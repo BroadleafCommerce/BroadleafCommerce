@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.time.SystemTime;
@@ -39,6 +40,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -149,6 +151,8 @@ public class ProductDaoImpl implements ProductDao {
 		
 		attachActiveRestriction(currentDate, product, sku, restrictions);
 		
+		attachOrderBy(searchCriteria, product, sku, criteria);
+		
     	// Execute the query with the restrictions
 		criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
     	return (List<Product>) em.createQuery(criteria).getResultList();
@@ -179,6 +183,8 @@ public class ProductDaoImpl implements ProductDao {
 		
 		attachActiveRestriction(currentDate, product, sku, restrictions);
 		
+		attachOrderBy(searchCriteria, product, sku, criteria);
+		
     	// Execute the query with the restrictions
 		criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
     	return (List<Product>) em.createQuery(criteria).getResultList();
@@ -199,6 +205,41 @@ public class ProductDaoImpl implements ProductDao {
     	restrictions.add(builder.or(
     						builder.isNull(sku.get("activeEndDate")),
     						builder.greaterThan(sku.get("activeEndDate").as(Date.class), myDate)));
+	}
+	
+	protected void attachOrderBy(ProductSearchCriteria searchCriteria, 
+			Path<? extends Product> product, Path<? extends Sku> sku, CriteriaQuery<?> criteria) {
+		if (StringUtils.isNotBlank(searchCriteria.getSortQuery())) {
+			CriteriaBuilder builder = em.getCriteriaBuilder();
+		
+			List<Order> sorts = new ArrayList<Order>();
+			
+			String sortQueries = searchCriteria.getSortQuery();
+			for (String sortQuery : sortQueries.split(",")) {
+				String[] sort = sortQuery.split(" ");
+				if (sort.length == 2) {
+					String key = sort[0];
+					boolean asc = sort[1].toLowerCase().contains("asc");
+					
+					// Determine whether we should use the product path or the sku path
+					Path<?> pathToUse;
+					if (key.contains("defaultSku.")) {
+						pathToUse = sku;
+						key = key.substring("defaultSku.".length());
+					} else {
+						pathToUse = product;
+					}
+					
+					if (asc) {
+						sorts.add(builder.asc(pathToUse.get(key)));
+					} else {
+						sorts.add(builder.desc(pathToUse.get(key)));
+					}
+				}
+			}
+			
+			criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
+		}
 	}
 
 	protected void attachProductSearchCriteria(ProductSearchCriteria searchCriteria, 

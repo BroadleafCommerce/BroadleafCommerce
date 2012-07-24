@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.core.search.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -45,6 +49,12 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	@Resource(name = "blSearchFacetDao")
 	protected SearchFacetDao searchFacetDao;
 	
+	protected boolean disableCaching = false;
+	
+    protected static String CACHE_NAME = "blStandardElements";
+    protected static String CACHE_KEY_PREFIX = "facet:";
+    protected Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
+	
 	@Override
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
 		ProductSearchResult result = new ProductSearchResult();
@@ -65,12 +75,28 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected List<SearchFacetDTO> getSearchFacets() {
-		return buildSearchFacetDtos(searchFacetDao.readAllSearchFacets());
+		String cacheKey = CACHE_KEY_PREFIX + "blc-search";
+		List<SearchFacetDTO> facets = (List<SearchFacetDTO>) cache.get(cacheKey);
+		if (facets == null) {
+			facets = buildSearchFacetDtos(searchFacetDao.readAllSearchFacets());
+			Element element = new Element(cacheKey, facets);
+			cache.put(element);
+		}
+		return facets;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected List<SearchFacetDTO> getCategoryFacets(Category category) {
-		return buildSearchFacetDtos(category.getCumulativeSearchFacets());
+		String cacheKey = CACHE_KEY_PREFIX + "category:" + category.getId();
+		List<SearchFacetDTO> facets = (List<SearchFacetDTO>) cache.get(cacheKey);
+		if (facets == null) {
+			facets = buildSearchFacetDtos(category.getCumulativeSearchFacets());
+			Element element = new Element(cacheKey, facets);
+			cache.put(element);
+		}
+		return facets;
 	}
 	
 	protected List<SearchFacetDTO> buildSearchFacetDtos(List<CategorySearchFacet> categoryFacets) {
@@ -128,4 +154,12 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 		return results;
 	}
 
+	public boolean isDisableCaching() {
+		return disableCaching;
+	}
+
+	public void setDisableCaching(boolean disableCaching) {
+		this.disableCaching = disableCaching;
+	}
+	
 }
