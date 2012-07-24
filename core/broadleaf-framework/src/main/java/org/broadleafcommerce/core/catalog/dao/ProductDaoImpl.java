@@ -39,6 +39,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
@@ -128,11 +129,11 @@ public class ProductDaoImpl implements ProductDao {
     	CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
 		
-		// The root of our search is Category since we are browsing
+		// The root of our search is Product since we are searching
 		Root<ProductImpl> product = criteria.from(ProductImpl.class);
 		
-		// We also want to filter on attributes from sku
-		Path<Sku> sku = product.get("defaultSku");
+		// We also want to filter on attributes from sku and productAttributes
+		Join<Product, Sku> sku = product.join("defaultSku");
 		
 		// Product objects are what we want back
 		criteria.select(product);
@@ -170,7 +171,7 @@ public class ProductDaoImpl implements ProductDao {
 		
 		// We want to filter on attributes from product and sku
 		Join<Category, Product> product = category.join("allProducts");
-		Path<Sku> sku = product.get("defaultSku");
+		Join<Product, Sku> sku = product.join("defaultSku");
 		
 		// Product objects are what we want back
 		criteria.select(product);
@@ -243,7 +244,7 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	protected void attachProductSearchCriteria(ProductSearchCriteria searchCriteria, 
-			Path<? extends Product> product, Path<? extends Sku> sku, List<Predicate> restrictions) {
+			From<?, ? extends Product> product, From<?, ? extends Sku> sku, List<Predicate> restrictions) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		
 		// Build out the filter criteria from the users request
@@ -257,6 +258,13 @@ public class ProductDaoImpl implements ProductDao {
 			if (key.contains("defaultSku.")) {
 				pathToUse = sku;
 				key = key.substring("defaultSku.".length());
+			} else if (key.contains("productAttribute.")) {
+				pathToUse = product.join("productAttributes");
+				
+				key = key.substring("productAttribute.".length());
+				restrictions.add(builder.equal(pathToUse.get("name").as(String.class), key));
+				
+				key = "value";
 			} else {
 				pathToUse = product;
 			}

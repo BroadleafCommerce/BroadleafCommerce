@@ -71,6 +71,14 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 		if (fieldName.contains("defaultSku.")) {
 			pathToUse = sku;
 			fieldName = fieldName.substring("defaultSku.".length());
+		} else if (fieldName.contains("productAttribute.")) {
+			pathToUse = product.join("productAttributes");
+			
+			fieldName = fieldName.substring("productAttribute.".length());
+			criteria.where(builder.equal(
+				builder.lower(pathToUse.get("name").as(String.class)), fieldName.toLowerCase()));
+			
+			fieldName = "value";
 		} else {
 			pathToUse = product;
 		}

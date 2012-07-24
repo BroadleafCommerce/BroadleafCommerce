@@ -77,11 +77,17 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	
 	@SuppressWarnings("unchecked")
 	protected List<SearchFacetDTO> getSearchFacets() {
+		List<SearchFacetDTO> facets = null;
+		
 		String cacheKey = CACHE_KEY_PREFIX + "blc-search";
-		List<SearchFacetDTO> facets = (List<SearchFacetDTO>) cache.get(cacheKey);
+		Element element = cache.get(cacheKey);
+		if (element != null) {
+			facets = (List<SearchFacetDTO>) element.getValue();
+		}
+		
 		if (facets == null) {
 			facets = buildSearchFacetDtos(searchFacetDao.readAllSearchFacets());
-			Element element = new Element(cacheKey, facets);
+			element = new Element(cacheKey, facets);
 			cache.put(element);
 		}
 		return facets;
@@ -89,11 +95,17 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	
 	@SuppressWarnings("unchecked")
 	protected List<SearchFacetDTO> getCategoryFacets(Category category) {
+		List<SearchFacetDTO> facets = null;
+		
 		String cacheKey = CACHE_KEY_PREFIX + "category:" + category.getId();
-		List<SearchFacetDTO> facets = (List<SearchFacetDTO>) cache.get(cacheKey);
+		Element element = cache.get(cacheKey);
+		if (element != null) {
+			facets = (List<SearchFacetDTO>) element.getValue();
+		}
+		
 		if (facets == null) {
 			facets = buildSearchFacetDtos(category.getCumulativeSearchFacets());
-			Element element = new Element(cacheKey, facets);
+			element = new Element(cacheKey, facets);
 			cache.put(element);
 		}
 		return facets;
