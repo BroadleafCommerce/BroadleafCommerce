@@ -29,7 +29,8 @@ public class ProductSearchCriteria {
     public static String PAGE_SIZE_STRING = "pageSize";
     public static String PAGE_NUMBER = "pageNumber";
     public static String SORT_STRING = "sort";
-	
+    public static String QUERY_STRING = "q";
+    
 	protected Integer page;
 	protected Integer pageSize;
 	protected String sortQuery;

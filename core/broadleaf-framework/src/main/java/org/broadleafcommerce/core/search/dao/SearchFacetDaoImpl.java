@@ -19,19 +19,23 @@ package org.broadleafcommerce.core.search.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
+import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
 import java.util.List;
 
-@Repository("blSearchFacetValueDao")
-public class SearchFacetValueDaoImpl implements SearchFacetValueDao {
+@Repository("blSearchFacetDao")
+public class SearchFacetDaoImpl implements SearchFacetDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -39,9 +43,27 @@ public class SearchFacetValueDaoImpl implements SearchFacetValueDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
     
+    @Override
+    public List<CategorySearchFacet> readAllSearchFacets() {
+    	CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<CategorySearchFacet> criteria = builder.createQuery(CategorySearchFacet.class);
+		
+		Root<CategorySearchFacetImpl> root = criteria.from(CategorySearchFacetImpl.class);
+		Path<SearchFacet> facet = root.get("searchFacet");
+		
+		criteria.select(root);
+		criteria.where(
+			builder.equal(facet.get("showOnSearch").as(Boolean.class), true)
+		);
+    	
+		return em.createQuery(criteria).getResultList();
+    }
+    
 	@Override
 	public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass) {
-		CriteriaQuery<T> criteria = em.getCriteriaBuilder().createQuery(fieldValueClass);
+    	CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<T> criteria = builder.createQuery(fieldValueClass);
+		
 		Root<ProductImpl> product = criteria.from(ProductImpl.class);
 		Path<Sku> sku = product.get("defaultSku");
 		

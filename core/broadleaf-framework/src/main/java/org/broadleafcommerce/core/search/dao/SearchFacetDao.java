@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
+
 import java.util.List;
 
 /**
- * Dynamic DAO that is used in conjuction with the DatabaseProductSearchService
- * to generate distinct possible values for certain search facets
+ * DAO used to interact with the database search facets
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacetValueDao {
+public interface SearchFacetDao {
 
 	/**
 	 * Returns the distinct values for the given fieldName inside of the search clas sas a list of the specified 
@@ -37,5 +38,12 @@ public interface SearchFacetValueDao {
 	 * @return  the distinct values for the field
 	 */
 	public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass);
+
+	/**
+	 * Returns all CategorySearchFacets whose SearchFacets are tagged with showOnSearch
+	 * 
+	 * @return the facets to display on searches
+	 */
+	public List<CategorySearchFacet> readAllSearchFacets();
 
 }

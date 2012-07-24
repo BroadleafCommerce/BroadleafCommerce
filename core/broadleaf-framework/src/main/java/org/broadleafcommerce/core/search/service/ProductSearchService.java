@@ -27,13 +27,23 @@ import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 public interface ProductSearchService {
 	
 	/**
-	 * Performs a search for products in the given category, taking into consideration the optional
-	 * ProductSearchCriteria
+	 * Performs a search for products in the given category, taking into consideration the ProductSearchCriteria
 	 * 
 	 * @param category
 	 * @param searchCriteria
 	 * @return the result of the search
 	 */
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria);
+	
+	/**
+	 * Performs a search for products across all categories for the given query, taking into consideration
+	 * the ProductSearchCriteria
+	 * 
+	 * @param query
+	 * @param searchCriteria
+	 * @return the result of the search
+	 */
+	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria);
+
 
 }

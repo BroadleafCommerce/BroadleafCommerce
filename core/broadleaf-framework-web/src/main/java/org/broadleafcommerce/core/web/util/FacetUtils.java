@@ -16,8 +16,15 @@
 
 package org.broadleafcommerce.core.web.util;
 
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -28,7 +35,54 @@ import java.util.Map.Entry;
  */
 public class FacetUtils {
 	
-	public static boolean isActive(SearchFacetResultDTO result, Map<String, String[]> params) {
+	@SuppressWarnings("unchecked")
+	public static ProductSearchCriteria buildSearchCriteria(HttpServletRequest request) {
+		ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
+		
+		Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
+		for (Iterator<Map.Entry<String,String[]>> iter = params.entrySet().iterator(); iter.hasNext();){
+			Map.Entry<String, String[]> entry = iter.next();
+			String key = entry.getKey();
+			
+			if (key.equals(ProductSearchCriteria.SORT_STRING)) {
+				searchCriteria.setSortQuery(entry.getValue()[0]);
+				iter.remove();
+			}
+			
+			if (key.equals(ProductSearchCriteria.PAGE_NUMBER)) {
+				searchCriteria.setPage(Integer.parseInt(entry.getValue()[0]));
+				iter.remove();
+			}
+			
+			if (key.equals(ProductSearchCriteria.PAGE_SIZE_STRING)) {
+				searchCriteria.setPageSize(Integer.parseInt(entry.getValue()[0]));
+				iter.remove();
+			}
+			
+			// This is handled specifically by the controller and we do not need to deal with it here
+			if (key.equals(ProductSearchCriteria.QUERY_STRING)) {
+				iter.remove();
+			}
+		}
+		
+		searchCriteria.setFilterCriteria(params);
+		
+		return searchCriteria;
+	}
+	
+	public static void setActiveFacetResults(List<SearchFacetDTO> facets, HttpServletRequest request) {
+		if (facets != null) {
+	    	for (SearchFacetDTO facet : facets) {
+	    		for (SearchFacetResultDTO facetResult : facet.getFacetValues()) {
+	    			facetResult.setActive(FacetUtils.isActive(facetResult, request));
+	    		}
+	    	}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static boolean isActive(SearchFacetResultDTO result, HttpServletRequest request) {
+		Map<String, String[]> params = request.getParameterMap();
 		for (Entry<String, String[]> entry : params.entrySet()) {
 			String key = entry.getKey();
 			if (key.equals(getKey(result))) {

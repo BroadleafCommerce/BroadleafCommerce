@@ -86,7 +86,8 @@ public interface ProductDao {
     
     /**
      * Find all products whose start and end dates are before and after the passed in
-     * date, who are related to the given category, and match the given search criteria
+     * date, who are related to the given category, match the given search criteria, and 
+     * are not marked as archived.
      * 
      * @param categoryId
      * @param currentDate
@@ -95,6 +96,19 @@ public interface ProductDao {
      */
     @Nonnull
 	public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, ProductSearchCriteria searchCriteria);
+    
+    /**
+     * Find all products whose start and end dates are before and after the passed in 
+     * date, who match the search string, match the given search criteria, and are not
+     * marked as archived.
+     * 
+     * @param query
+     * @param currentDate
+     * @param searchCriteria
+     * @return the matching products
+     */
+    @Nonnull
+	public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
 
     @Nonnull
     public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate, @Nonnull int limit, @Nonnull int offset);
@@ -165,5 +179,6 @@ public interface ProductDao {
      * 
      */
 	List<Product> findProductByURI(String key);
+
 
 }

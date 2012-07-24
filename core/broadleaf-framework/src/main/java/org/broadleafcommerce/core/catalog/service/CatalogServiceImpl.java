@@ -74,6 +74,11 @@ public class CatalogServiceImpl implements CatalogService {
     public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria) {
         return productDao.readFilteredActiveProductsByCategory(category.getId(), currentDate, searchCriteria);
     }
+    
+    @Override
+    public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria) {
+        return productDao.readFilteredActiveProductsByQuery(query, currentDate, searchCriteria);
+    }
 
     @Override
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset) {
