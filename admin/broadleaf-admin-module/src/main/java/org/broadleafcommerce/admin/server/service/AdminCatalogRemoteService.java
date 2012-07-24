@@ -125,18 +125,31 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
         
         //Detach and save a cloned Sku
         Sku cloneSku = cloneProduct.getDefaultSku();
+        cloneSku.getSkuMedia().size();
         em.detach(cloneSku);
         cloneSku.setId(null);
         
+        cloneProduct.setDefaultSku(cloneSku);
+        
+        //initialize the many-to-many to save off
+        cloneProduct.getProductOptions().size();
+        cloneProduct.getAllParentCategories().size();
+
         em.detach(cloneProduct);
         cloneProduct.setId(null);
-        cloneProduct.setDefaultSku(cloneSku);
         Product derivedProduct = catalogService.saveProduct(cloneProduct);
         
-        //save off the many-to-many
-        derivedProduct.setProductOptions(cloneProduct.getProductOptions());
-        derivedProduct.setAllParentCategories(cloneProduct.getAllParentCategories());
-        derivedProduct = catalogService.saveProduct(derivedProduct);
+        cloneProduct = catalogService.findProductById(productId);
+        //Re-associate the new Skus to the new Product
+        for (Sku additionalSku : cloneProduct.getAdditionalSkus()) {
+            additionalSku.getProductOptionValues().size();
+            em.detach(additionalSku);
+            additionalSku.setId(null);
+            additionalSku.setProduct(derivedProduct);
+            catalogService.saveSku(additionalSku);
+        }
+        
+        
         return true;
     }
     

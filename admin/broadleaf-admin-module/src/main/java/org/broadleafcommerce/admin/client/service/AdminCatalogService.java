@@ -39,6 +39,19 @@ public interface AdminCatalogService extends RemoteService {
     @Secured("PERMISSION_OTHER_DEFAULT")
     public Integer generateSkusFromProduct(Long productId) throws ApplicationSecurityException;
 
+    /**
+     * This will create a new product along with a new Sku for the defaultSku, along with new
+     * Skus for all of the additional Skus. This is achieved by simply detaching the entities
+     * from the persistent session, resetting the primary keys and then saving the entity.
+     * 
+     * Note: Media for the product is not saved separately, meaning if you make a change to the
+     * original product's media items (the one specified by <b>productId</b>) it will change the
+     * cloned product's media and vice-versa.
+     * 
+     * @param productId
+     * @return
+     * @throws ApplicationSecurityException
+     */
     @Secured("PERMISSION_OTHER_DEFAULT")
     public Boolean cloneProduct(Long productId) throws ApplicationSecurityException;
 

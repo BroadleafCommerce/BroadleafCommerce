@@ -176,6 +176,7 @@ public class OneToOneProductSkuPresenter extends HtmlEditingPresenter implements
                     @Override
                     public void onSuccess(Boolean result) {
                         if (result) {
+                            getDisplay().getListDisplay().getGrid().invalidateCache();
                             SC.say(productName + " has been cloned successfully");
                         } else {
                             SC.say("There was an error when cloning product " + productName);
