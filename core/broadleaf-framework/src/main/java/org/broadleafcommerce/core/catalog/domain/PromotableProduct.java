@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import java.io.Serializable;
 
 public interface PromotableProduct extends Serializable {
-    Product getProduct();
+    Product getRelatedProduct();
     
     String getPromotionMessage();
 }

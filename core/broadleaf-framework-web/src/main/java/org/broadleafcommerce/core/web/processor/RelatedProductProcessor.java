@@ -81,7 +81,7 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
 		List<Product> products = new ArrayList<Product>();
 		if (relatedProducts != null) {
 			for (PromotableProduct product : relatedProducts) {
-				products.add(product.getProduct());
+				products.add(product.getRelatedProduct());
 			}
 		}
 		return products;		

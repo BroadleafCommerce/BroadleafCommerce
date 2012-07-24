@@ -39,4 +39,10 @@ public interface FeaturedProduct extends PromotableProduct {
 
     void setPromotionMessage(String promotionMessage);
 
+    /**
+     * Pass through to getProdcut() to meet the contract for promotable product.
+     * @return
+     */
+    Product getRelatedProduct();
+
 }

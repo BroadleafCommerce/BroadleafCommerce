@@ -18,18 +18,11 @@ package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
-import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
-import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
+import org.broadleafcommerce.core.catalog.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service("blRelatedProductsService")
 /*
@@ -85,17 +78,38 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
 		}
 		
 		removeCurrentProductFromReturnList(product, returnFeaturedProducts);
+        returnFeaturedProducts = (List<FeaturedProduct>)removeDuplicatesFromList(returnFeaturedProducts);
 		
 		return resizeList(returnFeaturedProducts, relatedProductDTO.getQuantity());
 	}
+    
+    private List<? extends PromotableProduct> removeDuplicatesFromList(List <? extends PromotableProduct> returnPromotableProducts) {
+        Set<PromotableProduct> productSet = new LinkedHashSet<PromotableProduct>();
+        Set<Product> relatedProductSet = new LinkedHashSet<Product>();
 
-	private void removeCurrentProductFromReturnList(Product product,
+        if (returnPromotableProducts != null) {
+            for(PromotableProduct p : returnPromotableProducts) {
+                if (!relatedProductSet.contains(p.getRelatedProduct())){
+                    productSet.add(p);
+                    relatedProductSet.add(p.getRelatedProduct());
+                }
+            }
+        } else {
+            return null;
+        }
+        returnPromotableProducts.clear();
+        returnPromotableProducts.addAll(new ArrayList(productSet));
+        return returnPromotableProducts;
+
+    }
+
+     private void removeCurrentProductFromReturnList(Product product,
 			List<? extends PromotableProduct> returnPromotableProducts) {
 		if (product != null && returnPromotableProducts != null) {
 			Iterator<? extends PromotableProduct> productIterator = returnPromotableProducts.iterator();
 			while (productIterator.hasNext()) {
 				PromotableProduct promotableProduct = productIterator.next();
-				if (product.getId().equals(promotableProduct.getProduct().getId())) {
+				if (product.getId().equals(promotableProduct.getRelatedProduct().getId())) {
 					productIterator.remove();
 				}				
 			}			
@@ -124,8 +138,11 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
 			} else {
 				returnUpSaleProducts = category.getUpSaleProducts();
 			}
-		}	
-		
+		}
+
+        removeCurrentProductFromReturnList(product, returnUpSaleProducts);
+        returnUpSaleProducts = removeDuplicatesFromList(returnUpSaleProducts);
+
 		return resizeList(returnUpSaleProducts, relatedProductDTO.getQuantity());
 	}
 	
@@ -151,7 +168,10 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
 			} else {
 				crossSaleProducts = category.getCrossSaleProducts();
 			}
-		}	
+		}
+
+        removeCurrentProductFromReturnList(product, crossSaleProducts);
+        crossSaleProducts = removeDuplicatesFromList(crossSaleProducts);
 		
 		return resizeList(crossSaleProducts, relatedProductDTO.getQuantity());
 	}	
