@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.broadleafcommerce.core.web.util.FacetUtils;
+import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
@@ -36,13 +38,13 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
-public class AddCriteriaLinkProcessor extends AbstractAttributeModifierAttrProcessor {
+public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProcessor {
 
 	/**
 	 * Sets the name of this processor to be used in Thymeleaf template
 	 */
-	public AddCriteriaLinkProcessor() {
-		super("addcriterialink");
+	public ToggleFacetLinkProcessor() {
+		super("togglecriterialink");
 	}
 	
 	@Override
@@ -63,15 +65,16 @@ public class AddCriteriaLinkProcessor extends AbstractAttributeModifierAttrProce
 		
 		SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
 		
-		String key = result.getFacet().getSearchFacet().getFieldName();
+		String key = FacetUtils.getKey(result);
+		String value = FacetUtils.getValue(result);
 		String[] paramValues = params.get(key);
 		
-		String value = result.getValue();
-		if (value == null) {
-			value = "blcRange[" + result.getMinValue() + ":" + result.getMaxValue() + "]";
+		if (ArrayUtils.contains(paramValues, FacetUtils.getValue(result))) {
+			paramValues = (String[]) ArrayUtils.removeElement(paramValues, FacetUtils.getValue(result));
+		} else {
+			paramValues = (String[]) ArrayUtils.add(paramValues, value);
 		}
 		
-		paramValues = (String[]) ArrayUtils.add(paramValues, value);
 		params.put(key, paramValues);
 		
 		String url = ProcessorUtils.getUrl(baseUrl, params);

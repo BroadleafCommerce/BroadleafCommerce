@@ -5,8 +5,11 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.service.ProductSearchService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
+import org.broadleafcommerce.core.web.util.FacetUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -29,6 +32,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected static String CATEGORY_ATTRIBUTE_NAME = "category";  
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
     protected static String FACETS_ATTRIBUTE_NAME = "facets";  
+    protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
     
 	@Resource(name = "blProductSearchService")
 	protected ProductSearchService productSearchService;
@@ -69,6 +73,14 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 		
 		//TODO: Introduce paging, filtering, sorting
 		ProductSearchResult result = productSearchService.findProductsByCategory(category, searchCriteria);
+    	
+		// Determine whether a result is active or not based on the current url
+    	for (SearchFacetDTO facet : result.getFacets()) {
+    		for (SearchFacetResultDTO facetResult : facet.getFacetValues()) {
+    			facetResult.setActive(FacetUtils.isActive(facetResult, params));
+    		}
+    	}
+    	
     	model.addObject(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
     	model.addObject(FACETS_ATTRIBUTE_NAME, result.getFacets());
 

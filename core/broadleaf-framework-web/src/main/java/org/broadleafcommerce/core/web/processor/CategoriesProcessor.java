@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 

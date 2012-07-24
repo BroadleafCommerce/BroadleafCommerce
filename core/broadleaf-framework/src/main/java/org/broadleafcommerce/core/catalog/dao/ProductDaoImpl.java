@@ -147,8 +147,6 @@ public class ProductDaoImpl implements ProductDao {
 			List<String> eqValues = new ArrayList<String>();
 			List<String[]> rangeValues = new ArrayList<String[]>();
 			
-			//List<String> values = Arrays.asList(entry.getValue());
-			
 			// Determine whether we should use the product path or the sku path
 			Path<?> pathToUse;
 			if (key.contains("defaultSku.")) {

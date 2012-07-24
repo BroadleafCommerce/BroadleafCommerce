@@ -32,6 +32,8 @@ public class SearchFacetResultDTO {
 	
 	protected Integer quantity;
 	
+	protected boolean active;
+	
 	public CategorySearchFacet getFacet() {
 		return facet;
 	}
@@ -70,6 +72,14 @@ public class SearchFacetResultDTO {
 	
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	
 }

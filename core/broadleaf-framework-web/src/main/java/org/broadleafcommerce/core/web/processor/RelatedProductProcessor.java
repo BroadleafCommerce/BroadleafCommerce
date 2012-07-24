@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
+import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;

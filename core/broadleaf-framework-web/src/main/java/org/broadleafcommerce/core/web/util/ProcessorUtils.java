@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.processor;
+package org.broadleafcommerce.core.web.util;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -136,10 +136,20 @@ public class ProcessorUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(baseUrl);
 		
-		if (parameters == null || parameters.size() == 0) {
-			return sb.toString();
-		} else {
+		boolean atLeastOneParam = false;
+		
+		if (parameters != null && parameters.size() > 0) {
+			for (Entry<String, String[]> entry : parameters.entrySet()) {
+				if (entry.getValue().length > 0) {
+					atLeastOneParam = true;
+				}
+			}
+		}
+		
+		if (atLeastOneParam) {
 			sb.append("?");
+		} else {
+			return sb.toString();
 		}
 		
 		for (Entry<String, String[]> entry : parameters.entrySet()) {
