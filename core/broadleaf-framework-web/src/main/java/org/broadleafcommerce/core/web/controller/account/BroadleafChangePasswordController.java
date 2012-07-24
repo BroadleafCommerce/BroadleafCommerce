@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.ChangePasswordValidator;
@@ -23,9 +26,7 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * This controller handles password changes for a customer's account
@@ -34,36 +35,41 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
 
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
-    
     @Resource(name = "blChangePasswordValidator")
     protected ChangePasswordValidator changePasswordValidator;
 
+    protected String passwordChangedMessage = "Password successfully changed";
+    
     protected static String changePasswordView = "account/changePassword";
+    protected static String changePasswordRedirect = "redirect:/account/password";
 
     public String viewChangePassword(HttpServletRequest request, Model model) {
         return getChangePasswordView();
     }
 
-    public String processChangePassword(HttpServletRequest request, Model model, ChangePasswordForm form, BindingResult result) {
-
+    public String processChangePassword(HttpServletRequest request, Model model, ChangePasswordForm form, BindingResult result, RedirectAttributes redirectAttributes) {
         PasswordChange passwordChange = new PasswordChange(CustomerState.getCustomer().getUsername());
         passwordChange.setCurrentPassword(form.getCurrentPassword());
         passwordChange.setNewPassword(form.getNewPassword());
         passwordChange.setNewPasswordConfirm(form.getNewPasswordConfirm());
-
         changePasswordValidator.validate(passwordChange, result);
-
         if (result.hasErrors()) {
             return getChangePasswordView();
         }
-
         customerService.changePassword(passwordChange);
-
-        return getChangePasswordView();
+        return getChangePasswordRedirect();
     }
 
     public String getChangePasswordView() {
         return changePasswordView;
     }
-
+    
+    public String getChangePasswordRedirect() {
+    	return changePasswordRedirect;
+    }
+    
+    public String getPasswordChangedMessage() {
+    	return passwordChangedMessage;
+    }
+    
 }
