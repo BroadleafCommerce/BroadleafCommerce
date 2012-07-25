@@ -26,7 +26,10 @@ import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class extends the default ThymeleafViewResolver to facilitate rendering
@@ -44,7 +47,8 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
      *   Prefix to be used in view names (returned by controllers) for specifying an
      *   HTTP redirect with AJAX support. That is, if you want a redirect to be followed
      *   by the browser as the result of an AJAX call or within an iFrame at the parent 
-     *   window, you can utilize this prefix.
+     *   window, you can utilize this prefix. Note that this requires a JavaScript component,
+     *   which is provided as part of BLC.js
      *   
      *   If the request was not performed in an AJAX / iFrame context, this method will
      *   delegate to the normal "redirect:" prefix.
@@ -55,35 +59,15 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
      */
     public static final String AJAX_REDIRECT_URL_PREFIX = "ajaxredirect:";
     
-    /**
-     * <p>
-     *   Prefix to be used in view names (returned by controllers) for specifying an
-     *   a template that can be resolved by itself (for use in a modal for example)
-     *   when requested via AJAX or placed inside of a container when requested in
-     *   a non-AJAX manner.
-     * </p>
-     * <p>
-     *   Value: <tt>ajax:</tt>
-     * </p>
-     */
-    public static final String AJAX_URL_PREFIX = "ajax:";
-    
-    /**
-     * <p>
-     *   Prefix to be used in view names (returned by controllers) for specifying an
-     *   a template that can be resolved by itself (for use in a modal for example)
-     *   when requested via an iFrame or placed inside of a container when requested in
-     *   a non-iFrame manner.
-     * </p>
-     * <p>
-     *   Value: <tt>iframe:</tt>
-     * </p>
-     */
-    public static final String IFRAME_URL_PREFIX = "iframe:";
-    
+    protected Map<String, String> layoutMap = new HashMap<String, String>();
     protected String fullPageLayout = "layout/fullPageLayout";
+    protected String iframeLayout = "layout/iframeLayout";
     
-    private boolean canHandle(final String viewName) {
+    /*
+     * This method is a copy of the same method in ThymeleafViewResolver, but since it is marked private,
+     * we are unable to call it from the BroadleafThymeleafViewResolver
+     */
+    protected boolean canHandle(final String viewName) {
         final String[] viewNamesToBeProcessed = getViewNames();
         final String[] viewNamesNotToBeProcessed = getExcludedViewNames();
         return ((viewNamesToBeProcessed == null || PatternMatchUtils.simpleMatch(viewNamesToBeProcessed, viewName)) &&
@@ -101,21 +85,13 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
             LOG.trace("[THYMELEAF] View {" + viewName + "} cannot be handled by ThymeleafViewResolver. Passing on to the next resolver in the chain");
             return null;
         }
+        
         if (viewName.startsWith(AJAX_REDIRECT_URL_PREFIX)) {
             LOG.trace("[THYMELEAF] View {" + viewName + "} is an ajax redirect, and will be handled directly by BroadleafThymeleafViewResolver");
             String redirectUrl = viewName.substring(AJAX_REDIRECT_URL_PREFIX.length());
         	return loadAjaxRedirectView(redirectUrl, locale);
         }
-        if (viewName.startsWith(AJAX_URL_PREFIX)) {
-            LOG.trace("[THYMELEAF] View {" + viewName + "} is an ajax modal, and will be handled directly by BroadleafThymeleafViewResolver");
-            String requestedViewName = viewName.substring(AJAX_URL_PREFIX.length());
-        	return loadAjaxView(requestedViewName, locale);
-        }
-        if (viewName.startsWith(IFRAME_URL_PREFIX)) {
-            LOG.trace("[THYMELEAF] View {" + viewName + "} is an iFrame modal, and will be handled directly by BroadleafThymeleafViewResolver");
-            String requestedViewName = viewName.substring(IFRAME_URL_PREFIX.length());
-        	return loadIFrameView(requestedViewName, locale);
-        }
+        
         return super.createView(viewName, locale);
     }
     
@@ -138,33 +114,36 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     	}
     }
     
-    protected View loadIFrameView(final String requestedViewName, final Locale locale) throws Exception {
-    	String viewName = requestedViewName;
-    	if (!isIFrameRequest()) {
-	        viewName = "layout/iFrameContainerLayout";
-	        addStaticVariable("templateName", requestedViewName);
-    	}
-	    return super.loadView(viewName, locale);
-    }
-    
-    /**
-     * If the current request is an AJAX request, this method will render the requested viewName.
-     * However, if the current request is NOT and AJAX request, this method will render the 
-     * fullPageLayout with the requested viewName set as the templateName variable for use by 
-     * the fullPageLayout.
-     * 
-     * @param requestedViewName
-     * @param locale
-     * @return
-     * @throws Exception
-     */
-    protected View loadAjaxView(final String requestedViewName, final Locale locale) throws Exception {
-    	String viewName = requestedViewName;
+    @Override
+    protected View loadView(final String originalViewName, final Locale locale) throws Exception {
+    	String viewName = originalViewName;
+    	
     	if (!isAjaxRequest()) {
-	        viewName = getFullPageLayout();
-	        addStaticVariable("templateName", requestedViewName);
+    		addStaticVariable("templateName", originalViewName);
+    		
+    		String longestPrefix = "";
+    		
+    		for (Entry<String, String> entry : layoutMap.entrySet()) {
+    			String viewPrefix = entry.getKey();
+    			String viewLayout = entry.getValue();
+    			
+    			if (viewPrefix.length() > longestPrefix.length()) {
+	    	    	if (originalViewName.startsWith(viewPrefix)) {
+	    	    		longestPrefix = viewPrefix;
+	    	    		
+	    	    		if (!"NONE".equals(viewLayout)) {
+	    	    			viewName = viewLayout;
+	    	    		}
+	    	    	}
+    			}
+    		}  
+    		
+    		if (longestPrefix.equals("")) {
+    			viewName = getFullPageLayout();
+    		}
     	}
-	    return super.loadView(viewName, locale);
+    	
+		return super.loadView(viewName, locale);
     }
     
     protected boolean isIFrameRequest() {
@@ -178,12 +157,56 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
         return BroadleafControllerUtility.isAjaxRequest(request);
     }
 
+    /**
+     * Gets the map of prefix : layout for use in determining which layout
+     * to dispatch the request to in non-AJAX calls
+     * 
+     * @return the layout map
+     */
+	public Map<String, String> getLayoutMap() {
+		return layoutMap;
+	}
+
+	/**
+	 * @see #getLayoutMap()
+	 * @param layoutMap
+	 */
+	public void setLayoutMap(Map<String, String> layoutMap) {
+		this.layoutMap = layoutMap;
+	}
+
+	/**
+	 * The default layout to use if there is no specifc entry in the layout map
+	 * 
+	 * @return the full page layout
+	 */
 	public String getFullPageLayout() {
 		return fullPageLayout;
 	}
 
+	/**
+	 * @see #getFullPageLayout()
+	 * @param fullPageLayout
+	 */
 	public void setFullPageLayout(String fullPageLayout) {
 		this.fullPageLayout = fullPageLayout;
+	}
+
+	/**
+	 * The layout to use for iframe requests
+	 * 
+	 * @return the iframe layout
+	 */
+	public String getIframeLayout() {
+		return iframeLayout;
+	}
+
+	/**
+	 * @see #getIframeLayout()
+	 * @param iframeLayout
+	 */
+	public void setIframeLayout(String iframeLayout) {
+		this.iframeLayout = iframeLayout;
 	}
     
 }

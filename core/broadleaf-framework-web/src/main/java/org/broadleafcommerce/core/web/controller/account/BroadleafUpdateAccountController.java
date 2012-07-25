@@ -1,8 +1,5 @@
 package org.broadleafcommerce.core.web.controller.account;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.UpdateAccountValidator;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -12,10 +9,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 public class BroadleafUpdateAccountController extends BroadleafAbstractController {
 
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
+    
     @Resource(name = "blUpdateAccountValidator")
     protected UpdateAccountValidator updateAccountValidator;
 

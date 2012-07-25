@@ -49,7 +49,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 		
 	private boolean useEmailForLogin = true;
 	protected static String registerSuccessView = "ajaxredirect:/";
-	protected static String registerView = "ajax:authentication/register";
+	protected static String registerView = "authentication/register";
 	
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
@@ -114,7 +114,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 	 * 
 	 * By default, returns "redirect:/"
 	 * 
-	 * @return
+	 * @return the register success view
 	 */
 	public String getRegisterSuccessView() {
 		return registerSuccessView;
@@ -125,7 +125,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 	 * 
 	 * By default, returns "/register"
 	 * 
-	 * @return
+	 * @return the register view
 	 */
 	public String getRegisterView() {
 		return registerView;

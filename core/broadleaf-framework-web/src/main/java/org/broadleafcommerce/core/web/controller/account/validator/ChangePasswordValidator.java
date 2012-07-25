@@ -1,8 +1,6 @@
 package org.broadleafcommerce.core.web.controller.account.validator;
 
-import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.common.security.util.PasswordChange;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

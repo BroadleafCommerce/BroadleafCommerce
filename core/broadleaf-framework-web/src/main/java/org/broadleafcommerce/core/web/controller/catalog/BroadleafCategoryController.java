@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafCategoryController extends BroadleafAbstractController implements Controller {
 	
-    protected String defaultCategoryView = "catalog/category";
+    protected static String defaultCategoryView = "catalog/category";
     protected static String CATEGORY_ATTRIBUTE_NAME = "category";  
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
     protected static String FACETS_ATTRIBUTE_NAME = "facets";  
@@ -57,12 +57,12 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 		return model;
 	}
 
-	public String getDefaultCategoryView() {
+	public static String getDefaultCategoryView() {
 		return defaultCategoryView;
 	}
 
-	public void setDefaultCategoryView(String defaultCategoryView) {
-		this.defaultCategoryView = defaultCategoryView;
+	public static void setDefaultCategoryView(String defaultCategoryView) {
+		BroadleafCategoryController.defaultCategoryView = defaultCategoryView;
 	}
-	
+
 }

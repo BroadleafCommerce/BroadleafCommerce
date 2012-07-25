@@ -53,10 +53,10 @@ public class BroadleafLoginController extends BroadleafAbstractController {
     @Resource(name="blMergeCartProcessor")
     protected MergeCartProcessor mergeCartProcessor;
 	
-	protected static String loginView = "ajax:authentication/login";
-	protected static String forgotPasswordView = "ajax:authentication/forgotPassword";
-	protected static String forgotUsernameView = "ajax:authentication/forgotUsername";	
-	protected static String forgotPasswordSuccessView = "ajax:authentication/forgotPasswordSuccess";
+	protected static String loginView = "authentication/login";
+	protected static String forgotPasswordView = "authentication/forgotPassword";
+	protected static String forgotUsernameView = "authentication/forgotUsername";	
+	protected static String forgotPasswordSuccessView = "authentication/forgotPasswordSuccess";
 	protected static String resetPasswordView = "authentication/resetPassword";
 	protected static String resetPasswordErrorView = "authentication/resetPasswordError";
 	protected static String resetPasswordSuccessView = "redirect:/";
@@ -68,7 +68,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @param request
 	 * @param response
 	 * @param model
-	 * @return
+	 * @return the return view
 	 */
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		return getLoginView();
@@ -80,7 +80,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @param request
 	 * @param response
 	 * @param model
-	 * @return
+	 * @return the return view
 	 */
 	public String forgotPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
 		return getForgotPasswordView();
@@ -95,7 +95,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @param username
 	 * @param request
 	 * @param model
-	 * @return
+	 * @return the return view
 	 */
     public String processForgotPassword(String username, HttpServletRequest request, Model model) {
     	GenericResponse errorResponse = customerService.sendForgotPasswordNotification(username, getResetPasswordUrl(request));
@@ -115,7 +115,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
      * @param request
      * @param response
      * @param model
-     * @return
+     * @return the return view
      */
 	public String forgotUsername(HttpServletRequest request, HttpServletResponse response, Model model) {
 		return getForgotUsernameView();
@@ -129,7 +129,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @param request
 	 * @param response
 	 * @param model
-	 * @return
+	 * @return the return view
 	 */
     public String processForgotUsername(String email, HttpServletRequest request, HttpServletResponse response, Model model) {
         GenericResponse errorResponse = customerService.sendForgotUsernameNotification(email);
@@ -150,7 +150,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
      * @param request
      * @param response
      * @param model
-     * @return
+     * @return the return view
      */
 	public String resetPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
 		ResetPasswordForm resetPasswordForm = initResetPasswordForm(request);
@@ -175,7 +175,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @param response
 	 * @param model
 	 * @param errors
-	 * @return
+	 * @return the return view
 	 */
     public String processResetPassword(ResetPasswordForm resetPasswordForm, HttpServletRequest request, HttpServletResponse response, Model model, BindingResult errors) {
     	GenericResponse errorResponse = new GenericResponse();
@@ -206,7 +206,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
      * By default, redirects to the login page with a message.  
      * 
      * @param message
-     * @return
+     * @return the return view
      */
     protected String buildRedirectToLoginWithMessage(String message) {
         StringBuffer url = new StringBuffer("redirect:").append(getLoginView()).append("?messageCode=").append(message);
@@ -221,7 +221,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
      * forgotPassword request, the username will auto-populate
      * 
      * @param request
-     * @return
+     * @return the return view
      */
     public ResetPasswordForm initResetPasswordForm(HttpServletRequest request) {
         ResetPasswordForm resetPasswordForm = new ResetPasswordForm();
@@ -233,48 +233,42 @@ public class BroadleafLoginController extends BroadleafAbstractController {
     }
 
 	/**
-	 * The view representing the login page.
-	 * @return
+	 * @return the view representing the login page.
 	 */
     public String getLoginView() {
 		return loginView;
 	}
 
 	/**
-	 * The view displayed for the forgot username form.
-	 * @return
+	 * @return the view displayed for the forgot username form.
 	 */
 	public String getForgotUsernameView() {
 		return forgotUsernameView;
 	}
 
 	/**
-	 * The view displayed for the forgot password form.
-	 * @return
+	 * @return the view displayed for the forgot password form.
 	 */
 	public String getForgotPasswordView() {
 		return forgotPasswordView;
 	}
 
 	/**
-	 * The view displayed for the reset password form.
-	 * @return
+	 * @return the view displayed for the reset password form.
 	 */
 	public String getResetPasswordView() {
 		return resetPasswordView;
 	}
 
 	/**
-	 * The view returned after a successful forgotPassword email has been sent.
-	 * @return
+	 * @return the view returned after a successful forgotPassword email has been sent.
 	 */
 	public String getForgotPasswordSuccessView() {
 		return forgotPasswordSuccessView;
 	}
 
 	/**
-	 * The view name to use for the reset password model..
-	 * @return
+	 * @return the view name to use for the reset password model..
 	 */
 	public String getResetPasswordFormView() {
 		return resetPasswordFormView;
@@ -308,7 +302,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * View user is directed to if they try to access the resetPasswordForm with an 
 	 * invalid token.
 	 * 
-	 * @return
+	 * @return the error view
 	 */
 	public String getResetPasswordErrorView() {
 		return resetPasswordErrorView;

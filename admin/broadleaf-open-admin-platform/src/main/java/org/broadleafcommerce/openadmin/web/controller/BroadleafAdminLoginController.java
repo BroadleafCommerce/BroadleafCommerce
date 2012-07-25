@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.controller;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
@@ -27,6 +23,10 @@ import org.broadleafcommerce.openadmin.web.form.ResetPasswordForm;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * AdminLoginController handles login related needs for the BLC admin including:
@@ -43,37 +43,23 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     protected AdminSecurityService adminSecurityService;
 
     // Entry URLs
-    protected String loginView = "/blcadmin/login";
-    protected String forgotPasswordView = "/blcadmin/forgotPassword";
-    protected String forgotUsernameView = "/blcadmin/forgotUsername";
-    protected String resetPasswordView  = "/blcadmin/resetPassword";
-    protected String changePasswordView  = "/blcadmin/changePassword";
-
-   
-    public String getChangePasswordView() {
-		return changePasswordView;
-	}
-
-
-	public void setChangePasswordView(String changePasswordView) {
-		this.changePasswordView = changePasswordView;
-	}
-
+    protected static String loginView = "/blcadmin/login";
+    protected static String forgotPasswordView = "/blcadmin/forgotPassword";
+    protected static String forgotUsernameView = "/blcadmin/forgotUsername";
+    protected static String resetPasswordView  = "/blcadmin/resetPassword";
+    protected static String changePasswordView  = "/blcadmin/changePassword";
 
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getLoginView();
     }
-
    
     public String forgotPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getForgotPasswordView();
     }
     
-    
     public String forgotUsername(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getForgotUsernameView();
     }
-
     
     public String processResetPassword(@RequestParam("username") String username, HttpServletRequest request, HttpServletResponse response, Model model) {
         GenericResponse errorResponse = adminSecurityService.sendResetPasswordNotification(username);
@@ -85,7 +71,6 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
             return redirectToResetPasswordWithMessage("passwordTokenSent");
         }
     }
-
    
     public String processForgotUserName(@RequestParam("email") String email, HttpServletRequest request,Model model) {
         GenericResponse errorResponse = adminSecurityService.sendForgotUsernameNotification(email);
@@ -141,38 +126,6 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
         request.setAttribute("errorCode", errorCode);
     }
 
-    public String getLoginView() {
-        return loginView;
-    }
-
-    public void setLoginView(String loginView) {
-        this.loginView = loginView;
-    }
-
-    public String getForgotPasswordView() {
-        return forgotPasswordView;
-    }
-
-    public void setForgotPasswordView(String forgotPasswordView) {
-        this.forgotPasswordView = forgotPasswordView;
-    }
-
-    public String getForgotUsernameView() {
-        return forgotUsernameView;
-    }
-
-    public void setForgotUsernameView(String forgotUsernameView) {
-        this.forgotUsernameView = forgotUsernameView;
-    }
-
-    public String getResetPasswordView() {
-        return resetPasswordView;
-    }
-
-    public void setResetPasswordView(String resetPasswordView) {
-        this.resetPasswordView = resetPasswordView;
-    }
-    
     public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getChangePasswordView();
     }
@@ -190,6 +143,46 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
 		} else {
 			return redirectToLoginWithMessage("passwordReset");
 		}
-}
+	}
 
+	public static String getLoginView() {
+		return loginView;
+	}
+
+	public static void setLoginView(String loginView) {
+		BroadleafAdminLoginController.loginView = loginView;
+	}
+
+	public static String getForgotPasswordView() {
+		return forgotPasswordView;
+	}
+
+	public static void setForgotPasswordView(String forgotPasswordView) {
+		BroadleafAdminLoginController.forgotPasswordView = forgotPasswordView;
+	}
+
+	public static String getForgotUsernameView() {
+		return forgotUsernameView;
+	}
+
+	public static void setForgotUsernameView(String forgotUsernameView) {
+		BroadleafAdminLoginController.forgotUsernameView = forgotUsernameView;
+	}
+
+	public static String getResetPasswordView() {
+		return resetPasswordView;
+	}
+
+	public static void setResetPasswordView(String resetPasswordView) {
+		BroadleafAdminLoginController.resetPasswordView = resetPasswordView;
+	}
+
+	public static String getChangePasswordView() {
+		return changePasswordView;
+	}
+
+	public static void setChangePasswordView(String changePasswordView) {
+		BroadleafAdminLoginController.changePasswordView = changePasswordView;
+	}
+	
 }

@@ -11,9 +11,9 @@ import java.util.List;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
 
-    protected String orderHistoryView = "account/orderHistory";
-    protected String orderDetailsView = "ajax:account/partials/orderDetails";
-    protected String orderDetailsRedirectView = "account/partials/orderDetails";
+    protected static String orderHistoryView = "account/orderHistory";
+    protected static String orderDetailsView = "account/partials/orderDetails";
+    protected static String orderDetailsRedirectView = "account/partials/orderDetails";
     
     public String viewOrderHistory(HttpServletRequest request, Model model) {
         List<Order> orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
@@ -30,28 +30,28 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         return isAjaxRequest(request) ? getOrderDetailsView() : getOrderDetailsRedirectView();
     }
 
-    public String getOrderHistoryView() {
-        return orderHistoryView;
-    }
+	public static String getOrderHistoryView() {
+		return orderHistoryView;
+	}
 
-    public void setOrderHistoryView(String orderHistoryView) {
-        this.orderHistoryView = orderHistoryView;
-    }
+	public static void setOrderHistoryView(String orderHistoryView) {
+		BroadleafOrderHistoryController.orderHistoryView = orderHistoryView;
+	}
 
-    public String getOrderDetailsView() {
-        return orderDetailsView;
-    }
+	public static String getOrderDetailsView() {
+		return orderDetailsView;
+	}
 
-    public void setOrderDetailsView(String orderDetailsView) {
-        this.orderDetailsView = orderDetailsView;
-    }
+	public static void setOrderDetailsView(String orderDetailsView) {
+		BroadleafOrderHistoryController.orderDetailsView = orderDetailsView;
+	}
 
-    public String getOrderDetailsRedirectView() {
-        return orderDetailsRedirectView;
-    }
+	public static String getOrderDetailsRedirectView() {
+		return orderDetailsRedirectView;
+	}
 
-    public void setOrderDetailsRedirectView(String orderDetailsRedirectView) {
-        this.orderDetailsRedirectView = orderDetailsRedirectView;
-    }
+	public static void setOrderDetailsRedirectView(String orderDetailsRedirectView) {
+		BroadleafOrderHistoryController.orderDetailsRedirectView = orderDetailsRedirectView;
+	}
 
 }
