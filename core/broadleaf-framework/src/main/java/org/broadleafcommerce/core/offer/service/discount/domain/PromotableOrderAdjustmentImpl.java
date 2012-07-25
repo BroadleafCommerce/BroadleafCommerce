@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.common.money.Money;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment {
 	
@@ -61,6 +61,7 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                 BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+                offerValue = offerValue.setScale(2, RoundingMode.HALF_EVEN);
             	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (adjustmentPrice.lessThan(delegate.getValue())) {
