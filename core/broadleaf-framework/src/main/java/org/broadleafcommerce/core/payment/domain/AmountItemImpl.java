@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import java.math.BigDecimal;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.Index;
+import java.math.BigDecimal;
 
 /**
  * @author jfischer
@@ -56,7 +56,7 @@ public class AmountItemImpl implements AmountItem {
 	@Column(name = "DESCRIPTION")
 	protected String description;
 	
-	@Column(name = "UNIT_PRICE", nullable=false)
+	@Column(name = "UNIT_PRICE", nullable=false, precision=19, scale=5)
 	protected BigDecimal unitPrice;
 	
 	@Column(name = "QUANTITY", nullable=false)

@@ -16,7 +16,14 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,10 +35,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.common.money.Money;
-import org.hibernate.annotations.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER")
@@ -68,7 +72,7 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @Index(name="CANDIDATE_ORDEROFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
-    @Column(name = "DISCOUNTED_PRICE")
+    @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
     protected BigDecimal discountedPrice;
 
     public Long getId() {

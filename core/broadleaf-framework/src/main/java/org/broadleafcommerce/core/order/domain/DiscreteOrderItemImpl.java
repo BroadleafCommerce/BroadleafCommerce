@@ -48,6 +48,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,11 +64,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     private static final long serialVersionUID = 1L;
     
-    @Column(name="BASE_RETAIL_PRICE")
+    @Column(name="BASE_RETAIL_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Base_Retail_Price", order=2, group = "DiscreteOrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal baseRetailPrice;
     
-    @Column(name="BASE_SALE_PRICE")
+    @Column(name="BASE_SALE_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Base_Sale_Price", order=2, group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
