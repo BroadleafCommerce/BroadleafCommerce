@@ -15,15 +15,15 @@
  */
 package org.broadleafcommerce.test.integration;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 
 @ContextConfiguration(
         locations = {
@@ -50,13 +50,13 @@ public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextT
     protected EntityManager em;
 
     public EntityManager getEntityManager() {
-        if (em == null) {
-            em = ((EntityManagerFactory) applicationContext.getBean("blEntityManagerFactory")).createEntityManager();
-        }
-        return em;
+	if (em == null) {
+		em = ((EntityManagerFactory) applicationContext.getBean("blEntityManagerFactory")).createEntityManager();
+	}
+	return em;
     }
 
-    @BeforeClass
+    @BeforeMethod
     public void setup() {
         getEntityManager();
     }
