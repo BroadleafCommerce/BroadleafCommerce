@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.PaymentInfoFactory;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
@@ -39,8 +40,9 @@ import javax.annotation.Resource;
  *
  * @author elbertbautista
  */
-public class AbstractCheckoutController extends BroadleafAbstractController {
+public abstract class AbstractCheckoutController extends BroadleafAbstractController {
 
+    /* Services */
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
@@ -68,16 +70,21 @@ public class AbstractCheckoutController extends BroadleafAbstractController {
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
 
+    @Resource(name = "blSecurePaymentInfoService")
+    protected SecurePaymentInfoService securePaymentInfoService;
+
+    /* Factories */
+    @Resource(name = "blCreditCardPaymentInfoFactory")
+    protected PaymentInfoFactory creditCardPaymentInfoFactory;
+    
+    /* Validators */
     @Resource(name = "blShippingInfoFormValidator")
     protected ShippingInfoFormValidator shippingInfoFormValidator;
+    
+    @Resource(name = "blMultishipAddAddressFormValidator")
+    protected MultishipAddAddressFormValidator multishipAddAddressFormValidator;
 
     @Resource(name = "blBillingInfoFormValidator")
     protected BillingInfoFormValidator billingInfoFormValidator;
-
-    @Resource(name = "blCreditCardPaymentInfoFactory")
-    protected PaymentInfoFactory creditCardPaymentInfoFactory;
-
-    @Resource(name = "blSecurePaymentInfoService")
-    protected SecurePaymentInfoService securePaymentInfoService;
 
 }

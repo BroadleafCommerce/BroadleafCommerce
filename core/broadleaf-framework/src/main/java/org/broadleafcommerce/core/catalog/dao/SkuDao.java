@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuFee;
 
 import java.util.List;
 
@@ -42,6 +43,8 @@ public interface SkuDao {
      * @return the saved state of the passed in sku
      */
     public Sku save(Sku sku);
+    
+    public SkuFee saveSkuFee(SkuFee fee);
 
     /**
      * Retrieve the {@code Sku} instance whose primary key is the smallest

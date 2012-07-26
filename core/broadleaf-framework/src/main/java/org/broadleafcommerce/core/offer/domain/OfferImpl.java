@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
@@ -55,6 +55,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,7 +113,7 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order=4, group = "OfferImpl_Amount", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType", groupOrder=2)
     protected String discountType;
 
-    @Column(name = "OFFER_VALUE", nullable=false)
+    @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order=5, group = "OfferImpl_Amount", prominent=true, groupOrder=2)
     protected BigDecimal value;
 

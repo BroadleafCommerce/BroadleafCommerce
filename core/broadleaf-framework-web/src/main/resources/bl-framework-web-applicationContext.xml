@@ -27,10 +27,15 @@
 	<bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
 	    <property name="processors">
 		  <set>
+			<bean class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
+            <bean class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
-			<bean class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.UrlRewriteProcessor" />
 		  </set>
 		</property>  	
 	</bean> 

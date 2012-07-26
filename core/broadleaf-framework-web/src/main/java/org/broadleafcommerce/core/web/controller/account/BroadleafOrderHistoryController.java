@@ -11,8 +11,10 @@ import java.util.List;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
 
-    private String orderHistoryView = "account/orderHistory";
-
+    protected static String orderHistoryView = "account/orderHistory";
+    protected static String orderDetailsView = "account/partials/orderDetails";
+    protected static String orderDetailsRedirectView = "account/partials/orderDetails";
+    
     public String viewOrderHistory(HttpServletRequest request, Model model) {
         List<Order> orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
         model.addAttribute("orders", orders);
@@ -25,14 +27,31 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         	throw new IllegalArgumentException("The orderNumber provided is not valid");
         }
         model.addAttribute("order", order);
-        return getOrderHistoryView();
+        return isAjaxRequest(request) ? getOrderDetailsView() : getOrderDetailsRedirectView();
     }
 
-    public String getOrderHistoryView() {
-        return orderHistoryView;
-    }
+	public static String getOrderHistoryView() {
+		return orderHistoryView;
+	}
 
-    public void setOrderHistoryView(String orderHistoryView) {
-        this.orderHistoryView = orderHistoryView;
-    }
+	public static void setOrderHistoryView(String orderHistoryView) {
+		BroadleafOrderHistoryController.orderHistoryView = orderHistoryView;
+	}
+
+	public static String getOrderDetailsView() {
+		return orderDetailsView;
+	}
+
+	public static void setOrderDetailsView(String orderDetailsView) {
+		BroadleafOrderHistoryController.orderDetailsView = orderDetailsView;
+	}
+
+	public static String getOrderDetailsRedirectView() {
+		return orderDetailsRedirectView;
+	}
+
+	public static void setOrderDetailsRedirectView(String orderDetailsRedirectView) {
+		BroadleafOrderHistoryController.orderDetailsRedirectView = orderDetailsRedirectView;
+	}
+
 }

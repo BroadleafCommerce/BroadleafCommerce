@@ -21,7 +21,8 @@
 			<list>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.AutoBundleActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity"/>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupTotalActivity"/>
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity">
                     <property name="fulfillmentPricingService" ref="blFulfillmentPricingService"/>
                 </bean>
@@ -45,7 +46,7 @@
 	   <property name="providers">
 	       <list>
 	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider" />
-	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider" />
+	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider" />
 	       </list>
 	   </property>
 	</bean>

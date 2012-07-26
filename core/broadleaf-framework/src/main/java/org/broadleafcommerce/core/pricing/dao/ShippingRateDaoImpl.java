@@ -22,7 +22,7 @@ import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmen
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.domain.ShippingRateImpl;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
-import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -34,7 +34,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * @deprecated Superceded in functionality by {@link BandedPriceFulfillmentOption} and {@link BandedPriceFulfillmentPricingProvider}
+ * @deprecated Superceded in functionality by {@link BandedPriceFulfillmentOption} and {@link BandedFulfillmentPricingProvider}
  * @see {@link FulfillmentOption}, {@link FulfillmentPricingService}
  */
 @Repository("blShippingRatesDao")

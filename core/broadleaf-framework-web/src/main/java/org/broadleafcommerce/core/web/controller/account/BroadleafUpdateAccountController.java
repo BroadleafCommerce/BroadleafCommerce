@@ -7,6 +7,7 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,10 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
     @Resource(name = "blUpdateAccountValidator")
     protected UpdateAccountValidator updateAccountValidator;
 
-    protected String updateAccountView = "account/updateAccount";
+    protected String accountUpdatedMessage = "Account successfully updated";
+    
+    protected static String updateAccountView = "account/updateAccount";
+    protected static String accountRedirectView = "redirect:/account";
 
     public String viewUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form) {
         Customer customer = CustomerState.getCustomer();
@@ -29,28 +33,30 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
         return getUpdateAccountView();
     }
 
-    public String processUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form, BindingResult result) {
+    public String processUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form, BindingResult result, RedirectAttributes redirectAttributes) {
         updateAccountValidator.validate(form, result);
-
         if (result.hasErrors()) {
             return getUpdateAccountView();
         }
-
         Customer customer = CustomerState.getCustomer();
         customer.setEmailAddress(form.getEmailAddress());
         customer.setFirstName(form.getFirstName());
         customer.setLastName(form.getLastName());
         customerService.saveCustomer(customer);
-
-        return getUpdateAccountView();
-    }
-
-    public void setUpdateAccountView(String updateAccountView) {
-        this.updateAccountView = updateAccountView;
+        redirectAttributes.addFlashAttribute("successMessage", getAccountUpdatedMessage());
+        return getAccountRedirectView();
     }
 
     public String getUpdateAccountView() {
         return updateAccountView;
+    }
+    
+    public String getAccountRedirectView() {
+    	return accountRedirectView;
+    }
+    
+    public String getAccountUpdatedMessage() {
+    	return accountUpdatedMessage;
     }
 
 }

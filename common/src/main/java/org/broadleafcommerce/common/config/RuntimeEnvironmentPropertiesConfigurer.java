@@ -16,21 +16,24 @@
 
 package org.broadleafcommerce.common.config;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.StringValueResolver;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * A property resource configurer that chooses the property file at runtime
@@ -69,18 +72,52 @@ import org.springframework.util.StringValueResolver;
 public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderConfigurer implements InitializingBean {
 
     private static final Log LOG = LogFactory.getLog(RuntimeEnvironmentPropertiesConfigurer.class);
+    
+    protected static Set<String> defaultEnvironments = new HashSet<String>();
+    protected static Set<Resource> blcPropertyLocations = new HashSet<Resource>();
+    protected static Set<Resource> defaultPropertyLocations = new HashSet<Resource>();
 
-    protected String defaultEnvironment;
+    
+    static {
+    	defaultEnvironments.add("production");
+    	defaultEnvironments.add("staging");
+    	defaultEnvironments.add("integrationqa");
+    	defaultEnvironments.add("integrationdev");
+    	defaultEnvironments.add("development");
+    	defaultEnvironments.add("local");
+    	
+		blcPropertyLocations.add(new ClassPathResource("config/bc/admin/"));
+		blcPropertyLocations.add(new ClassPathResource("config/bc/"));
+		blcPropertyLocations.add(new ClassPathResource("config/bc/cms/"));
+		
+		defaultPropertyLocations.add(new ClassPathResource("runtime-properties/"));
+    }
+
+    protected String defaultEnvironment = "development";
     protected RuntimeEnvironmentKeyResolver keyResolver;
     protected Set<String> environments = Collections.emptySet();
     protected Set<Resource> propertyLocations;
     protected StringValueResolver stringValueResolver;
 
     public RuntimeEnvironmentPropertiesConfigurer() {
-        // EMPTY
+    	super();
+    	setIgnoreUnresolvablePlaceholders(true); // This default will get overriden by user options if present
     }
 
     public void afterPropertiesSet() throws IOException {
+    	// If no environment override has been specified, used the default environments
+    	if (environments == null || environments.size() == 0) {
+    		environments = defaultEnvironments;
+    	}
+    	
+    	// Prepend the default property locations to the specified property locations (if any)
+		Set<Resource> combinedLocations = new HashSet<Resource>();
+		combinedLocations.addAll(defaultPropertyLocations);
+    	if (propertyLocations != null && propertyLocations.size() > 0) {
+    		combinedLocations.addAll(propertyLocations);
+    	}
+    	propertyLocations = combinedLocations;
+    
         if (!environments.contains(defaultEnvironment)) {
             throw new AssertionError("Default environment '" + defaultEnvironment + "' not listed in environment list");
         }
@@ -90,13 +127,41 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         }
 
         String environment = determineEnvironment();
+        
+        Resource[] blcPropertiesLocation = createBroadleafResource();
+        
+        Resource[] sharedPropertiesLocation = createSharedPropertiesResource(environment);
+        Resource[] sharedCommonLocation = createSharedCommonResource();
 
         Resource[] propertiesLocation = createPropertiesResource(environment);
         Resource[] commonLocation = createCommonResource();
+        
         ArrayList<Resource> allLocations = new ArrayList<Resource>();
+        
+        /* Process configuration in the following order (later files override earlier files
+         * common-shared.properties
+         * [environment]-shared.properties
+         * common.properties
+         * [environment].properties */
+        
+        for (Resource resource : blcPropertiesLocation) {
+            if (resource.exists()) {
+                allLocations.add(resource);
+            }
+        }
+        
+        for (Resource resource : sharedCommonLocation) {
+            if (resource.exists()) {
+                allLocations.add(resource);
+            }
+        }
 
-        // Process common configuration first.   This allows the environment configuration to
-        // override the common values if needed.
+        for (Resource resource : sharedPropertiesLocation) {
+            if (resource.exists()) {
+                allLocations.add(resource);
+            }
+        }
+
         for (Resource resource : commonLocation) {
             if (resource.exists()) {
                 allLocations.add(resource);
@@ -108,24 +173,56 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
                 allLocations.add(resource);
             }
         }
+        
+        if (LOG.isDebugEnabled()) {
+	        Properties props = new Properties();
+	        for (Resource resource : allLocations) {
+	            if (resource.exists()) {
+	                props = new Properties(props);
+	                props.load(resource.getInputStream());
+	                for (Entry<Object, Object> entry : props.entrySet()) {
+	                	LOG.debug("Read " + entry.getKey() + " as " + entry.getValue());
+	                }
+	            } else {
+	                LOG.debug("Unable to locate resource: " + resource.getFilename());
+	            }
+	        }
+        }
+
 
         setLocations(allLocations.toArray(new Resource[] {}));
 
-        validateProperties();
+    }
+    
+    protected Resource[] createSharedPropertiesResource(String environment) throws IOException {
+        String fileName = environment.toString().toLowerCase() + "-shared.properties";
+        Resource[] resources = new Resource[propertyLocations.size()];
+        int index = 0;
+        for (Resource resource : propertyLocations) {
+            resources[index] = resource.createRelative(fileName);
+            index++;
+        }
+        return resources;
+    }
+    
+    protected Resource[] createBroadleafResource() throws IOException {
+        Resource[] resources = new Resource[blcPropertyLocations.size()];
+        int index = 0;
+        for (Resource resource : blcPropertyLocations) {
+            resources[index] = resource.createRelative("common.properties");
+            index++;
+        }
+        return resources;
     }
 
-    protected boolean compareProperties(Properties props1, Properties props2, String envInner) throws IOException {
-        Set<Object> outerKeys = props1.keySet();
-        boolean missingKeys = false;
-        for (Object keyObj : outerKeys) {
-            String key = (String) keyObj;
-            if (!props2.containsKey(key)) {
-                missingKeys = true;
-                LOG.info("Property file mismatch: " + key + " missing from environment " + envInner + ".   Make sure that the a property placeholder (at least) is defined in each environment (e.g. myproperty=?).");
-            }
+    protected Resource[] createSharedCommonResource() throws IOException {
+        Resource[] resources = new Resource[propertyLocations.size()];
+        int index = 0;
+        for (Resource resource : propertyLocations) {
+            resources[index] = resource.createRelative("common-shared.properties");
+            index++;
         }
-
-        return missingKeys;
+        return resources;
     }
 
     protected Resource[] createPropertiesResource(String environment) throws IOException {
@@ -158,40 +255,6 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         }
 
         return environment.toLowerCase();
-    }
-
-    protected void validateProperties() throws IOException {
-        boolean missingKeys = false;
-        for (String envOuter : environments) {
-            for (String envInner : environments) {
-                if (!envOuter.equals(envInner)) {
-                    Properties resource1 = mergeProperties(createPropertiesResource(envOuter));
-
-                    Properties resource2 = mergeProperties(createPropertiesResource(envInner));
-
-                    missingKeys |= compareProperties(resource1, resource2, envInner);
-                }
-            }
-        }
-
-        // BP:  Removing exception.   Having "fake" properties is no better than having none.
-        // Info messages will provide information on what properties are different by environment.
-        /*if (missingKeys) {
-            throw new AssertionError("Missing runtime properties keys (log entries above have details)");
-        }*/
-    }
-
-    protected Properties mergeProperties(Resource[] locations) throws IOException {
-        Properties props = new Properties();
-        for (Resource resource : locations) {
-            if (resource.exists()) {
-                props = new Properties(props);
-                props.load(resource.getInputStream());
-            } else {
-                LOG.warn("Unable to locate resource: " + resource.getFilename());
-            }
-        }
-        return props;
     }
 
     @Override

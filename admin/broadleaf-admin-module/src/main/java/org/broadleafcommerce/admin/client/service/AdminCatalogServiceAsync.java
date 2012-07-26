@@ -27,4 +27,6 @@ public interface AdminCatalogServiceAsync {
 
     public void generateSkusFromProduct(Long productId, AsyncCallback<Integer> callback);
 
+    public void cloneProduct(Long productId, AsyncCallback<Boolean> callback);
+
 }

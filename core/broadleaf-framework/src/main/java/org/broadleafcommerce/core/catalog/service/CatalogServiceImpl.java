@@ -27,7 +27,9 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundleComparator;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,10 +54,12 @@ public class CatalogServiceImpl implements CatalogService {
     @Resource(name="blProductOptionDao")
     protected ProductOptionDao productOptionDao;
 
+    @Override
     public Product findProductById(Long productId) {
         return productDao.readProductById(productId);
     }
 
+    @Override
     public List<Product> findProductsByName(String searchName) {
         return productDao.readProductsByName(searchName);
     }
@@ -65,8 +69,19 @@ public class CatalogServiceImpl implements CatalogService {
         return productDao.readProductsByName(searchName, limit, offset);
     }
 
+    @Override
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate) {
         return productDao.readActiveProductsByCategory(category.getId(), currentDate);
+    }
+    
+    @Override
+    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria) {
+        return productDao.readFilteredActiveProductsByCategory(category.getId(), currentDate, searchCriteria);
+    }
+    
+    @Override
+    public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria) {
+        return productDao.readFilteredActiveProductsByQuery(query, currentDate, searchCriteria);
     }
 
     @Override
@@ -81,14 +96,17 @@ public class CatalogServiceImpl implements CatalogService {
         return bundles;
     }
 
+    @Override
     public Product saveProduct(Product product) {
         return productDao.save(product);
     }
 
+    @Override
     public Category findCategoryById(Long categoryId) {
         return categoryDao.readCategoryById(categoryId);
     }
 
+    @Override
     @Deprecated
     public Category findCategoryByName(String categoryName) {
         return categoryDao.readCategoryByName(categoryName);
@@ -104,14 +122,17 @@ public class CatalogServiceImpl implements CatalogService {
         return categoryDao.readCategoriesByName(categoryName, limit, offset);
     }
 
+    @Override
     public Category saveCategory(Category category) {
         return categoryDao.save(category);
     }
     
+    @Override
     public void removeCategory(Category category){
     	categoryDao.delete(category);
     }
 
+    @Override
     public List<Category> findAllCategories() {
         return categoryDao.readAllCategories();
     }
@@ -141,6 +162,7 @@ public class CatalogServiceImpl implements CatalogService {
         return categoryDao.readActiveSubCategoriesByCategory(category, limit, offset);
     }
 
+    @Override
     public List<Product> findAllProducts() {
         return categoryDao.readAllProducts();
     }
@@ -150,18 +172,27 @@ public class CatalogServiceImpl implements CatalogService {
         return categoryDao.readAllProducts(limit, offset);
     }
 
+    @Override
     public List<Sku> findAllSkus() {
         return skuDao.readAllSkus();
     }
 
+    @Override
     public Sku findSkuById(Long skuId) {
         return skuDao.readSkuById(skuId);
     }
 
+    @Override
     public Sku saveSku(Sku sku) {
         return skuDao.save(sku);
     }
-
+    
+    @Override
+    public SkuFee saveSkuFee(SkuFee fee) {
+        return skuDao.saveSkuFee(fee);
+    }
+    
+    @Override
     public List<Sku> findSkusByIds(List<Long> ids) {
         return skuDao.readSkusById(ids);
     }
@@ -174,6 +205,7 @@ public class CatalogServiceImpl implements CatalogService {
         this.skuDao = skuDao;
     }
 
+    @Override
     public List<Product> findProductsForCategory(Category category) {
         return productDao.readProductsByCategory(category.getId());
     }
@@ -187,6 +219,7 @@ public class CatalogServiceImpl implements CatalogService {
         this.categoryDao = categoryDao;
     }
 
+    @Override
     public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId) {
         Category category = findCategoryById(categoryId);
         if (category != null) {
@@ -195,14 +228,17 @@ public class CatalogServiceImpl implements CatalogService {
         return null;
     }
     
+    @Override
     public Category createCategory() {
     	return categoryDao.create();
     }
     
+    @Override
     public Sku createSku() {
     	return skuDao.create();
     }
     
+    @Override
     public Product createProduct(ProductType productType) {
     	return productDao.create(productType);
     }

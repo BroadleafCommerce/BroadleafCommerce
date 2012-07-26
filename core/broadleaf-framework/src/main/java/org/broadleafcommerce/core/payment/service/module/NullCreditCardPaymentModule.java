@@ -61,7 +61,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
         //In order to persist custom attributes to the credit card payment info on the order we must look it up first.
         PaymentInfo paymentInfo = null;
         for (PaymentInfo pi : paymentContext.getPaymentInfo().getOrder().getPaymentInfos()) {
-            if (PaymentInfoType.CREDIT_CARD == pi.getType()) {
+            if (PaymentInfoType.CREDIT_CARD.equals(pi.getType())) {
                 paymentInfo = pi;
             }
         }
@@ -137,6 +137,6 @@ public class NullCreditCardPaymentModule extends AbstractModule {
     }
 
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
-        return paymentType == PaymentInfoType.CREDIT_CARD;
+        return PaymentInfoType.CREDIT_CARD.equals(paymentType);
     }
 }

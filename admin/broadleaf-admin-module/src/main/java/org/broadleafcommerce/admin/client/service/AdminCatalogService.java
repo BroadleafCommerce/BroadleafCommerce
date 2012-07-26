@@ -16,7 +16,10 @@
 
 package org.broadleafcommerce.admin.client.service;
 
+import org.springframework.security.access.annotation.Secured;
+
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 /**
  * 
@@ -33,6 +36,23 @@ public interface AdminCatalogService extends RemoteService {
      * @param productId - the Product to generate Skus from
      * @return the number of generated Skus from the ProductOption permutations
      */
-    public Integer generateSkusFromProduct(Long productId);
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public Integer generateSkusFromProduct(Long productId) throws ApplicationSecurityException;
+
+    /**
+     * This will create a new product along with a new Sku for the defaultSku, along with new
+     * Skus for all of the additional Skus. This is achieved by simply detaching the entities
+     * from the persistent session, resetting the primary keys and then saving the entity.
+     * 
+     * Note: Media for the product is not saved separately, meaning if you make a change to the
+     * original product's media items (the one specified by <b>productId</b>) it will change the
+     * cloned product's media and vice-versa.
+     * 
+     * @param productId
+     * @return
+     * @throws ApplicationSecurityException
+     */
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public Boolean cloneProduct(Long productId) throws ApplicationSecurityException;
 
 }

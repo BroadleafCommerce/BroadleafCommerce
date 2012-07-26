@@ -1,7 +1,8 @@
 package org.broadleafcommerce.core.web.controller.account.validator;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.validator.GenericValidator;
-import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.core.web.controller.account.UpdateAccountForm;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -11,20 +12,14 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import javax.annotation.Resource;
-
 
 @Component("blUpdateAccountValidator")
 public class UpdateAccountValidator implements Validator {
 
-    @Resource
+    @Resource(name="blCustomerService")
     CustomerService customerService;
 
     public void validate(UpdateAccountForm form, Errors errors) {
-
-        String emailAddress = form.getEmailAddress();
-        String firstName = form.getFirstName();
-        String lastName = form.getLastName();
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailAddress", "emailAddress.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "firstName.required");

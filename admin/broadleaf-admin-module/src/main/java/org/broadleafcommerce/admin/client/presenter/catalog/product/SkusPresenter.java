@@ -45,7 +45,7 @@ public class SkusPresenter extends SubPresenter {
     protected HandlerRegistration addClickedHandlerRegistration;
 
     public SkusPresenter(SubItemDisplay display, String newEntityDialogTitle, String[] availableToTypes, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
-        super(display);
+        super(display, availableToTypes, showDisabledState, canEdit, showId);
         this.newEntityDialogTitle = newEntityDialogTitle;
     }
 

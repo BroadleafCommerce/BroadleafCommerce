@@ -16,75 +16,64 @@
 
 package org.broadleafcommerce.core.web.controller.catalog;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.search.domain.SearchIntercept;
-import org.broadleafcommerce.core.search.domain.SearchQuery;
-import org.broadleafcommerce.core.search.service.SearchService;
-import org.broadleafcommerce.core.web.search.SearchFilterUtil;
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.service.ProductSearchService;
+import org.broadleafcommerce.core.web.util.FacetUtils;
+import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.ui.Model;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
- * Handles searching the catalog for a given search term.
+ * Handles searching the catalog for a given search term. Will apply product search criteria
+ * such as filters, sorts, and pagination if applicable
+ * 
+ * @author Andre Azzolini (apazzolini)
  */
 public class BroadleafSearchController extends AbstractCatalogController {
 
-	@Resource(name = "blSearchService")
-    protected SearchService searchService;
+	@Resource(name = "blProductSearchService")
+	protected ProductSearchService productSearchService;
 	
-	protected String searchView = "ajax:catalog/search";
+	@Resource(name = "blExploitProtectionService")
+	protected ExploitProtectionService exploitProtectionService;
+	
+	protected static String searchView = "catalog/search";
+	
+    protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
+    protected static String FACETS_ATTRIBUTE_NAME = "facets";  
+    protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
+    protected static String ORIGINAL_QUERY_ATTRIBUTE_NAME = "originalQuery";  
 
-	//TODO: This isn't really implemented
-    @SuppressWarnings("unchecked")
-	public String search(Model model, HttpServletRequest request,
-            String queryString,
-            String originalQueryString) {
-        SearchQuery input = new SearchQuery(queryString);
-        
-        SearchIntercept intercept = searchService.getInterceptForTerm(queryString);
-        if (intercept != null) {
-            return "redirect:"+ intercept.getRedirect();
-        }
-        
-        List<Product> products = null;
+	public String search(Model model, HttpServletRequest request, String query) {
+		try {
+			if (StringUtils.isNotEmpty(query)) {
+				query = exploitProtectionService.cleanString(query);
+			}
+		} catch (ServiceException e) {
+			query = null;
+		}
+		
+		if (StringUtils.isNotEmpty(query)) {
+			ProductSearchCriteria searchCriteria = FacetUtils.buildSearchCriteria(request);
+			ProductSearchResult result = productSearchService.findProductsByQuery(query, searchCriteria);
+			
+			FacetUtils.setActiveFacetResults(result.getFacets(), request);
+	    	
+	    	model.addAttribute(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
+	    	model.addAttribute(FACETS_ATTRIBUTE_NAME, result.getFacets());
+	    	model.addAttribute(ORIGINAL_QUERY_ATTRIBUTE_NAME, query);
+		}
 
-        products = searchService.performSearch(input.getQueryString());
-        SearchFilterUtil.filterProducts(products, request.getParameterMap(), new String[]{"manufacturer","defaultCategory.id","sku.salePrice"});
-
-        model.addAttribute("queryString", input.getQueryString());
-        model.addAttribute("products", products);
-
-        // Separate results by category
-        List<Category> categories = new ArrayList<Category>();
-        Map<Long, List<Product> > categoryGroups= new HashMap<Long, List<Product> >();
-        for (Product product : products) {
-            Category cat = product.getDefaultCategory();
-            if (!categoryGroups.containsKey(cat.getId())) {
-                categories.add(cat);
-                categoryGroups.put(cat.getId(), new ArrayList<Product>());
-            }
-            categoryGroups.get(cat.getId()).add(product);
-        }
-        model.addAttribute("categories", categories);
-        model.addAttribute("categoryGroups", categoryGroups);
-        
         return getSearchView();
     }
 
 	public String getSearchView() {
 		return searchView;
-	}
-
-	public void setSearchView(String searchView) {
-		this.searchView = searchView;
 	}
     
 }

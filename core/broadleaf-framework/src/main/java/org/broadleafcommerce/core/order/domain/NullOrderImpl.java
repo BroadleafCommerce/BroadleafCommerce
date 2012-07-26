@@ -76,7 +76,7 @@ public class NullOrderImpl implements Order {
 
 	@Override
 	public Money getSubTotal() {
-		return null;
+		return Money.ZERO;
 	}
 
 	@Override

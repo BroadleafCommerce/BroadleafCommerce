@@ -453,37 +453,42 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         
         menu.setItems(edit, changePassword, logout);
 
-        
         changePassword.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
-                    @Override
-                    public void onClick(MenuItemClickEvent event) {
-                        final DynamicEntityDataSource userDS = new DynamicEntityDataSource(CeilingEntities.ADMIN_USER);
-                        userDS.buildFields(null, false, new AsyncCallbackAdapter() {
-                            public void onSetupSuccess(DataSource ds) {
-                                //strip out password validation
-                                userDS.getField("password").setValidators();
-
-                                AdminUser currentUser = SecurityManager.USER;
-                                Record userRecord = new Record();
-                                userRecord.setAttribute("id", currentUser.getId());                                
-                                userRecord.setAttribute("login", currentUser.getUserName());
-                                userRecord.setAttribute("_type", new String[]{EntityImplementations.ADMIN_USER});
-        
-                                EntityEditDialog ed = new EntityEditDialog();
-        
-                                ed.editRecord("Change Password", userDS, userRecord, new ItemEditedHandler() {
-                                    public void onItemEdited(ItemEdited event) {
-                                        String currentPage = BLCLaunch.getSelectedPage(History.getToken());
-                                        if ("User Management".equals(currentPage)) {
-                                            buildHistoryNewItem(currentPage, BLCLaunch.getSelectedModule(History.getToken()), event.getRecord().getAttribute("id"));
-                                        }
-                                    }
-                                }, new String[]{"password"}, new String[]{}, false);
-                            }
-                        });
-        
-                    }
-                });
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+            	redirect(GWT.getHostPageBaseURL()+"blcadmin/changePassword");
+            }
+        });
+//        changePassword.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
+//                    @Override
+//                    public void onClick(MenuItemClickEvent event) {
+//                        final DynamicEntityDataSource userDS = new DynamicEntityDataSource(CeilingEntities.ADMIN_USER);
+//                        userDS.buildFields(null, false, new AsyncCallbackAdapter() {
+//                            public void onSetupSuccess(DataSource ds) {
+//                                //strip out password validation
+//                                userDS.getField("password").setValidators();
+//
+//                                AdminUser currentUser = SecurityManager.USER;
+//                                Record userRecord = new Record();
+//                                userRecord.setAttribute("id", currentUser.getId());                                
+//                                userRecord.setAttribute("login", currentUser.getUserName());
+//                                userRecord.setAttribute("_type", new String[]{EntityImplementations.ADMIN_USER});
+//        
+//                                EntityEditDialog ed = new EntityEditDialog();
+//        
+//                                ed.editRecord("Change Password", userDS, userRecord, new ItemEditedHandler() {
+//                                    public void onItemEdited(ItemEdited event) {
+//                                        String currentPage = BLCLaunch.getSelectedPage(History.getToken());
+//                                        if ("User Management".equals(currentPage)) {
+//                                            buildHistoryNewItem(currentPage, BLCLaunch.getSelectedModule(History.getToken()), event.getRecord().getAttribute("id"));
+//                                        }
+//                                    }
+//                                }, new String[]{"password"}, new String[]{}, false);
+//                            }
+//                        });
+//        
+//                    }
+//                });
 
         edit.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
             @Override
@@ -566,6 +571,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 	public Canvas getContainer() {
 		return canvas;
 	}
+	
 
 	public ToolStrip getBottomBar() {
 		return bottomBar;
@@ -582,4 +588,8 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
     public Module lookupModule(String key) {
         return modules.get(key);
     }
+    protected static native void redirect(String url)/*-{ 
+    $wnd.location = url; 
+    }-*/; 
+
 }

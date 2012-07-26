@@ -98,7 +98,7 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public Page findPageByURI(SandBox sandBox, Locale locale, String uri) {
+    public List<Page> findPageByURI(SandBox sandBox, Locale locale, String uri) {
         Query query;
         if (sandBox == null) {
             query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
@@ -116,12 +116,7 @@ public class PageDaoImpl implements PageDao {
             query.setParameter("uri", uri);
         }
 
-        List<Page> results = query.getResultList();
-        if (results != null && !results.isEmpty()) {
-            return results.get(0);
-        } else {
-            return null;
-        }
+        return query.getResultList();
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.springframework.stereotype.Repository;
 
@@ -45,6 +46,11 @@ public class SkuDaoImpl implements SkuDao {
     @Override
     public Sku save(Sku sku) {
         return em.merge(sku);
+    }
+    
+    @Override
+    public SkuFee saveSkuFee(SkuFee fee) {
+        return em.merge(fee);
     }
 
     @Override

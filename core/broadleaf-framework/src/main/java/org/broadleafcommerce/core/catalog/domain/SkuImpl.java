@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsideratio
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -40,6 +41,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -121,59 +123,60 @@ public class SkuImpl implements Sku {
 
     /** The sale price. */
     @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", order=9, group = "SkuImpl_Price", prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", order=2, group = "SkuImpl_Price", prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal salePrice;
 
     /** The retail price. */
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", order=10, group = "SkuImpl_Price", prominent=true, fieldType= SupportedFieldType.MONEY, groupOrder=3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", order=1, group = "SkuImpl_Price", prominent=true, fieldType= SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal retailPrice;
 
     /** The name. */
     @Column(name = "NAME")
     @SearchableProperty
     @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "SkuImpl_Sku_Description", prominent=true, columnWidth="25%", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
     protected String name;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order=2, group = "SkuImpl_Sku_Description", largeEntry=true, groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order=2, group = "ProductImpl_Product_Description", largeEntry=true, groupOrder=1)
     protected String description;
 
     /** The long description. */
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=3, group = "SkuImpl_Sku_Description", largeEntry=true, groupOrder=4,fieldType=SupportedFieldType.HTML_BASIC)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=5, group = "ProductImpl_Product_Description", largeEntry=true, groupOrder=1,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
     /** The taxable. */
     @Column(name = "TAXABLE_FLAG")
     @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order=4, group = "SkuImpl_Sku_Description", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order=3, group = "SkuImpl_Price", groupOrder=3)
     protected Character taxable;
 
     /** The discountable. */
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order=5, group = "SkuImpl_Sku_Description", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order=4, group = "SkuImpl_Price", groupOrder=3)
     protected Character discountable;
 
     /** The available. */
     @Column(name = "AVAILABLE_FLAG")
     @Index(name="SKU_AVAILABLE_INDEX", columnNames={"AVAILABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", order=6, group = "SkuImpl_Sku_Description", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", order=6, group = "SkuImpl_Sku_Inventory", groupOrder=5)
     protected Character available;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "SkuImpl_Sku_Description", tooltip="skuStartDateTooltip", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "ProductImpl_Product_Description", tooltip="skuStartDateTooltip", groupOrder=1)
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "SkuImpl_Sku_Description", tooltip="skuEndDateTooltip", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "ProductImpl_Product_Description", tooltip="skuEndDateTooltip", groupOrder=1)
     protected Date activeEndDate;
     
     /** The product dimensions **/
@@ -188,7 +191,7 @@ public class SkuImpl implements Sku {
     protected DynamicSkuPrices dynamicPrices = null;
 
     @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName = "SkuImpl_Is_Product_Machine_Sortable", order=9, group = "SkuImpl_Product_Description", prominent=false)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=15, group = "ProductImpl_Product_Description", prominent=false)
     protected Boolean isMachineSortable = true;
 
     /** The sku media. */
@@ -243,6 +246,15 @@ public class SkuImpl implements Sku {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
+    
+    @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
+    @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED", 
+                joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), 
+         inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<FulfillmentOption> excludedFulfillmentOptions;
+
 
     @Override
     public Long getId() {
@@ -651,6 +663,16 @@ public class SkuImpl implements Sku {
     @Override
     public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates) {
         this.fulfillmentFlatRates = fulfillmentFlatRates;
+    }
+    
+    @Override
+    public List<FulfillmentOption> getExcludedFulfillmentOptions() {
+        return excludedFulfillmentOptions;
+    }
+
+    @Override
+    public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions) {
+        this.excludedFulfillmentOptions = excludedFulfillmentOptions;
     }
     
 	@Override

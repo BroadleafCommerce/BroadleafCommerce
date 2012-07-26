@@ -75,27 +75,7 @@
 		</property>
 	</bean>
 
-	<bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer">
-		<property name="propertyLocations">
-			<set>
-				<value>classpath:config/bc/</value>
-                <value>classpath:config/bc/admin/</value>
-                <value>classpath:config/bc/cms/</value>
-			</set>
-		</property>
-		<property name="environments">
-			<set>
-                <value>production</value>
-                <value>staging</value>
-                <value>integrationQA</value>
-                <value>integrationDev</value>
-                <value>development</value>
-                <value>local</value>
-			</set>
-		</property>
-		<property name="defaultEnvironment" value="development"/>
-		<property name="ignoreUnresolvablePlaceholders" value="true"/>
-	</bean>
+    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 	
 	<bean id="baseEmailInfo" abstract="true">
         <property name="sendEmailReliableAsync" value="false"/>

@@ -108,4 +108,8 @@ public class FeaturedProductImpl implements FeaturedProduct {
         this.product = product;
     }
     
+    public Product getRelatedProduct() {
+        return product;
+    }
+    
 }

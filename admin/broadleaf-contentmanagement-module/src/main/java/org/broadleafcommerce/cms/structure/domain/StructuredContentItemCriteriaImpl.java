@@ -59,7 +59,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
             @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="StructuredContentItemCriteriaImpl"),
             @Parameter(name="increment_size", value="50"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteriaImpl")
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
         }
     )
     @Column(name = "SC_ITEM_CRITERIA_ID")

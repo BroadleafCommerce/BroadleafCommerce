@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.admin.server.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.service.AdminCatalogService;
@@ -31,6 +26,13 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -47,6 +49,9 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
     
     @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
+
+    @PersistenceContext(unitName="blPU")
+    protected EntityManager em;
     
     @Override
     public Integer generateSkusFromProduct(Long productId) {
@@ -114,4 +119,38 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
         return result;
     }
 
+    @Override
+    public Boolean cloneProduct(Long productId) {
+        Product cloneProduct = catalogService.findProductById(productId);
+        
+        //Detach and save a cloned Sku
+        Sku cloneSku = cloneProduct.getDefaultSku();
+        cloneSku.getSkuMedia().size();
+        em.detach(cloneSku);
+        cloneSku.setId(null);
+        
+        cloneProduct.setDefaultSku(cloneSku);
+        
+        //initialize the many-to-many to save off
+        cloneProduct.getProductOptions().size();
+        cloneProduct.getAllParentCategories().size();
+
+        em.detach(cloneProduct);
+        cloneProduct.setId(null);
+        Product derivedProduct = catalogService.saveProduct(cloneProduct);
+        
+        cloneProduct = catalogService.findProductById(productId);
+        //Re-associate the new Skus to the new Product
+        for (Sku additionalSku : cloneProduct.getAdditionalSkus()) {
+            additionalSku.getProductOptionValues().size();
+            em.detach(additionalSku);
+            additionalSku.setId(null);
+            additionalSku.setProduct(derivedProduct);
+            catalogService.saveSku(additionalSku);
+        }
+        
+        
+        return true;
+    }
+    
 }

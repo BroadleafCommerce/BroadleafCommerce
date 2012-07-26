@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
@@ -47,10 +48,10 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
 
     private static final Log LOG = LogFactory.getLog(StaticAssetServiceImpl.class);
 
-    @Value("${asset.server.url.prefix}")
+    @Value("${asset.server.url.prefix.internal}")
     protected String staticAssetUrlPrefix;
 
-    @Value("${asset.server.url.prefix.internal}")
+    @Value("${asset.server.url.prefix}")
     protected String staticAssetEnvironmentUrlPrefix;
 
     @Value("${asset.server.url.prefix.secure}")
@@ -361,7 +362,6 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     @Override
     public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest) {
         String returnValue = assetPath;
-
         
         if (assetPath != null && getStaticAssetEnvironmentUrlPrefix() != null && ! "".equals(getStaticAssetEnvironmentUrlPrefix())) {
             final String envPrefix;

@@ -16,7 +16,13 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,13 +32,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -64,11 +64,11 @@ public class TaxDetailImpl implements TaxDetail {
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Type", order=1, group = "TaxDetailImpl_Tax_Detail")
     protected TaxType type;
     
-    @Column(name = "AMOUNT")
+    @Column(name = "AMOUNT", precision=19, scale=5)
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Amount", order=2, group = "TaxDetailImpl_Tax_Detail")
     protected Money amount;
     
-    @Column(name = "RATE")
+    @Column(name = "RATE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Rate", order=1, group = "TaxDetailImpl_Tax_Detail")
     protected BigDecimal rate;
     

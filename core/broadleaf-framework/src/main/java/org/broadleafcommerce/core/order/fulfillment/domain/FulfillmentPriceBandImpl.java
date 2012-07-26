@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -43,13 +39,12 @@ import java.math.BigDecimal;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FULFILLMENT_BAND")
+@Table(name = "BLC_FULFILLMENT_PRICE_BAND")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(friendlyName = "Banded Price Fulfillment Option")
-public class FulfillmentPriceBandImpl implements FulfillmentPriceBand {
+public class FulfillmentPriceBandImpl extends FulfillmentBandImpl implements FulfillmentPriceBand {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(generator= "FulfillmentPriceBandId")
     @GenericGenerator(
@@ -60,18 +55,11 @@ public class FulfillmentPriceBandImpl implements FulfillmentPriceBand {
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl")
         }
     )
-    @Column(name = "FULFILLMENT_BAND_ID")
+    @Column(name = "FULFILLMENT_PRICE_BAND_ID")
     protected Long id;
 
     @Column(name="RETAIL_PRICE_MINIMUM_AMOUNT", precision=19, scale=5, nullable = false)
     protected BigDecimal retailPriceMinimumAmount;
-
-    @Column(name="RESULT_AMOUNT", precision=19, scale=5, nullable = false)
-    protected BigDecimal resultAmount;
-    
-    @Column(name="RESULT__AMOUNT_TYPE", nullable = false)
-    @AdminPresentation(friendlyName="Result Type", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType")
-    protected String resultAmountType = FulfillmentBandResultAmountType.RATE.getType();
     
     @ManyToOne(targetEntity=BandedPriceFulfillmentOptionImpl.class)
     @JoinColumn(name="FULFILLMENT_OPTION_ID")
@@ -86,7 +74,7 @@ public class FulfillmentPriceBandImpl implements FulfillmentPriceBand {
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     @Override
     public BigDecimal getRetailPriceMinimumAmount() {
         return retailPriceMinimumAmount;
@@ -98,23 +86,13 @@ public class FulfillmentPriceBandImpl implements FulfillmentPriceBand {
     }
 
     @Override
-    public BigDecimal getResultAmount() {
-        return resultAmount;
+    public BandedPriceFulfillmentOption getOption() {
+        return option;
     }
 
     @Override
-    public void setResultAmount(BigDecimal resultAmount) {
-        this.resultAmount = resultAmount;
-    }
-
-    @Override
-    public FulfillmentBandResultAmountType getResultAmountType() {
-        return FulfillmentBandResultAmountType.getInstance(resultAmountType);
-    }
-
-    @Override
-    public void setResultAmountType(FulfillmentBandResultAmountType resultAmountType) {
-        this.resultAmountType = resultAmountType.getType();
+    public void setOption(BandedPriceFulfillmentOption option) {
+        this.option = option;
     }
 
 }

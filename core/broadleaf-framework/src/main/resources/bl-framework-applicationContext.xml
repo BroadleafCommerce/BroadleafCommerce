@@ -69,6 +69,24 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blPageCartRuleProcessor" class="org.broadleafcommerce.core.order.service.PageCartRuleProcessor">
+        <property name="orderDao" ref="blOrderDao"/>
+        <property name="contextClassNames">
+            <map>
+                <entry key="discreteOrderItem" value="org.broadleafcommerce.core.order.domain.DiscreteOrderItem" />
+            </map>
+	    </property>
+    </bean>
+
+    <!-- Append the content rule processor that checks for cart contents -->
+    <bean id="blPageRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blPageCartRuleProcessor"/>
+            </list>
+        </property>
+    </bean>    
 
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
 	    <property name="converters">

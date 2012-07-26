@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.security.service;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.security.util.PasswordChange;
@@ -332,4 +333,26 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     public void setResetPasswordEmailInfo(EmailInfo resetPasswordEmailInfo) {
         this.resetPasswordEmailInfo = resetPasswordEmailInfo;
     }
+
+	@Override
+	public GenericResponse changePassword(String username,
+			String oldPassword, String password, String confirmPassword) {
+		GenericResponse response = new GenericResponse();
+		AdminUser user = null;
+		if (username != null) {
+			user = adminUserDao.readAdminUserByUserName(username);
+		}
+		checkUser(user, response);
+		checkPassword(password, confirmPassword, response);
+		checkPassword(oldPassword, user.getPassword(), response);
+
+		if (!response.getHasErrors()) {
+			user.setUnencodedPassword(password);
+			saveAdminUser(user);
+
+		}
+
+		return response;
+
+	}
 }

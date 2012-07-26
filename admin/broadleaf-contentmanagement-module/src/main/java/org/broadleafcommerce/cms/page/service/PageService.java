@@ -112,10 +112,11 @@ public interface PageService {
      * @param currentSandbox - current sandbox
      * @param locale - current locale
      * @param uri - the URI to return a page for
+     * @param ruleDTOs - ruleDTOs that are used as the data to process page rules
      * @param secure - set to true if current request is over HTTPS
      * @return
      */
-    PageDTO findPageByURI(SandBox currentSandbox, Locale locale, String uri, boolean secure);
+    PageDTO findPageByURI(SandBox currentSandbox, Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
 
 
     /**

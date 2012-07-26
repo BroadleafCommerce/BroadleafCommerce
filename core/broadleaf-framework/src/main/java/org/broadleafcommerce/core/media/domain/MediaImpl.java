@@ -16,6 +16,14 @@
 
 package org.broadleafcommerce.core.media.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,10 +31,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -53,68 +57,85 @@ public class MediaImpl implements Media {
     @Column(name = "MEDIA_ID")
     protected Long id;
 
-    @Column(name = "NAME", nullable = false)
-    @Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "MediaImpl_Media_Name", order=1, prominent=true)
-    protected String name;
-
     @Column(name = "URL", nullable = false)
     @Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
-    @AdminPresentation(friendlyName = "MediaImpl_Media_Url", order=2, prominent=true, fieldType = SupportedFieldType.ASSET_URL)
+    @AdminPresentation(friendlyName = "MediaImpl_Media_Url", order=1, prominent=true, fieldType = SupportedFieldType.ASSET_URL)
     protected String url;
+	
+    @Column(name = "TITLE")
+    @Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order=2, prominent=true)
+    protected String title;
+    
+    @Column(name = "ALT_TEXT")
+    @AdminPresentation(friendlyName = "MediaImpl_Media_Alt_Text", order=3, prominent=true)
+    protected String altText;
+    
+    @Column(name = "TAGS")
+    @AdminPresentation(friendlyName = "MediaImpl_Media_Tags")
+    protected String tags;
 
-    @Column(name = "LABEL", nullable = false)
-    @AdminPresentation(friendlyName = "MediaImpl_Media_Label", order=3, prominent=true)
-    protected String label;
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
+    
+    @Override
     public String getUrl() {
         return url;
     }
 
+    @Override
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public String getAltText() {
+        return altText;
+    }
+
+    @Override
+    public void setAltText(String altText) {
+        this.altText = altText;
+    }
     
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+    @Override
+    public String getTags() {
+        return tags;
+    }
+
+    @Override
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((label == null) ? 0 : label.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((altText == null) ? 0 : altText.hashCode());
+		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -129,16 +150,21 @@ public class MediaImpl implements Media {
             return id.equals(other.id);
         }
 		
-		if (label == null) {
-			if (other.label != null)
+		if (title == null) {
+			if (other.title != null)
 				return false;
-		} else if (!label.equals(other.label))
+		} else if (!title.equals(other.title))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (altText == null) {
+			if (other.title != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!title.equals(other.title))
 			return false;
+        if (tags == null) {
+            if (other.tags != null)
+                return false;
+        } else if (!tags.equals(other.tags))
+            return false;
 		if (url == null) {
 			if (other.url != null)
 				return false;

@@ -21,13 +21,20 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.common.RequestDTO;
+import org.broadleafcommerce.common.TimeDTO;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @deprecated.   Should now use PageHandlerMapping
@@ -53,6 +60,11 @@ public class PageURLProcessor implements URLProcessor {
     private StaticAssetService staticAssetService;
 
     private static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";
+    
+    public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
+
+    // The following attribute is set in BroadleafProcessURLFilter
+    public static final String REQUEST_DTO = "blRequestDTO";
 
     /**
      * Implementors of this interface will return true if they are able to process the
@@ -69,7 +81,7 @@ public class PageURLProcessor implements URLProcessor {
     @Override
     public boolean canProcessURL(String key) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        PageDTO p = pageService.findPageByURI(context.getSandbox(), context.getLocale(), key, context.isSecure());
+        PageDTO p = pageService.findPageByURI(context.getSandbox(), context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
         context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, p);
         return (p != null);
     }
@@ -91,7 +103,7 @@ public class PageURLProcessor implements URLProcessor {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         PageDTO p = (PageDTO) context.getRequest().getAttribute(PAGE_ATTRIBUTE_NAME);
         if (p == null) {
-            p = pageService.findPageByURI(context.getSandbox(), context.getLocale(), key, context.isSecure());
+            p = pageService.findPageByURI(context.getSandbox(), context.getLocale(), key, buildMvelParameters(context.getRequest()), context.isSecure());
         }
 
         if (p != null) {
@@ -106,5 +118,30 @@ public class PageURLProcessor implements URLProcessor {
             return true;
         }
         return false;
+    }
+    
+	 /**
+     * MVEL is used to process the content targeting rules.
+     *
+     *
+     * @param request
+     * @return
+     */
+    private Map<String,Object> buildMvelParameters(HttpServletRequest request) {
+        TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
+        RequestDTO requestDto = (RequestDTO) request.getAttribute(REQUEST_DTO);
+
+        Map<String, Object> mvelParameters = new HashMap<String, Object>();
+        mvelParameters.put("time", timeDto);
+        mvelParameters.put("request", requestDto);
+
+        Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
+        if (blcRuleMap != null) {
+            for (String mapKey : blcRuleMap.keySet()) {
+                mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
+            }
+        }
+
+        return mvelParameters;
     }
 }

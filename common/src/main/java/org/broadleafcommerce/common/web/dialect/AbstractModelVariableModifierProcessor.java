@@ -16,12 +16,13 @@
 
 package org.broadleafcommerce.common.web.dialect;
 
-import java.util.Map;
-
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.NestableNode;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
+
+import java.util.Map;
 
 /**
  * @author apazzolini
@@ -46,7 +47,12 @@ public abstract class AbstractModelVariableModifierProcessor extends AbstractEle
     protected ProcessorResult processElement(final Arguments arguments, final Element element) {
 		this.arguments = arguments;
 		modifyModelAttributes(arguments, element);
-		return ProcessorResult.OK;
+		
+		// Remove the tag from the DOM
+        final NestableNode parent = element.getParent();
+        parent.removeChild(element);
+        
+        return ProcessorResult.OK;
     }
 	
 	/**

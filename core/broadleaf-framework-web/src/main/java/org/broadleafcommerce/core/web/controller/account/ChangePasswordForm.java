@@ -1,7 +1,5 @@
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.broadleafcommerce.common.security.util.PasswordChange;
-
 import java.io.Serializable;
 
 public class ChangePasswordForm implements Serializable {

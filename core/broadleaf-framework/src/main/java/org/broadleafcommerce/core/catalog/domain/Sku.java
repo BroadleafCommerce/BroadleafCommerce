@@ -401,4 +401,19 @@ public interface Sku extends Serializable {
      */
     public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates);
 
+    /**
+     * Gets the {@link FulfillmentOption}s that this {@link Sku} should be excluded from. For instance,
+     * some {@link Sku}s might not be available to be fulfilled next-day
+     * 
+     * @return
+     */
+    public List<FulfillmentOption> getExcludedFulfillmentOptions();
+
+    /**
+     * Sets the {@link FulfillmentOption}s that this Sku should be excluded from being apart of
+     * 
+     * @param excludedFulfillmentOptions
+     */
+    public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
+    
 }

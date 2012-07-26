@@ -20,12 +20,12 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
-import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider;
 
 import java.math.BigDecimal;
 
 /**
- * @deprecated Superceded in functionality by {@link BandedPriceFulfillmentOption} and {@link BandedPriceFulfillmentPricingProvider}
+ * @deprecated Superceded in functionality by {@link BandedPriceFulfillmentOption} and {@link BandedFulfillmentPricingProvider}
  * @see {@link FulfillmentOption}, {@link FulfillmentPricingService}
  */
 @Deprecated

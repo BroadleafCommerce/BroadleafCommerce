@@ -85,9 +85,10 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
     public String SkuAvailabilityImpl_Reserve_Quantity();
     public String SkuAvailabilityImpl_Availability_Status();
     public String SkuAvailabilityImpl_Available_Date();
-    public String MediaImpl_Media_Name();
+    public String MediaImpl_Media_Title();
     public String MediaImpl_Media_Url();
-    public String MediaImpl_Media_Label();
+    public String MediaImpl_Media_Alt_Text();
+    public String MediaImpl_Media_Tags();
     public String FulfillmentGroupAdjustmentImpl_baseFulfillmentGroupAdjustment();
     public String FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason();
     public String FulfillmentGroupAdjustmentImpl_FG_Adjustment_Value();
@@ -268,4 +269,7 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
     public String PaymentInfoImpl_Phone();
     public String PaymentLogImpl_Payment_Log();
     public String PaymentResponseItemImpl_Payment_Response();
+   
+    public String BundleOrderItemImpl_Base_Retail_Price();
+    public String BundleOrderItemImpl_Base_Sale_Price();
 }

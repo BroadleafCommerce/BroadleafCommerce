@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -39,6 +39,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -108,7 +109,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Order_Adjustment_Reason", order=1, group = "OrderAdjustmentImpl_Description")
     protected String reason;
 
-    @Column(name = "ADJUSTMENT_VALUE", nullable=false)
+    @Column(name = "ADJUSTMENT_VALUE", nullable=false, precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Order_Adjustment_Value", order=2, group = "OrderAdjustmentImpl_Description")
     protected BigDecimal value = Money.ZERO.getAmount();
 

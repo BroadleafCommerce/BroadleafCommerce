@@ -35,7 +35,7 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FULFILLMENT_OPTION_BANDED")
+@Table(name = "BLC_FULFILLMENT_OPT_BANDED_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(friendlyName = "Banded Price Fulfillment Option")
 public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl implements BandedPriceFulfillmentOption {

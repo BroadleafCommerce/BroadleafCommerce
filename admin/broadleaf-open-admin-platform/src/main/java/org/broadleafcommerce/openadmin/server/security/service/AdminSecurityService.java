@@ -82,4 +82,5 @@ public interface AdminSecurityService {
      * @return Response can contain errors including (invalidUsername, inactiveUser, invalidToken, invalidPassword, tokenExpired, passwordMismatch)
      */
     GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
+    GenericResponse changePassword(String username, String oldPassword, String password, String confirmPassword);
 }

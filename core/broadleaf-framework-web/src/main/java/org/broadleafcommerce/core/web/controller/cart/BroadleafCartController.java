@@ -28,8 +28,8 @@ import java.util.Map;
  */
 public class BroadleafCartController extends AbstractCartController {
 	
-	protected String cartView = "ajax:cart/cart";
-	protected String cartPageRedirect = "redirect:/cart";
+	protected static String cartView = "cart/cart";
+	protected static String cartPageRedirect = "redirect:/cart";
 	
 	/**
 	 * Renders the cart page.
@@ -167,13 +167,12 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @param response
 	 * @param model
 	 * @param customerOffer
-	 * @return
+	 * @return the return view
 	 * @throws IOException
 	 * @throws PricingException
 	 * @throws ItemNotFoundException
 	 * @throws OfferMaxUseExceededException 
 	 */
-	
 	public String addPromo(HttpServletRequest request, HttpServletResponse response, Model model,
 			String customerOffer) throws IOException, PricingException {
 		Order cart = CartState.getCart();
@@ -215,13 +214,12 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @param response
 	 * @param model
 	 * @param offerId
-	 * @return
+	 * @return the return view
 	 * @throws IOException
 	 * @throws PricingException
 	 * @throws ItemNotFoundException
 	 * @throws OfferMaxUseExceededException 
 	 */
-	
 	public String removePromo(HttpServletRequest request, HttpServletResponse response, Model model,
 			Long offerCodeId) throws IOException, PricingException {
 		Order cart = CartState.getCart();
@@ -239,16 +237,8 @@ public class BroadleafCartController extends AbstractCartController {
 		return cartView;
 	}
 
-	public void setCartView(String cartView) {
-		this.cartView = cartView;
-	}
-
 	public String getCartPageRedirect() {
 		return cartPageRedirect;
-	}
-
-	public void setCartPageRedirect(String cartPageRedirect) {
-		this.cartPageRedirect = cartPageRedirect;
 	}
 	
 }

@@ -32,7 +32,7 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
     @Resource(name = "blOrderService")
     protected OrderService orderService;
     
-    protected String orderConfirmationView = "checkout/confirmation";
+    protected static String orderConfirmationView = "checkout/confirmation";
 
     public String displayOrderConfirmationByOrderNumber(String orderNumber, Model model,
              HttpServletRequest request, HttpServletResponse response) {
@@ -65,7 +65,4 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
 		return orderConfirmationView;
 	}
 
-	public void setOrderConfirmationView(String orderConfirmationView) {
-		this.orderConfirmationView = orderConfirmationView;
-	}
 }

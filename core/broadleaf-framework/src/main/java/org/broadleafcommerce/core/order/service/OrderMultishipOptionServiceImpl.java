@@ -108,8 +108,19 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
 			
 			option.setOrder(order);
 			option.setOrderItem(orderItemService.readOrderItemById(dto.getOrderItemId()));
-			option.setAddress(addressService.readAddressById(dto.getAddressId()));
-			option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(dto.getFulfillmentOptionId()));
+			
+			if (dto.getAddressId() != null) {
+				option.setAddress(addressService.readAddressById(dto.getAddressId()));
+			} else {
+				option.setAddress(null);
+			}
+			
+			if (dto.getFulfillmentOptionId() != null) {
+				option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(dto.getFulfillmentOptionId()));
+			} else {
+				option.setFulfillmentOption(null);
+			}
+			
 			orderMultishipOptions.add(option);
 		}
 		
@@ -150,6 +161,25 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
 		orderMultishipOptions.removeAll(optionsToRemove);
 		orderMultishipOptionDao.deleteAll(optionsToRemove);
 		
+		return orderMultishipOptions;
+	}
+	
+	@Override
+	public List<OrderMultishipOption> getOrderMultishipOptionsFromDTOs(Order order, List<OrderMultishipOptionDTO> optionDtos) {
+		List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
+		for (OrderMultishipOptionDTO optionDto : optionDtos) {
+			OrderMultishipOption option = new OrderMultishipOptionImpl();
+			if (optionDto.getAddressId() != null) {
+				option.setAddress(addressService.readAddressById(optionDto.getAddressId()));
+			}	
+			if (optionDto.getFulfillmentOptionId() != null) {
+				option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(optionDto.getFulfillmentOptionId()));
+			}
+			option.setId(optionDto.getId());
+			option.setOrder(order);
+			option.setOrderItem(orderItemService.readOrderItemById(optionDto.getOrderItemId()));
+			orderMultishipOptions.add(option);
+		}
 		return orderMultishipOptions;
 	}
 	

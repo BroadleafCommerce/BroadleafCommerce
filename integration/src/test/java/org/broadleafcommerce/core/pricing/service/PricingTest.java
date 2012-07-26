@@ -19,8 +19,11 @@ package org.broadleafcommerce.core.pricing.service;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuFee;
+import org.broadleafcommerce.core.catalog.domain.SkuFeeImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
@@ -32,6 +35,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
@@ -147,7 +151,16 @@ public class PricingTest extends BaseTest {
         sku.setName("Test Sku");
         sku.setRetailPrice(new Money(10D));
         sku.setDiscountable(true);
+           
+        SkuFee fee = new SkuFeeImpl();
+        fee.setFeeType(SkuFeeType.FULFILLMENT);
+        fee.setName("fee test");
+        fee.setAmount(new Money(10D));
+        fee = catalogService.saveSkuFee(fee);
+        List<SkuFee> fees = new ArrayList<SkuFee>();
+        fees.add(fee);
         
+        sku.setFees(fees);
         sku = catalogService.saveSku(sku);
         
         item.setSku(sku);
@@ -200,10 +213,20 @@ public class PricingTest extends BaseTest {
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D))); // Shipping is not taxable
-        assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).subtract(order.getOrderAdjustmentsValue())));
+        //determine the total cost of the fulfillment group fees
+        Money fulfillmentGroupFeeTotal = getFulfillmentGroupFeeTotal(order);
+        assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).add(fulfillmentGroupFeeTotal).subtract(order.getOrderAdjustmentsValue())));
     }
 
-
+    public Money getFulfillmentGroupFeeTotal(Order order) {
+        Money result = new Money(BigDecimal.ZERO);
+        for (FulfillmentGroup group : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupFee fee : group.getFulfillmentGroupFees()) {
+                result = result.add(fee.getAmount());
+            }
+        }
+        return result;
+    }
 
     @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration"})
     @Transactional

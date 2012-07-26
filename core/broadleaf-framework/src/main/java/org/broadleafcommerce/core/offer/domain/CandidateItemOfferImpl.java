@@ -16,8 +16,16 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,12 +37,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemImpl;
-import org.broadleafcommerce.common.money.Money;
-import org.hibernate.annotations.*;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
@@ -72,7 +76,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @Index(name="CANDIDATE_ITEMOFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
-    @Column(name = "DISCOUNTED_PRICE")
+    @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
     private BigDecimal discountedPrice;
 
     public Long getId() {
