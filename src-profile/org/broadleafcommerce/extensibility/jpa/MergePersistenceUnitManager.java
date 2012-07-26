@@ -63,8 +63,6 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 //	protected List<BroadleafClassTransformer> classTransformers = new ArrayList<BroadleafClassTransformer>();
 
 	protected PersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
-		System.err.println("getMergedUnit " + persistenceUnitName + newPU.getPersistenceUnitName());
-
 		if (!mergedPus.containsKey(persistenceUnitName)) {
 			PersistenceUnitInfo puiToStore = newPU;
 //			if (jpa2ApiPresent) {
