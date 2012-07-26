@@ -21,6 +21,7 @@ import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSProtocol;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -49,6 +50,7 @@ public class FieldDataSourceWrapper extends DataSource {
         DSResponse response = new DSResponse();
         response.setAttribute ("clientContext", dsRequest.getAttributeAsObject ("clientContext"));
         response.setStatus(0);
+        HashMap<String,String>duplicateCheck=new HashMap<String, String>();
         List<Record> records = new ArrayList<Record>();
         for (DataSourceField field : delegate.getFields()) {
         	String title = field.getTitle();
@@ -56,7 +58,11 @@ public class FieldDataSourceWrapper extends DataSource {
         		title = field.getName();
         	}
         	if (!field.getHidden() && (entered == null || entered.equals("") || (title != null && title.toLowerCase().startsWith(entered.toLowerCase())))) {
-	        	Record record = new Record();
+	        	//do not allow duplicate attributes in the pulldown menu
+        		if(duplicateCheck.get(title)!=null) continue;
+        		duplicateCheck.put(title, title);
+
+        		Record record = new Record();
 	        	for (String attribute : field.getAttributes()) {
 	        		record.setAttribute(attribute, field.getAttribute(attribute));
 	        	}
