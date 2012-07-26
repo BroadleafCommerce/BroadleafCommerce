@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsideratio
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -245,6 +246,15 @@ public class SkuImpl implements Sku {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
+    
+    @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
+    @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED", 
+                joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), 
+         inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<FulfillmentOption> excludedFulfillmentOptions;
+
 
     @Override
     public Long getId() {
@@ -653,6 +663,16 @@ public class SkuImpl implements Sku {
     @Override
     public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates) {
         this.fulfillmentFlatRates = fulfillmentFlatRates;
+    }
+    
+    @Override
+    public List<FulfillmentOption> getExcludedFulfillmentOptions() {
+        return excludedFulfillmentOptions;
+    }
+
+    @Override
+    public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions) {
+        this.excludedFulfillmentOptions = excludedFulfillmentOptions;
     }
     
 	@Override
