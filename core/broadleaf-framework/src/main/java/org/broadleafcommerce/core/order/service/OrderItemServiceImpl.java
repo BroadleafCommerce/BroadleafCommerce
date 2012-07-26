@@ -45,6 +45,7 @@ import javax.annotation.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 @Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
@@ -233,11 +234,19 @@ public class OrderItemServiceImpl implements OrderItemService {
     	OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO()
     		.setQuantity(item.getQuantity())
     		.setSkuId(((DiscreteOrderItem) item).getSku().getId());
+    	
     	if (item.getCategory() != null) {
     		orderItemRequest.setCategoryId(item.getCategory().getId());
     	}
+    	
     	if (((DiscreteOrderItem) item).getProduct() != null) {
     		orderItemRequest.setProductId(((DiscreteOrderItem) item).getProduct().getId());
+    	}
+    	
+    	if (item.getOrderItemAttributes() != null) {
+    		for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
+    			orderItemRequest.getItemAttributes().put(entry.getKey(), entry.getValue().getValue());
+    		}
     	}
     	
     	return orderItemRequest;

@@ -53,7 +53,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
         
         wishlist = orderService.addItem(wishlist.getId(), itemRequest, true);
         
-        return getAccountWishlistView();
+        return getAccountWishlistRedirect();
     }
     
     public String viewWishlist(HttpServletRequest request, HttpServletResponse response, Model model,
