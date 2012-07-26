@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -39,31 +40,32 @@ import java.math.BigDecimal;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FULFILLMENT_PRICE_BAND")
+@Table(name = "BLC_FULFILLMENT_WEIGHT_BAND")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class FulfillmentPriceBandImpl extends FulfillmentBandImpl implements FulfillmentPriceBand {
+public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements FulfillmentWeightBand {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @GeneratedValue(generator= "FulfillmentPriceBandId")
+    @GeneratedValue(generator= "FulfillmentWeightBandId")
     @GenericGenerator(
-        name="FulfillmentPriceBandId",
+        name="FulfillmentWeightBandId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="segment_value", value="FulfillmentPriceBandImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl")
+            @Parameter(name="segment_value", value="FulfillmentWeightBandImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl")
         }
     )
-    @Column(name = "FULFILLMENT_PRICE_BAND_ID")
+    @Column(name = "FULFILLMENT_WEIGHT_BAND_ID")
     protected Long id;
-
-    @Column(name="RETAIL_PRICE_MINIMUM_AMOUNT", precision=19, scale=5, nullable = false)
-    protected BigDecimal retailPriceMinimumAmount;
     
-    @ManyToOne(targetEntity=BandedPriceFulfillmentOptionImpl.class)
+    @Column(name = "MINIMUM_WEIGHT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentWeightBandImpl_Weight")
+    protected BigDecimal minimumWeight;
+    
+    @ManyToOne(targetEntity=BandedWeightFulfillmentOptionImpl.class)
     @JoinColumn(name="FULFILLMENT_OPTION_ID")
-    protected BandedPriceFulfillmentOption option;
+    protected BandedWeightFulfillmentOption option;
 
     @Override
     public Long getId() {
@@ -76,22 +78,22 @@ public class FulfillmentPriceBandImpl extends FulfillmentBandImpl implements Ful
     }
     
     @Override
-    public BigDecimal getRetailPriceMinimumAmount() {
-        return retailPriceMinimumAmount;
+    public BigDecimal getMinimumWeight() {
+        return minimumWeight;
     }
-
+    
     @Override
-    public void setRetailPriceMinimumAmount(BigDecimal retailPriceMinimumAmount) {
-        this.retailPriceMinimumAmount = retailPriceMinimumAmount;
+    public void setMinimumWeight(BigDecimal minimumWeight) {
+        this.minimumWeight = minimumWeight;
     }
-
+    
     @Override
-    public BandedPriceFulfillmentOption getOption() {
+    public BandedWeightFulfillmentOption getOption() {
         return option;
     }
 
     @Override
-    public void setOption(BandedPriceFulfillmentOption option) {
+    public void setOption(BandedWeightFulfillmentOption option) {
         this.option = option;
     }
 

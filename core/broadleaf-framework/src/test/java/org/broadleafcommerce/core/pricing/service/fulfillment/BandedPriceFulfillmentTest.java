@@ -35,7 +35,7 @@ import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmen
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
-import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -180,7 +180,7 @@ public class BandedPriceFulfillmentTest extends TestCase {
     protected Money calculationResponse(BandedPriceFulfillmentOption option, Order order) throws Exception {
         Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
         options.add(option);
-        BandedPriceFulfillmentPricingProvider provider = new BandedPriceFulfillmentPricingProvider();
+        BandedFulfillmentPricingProvider provider = new BandedFulfillmentPricingProvider();
         return provider.estimateCostForFulfillmentGroup(order.getFulfillmentGroups().get(0), options).getFulfillmentOptionPrices().get(option);
     }
 

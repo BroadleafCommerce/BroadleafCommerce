@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -36,16 +35,13 @@ import java.math.BigDecimal;
  *  the cost for the fulfillment group is whatever is defined in {@link #getResultAmount()}</li>
  *  <li>If {@link #getResultAmountType()} returns {@link FulfillmentBandResultAmountType#PERCENTAGE}, then
  *  the fulfillment cost is the percentage obtained by {@link #getResultAmount()} * retailPriceTotal</li>
+ *  <li>If two bands have the same retail price minimum amount, the cheapest resulting amount is used</li>
  * </ol>
  * 
  * @author Phillip Verheyden
  * @see {@link BandedPriceFulfillmentOption}
  */
-public interface FulfillmentPriceBand extends Serializable {
-
-    public Long getId();
-
-    public void setId(Long id);
+public interface FulfillmentPriceBand extends FulfillmentBand {
 
     /**
      * Gets the minimum amount that this band is valid for. If the addition
@@ -70,39 +66,17 @@ public interface FulfillmentPriceBand extends Serializable {
     public void setRetailPriceMinimumAmount(BigDecimal retailPriceMinimumAmount);
 
     /**
-     * Gets the amount that should be applied to the fulfillment
-     * cost for the {@link FulfillmentGroup}. This could be applied as
-     * a percentage or as a flat rate, depending on the result of calling
-     * {@link #getResultType()}.
+     * Gets the {@link BandedPriceFulfillmentOption} that this band is associated to
      * 
-     * @return the amount to apply for this band
+     * @return the associated {@link BandedPriceFulfillmentOption}
      */
-    public BigDecimal getResultAmount();
+    public BandedPriceFulfillmentOption getOption();
 
     /**
-     * Sets the amount that should be applied to the fulfillment cost
-     * for this band. This can be either a flat rate or a percentage depending
-     * on {@link #getResultType()}.
+     * Sets the {@link BandedPriceFulfillmentOption} to associate with this band
      * 
-     * @param resultAmount - the percentage or flat rate that should be applied
-     * as a fulfillment cost for this band
+     * @param option
      */
-    public void setResultAmount(BigDecimal resultAmount);
-
-    /**
-     * Gets how {@link #getResultAmount} should be applied to the fulfillment cost
-     * 
-     * @return the type of {@link #getResultAmount()} which determines how that value
-     * should be calculated into the cost
-     */
-    public FulfillmentBandResultAmountType getResultAmountType();
-
-    /**
-     * Sets how {@link #getResultAmount()} should be applied to the fulfillment cost
-     * 
-     * @param resultAmountType - how the value from {@link #getResultAmount()} should be
-     * applied to the cost of the {@link FulfillmentGroup}
-     */
-    public void setResultAmountType(FulfillmentBandResultAmountType resultAmountType);
+    public void setOption(BandedPriceFulfillmentOption option);
 
 }

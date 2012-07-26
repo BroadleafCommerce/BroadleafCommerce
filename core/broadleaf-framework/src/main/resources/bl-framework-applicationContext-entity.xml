@@ -12,7 +12,10 @@
     <bean id="org.broadleafcommerce.core.order.domain.FulfillmentOption" class="org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption" class="org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption" class="org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.fulfillment.domain.BandedWeightFulfillmentOption" class="org.broadleafcommerce.core.order.fulfillment.domain.BandedWeightFulfillmentOptionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentBand" class="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentBandImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand" class="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBand" class="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.Order" class="org.broadleafcommerce.core.order.domain.OrderImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.OrderMultishipOption" class="org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItemImpl" scope="prototype"/>

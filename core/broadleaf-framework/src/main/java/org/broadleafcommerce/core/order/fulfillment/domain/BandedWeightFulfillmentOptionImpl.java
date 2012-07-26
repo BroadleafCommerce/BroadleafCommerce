@@ -35,24 +35,24 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FULFILLMENT_OPT_BANDED_PRICE")
+@Table(name = "BLC_FULFILLMENT_OPT_BANDED_WGT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(friendlyName = "Banded Price Fulfillment Option")
-public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl implements BandedPriceFulfillmentOption {
+@AdminPresentationClass(friendlyName = "Banded Weight Fulfillment Option")
+public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl implements BandedWeightFulfillmentOption {
 
     private static final long serialVersionUID = 1L;
-    
-    @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
+
+    @OneToMany(mappedBy="option", targetEntity=FulfillmentWeightBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected List<FulfillmentPriceBand> bands;
+    protected List<FulfillmentWeightBand> bands;
 
     @Override
-    public List<FulfillmentPriceBand> getBands() {
+    public List<FulfillmentWeightBand> getBands() {
         return bands;
     }
 
     @Override
-    public void setBands(List<FulfillmentPriceBand> bands) {
+    public void setBands(List<FulfillmentWeightBand> bands) {
         this.bands = bands;
     }
 
