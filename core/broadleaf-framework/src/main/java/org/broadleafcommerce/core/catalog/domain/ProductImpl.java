@@ -92,7 +92,7 @@ import java.util.Map;
 @Table(name="BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductImpl_baseProduct")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
 public class ProductImpl implements Product, Status {
 
@@ -121,31 +121,31 @@ public class ProductImpl implements Product, Status {
     protected Long id;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO",groupOrder=2)
     protected String url;
 
     @Column(name = "URL_KEY")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "ProductImpl_SEO")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "ProductImpl_SEO",groupOrder=2)
     protected String urlKey;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=5, group = "ProductImpl_Product_Description")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=5, group = "ProductImpl_SEO",groupOrder=2)
     protected String displayTemplate;
 
     /** The product model number */
     @Column(name = "MODEL")
     @SearchableProperty(name="productModel")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order=6, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order=10, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
     @SearchableProperty(name="productManufacturer")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=7, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=9, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String manufacturer;
     
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=8, group = "ProductImpl_Product_Description", prominent=false)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=11, group = "ProductImpl_Product_Description", prominent=false)
     protected boolean isFeaturedProduct = false;
     
     @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL})
@@ -181,7 +181,7 @@ public class ProductImpl implements Product, Status {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order=6, group = "ProductImpl_Product_Description", excluded = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order=3, group = "ProductImpl_Product_Description", excluded = true, requiredOverride = RequiredOverride.REQUIRED)
     protected Category defaultCategory;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -686,6 +686,7 @@ public class ProductImpl implements Product, Status {
 		} else {
 			if (getName() != null) {
 				String returnKey = getName().toLowerCase();
+				
 				returnKey = returnKey.replaceAll(" ","-");
 				return returnKey.replaceAll("[^A-Za-z0-9/-]", "");
 			}

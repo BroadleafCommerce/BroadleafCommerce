@@ -108,4 +108,14 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String bundleItemSalePriceTooltip();
     public String cloneButtonTitle();
     
+    public String SkuImpl_Sku_Inventory();
+    public String ProductWeight_Shipping();
+    public String ProductImpl_Product_Url();
+    public String ProductImpl_Product_UrlKey();
+    public String ProductImpl_Product_Display_Template();
+    public String ProductImpl_SEO();
+    public String BundleOrderItemImpl_bundleOrderItem();
+    public String ProductImpl_bundleProduct();
+    public String OrderItemImpl_baseOrderItem();
+ 
 }
