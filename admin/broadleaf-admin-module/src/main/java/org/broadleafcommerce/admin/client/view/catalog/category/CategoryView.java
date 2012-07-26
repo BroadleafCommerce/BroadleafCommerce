@@ -143,7 +143,8 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         
         upSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("upsaleProductsTitle"), true, true);
         crossLayout.addMember(upSaleDisplay);
-        
+        featuredDisplay = new GridStructureView(BLCMain.getMessageManager().getString("featuredProductsListTitle"), true, true);
+        crossLayout.addMember(featuredDisplay);
         crossSaleTab.setPane(crossLayout); 
         
         Tab featuredTab = new Tab(BLCMain.getMessageManager().getString("productsTabTitle"));
@@ -156,8 +157,6 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         featuredLayout.setBackgroundColor("#eaeaea");
         featuredLayout.setOverflow(Overflow.AUTO);
         
-        featuredDisplay = new GridStructureView(BLCMain.getMessageManager().getString("featuredProductsListTitle"), true, true);
-        featuredLayout.addMember(featuredDisplay);
         
         allProductsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("allProductsListTitle"), true, false);
         featuredLayout.addMember(allProductsDisplay);
