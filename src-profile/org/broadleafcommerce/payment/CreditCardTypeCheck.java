@@ -32,7 +32,7 @@ public class CreditCardTypeCheck {
         if (pan.matches("(300)?(301)?(302)?(303)?(304)?(305)?[0-9]{11}") || pan.matches("(36)?(38)?[0-9]{12}")) {
             return CreditCardType.DINERSCLUB_CARTEBLANCHE;
         }
-        if (pan.matches("6011[0-9]{12}")) {
+        if (pan.matches("6011[0-9]{12}") || pan.matches("65[0-9]{14}")) {
             return CreditCardType.DISCOVER;
         }
         if (pan.matches("(2014)?(2149)?[0-9]{11}")) {
