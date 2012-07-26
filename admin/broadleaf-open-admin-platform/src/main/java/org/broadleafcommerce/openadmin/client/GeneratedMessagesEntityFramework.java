@@ -269,4 +269,7 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
     public String PaymentInfoImpl_Phone();
     public String PaymentLogImpl_Payment_Log();
     public String PaymentResponseItemImpl_Payment_Response();
+   
+    public String BundleOrderItemImpl_Base_Retail_Price();
+    public String BundleOrderItemImpl_Base_Sale_Price();
 }
