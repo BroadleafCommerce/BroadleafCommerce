@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 
@@ -135,6 +136,8 @@ public interface CatalogService {
     public List<Product> findProductsForCategory(Category category, int limit, int offset);
 
     public Sku saveSku(Sku sku);
+    
+    public SkuFee saveSkuFee(SkuFee fee);
 
     public List<Sku> findAllSkus();
 

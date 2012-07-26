@@ -99,15 +99,16 @@ public interface SkuFee extends Serializable {
 
     /**
      * Gets the optional MVEL expression used as additional criteria to determine if
-     * this fee applies to a certain Order
+     * this fee applies
      * 
-     * @return the MVEL expression of extra criteria on an Order to determine if this
+     * @return the MVEL expression of extra criteria to determine if this
      * fee applies
      */
     public String getExpression();
 
     /**
-     * Sets the MVEL expression used to determine if this fee should be applied
+     * Sets the MVEL expression used to determine if this fee should be applied. If this is
+     * null or empty, this fee will always be applied
      * 
      * @param expression - a valid MVEL expression
      */

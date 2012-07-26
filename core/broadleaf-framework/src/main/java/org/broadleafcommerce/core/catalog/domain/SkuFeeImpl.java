@@ -27,6 +27,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,6 +38,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -74,12 +76,14 @@ public class SkuFeeImpl implements SkuFee {
     @Column(name = "DESCRIPTION")
     protected String description;
     
-    @Column(name ="AMOUNT", precision=19, scale=5)
+    @Column(name ="AMOUNT", precision=19, scale=5, nullable=false)
     protected BigDecimal amount;
     
     @Column(name = "TAXABLE")
     protected Boolean taxable = Boolean.FALSE;
     
+    @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "EXPRESSION")
     protected String expression;
 
