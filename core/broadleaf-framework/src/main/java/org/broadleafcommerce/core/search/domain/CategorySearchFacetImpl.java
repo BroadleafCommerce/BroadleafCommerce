@@ -35,7 +35,7 @@ import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CATEGORY_SEARCH_FACET_XREF")
+@Table(name = "BLC_CAT_SEARCH_FACET_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 public class CategorySearchFacetImpl implements CategorySearchFacet {
 	
