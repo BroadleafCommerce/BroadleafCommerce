@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
-import org.broadleafcommerce.core.web.util.FacetUtils;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -56,6 +56,7 @@ public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProce
 	@SuppressWarnings("unchecked")
 	protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
 		Map<String, String> attrs = new HashMap<String, String>();
+		SearchFacetDTOService facetService = ProcessorUtils.getSearchFacetDTOService(arguments);
 		
 		BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
 		HttpServletRequest request = blcContext.getRequest();
@@ -65,12 +66,12 @@ public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProce
 		
 		SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
 		
-		String key = FacetUtils.getKey(result);
-		String value = FacetUtils.getValue(result);
+		String key = facetService.getKey(result);
+		String value = facetService.getValue(result);
 		String[] paramValues = params.get(key);
 		
-		if (ArrayUtils.contains(paramValues, FacetUtils.getValue(result))) {
-			paramValues = (String[]) ArrayUtils.removeElement(paramValues, FacetUtils.getValue(result));
+		if (ArrayUtils.contains(paramValues, facetService.getValue(result))) {
+			paramValues = (String[]) ArrayUtils.removeElement(paramValues, facetService.getValue(result));
 		} else {
 			paramValues = (String[]) ArrayUtils.add(paramValues, value);
 		}

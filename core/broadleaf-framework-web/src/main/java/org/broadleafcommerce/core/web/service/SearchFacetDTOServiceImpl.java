@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.util;
+package org.broadleafcommerce.core.web.service;
 
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,60 +29,55 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * Provides static utility methods that facilitate interactions with SearchFacets
- * 
- * @author Andre Azzolini (apazzolini)
- */
-public class FacetUtils {
+@Service("blSearchFacetDTOService")
+public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
 	
+	@Override
 	@SuppressWarnings("unchecked")
-	public static ProductSearchCriteria buildSearchCriteria(HttpServletRequest request) {
+	public ProductSearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets) {
 		ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
 		
-		Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
-		for (Iterator<Map.Entry<String,String[]>> iter = params.entrySet().iterator(); iter.hasNext();){
+		Map<String, String[]> convertedFacets = new HashMap<String, String[]>();
+		
+		for (Iterator<Entry<String,String[]>> iter = request.getParameterMap().entrySet().iterator(); iter.hasNext();){
 			Map.Entry<String, String[]> entry = iter.next();
 			String key = entry.getKey();
 			
 			if (key.equals(ProductSearchCriteria.SORT_STRING)) {
 				searchCriteria.setSortQuery(entry.getValue()[0]);
-				iter.remove();
-			}
-			
-			if (key.equals(ProductSearchCriteria.PAGE_NUMBER)) {
+			} else if (key.equals(ProductSearchCriteria.PAGE_NUMBER)) {
 				searchCriteria.setPage(Integer.parseInt(entry.getValue()[0]));
-				iter.remove();
-			}
-			
-			if (key.equals(ProductSearchCriteria.PAGE_SIZE_STRING)) {
+			} else if (key.equals(ProductSearchCriteria.PAGE_SIZE_STRING)) {
 				searchCriteria.setPageSize(Integer.parseInt(entry.getValue()[0]));
-				iter.remove();
-			}
-			
-			// This is handled specifically by the controller and we do not need to deal with it here
-			if (key.equals(ProductSearchCriteria.QUERY_STRING)) {
-				iter.remove();
+			} else if (key.equals(ProductSearchCriteria.QUERY_STRING)) {
+				continue; // This is handled by the controller
+			} else {
+				String convertedKey = getConvertedKey(key, availableFacets);
+				if (convertedKey != null) {
+					convertedFacets.put(convertedKey, entry.getValue());
+				}
 			}
 		}
 		
-		searchCriteria.setFilterCriteria(params);
+		searchCriteria.setFilterCriteria(convertedFacets);
 		
 		return searchCriteria;
 	}
 	
-	public static void setActiveFacetResults(List<SearchFacetDTO> facets, HttpServletRequest request) {
+	@Override
+	public void setActiveFacetResults(List<SearchFacetDTO> facets, HttpServletRequest request) {
 		if (facets != null) {
 	    	for (SearchFacetDTO facet : facets) {
 	    		for (SearchFacetResultDTO facetResult : facet.getFacetValues()) {
-	    			facetResult.setActive(FacetUtils.isActive(facetResult, request));
+	    			facetResult.setActive(isActive(facetResult, request));
 	    		}
 	    	}
 		}
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
-	public static boolean isActive(SearchFacetResultDTO result, HttpServletRequest request) {
+	public boolean isActive(SearchFacetResultDTO result, HttpServletRequest request) {
 		Map<String, String[]> params = request.getParameterMap();
 		for (Entry<String, String[]> entry : params.entrySet()) {
 			String key = entry.getKey();
@@ -96,18 +92,29 @@ public class FacetUtils {
 		return false;
 	}
 	
-	public static String getKey(SearchFacetResultDTO result) {
-		return result.getFacet().getSearchFacet().getFieldName();
+	@Override
+	public String getKey(SearchFacetResultDTO result) {
+		return result.getFacet().getSearchFacet().getQueryStringKey();
 	}
 	
-	public static String getValue(SearchFacetResultDTO result) {
+	@Override
+	public String getValue(SearchFacetResultDTO result) {
 		String value = result.getValue();
 		
 		if (value == null) {
-			value = "blcRange[" + result.getMinValue() + ":" + result.getMaxValue() + "]";
+			value = "range[" + result.getMinValue() + ":" + result.getMaxValue() + "]";
 		}
 		
 		return value;
+	}
+	
+	protected String getConvertedKey(String key, List<SearchFacetDTO> availableFacets) {
+		for (SearchFacetDTO dto : availableFacets) {
+			if (key.equals(dto.getFacet().getSearchFacet().getQueryStringKey())) {
+				return dto.getFacet().getSearchFacet().getFieldName();
+			}
+		}
+		return null;
 	}
 
 }

@@ -47,8 +47,11 @@ public class SearchFacetImpl implements SearchFacet {
     @Column(name = "SEARCH_FACET_ID")
     protected Long id;
     
-    @Column(name = "FIELD_NAME")
+    @Column(name = "FIELD_NAME", nullable = false)
     protected String fieldName;
+    
+    @Column(name = "QUERY_STRING_KEY", nullable = false)
+    protected String queryStringKey;
     
     @Column(name = "LABEL")
     protected String label;
@@ -82,6 +85,16 @@ public class SearchFacetImpl implements SearchFacet {
 	@Override
 	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
+	}
+	
+	@Override
+	public String getQueryStringKey() {
+		return queryStringKey;
+	}
+
+	@Override
+	public void setQueryStringKey(String queryStringKey) {
+		this.queryStringKey = queryStringKey;
 	}
 
 	@Override
