@@ -79,8 +79,11 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 				builder.lower(pathToUse.get("name").as(String.class)), fieldName.toLowerCase()));
 			
 			fieldName = "value";
-		} else {
+		} else if (fieldName.contains("product.")) {
 			pathToUse = product;
+			fieldName = fieldName.substring("product.".length());
+		} else {
+			throw new IllegalArgumentException("Invalid facet fieldName specified: " + fieldName);
 		}
 		criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
 		

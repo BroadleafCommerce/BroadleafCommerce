@@ -56,6 +56,22 @@ public interface SearchFacet {
 	public void setFieldName(String fieldName);
 
 	/**
+	 * Gets the query string key that's associated with this facet. This is what will show up in the URL
+	 * to identify that there is a facet filter on the current page
+	 * 
+	 * @return the query string key
+	 */
+	public String getQueryStringKey();
+
+	/**
+	 * Sets the query string key for this facet.
+	 * 
+	 * @see #getQueryStringKey()
+	 * @param queryStringKey
+	 */
+	public void setQueryStringKey(String queryStringKey);
+
+	/**
 	 * Gets the label of this SearchFacet. This is the label that will be used for the user-friendly
 	 * display name of this facet
 	 * 

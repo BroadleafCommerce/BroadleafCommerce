@@ -75,8 +75,9 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 		return result;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
-	protected List<SearchFacetDTO> getSearchFacets() {
+	public List<SearchFacetDTO> getSearchFacets() {
 		List<SearchFacetDTO> facets = null;
 		
 		String cacheKey = CACHE_KEY_PREFIX + "blc-search";
@@ -93,8 +94,9 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 		return facets;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
-	protected List<SearchFacetDTO> getCategoryFacets(Category category) {
+	public List<SearchFacetDTO> getCategoryFacets(Category category) {
 		List<SearchFacetDTO> facets = null;
 		
 		String cacheKey = CACHE_KEY_PREFIX + "category:" + category.getId();

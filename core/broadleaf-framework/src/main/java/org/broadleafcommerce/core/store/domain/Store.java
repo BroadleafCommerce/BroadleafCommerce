@@ -44,11 +44,11 @@ public interface Store extends Serializable{
     public String getPhone();
     public void setPhone(String phone);
 
-    public Float getLongitude();
-    public void setLongitude(Float longitude);
+    public Double getLongitude();
+    public void setLongitude(Double longitude);
 
-    public Float getLatitude();
-    public void setLatitude(Float latitude);
+    public Double getLatitude();
+    public void setLatitude(Double latitude);
 
     public void setState(String state);
     public String getState();

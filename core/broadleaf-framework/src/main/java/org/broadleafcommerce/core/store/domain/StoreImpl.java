@@ -67,11 +67,11 @@ public class StoreImpl implements Store {
 
     @Column(name = "LATITUDE")
     @Index(name="STORE_LATITUDE_INDEX", columnNames={"LATITUDE"})
-    private Float latitude;
+    private Double latitude;
 
     @Column(name = "LONGITUDE")
     @Index(name="STORE_LONGITUDE_INDEX", columnNames={"LONGITUDE"})
-    private Float longitude;
+    private Double longitude;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.store.domain.Store#getId()
@@ -239,7 +239,7 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.store.domain.Store#getLongitude()
      */
-    public Float getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
@@ -249,7 +249,7 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.store.domain.Store#setLongitude(java.lang.Float)
      */
-    public void setLongitude(Float longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
@@ -259,7 +259,7 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.store.domain.Store#getLatitude()
      */
-    public Float getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
@@ -269,7 +269,7 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.store.domain.Store#setLatitude(java.lang.Float)
      */
-    public void setLatitude(Float latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 

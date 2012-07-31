@@ -19,6 +19,9 @@ package org.broadleafcommerce.core.search.service;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+
+import java.util.List;
 
 /**
  * 
@@ -44,6 +47,21 @@ public interface ProductSearchService {
 	 * @return the result of the search
 	 */
 	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria);
+
+	/**
+	 * Gets all available facets for search results page
+	 * 
+	 * @return the available facets
+	 */
+	public List<SearchFacetDTO> getSearchFacets();
+
+	/**
+	 * Gets all available facets for a given category
+	 * 
+	 * @param category
+	 * @return the available facets
+	 */
+	public List<SearchFacetDTO> getCategoryFacets(Category category);
 
 
 }

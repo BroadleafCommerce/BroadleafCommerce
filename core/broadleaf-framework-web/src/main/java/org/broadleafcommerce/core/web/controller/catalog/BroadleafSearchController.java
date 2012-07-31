@@ -19,14 +19,17 @@ package org.broadleafcommerce.core.web.controller.catalog;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.service.ProductSearchService;
-import org.broadleafcommerce.core.web.util.FacetUtils;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.ui.Model;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 /**
  * Handles searching the catalog for a given search term. Will apply product search criteria
@@ -41,6 +44,9 @@ public class BroadleafSearchController extends AbstractCatalogController {
 	
 	@Resource(name = "blExploitProtectionService")
 	protected ExploitProtectionService exploitProtectionService;
+	
+	@Resource(name = "blSearchFacetDTOService")
+	protected SearchFacetDTOService facetService;
 	
 	protected static String searchView = "catalog/search";
 	
@@ -59,10 +65,11 @@ public class BroadleafSearchController extends AbstractCatalogController {
 		}
 		
 		if (StringUtils.isNotEmpty(query)) {
-			ProductSearchCriteria searchCriteria = FacetUtils.buildSearchCriteria(request);
+			List<SearchFacetDTO> availableFacets = productSearchService.getSearchFacets();
+			ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
 			ProductSearchResult result = productSearchService.findProductsByQuery(query, searchCriteria);
 			
-			FacetUtils.setActiveFacetResults(result.getFacets(), request);
+			facetService.setActiveFacetResults(result.getFacets(), request);
 	    	
 	    	model.addAttribute(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
 	    	model.addAttribute(FACETS_ATTRIBUTE_NAME, result.getFacets());

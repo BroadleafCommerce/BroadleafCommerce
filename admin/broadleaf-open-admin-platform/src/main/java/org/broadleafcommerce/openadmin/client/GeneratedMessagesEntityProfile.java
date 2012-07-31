@@ -81,4 +81,5 @@ public interface GeneratedMessagesEntityProfile extends ConstantsWithLookup {
     public String CustomerImpl_Primary_Key();
     public String PhoneImpl_Phone();
     public String StateImpl_Address();
+    public String CustomerImpl_Customer_Deactivated();
 }

@@ -20,6 +20,7 @@ import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
@@ -102,6 +103,22 @@ public class ProcessorUtils {
             cachedBeans.put(key, orderService);
         }
         return orderService;
+    }
+    
+    /**
+     * Gets the "blSearchFacetDTOService" bean via the Spring Web Application Context
+     * @param arguments the Thymeleaf arguments that's part of the request
+     * @return "blSearchFacetDTOService" bean instance
+     */
+    public static SearchFacetDTOService getSearchFacetDTOService(Arguments arguments) {
+        String key = "blSearchFacetDTOService";
+        SearchFacetDTOService facetService = (SearchFacetDTOService) cachedBeans.get(key);
+        if (facetService == null) {
+            final ApplicationContext appCtx = ((SpringWebContext) arguments.getContext()).getApplicationContext();
+            facetService = (SearchFacetDTOService) appCtx.getBean(key);
+            cachedBeans.put(key, facetService);
+        }
+        return facetService;
     }
 	
 	/**

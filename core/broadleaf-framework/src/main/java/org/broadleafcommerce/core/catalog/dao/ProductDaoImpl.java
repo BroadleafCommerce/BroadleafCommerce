@@ -265,14 +265,19 @@ public class ProductDaoImpl implements ProductDao {
 				restrictions.add(builder.equal(pathToUse.get("name").as(String.class), key));
 				
 				key = "value";
-			} else {
+			} else if (key.contains("product.")) {
 				pathToUse = product;
+				key = key.substring("product.".length());
+			} else {
+				// We don't know which path this facet is built on - resolves previous bug that attempted
+				// to attach search facet to any query parameter
+				continue;
 			}
 			
 			// Values can be equality checks (ie manufacturer=Dave's) or range checks, which take the form
-			// key=blcRange[minRange:maxRange]. Figure out what type of check this is
+			// key=range[minRange:maxRange]. Figure out what type of check this is
 			for (String value : entry.getValue()) {
-				if (value.contains("blcRange[")) {
+				if (value.contains("range[")) {
 					String[] rangeValue = new String[] {
 						value.substring(value.indexOf("[") + 1, value.indexOf(":")),
 						value.substring(value.indexOf(":") + 1, value.indexOf("]"))
@@ -284,13 +289,13 @@ public class ProductDaoImpl implements ProductDao {
 			}
 			
 			// Add the equality range restriction with the "in" builder. That means that the query string
-			// manufacturer=Dave and manufacturer=Bob would match either Dave or Bob
+			// ?manufacturer=Dave&manufacturer=Bob would match either Dave or Bob
 			if (eqValues.size() > 0) {
 				restrictions.add(pathToUse.get(key).in(eqValues));
 			}
 			
 			// If we have any range restrictions, we need to build those too. Ranges are also "or"ed together,
-			// such that specifying blcRange[0:5] and blcRange[10:null] for the same field would match items
+			// such that specifying range[0:5] and range[10:null] for the same field would match items
 			// that were valued between 0 and 5 OR over 10 for that field
 			List<Predicate> rangeRestrictions = new ArrayList<Predicate>();
 			for (String[] range : rangeValues) {
