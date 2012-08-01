@@ -156,8 +156,6 @@ public class OfferImpl implements Offer, Status {
     protected String appliesToCustomerRules;
 
     @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
-    @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
     @AdminPresentation(excluded = true)
     @Deprecated
     protected boolean applyDiscountToMarkedItems;
