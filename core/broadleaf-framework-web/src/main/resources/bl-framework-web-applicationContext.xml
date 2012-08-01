@@ -36,6 +36,7 @@
 			<bean class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.UrlRewriteProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
 		  </set>
 		</property>  	
 	</bean> 
