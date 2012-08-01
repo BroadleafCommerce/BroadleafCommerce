@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.service.RatingService;
@@ -22,6 +23,7 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 /**
  * A Thymeleaf processor that will add the product ratings and reviews to the model
@@ -48,18 +50,20 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-
     	RatingService ratingService = ProcessorUtils.getRatingService(arguments);
-
-        String ratingVar = element.getAttributeValue("ratingsVar");
-        String itemId = element.getAttributeValue("itemId");
-
+    	String itemId = String.valueOf(StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("itemId")));
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
-        
         if (ratingSummary != null) {
-            addToModel(ratingVar, ratingSummary);
+            addToModel(getRatingsVar(element), ratingSummary);
         }
-        
+    }
+    
+    private String getRatingsVar(Element element) {
+    	String ratingsVar = element.getAttributeValue("ratingsVar");
+    	if (StringUtils.isNotEmpty(ratingsVar)) {
+    		return ratingsVar;
+    	} 
+    	return "ratingSummary";
     }
 
 }
