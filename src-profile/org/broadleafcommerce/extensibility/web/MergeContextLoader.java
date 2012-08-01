@@ -91,6 +91,7 @@ public class MergeContextLoader extends ContextLoader {
 	 * @throws BeansException if the context couldn't be initialized
 	 * @see ConfigurableWebApplicationContext
 	 */
+	@Override
 	protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
 		MergeXmlWebApplicationContext wac = new MergeXmlWebApplicationContext();
 		wac.setParent(parent);
@@ -103,6 +104,11 @@ public class MergeContextLoader extends ContextLoader {
 		wac.refresh();
 
 		return wac;
+	}
+
+	@Override
+	protected WebApplicationContext createWebApplicationContext(ServletContext servletContext) throws BeansException {
+		return this.createWebApplicationContext(servletContext, null);
 	}
 
 }
