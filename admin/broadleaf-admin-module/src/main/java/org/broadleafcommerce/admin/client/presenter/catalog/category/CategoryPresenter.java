@@ -290,12 +290,12 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
             public void onSetupSuccess(DataSource result) {
 				ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
 				productSearchDataSource.resetPermanentFieldVisibility(
-					"name",
-					"description",
+					"defaultSku.name",
+					"defaultSku.description",
 					"model",
 					"manufacturer",
-					"activeStartDate",
-					"activeEndDate"
+					"defaultSku.activeStartDate",
+					"defaultSku.activeEndDate"
 				);
 				EntitySearchDialog productSearchView = new EntitySearchDialog(productSearchDataSource);
 				library.put("productSearchView", productSearchView);
@@ -305,14 +305,14 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
 			@Override
             public void onSetupSuccess(DataSource result) {
 				featuredPresenter = new EditableJoinStructurePresenter(getDisplay().getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
-				featuredPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
+				featuredPresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildProductsDS", new AllProductsDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
 				childProductsPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("productSearchPrompt"));
-				childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "model", "manufacturer"}, new Boolean[]{false, false, false});
+				childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "model", "manufacturer"}, new Boolean[]{false, false, false});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("mediaMapDS", new MediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
