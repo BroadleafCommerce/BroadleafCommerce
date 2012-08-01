@@ -59,7 +59,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyClass;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -241,7 +241,7 @@ public class SkuImpl implements Sku {
     @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES", 
                    joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
     @MapKeyJoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID")
-    @MapKeyColumn(name = "FULFILLMENT_OPTION_ID")
+    @MapKeyClass(FulfillmentOptionImpl.class)
     @Column(name = "RATE", precision=19, scale=5)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
