@@ -96,7 +96,7 @@ public class OfferPresenterExtractor {
 			if (getDisplay().getDeliveryTypeRadio().getValue().equals("CODE")) {
 				setData(tempRecord, "offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim(), dirtyValues);
 			}
-			
+			setData(tempRecord, "qualifyingItemSubTotal", getDisplay().getQualifyingItemSubTotal().getValue().toString().trim(), dirtyValues);
 			final String type = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").getValue().toString();
 			
 			extractCustomerData(tempRecord, dirtyValues);

@@ -27,6 +27,8 @@ import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
+import com.smartgwt.client.widgets.form.fields.FloatItem;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -74,7 +76,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	protected DynamicForm qualifyForAnotherPromoTargetForm;
 	protected DynamicForm fgCombineForm;
 	protected DynamicForm orderItemCombineForm;
-
+	protected DynamicForm qualifyingItemSubTotalForm;
+	
     protected VLayout customerLayout;
     protected VLayout orderSectionLayout;
     protected SectionView customerSection;
@@ -131,6 +134,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	protected TextAreaItem rawFGTextArea;
 	
 	protected ToolStripButton cloneButton;
+	protected FloatItem qualifyingItemSubTotal;
+	
 	
 	public OfferView() {
 		setHeight100();
@@ -517,9 +522,27 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         qualifyForAnotherPromoForm.setFields(qualifyForAnotherPromoRadio);
         advancedItemCriteria.addMember(qualifyForAnotherPromoForm);
         
+
+       qualifyingItemSubTotalForm = new DynamicForm();
+       qualifyingItemSubTotalForm.setNumCols(2);
+       //qualifyingItemSubTotal = new TextItem();
+       qualifyingItemSubTotal = new FloatItem();
+       qualifyingItemSubTotal.setAttribute("type", "localMoneyDecimal");
+       qualifyingItemSubTotal.setTitle(BLCMain.getMessageManager().getString("qualifiyngItemSubTotal"));
+       qualifyingItemSubTotal.setWrapTitle(false);
+       qualifyingItemSubTotal.setDisabled(false);
+       
+      // qualifyingItemSubTotalForm.setDataSource(entityDataSource);
+       qualifyingItemSubTotal.setCellStyle("label-bold");
+       qualifyingItemSubTotalForm.setFields( qualifyingItemSubTotal);
+       requiredItemsLayout.addMember(qualifyingItemSubTotalForm);
+        
+        
+        
+        
         itemSectionLayout.addMember(requiredItemsLayout);
         itemSectionLayout.setLayoutBottomMargin(10);
-        
+       
         itemQualificationSectionView = new SectionView(BLCMain.getMessageManager().getString("itemQualificationSectionTitle"));
         itemQualificationSectionView.setWidth("98%");
         itemQualificationSectionView.getContentLayout().addMember(itemSectionLayout);
@@ -655,7 +678,11 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         addMember(leftVerticalLayout);
         addMember(rightVerticalLayout);
 	}
-	
+
+	public DynamicForm getQualifyingItemSubTotalForm() {
+		return qualifyingItemSubTotalForm;
+	}
+
 	public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
 		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
 		builder.enable();
@@ -960,4 +987,16 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
     public SectionView getOrderSection() {
         return orderSection;
     }
+
+	
+	
+	
+	public FloatItem getQualifyingItemSubTotal() {
+		return qualifyingItemSubTotal;
+	}
+
+	public void setQualifyingItemSubTotal(FloatItem qualifyingItemSubTotal) {
+		this.qualifyingItemSubTotal = qualifyingItemSubTotal;
+	}
+
 }

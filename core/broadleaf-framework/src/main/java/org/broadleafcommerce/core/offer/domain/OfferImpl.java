@@ -207,7 +207,7 @@ public class OfferImpl implements Offer {
     protected Boolean treatAsNewFormat;
     
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Qualifying Item Subtotal", group="Application", groupOrder=5, visibility =VisibilityEnum.HIDDEN_ALL)    
+    @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)    
     protected BigDecimal qualifyingItemSubTotal;
 
     public Long getId() {
