@@ -116,7 +116,7 @@ public class OfferPresenterExtractor {
 			DSRequest requestProperties = new DSRequest();
 			requestProperties.setAttribute("dirtyValues", dirtyValues);
 
-            if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().validate()) {
+            if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().validate() && getDisplay().getQualifyingItemSubTotalForm().validate()) {
                 getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(tempRecord, new DSCallback() {
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                         try {

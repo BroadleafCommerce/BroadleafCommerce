@@ -32,6 +32,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.validator.FloatRangeValidator;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -531,7 +532,10 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
        qualifyingItemSubTotal.setTitle(BLCMain.getMessageManager().getString("qualifiyngItemSubTotal"));
        qualifyingItemSubTotal.setWrapTitle(false);
        qualifyingItemSubTotal.setDisabled(false);
-       
+
+       FloatRangeValidator floatRangeValidator = new FloatRangeValidator();  
+       floatRangeValidator.setMin(0.0f);  
+       qualifyingItemSubTotal.setValidators(floatRangeValidator); 
       // qualifyingItemSubTotalForm.setDataSource(entityDataSource);
        qualifyingItemSubTotal.setCellStyle("label-bold");
        qualifyingItemSubTotalForm.setFields( qualifyingItemSubTotal);
