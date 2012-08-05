@@ -23,11 +23,13 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.tool.hbm2x.StringUtils;
@@ -57,15 +59,94 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     			if (!candidates.isMatchedQualifier()) {
     				break;
     			}
-    		}
+    		}    		
     	}
     	
     	if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
 	    	checkForItemRequirements(candidates, offer.getTargetItemCriteria(), promotableOrderItems, false);
     	}
     	
+		if (candidates.isMatchedQualifier()) {
+			if (! meetsItemQualifierSubtotal(offer, candidates)) {
+				candidates.setMatchedQualifier(false);
+			}
+		}    	
+    	
     	return candidates;
     }
+	
+	private boolean isEmpty(Collection<? extends Object> collection) {
+		return (collection == null || collection.size() == 0);
+	}
+
+	private boolean hasPositiveValue(Money money) {
+		return (money != null && money.greaterThan(Money.ZERO));
+	}
+	
+	protected boolean meetsItemQualifierSubtotal(Offer offer, CandidatePromotionItems candidateItem) {
+		Money qualifyingSubtotal = offer.getQualifyingItemSubTotal(); 
+		if (! hasPositiveValue(qualifyingSubtotal)) {
+			if (LOG.isTraceEnabled()) {
+				LOG.trace("Offer " + offer.getName() + " does not have an item subtotal requirement.");
+			}
+			return true;
+		}
+
+		if (isEmpty(offer.getQualifyingItemCriteria())) {
+			if (OfferType.ORDER_ITEM.equals(offer.getType())) {
+				if (LOG.isWarnEnabled()) {
+					LOG.warn("Offer " + offer.getName() + " has a subtotal item requirement but no item qualification criteria.");
+				}
+				return false;
+			} else {			
+				// Checking if targets meet subtotal for item offer with no item criteria.
+				Money accumulatedTotal = new Money(0);
+				for (PromotableOrderItem orderItem : candidateItem.getCandidateTargets()) {						
+					Money itemPrice = orderItem.getCurrentPrice().multiply(orderItem.getQuantity());
+					accumulatedTotal = accumulatedTotal.add(itemPrice);
+					if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
+						if (LOG.isTraceEnabled()) {
+							LOG.trace("Offer " + offer.getName() + " meets qualifying item subtotal.");
+						}
+						return true;
+					}
+				}
+			}
+			
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Offer " + offer.getName() + " does not meet qualifying item subtotal.");
+			}
+		} else {
+			if (candidateItem.getCandidateQualifiersMap() != null) {
+				Money accumulatedTotal = new Money(0);
+				Set<PromotableOrderItem> usedItems = new HashSet<PromotableOrderItem>();
+				for (OfferItemCriteria criteria : candidateItem.getCandidateQualifiersMap().keySet()) {
+					List<PromotableOrderItem> promotableItems = candidateItem.getCandidateQualifiersMap().get(criteria);
+					if (promotableItems != null) {
+						for (PromotableOrderItem item : promotableItems) {
+							if (!usedItems.contains(item)) {
+								usedItems.add(item);
+								Money itemPrice = item.getCurrentPrice().multiply(item.getQuantity());
+								accumulatedTotal = accumulatedTotal.add(itemPrice);
+								if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
+									if (LOG.isTraceEnabled()) {
+										LOG.trace("Offer " + offer.getName() + " meets the item subtotal requirement.");
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Offer " + offer.getName() + " does not meet the item subtotal qualifications.");
+		}
+		return false;
+
+	}
 	
 	protected void checkForItemRequirements(CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, boolean isQualifier) {
 		boolean matchFound = false;
