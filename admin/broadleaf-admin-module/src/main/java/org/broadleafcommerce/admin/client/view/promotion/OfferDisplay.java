@@ -22,8 +22,6 @@ import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
-import com.smartgwt.client.widgets.form.fields.FloatItem;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -116,6 +114,5 @@ public interface OfferDisplay extends DynamicEditDisplay {
     public VLayout getOrderSectionLayout();
     public SectionView getCustomerSection();
     public SectionView getOrderSection();
-	public FloatItem getQualifyingItemSubTotal();
-	public DynamicForm getQualifyingItemSubTotalForm();
+	
 }

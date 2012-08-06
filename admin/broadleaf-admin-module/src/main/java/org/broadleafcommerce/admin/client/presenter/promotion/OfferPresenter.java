@@ -266,12 +266,6 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
-        getDisplay().getQualifyingItemSubTotalForm().addItemChangedHandler(new ItemChangedHandler() {
-            public void onItemChanged(ItemChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-            }
-        });
         getDisplay().getListDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
@@ -419,7 +413,6 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                 initializer.initBogoRule(bogoRule);
             }
         });
-        
         getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {

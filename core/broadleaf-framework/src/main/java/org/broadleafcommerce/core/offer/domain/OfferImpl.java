@@ -16,7 +16,28 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.money.Money;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
@@ -35,29 +56,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -205,10 +203,6 @@ public class OfferImpl implements Offer {
     @Column(name = "USE_NEW_FORMAT")
     @AdminPresentation(friendlyName="Treat As New Format", group="Application", groupOrder=4, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean treatAsNewFormat;
-    
-    @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)    
-    protected BigDecimal qualifyingItemSubTotal;
 
     public Long getId() {
         return id;
@@ -485,14 +479,6 @@ public class OfferImpl implements Offer {
 		this.treatAsNewFormat = treatAsNewFormat;
 	}
 
-	public Money getQualifyingItemSubTotal() {
-		return qualifyingItemSubTotal == null ? null : new Money(qualifyingItemSubTotal);
-	}
-
-	public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
-		this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
-	}
-	
 	@Override
     public int hashCode() {
         final int prime = 31;

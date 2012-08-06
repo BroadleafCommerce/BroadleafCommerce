@@ -185,7 +185,6 @@ public class OfferPresenterInitializer {
 		String deliveryType = selectedRecord.getAttribute("deliveryType");
 		getDisplay().getDeliveryTypeRadio().setValue(deliveryType);
 		initDeliveryType(deliveryType, selectedRecord);
-		getDisplay().getQualifyingItemSubTotal().setValue(selectedRecord.getAttribute("qualifyingItemSubTotal")==null?0.0:Float.parseFloat(selectedRecord.getAttribute("qualifyingItemSubTotal")));
 	}
 
 	public void initCustomerCriteria(final Record selectedRecord) {
@@ -401,7 +400,6 @@ public class OfferPresenterInitializer {
 			getDisplay().getCodeField().disable();
 			getDisplay().getCodeField().setValue("");
 		}
-		
 	}
 	
 	public void initCustomerRule(String customerRule, Record selectedRecord) {
