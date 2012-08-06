@@ -254,6 +254,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             } else {
                 if (!order.containsNotStackableOrderOffer() || !order.isHasOrderAdjustments()) {
                     boolean alreadyContainsTotalitarianOffer = order.isTotalitarianOfferApplied();
+
+                    // TODO:  Add filter for item-subtotal
                     applyOrderOffer(order, orderOffer);
                     orderOffersApplied = true;
                     if (
