@@ -90,7 +90,7 @@ public class ItemOfferProcessorTest extends TestCase {
 	}
 	
 	public void testFilterItemLevelOffer() {
-		EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andReturn(new CandidateItemOfferImpl()).times(4);
+		EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andReturn(new CandidateItemOfferImpl()).times(3);
 		
 		replay();
 		
@@ -123,41 +123,6 @@ public class ItemOfferProcessorTest extends TestCase {
 		//we don't know the targets yet, so there's only one CandidateItemOffer for now
 		assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
 		 
-		// Add a subtotal requirement that will be met by the item offer.
-		qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
-		offers = dataProvider.createItemBasedOfferWithItemCriteria(
-			"order.subTotal.getAmount()>20", 
-			OfferDiscountType.PERCENT_OFF, 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
-		);
-		
-		offers.get(0).setQualifyingItemSubTotal(new Money(1));
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
-		
-		//test that the valid order item offer is included
-		//there is a qualifier and the item qualifying criteria requires only 1, therefore there will be only one qualifier in the qualifiers map
-		//we don't know the targets yet, so there's only one CandidateItemOffer for now
-		assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
-		
-		
-		// Add a subtotal requirement that will not be met by the item offer.
-		qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
-		offers = dataProvider.createItemBasedOfferWithItemCriteria(
-			"order.subTotal.getAmount()>20", 
-			OfferDiscountType.PERCENT_OFF, 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
-		);
-		
-		offers.get(0).setQualifyingItemSubTotal(new Money(99999));
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
-		
-		// Since the item qualification subTotal is not met, the qualified offer size should
-		// be zero.
-		assertTrue(qualifiedOffers.size() == 0);
-			
-		
 		qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
 		offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
