@@ -96,7 +96,7 @@ public class OfferPresenterExtractor {
 			if (getDisplay().getDeliveryTypeRadio().getValue().equals("CODE")) {
 				setData(tempRecord, "offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim(), dirtyValues);
 			}
-			
+			setData(tempRecord, "qualifyingItemSubTotal", getDisplay().getQualifyingItemSubTotal().getValue().toString().trim(), dirtyValues);
 			final String type = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").getValue().toString();
 			
 			extractCustomerData(tempRecord, dirtyValues);
@@ -116,7 +116,7 @@ public class OfferPresenterExtractor {
 			DSRequest requestProperties = new DSRequest();
 			requestProperties.setAttribute("dirtyValues", dirtyValues);
 
-            if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().validate()) {
+            if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().validate() && getDisplay().getQualifyingItemSubTotalForm().validate()) {
                 getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(tempRecord, new DSCallback() {
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                         try {
