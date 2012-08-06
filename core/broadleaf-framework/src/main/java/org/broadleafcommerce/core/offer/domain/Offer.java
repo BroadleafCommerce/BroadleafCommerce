@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
@@ -181,21 +180,5 @@ public interface Offer extends Serializable {
 	public Boolean getTreatAsNewFormat();
 
 	public void setTreatAsNewFormat(Boolean treatAsNewFormat);
-	
-	/**
-	 * Indicates the amount of items that must be purchased for this offer to
-	 * be considered for this order.
-	 * 
-	 * The system will find all qualifying items for the given offer and sum their prices before
-	 * any discounts are applied to make the determination.  
-	 * 
-	 * If the sum of the qualifying items is not greater than this value the offer is 
-	 * not considered by the offer processing algorithm.
-	 * @return
-	 */
-    public Money getQualifyingItemSubTotal();
-    
-    
-    public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
 	
 }

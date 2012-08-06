@@ -153,8 +153,6 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             	isLegacyFormat = true;
             	appliedItemOffersCount = applyLegacyAdjustments(appliedItemOffersCount, itemOffer, beforeCount, orderItem);
             } else {
-            	// TODO:  Add filter for item-subtotal
-            	skipOfferIfSubtotalRequirementNotMet(order, itemOffer);
             	appliedItemOffersCount = applyAdjustments(order, appliedItemOffersCount, itemOffer, beforeCount);
             }
         }
@@ -168,74 +166,6 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
         return itemOffersApplied;
     }
-    
-    
-    protected boolean skipOfferIfSubtotalRequirementNotMet(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-    	if (itemOffer.getOffer().getQualifyingItemSubTotal() == null || itemOffer.getOffer().getQualifyingItemSubTotal().lessThanOrEqual(Money.ZERO)) {
-    		return false;
-    	}
-    	   
-    	/*
-		boolean notCombinableOfferApplied = false;
-		boolean offerApplied = false;
-		List<PromotableOrderItem> allSplitItems = order.getAllSplitItems();
-		for (PromotableOrderItem targetItem : allSplitItems) {
-			notCombinableOfferApplied = targetItem.isNotCombinableOfferApplied();
-			if (!offerApplied) {
-				offerApplied = targetItem.isHasOrderItemAdjustments();
-			}
-			if (notCombinableOfferApplied) {
-				break;
-			}
-		}
-		
-		if (
-				!notCombinableOfferApplied && (
-					(
-							(itemOffer.getOffer().isCombinableWithOtherOffers() || itemOffer.getOffer().isTotalitarianOffer() == null || !itemOffer.getOffer().isTotalitarianOffer()) 
-							//&& itemOffer.getOffer().isStackable()
-					) 
-					|| !offerApplied
-				)
-			) 
-		{
-            // At this point, we should not have any official adjustment on the order
-            // for this item.
-	    	applyItemQualifiersAndTargets(itemOffer, order);
-	    	allSplitItems = order.getAllSplitItems();
-	    	for (PromotableOrderItem splitItem : allSplitItems) {
-	    		for (PromotionDiscount discount : splitItem.getPromotionDiscounts()) {
-	    			if (discount.getPromotion().equals(itemOffer.getOffer())) {
-	    				applyOrderItemAdjustment(itemOffer, splitItem);
-	    				break;
-	    			}
-	    		}
-	    	}
-		}
-		// check if not combinable offer is better than sale price; if no, remove the not combinable offer so 
-		// that another offer may be applied to the item
-		if ((!itemOffer.getOffer().isCombinableWithOtherOffers() || (itemOffer.getOffer().isTotalitarianOffer() != null && itemOffer.getOffer().isTotalitarianOffer())) && appliedItemOffersCount > beforeCount) { 
-			Money adjustmentTotal = new Money(0D);
-			Money saleTotal = new Money(0D);
-			for (PromotableOrderItem splitItem : allSplitItems) {
-				adjustmentTotal = adjustmentTotal.add(splitItem.getCurrentPrice().multiply(splitItem.getQuantity()));
-				saleTotal = saleTotal.add(splitItem.getPriceBeforeAdjustments(true).multiply(splitItem.getQuantity()));
-			}
-			if (adjustmentTotal.greaterThanOrEqual(saleTotal)) {
-		        // adjustment price is not best price, remove adjustments for this item
-				for (PromotableOrderItem splitItem : allSplitItems) {
-					if (splitItem.isHasOrderItemAdjustments()) {
-						appliedItemOffersCount--;
-					}
-				}
-				order.getSplitItems().clear();
-		    }
-		}
-		return appliedItemOffersCount;
-		*/
-    	return false;
-	}
-     
 
 	protected int applyAdjustments(PromotableOrder order, int appliedItemOffersCount, PromotableCandidateItemOffer itemOffer, int beforeCount) {
 		boolean notCombinableOfferApplied = false;
