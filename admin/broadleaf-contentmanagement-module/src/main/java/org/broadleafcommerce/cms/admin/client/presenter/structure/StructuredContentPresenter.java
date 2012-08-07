@@ -222,12 +222,13 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-            if (event.isLeftButtonDown()) {
-                refresh();
-            }
+				  if (event.isLeftButtonDown()) {
+		                extractor.getRemovedItemQualifiers().clear();
+		                changeSelection(currentStructuredContentRecord);
+		            }
         }
         });
-        ruleRefreshButtonHandlerRegistration = getDisplay().getStructuredContentRefreshButton().addClickHandler(new ClickHandler() {
+        ruleRefreshButtonHandlerRegistration = getDisplay().getRulesRefreshButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
             if (event.isLeftButtonDown()) {
                 extractor.getRemovedItemQualifiers().clear();
@@ -243,7 +244,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             }
             }
         });
-        ruleSaveButtonHandlerRegistration = getDisplay().getStructuredContentSaveButton().addClickHandler(new ClickHandler() {
+        ruleSaveButtonHandlerRegistration = getDisplay().getRulesSaveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             //save the regular entity form and the page template form
             if (event.isLeftButtonDown()) {
@@ -374,8 +375,8 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected void resetButtons() {
         getDisplay().getDynamicFormDisplay().getSaveButton().enable();
         getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-        getDisplay().getStructuredContentSaveButton().enable();
-        getDisplay().getStructuredContentRefreshButton().enable();
+        getDisplay().getRulesSaveButton().enable();
+        getDisplay().getRulesRefreshButton().enable();
     }
 
     public void setup() {

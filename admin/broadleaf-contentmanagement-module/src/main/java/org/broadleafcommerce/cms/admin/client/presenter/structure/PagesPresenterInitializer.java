@@ -17,7 +17,8 @@
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
 
-import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
+import org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter;
+import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
 import com.smartgwt.client.data.Record;
@@ -27,22 +28,24 @@ import com.smartgwt.client.data.Record;
  * @author jfischer
  *
  */
-public class StructuredContentPresenterInitializer extends PresenterInitializer<StructuredContentPresenter, StructuredContentDisplay> {
+public class PagesPresenterInitializer extends PresenterInitializer<PagesPresenter, PagesDisplay> {
 
-	public StructuredContentPresenterInitializer(StructuredContentPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
+	public PagesPresenterInitializer(PagesPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
 		this.presenter = presenter;
 		this.offerItemCriteriaDataSource = offerItemCriteriaDataSource;
 		this.orderItemDataSource = orderItemDataSource;
 	}
 	public void initSection(Record selectedRecord, boolean disabled) {
-	    initFilterBuilder(((StructuredContentDisplay)getDisplay()).getCustomerFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.CUSTOMER)));
-	    initFilterBuilder(((StructuredContentDisplay)getDisplay()).getProductFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.PRODUCT)));
-	    initFilterBuilder(((StructuredContentDisplay)getDisplay()).getRequestFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.REQUEST)));
-	    initFilterBuilder(((StructuredContentDisplay)getDisplay()).getTimeFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.TIME)));
-		initItemQualifiers(selectedRecord, disabled);
+    	
+	    initFilterBuilder(getDisplay().getCustomerFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.CUSTOMER)));
+	    initFilterBuilder(getDisplay().getProductFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.PRODUCT)));
+	    initFilterBuilder(getDisplay().getRequestFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.REQUEST)));
+	    initFilterBuilder(getDisplay().getTimeFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.TIME)));
+		//initItemQualifiers(selectedRecord, disabled);
 	}
+	@Override
 	protected void bindItemBuilderEvents(org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay display) {
-		((StructuredContentPresenter) presenter).bindItemBuilderEvents(display);
+		presenter.bindItemBuilderEvents(display);
 	};
 
 }

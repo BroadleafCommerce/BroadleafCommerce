@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.admin.client.presenter.structure;
+package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,9 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
+import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
+import org.broadleafcommerce.cms.admin.client.presenter.structure.PagesPresenterInitializer;
+import org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenterInitializer;
+import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
@@ -48,7 +51,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
  * @author jfischer
  *
  */
-public class StructuredContentPresenterExtractor {
+public class PagesPresenterExtractor {
 
     private static Map<FilterType, String> MVELKEYWORDMAP = new HashMap<FilterType, String>();
 	static {
@@ -56,19 +59,19 @@ public class StructuredContentPresenterExtractor {
 		MVELKEYWORDMAP.put(FilterType.ORDER_ITEM, "discreteOrderItem");
 		MVELKEYWORDMAP.put(FilterType.REQUEST, "request");
 		MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
-        MVELKEYWORDMAP.put(FilterType.TIME, "time");
+                MVELKEYWORDMAP.put(FilterType.TIME, "time");
 	}
 
 	private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
 	
-	protected StructuredContentPresenter presenter;
+	protected PagesPresenter presenter;
     protected List<ItemBuilderDisplay> removedItemQualifiers = new ArrayList<ItemBuilderDisplay>();
 	
-	public StructuredContentPresenterExtractor(StructuredContentPresenter presenter) {
+	public PagesPresenterExtractor(PagesPresenter presenter) {
 		this.presenter = presenter;
 	}
 
-	protected StructuredContentDisplay getDisplay() {
+	protected PagesDisplay getDisplay() {
 		return presenter.getDisplay();
 	}
 	
@@ -101,17 +104,17 @@ public class StructuredContentPresenterExtractor {
 	public void applyData(final Record selectedRecord) {
 		try {
 			final Map<String, Object> dirtyValues = new HashMap<String, Object>();
-
-            extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(FilterType.CUSTOMER));
-            extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(FilterType.PRODUCT));
-            extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.REQUEST), getDisplay().getRequestFilterBuilder(), MVELKEYWORDMAP.get(FilterType.REQUEST));
-            extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.TIME), getDisplay().getTimeFilterBuilder(), MVELKEYWORDMAP.get(FilterType.TIME));
-
+			
+                       extractData(selectedRecord, dirtyValues, PagesPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(FilterType.CUSTOMER));
+                       extractData(selectedRecord, dirtyValues, PagesPresenterInitializer.ATTRIBUTEMAP.get(FilterType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(FilterType.PRODUCT));
+                       extractData(selectedRecord, dirtyValues, PagesPresenterInitializer.ATTRIBUTEMAP.get(FilterType.REQUEST), getDisplay().getRequestFilterBuilder(), MVELKEYWORDMAP.get(FilterType.REQUEST));
+                       extractData(selectedRecord, dirtyValues, PagesPresenterInitializer.ATTRIBUTEMAP.get(FilterType.TIME), getDisplay().getTimeFilterBuilder(), MVELKEYWORDMAP.get(FilterType.TIME));
+  
 			extractQualifierData(null, true, dirtyValues);
 
 			DSRequest requestProperties = new DSRequest();
 			requestProperties.setAttribute("dirtyValues", dirtyValues);
-
+		
             for (String key : dirtyValues.keySet()) {
                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));
             }
@@ -122,33 +125,38 @@ public class StructuredContentPresenterExtractor {
                 @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
-                	 printRecord("savedRecord",response.getData()[0]); 
-                	 printRecord("Presenter->CurrenStructuredContentRecord->",presenter.currentStructuredContentRecord);
-                	 for(Record d:getDisplay().getListDisplay().getGrid().getRecords()) {
-                           	printRecord("After--", d);
-                         }
                         final String newId = response.getAttribute("newId");
-                        FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
+                        System.out.println("the following should not be null????");
+                        printRecord("savedRecord",response.getData()[0]); 
+               	        printRecord("Presenter->CurrenPageRecord->",presenter.currentPageRecord);
+               	        for(Record d:getDisplay().getListDisplay().getGrid().getRecords()) {
+                          	printRecord("After--", d);
+                        }
+                        FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
+                      
                         final DynamicForm form = legacyForm.getForm();
+
+                    
                         for (FormItem formItem : form.getFields()) {
                         	 if (formItem instanceof HTMLTextItem) { 
                         		 form.setValue(formItem.getFieldName(), ((HTMLTextItem) formItem).getHTMLValue());
                         	 }
                         }
-                        StructuredContentTypeFormListDataSource dataSource = (StructuredContentTypeFormListDataSource) form.getDataSource();
+                 
+                        PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
                         dataSource.setCustomCriteria(new String[]{"constructForm", newId});
                         form.saveData(new DSCallback() {
                             @Override
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
-                                    try {                           
-                                        extractQualifierData(newId, false, dirtyValues);
-                                        if (!presenter.currentStructuredContentId.equals(newId)) {
-                                            Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentStructuredContentId);
+                                    try {
+                                       //extractQualifierData(newId, false, dirtyValues);
+                                        if (!presenter.currentPageId.equals(newId)) {
+                                            Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentPageId);
                                             if (myRecord != null) {
                                                 myRecord.setAttribute("id", newId);
-                                                presenter.currentStructuredContentRecord = myRecord;
-                                                presenter.currentStructuredContentId = newId;
+                                                presenter.currentPageRecord = myRecord;
+                                                presenter.currentPageId = newId;
                                             }  else {
                                                 String primaryKey = getDisplay().getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
                                                 getDisplay().getListDisplay().getGrid().getDataSource().
@@ -162,12 +170,12 @@ public class StructuredContentPresenterExtractor {
                                                     });
                                                 SC.say(BLCMain.getMessageManager().getString("criteriaDoesNotMatch"));
                                             }
+                                        
                                         }
-                                     
+                                      
+                                        getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(presenter.currentPageRecord));
                                     
-                                        getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(presenter.currentStructuredContentRecord));
-                                
-                                    } catch (IncompatibleMVELTranslationException e) {
+                                    } catch (Exception e) {
                                         SC.warn(e.getMessage());
                                         java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
                                     }
@@ -182,12 +190,14 @@ public class StructuredContentPresenterExtractor {
 			java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
 		}
 	}
+
     public static void printRecord(String string, Record selectedRecord) {
     	String id=selectedRecord.getAttribute("id");
     	String X=selectedRecord.getAttribute(StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER));
     	System.out.println(string+selectedRecord+" "+id+"->"+X);
 	}
-    protected void resetButtonState() {
+
+	protected void resetButtonState() {
         getDisplay().getDynamicFormDisplay().getSaveButton().disable();
         getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
         getDisplay().getRulesSaveButton().disable();
@@ -195,6 +205,7 @@ public class StructuredContentPresenterExtractor {
     }
 	
 	protected void extractQualifierData(final String id, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
+
 		for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
             if (builder.getDirty()) {
                 String temper = builder.getItemQuantity().getValue().toString();
@@ -220,8 +231,8 @@ public class StructuredContentPresenterExtractor {
                         temp.setAttribute("id", "");
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").setLinkedValue(id);
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").addData(temp, new DSCallback() {
-			            @Override
-			            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            @Override
+			    public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 builder.setRecord(temp);
                                 resetButtonState();

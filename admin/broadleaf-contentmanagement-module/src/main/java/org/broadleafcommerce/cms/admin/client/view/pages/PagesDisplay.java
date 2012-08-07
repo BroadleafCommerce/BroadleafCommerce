@@ -16,26 +16,72 @@
 
 package org.broadleafcommerce.cms.admin.client.view.pages;
 
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import org.broadleafcommerce.cms.admin.client.view.structure.RulesDisplayIf;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
-/**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 8/22/11
- * Time: 3:51 PM
- * To change this template use File | Settings | File Templates.
- */
-public interface PagesDisplay extends DynamicEditDisplay {
+import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.form.FilterBuilder;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.layout.VLayout;
 
+/**
+ * Created by IntelliJ IDEA. User: jfischer Date: 8/22/11 Time: 3:51 PM To
+ * change this template use File | Settings | File Templates.
+ */
+public interface PagesDisplay extends DynamicEditDisplay, RulesDisplayIf {
+
+    public FilterBuilder getCustomerFilterBuilder();
+
+    public FilterBuilder getProductFilterBuilder();
+
+    public FilterBuilder getTimeFilterBuilder();
+
+    public FilterBuilder getRequestFilterBuilder();
+
+    @Override
     public DynamicEntityListDisplay getListDisplay();
 
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay();
 
     public ComboBoxItem getCurrentLocale();
 
     public void setCurrentLocale(ComboBoxItem currentLocale);
 
+    public void enableRules();
+
+    public void disableRules();
+
+    public VLayout getNewItemBuilderLayout();
+
+    public void setNewItemBuilderLayout(VLayout newItemBuilderLayout);
+
+    public Button getAddItemButton();
+
+    public void setAddItemButton(Button addItemButton);
+
+    public void setItemBuilderContainerLayout(VLayout itemBuilderContainerLayout);
+
+    public Label getCustomerLabel();
+
+    public void setCustomerLabel(Label customerLabel);
+
+    public Label getTimeLabel();
+
+    public void setTimeLabel(Label timeLabel);
+
+    public Label getRequestLabel();
+
+    public void setRequestLabel(Label requestLabel);
+
+    public Label getProductLabel();
+
+    public void setProductLabel(Label productLabel);
+
+    public Label getOrderItemLabel();
+
+    public void setOrderItemLabel(Label orderItemLabel);
 }

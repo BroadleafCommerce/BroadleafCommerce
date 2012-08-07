@@ -16,9 +16,7 @@
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
-import java.util.List;
 
-import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.FilterBuilder;
@@ -26,7 +24,6 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,7 +32,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
  * Time: 3:51 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface StructuredContentDisplay extends DynamicEditDisplay {
+public interface StructuredContentDisplay extends DynamicEditDisplay, RulesDisplayIf {
 
     public FilterBuilder getCustomerFilterBuilder();
 
@@ -57,17 +54,13 @@ public interface StructuredContentDisplay extends DynamicEditDisplay {
 
     public void setStructuredContentToolBar(ToolStrip structuredContentToolBar);
 
-    public ToolStripButton getStructuredContentSaveButton();
+    public ToolStripButton getRulesSaveButton();
 
     public void setStructuredContentSaveButton(ToolStripButton structuredContentSaveButton);
 
-    public ToolStripButton getStructuredContentRefreshButton();
+    public ToolStripButton getRulesRefreshButton();
 
     public void setStructuredContentRefreshButton(ToolStripButton structuredContentRefreshButton);
-
-    public List<ItemBuilderDisplay> getItemBuilderViews();
-
-    public void setItemBuilderViews(List<ItemBuilderDisplay> itemBuilderViews);
 
     public VLayout getNewItemBuilderLayout();
 
@@ -77,15 +70,7 @@ public interface StructuredContentDisplay extends DynamicEditDisplay {
 
     public void setAddItemButton(Button addItemButton);
 
-    public VLayout getItemBuilderContainerLayout();
-
     public void setItemBuilderContainerLayout(VLayout itemBuilderContainerLayout);
-
-    public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource);
-
-	public void removeItemBuilder(ItemBuilderDisplay itemBuilder);
-
-	public void removeAllItemBuilders();
 
     public Label getCustomerLabel();
 

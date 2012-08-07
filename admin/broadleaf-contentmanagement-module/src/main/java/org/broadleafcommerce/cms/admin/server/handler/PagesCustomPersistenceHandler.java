@@ -16,17 +16,26 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageImpl;
+import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.cms.page.service.type.PageRuleType;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -52,14 +61,12 @@ import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.hibernate.Criteria;
+import org.hibernate.tool.hbm2x.StringUtils;
 
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 
 /**
  * @author Jeff Fischer
@@ -68,6 +75,9 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     private static final Log LOG = LogFactory.getLog(PagesCustomPersistenceHandler.class);
 
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
+ 
     @Resource(name="blPageService")
 	protected PageService pageService;
 
@@ -119,6 +129,12 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
+            addRule(entity, adminInstance, "customerRule", PageRuleType.CUSTOMER);
+			addRule(entity, adminInstance, "productRule", PageRuleType.PRODUCT);
+			addRule(entity, adminInstance, "requestRule", PageRuleType.REQUEST);
+            addRule(entity, adminInstance, "timeRule", PageRuleType.TIME);
+			
+			
             adminInstance = pageService.addPage(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
@@ -158,7 +174,6 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 }
                 cto = ctoCopy;
             }
-
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, Page.class.getName(), originalProps);
@@ -191,6 +206,10 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 }
             }
 
+            for (int j=0;j<pageEntities.length;j++) {
+                addRulesToEntity(pages.get(j), pageEntities[j]);
+            }
+
             DynamicResultSet response = new DynamicResultSet(pageEntities, totalRecords.intValue());
 
             return response;
@@ -200,6 +219,33 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         }
     }
 
+    protected void addRulesToEntity(Page structuredContent, Entity structuredContentEntity) {
+        Entity entity = structuredContentEntity;
+        Page content = structuredContent;
+        if (content.getPageMatchRules() != null) {
+            for (String key : content.getPageMatchRules().keySet()) {
+        	PageRuleType type = PageRuleType.getInstance(key);
+                Property prop = null;
+                if (PageRuleType.CUSTOMER.equals(type)) {
+                    prop = new Property();
+                    prop.setName("customerRule");
+                } else if (PageRuleType.PRODUCT.equals(type)) {
+                    prop = new Property();
+                    prop.setName("productRule");
+                } else if (PageRuleType.REQUEST.equals(type)) {
+                    prop = new Property();
+                    prop.setName("requestRule");
+                } else if (PageRuleType.TIME.equals(type)) {
+                    prop = new Property();
+                    prop.setName("timeRule");
+                }
+                if (prop != null) {
+                    prop.setValue(content.getPageMatchRules().get(key).getMatchRule());
+                    entity.addProperty(prop);
+                }
+            }
+        }
+    }
     protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
 		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
@@ -285,8 +331,36 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         iconAttributes.setRequiredOverride(true);
 
         mergedProperties.put("locked", iconMetadata);
+        
+
+        mergedProperties.put("timeRule", createHiddenField("timeRule"));
+        mergedProperties.put("requestRule", createHiddenField("requestRule"));
+        mergedProperties.put("customerRule", createHiddenField("customerRule"));
+        mergedProperties.put("productRule", createHiddenField("productRule"));
     }
 
+       
+       protected FieldMetadata createHiddenField(String name) {
+           FieldMetadata fieldMetadata = new FieldMetadata();
+           fieldMetadata.setFieldType(SupportedFieldType.HIDDEN);
+           fieldMetadata.setMutable(true);
+           fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
+           fieldMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
+           fieldMetadata.setCollection(false);
+           fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+           FieldPresentationAttributes attributes = new FieldPresentationAttributes();
+           fieldMetadata.setPresentationAttributes(attributes);
+           attributes.setName(name);
+           attributes.setFriendlyName(name);
+           attributes.setGroup("StructuredContentCustomPersistenceHandler_Rules");
+           attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+           attributes.setProminent(false);
+           attributes.setBroadleafEnumeration("");
+           attributes.setReadOnly(false);
+           attributes.setVisibility(VisibilityEnum.HIDDEN_ALL);
+           return fieldMetadata;
+       }
+       
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
 		try {
@@ -318,10 +392,15 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+                        Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-
-            adminInstance = pageService.updatePage(adminInstance, getSandBox());
+  
+			updateRule(entity, adminInstance, "customerRule", PageRuleType.CUSTOMER);
+			updateRule(entity, adminInstance, "productRule", PageRuleType.PRODUCT);
+			updateRule(entity, adminInstance, "requestRule", PageRuleType.REQUEST);
+                        updateRule(entity, adminInstance, "timeRule", PageRuleType.TIME);
+ 
+                        adminInstance = pageService.updatePage(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -354,4 +433,33 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
     }
+
+    protected void addRule(Entity entity, Page structuredContentInstance, String propertyName, PageRuleType type) {
+		Property ruleProperty = entity.findProperty(propertyName);
+		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            ruleProperty.setValue(ruleProperty.getRawValue());
+            PageRule rule = (PageRule) entityConfiguration.createEntityInstance(PageRule.class.getName());
+			rule.setMatchRule(ruleProperty.getValue());
+			structuredContentInstance.getPageMatchRules().put(type.getType(), rule);
+		}
+	}
+
+	protected void updateRule(Entity entity, Page structuredContentInstance, String propertyName, PageRuleType type) {
+		Property ruleProperty = entity.findProperty(propertyName);
+		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            ruleProperty.setValue(ruleProperty.getRawValue());
+            PageRule rule = structuredContentInstance.getPageMatchRules().get(type.getType());
+			if (rule == null) {
+				rule = (PageRule) entityConfiguration.createEntityInstance(PageRule.class.getName());
+	     }
+			rule.setMatchRule(ruleProperty.getValue());
+			structuredContentInstance.getPageMatchRules().put(type.getType(), rule);
+		} else {
+			structuredContentInstance.getPageMatchRules().remove(type.getType());
+		}
+	}
 }

@@ -323,7 +323,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         this.structuredContentToolBar = structuredContentToolBar;
     }
 
-    public ToolStripButton getStructuredContentSaveButton() {
+    public ToolStripButton getRulesSaveButton() {
         return structuredContentSaveButton;
     }
 
@@ -331,7 +331,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         this.structuredContentSaveButton = structuredContentSaveButton;
     }
 
-    public ToolStripButton getStructuredContentRefreshButton() {
+    public ToolStripButton getRulesRefreshButton() {
         return structuredContentRefreshButton;
     }
 
