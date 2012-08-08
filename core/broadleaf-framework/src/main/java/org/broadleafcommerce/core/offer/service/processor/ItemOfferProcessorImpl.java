@@ -498,8 +498,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 	}
     
     /**
-     * In order to ensure that customers get the highest discount, sort the qualifiers in ascending order by price. This will
-     * ensure that more expensive items can be used for promotion targets.
+     * Used in {@link #applyItemQualifiersAndTargets(PromotableCandidateItemOffer, PromotableOrder)} allow for customized
+     * sorting for which qualifier items should be attempted to be used first for a promotion. Default behavior
+     * is to sort descending, so higher-value items are attempted to be qualified first.
      * 
      * @param applyToSalePrice - whether or not the Comparator should use the sale price for comparison
      * @return
@@ -511,17 +512,26 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 Money price = o1.getPriceBeforeAdjustments(applyToSalePrice);
                 Money price2 = o2.getPriceBeforeAdjustments(applyToSalePrice);
                 
-                // lowest amount first
-                return price.compareTo(price2);
+                // highest amount first
+                return price2.compareTo(price);
             }
         };
     }
 
     /**
-     * To ensure customers get the highest value promotion, sort the target items in descending order by price. This
-     * will ensure that expensive items are used as promotion targets before cheaper items are.
+     * <p>
+     * Used in {@link #applyItemQualifiersAndTargets(PromotableCandidateItemOffer, PromotableOrder)} allow for customized
+     * sorting for which target items the promotion should be attempted to be applied to first. Default behavior is to
+     * sort descending, so higher-value items get the promotion over lesser-valued items.
+     * </p>
+     * <p>
+     * Note: By default, both the {@link #getQualifierItemComparator(boolean)} and this target comparator are sorted
+     * in descending order.  This means that higher-valued items can be paired with higher-valued items and lower-valued
+     * items can be paired with lower-valued items. This also ensures that you will <b>not</b> have the scenario where 2 lower-valued
+     * items can be used to qualify a higher-valued target.
+     * </p>
      * 
-     * @param applyToSalePrice
+     * @param applyToSalePrice - whether or not the Comparator should use the sale price for comparison
      * @return
      */
     protected Comparator<PromotableOrderItem> getTargetItemComparator(final boolean applyToSalePrice) {
