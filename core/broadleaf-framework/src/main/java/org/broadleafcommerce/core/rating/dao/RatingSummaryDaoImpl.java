@@ -39,7 +39,7 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
 	public void deleteRatingSummary(final RatingSummary summary) {
