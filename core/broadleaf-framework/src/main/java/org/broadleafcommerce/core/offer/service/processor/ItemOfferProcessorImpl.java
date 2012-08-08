@@ -24,7 +24,6 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.ItemOfferComparator;
-import org.broadleafcommerce.core.offer.service.discount.OrderItemPriceComparator;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -38,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -52,7 +52,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
 	 */
-	public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
+	@Override
+    public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
 		boolean isNewFormat = (offer.getQualifyingItemCriteria() != null && offer.getQualifyingItemCriteria().size() > 0) || offer.getTargetItemCriteria() != null;
 		boolean itemLevelQualification = false;
 		boolean offerCreated = false;
@@ -101,7 +102,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 					candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null);
 				}
 				for (PromotableOrderItem candidateItem : candidates.getCandidateTargets()) {
-					PromotableCandidateItemOffer itemOffer = (PromotableCandidateItemOffer) candidateOffer.clone();
+					PromotableCandidateItemOffer itemOffer = candidateOffer.clone();
 					itemOffer.setOrderItem(candidateItem);
 					candidateItem.addCandidateItemOffer(itemOffer);
 				}
@@ -135,6 +136,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#applyAllItemOffers(java.util.List, java.util.List)
      */
+    @Override
     public boolean applyAllItemOffers(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
         // Iterate through the collection of CandidateItemOffers. Remember that each one is an offer that may apply to a
         // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
@@ -393,7 +395,6 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     
     protected void applyItemQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
 		Offer promotion = itemOffer.getOffer();
-		OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(promotion.getApplyDiscountToSalePrice());
 		boolean matchFound = false;
 		do {
 			matchFound = false;
@@ -407,8 +408,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 				for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
 					List<PromotableOrderItem> chargeableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
 					
-					// Sort the items so that the highest priced ones are at the top
-					Collections.sort(chargeableItems, priceComparator);
+					Collections.sort(chargeableItems, getQualifierItemComparator(promotion.getApplyDiscountToSalePrice()));
+
 					// Calculate the number of qualifiers needed that will not receive the promotion.  
 					// These will be reserved first before the target is assigned.
 					int qualifierQtyNeeded = itemCriteria.getQuantity();
@@ -436,7 +437,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 				}
 				checkTargets :{
 					List<PromotableOrderItem> chargeableItems = itemOffer.getCandidateTargets();
-					Collections.sort(chargeableItems, priceComparator);
+					Collections.sort(chargeableItems, getTargetItemComparator(promotion.getApplyDiscountToSalePrice()));
 					for (PromotableOrderItem chargeableItem : chargeableItems) {
 						// Mark Targets
 						if (receiveQtyNeeded > 0) {
@@ -495,6 +496,46 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 			} 
 		}
 	}
+    
+    /**
+     * In order to ensure that customers get the highest discount, sort the qualifiers in ascending order by price. This will
+     * ensure that more expensive items can be used for promotion targets.
+     * 
+     * @param applyToSalePrice - whether or not the Comparator should use the sale price for comparison
+     * @return
+     */
+    protected Comparator<PromotableOrderItem> getQualifierItemComparator(final boolean applyToSalePrice) {
+        return new Comparator<PromotableOrderItem>() {
+            @Override
+            public int compare(PromotableOrderItem o1, PromotableOrderItem o2) {
+                Money price = o1.getPriceBeforeAdjustments(applyToSalePrice);
+                Money price2 = o2.getPriceBeforeAdjustments(applyToSalePrice);
+                
+                // lowest amount first
+                return price.compareTo(price2);
+            }
+        };
+    }
+
+    /**
+     * To ensure customers get the highest value promotion, sort the target items in descending order by price. This
+     * will ensure that expensive items are used as promotion targets before cheaper items are.
+     * 
+     * @param applyToSalePrice
+     * @return
+     */
+    protected Comparator<PromotableOrderItem> getTargetItemComparator(final boolean applyToSalePrice) {
+        return new Comparator<PromotableOrderItem>() {
+            @Override
+            public int compare(PromotableOrderItem o1, PromotableOrderItem o2) {
+                Money price = o1.getPriceBeforeAdjustments(applyToSalePrice);
+                Money price2 = o2.getPriceBeforeAdjustments(applyToSalePrice);
+                
+                // highest amount first
+                return price2.compareTo(price);
+            }
+        };
+    }
 
     /**
      * Private method used by applyAllItemOffers to create an OrderItemAdjustment from a CandidateItemOffer
@@ -510,6 +551,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         orderItem.addOrderItemAdjustment(promotableOrderItemAdjustment); //This is how we can tell if an item has been discounted
     }
     
+    @Override
     public void filterOffers(PromotableOrder order, List<Offer> filteredOffers, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, List<PromotableCandidateItemOffer> qualifiedItemOffers) {
 		// set order subtotal price to total item price without adjustments
     	order.setSubTotal(order.calculateOrderItemsFinalPrice(true));
@@ -522,6 +564,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		}
 	}
     
+    @Override
     @SuppressWarnings("unchecked")
 	public void applyAndCompareOrderAndItemOffers(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, List<PromotableCandidateItemOffer> qualifiedItemOffers) {
 		if (!qualifiedItemOffers.isEmpty()) {
