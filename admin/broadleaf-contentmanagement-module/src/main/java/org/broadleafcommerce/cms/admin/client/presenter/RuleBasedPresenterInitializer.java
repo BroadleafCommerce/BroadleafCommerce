@@ -1,17 +1,4 @@
-package org.broadleafcommerce.cms.admin.client.presenter.structure;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.cms.admin.client.view.structure.RulesDisplayIf;
-import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.translation.MVELToAdvancedCriteriaTranslator;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+package org.broadleafcommerce.cms.admin.client.presenter;
 
 import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.Criteria;
@@ -22,8 +9,20 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.FilterBuilder;
+import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
+import org.broadleafcommerce.cms.admin.client.view.structure.RulesDisplayIf;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.translation.MVELToAdvancedCriteriaTranslator;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
-public abstract class PresenterInitializer<U extends DynamicEntityPresenter,V extends RulesDisplayIf> {
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class RuleBasedPresenterInitializer<U extends DynamicEntityPresenter,V extends RulesDisplayIf> {
+
 	public static Map<FilterType, String> ATTRIBUTEMAP = new HashMap<FilterType, String>();
 
     static {
@@ -39,15 +38,13 @@ public abstract class PresenterInitializer<U extends DynamicEntityPresenter,V ex
 	protected DynamicEntityDataSource offerItemCriteriaDataSource;
 	protected DynamicEntityDataSource orderItemDataSource;
 
-	public PresenterInitializer() {
+	public RuleBasedPresenterInitializer() {
 		super();
 	}
 
 	protected V getDisplay() {
 		return (V) presenter.getDisplay();
 	}
-
-
 
 	public void initFilterBuilder(FilterBuilder filterBuilder, String rule) {
 		filterBuilder.clearCriteria();
@@ -102,6 +99,7 @@ public abstract class PresenterInitializer<U extends DynamicEntityPresenter,V ex
 			
 		});
 	}
+
 	protected abstract void bindItemBuilderEvents(ItemBuilderDisplay display);
 	
 }

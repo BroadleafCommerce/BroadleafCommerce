@@ -26,7 +26,6 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDa
 import org.broadleafcommerce.cms.admin.client.datasource.structure.RequestDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.PagesPresenterInitializer;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -83,7 +82,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     protected String currentPageId;
     protected Integer currentPagePos;
 	protected EntitySearchDialog pageTemplateDialogView;
-    protected PagesPresenterInitializer initializer;
+    protected PagesRuleBasedPresenterInitializer initializer;
     protected PagesPresenterExtractor extractor;
     protected AdditionalFilterEventManager additionalFilterEventManager = new AdditionalFilterEventManager();
 
@@ -141,10 +140,6 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
             loadTemplateForm(selectedRecord,cb);
             }
         });
-        
-        
-        
-
 	}
 
     protected void loadTemplateForm(final Record selectedRecord, final FilterRestartCallback cb) {
@@ -399,33 +394,32 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 	@Override
 	public void setup() {
         super.setup();
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
-	    public void onSetupSuccess(DataSource result) {
+	        public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("id");
             }
         }));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scProductDS", new ProductListDataSourceFactory(), new NullAsyncCallbackAdapter()));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("timeDTODS", new TimeDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("requestDTODS", new RequestDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scOrderItemDS", new OrderItemListDataSourceFactory(), new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageProductDS", new ProductListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTimeDTODS", new TimeDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageRequestDTODS", new RequestDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageOrderItemDS", new OrderItemListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
 	    public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("product.id", "category.id", "sku.id");
-             initializer = new PagesPresenterInitializer(PagesPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+                initializer = new PagesRuleBasedPresenterInitializer(PagesPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
                 extractor = new PagesPresenterExtractor(PagesPresenter.this);
             }}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageDS", new PageDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
-	    public void onSetupSuccess(DataSource top) {
+	        public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top,
-						 
-		                getPresenterSequenceSetupManager().getDataSource("scCustomerDS"),
-		                getPresenterSequenceSetupManager().getDataSource("timeDTODS"),
-		                getPresenterSequenceSetupManager().getDataSource("requestDTODS"),
-		                getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"),
-		                getPresenterSequenceSetupManager().getDataSource("scProductDS"));
-				((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
+                    getPresenterSequenceSetupManager().getDataSource("pageCustomerDS"),
+                    getPresenterSequenceSetupManager().getDataSource("pageTimeDTODS"),
+                    getPresenterSequenceSetupManager().getDataSource("pageRequestDTODS"),
+                    getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"),
+                    getPresenterSequenceSetupManager().getDataSource("pageProductDS"));
+				    ((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
 			}
         }));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearchDS", new PageTemplateSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
@@ -440,19 +434,19 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 				pageTemplateDialogView = pageTemplateSearchView;
 				getPresenterSequenceSetupManager().getDataSource("pageDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                        "pageTemplate",
-                        pageTemplateSearchView,
-                        "Page Template Search",
-                        getDisplay().getDynamicFormDisplay(),
-                        new FormItemCallback() {
-                            @Override
-                            public void execute(FormItem formItem) {
-                                if (currentPageRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
-                                    destroyTemplateForm();
-                                    loadTemplateForm(currentPageRecord,null);
-                                }
+                    "pageTemplate",
+                    pageTemplateSearchView,
+                    "Page Template Search",
+                    getDisplay().getDynamicFormDisplay(),
+                    new FormItemCallback() {
+                        @Override
+                        public void execute(FormItem formItem) {
+                            if (currentPageRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
+                                destroyTemplateForm();
+                                loadTemplateForm(currentPageRecord,null);
                             }
                         }
+                    }
                 );
 			}
 		}));
@@ -469,10 +463,11 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
         getDisplay().getRulesSaveButton().enable();
         getDisplay().getRulesRefreshButton().enable();
     }
+
     public void bindItemBuilderEvents(final ItemBuilderDisplay display) {
         display.getRemoveButton().addClickHandler(new ClickHandler() {
             @Override
-	    public void onClick(ClickEvent event) {
+	        public void onClick(ClickEvent event) {
                 extractor.getRemovedItemQualifiers().add(display);
                 additionalFilterEventManager.removeFilterBuilderAdditionalEventHandler(display.getItemFilterBuilder());
                 resetButtons();
@@ -481,21 +476,21 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
         });
         display.getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
             @Override
-	    public void onItemChanged(ItemChangedEvent event) {
+	        public void onItemChanged(ItemChangedEvent event) {
                 resetButtons();
                 display.setDirty(true);
             }
         });
         display.getItemForm().addItemChangedHandler(new ItemChangedHandler() {
             @Override
-	    public void onItemChanged(ItemChangedEvent event) {
+	        public void onItemChanged(ItemChangedEvent event) {
                 resetButtons();
                 display.setDirty(true);
             }
         });
         display.getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             @Override
-	    public void onFilterChanged(FilterChangedEvent event) {
+	        public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
                 display.setDirty(true);
             }

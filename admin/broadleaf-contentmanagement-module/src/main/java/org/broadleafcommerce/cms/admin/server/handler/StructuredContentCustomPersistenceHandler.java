@@ -420,12 +420,12 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-                        updateRule(entity, adminInstance, "customerRule", StructuredContentRuleType.CUSTOMER);
+            updateRule(entity, adminInstance, "customerRule", StructuredContentRuleType.CUSTOMER);
 			updateRule(entity, adminInstance, "productRule", StructuredContentRuleType.PRODUCT);
 			updateRule(entity, adminInstance, "requestRule", StructuredContentRuleType.REQUEST);
-                        updateRule(entity, adminInstance, "timeRule", StructuredContentRuleType.TIME);
+            updateRule(entity, adminInstance, "timeRule", StructuredContentRuleType.TIME);
 
-                        adminInstance = structuredContentService.updateStructuredContent(adminInstance, getSandBox());
+            adminInstance = structuredContentService.updateStructuredContent(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 

@@ -146,6 +146,8 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 adminEntity.addProperty(property);
             }
 
+            addRulesToEntity(adminInstance, adminEntity);
+
 			return adminEntity;
 		} catch (Exception e) {
             LOG.error("Unable to add entity for " + entity.getType()[0], e);
@@ -392,15 +394,15 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-                        Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
   
 			updateRule(entity, adminInstance, "customerRule", PageRuleType.CUSTOMER);
 			updateRule(entity, adminInstance, "productRule", PageRuleType.PRODUCT);
 			updateRule(entity, adminInstance, "requestRule", PageRuleType.REQUEST);
-                        updateRule(entity, adminInstance, "timeRule", PageRuleType.TIME);
+            updateRule(entity, adminInstance, "timeRule", PageRuleType.TIME);
  
-                        adminInstance = pageService.updatePage(adminInstance, getSandBox());
+            adminInstance = pageService.updatePage(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -410,6 +412,8 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 property.setValue(adminEntity.findProperty("pageTemplate").getValue());
                 adminEntity.addProperty(property);
             }
+
+            addRulesToEntity(adminInstance, adminEntity);
 
 			return adminEntity;
 		} catch (Exception e) {

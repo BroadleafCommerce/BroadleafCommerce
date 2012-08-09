@@ -82,7 +82,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected Record currentStructuredContentRecord;
     protected String currentStructuredContentId;
     protected Integer currentStructuredContentPos;
-    protected StructuredContentPresenterInitializer initializer;
+    protected StructuredContentRuleBasedPresenterInitializer initializer;
     protected StructuredContentPresenterExtractor extractor;
     protected AdditionalFilterEventManager additionalFilterEventManager = new AdditionalFilterEventManager();
 
@@ -431,7 +431,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 		}));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scItemCriteriaDS", new StructuredContentItemCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource result) {
-            initializer = new StructuredContentPresenterInitializer(StructuredContentPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+            initializer = new StructuredContentRuleBasedPresenterInitializer(StructuredContentPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
             extractor = new StructuredContentPresenterExtractor(StructuredContentPresenter.this);
             }
         }));

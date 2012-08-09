@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.admin.client.presenter.structure;
+package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-
-import org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter;
-import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
 import com.smartgwt.client.data.Record;
+import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
+import org.broadleafcommerce.cms.admin.client.presenter.RuleBasedPresenterInitializer;
+import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class PagesPresenterInitializer extends PresenterInitializer<PagesPresenter, PagesDisplay> {
+public class PagesRuleBasedPresenterInitializer extends RuleBasedPresenterInitializer<PagesPresenter, PagesDisplay> {
 
-	public PagesPresenterInitializer(PagesPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
+	public PagesRuleBasedPresenterInitializer(PagesPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
 		this.presenter = presenter;
 		this.offerItemCriteriaDataSource = offerItemCriteriaDataSource;
 		this.orderItemDataSource = orderItemDataSource;

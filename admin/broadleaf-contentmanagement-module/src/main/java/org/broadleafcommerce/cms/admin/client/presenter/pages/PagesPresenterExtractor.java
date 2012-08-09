@@ -16,25 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.PagesPresenterInitializer;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenterInitializer;
-import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
-
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -45,139 +26,155 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
+import org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentRuleBasedPresenterInitializer;
+import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class PagesPresenterExtractor {
 
     private static Map<FilterType, String> MVELKEYWORDMAP = new HashMap<FilterType, String>();
-	static {
-		MVELKEYWORDMAP.put(FilterType.PRODUCT, "product");
-		MVELKEYWORDMAP.put(FilterType.ORDER_ITEM, "discreteOrderItem");
-		MVELKEYWORDMAP.put(FilterType.REQUEST, "request");
-		MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
-                MVELKEYWORDMAP.put(FilterType.TIME, "time");
-	}
 
-	private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
-	
-	protected PagesPresenter presenter;
+    static {
+        MVELKEYWORDMAP.put(FilterType.PRODUCT, "product");
+        MVELKEYWORDMAP.put(FilterType.ORDER_ITEM, "discreteOrderItem");
+        MVELKEYWORDMAP.put(FilterType.REQUEST, "request");
+        MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
+        MVELKEYWORDMAP.put(FilterType.TIME, "time");
+    }
+
+    private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
+
+    protected PagesPresenter presenter;
     protected List<ItemBuilderDisplay> removedItemQualifiers = new ArrayList<ItemBuilderDisplay>();
-	
-	public PagesPresenterExtractor(PagesPresenter presenter) {
-		this.presenter = presenter;
-	}
 
-	protected PagesDisplay getDisplay() {
-		return presenter.getDisplay();
-	}
-	
-	public void removeItemQualifer(final ItemBuilderDisplay builder) {
-		if (builder.getRecord() != null) {
-			presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
-				@Override
-				public void execute(DSResponse response, Object rawData, DSRequest request) {
-					getDisplay().removeItemBuilder(builder);
-				}
-			});
-		} else {
-			getDisplay().removeItemBuilder(builder);
-		}
-	}
+    public PagesPresenterExtractor(PagesPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    protected PagesDisplay getDisplay() {
+        return presenter.getDisplay();
+    }
+
+    public void removeItemQualifer(final ItemBuilderDisplay builder) {
+        if (builder.getRecord() != null) {
+            presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
+                @Override
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    getDisplay().removeItemBuilder(builder);
+                }
+            });
+        } else {
+            getDisplay().removeItemBuilder(builder);
+        }
+    }
 
     protected void extractData(final Record selectedRecord, Map<String, Object> dirtyValues, String property, FilterBuilder filterBuilder, String keyWord) throws IncompatibleMVELTranslationException {
-		setData(selectedRecord, property, TRANSLATOR.createMVEL(keyWord, filterBuilder.getCriteria(), filterBuilder.getDataSource()), dirtyValues);
-	}
-	
-	protected void setData(Record record, String fieldName, Object value, Map<String, Object> dirtyValues) {
-        String attr = record.getAttribute(fieldName);
-        String val = value==null?null:String.valueOf(value);
-		if (attr != val && (attr == null || val == null || !attr.equals(val))) {
-			record.setAttribute(fieldName, value);
-			dirtyValues.put(fieldName, value);
-		}
-	}
-	
-	public void applyData(final Record selectedRecord) {
-		try {
-			final Map<String, Object> dirtyValues = new HashMap<String, Object>();
-			
-                       extractData(selectedRecord, dirtyValues, PagesPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(FilterType.CUSTOMER));
-                       extractData(selectedRecord, dirtyValues, PagesPresenterInitializer.ATTRIBUTEMAP.get(FilterType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(FilterType.PRODUCT));
-                       extractData(selectedRecord, dirtyValues, PagesPresenterInitializer.ATTRIBUTEMAP.get(FilterType.REQUEST), getDisplay().getRequestFilterBuilder(), MVELKEYWORDMAP.get(FilterType.REQUEST));
-                       extractData(selectedRecord, dirtyValues, PagesPresenterInitializer.ATTRIBUTEMAP.get(FilterType.TIME), getDisplay().getTimeFilterBuilder(), MVELKEYWORDMAP.get(FilterType.TIME));
-  
-			extractQualifierData(null, true, dirtyValues);
+        setData(selectedRecord, property, TRANSLATOR.createMVEL(keyWord, filterBuilder.getCriteria(), filterBuilder.getDataSource()), dirtyValues);
+    }
 
-			DSRequest requestProperties = new DSRequest();
-			requestProperties.setAttribute("dirtyValues", dirtyValues);
-		
+    protected void setData(Record record, String fieldName, Object value, Map<String, Object> dirtyValues) {
+        String attr = record.getAttribute(fieldName);
+        String val = value == null ? null : String.valueOf(value);
+        if (attr != val && (attr == null || val == null || !attr.equals(val))) {
+            record.setAttribute(fieldName, value);
+            dirtyValues.put(fieldName, value);
+        }
+    }
+
+    public void applyData(final Record selectedRecord) {
+        try {
+            final Map<String, Object> dirtyValues = new HashMap<String, Object>();
+
+            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(FilterType.CUSTOMER));
+            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(FilterType.PRODUCT));
+            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.REQUEST), getDisplay().getRequestFilterBuilder(), MVELKEYWORDMAP.get(FilterType.REQUEST));
+            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.TIME), getDisplay().getTimeFilterBuilder(), MVELKEYWORDMAP.get(FilterType.TIME));
+
+            extractQualifierData(null, true, dirtyValues);
+
+            DSRequest requestProperties = new DSRequest();
+            requestProperties.setAttribute("dirtyValues", dirtyValues);
+
             for (String key : dirtyValues.keySet()) {
-               getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));
             }
-            for(Record d:getDisplay().getListDisplay().getGrid().getRecords()) {
-            	printRecord("Before--", d);
+            for (Record d : getDisplay().getListDisplay().getGrid().getRecords()) {
+                printRecord("Before--", d);
             }
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                 @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
-                    if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
+                    if (response.getStatus() != RPCResponse.STATUS_FAILURE) {
                         final String newId = response.getAttribute("newId");
                         System.out.println("the following should not be null????");
-                        printRecord("savedRecord",response.getData()[0]); 
-               	        printRecord("Presenter->CurrenPageRecord->",presenter.currentPageRecord);
-               	        for(Record d:getDisplay().getListDisplay().getGrid().getRecords()) {
-                          	printRecord("After--", d);
+                        printRecord("savedRecord", response.getData()[0]);
+                        printRecord("Presenter->CurrenPageRecord->", presenter.currentPageRecord);
+                        for (Record d : getDisplay().getListDisplay().getGrid().getRecords()) {
+                            printRecord("After--", d);
                         }
                         FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
-                      
+
                         final DynamicForm form = legacyForm.getForm();
 
-                    
+
                         for (FormItem formItem : form.getFields()) {
-                        	 if (formItem instanceof HTMLTextItem) { 
-                        		 form.setValue(formItem.getFieldName(), ((HTMLTextItem) formItem).getHTMLValue());
-                        	 }
+                            if (formItem instanceof HTMLTextItem) {
+                                form.setValue(formItem.getFieldName(), ((HTMLTextItem) formItem).getHTMLValue());
+                            }
                         }
-                 
+
                         PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
                         dataSource.setCustomCriteria(new String[]{"constructForm", newId});
                         form.saveData(new DSCallback() {
                             @Override
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
-                                if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
+                                if (response.getStatus() != RPCResponse.STATUS_FAILURE) {
                                     try {
-                                       //extractQualifierData(newId, false, dirtyValues);
+                                        //extractQualifierData(newId, false, dirtyValues);
                                         if (!presenter.currentPageId.equals(newId)) {
                                             Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentPageId);
                                             if (myRecord != null) {
                                                 myRecord.setAttribute("id", newId);
                                                 presenter.currentPageRecord = myRecord;
                                                 presenter.currentPageId = newId;
-                                            }  else {
+                                            } else {
                                                 String primaryKey = getDisplay().getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
                                                 getDisplay().getListDisplay().getGrid().getDataSource().
-                                                    fetchData(new Criteria(primaryKey, newId), new DSCallback() {
-                                                        @Override
-                                                        public void execute(DSResponse response, Object rawData, DSRequest request) {
-                                                            getDisplay().getListDisplay().getGrid().clearCriteria();
-                                                            getDisplay().getListDisplay().getGrid().setData(response.getData());
-                                                            getDisplay().getListDisplay().getGrid().selectRecord(0);
-                                                        }
-                                                    });
+                                                        fetchData(new Criteria(primaryKey, newId), new DSCallback() {
+                                                            @Override
+                                                            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                                                getDisplay().getListDisplay().getGrid().clearCriteria();
+                                                                getDisplay().getListDisplay().getGrid().setData(response.getData());
+                                                                getDisplay().getListDisplay().getGrid().selectRecord(0);
+                                                            }
+                                                        });
                                                 SC.say(BLCMain.getMessageManager().getString("criteriaDoesNotMatch"));
                                             }
-                                        
+
                                         }
-                                      
+
                                         getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(presenter.currentPageRecord));
-                                    
+
                                     } catch (Exception e) {
                                         SC.warn(e.getMessage());
-                                        java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
+                                        java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE, e.getMessage(), e);
                                     }
                                 }
                             }
@@ -185,28 +182,28 @@ public class PagesPresenterExtractor {
                     }
                 }
             }, requestProperties);
-		} catch (IncompatibleMVELTranslationException e) {
-			SC.warn(e.getMessage());
-			java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
-		}
-	}
+        } catch (IncompatibleMVELTranslationException e) {
+            SC.warn(e.getMessage());
+            java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
 
     public static void printRecord(String string, Record selectedRecord) {
-    	String id=selectedRecord.getAttribute("id");
-    	String X=selectedRecord.getAttribute(StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER));
-    	System.out.println(string+selectedRecord+" "+id+"->"+X);
-	}
+        String id = selectedRecord.getAttribute("id");
+        String X = selectedRecord.getAttribute(StructuredContentRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER));
+        System.out.println(string + selectedRecord + " " + id + "->" + X);
+    }
 
-	protected void resetButtonState() {
+    protected void resetButtonState() {
         getDisplay().getDynamicFormDisplay().getSaveButton().disable();
         getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
         getDisplay().getRulesSaveButton().disable();
         getDisplay().getRulesRefreshButton().disable();
     }
-	
-	protected void extractQualifierData(final String id, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 
-		for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
+    protected void extractQualifierData(final String id, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
+
+        for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
             if (builder.getDirty()) {
                 String temper = builder.getItemQuantity().getValue().toString();
                 Integer quantity = Integer.parseInt(temper);
@@ -217,7 +214,7 @@ public class PagesPresenterExtractor {
                         setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
                             @Override
-			    public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 resetButtonState();
                             }
@@ -232,7 +229,7 @@ public class PagesPresenterExtractor {
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").setLinkedValue(id);
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").addData(temp, new DSCallback() {
                             @Override
-			    public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 builder.setRecord(temp);
                                 resetButtonState();
@@ -250,7 +247,7 @@ public class PagesPresenterExtractor {
         if (getDisplay().getItemBuilderViews().size() == 0) {
             resetButtonState();
         }
-	}
+    }
 
     public List<ItemBuilderDisplay> getRemovedItemQualifiers() {
         return removedItemQualifiers;
