@@ -26,7 +26,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.broadleafcommerce.openadmin.server.util;
+package org.broadleafcommerce.common.security;
 
 import java.security.SecureRandom;
 import java.security.NoSuchAlgorithmException;

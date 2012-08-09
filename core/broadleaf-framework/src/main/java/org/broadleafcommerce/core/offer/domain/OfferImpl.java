@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -57,7 +58,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -216,6 +216,10 @@ public class OfferImpl implements Offer, Status {
     @Column(name = "USE_NEW_FORMAT")
     @AdminPresentation(friendlyName = "OfferImpl_Treat_As_New_Format", group = "OfferImpl_Application", groupOrder=4, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean treatAsNewFormat;
+    
+    @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
+    @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)    
+    protected BigDecimal qualifyingItemSubTotal;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -571,6 +575,14 @@ public class OfferImpl implements Offer, Status {
     @Override
     public boolean isActive() {
         return DateUtil.isActive(startDate, endDate, true) && 'Y'!=getArchived();
+    }
+    
+    public Money getQualifyingItemSubTotal() {
+        return qualifyingItemSubTotal == null ? null : new Money(qualifyingItemSubTotal);
+    }
+
+    public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
+        this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
     }
 
     @Override

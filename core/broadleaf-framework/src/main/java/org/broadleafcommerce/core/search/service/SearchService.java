@@ -16,12 +16,13 @@
 
 package org.broadleafcommerce.core.search.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.SearchIntercept;
 import org.broadleafcommerce.core.search.domain.SearchSynonym;
 
+import java.util.List;
+
+@Deprecated
 public interface SearchService {
 
     public void rebuildProductIndex();

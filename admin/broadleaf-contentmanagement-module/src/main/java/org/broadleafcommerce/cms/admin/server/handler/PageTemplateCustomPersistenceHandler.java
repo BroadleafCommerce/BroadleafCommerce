@@ -260,7 +260,10 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 String value = null;
                 if (!MapUtils.isEmpty(pageFieldMap)) {
                     PageField pageField = pageFieldMap.get(definition.getName());
-                    value = pageField.getValue();
+                    if(pageField==null)
+                    	value="";
+                     else
+                        value = pageField.getValue();
                 }
                 property.setValue(value);
             }

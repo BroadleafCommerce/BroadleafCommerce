@@ -204,19 +204,11 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
 			Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
-            try {
-                StaticAssetStorage storage = staticAssetStorageService.create();
-                storage.setStaticAssetId(adminInstance.getId());
-                Blob uploadBlob = staticAssetStorageService.createBlob(upload);
-                storage.setFileData(uploadBlob);
-                staticAssetStorageService.save(storage);
-            } catch (Exception e) {
-                /*
-                the blob storage is a long-lived transaction - using a compensating transaction to cover failure
-                 */
-                staticAssetService.deleteStaticAsset(adminInstance, getSandBox());
-                throw e;
-            }
+            StaticAssetStorage storage = staticAssetStorageService.create();
+            storage.setStaticAssetId(adminInstance.getId());
+            Blob uploadBlob = staticAssetStorageService.createBlob(upload);
+            storage.setFileData(uploadBlob);
+            staticAssetStorageService.save(storage);
 
             return addImageRecords(adminEntity);
 		} catch (Exception e) {

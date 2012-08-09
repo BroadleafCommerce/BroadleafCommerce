@@ -1,5 +1,19 @@
 package org.broadleafcommerce.core.web.controller.checkout;
 
+import java.beans.PropertyEditorSupport;
+import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
@@ -28,20 +42,6 @@ import org.joda.time.DateTime;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.beans.PropertyEditorSupport;
-import java.text.DateFormatSymbols;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -221,7 +221,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	customerAddress.setCustomer(CustomerState.getCustomer());
     	customerAddressService.saveCustomerAddress(customerAddress);
     	
-    	return getMultishipAddAddressSuccessView();
+    	//append current time to redirect to fix a problem with ajax caching in IE
+    	return getMultishipAddAddressSuccessView() + "?_=" + System.currentTimeMillis();
     }
 
     /**

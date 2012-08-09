@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.core.search.service;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -35,10 +31,16 @@ import org.compass.core.CompassSearchSession;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author dmclain
  *
  */
+@Deprecated
 @Service("blSearchService")
 public class SearchServiceCompassImpl implements SearchService {
 
