@@ -16,20 +16,26 @@
 
 package org.broadleafcommerce.core.web.controller.catalog;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.service.ProductSearchService;
+import org.broadleafcommerce.core.searchRedirect.domain.SearchRedirect;
+import org.broadleafcommerce.core.searchRedirect.service.SearchRedirectService;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.ui.Model;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.List;
 
 /**
  * Handles searching the catalog for a given search term. Will apply product search criteria
@@ -47,7 +53,8 @@ public class BroadleafSearchController extends AbstractCatalogController {
 	
 	@Resource(name = "blSearchFacetDTOService")
 	protected SearchFacetDTOService facetService;
-	
+	@Resource(name = "blSearchRedirectService")
+	private SearchRedirectService searchRedirectService;
 	protected static String searchView = "catalog/search";
 	
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
@@ -55,7 +62,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
     protected static String ORIGINAL_QUERY_ATTRIBUTE_NAME = "originalQuery";  
 
-	public String search(Model model, HttpServletRequest request, String query) {
+	public String search(Model model, HttpServletRequest request, HttpServletResponse response,String query) throws ServletException, IOException {
 		try {
 			if (StringUtils.isNotEmpty(query)) {
 				query = exploitProtectionService.cleanString(query);
@@ -63,7 +70,15 @@ public class BroadleafSearchController extends AbstractCatalogController {
 		} catch (ServiceException e) {
 			query = null;
 		}
-		
+	        SearchRedirect handler = searchRedirectService
+	                .findSearchRedirectBySearchTerm(query);
+	       
+	        if (handler != null) {
+	            String contextPath = request.getContextPath();
+	            String url = UrlUtil.fixRedirectUrl(contextPath, handler.getUrl());
+	            response.sendRedirect(url);   
+	            return null;
+	        }; 
 		if (StringUtils.isNotEmpty(query)) {
 			List<SearchFacetDTO> availableFacets = productSearchService.getSearchFacets();
 			ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
@@ -77,10 +92,13 @@ public class BroadleafSearchController extends AbstractCatalogController {
 		}
 
         return getSearchView();
+    
+
+	
     }
 
-	public String getSearchView() {
+    public String getSearchView() {
 		return searchView;
 	}
-    
+
 }
