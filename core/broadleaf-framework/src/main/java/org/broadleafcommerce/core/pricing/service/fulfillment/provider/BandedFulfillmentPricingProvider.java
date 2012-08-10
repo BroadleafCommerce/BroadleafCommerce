@@ -137,9 +137,9 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                     }
                     
                     if (addToTotal) {
-                        BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null) ? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
+                        BigDecimal price = (fulfillmentGroupItem.getPrice() != null) ? fulfillmentGroupItem.getPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
                         if (price == null) {
-                            price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                            price = fulfillmentGroupItem.getOrderItem().getPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
                         }
                         retailTotal = retailTotal.add(price);
                         
