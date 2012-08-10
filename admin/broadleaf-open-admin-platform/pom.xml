@@ -145,10 +145,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <relativePath>../../../</relativePath>
-                            <rootPath>$${rebel.root}</rootPath>
-                        </configuration>
+                   
                     </plugin>
                 </plugins>
             </build>
