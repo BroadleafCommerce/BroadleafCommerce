@@ -16,17 +16,22 @@
 
 package org.broadleafcommerce.core.web.checkout.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.common.payment.CreditCardType;
+import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
 
-public class CheckoutForm {
-    private String emailAddress;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CheckoutForm extends CsrfProtectedForm implements Serializable {
+	
+	private static final long serialVersionUID = 8866879738364589339L;
+	
+	private String emailAddress;
     private Address shippingAddress = new AddressImpl();
     private Address billingAddress = new AddressImpl();
     private String creditCardNumber;

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -67,7 +68,9 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 		return getRegisterView();
 	}
 	
-	public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, HttpServletRequest request, HttpServletResponse response, Model model) throws ServiceException {
+		exploitProtectionService.compareToken(registerCustomerForm.getCsrfToken());
+		
 		if (useEmailForLogin) {
 			Customer customer = registerCustomerForm.getCustomer();
 			customer.setUsername(customer.getEmailAddress());

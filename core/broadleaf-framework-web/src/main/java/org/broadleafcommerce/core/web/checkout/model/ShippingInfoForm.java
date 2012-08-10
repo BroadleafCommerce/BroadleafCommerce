@@ -16,8 +16,11 @@
 
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
+
+import java.io.Serializable;
 
 /**
  * A form to model adding a shipping address with shipping options.
@@ -25,9 +28,11 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
  * @author Elbert Bautista (ebautista)
  * @author Andre Azzolini (apazzolini)
  */
-public class ShippingInfoForm {
+public class ShippingInfoForm extends CsrfProtectedForm implements Serializable {
 
-    protected Address address = new AddressImpl();
+	private static final long serialVersionUID = -7895489234675056031L;
+	
+	protected Address address = new AddressImpl();
     protected String addressName;
     protected Long fulfillmentOptionId;
 

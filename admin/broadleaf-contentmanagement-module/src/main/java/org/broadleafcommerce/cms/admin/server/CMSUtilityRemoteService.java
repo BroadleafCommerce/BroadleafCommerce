@@ -17,7 +17,8 @@
 package org.broadleafcommerce.cms.admin.server;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
-import org.broadleafcommerce.openadmin.client.service.ServiceException;
+
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.server.service.UtilityRemoteService;
 import org.springframework.beans.factory.annotation.Value;
 

@@ -18,6 +18,8 @@ package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
+
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;

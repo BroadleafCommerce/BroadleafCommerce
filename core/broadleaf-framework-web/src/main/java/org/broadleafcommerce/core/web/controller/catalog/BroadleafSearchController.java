@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
@@ -33,8 +35,6 @@ import org.broadleafcommerce.core.search.service.ProductSearchService;
 import org.broadleafcommerce.core.searchRedirect.domain.SearchRedirect;
 import org.broadleafcommerce.core.searchRedirect.service.SearchRedirectService;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
-import org.broadleafcommerce.openadmin.client.service.ServiceException;
-import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.ui.Model;
 
 /**
@@ -90,15 +90,16 @@ public class BroadleafSearchController extends AbstractCatalogController {
 	    	model.addAttribute(FACETS_ATTRIBUTE_NAME, result.getFacets());
 	    	model.addAttribute(ORIGINAL_QUERY_ATTRIBUTE_NAME, query);
 		}
+		
+	        return getSearchView();
+	        
 
-        return getSearchView();
-    
+	        
+	    }
 
-	
-    }
-
-    public String getSearchView() {
-		return searchView;
-	}
-
+	    public String getSearchView() {
+	                return searchView;
+	        }
+	    
 }
+

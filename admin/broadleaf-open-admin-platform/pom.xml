@@ -217,9 +217,5 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.owasp.antisamy</groupId>
-            <artifactId>antisamy</artifactId>
-        </dependency>
 	</dependencies>
 </project>

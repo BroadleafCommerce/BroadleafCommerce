@@ -1,5 +1,6 @@
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.UpdateAccountValidator;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -33,7 +34,8 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
         return getUpdateAccountView();
     }
 
-    public String processUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String processUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
+		exploitProtectionService.compareToken(form.getCsrfToken());
         updateAccountValidator.validate(form, result);
         if (result.hasErrors()) {
             return getUpdateAccountView();

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.service;
 
+import org.broadleafcommerce.common.exception.ServiceException;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
@@ -96,7 +98,7 @@ public interface UtilityService extends RemoteService {
      *
      * @param qualifiers additional data useful for making a determination
      * @return Whether or not any items are enabled for workflow.
-     * @throws org.broadleafcommerce.openadmin.client.service.ServiceException
+     * @throws org.broadleafcommerce.common.exception.ServiceException
      * @throws com.gwtincubator.security.exception.ApplicationSecurityException
      */
     public Boolean getWorkflowEnabled(String[] qualifiers) throws ServiceException, ApplicationSecurityException;

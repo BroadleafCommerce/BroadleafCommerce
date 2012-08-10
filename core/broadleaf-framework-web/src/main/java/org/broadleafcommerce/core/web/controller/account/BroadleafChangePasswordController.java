@@ -16,9 +16,7 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.ChangePasswordValidator;
@@ -27,6 +25,9 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This controller handles password changes for a customer's account
@@ -47,7 +48,9 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
         return getChangePasswordView();
     }
 
-    public String processChangePassword(HttpServletRequest request, Model model, ChangePasswordForm form, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String processChangePassword(HttpServletRequest request, Model model, ChangePasswordForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
+		exploitProtectionService.compareToken(form.getCsrfToken());
+    	
         PasswordChange passwordChange = new PasswordChange(CustomerState.getCustomer().getUsername());
         passwordChange.setCurrentPassword(form.getCurrentPassword());
         passwordChange.setNewPassword(form.getNewPassword());

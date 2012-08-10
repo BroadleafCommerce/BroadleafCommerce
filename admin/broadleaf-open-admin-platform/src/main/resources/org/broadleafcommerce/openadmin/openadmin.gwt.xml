@@ -8,7 +8,7 @@
 	<inherits name="com.anasoft.os.daofusion.cto.daofusion" />
 	<inherits name="com.gwtincubator.security.IncubatorSecurity" />
 	<inherits name="com.google.gwt.i18n.I18N" />
-    <inherits name="org.broadleafcommerce.common.presentation.common"/>
+    <inherits name="org.broadleafcommerce.common.common"/>
 
 	<source path="client" />
 	<generate-with class="org.broadleafcommerce.openadmin.generator.FactoryGenerator">
