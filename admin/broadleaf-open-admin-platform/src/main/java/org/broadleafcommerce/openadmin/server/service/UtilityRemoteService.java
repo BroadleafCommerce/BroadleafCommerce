@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.client.service.UtilityService;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,11 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     private static final Log LOG = LogFactory.getLog(UtilityRemoteService.class);
 
     private ApplicationContext applicationContext;
+
+    @Value("${store.front.webapp.prefix}")
     protected String storeFrontWebAppPrefix;
+
+    @Value("${asset.server.url.prefix}")
     protected String assetServerUrlPrefix;
 
     @Resource(name="blExploitProtectionService")
