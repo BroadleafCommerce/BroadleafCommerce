@@ -41,6 +41,15 @@ public class NullFulfillmentGroupItemStrategyImpl extends FulfillmentGroupItemSt
 		return request;
 	}
 	
+	/** 
+	 * When we remove an order item, we must also remove the associated fulfillment group
+	 * item to respsect the database constraints.
+	 */
+	@Override
+	public CartOperationRequest onItemRemoved(CartOperationRequest request) {
+		return super.onItemRemoved(request);
+	}
+	
 	@Override
 	public CartOperationRequest verify(CartOperationRequest request) {
 		return request;
