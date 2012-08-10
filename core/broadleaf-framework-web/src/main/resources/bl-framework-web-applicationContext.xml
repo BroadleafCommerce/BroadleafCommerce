@@ -30,13 +30,14 @@
 			<bean class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.CsrfTokenProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
             <bean class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.UrlRewriteProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
 		  </set>
 		</property>  	
 	</bean> 

@@ -1,19 +1,6 @@
 package org.broadleafcommerce.core.web.controller.checkout;
 
-import java.beans.PropertyEditorSupport;
-import java.text.DateFormatSymbols;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
@@ -42,6 +29,20 @@ import org.joda.time.DateTime;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.beans.PropertyEditorSupport;
+import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -112,9 +113,11 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param model
      * @param shippingForm
      * @return the return path
+     * @throws ServiceException 
      */
 	public String saveSingleShip(HttpServletRequest request, HttpServletResponse response, Model model,
-			ShippingInfoForm shippingForm, BindingResult result) throws PricingException {
+			ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
+		exploitProtectionService.compareToken(shippingForm.getCsrfToken());
         Order cart = CartState.getCart();
 
         shippingInfoFormValidator.validate(shippingForm, result);
@@ -172,9 +175,11 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	 * @param orderMultishipOptionForm
 	 * @return a redirect to the checkout page
 	 * @throws PricingException 
+	 * @throws ServiceException 
 	 */
     public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model,
-    		OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException {
+    		OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException, ServiceException {
+		exploitProtectionService.compareToken(orderMultishipOptionForm.getCsrfToken());
     	Order cart = CartState.getCart();
     	orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
     	cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, true);
@@ -205,9 +210,11 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param model
      * @param addressForm
      * @return the return path to the multiship page
+     * @throws ServiceException 
      */
     public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
-    		 ShippingInfoForm addressForm, BindingResult result) {
+    		 ShippingInfoForm addressForm, BindingResult result) throws ServiceException {
+		exploitProtectionService.compareToken(addressForm.getCsrfToken());
         multishipAddAddressFormValidator.validate(addressForm, result);
         if (result.hasErrors()) {
             return showMultishipAddAddress(request, response, model);
@@ -245,9 +252,11 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param model
      * @param billingForm
      * @return the return path
+     * @throws ServiceException 
      */
     public String completeSecureCreditCardCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
-            BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException {
+            BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
+		exploitProtectionService.compareToken(billingForm.getCsrfToken());
 
         Order cart = CartState.getCart();
         if (cart != null) {

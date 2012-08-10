@@ -16,17 +16,22 @@
 
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
+
+import java.io.Serializable;
 
 /**
  * A form to model adding a payment to the order.
  *
  * @author Elbert Bautista (elbertbautista)
  */
-public class BillingInfoForm {
-
-    private Address address = new AddressImpl();
+public class BillingInfoForm extends CsrfProtectedForm implements Serializable {
+	
+	private static final long serialVersionUID = 7408792703984771616L;
+	
+	private Address address = new AddressImpl();
     private String creditCardName;
     private String creditCardNumber;
     private String creditCardCvvCode;
