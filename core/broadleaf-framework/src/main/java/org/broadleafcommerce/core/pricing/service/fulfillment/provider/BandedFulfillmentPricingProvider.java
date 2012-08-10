@@ -149,9 +149,13 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                         }
                     }
                 }
-
-                BigDecimal lowestFulfillmentAmount = BigDecimal.ZERO;
-                BigDecimal lowestFulfillmentBandMinimum = BigDecimal.ZERO;
+                
+                //Used to keep track of the lowest price when there is are bands that have the same
+                //minimum amount
+                BigDecimal lowestBandFulfillmentPrice = null;
+                //Used to keep track of the amount for the lowest band fulfillment price. Used to compare
+                //if 2 bands are configured for the same minimum amount
+                BigDecimal lowestBandFulfillmentPriceMinimumAmount = BigDecimal.ZERO;
                 for (FulfillmentBand band : bands) {
                     
                     BigDecimal bandMinimumAmount = BigDecimal.ZERO;
@@ -179,27 +183,40 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                         }
                         
                         if (bandFulfillmentPrice != null) {
+                            
+                            //haven't initialized the lowest price yet so just take on this one
+                            if (lowestBandFulfillmentPrice == null) {
+                                lowestBandFulfillmentPrice = bandFulfillmentPrice;
+                                lowestBandFulfillmentPriceMinimumAmount = bandMinimumAmount;
+                            }
+                            
                             //If there is a duplicate price band (meaning, 2 price bands are configured with the same miniumum retail price)
                             //then the lowest fulfillment amount should only be updated if the result of the current band being looked at
                             //is cheaper
-                            if (lowestFulfillmentBandMinimum.equals(bandMinimumAmount)) {
-                                if (bandFulfillmentPrice.compareTo(lowestFulfillmentAmount) <= 0) {
-                                    lowestFulfillmentAmount = bandFulfillmentPrice;
-                                    lowestFulfillmentBandMinimum = bandMinimumAmount;
+                            if (lowestBandFulfillmentPriceMinimumAmount.compareTo(bandMinimumAmount) == 0) {
+                                if (bandFulfillmentPrice.compareTo(lowestBandFulfillmentPrice) <= 0) {
+                                    lowestBandFulfillmentPrice = bandFulfillmentPrice;
+                                    lowestBandFulfillmentPriceMinimumAmount = bandMinimumAmount;
                                 }
-                            } else if (bandMinimumAmount.compareTo(lowestFulfillmentBandMinimum) > 0) {
-                                lowestFulfillmentAmount = bandFulfillmentPrice;
-                                lowestFulfillmentBandMinimum = bandMinimumAmount;
+                            } else if (bandMinimumAmount.compareTo(lowestBandFulfillmentPriceMinimumAmount) > 0) {
+                                lowestBandFulfillmentPrice = bandFulfillmentPrice;
+                                lowestBandFulfillmentPriceMinimumAmount = bandMinimumAmount;
                             }
                             
+                        } else {
+                            throw new IllegalStateException("Bands must have a non-null fulfillment price");
                         }
                     }
                 }
                 
+                //If I didn't find a valid band, initialize the fulfillment price to zero
+                if (lowestBandFulfillmentPrice == null) {
+                    lowestBandFulfillmentPrice = BigDecimal.ZERO;
+                }
                 //add the flat rate amount calculated on the Sku
-                lowestFulfillmentAmount = lowestFulfillmentAmount.add(flatTotal);
+                lowestBandFulfillmentPrice = lowestBandFulfillmentPrice.add(flatTotal);
 
-                shippingPrices.put(option, new Money(lowestFulfillmentAmount));
+                shippingPrices.put(option, new Money(lowestBandFulfillmentPrice));
             }
         }
 
