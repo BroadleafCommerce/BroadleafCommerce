@@ -142,10 +142,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <relativePath>../../</relativePath>
-                            <rootPath>${rebel.root}</rootPath>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
