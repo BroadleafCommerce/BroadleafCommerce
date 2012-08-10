@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.pricing.service.fulfillment.provider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.UnitOfMeasureUtil;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -105,18 +107,19 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                 
                 if (bands == null || bands.isEmpty()) {
                     //Something is misconfigured. There are no bands associated with this fulfillment option
-                    throw new IllegalStateException("There were no Fulfillment Price Bands configred for a BandedPriceFulfillmentOption with ID: "
+                    throw new IllegalStateException("There were no Fulfillment Price Bands configured for a BandedPriceFulfillmentOption with ID: "
                             + option.getId());
                 }
 
                 //Calculate the amount that the band will be applied to
                 BigDecimal retailTotal = BigDecimal.ZERO;
                 BigDecimal flatTotal = BigDecimal.ZERO;
+                
                 BigDecimal weightTotal = BigDecimal.ZERO;
                 for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                     
-                    //If this item has a Sku associated with it which also has a flat rate for this fulfillment option, don't add it to the retail
-                    //total but instead tack it onto the final rate
+                    //If this item has a Sku associated with it which also has a flat rate for this fulfillment option, don't add it to the price
+                    //or weight total but instead tack it onto the final rate
                     boolean addToTotal = true;
                     Sku sku = null;
                     if (fulfillmentGroupItem.getOrderItem() instanceof DiscreteOrderItem) {
@@ -141,7 +144,8 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                         retailTotal = retailTotal.add(price);
                         
                         if (sku != null && sku.getWeight() != null && sku.getWeight().getWeight() != null) {
-                            weightTotal = weightTotal.add(sku.getWeight().getWeight());
+                            BigDecimal convertedWeight = convertWeight(sku.getWeight().getWeight(), sku.getWeight().getWeightUnitOfMeasure());
+                            weightTotal = weightTotal.add(convertedWeight);
                         }
                     }
                 }
@@ -200,6 +204,17 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
         }
 
         return res;
+    }
+    
+    /**
+     * Default implementation is to convert everything to pounds for consistent weight types
+     * 
+     * @param weight
+     * @param type
+     * @return
+     */
+    protected BigDecimal convertWeight(BigDecimal weight, WeightUnitOfMeasureType type) {
+        return UnitOfMeasureUtil.findPounds(weight, type);
     }
 
 }
