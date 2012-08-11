@@ -11,20 +11,31 @@
 		<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
 		<property name="persistenceUnitName" value="blPU"/>
 	</bean>
+
+    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath*:/META-INF/persistence-common.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-common-applicationContext-entity.xml</value>
+            </list>
+        </property>
+    </bean>
 	
 	<bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
-		<property name="persistenceXmlLocations">
-			<list>
-				<value>classpath*:/META-INF/persistence-common.xml</value>
-			</list>
-		</property>
-	</bean>
+        <property name="persistenceUnitPostProcessors">
+            <list>
+                <bean class="org.broadleafcommerce.common.extensibility.jpa.JPAPropertiesPersistenceUnitPostProcessor"/>
+            </list>
+        </property>
+    </bean>
 	
-	<bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
-		<property name="entityContexts">
-			<list>
-				<value>classpath:bl-common-applicationContext-entity.xml</value>
-			</list>
-		</property>
-	</bean>
+	<bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration"/>
+
 </beans>

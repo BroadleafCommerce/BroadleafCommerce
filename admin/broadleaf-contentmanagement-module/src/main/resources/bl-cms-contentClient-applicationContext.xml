@@ -12,13 +12,13 @@
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
-    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
-		<property name="persistenceXmlLocations">
-			<list>
-				<value>classpath*:/META-INF/persistence-cms.xml</value>
-			</list>
-		</property>
-	</bean>
+    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath*:/META-INF/persistence-cms.xml</value>
+            </list>
+        </property>
+    </bean>
 
     <bean id="blEntityManagerFactoryAssetStorageInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
 		<property name="jpaVendorAdapter">
@@ -32,22 +32,21 @@
 		<property name="entityManagerFactory" ref="blEntityManagerFactoryAssetStorageInfo" />
 	</bean>
 
-	<bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
-		<property name="shared" value="true"/>
-		<property name="configLocations">
-			<list>
-				<value>classpath:bl-cms-ehcache.xml</value>
-			</list>
-		</property>
-	</bean>
+    <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-cms-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
 
-    <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
-		<property name="entityContexts">
-			<list>
-				<value>classpath:bl-cms-applicationContext-entity.xml</value>
-			</list>
-		</property>
-	</bean>
+    <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-cms-applicationContext-entity.xml</value>
+            </list>
+        </property>
+    </bean>
 
     <bean id="blSandboxItemListeners" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
