@@ -16,24 +16,56 @@
 
 package org.broadleafcommerce.common.extensibility.cache.ehcache;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.web.context.WebApplicationContext;
 
-public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean {
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-    public void setConfigLocations(List<Resource> configLocations) throws BeansException {
+public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean implements ApplicationContextAware {
+
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @javax.annotation.Resource(name="blMergedCacheConfigLocations")
+    protected Set<String> mergedCacheConfigLocations;
+
+    protected List<Resource> configLocations;
+
+    @PostConstruct
+    public void configureMergedItems() {
+        Set<Resource> temp = new HashSet<Resource>();
+        if (mergedCacheConfigLocations != null && !mergedCacheConfigLocations.isEmpty()) {
+            for (String location : mergedCacheConfigLocations) {
+                temp.add(applicationContext.getResource(location));
+            }
+        }
+        if (configLocations != null && !configLocations.isEmpty()) {
+            for (Resource resource : configLocations) {
+                temp.add(resource);
+            }
+        }
         try {
             MergeXmlConfigResource merge = new MergeXmlConfigResource();
-            ResourceInputStream[] sources = new ResourceInputStream[configLocations.size()];
+            ResourceInputStream[] sources = new ResourceInputStream[temp.size()];
             int j=0;
-            for (Resource resource : configLocations) {
+            for (Resource resource : temp) {
                 sources[j] = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
                 j++;
             }
@@ -41,5 +73,9 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean {
         } catch (IOException e) {
             throw new FatalBeanException("Unable to merge cache locations", e);
         }
+    }
+
+    public void setConfigLocations(List<Resource> configLocations) throws BeansException {
+        this.configLocations = configLocations;
     }
 }

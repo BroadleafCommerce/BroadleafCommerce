@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.common.extensibility.jpa;
 
-import javax.persistence.spi.PersistenceUnitInfo;
-import java.lang.reflect.*;
-import java.net.URL;
-import java.util.*;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
@@ -31,6 +26,24 @@ import org.springframework.orm.jpa.persistenceunit.Jpa2PersistenceUnitInfoDecora
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
 import org.springframework.util.ClassUtils;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.spi.PersistenceUnitInfo;
+import javax.sql.DataSource;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Merges jars, class names and mapping file names from several persistence.xml files. The
@@ -50,6 +63,35 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
     protected final boolean jpa2ApiPresent = ClassUtils.hasMethod(PersistenceUnitInfo.class, "getSharedCacheMode");
     protected List<BroadleafClassTransformer> classTransformers = new ArrayList<BroadleafClassTransformer>();
+
+    @Resource(name="blMergedPersistenceXmlLocations")
+    protected Set<String> mergedPersistenceXmlLocations;
+
+    @Resource(name="blMergedDataSources")
+    protected Map<String, DataSource> mergedDataSources;
+
+    @PostConstruct
+    public void configureMergedItems() {
+        String[] tempLocations;
+        try {
+            Field persistenceXmlLocations = DefaultPersistenceUnitManager.class.getDeclaredField("persistenceXmlLocations");
+            persistenceXmlLocations.setAccessible(true);
+            tempLocations = (String[]) persistenceXmlLocations.get(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        for (String legacyLocation : tempLocations) {
+            if (!legacyLocation.endsWith("/persistence.xml")) {
+                //do not add the default JPA persistence location by default
+                mergedPersistenceXmlLocations.add(legacyLocation);
+            }
+        }
+        setPersistenceXmlLocations(mergedPersistenceXmlLocations.toArray(new String[mergedPersistenceXmlLocations.size()]));
+
+        if (!mergedDataSources.isEmpty()) {
+            setDataSources(mergedDataSources);
+        }
+    }
 
     protected PersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
         if (!mergedPus.containsKey(persistenceUnitName)) {

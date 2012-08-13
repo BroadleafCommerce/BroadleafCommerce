@@ -64,6 +64,20 @@ public class BandedPriceFulfillmentTest extends TestCase {
         assertEquals(new Money("30.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("100.00"), 5)));
     }
     
+    public void testMinimumAmountsWithZero() throws Exception {
+        BandedPriceFulfillmentOption option = createBands(new String[]{"0", "20", "30"}, 
+                                                          new String[]{"10", "20", "30"}, 
+                                                          new FulfillmentBandResultAmountType[]{FulfillmentBandResultAmountType.RATE,
+                                                                                                FulfillmentBandResultAmountType.RATE,
+                                                                                                FulfillmentBandResultAmountType.RATE});
+        assertEquals(new Money("20.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("20.00"), 2)));
+        assertEquals(new Money("10.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("9.00"), 3)));
+        assertEquals(new Money("30.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("30.00"), 3)));
+        assertEquals(new Money("20.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("25.00"), 5)));
+        assertEquals(new Money("30.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("100.00"), 5)));
+    }
+
+    
     public void testPriceBandPercentage() throws Exception {
         BandedPriceFulfillmentOption option = createBands(new String[]{"10", "30", "20"}, 
                                                           new String[]{".10", ".20", ".30"}, 
@@ -159,7 +173,7 @@ public class BandedPriceFulfillmentTest extends TestCase {
                 ((DiscreteOrderItem)orderItem).setSku(sku);
             }
             
-            orderItem.setRetailPrice(new Money(retailTotal.divide(new BigDecimal(orderItemsToCreate))));
+            orderItem.setPrice(new Money(retailTotal.divide(new BigDecimal(orderItemsToCreate))));
             FulfillmentGroupItem fulfillmentItem = new FulfillmentGroupItemImpl();
             fulfillmentItem.setOrderItem(orderItem);
             fulfillmentItem.setQuantity(1);

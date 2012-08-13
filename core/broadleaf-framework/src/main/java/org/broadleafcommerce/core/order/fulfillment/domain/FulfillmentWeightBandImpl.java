@@ -17,6 +17,8 @@
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -63,6 +65,10 @@ public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements Fu
     @AdminPresentation(friendlyName = "FulfillmentWeightBandImpl_Weight")
     protected BigDecimal minimumWeight;
     
+    @Column(name = "WEIGHT_UNIT_OF_MEASURE")
+    @AdminPresentation(friendlyName = "FulfillmentWeightBandImpl_Weight_Units", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
+    protected String weightUnitOfMeasure;
+    
     @ManyToOne(targetEntity=BandedWeightFulfillmentOptionImpl.class)
     @JoinColumn(name="FULFILLMENT_OPTION_ID")
     protected BandedWeightFulfillmentOption option;
@@ -95,6 +101,18 @@ public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements Fu
     @Override
     public void setOption(BandedWeightFulfillmentOption option) {
         this.option = option;
+    }
+
+    @Override
+    public WeightUnitOfMeasureType getWeightUnitOfMeasure() {
+        return WeightUnitOfMeasureType.getInstance(weightUnitOfMeasure);
+    }
+
+    @Override
+    public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure) {
+        if (weightUnitOfMeasure != null) {
+            this.weightUnitOfMeasure = weightUnitOfMeasure.getType();
+        }
     }
 
 }

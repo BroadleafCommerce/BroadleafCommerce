@@ -16,20 +16,7 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -112,6 +99,9 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Column(name = "FIELD_VALUE")
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
+    @Transient
+    protected Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
+
     public Money getAmount() {
         return amount == null ? null : new Money(amount);
     }
@@ -192,7 +182,15 @@ public class PaymentInfoImpl implements PaymentInfo {
 		this.additionalFields = additionalFields;
 	}
 
-	public boolean equals(Object obj) {
+    public Map<String, String[]> getRequestParameterMap() {
+        return requestParameterMap;
+    }
+
+    public void setRequestParameterMap(Map<String, String[]> requestParameterMap) {
+        this.requestParameterMap = requestParameterMap;
+    }
+
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)

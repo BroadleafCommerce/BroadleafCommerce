@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -53,5 +54,9 @@ public interface FulfillmentWeightBand extends FulfillmentBand {
     public BandedWeightFulfillmentOption getOption();
 
     public void setOption(BandedWeightFulfillmentOption option);
+    
+    public WeightUnitOfMeasureType getWeightUnitOfMeasure();
+    
+    public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure);
 
 }
