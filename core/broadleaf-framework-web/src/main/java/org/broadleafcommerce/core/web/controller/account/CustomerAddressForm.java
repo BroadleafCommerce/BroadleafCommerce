@@ -1,11 +1,12 @@
 package org.broadleafcommerce.core.web.controller.account;
 
-import java.io.Serializable;
-
+import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 
-public class CustomerAddressForm implements Serializable {
+import java.io.Serializable;
+
+public class CustomerAddressForm extends CsrfProtectedForm implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.client.service;
-
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
-import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.openadmin.client.security.AdminUser;
+package org.broadleafcommerce.common.web.form;
 
 /**
+ * A form that will provided a CSRF token field
  * 
- * @author jfischer
- *
+ * @author Andre Azzolini (apazzolini)
  */
-public interface AdminSecurityService extends RemoteService {
+public class CsrfProtectedForm {
+	
+	protected String csrfToken;
 
-	public AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException;
+	public String getCsrfToken() {
+		return csrfToken;
+	}
+
+	public void setCsrfToken(String csrfToken) {
+		this.csrfToken = csrfToken;
+	}
 	
 }

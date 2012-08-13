@@ -20,31 +20,34 @@
 		<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
 		<property name="persistenceUnitName" value="blPU"/>
 	</bean>
-	
-	<bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
-		<property name="persistenceXmlLocations">
-			<list>
-				<value>classpath*:/META-INF/persistence-profile.xml</value>
-			</list>
-		</property>
-	</bean>
+
+    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath*:/META-INF/persistence-profile.xml</value>
+            </list>
+        </property>
+    </bean>
 	
 	<bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
 		<property name="shared" value="true"/>
-		<property name="configLocations">
-			<list>
-				<value>classpath:bl-ehcache.xml</value>
-			</list>
-		</property>
 	</bean>
-	
-	<bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
-		<property name="entityContexts">
-			<list>
-				<value>classpath:bl-profile-applicationContext-entity.xml</value>
-			</list>
-		</property>
-	</bean>
+
+    <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-profile-applicationContext-entity.xml</value>
+            </list>
+        </property>
+    </bean>
 	
     <bean id="hibernateExporter" class="org.springframework.jmx.export.MBeanExporter" depends-on="entityManagerFactory">
         <property name="autodetect" value="false" />

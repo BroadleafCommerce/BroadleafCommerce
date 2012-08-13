@@ -39,7 +39,7 @@ public interface FulfillmentBand extends Serializable {
      * Gets the amount that should be applied to the fulfillment
      * cost for the {@link FulfillmentGroup}. This could be applied as
      * a percentage or as a flat rate, depending on the result of calling
-     * {@link #getResultType()}.
+     * {@link #getResultType()}. This is required and should never be null
      * 
      * @return the amount to apply for this band
      */

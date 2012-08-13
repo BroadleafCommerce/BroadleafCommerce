@@ -68,5 +68,10 @@ public interface PaymentInfo extends Serializable {
 
     public void setAdditionalFields(Map<String, String> additionalFields);
 
+    public Map<String, String[]> getRequestParameterMap();
+
+    public void setRequestParameterMap(Map<String, String[]> requestParameterMap);
+
     public Referenced createEmptyReferenced();
+
 }

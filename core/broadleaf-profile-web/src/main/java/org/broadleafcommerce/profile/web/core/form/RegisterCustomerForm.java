@@ -16,11 +16,12 @@
 
 package org.broadleafcommerce.profile.web.core.form;
 
-import java.io.Serializable;
-
+import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-public class RegisterCustomerForm implements Serializable {
+import java.io.Serializable;
+
+public class RegisterCustomerForm extends CsrfProtectedForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Customer customer;

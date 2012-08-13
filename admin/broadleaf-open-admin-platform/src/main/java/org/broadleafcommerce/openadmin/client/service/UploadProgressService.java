@@ -18,6 +18,8 @@ package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
+
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.springframework.security.access.annotation.Secured;
 
 /**

@@ -34,6 +34,7 @@ import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -49,7 +50,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageArtifactProcessor;
@@ -204,19 +204,11 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
 			Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
-            try {
-                StaticAssetStorage storage = staticAssetStorageService.create();
-                storage.setStaticAssetId(adminInstance.getId());
-                Blob uploadBlob = staticAssetStorageService.createBlob(upload);
-                storage.setFileData(uploadBlob);
-                staticAssetStorageService.save(storage);
-            } catch (Exception e) {
-                /*
-                the blob storage is a long-lived transaction - using a compensating transaction to cover failure
-                 */
-                staticAssetService.deleteStaticAsset(adminInstance, getSandBox());
-                throw e;
-            }
+            StaticAssetStorage storage = staticAssetStorageService.create();
+            storage.setStaticAssetId(adminInstance.getId());
+            Blob uploadBlob = staticAssetStorageService.createBlob(upload);
+            storage.setFileData(uploadBlob);
+            staticAssetStorageService.save(storage);
 
             return addImageRecords(adminEntity);
 		} catch (Exception e) {

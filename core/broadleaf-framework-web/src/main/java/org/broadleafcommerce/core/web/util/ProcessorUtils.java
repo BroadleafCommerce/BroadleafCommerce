@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
-import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.spring3.context.SpringWebContext;

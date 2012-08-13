@@ -41,12 +41,15 @@
 	<bean id="blBankAccountModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
 	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.NullCreditCardPaymentModule"/>
+	
+	<bean id="blFixedPriceFulfillmentPricingProvider" class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider" />
+	<bean id="blBandedFulfillmentPricingProvider" class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider" />
 
 	<bean id="blFulfillmentPricingService" class="org.broadleafcommerce.core.pricing.service.FulfillmentPricingServiceImpl">
 	   <property name="providers">
 	       <list>
-	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider" />
-	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider" />
+	           <ref bean="blFixedPriceFulfillmentPricingProvider" />
+	           <ref bean="blBandedFulfillmentPricingProvider" />
 	       </list>
 	   </property>
 	</bean>

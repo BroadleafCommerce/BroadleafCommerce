@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
+import org.broadleafcommerce.core.payment.service.type.PaymentInfoAdditionalFieldType;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.joda.time.DateTime;
 
@@ -109,11 +110,11 @@ public class NullCreditCardPaymentModule extends AbstractModule {
         responseItem.setAmountPaid(paymentInfo.getAmount());
         if (responseItem.getTransactionSuccess()) {
             Map<String, String> additionalFields = new HashMap<String, String>();
-            additionalFields.put("NAME_ON_CARD", nameOnCard);
-            additionalFields.put("CARD_TYPE", cardType);
-            additionalFields.put("EXP_MONTH", expMonth+"");
-            additionalFields.put("EXP_YEAR", expYear+"");
-            additionalFields.put("LAST_FOUR", StringUtils.right(ccNumber, 4));
+            additionalFields.put(PaymentInfoAdditionalFieldType.NAME_ON_CARD.getType(), nameOnCard);
+            additionalFields.put(PaymentInfoAdditionalFieldType.CARD_TYPE.getType(), cardType);
+            additionalFields.put(PaymentInfoAdditionalFieldType.EXP_MONTH.getType(), expMonth+"");
+            additionalFields.put(PaymentInfoAdditionalFieldType.EXP_YEAR.getType(), expYear+"");
+            additionalFields.put(PaymentInfoAdditionalFieldType.LAST_FOUR.getType(), StringUtils.right(ccNumber, 4));
             paymentInfo.setAdditionalFields(additionalFields);
         }
 

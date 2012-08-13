@@ -27,10 +27,10 @@ import java.math.BigDecimal;
  * <p>This entity defines the bands that can be specified for {@link BandedPriceFulfillmentOption}. Bands
  * work on the retail price of an {@link Order} and should be calculated as follows:</p>
  * <ol>
- *  <li>The retail prices of all of the {@link OrderItems} in a {@link FulfillmentGroup} (which
+ *  <li>The prices of all of the {@link OrderItems} in a {@link FulfillmentGroup} (which
  *  is obtained through their relationship with {@link FulfillmentGroupItem} are summed together</li>
  *  <li>The {@link FulfillmentPriceBand} should be looked up by getting the closest band less
- *  than the sum of the retail price</li>
+ *  than the sum of the price</li>
  *  <li>If {@link #getResultAmountType()} returns {@link FulfillmentBandResultAmountType#RATE}, then
  *  the cost for the fulfillment group is whatever is defined in {@link #getResultAmount()}</li>
  *  <li>If {@link #getResultAmountType()} returns {@link FulfillmentBandResultAmountType#PERCENTAGE}, then

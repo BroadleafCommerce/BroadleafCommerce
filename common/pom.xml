@@ -90,10 +90,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <relativePath>../../</relativePath>
-                            <rootPath>$${rebel.root}</rootPath>
-                        </configuration>
+               
                     </plugin>
                 </plugins>
             </build>
@@ -277,5 +274,9 @@
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring3</artifactId>
 		</dependency>			      
+        <dependency>
+            <groupId>org.owasp.antisamy</groupId>
+            <artifactId>antisamy</artifactId>
+        </dependency>
     </dependencies>
 </project>

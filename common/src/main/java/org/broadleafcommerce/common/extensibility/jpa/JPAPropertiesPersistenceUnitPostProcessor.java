@@ -16,8 +16,11 @@
 
 package org.broadleafcommerce.common.extensibility.jpa;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -57,10 +60,75 @@ import java.util.Set;
  *    </bean>
  *
  */
-public class JPAPropertiesPersistenceUnitPostProcessor implements
-        org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor {
+public class JPAPropertiesPersistenceUnitPostProcessor implements org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor {
 
-    private Map<String, String> persistenceUnitProperties;
+    protected Map<String, String> persistenceUnitProperties = new HashMap<String, String>();
+    protected Map<String, String> overrideProperties = new HashMap<String, String>();
+
+    @Value("${blPU.hibernate.hbm2ddl.auto}")
+    protected String blPUHibernateHbm2ddlAuto;
+    @Value("${blPU.hibernate.dialect}")
+    protected String blPUHibernateDialect;
+    @Value("${blPU.hibernate.show_sql}")
+    protected String blPUHibernateShow_sql;
+    @Value("${blPU.hibernate.cache.use_second_level_cache}")
+    protected String blPUHibernateCacheUse_second_level_cache;
+    @Value("${blPU.hibernate.cache.use_query_cache}")
+    protected String blPUHibernateCacheUse_query_cache;
+    @Value("${blPU.hibernate.hbm2ddl.import_files}")
+    protected String blPUHibernateHbm2ddlImport_files;
+
+    @Value("${blCMSStorage.hibernate.hbm2ddl.auto}")
+    protected String blCMSStorageHibernateHbm2ddlAuto;
+    @Value("${blCMSStorage.hibernate.dialect}")
+    protected String blCMSStorageHibernateDialect;
+    @Value("${blCMSStorage.hibernate.show_sql}")
+    protected String blCMSStorageHibernateShow_sql;
+    @Value("${blCMSStorage.hibernate.cache.use_second_level_cache}")
+    protected String blCMSStorageHibernateCacheUse_second_level_cache;
+    @Value("${blCMSStorage.hibernate.cache.use_query_cache}")
+    protected String blCMSStorageHibernateCacheUse_query_cache;
+    @Value("${blCMSStorage.hibernate.hbm2ddl.import_files}")
+    protected String blCMSStorageHibernateHbm2ddlImport_files;
+
+    @Value("${blSecurePU.hibernate.hbm2ddl.auto}")
+    protected String blSecurePUHibernateHbm2ddlAuto;
+    @Value("${blSecurePU.hibernate.dialect}")
+    protected String blSecurePUHibernateDialect;
+    @Value("${blSecurePU.hibernate.show_sql}")
+    protected String blSecurePUHibernateShow_sql;
+    @Value("${blSecurePU.hibernate.cache.use_second_level_cache}")
+    protected String blSecurePUHibernateCacheUse_second_level_cache;
+    @Value("${blSecurePU.hibernate.cache.use_query_cache}")
+    protected String blSecurePUHibernateCacheUse_query_cache;
+    @Value("${blSecurePU.hibernate.hbm2ddl.import_files}")
+    protected String blSecurePUHibernateHbm2ddlImport_files;
+
+    @PostConstruct
+    public void populatePresetProperties() {
+        if (!blPUHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.auto", blPUHibernateHbm2ddlAuto);
+        if (!blPUHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.dialect", blPUHibernateDialect);
+        if (!blPUHibernateShow_sql.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.show_sql", blPUHibernateShow_sql);
+        if (!blPUHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.cache.use_second_level_cache", blPUHibernateCacheUse_second_level_cache);
+        if (!blPUHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.cache.use_query_cache", blPUHibernateCacheUse_query_cache);
+        if (!blPUHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", blPUHibernateHbm2ddlImport_files);
+
+        if (!blCMSStorageHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.auto", blCMSStorageHibernateHbm2ddlAuto);
+        if (!blCMSStorageHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.dialect", blCMSStorageHibernateDialect);
+        if (!blCMSStorageHibernateShow_sql.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.show_sql", blCMSStorageHibernateShow_sql);
+        if (!blCMSStorageHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.cache.use_second_level_cache", blCMSStorageHibernateCacheUse_second_level_cache);
+        if (!blCMSStorageHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.cache.use_query_cache", blCMSStorageHibernateCacheUse_query_cache);
+        if (!blCMSStorageHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.import_files", blCMSStorageHibernateHbm2ddlImport_files);
+
+        if (!blSecurePUHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.auto", blSecurePUHibernateHbm2ddlAuto);
+        if (!blSecurePUHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.dialect", blSecurePUHibernateDialect);
+        if (!blSecurePUHibernateShow_sql.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.show_sql", blSecurePUHibernateShow_sql);
+        if (!blSecurePUHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.cache.use_second_level_cache", blSecurePUHibernateCacheUse_second_level_cache);
+        if (!blSecurePUHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.cache.use_query_cache", blSecurePUHibernateCacheUse_query_cache);
+        if (!blSecurePUHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.import_files", blSecurePUHibernateHbm2ddlImport_files);
+
+        persistenceUnitProperties.putAll(overrideProperties);
+    }
     
     @Override
     public void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo pui) {
@@ -85,6 +153,6 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements
     }
     
     public void setPersistenceUnitProperties(Map<String, String> properties) {
-        this.persistenceUnitProperties = properties;
+        this.overrideProperties = properties;
     }
 }

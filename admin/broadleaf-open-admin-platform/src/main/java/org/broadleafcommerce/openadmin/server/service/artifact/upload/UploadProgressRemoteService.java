@@ -17,9 +17,10 @@
 package org.broadleafcommerce.openadmin.server.service.artifact.upload;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
-import org.broadleafcommerce.openadmin.client.service.ServiceException;
+
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.openadmin.client.service.UploadProgressService;
-import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

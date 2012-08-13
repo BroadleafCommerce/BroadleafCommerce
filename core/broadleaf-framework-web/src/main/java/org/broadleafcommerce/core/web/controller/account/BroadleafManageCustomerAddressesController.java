@@ -1,11 +1,6 @@
 package org.broadleafcommerce.core.web.controller.account;
 
-import java.beans.PropertyEditorSupport;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -21,6 +16,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import java.beans.PropertyEditorSupport;
+import java.util.List;
 
 public class BroadleafManageCustomerAddressesController extends BroadleafAbstractController {
 
@@ -100,7 +101,8 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     	return getCustomerAddressesView();
     }
 
-    public String addCustomerAddress(HttpServletRequest request, Model model, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String addCustomerAddress(HttpServletRequest request, Model model, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
+		exploitProtectionService.compareToken(form.getCsrfToken());
     	customerAddressValidator.validate(form, result);
     	if (result.hasErrors()) {
     		return getCustomerAddressesView();
@@ -122,7 +124,8 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         return getCustomerAddressesRedirect();
     }
     
-    public String updateCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String updateCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
+		exploitProtectionService.compareToken(form.getCsrfToken());
     	customerAddressValidator.validate(form, result);
     	if (result.hasErrors()) {
     		return getCustomerAddressesView();
