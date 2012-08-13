@@ -16,6 +16,23 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
+import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
+
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -26,23 +43,6 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentRuleBasedPresenterInitializer;
-import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * @author jfischer
@@ -115,20 +115,12 @@ public class PagesPresenterExtractor {
             for (String key : dirtyValues.keySet()) {
                 getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));
             }
-            for (Record d : getDisplay().getListDisplay().getGrid().getRecords()) {
-                printRecord("Before--", d);
-            }
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                 @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     if (response.getStatus() != RPCResponse.STATUS_FAILURE) {
                         final String newId = response.getAttribute("newId");
-                        System.out.println("the following should not be null????");
-                        printRecord("savedRecord", response.getData()[0]);
-                        printRecord("Presenter->CurrenPageRecord->", presenter.currentPageRecord);
-                        for (Record d : getDisplay().getListDisplay().getGrid().getRecords()) {
-                            printRecord("After--", d);
-                        }
+                       
                         FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
 
                         final DynamicForm form = legacyForm.getForm();
@@ -188,11 +180,7 @@ public class PagesPresenterExtractor {
         }
     }
 
-    public static void printRecord(String string, Record selectedRecord) {
-        String id = selectedRecord.getAttribute("id");
-        String X = selectedRecord.getAttribute(StructuredContentRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER));
-        System.out.println(string + selectedRecord + " " + id + "->" + X);
-    }
+
 
     protected void resetButtonState() {
         getDisplay().getDynamicFormDisplay().getSaveButton().disable();
