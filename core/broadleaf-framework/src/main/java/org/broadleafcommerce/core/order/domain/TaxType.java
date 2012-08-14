@@ -34,15 +34,15 @@ public class TaxType implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, TaxType> TYPES = new HashMap<String, TaxType>();
 
-    public static final TaxType CITY = new TaxType("city", "City");
-    public static final TaxType STATE = new TaxType("state", "State");
-    public static final TaxType DISTRICT = new TaxType("district", "District");
-    public static final TaxType COUNTY = new TaxType("county", "County");
-    public static final TaxType COUNTRY = new TaxType("country", "Country");
-    public static final TaxType SHIPPING = new TaxType("shipping", "Shipping");
+    public static final TaxType CITY = new TaxType("CITY", "City");
+    public static final TaxType STATE = new TaxType("STATE", "State");
+    public static final TaxType DISTRICT = new TaxType("DISTRICT", "District");
+    public static final TaxType COUNTY = new TaxType("COUNTY", "County");
+    public static final TaxType COUNTRY = new TaxType("COUNTRY", "Country");
+    public static final TaxType SHIPPING = new TaxType("SHIPPING", "Shipping");
 
     // Used by SimpleTaxModule to represent total taxes owed.
-    public static final TaxType COMBINED = new TaxType("combined", "Combined");
+    public static final TaxType COMBINED = new TaxType("COMBINED", "Combined");
 
     public static TaxType getInstance(final String type) {
         return TYPES.get(type);
