@@ -209,7 +209,7 @@ public class ProductDaoImpl implements ProductDao {
 	}
 	
 	protected void attachOrderBy(ProductSearchCriteria searchCriteria, 
-			Path<? extends Product> product, Path<? extends Sku> sku, CriteriaQuery<?> criteria) {
+			From<?, ? extends Product> product, Path<? extends Sku> sku, CriteriaQuery<?> criteria) {
 		if (StringUtils.isNotBlank(searchCriteria.getSortQuery())) {
 			CriteriaBuilder builder = em.getCriteriaBuilder();
 		
@@ -227,8 +227,13 @@ public class ProductDaoImpl implements ProductDao {
 					if (key.contains("defaultSku.")) {
 						pathToUse = sku;
 						key = key.substring("defaultSku.".length());
-					} else {
+					} else if (key.contains("product.")) {
 						pathToUse = product;
+						key = key.substring("product.".length());
+					} else {
+						// We don't know which path this facet is built on - resolves previous bug that attempted
+						// to attach search facet to any query parameter
+						continue;
 					}
 					
 					if (asc) {

@@ -106,9 +106,13 @@
     </profiles>
 	<dependencies>
 		<dependency>
-			<groupId>org.compass-project</groupId>
-			<artifactId>compass</artifactId>
-		</dependency>
+            <artifactId>solr-solrj</artifactId>
+            <groupId>org.apache.solr</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>solr-core</artifactId>
+            <groupId>org.apache.solr</groupId>
+       	</dependency>
 		<dependency>
 			<groupId>org.mvel</groupId>
 			<artifactId>mvel2</artifactId>

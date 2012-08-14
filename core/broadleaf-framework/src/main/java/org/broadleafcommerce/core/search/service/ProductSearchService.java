@@ -16,11 +16,13 @@
 
 package org.broadleafcommerce.core.search.service;
 
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -35,8 +37,9 @@ public interface ProductSearchService {
 	 * @param category
 	 * @param searchCriteria
 	 * @return the result of the search
+	 * @throws ServiceException 
 	 */
-	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria);
+	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException;
 	
 	/**
 	 * Performs a search for products across all categories for the given query, taking into consideration
@@ -62,6 +65,13 @@ public interface ProductSearchService {
 	 * @return the available facets
 	 */
 	public List<SearchFacetDTO> getCategoryFacets(Category category);
-
+	
+	/**
+	 * Rebuilds the current index. Note that some search service implementations may not necessarily
+	 * support rebuilding an index (such as the DatabaseProductSearchService)
+	 * @throws IOException 
+	 * @throws ServiceException
+	 */
+	public void rebuildIndex() throws ServiceException, IOException;
 
 }

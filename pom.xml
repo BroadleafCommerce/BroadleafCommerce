@@ -623,26 +623,20 @@
             </dependency>
 
             <!-- Search Related Libraries -->
-            <dependency>
-                <groupId>org.compass-project</groupId>
-                <artifactId>compass</artifactId>
-                <version>2.2.0</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-logging</artifactId>
-                        <groupId>commons-logging</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-analyzers</artifactId>
-                <version>2.4.1</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
+			<dependency>
+	            <artifactId>solr-solrj</artifactId>
+	            <groupId>org.apache.solr</groupId>
+	            <version>1.4.0</version>
+	            <type>jar</type>
+	            <scope>compile</scope>
+	        </dependency>
+	        <dependency>
+	            <artifactId>solr-core</artifactId>
+	            <groupId>org.apache.solr</groupId>
+	            <version>1.4.0</version>
+	            <type>jar</type>
+	            <scope>compile</scope>
+        	</dependency>
 
             <!-- Byte Code Manipulation Libraries-->
             <dependency>

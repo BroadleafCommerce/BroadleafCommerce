@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -32,7 +33,6 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.compass.core.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

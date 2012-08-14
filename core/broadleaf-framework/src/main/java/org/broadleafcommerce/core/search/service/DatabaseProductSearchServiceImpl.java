@@ -175,5 +175,10 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	public void setDisableCaching(boolean disableCaching) {
 		this.disableCaching = disableCaching;
 	}
+
+	@Override
+	public void rebuildIndex() {
+		throw new UnsupportedOperationException("Indexes are not supported by this implementation");
+	}
 	
 }
