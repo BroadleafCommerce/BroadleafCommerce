@@ -62,11 +62,11 @@ public class TaxDetailImpl implements TaxDetail {
     
     @Column(name = "TYPE")
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Type", order=1, group = "TaxDetailImpl_Tax_Detail")
-    protected TaxType type;
+    protected String type;
     
     @Column(name = "AMOUNT", precision=19, scale=5)
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Amount", order=2, group = "TaxDetailImpl_Tax_Detail")
-    protected Money amount;
+    protected BigDecimal amount;
     
     @Column(name = "RATE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Rate", order=1, group = "TaxDetailImpl_Tax_Detail")
@@ -77,8 +77,8 @@ public class TaxDetailImpl implements TaxDetail {
     }
     
     public TaxDetailImpl(TaxType type, Money amount, BigDecimal rate) {
-        this.type = type;
-        this.amount = amount;
+        this.type = type.getType();
+        this.amount = amount.getAmount();
         this.rate = rate;
     }
 
@@ -94,22 +94,22 @@ public class TaxDetailImpl implements TaxDetail {
 
     @Override
     public TaxType getType() {
-        return type;
+        return TaxType.getInstance(this.type);
     }
 
     @Override
     public void setType(TaxType type) {
-        this.type = type;
+        this.type = type.getType();
     }
 
     @Override
     public Money getAmount() {
-        return amount;
+        return new Money(amount);
     }
 
     @Override
     public void setAmount(Money amount) {
-        this.amount = amount;
+        this.amount = amount.getAmount();
     }
 
     @Override
