@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.service.ProductSearchService;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -63,10 +64,12 @@ public class SolrProductSearchServiceImpl implements ProductSearchService {
 
 	@Override
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException {
+		System.out.println("SEARCHING");
 		
 	    SolrQuery query = new SolrQuery();
 	    query.setQuery( "*:*" );
-	    query.addSortField( "price", SolrQuery.ORDER.asc );
+	    query.addSortField( "price_d", SolrQuery.ORDER.asc );
+	    query.setRows(40);
 
 	    try {
 	    	QueryResponse rsp = server.query( query );
@@ -83,7 +86,7 @@ public class SolrProductSearchServiceImpl implements ProductSearchService {
 		
 		
 		// TODO Auto-generated method stub
-		return null;
+		return new ProductSearchResult();
 	}
 
 	@Override
@@ -105,17 +108,17 @@ public class SolrProductSearchServiceImpl implements ProductSearchService {
 	}
 
 	@Override
-	//@Scheduled(fixedDelay = 10000)
+	@Scheduled(fixedRate = 3000000)
 	public void rebuildIndex() throws ServiceException, IOException {
 		System.out.println("REBUILDING");
 		SolrInputDocument doc1 = new SolrInputDocument();
-	    doc1.addField("id", "id1", 1.0f);
-	    doc1.addField("name", "doc1", 1.0f);
-	    doc1.addField("price", 10);
+	    doc1.addField("id_t", "id1", 1.0f);
+	    doc1.addField("name_t", "doc1", 1.0f);
+	    doc1.addField("price_d", 10.0);
 	    SolrInputDocument doc2 = new SolrInputDocument();
-	    doc2.addField("id", "id2", 1.0f);
-	    doc2.addField("name", "doc2", 1.0f);
-	    doc2.addField("price", 20);
+	    doc2.addField("id_t", "id2", 1.0f);
+	    doc2.addField("name_t", "doc2", 1.0f);
+	    doc2.addField("price_d", 20.0);
 	    
 	    Collection<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
 	    docs.add(doc1);
@@ -124,6 +127,8 @@ public class SolrProductSearchServiceImpl implements ProductSearchService {
 	    try {
 		    server.add(docs);
 		    server.commit();
+		    
+		    
 		    
 		    UpdateRequest req = new UpdateRequest();
 		    req.setAction(UpdateRequest.ACTION.COMMIT, false, false);
