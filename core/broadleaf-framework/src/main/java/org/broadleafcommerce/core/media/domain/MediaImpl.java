@@ -63,7 +63,7 @@ public class MediaImpl implements Media {
     protected String url;
 	
     @Column(name = "TITLE")
-    @Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"})
+    @Index(name="MEDIA_TITLE_INDEX", columnNames={"TITLE"})
     @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order=2, prominent=true)
     protected String title;
     

@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -32,8 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 /**
  * @author jfischer
@@ -48,7 +49,7 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     @Value("${store.front.webapp.prefix}")
     protected String storeFrontWebAppPrefix;
 
-    @Value("${asset.server.url.prefix}")
+    @Value("${asset.server.url.prefix.internal}")
     protected String assetServerUrlPrefix;
 
     @Resource(name="blExploitProtectionService")
