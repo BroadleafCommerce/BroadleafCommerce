@@ -16,39 +16,11 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import java.util.List;
 
 /**
+ * 
  * @author Andre Azzolini (apazzolini)
  */
-public class SearchFacetDTO {
-	
-	protected SearchFacet facet;
-	protected boolean showQuantity;
-	protected List<SearchFacetResultDTO> facetValues;
-	
-	public SearchFacet getFacet() {
-		return facet;
-	}
-	
-	public void setFacet(SearchFacet facet) {
-		this.facet = facet;
-	}
-	
-	public boolean isShowQuantity() {
-		return showQuantity;
-	}
-	
-	public void setShowQuantity(boolean showQuantity) {
-		this.showQuantity = showQuantity;
-	}
-	
-	public List<SearchFacetResultDTO> getFacetValues() {
-		return facetValues;
-	}
-	
-	public void setFacetValues(List<SearchFacetResultDTO> facetValues) {
-		this.facetValues = facetValues;
-	}
+public interface SearchConfig {
 
 }

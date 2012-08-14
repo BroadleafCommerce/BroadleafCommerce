@@ -23,7 +23,7 @@ import java.math.BigDecimal;
  */
 public class SearchFacetResultDTO {
 	
-	protected CategorySearchFacet facet;
+	protected SearchFacet facet;
 	
 	protected String value;
 	
@@ -34,11 +34,11 @@ public class SearchFacetResultDTO {
 	
 	protected boolean active;
 	
-	public CategorySearchFacet getFacet() {
+	public SearchFacet getFacet() {
 		return facet;
 	}
 
-	public void setFacet(CategorySearchFacet facet) {
+	public void setFacet(SearchFacet facet) {
 		this.facet = facet;
 	}
 

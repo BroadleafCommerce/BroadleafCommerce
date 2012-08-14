@@ -32,7 +32,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
-import org.broadleafcommerce.core.search.service.ProductSearchService;
+import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.xml.sax.SAXException;
 
@@ -46,11 +46,11 @@ import java.util.List;
 /**
  * @author Andre Azzolini (apazzolini)
  */
-public class SolrProductSearchServiceImpl implements ProductSearchService {
+public class SolrSearchServiceImpl implements SearchService {
 	
 	protected SolrServer server;
 	
-	public SolrProductSearchServiceImpl() throws IOException, ParserConfigurationException, SAXException {
+	public SolrSearchServiceImpl() throws IOException, ParserConfigurationException, SAXException {
 		System.setProperty("solr.solr.home", "/solrtemp");
 		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
 		CoreContainer coreContainer = initializer.initialize();
@@ -58,7 +58,7 @@ public class SolrProductSearchServiceImpl implements ProductSearchService {
 		this.server = server;
 	}
 	
-	public SolrProductSearchServiceImpl(SolrServer server) {
+	public SolrSearchServiceImpl(SolrServer server) {
 		this.server = server;
 	}
 

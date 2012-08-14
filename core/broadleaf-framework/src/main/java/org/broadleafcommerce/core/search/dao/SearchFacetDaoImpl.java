@@ -19,9 +19,8 @@ package org.broadleafcommerce.core.search.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
-import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -44,14 +43,13 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
     protected EntityConfiguration entityConfiguration;
     
     @Override
-    public List<CategorySearchFacet> readAllSearchFacets() {
+    public List<SearchFacet> readAllSearchFacets() {
     	CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaQuery<CategorySearchFacet> criteria = builder.createQuery(CategorySearchFacet.class);
+		CriteriaQuery<SearchFacet> criteria = builder.createQuery(SearchFacet.class);
 		
-		Root<CategorySearchFacetImpl> root = criteria.from(CategorySearchFacetImpl.class);
-		Path<SearchFacet> facet = root.get("searchFacet");
+		Root<SearchFacetImpl> facet = criteria.from(SearchFacetImpl.class);
 		
-		criteria.select(root);
+		criteria.select(facet);
 		criteria.where(
 			builder.equal(facet.get("showOnSearch").as(Boolean.class), true)
 		);

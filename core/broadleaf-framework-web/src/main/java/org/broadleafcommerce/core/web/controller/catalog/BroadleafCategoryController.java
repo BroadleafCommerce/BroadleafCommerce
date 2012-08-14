@@ -6,7 +6,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
-import org.broadleafcommerce.core.search.service.ProductSearchService;
+import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,8 +32,8 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected static String FACETS_ATTRIBUTE_NAME = "facets";  
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
     
-	@Resource(name = "blProductSearchService")
-	protected ProductSearchService productSearchService;
+	@Resource(name = "blSearchService")
+	protected SearchService searchService;
 	
 	@Resource(name = "blSearchFacetDTOService")
 	protected SearchFacetDTOService facetService;
@@ -45,9 +45,9 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 		Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
 		assert(category != null);
 		
-		List<SearchFacetDTO> availableFacets = productSearchService.getCategoryFacets(category);
+		List<SearchFacetDTO> availableFacets = searchService.getCategoryFacets(category);
 		ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
-		ProductSearchResult result = productSearchService.findProductsByCategory(category, searchCriteria);
+		ProductSearchResult result = searchService.findProductsByCategory(category, searchCriteria);
 		
 		facetService.setActiveFacetResults(result.getFacets(), request);
     	

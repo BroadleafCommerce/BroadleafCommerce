@@ -54,6 +54,7 @@ import java.util.Map.Entry;
 
 /**
  * @author Jeff Fischer
+ * @author Andre Azzolini (apazzolini)
  */
 @Repository("blProductDao")
 public class ProductDaoImpl implements ProductDao {
@@ -258,7 +259,7 @@ public class ProductDaoImpl implements ProductDao {
 			List<String> eqValues = new ArrayList<String>();
 			List<String[]> rangeValues = new ArrayList<String[]>();
 			
-			// Determine whether we should use the product path or the sku path
+			// Determine which path is the appropriate one to use
 			Path<?> pathToUse;
 			if (key.contains("defaultSku.")) {
 				pathToUse = sku;

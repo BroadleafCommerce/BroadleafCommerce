@@ -22,7 +22,7 @@ import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
-import org.broadleafcommerce.core.search.service.ProductSearchService;
+import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.springframework.ui.Model;
 
@@ -39,8 +39,8 @@ import java.util.List;
  */
 public class BroadleafSearchController extends AbstractCatalogController {
 
-	@Resource(name = "blProductSearchService")
-	protected ProductSearchService productSearchService;
+	@Resource(name = "blSearchService")
+	protected SearchService searchService;
 	
 	@Resource(name = "blExploitProtectionService")
 	protected ExploitProtectionService exploitProtectionService;
@@ -65,9 +65,9 @@ public class BroadleafSearchController extends AbstractCatalogController {
 		}
 		
 		if (StringUtils.isNotEmpty(query)) {
-			List<SearchFacetDTO> availableFacets = productSearchService.getSearchFacets();
+			List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
 			ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
-			ProductSearchResult result = productSearchService.findProductsByQuery(query, searchCriteria);
+			ProductSearchResult result = searchService.findProductsByQuery(query, searchCriteria);
 			
 			facetService.setActiveFacetResults(result.getFacets(), request);
 	    	

@@ -17,7 +17,6 @@
 package org.broadleafcommerce.core.web.service;
 
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
-import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 
@@ -61,14 +60,12 @@ public interface SearchFacetDTOService {
 	public boolean isActive(SearchFacetResultDTO result, HttpServletRequest request);
 	
 	/**
-	 * Gets the key associated with a given SearchFacetResultDTO.
-	 * The default Broadleaf implementation will return the result of a call to the 
-	 * {@link SearchFacet#getQueryStringKey()} method.
+	 * Gets the url abbreviation associated with a given SearchFacetResultDTO.
 	 * 
 	 * @param result
 	 * @return the key associated with a SearchFacetResultDTO
 	 */
-	public String getKey(SearchFacetResultDTO result);
+	public String getUrlKey(SearchFacetResultDTO result);
 
 	/**
 	 * Gets the value of the given SearchFacetResultDTO.

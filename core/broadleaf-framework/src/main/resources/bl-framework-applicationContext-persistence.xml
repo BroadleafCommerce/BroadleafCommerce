@@ -195,11 +195,6 @@
 	</aop:config>
 
 	<aop:config>
-		<aop:pointcut id="blSearchServiceOperation" expression="execution(* org.broadleafcommerce.core.search.service.SearchService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSearchServiceOperation"/>
-	</aop:config>
-
-	<aop:config>
 		<aop:pointcut id="blContentServiceOperation" expression="execution(* org.broadleafcommerce.core.content.service.ContentService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blContentServiceOperation"/>
 	</aop:config>
