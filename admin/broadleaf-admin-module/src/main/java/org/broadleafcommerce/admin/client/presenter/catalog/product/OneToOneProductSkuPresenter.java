@@ -229,12 +229,12 @@ public class OneToOneProductSkuPresenter extends HtmlEditingPresenter implements
             public void onSetupSuccess(DataSource result) {
 				final ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
 				productSearchDataSource.resetPermanentFieldVisibility(
-					"name",
-					"description",
+					"defaultSku.name",
+					"defaultSku.description",
 					"model",
 					"manufacturer",
-					"activeStartDate",
-					"activeEndDate"
+					"defaultSku.activeStartDate",
+					"defaultSku.activeEndDate"
 				);
 				productSearchView = new EntitySearchDialog(productSearchDataSource);
 			}
