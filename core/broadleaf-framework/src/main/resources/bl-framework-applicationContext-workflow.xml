@@ -23,9 +23,7 @@
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity"/>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity">
-                    <property name="fulfillmentPricingService" ref="blFulfillmentPricingService"/>
-                </bean>
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity" />
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity"/>
 				<bean class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity">
 					<property name="taxModule" ref="blTaxModule"/>
@@ -45,14 +43,14 @@
 	<bean id="blFixedPriceFulfillmentPricingProvider" class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider" />
 	<bean id="blBandedFulfillmentPricingProvider" class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider" />
 
-	<bean id="blFulfillmentPricingService" class="org.broadleafcommerce.core.pricing.service.FulfillmentPricingServiceImpl">
-	   <property name="providers">
-	       <list>
-	           <ref bean="blFixedPriceFulfillmentPricingProvider" />
-	           <ref bean="blBandedFulfillmentPricingProvider" />
-	       </list>
-	   </property>
-	</bean>
+    <bean id="blFulfillmentPricingProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+               <ref bean="blFixedPriceFulfillmentPricingProvider" />
+               <ref bean="blBandedFulfillmentPricingProvider" />
+            </list>
+        </property>
+    </bean>
 	
 	<bean id="blGiftCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
 		<property name="paymentModule" ref="blGiftCardModule"/>
