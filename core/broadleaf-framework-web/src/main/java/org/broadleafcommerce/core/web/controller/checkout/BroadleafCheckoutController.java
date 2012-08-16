@@ -15,6 +15,7 @@ import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
+import org.broadleafcommerce.core.web.checkout.model.MultiShipInstructionForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
@@ -43,6 +44,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -127,6 +131,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
         fulfillmentGroup.setAddress(shippingForm.getAddress());
+        fulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
+        fulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
         FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOptionId());
         fulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
@@ -231,6 +237,31 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	//append current time to redirect to fix a problem with ajax caching in IE
     	return getMultishipAddAddressSuccessView() + "?_=" + System.currentTimeMillis();
     }
+    
+    
+    
+    
+    public String saveMultiShipInstruction(HttpServletRequest request, HttpServletResponse response, Model model,
+    		MultiShipInstructionForm instructionForm) throws ServiceException, PricingException {
+    	Order cart = CartState.getCart();
+    	FulfillmentGroup fulfillmentGroup = null;
+    	
+    	for( FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
+    		if(tempFulfillmentGroup.getId() == instructionForm.getId()) {
+    			fulfillmentGroup = tempFulfillmentGroup;
+    		}
+    		
+    	}
+    	fulfillmentGroup.setPersonalMessage(instructionForm.getPersonalMessage());
+    	fulfillmentGroup.setDeliveryInstruction(instructionForm.getDeliveryMessage());
+    	
+    	fulfillmentGroupService.save(fulfillmentGroup);
+    	
+   	//append current time to redirect to fix a problem with ajax caching in IE
+   	return getCheckoutPageRedirect()+ "?_=" + System.currentTimeMillis();
+   	
+       
+   }
 
     /**
      * Processes the request to complete checkout using a Credit Card

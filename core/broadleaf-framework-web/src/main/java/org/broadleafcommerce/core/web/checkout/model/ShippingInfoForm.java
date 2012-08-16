@@ -17,6 +17,8 @@
 package org.broadleafcommerce.core.web.checkout.model;
 
 import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
+import org.broadleafcommerce.core.order.domain.PersonalMessage;
+import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 
@@ -31,11 +33,12 @@ import java.io.Serializable;
 public class ShippingInfoForm extends CsrfProtectedForm implements Serializable {
 
 	private static final long serialVersionUID = -7895489234675056031L;
-	
 	protected Address address = new AddressImpl();
     protected String addressName;
     protected Long fulfillmentOptionId;
-
+	protected PersonalMessage personalMessage = new PersonalMessageImpl();
+	protected String deliveryMessage;
+	
     public Long getFulfillmentOptionId() {
         return fulfillmentOptionId;
     }
@@ -58,6 +61,24 @@ public class ShippingInfoForm extends CsrfProtectedForm implements Serializable 
 
 	public void setAddressName(String addressName) {
 		this.addressName = addressName;
+	} 
+	
+	public String getDeliveryMessage() {
+		return deliveryMessage;
 	}
+	
+	public void setDeliveryMessage(String deliveryMessage) {
+		this.deliveryMessage = deliveryMessage;
+	}
+	
+	public void setPersonalMessage(PersonalMessage personalMessage) {
+		this.personalMessage = personalMessage;
+	}
+	
+	public PersonalMessage getPersonalMessage() {
+		return personalMessage;
+	}
+	
+	
 	
 }
