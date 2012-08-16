@@ -247,7 +247,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	FulfillmentGroup fulfillmentGroup = null;
     	
     	for( FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
-    		if(tempFulfillmentGroup.getId() == instructionForm.getId()) {
+    		if(tempFulfillmentGroup.getId() == instructionForm.getfulfillmentGroupId()) {
     			fulfillmentGroup = tempFulfillmentGroup;
     		}
     		
