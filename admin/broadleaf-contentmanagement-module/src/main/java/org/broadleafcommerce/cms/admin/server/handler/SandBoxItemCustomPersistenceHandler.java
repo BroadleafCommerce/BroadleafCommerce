@@ -16,11 +16,7 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,6 +34,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -47,7 +44,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 import javax.annotation.Resource;
@@ -204,20 +200,11 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());
 
-            SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    return Restrictions.or(Restrictions.eq("rootEntityItem", true), Restrictions.isNull("rootEntityItem"));
-                }
-            };
-            FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "rootEntityItem", criterionProvider);
-            ((NestedPropertyCriteria) queryCriteria).add(filterCriterion);
-
-            List<Serializable> records = dynamicEntityDao.query(queryCriteria, SandBoxItem.class);
+            List<Serializable> records = dynamicEntityDao.query(queryCriteria, SandBoxItemImpl.class);
             Entity[] results = helper.getRecords(originalProps, records);
 
             PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), ceilingEntityFullyQualifiedClassname);
-            ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
-            int totalRecords = dynamicEntityDao.count(countCriteria, Class.forName(StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname()) ? ceilingEntityFullyQualifiedClassname : persistencePackage.getFetchTypeFullyQualifiedClassname()));
+            int totalRecords = dynamicEntityDao.count(countCriteria, SandBoxItemImpl.class);
 
             DynamicResultSet response = new DynamicResultSet(results, totalRecords);
 

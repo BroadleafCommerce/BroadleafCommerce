@@ -99,11 +99,6 @@ public class SandBoxItemImpl implements SandBoxItem {
     @Index(name="ARCHIVED_FLAG_INDEX", columnNames={"ARCHIVED_FLAG"})
     protected Character archivedFlag = 'N';
 
-    @Column(name = "ROOT_ENTITY_ITEM")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ROOT_ENTY_ITM_INDEX", columnNames={"ROOT_ENTITY_ITEM"})
-    protected Boolean rootEntityItem = false;
-
     @ManyToMany(targetEntity = SandBoxActionImpl.class, cascade = CascadeType.ALL)
     @JoinTable(
         name = "SANDBOX_ITEM_ACTION",
@@ -247,16 +242,6 @@ public class SandBoxItemImpl implements SandBoxItem {
     @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
-    }
-
-    @Override
-    public Boolean getRootEntityItem() {
-        return rootEntityItem;
-    }
-
-    @Override
-    public void setRootEntityItem(Boolean rootEntityItem) {
-        this.rootEntityItem = rootEntityItem;
     }
 
     @Override
