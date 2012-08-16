@@ -16,8 +16,14 @@
 
 package org.broadleafcommerce.openadmin.client;
 
+import java.util.logging.Level;
+
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.History;
+import com.smartgwt.client.util.SC;
 
 /**
  * 
@@ -28,15 +34,33 @@ public class BLCLaunch implements EntryPoint {
     private static String PAGE_FRAGMENT = "pageKey=";
     private static String MODULE_FRAGMENT = "moduleKey=";
     private static String ITEM_FRAGMENT = "itemId=";
+    @Override
+    public void onModuleLoad() {
+        GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+        @Override
+        public void onUncaughtException(Throwable throwable) {
+         
+          String title = "BLC Admin Uncaught exception: ";
+          java.util.logging.Logger.getLogger(BLCMain.class.getName()).log(Level.SEVERE,title,throwable);
+          SC.say(title, "Please see server logs for details.\n"+throwable.getMessage());
+         }
+        });
 
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {    
+         @Override
+         public void execute() {
+            onModuleLoad2();
+          }
+         });
+}
 
-	public void onModuleLoad() {
+	public void onModuleLoad2() {
 		if (BLCMain.SPLASH_PROGRESS != null) {
 			BLCMain.SPLASH_PROGRESS.startProgress();
 		}
 
-        String currentModulePage = History.getToken();
-        BLCMain.drawCurrentState(getSelectedModule(currentModulePage), getSelectedPage(currentModulePage));
+               String currentModulePage = History.getToken();
+               BLCMain.drawCurrentState(getSelectedModule(currentModulePage), getSelectedPage(currentModulePage));
 	}
     
     private static String getSelectedString(String currentModulePage, String fragment) {
