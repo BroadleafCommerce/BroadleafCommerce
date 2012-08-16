@@ -243,11 +243,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	Order cart = CartState.getCart();
     	FulfillmentGroup fulfillmentGroup = null;
     	
-    	for ( FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
+    	for (FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
     		if (tempFulfillmentGroup.getId() == instructionForm.getfulfillmentGroupId()) {
     			fulfillmentGroup = tempFulfillmentGroup;
     		}
-    		
     	}
     	fulfillmentGroup.setPersonalMessage(instructionForm.getPersonalMessage());
     	fulfillmentGroup.setDeliveryInstruction(instructionForm.getDeliveryMessage());
