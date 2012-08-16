@@ -79,6 +79,4 @@ public class ShippingInfoForm extends CsrfProtectedForm implements Serializable 
 		return personalMessage;
 	}
 	
-	
-	
 }

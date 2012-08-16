@@ -237,30 +237,24 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	//append current time to redirect to fix a problem with ajax caching in IE
     	return getMultishipAddAddressSuccessView() + "?_=" + System.currentTimeMillis();
     }
-    
-    
-    
-    
+
     public String saveMultiShipInstruction(HttpServletRequest request, HttpServletResponse response, Model model,
     		MultiShipInstructionForm instructionForm) throws ServiceException, PricingException {
     	Order cart = CartState.getCart();
     	FulfillmentGroup fulfillmentGroup = null;
     	
-    	for( FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
-    		if(tempFulfillmentGroup.getId() == instructionForm.getfulfillmentGroupId()) {
+    	for ( FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
+    		if (tempFulfillmentGroup.getId() == instructionForm.getfulfillmentGroupId()) {
     			fulfillmentGroup = tempFulfillmentGroup;
     		}
     		
     	}
     	fulfillmentGroup.setPersonalMessage(instructionForm.getPersonalMessage());
     	fulfillmentGroup.setDeliveryInstruction(instructionForm.getDeliveryMessage());
-    	
     	fulfillmentGroupService.save(fulfillmentGroup);
     	
    	//append current time to redirect to fix a problem with ajax caching in IE
    	return getCheckoutPageRedirect()+ "?_=" + System.currentTimeMillis();
-   	
-       
    }
 
     /**
