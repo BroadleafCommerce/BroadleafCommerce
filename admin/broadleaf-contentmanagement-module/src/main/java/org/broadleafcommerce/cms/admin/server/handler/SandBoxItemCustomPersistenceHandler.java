@@ -102,7 +102,8 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
         if (CollectionUtils.isEmpty(ids)) {
             throw new IllegalArgumentException("The passed in ids parameter is empty");
         }
-        Criteria criteria = dynamicEntityDao.createCriteria(SandBoxItem.class);
+        //declare SandBoxItemImpl explicitly, as we do not want to retrieve other polymorphic types (e.g. WorkflowSandBoxItemImpl)
+        Criteria criteria = dynamicEntityDao.createCriteria(SandBoxItemImpl.class);
         criteria.add(Restrictions.in("id", ids));
         criteria.add(Restrictions.or(Restrictions.eq("originalSandBoxId", mySandBox.getId()), Restrictions.eq("sandBoxId", mySandBox.getId())));
         return criteria.list();
@@ -200,6 +201,7 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());
 
+            //declare SandBoxItemImpl explicitly, as we do not want to retrieve other polymorphic types (e.g. WorkflowSandBoxItemImpl)
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, SandBoxItemImpl.class);
             Entity[] results = helper.getRecords(originalProps, records);
 
