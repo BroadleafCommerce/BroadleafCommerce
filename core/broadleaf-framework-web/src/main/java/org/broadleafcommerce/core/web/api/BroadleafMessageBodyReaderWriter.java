@@ -22,7 +22,6 @@ import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
 import com.sun.jersey.spi.inject.Injectable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
