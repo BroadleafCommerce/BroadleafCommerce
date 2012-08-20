@@ -19,7 +19,6 @@ import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
@@ -29,7 +28,6 @@ import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
@@ -167,23 +165,6 @@ public class CatalogEndpoint implements ApplicationContextAware {
     		SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
             wrapper.wrap(product.getDefaultSku(), request);
             return wrapper;
-    	}
-    	throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
-    
-    @GET
-    @Path("product/{id}/options")
-    public List<ProductOptionWrapper> findProductOptionsByProductId(@Context HttpServletRequest request, @PathParam("id") Long id) {
-    	Product product = catalogService.findProductById(id);
-    	if (product != null) {
-    		ArrayList<ProductOptionWrapper> out = new ArrayList<ProductOptionWrapper>();
-    		List<ProductOption> options = product.getProductOptions();
-    		for (ProductOption option : options) {
-    			ProductOptionWrapper wrapper = (ProductOptionWrapper)context.getBean(ProductOptionWrapper.class.getName());
-    			wrapper.wrap(option, request);
-    			out.add(wrapper);
-    		}
-    		return out;
     	}
     	throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
