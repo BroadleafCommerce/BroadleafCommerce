@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
+import java.util.HashMap;
+import java.util.Set;
+
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
@@ -52,7 +55,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * JAXRS endpoint for providing RESTful services related to the shopping cart.
@@ -130,26 +135,79 @@ public class CartEndpoint implements ApplicationContextAware {
         return wrapper;
     }
 
+    /**
+     * This method takes in a categoryId and productId as path parameters.  In addition, query parameters can be supplied including:
+     * 
+     * <li>skuId</li>
+     * <li>quantity</li>
+     * <li>priceOrder</li>
+     * 
+     * You must provide a skuId OR product options. Product options can be posted as form or querystring parameters. 
+     * You must pass in the ProductOption attributeName as the key and the 
+     * ProductOptionValue attributeValue as the value.  See {@link CatalogEndpoint}.
+     * 
+     * @param request
+     * @param uriInfo
+     * @param categoryId
+     * @param productId
+     * @param skuId
+     * @param quantity
+     * @param priceOrder
+     * @return OrderWrapper
+     */
     @POST
-    @Path("{categoryId}/{productId}/{skuId}")
+    @Path("{categoryId}/{productId}")
     public OrderWrapper addSkuToOrder(@Context HttpServletRequest request,
+    								  @Context UriInfo uriInfo,
                                       @PathParam("categoryId") Long categoryId,
                                       @PathParam("productId") Long productId,
-                                      @PathParam("skuId") Long skuId,
+                                      @QueryParam("skuId") Long skuId,
                                       @QueryParam("quantity") @DefaultValue("1") int quantity,
                                       @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
-
-        if (customer != null && skuId != null) {
+        
+        if (customer != null) {
             Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
+                	//We allow product options to be submitted via form post or via query params.  We need to take 
+                	//the product options and build a map with them...
+                	MultivaluedMap<String, String> multiValuedMap = uriInfo.getQueryParameters();
+                	HashMap<String, String> productOptions = new HashMap<String, String>();
+                	
+                	//Fill up a map of key values that will represent product options
+                	Set<String> keySet = multiValuedMap.keySet();
+                	for (String key : keySet) {
+                		if (multiValuedMap.getFirst(key) != null) {
+                			productOptions.put(key, multiValuedMap.getFirst(key));
+                		}
+                	}
+                	
+                	//Remove the items from the map that represent the other query params of the request
+                	//Essentially these can't be used as product option names...
+                	productOptions.remove("categoryId");
+                	productOptions.remove("productId");
+                	productOptions.remove("skuId");
+                	productOptions.remove("quantity");
+                	productOptions.remove("priceOrder");
+                	
+                	//If a Sku ID was not supplied and no product options were supplied, then we can't process this request
+                	if (skuId == null && productOptions.size() == 0) {
+                		throw new WebApplicationException(Response.Status.BAD_REQUEST);
+                	}
+                	
                 	OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
                 	orderItemRequestDTO.setCategoryId(categoryId);
                 	orderItemRequestDTO.setProductId(productId);
                 	orderItemRequestDTO.setSkuId(skuId);
                 	orderItemRequestDTO.setCategoryId(categoryId);
                 	orderItemRequestDTO.setQuantity(quantity);
+                	
+                	//If we have product options set them on the DTO
+                	if (productOptions.size() > 0) {
+                		orderItemRequestDTO.setItemAttributes(productOptions);
+                	}
+                	
                     Order order = orderService.addItem(cart.getId(), orderItemRequestDTO, priceOrder);
                     order = orderService.save(order, priceOrder);
                     
