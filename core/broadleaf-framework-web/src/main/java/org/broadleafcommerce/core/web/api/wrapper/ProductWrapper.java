@@ -48,6 +48,9 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
 
     @XmlElement
     protected String description;
+    
+    @XmlElement
+    protected Boolean bundle = Boolean.FALSE;
 
     @XmlElement
     protected Date activeStartDate;
@@ -72,9 +75,6 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     protected List<ProductOptionWrapper> productOptions;
     
     //The following are for Product Bundles
-    @XmlElement
-    protected Boolean bundle = Boolean.FALSE;
-    
     @XmlElement
 	protected Integer priority;
 	
