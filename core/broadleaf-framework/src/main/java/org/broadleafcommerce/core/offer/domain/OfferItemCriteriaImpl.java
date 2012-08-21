@@ -81,7 +81,11 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     
     @ManyToOne(targetEntity = OfferImpl.class)
     @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ID"))
-    protected Offer offer;
+    protected Offer qualifyingOffer;
+
+    @ManyToOne(targetEntity = OfferImpl.class)
+    @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ID"))
+    protected Offer targetOffer;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getId()
@@ -125,15 +129,23 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 		this.orderItemMatchRule = orderItemMatchRule;
 	}
 
-	public Offer getOffer() {
-		return offer;
+	public Offer getQualifyingOffer() {
+		return qualifyingOffer;
 	}
 
-	public void setOffer(Offer offer) {
-		this.offer = offer;
+	public void setQualifyingOffer(Offer offer) {
+		this.qualifyingOffer = offer;
 	}
 
-	@Override
+    public Offer getTargetOffer() {
+        return targetOffer;
+    }
+
+    public void setTargetOffer(Offer targetOffer) {
+        this.targetOffer = targetOffer;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

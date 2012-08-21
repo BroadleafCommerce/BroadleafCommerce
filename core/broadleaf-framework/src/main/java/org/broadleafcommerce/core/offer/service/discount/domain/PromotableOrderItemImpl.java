@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -31,6 +26,12 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class PromotableOrderItemImpl implements PromotableOrderItem {
 
@@ -264,7 +265,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 		pq.setItemCriteria(itemCriteria);
 	}
 	
-	public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity) {
+	public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, Set<OfferItemCriteria> itemCriteria, int quantity) {
 		PromotionDiscount pd = lookupOrCreatePromotionDiscount(candidatePromotion);
         if (pd == null) {
             return;

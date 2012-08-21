@@ -185,11 +185,11 @@ public class OfferImpl implements Offer {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
-    @ManyToOne(targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
-    @AdminPresentation(friendlyName="Target Item Criteria", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
     @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    protected OfferItemCriteria targetItemCriteria;
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
     @AdminPresentation(friendlyName="Totalitarian Offer", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
@@ -207,7 +207,7 @@ public class OfferImpl implements Offer {
     protected Boolean treatAsNewFormat;
     
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)    
+    @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)
     protected BigDecimal qualifyingItemSubTotal;
 
     public Long getId() {
@@ -450,13 +450,13 @@ public class OfferImpl implements Offer {
 		this.qualifyingItemCriteria = qualifyingItemCriteria;
 	}
 
-	public OfferItemCriteria getTargetItemCriteria() {
-		return targetItemCriteria;
-	}
+    public Set<OfferItemCriteria> getTargetItemCriteria() {
+        return targetItemCriteria;
+    }
 
-	public void setTargetItemCriteria(OfferItemCriteria targetItemCriteria) {
-		this.targetItemCriteria = targetItemCriteria;
-	}
+    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria) {
+        this.targetItemCriteria = targetItemCriteria;
+    }
 
 	public Boolean isTotalitarianOffer() {
 		return totalitarianOffer;

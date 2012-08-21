@@ -23,7 +23,6 @@ import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.FloatItem;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -32,6 +31,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 import java.util.List;
@@ -64,7 +64,6 @@ public interface OfferDisplay extends DynamicEditDisplay {
 	public Label getTargetItemsLabel();
 	public Label getBogoQuestionLabel();
 	public void setHelpButtonBogo(ImgButton helpButtonBogo);
-	public ItemBuilderDisplay getTargetItemBuilder();
 	public DynamicForm getStepBogoForm();
 	public VLayout getBogoQuestionLayout();
 	public VLayout getFgQuestionLayout();
@@ -118,4 +117,12 @@ public interface OfferDisplay extends DynamicEditDisplay {
     public SectionView getOrderSection();
 	public FloatItem getQualifyingItemSubTotal();
 	public DynamicForm getQualifyingItemSubTotalForm();
+
+    public VLayout getNewTargetItemBuilderLayout();
+    public List<ItemBuilderDisplay> getTargetItemBuilderViews();
+    public VLayout getTargetItemBuilderContainerLayout();
+    public Button getTargetAddItemButton();
+    public ItemBuilderDisplay addTargetItemBuilder(DataSource orderItemDataSource);
+    public void removeTargetItemBuilder(ItemBuilderDisplay itemBuilder);
+    public void removeAllTargetItemBuilders();
 }

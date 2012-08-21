@@ -37,8 +37,12 @@ public interface OfferItemCriteria extends Serializable {
 
 	public void setOrderItemMatchRule(String orderItemMatchRule);
 
-	public Offer getOffer();
+	public Offer getQualifyingOffer();
 
-	public void setOffer(Offer offer);
+	public void setQualifyingOffer(Offer offer);
+
+    public Offer getTargetOffer();
+
+    public void setTargetOffer(Offer targetOffer);
 	
 }

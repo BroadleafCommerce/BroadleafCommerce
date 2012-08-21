@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -47,6 +43,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.admin.client.datasource.promotion.CustomerListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.promotion.FulfillmentGroupListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemTargetCriteriaListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.promotion.OrderItemListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.promotion.OrderListDataSourceFactory;
@@ -64,6 +61,10 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.FilterBuilderAddition
 import org.broadleafcommerce.openadmin.client.view.dynamic.FilterRestartCallback;
 import org.broadleafcommerce.openadmin.client.view.dynamic.FilterStateRunnable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -424,7 +425,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
-                    bindItemBuilderEvents(display);
+                    bindItemBuilderEvents(display, true);
                     display.setDirty(true);
                     getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                     getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
@@ -432,7 +433,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         for (final ItemBuilderDisplay display : getDisplay().getItemBuilderViews()) {
-            bindItemBuilderEvents(display);
+            bindItemBuilderEvents(display, true);
         }
         getDisplay().getCustomerFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
@@ -479,35 +480,29 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                 getDisplay().getRawFGTextArea().setAttribute("dirty", true);
             }
         });
-        getDisplay().getTargetItemBuilder().getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
-            public void onItemChanged(ItemChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getTargetItemBuilder().setDirty(true);
+
+
+
+
+
+        getDisplay().getTargetAddItemButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    final ItemBuilderDisplay display = getDisplay().addTargetItemBuilder(getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
+                    bindItemBuilderEvents(display, true);
+                    display.setDirty(true);
+                    getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                    getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
+                }
             }
         });
-        getDisplay().getTargetItemBuilder().getItemForm().addItemChangedHandler(new ItemChangedHandler() {
-            public void onItemChanged(ItemChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getTargetItemBuilder().setDirty(true);
-            }
-        });
-        getDisplay().getTargetItemBuilder().getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
-            public void onFilterChanged(FilterChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getTargetItemBuilder().setDirty(true);
-            }
-        });
-        additionalFilterEventManager.addFilterBuilderAdditionalEventHandler(getDisplay().getTargetItemBuilder().getItemFilterBuilder(), new FilterBuilderAdditionalEventHandler() {
-            @Override
-            public void onAdditionalChangeEvent() {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getTargetItemBuilder().setDirty(true);
-            }
-        });
+        for (final ItemBuilderDisplay display : getDisplay().getTargetItemBuilderViews()) {
+            bindItemBuilderEvents(display, true);
+        }
+
+
+
+
         getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
@@ -528,12 +523,22 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         });
     }
 
-    protected void bindItemBuilderEvents(final ItemBuilderDisplay display) {
+    protected void bindItemBuilderEvents(final ItemBuilderDisplay display, final boolean isTarget) {
         display.getRemoveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                if (getDisplay().getItemBuilderViews().size() > 1) {
+                boolean greaterThanOne;
+                if (isTarget) {
+                    greaterThanOne = getDisplay().getTargetItemBuilderViews().size() > 1;
+                } else {
+                    greaterThanOne = getDisplay().getItemBuilderViews().size() > 1;
+                }
+                if (greaterThanOne) {
                     additionalFilterEventManager.removeFilterBuilderAdditionalEventHandler(display.getItemFilterBuilder());
-                    extractor.removeItemQualifer(display);
+                    if (isTarget) {
+                        extractor.removeItemTarget(display);
+                    } else {
+                        extractor.removeItemQualifer(display);
+                    }
                 }
             }
         });
@@ -580,15 +585,16 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("id");
-                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("offerDS")).permanentlyHideFields("appliesToOrderRules", "appliesToCustomerRules", "appliesToFulfillmentGroupRules", "id");
-                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("offerDS")).resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
+                getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields("appliesToOrderRules", "appliesToCustomerRules", "appliesToFulfillmentGroupRules", "id");
+                getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("offerDS"), getPresenterSequenceSetupManager().getDataSource("offerOrderDS"), getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"), getPresenterSequenceSetupManager().getDataSource("offerFGDS"), result);
                 ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("offerDS")).setupGridFields(new String[]{"name"}, new Boolean[]{true});
             }
         }));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerItemCriteriaDS", new OfferItemCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerItemCriteriaDS", new OfferItemCriteriaListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerItemTargetCriteriaDS", new OfferItemTargetCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource result) {
-                initializer = new OfferPresenterInitializer(OfferPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
+                initializer = new OfferPresenterInitializer(OfferPresenter.this, getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS"), (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
                 extractor = new OfferPresenterExtractor(OfferPresenter.this);
             }
         }));

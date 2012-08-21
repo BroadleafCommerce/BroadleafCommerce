@@ -16,11 +16,12 @@
 
 package org.broadleafcommerce.core.offer.service.discount;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
+
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Records the usage of this item as qualifier or target of
@@ -34,7 +35,7 @@ public class PromotionDiscount implements Serializable{
     
     private PromotableCandidateItemOffer candidateItemOffer;
 	private Offer promotion;
-	private OfferItemCriteria itemCriteria;
+	private Set<OfferItemCriteria> itemCriteria;
 	private int quantity;
 	private int finalizedQuantity;
 
@@ -47,11 +48,11 @@ public class PromotionDiscount implements Serializable{
 		this.promotion = promotion;
 	}
 	
-	public OfferItemCriteria getItemCriteria() {
+	public Set<OfferItemCriteria> getItemCriteria() {
 		return itemCriteria;
 	}
 	
-	public void setItemCriteria(OfferItemCriteria itemCriteria) {
+	public void setItemCriteria(Set<OfferItemCriteria> itemCriteria) {
 		this.itemCriteria = itemCriteria;
 	}
 

@@ -16,14 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -55,7 +48,6 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -66,6 +58,14 @@ import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -315,7 +315,7 @@ public class OfferDataItemProvider {
 		Set<OfferItemCriteria> qualifyingItemCriteria,
 		boolean stackable,
 		Date startDate,
-		OfferItemCriteria targetItemCriteria,
+        Set<OfferItemCriteria> targetItemCriteria,
 		boolean totalitarianOffer,
 		OfferType offerType,
 		BigDecimal value
@@ -392,12 +392,14 @@ public class OfferDataItemProvider {
 		offers.get(0).setType(OfferType.ORDER_ITEM);
 		
 		if (targetRule != null) {
+            Set<OfferItemCriteria> targetSet = new HashSet<OfferItemCriteria>();
 			OfferItemCriteria targetCriteria = new OfferItemCriteriaImpl();
-			targetCriteria.setOffer(offers.get(0));
+			targetCriteria.setQualifyingOffer(offers.get(0));
 			targetCriteria.setQuantity(1);
 			targetCriteria.setOrderItemMatchRule(targetRule);
+            targetSet.add(targetCriteria);
 			
-			offers.get(0).setTargetItemCriteria(targetCriteria);
+			offers.get(0).setTargetItemCriteria(targetSet);
 		}
 		
 		return offers;
@@ -407,7 +409,7 @@ public class OfferDataItemProvider {
 		List<Offer> offers = createOrderBasedOffer(orderRule, discountType);
 		
 		OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
-		qualCriteria.setOffer(offers.get(0));
+		qualCriteria.setQualifyingOffer(offers.get(0));
 		qualCriteria.setQuantity(1);
 		qualCriteria.setOrderItemMatchRule(orderItemMatchRule);
 		Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
@@ -422,7 +424,7 @@ public class OfferDataItemProvider {
 		List<Offer> offers = createFGBasedOffer(orderRule, fgRule, discountType);
 		
 		OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
-		qualCriteria.setOffer(offers.get(0));
+		qualCriteria.setQualifyingOffer(offers.get(0));
 		qualCriteria.setQuantity(1);
 		qualCriteria.setOrderItemMatchRule(orderItemMatchRule);
 		Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
@@ -438,7 +440,7 @@ public class OfferDataItemProvider {
 		
 		if (qualRule != null) {
 			OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
-			qualCriteria.setOffer(offers.get(0));
+			qualCriteria.setQualifyingOffer(offers.get(0));
 			qualCriteria.setQuantity(1);
 			qualCriteria.setOrderItemMatchRule(qualRule);
 			Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
