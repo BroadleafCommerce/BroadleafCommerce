@@ -49,6 +49,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.util.StopWatch;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
@@ -101,6 +102,9 @@ public class SolrSearchServiceImpl implements SearchService {
 	@Override
     @Transactional("blTransactionManager")
 	public void rebuildIndex() throws ServiceException, IOException {
+		LOG.info("Rebuilding the solr index...");
+		StopWatch s = new StopWatch();
+		
 		List<Product> products = productDao.readAllActiveProducts(SystemTime.asDate());
 		List<Field> fields = fieldDao.readAllProductFields();
 		
@@ -158,6 +162,8 @@ public class SolrSearchServiceImpl implements SearchService {
 	    } catch (SolrServerException e) {
 	    	throw new ServiceException("Could not rebuild index", e);
 	    }
+	    
+	    LOG.info("Finished rebuilding the solr index in " + s.toLapString());
 	}
 	
 	@Override
