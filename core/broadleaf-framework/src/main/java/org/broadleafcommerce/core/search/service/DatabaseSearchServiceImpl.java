@@ -71,6 +71,9 @@ public class DatabaseSearchServiceImpl implements SearchService {
 		List<SearchFacetDTO> facets = getCategoryFacets(category);
 		result.setProducts(products);
 		result.setFacets(facets);
+		result.setTotalResults(products.size());
+		result.setPage(1);
+		result.setPageSize(products.size());
 		return result;
 	}
 
@@ -82,6 +85,9 @@ public class DatabaseSearchServiceImpl implements SearchService {
 		List<SearchFacetDTO> facets = getSearchFacets();
 		result.setProducts(products);
 		result.setFacets(facets);
+	    result.setTotalResults(products.size());
+	    result.setPage(1);
+	    result.setPageSize(products.size());
 		return result;
 	}
 	
