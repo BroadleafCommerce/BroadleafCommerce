@@ -47,10 +47,10 @@ public class SandBoxServiceImpl implements SandBoxService {
     @Resource(name="blSandboxItemListeners")
     protected List<SandBoxItemListener> sandboxItemListeners = new ArrayList<SandBoxItemListener>();
 
-    @Resource
+    @Resource(name="blSandBoxDao")
     protected SandBoxDao sandBoxDao;
 
-    @Resource
+    @Resource(name="blSandBoxItemDao")
     protected SandBoxItemDao sandBoxItemDao;
 
     @Resource(name="blAdminSecurityService")

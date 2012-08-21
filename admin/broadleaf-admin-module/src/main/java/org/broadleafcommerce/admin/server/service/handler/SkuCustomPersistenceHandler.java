@@ -62,7 +62,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
     
-    @Resource
+    @Resource(name="blCatalogService")
     protected CatalogService catalogService;
     
     @Override

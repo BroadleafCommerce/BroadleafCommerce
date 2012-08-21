@@ -43,10 +43,10 @@ import org.springframework.stereotype.Service;
 @Service("blRatingService")
 public class RatingServiceImpl implements RatingService {
 
-    @Resource
+    @Resource(name="blRatingSummaryDao")
     private RatingSummaryDao ratingSummaryDao;
 
-    @Resource
+    @Resource(name="blReviewDetailDao")
     private ReviewDetailDao reviewDetailDao;
 
     public void deleteRatingSummary(RatingSummary ratingSummary) {
