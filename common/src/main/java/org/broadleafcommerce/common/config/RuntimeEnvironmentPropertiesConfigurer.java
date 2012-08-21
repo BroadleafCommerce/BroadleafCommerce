@@ -89,6 +89,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
 		blcPropertyLocations.add(new ClassPathResource("config/bc/admin/"));
 		blcPropertyLocations.add(new ClassPathResource("config/bc/"));
 		blcPropertyLocations.add(new ClassPathResource("config/bc/cms/"));
+		blcPropertyLocations.add(new ClassPathResource("config/bc/web/"));
 		
 		defaultPropertyLocations.add(new ClassPathResource("runtime-properties/"));
     }
