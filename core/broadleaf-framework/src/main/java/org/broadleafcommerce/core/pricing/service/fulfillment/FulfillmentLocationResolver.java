@@ -22,7 +22,9 @@ import org.broadleafcommerce.profile.core.domain.Address;
 /**
  * This can be used by various third-party fulfillment pricing services in order to
  * resolve a location that items will be shipped from in order to properly calculate the
- * cost of fulfilling that particular fulfillment group. 
+ * cost of fulfilling that particular fulfillment group.
+ * 
+ * <p>Note: the bean name in XML should be blFulfillmentLocationResolver
  * 
  * @author Phillip Verheyden
  * @see {@link SimpleFulfillmentLocationResolver}
