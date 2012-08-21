@@ -156,9 +156,9 @@ public class MediaImpl implements Media {
 		} else if (!title.equals(other.title))
 			return false;
 		if (altText == null) {
-			if (other.title != null)
+			if (other.altText != null)
 				return false;
-		} else if (!title.equals(other.title))
+		} else if (!altText.equals(other.altText))
 			return false;
         if (tags == null) {
             if (other.tags != null)
