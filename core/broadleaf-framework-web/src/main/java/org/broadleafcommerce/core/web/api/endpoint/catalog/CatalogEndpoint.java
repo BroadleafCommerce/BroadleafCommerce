@@ -156,6 +156,18 @@ public class CatalogEndpoint implements ApplicationContextAware {
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
+    
+    @GET
+    @Path("product/{id}/defaultSku")
+    public SkuWrapper findDefaultSkuByProductId(@Context HttpServletRequest request, @PathParam("id") Long id) {
+    	Product product = catalogService.findProductById(id);
+    	if (product != null && product.getDefaultSku() != null) {
+    		SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
+            wrapper.wrap(product.getDefaultSku(), request);
+            return wrapper;
+    	}
+    	throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
 
     @GET
     @Path("categories")

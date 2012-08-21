@@ -16,14 +16,21 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -64,6 +71,10 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
 
     @XmlElement
     protected ProductWrapper product;
+    
+    @XmlElement(name = "orderItemAttribute")
+    @XmlElementWrapper(name = "orderItemAttributes")
+    protected List<OrderItemAttributeWrapper> orderItemAttributes;
 
     @Override
     public void wrap(OrderItem model, HttpServletRequest request) {
@@ -80,7 +91,19 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
         }
 
         this.orderId = model.getOrder().getId();
-
+        
+        Map<String, OrderItemAttribute> itemAttributes = model.getOrderItemAttributes();
+        if (itemAttributes != null && ! itemAttributes.isEmpty()) {
+        	this.orderItemAttributes = new ArrayList<OrderItemAttributeWrapper>();
+        	Set<String> keys = itemAttributes.keySet();
+        	for (String key : keys) {
+        		OrderItemAttributeWrapper orderItemAttributeWrapper = 
+        				(OrderItemAttributeWrapper) context.getBean(OrderItemAttributeWrapper.class.getName());
+        		orderItemAttributeWrapper.wrap(itemAttributes.get(key), request);
+        		this.orderItemAttributes.add(orderItemAttributeWrapper);
+        	}
+        }
+        
         if (model instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem) model;
 

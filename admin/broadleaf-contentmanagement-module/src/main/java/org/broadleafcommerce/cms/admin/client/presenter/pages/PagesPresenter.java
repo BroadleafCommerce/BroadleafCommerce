@@ -25,13 +25,13 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemList
 import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.RequestDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -47,7 +47,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Command;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -72,7 +71,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
  * @author jfischer
  *
  */
-public class PagesPresenter extends HtmlEditingPresenter implements Instantiable {
+public class PagesPresenter extends DynamicEntityPresenter implements Instantiable {
 
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
@@ -171,18 +170,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         for (final FormItem formItem : formOnlyView.getForm().getFields()) {
                         	if (formItem instanceof HTMLTextItem) {
                         		((HTMLTextItem)	formItem).setHTMLValue((formOnlyView.getForm().getValue(formItem.getFieldName()))!=null?formOnlyView.getForm().getValue(formItem.getFieldName()).toString():"");
-                        		
-
-                                 	((HTMLTextItem)	formItem).addAssetHandler(new Command() {
-		
-                                 	@Override
-                                 	public void execute() {
-                                 		displayAssetSearchDialog(((HTMLTextItem)	formItem));
-                                 	}
-                                 	});
-                                 	//need to disable again in case the htmltextitem enabled the form on setting the value
-                                    getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-                                    getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
+                        	
                             }
                         }
                         if (cb != null) {
@@ -393,7 +381,8 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 
 	@Override
 	public void setup() {
-        super.setup();
+//        super.setup();
+	   
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
 	        public void onSetupSuccess(DataSource result) {

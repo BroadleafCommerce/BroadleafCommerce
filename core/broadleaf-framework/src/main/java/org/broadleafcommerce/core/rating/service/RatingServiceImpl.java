@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.rating.dao.RatingSummaryDao;
 import org.broadleafcommerce.core.rating.dao.ReviewDetailDao;
 import org.broadleafcommerce.core.rating.domain.RatingDetail;
@@ -36,7 +37,6 @@ import org.broadleafcommerce.core.rating.domain.ReviewDetailImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
 import org.broadleafcommerce.core.rating.service.type.RatingSortType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
@@ -162,6 +162,11 @@ public class RatingServiceImpl implements RatingService {
         // load reviews
         ratingSummary.getReviews().size();
         ratingSummaryDao.saveRatingSummary(ratingSummary);
+    }
+    
+    @Override
+    public ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId) {
+    	return reviewDetailDao.readReviewByCustomerAndItem(customer, itemId);
     }
 
 }

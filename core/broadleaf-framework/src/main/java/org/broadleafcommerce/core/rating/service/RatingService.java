@@ -36,5 +36,13 @@ public interface RatingService {
     public List<ReviewDetail> readReviews(String itemId, RatingType type, int start, int finish, RatingSortType sortBy);
     public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText);
     public void markReviewHelpful(Long reviewId, Customer customer, Boolean helpful);
+    
+    /**
+     * Reads a ReviewDetail by the given customer and the itemId
+     * @param itemId
+     * @param customer
+     * @return review, or null if review is not found
+     */
+    public ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId);
 
 }

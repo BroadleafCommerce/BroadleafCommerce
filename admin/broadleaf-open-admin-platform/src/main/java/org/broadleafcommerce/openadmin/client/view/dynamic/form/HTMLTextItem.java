@@ -26,10 +26,13 @@ public class HTMLTextItem extends CanvasItem {
 		super();
 		textArea = new RichTextArea();
 	    textArea.addInitializeHandler(new InitializeHandler() {
+            @Override
             public void onInitialize(InitializeEvent ie) {
             IFrameElement fe = (IFrameElement)
             textArea.getElement().cast();
-            if(fe==null) return;
+            if(fe==null) {
+                return;
+            }
             Style s = fe.getContentDocument().getBody().getStyle();
             s.setProperty("fontFamily", "helvetica, sans-serif");
             s.setProperty("fontSize", "12");
@@ -75,7 +78,8 @@ public class HTMLTextItem extends CanvasItem {
 		//change will then be reflected in the dynamic form , for example enabling the save button. 
 		toolBar.setSaveCommand(saveCommand);
 	     SecurityManager.getInstance().doSecure("PERMISSION_READ_ASSET", new  SecureCallbackAdapter() {
-				 public void succeed() {
+				 @Override
+                public void succeed() {
 					 getToolBar().showAssetButton(true);
 				}
 				 @Override
@@ -83,6 +87,10 @@ public class HTMLTextItem extends CanvasItem {
 					 getToolBar().showAssetButton(false);
 				}
 			});
+	     
+	   
+	                                
+	                
 
 	}
 	private RichTextArea getTextArea() {
@@ -128,7 +136,9 @@ public void setValue(Object value) {
 public void setValue(String value) {
 	
 	
-	if(value==null) value="";
+	if(value==null) {
+        value="";
+    }
 	super.setValue(value);
 	setHTMLValue(value);
 }

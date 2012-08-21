@@ -17,10 +17,14 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This is a JAXB wrapper around Product.
@@ -55,6 +59,10 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
 
     @XmlElement
     protected String promoMessage;
+    
+    @XmlElement(name = "productOption")
+    @XmlElementWrapper(name = "productOptions")
+    protected List<ProductOptionWrapper> productOptions;
 
     @Override
     public void wrap(Product model, HttpServletRequest request) {
@@ -66,6 +74,14 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         this.manufacturer = model.getManufacturer();
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
-
+        if (model.getProductOptions() != null) {
+        	this.productOptions = new ArrayList<ProductOptionWrapper>();
+        	List<ProductOption> options = model.getProductOptions();
+        	for (ProductOption option : options) {
+        		ProductOptionWrapper optionWrapper = (ProductOptionWrapper)context.getBean(ProductOptionWrapper.class.getName());
+        		optionWrapper.wrap(option, request);
+        		this.productOptions.add(optionWrapper);
+        	}
+        }
     }
 }

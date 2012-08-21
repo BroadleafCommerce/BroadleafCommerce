@@ -19,49 +19,24 @@ package org.broadleafcommerce.core.web.checkout.model;
 import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
 
 import java.io.Serializable;
 
 /**
- * A form to model adding a shipping address with shipping options.
+ * This form is used to bind multiship options in a way that doesn't require
+ * the actual objects to be instantiated -- we handle that at the controller
+ * level.
  * 
- * @author Elbert Bautista (ebautista)
- * @author Andre Azzolini (apazzolini)
+ * 
  */
-public class ShippingInfoForm extends CsrfProtectedForm implements Serializable {
+public class MultiShipInstructionForm extends CsrfProtectedForm implements Serializable {
 
-	private static final long serialVersionUID = -7895489234675056031L;
-	protected Address address = new AddressImpl();
-    protected String addressName;
-    protected Long fulfillmentOptionId;
-	protected PersonalMessage personalMessage = new PersonalMessageImpl();
-	protected String deliveryMessage;
+	private static final long serialVersionUID = 1L;
 	
-    public Long getFulfillmentOptionId() {
-        return fulfillmentOptionId;
-    }
-
-    public void setFulfillmentOptionId(Long fulfillmentOptionId) {
-        this.fulfillmentOptionId = fulfillmentOptionId;
-    }
-
-    public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
-	}
-
-	public String getAddressName() {
-		return addressName;
-	}
-
-	public void setAddressName(String addressName) {
-		this.addressName = addressName;
-	} 
+	protected String deliveryMessage;
+	protected PersonalMessage personalMessage = new PersonalMessageImpl();
+	protected Long fulfillmentGroupId;
 	
 	public String getDeliveryMessage() {
 		return deliveryMessage;
@@ -71,12 +46,20 @@ public class ShippingInfoForm extends CsrfProtectedForm implements Serializable 
 		this.deliveryMessage = deliveryMessage;
 	}
 	
+	public PersonalMessage getPersonalMessage() {
+		return personalMessage;
+	}
+	
 	public void setPersonalMessage(PersonalMessage personalMessage) {
 		this.personalMessage = personalMessage;
 	}
-	
-	public PersonalMessage getPersonalMessage() {
-		return personalMessage;
+
+	public Long getfulfillmentGroupId() {
+		return fulfillmentGroupId;
+	}
+
+	public void setfulfillmentGroupId(Long id) {
+		this.fulfillmentGroupId = id;
 	}
 	
 }
