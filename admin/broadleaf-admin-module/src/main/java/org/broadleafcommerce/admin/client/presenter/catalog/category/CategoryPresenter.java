@@ -16,8 +16,11 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
-import org.broadleafcommerce.admin.client.datasource.catalog.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
@@ -29,12 +32,13 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.CategoryCro
 import org.broadleafcommerce.admin.client.datasource.catalog.product.CategoryUpSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
-import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.openadmin.client.datasource.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -42,6 +46,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
@@ -74,16 +79,12 @@ import com.smartgwt.client.widgets.tree.TreeNode;
 import com.smartgwt.client.widgets.tree.events.DataArrivedEvent;
 import com.smartgwt.client.widgets.tree.events.DataArrivedHandler;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * 
  * @author jfischer
  *
  */
-public class CategoryPresenter extends HtmlEditingPresenter implements Instantiable {
+public class CategoryPresenter extends DynamicEntityPresenter implements Instantiable {
 
 	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected String rootId = "1";
@@ -167,7 +168,7 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
 		featuredPresenter.load(selectedRecord, dataSource, null);
 		childProductsPresenter.load(selectedRecord, dataSource, null);
 		getDisplay().getAllCategoriesDisplay().getRemoveButton().disable();
-		addListenerToFormItem(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm());
+		//addListenerToFormItem(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm());
 	}
 
 	@Override
@@ -329,17 +330,28 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
             @Override
             public void onSetupSuccess(DataSource dataSource) {
             	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-            	 assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS);
+            	final AssetSearchDialog dialog=new AssetSearchDialog(staticAssetTreeDS);
+                HashMap<String, Object> initialValues = new HashMap<String, Object>(10);
+                initialValues.put("operation", "add");
+                initialValues.put("customCriteria", "assetListUi");
+                initialValues.put("ceilingEntityFullyQualifiedClassname",
+                        CeilingEntities.STATICASSETS);
+                // initialValues.put("_type", new String[]{((DynamicEntityDataSource)
+                // display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+                initialValues.put("_type", CeilingEntities.STATICASSETS);
+                initialValues.put("csrfToken", BLCMain.csrfToken);
+                dialog.setInitialValues(initialValues);
                 getPresenterSequenceSetupManager().getDataSource("mediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
                     @Override
                     public void execute(final FormItem formItem) {
-                        assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
+                        dialog.search("Asset Search", new TileGridItemSelectedHandler() {
                             @Override
                             public void onSearchItemSelected(TileGridItemSelected event) {
                                 String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
                                 formItem.setValue(staticAssetFullUrl);
                                 getMediaEntityView().updateMedia(staticAssetFullUrl);
                             }
+                      
                         });
                     }
                 });
