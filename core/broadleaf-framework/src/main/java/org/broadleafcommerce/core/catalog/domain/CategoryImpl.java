@@ -662,7 +662,7 @@ public class CategoryImpl implements Category, Status {
     
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
-    	List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
+    	final List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
     	returnFacets.addAll(getSearchFacets());
     	Collections.sort(returnFacets, facetPositionComparator);
     	
@@ -674,7 +674,7 @@ public class CategoryImpl implements Category, Status {
     			@Override
     			public boolean evaluate(Object arg) {
     				CategorySearchFacet csf = (CategorySearchFacet) arg;
-    				return !getExcludedSearchFacets().contains(csf.getSearchFacet());
+    				return !getExcludedSearchFacets().contains(csf.getSearchFacet()) && !returnFacets.contains(csf.getSearchFacet());
     			}
         	});
     	}

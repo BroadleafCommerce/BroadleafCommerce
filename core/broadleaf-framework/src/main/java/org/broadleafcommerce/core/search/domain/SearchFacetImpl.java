@@ -139,5 +139,18 @@ public class SearchFacetImpl implements SearchFacet {
 	public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
 		this.searchFacetRanges = searchFacetRanges;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	   	if (this == obj)
+	        return true;
+	    if (obj == null)
+	        return false;
+	    if (getClass() != obj.getClass())
+	        return false;
+        SearchFacet other = (SearchFacet) obj;
+        
+        return getField().equals(other.getField());
+    }
 
 }

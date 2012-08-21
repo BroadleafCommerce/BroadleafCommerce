@@ -166,4 +166,18 @@ public class FieldImpl implements Field {
 	public void setSearchConfigs(List<SearchConfig> searchConfigs) {
 		throw new UnsupportedOperationException("The default Field implementation does not support search configs");
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	   	if (this == obj)
+	        return true;
+	    if (obj == null)
+	        return false;
+	    if (getClass() != obj.getClass())
+	        return false;
+        Field other = (Field) obj;
+        
+        return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
+        		
+    }
 }
