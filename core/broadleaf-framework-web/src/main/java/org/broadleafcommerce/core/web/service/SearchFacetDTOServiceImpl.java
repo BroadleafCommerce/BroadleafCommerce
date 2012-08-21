@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
@@ -49,7 +50,7 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
 			String key = entry.getKey();
 			
 			if (key.equals(ProductSearchCriteria.SORT_STRING)) {
-				searchCriteria.setSortQuery(entry.getValue()[0]);
+				searchCriteria.setSortQuery(StringUtils.join(entry.getValue(), ","));
 			} else if (key.equals(ProductSearchCriteria.PAGE_NUMBER)) {
 				searchCriteria.setPage(Integer.parseInt(entry.getValue()[0]));
 			} else if (key.equals(ProductSearchCriteria.PAGE_SIZE_STRING)) {

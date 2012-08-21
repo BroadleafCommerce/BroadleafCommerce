@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -126,6 +127,34 @@ public class FieldImpl implements Field {
 	@Override
 	public void setSearchable(Boolean searchable) {
 		this.searchable = searchable;
+	}
+    
+	@Override
+    public FieldType getFacetFieldType() {
+		return FieldType.getInstance(facetFieldType);
+	}
+
+	@Override
+	public void setFacetFieldType(FieldType facetFieldType) {
+		this.facetFieldType = facetFieldType.getType();
+	}
+
+	@Override
+	public List<FieldType> getSearchableFieldTypes() {
+		List<FieldType> fieldTypes = new ArrayList<FieldType>();
+		for (String fieldType : searchableFieldTypes) {
+			fieldTypes.add(FieldType.getInstance(fieldType));
+		}
+		return fieldTypes;
+	}
+
+	@Override
+	public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes) {
+		List<String> fieldTypes = new ArrayList<String>();
+		for (FieldType fieldType : searchableFieldTypes) {
+			fieldTypes.add(fieldType.getType());
+		}
+		this.searchableFieldTypes = fieldTypes;
 	}
 
 	@Override

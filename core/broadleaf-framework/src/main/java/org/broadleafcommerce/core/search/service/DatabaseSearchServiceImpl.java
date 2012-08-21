@@ -180,7 +180,6 @@ public class DatabaseSearchServiceImpl implements SearchService {
 			return qualifiedFieldName;
 		}
 	}
-
 	
 	/**
 	 * Create the wrapper DTO around the SearchFacet
