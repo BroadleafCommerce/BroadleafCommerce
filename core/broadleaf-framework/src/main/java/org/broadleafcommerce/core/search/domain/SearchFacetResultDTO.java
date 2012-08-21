@@ -82,4 +82,14 @@ public class SearchFacetResultDTO {
 		this.active = active;
 	}
 	
+	public String getValueKey() {
+		String value = getValue();
+		
+		if (value == null) {
+			value = "range[" + getMinValue() + ":" + getMaxValue() + "]";
+		}
+		
+		return value;
+	}
+	
 }

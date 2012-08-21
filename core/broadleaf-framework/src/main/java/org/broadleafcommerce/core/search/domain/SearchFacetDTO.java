@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,8 @@ public class SearchFacetDTO {
 	
 	protected SearchFacet facet;
 	protected boolean showQuantity;
-	protected List<SearchFacetResultDTO> facetValues;
+	protected List<SearchFacetResultDTO> facetValues = new ArrayList<SearchFacetResultDTO>();
+	protected boolean active;
 	
 	public SearchFacet getFacet() {
 		return facet;
@@ -51,4 +53,12 @@ public class SearchFacetDTO {
 		this.facetValues = facetValues;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 }

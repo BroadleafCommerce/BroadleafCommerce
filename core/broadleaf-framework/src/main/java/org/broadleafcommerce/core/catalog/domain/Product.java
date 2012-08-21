@@ -672,6 +672,11 @@ public interface Product extends Serializable {
 	 */
 	public ProductAttribute getProductAttributeByName(String name);
 
+	/**
+	 * @return a Map of all the product attributes on this product keyed by the attribute name
+	 */
+	public Map<String, ProductAttribute> getMappedProductAttributes();
+	
 	/** 
 	 * Returns a list of the cross sale products for this product as well
 	 * all cross sale products in all parent categories of this product.
@@ -687,5 +692,6 @@ public interface Product extends Serializable {
 	 * @return the cumulative upsale products
 	 */
 	public List<RelatedProduct> getCumulativeUpSaleProducts();
+
 
 }

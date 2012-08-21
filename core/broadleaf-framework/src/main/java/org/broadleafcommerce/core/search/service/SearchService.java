@@ -48,8 +48,9 @@ public interface SearchService {
 	 * @param query
 	 * @param searchCriteria
 	 * @return the result of the search
+	 * @throws ServiceException 
 	 */
-	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria);
+	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) throws ServiceException;
 
 	/**
 	 * Gets all available facets for search results page

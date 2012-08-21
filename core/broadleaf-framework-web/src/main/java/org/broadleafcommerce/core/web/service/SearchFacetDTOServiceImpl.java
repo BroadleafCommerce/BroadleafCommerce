@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.service;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,11 +32,15 @@ import java.util.Map.Entry;
 
 @Service("blSearchFacetDTOService")
 public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
+    
+    @Value("${web.defaultPageSize}")
+    protected Integer defaultPageSize;
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public ProductSearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets) {
 		ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
+		searchCriteria.setPageSize(defaultPageSize);
 		
 		Map<String, String[]> facets = new HashMap<String, String[]>();
 		
@@ -96,13 +101,7 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
 	
 	@Override
 	public String getValue(SearchFacetResultDTO result) {
-		String value = result.getValue();
-		
-		if (value == null) {
-			value = "range[" + result.getMinValue() + ":" + result.getMaxValue() + "]";
-		}
-		
-		return value;
+		return result.getValueKey();
 	}
 
 }

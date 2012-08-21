@@ -100,6 +100,20 @@ public interface SearchFacet {
 	 * @param searchDisplayPriority
 	 */
 	public void setSearchDisplayPriority(Integer searchDisplayPriority);
+	
+	/**
+	 * Sets whether or not you can multiselect values for this Facet.
+	 * 
+	 * @param canMultiselect
+	 */
+	public void setCanMultiselect(Boolean canMultiselect);
+
+	/**
+	 * Gets whether or not you can multiselect values for this Facet
+	 * 
+	 * @return the multiselect flag
+	 */
+	public Boolean getCanMultiselect();
 
 	/**
 	 * Gets the applicable ranges for this search facet, if any are specified. For example, the 

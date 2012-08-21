@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.FieldImpl;
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +28,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import java.util.List;
 
 @Repository("blFieldDao")
 public class FieldDaoImpl implements FieldDao {
@@ -50,6 +53,21 @@ public class FieldDaoImpl implements FieldDao {
 		);
     	
 		return em.createQuery(criteria).getSingleResult();
+    }
+    
+    @Override
+	public List<Field> readAllProductFields() {
+    	CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
+		
+		Root<FieldImpl> root = criteria.from(FieldImpl.class);
+		
+		criteria.select(root);
+		criteria.where(
+			builder.equal(root.get("entityType").as(String.class), FieldEntity.PRODUCT.getType())
+		);
+    	
+		return em.createQuery(criteria).getResultList();
     }
     
 }

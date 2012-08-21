@@ -29,6 +29,10 @@ public class ProductSearchResult {
 	
 	protected List<Product> products;
 	protected List<SearchFacetDTO> facets;
+	
+	protected Integer totalResults;
+	protected Integer page;
+	protected Integer pageSize;
 
 	public List<Product> getProducts() {
 		return products;
@@ -45,5 +49,41 @@ public class ProductSearchResult {
 	public void setFacets(List<SearchFacetDTO> facets) {
 		this.facets = facets;
 	}
+
+	public Integer getTotalResults() {
+		return totalResults;
+	}
+
+	public void setTotalResults(Integer totalResults) {
+		this.totalResults = totalResults;
+	}
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
 	
+	public Integer getStartResult() {
+		return ((page - 1) * pageSize) + 1;
+	}
+	
+	public Integer getEndResult() {
+		return Math.min(page * pageSize, totalResults);
+	}
+	
+	public Integer getTotalPages() {
+		return (int) Math.ceil(totalResults * 1.0 / pageSize);
+	}
+
 }

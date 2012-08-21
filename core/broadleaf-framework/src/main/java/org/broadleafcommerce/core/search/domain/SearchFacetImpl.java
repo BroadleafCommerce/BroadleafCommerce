@@ -62,6 +62,9 @@ public class SearchFacetImpl implements SearchFacet {
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
     protected Integer searchDisplayPriority = 1;
     
+    @Column(name = "MULTISELECT")
+    protected Boolean canMultiselect = true;
+    
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
@@ -116,6 +119,16 @@ public class SearchFacetImpl implements SearchFacet {
 	public void setSearchDisplayPriority(Integer searchDisplayPriority) {
 		this.searchDisplayPriority = searchDisplayPriority;
 	}
+	
+	@Override
+	public Boolean getCanMultiselect() {
+		return canMultiselect;
+	}
+
+	@Override
+	public void setCanMultiselect(Boolean canMultiselect) {
+		this.canMultiselect = canMultiselect;
+	}
 
 	@Override
 	public List<SearchFacetRange> getSearchFacetRanges() {
@@ -126,7 +139,5 @@ public class SearchFacetImpl implements SearchFacet {
 	public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
 		this.searchFacetRanges = searchFacetRanges;
 	}
-	
-	
-    
+
 }

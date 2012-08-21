@@ -172,7 +172,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
 	 * @return the database qualified name
 	 */
 	protected String getDatabaseQualifiedFieldName(String qualifiedFieldName) {
-		if (qualifiedFieldName.contains("productAttribute")) {
+		if (qualifiedFieldName.contains("productAttributes")) {
 			return qualifiedFieldName.replace("product.", "");
 		} else if (qualifiedFieldName.contains("defaultSku")) {
 			return qualifiedFieldName.replace("product.", "");
@@ -195,6 +195,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
 			dto.setFacet(facet);
 			dto.setShowQuantity(false);
 			dto.setFacetValues(getFacetValues(facet));
+			dto.setActive(true);
 			facets.add(dto);
 		}
 		

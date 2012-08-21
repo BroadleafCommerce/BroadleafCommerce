@@ -18,17 +18,22 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,8 +48,9 @@ public class FieldImpl implements Field {
     @Column(name = "FIELD_ID")
     protected Long id;
     
+    // This is a broadleaf enumeration
     @Column(name = "ENTITY_TYPE", nullable = false)
-    protected FieldEntity entityType;
+    protected String entityType;
     
     @Column(name = "PROPERTY_NAME", nullable = false)
     protected String propertyName;
@@ -55,9 +61,21 @@ public class FieldImpl implements Field {
     @Column(name =  "SEARCHABLE")
     protected Boolean searchable = false;
     
+    // This is a broadleaf enumeration
+    @Column(name =  "FACET_FIELD_TYPE")
+    protected String facetFieldType;
+
+    // This is a broadleaf enumeration
+	@ElementCollection
+    @CollectionTable(name="BLC_FIELD_SEARCH_TYPES", joinColumns=@JoinColumn(name="FIELD_ID"))
+    @Column(name="SEARCHABLE_FIELD_TYPE")
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+	private List<String> searchableFieldTypes = new ArrayList<String>();
+    
     @Override
     public String getQualifiedFieldName() {
-    	return entityType.getFriendlyType() + "." + propertyName;
+    	return getEntityType().getFriendlyType() + "." + propertyName;
     }
 
 	@Override
@@ -72,12 +90,12 @@ public class FieldImpl implements Field {
 
 	@Override
 	public FieldEntity getEntityType() {
-		return entityType;
+		return FieldEntity.getInstance(entityType);
 	}
 
 	@Override
 	public void setEntityType(FieldEntity entityType) {
-		this.entityType = entityType;
+		this.entityType = entityType.getType();
 	}
 
 	@Override

@@ -87,7 +87,7 @@ public interface Field {
 	 * @param searchable
 	 */
 	public void setSearchable(Boolean searchable);
-	
+
 	/**
 	 * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available 
 	 * in the community version of Broadleaf Commerce.

@@ -621,6 +621,15 @@ public class ProductImpl implements Product, Status {
     	}
     	return null;
     }
+    
+    @Override
+    public Map<String, ProductAttribute> getMappedProductAttributes() {
+    	Map<String, ProductAttribute> map = new HashMap<String, ProductAttribute>();
+    	for (ProductAttribute attr : getProductAttributes()) {
+    		map.put(attr.getName(), attr);
+    	}
+    	return map;
+    }
 
     @Override
     public Character getArchived() {

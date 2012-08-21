@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.core.search.domain.Field;
 
+import java.util.List;
+
 /**
  * DAO to facilitate interaction with Broadleaf fields.
  * 
@@ -34,5 +36,14 @@ public interface FieldDao {
 	 * @return the Field that has this abbreviation
 	 */
 	public Field readFieldByAbbreviation(String abbreviation);
+
+	/**
+	 * Reads all Field objects that are set to searchable. This is typically used to build an
+	 * index for searching. Note that the default Broadleaf implementation returns only fields that
+	 * have a FieldEntity equal to PRODUCT
+	 * 
+	 * @return the product Fields
+	 */
+	public List<Field> readAllProductFields();
 
 }

@@ -17,34 +17,32 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
+import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * A Thymeleaf processor that generates a search query link that will reflect the current 
- * search criteria in addition to the requested sort string
+ * A Thymeleaf processor that processes the value attribute on the element it's tied to
+ * with a predetermined value based on the SearchFacetResultDTO object that is passed into this
+ * processor. 
  * 
  * @author apazzolini
  */
-public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor {
-	
-	protected boolean allowMultipleSorts = false;
-	
+public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAttrProcessor {
+
 	/**
 	 * Sets the name of this processor to be used in Thymeleaf template
 	 */
-	public AddSortLinkProcessor() {
-		super("addsortlink");
+	public RemoveFacetValuesLinkProcessor() {
+		super("removefacetvalueslink");
 	}
 	
 	@Override
@@ -63,68 +61,13 @@ public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor
 		String baseUrl = request.getRequestURL().toString();
 		Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
 		
-		String key = ProductSearchCriteria.SORT_STRING;
-		String sortField = element.getAttributeValue(attributeName);
+		SearchFacetDTO facet = (SearchFacetDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
 		
-		List<String[]> sortedFields = new ArrayList<String[]>();
-		
-		String[] paramValues = params.get(key);
-		if (paramValues != null && paramValues.length > 0) {
-			String sortQueries = paramValues[0];
-			for (String sortQuery : sortQueries.split(",")) {
-				String[] sort = sortQuery.split(" ");
-				if (sort.length == 2) {
-					sortedFields.add(new String[] { sort[0], sort[1] });
-				}
-			}
-		}
-		
-		boolean currentlySortingOnThisField = false;
-		boolean currentlyAscendingOnThisField = false;
-		
-		for (String[] sortedField : sortedFields) {
-			if (sortField.equals(sortedField[0])) {
-				currentlySortingOnThisField = true;
-				currentlyAscendingOnThisField = sortedField[1].equals("asc");
-				sortedField[1] = currentlyAscendingOnThisField ? "desc" : "asc";
-			}
-		}
-		
-		String sortString = sortField;
-		String classString = "";
-		
-		if (currentlySortingOnThisField) {
-			classString += "active ";
-			if (currentlyAscendingOnThisField) {
-				sortString += " desc";
-				classString += "asc ";
-			} else {
-				sortString += " asc";
-				classString += "desc ";
-			}
-		} else {
-			sortString += " asc";
-			classString += "asc ";
-			params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
-		}
-		
-		if (allowMultipleSorts) {
-			StringBuilder sortSb = new StringBuilder();
-			for (String[] sortedField : sortedFields) {
-				sortSb.append(sortedField[0]).append(" ").append(sortedField[1]).append(",");
-			}
-			
-			sortString = sortSb.toString();
-			if (sortString.charAt(sortString.length() - 1) == ',') {
-				sortString = sortString.substring(0, sortString.length() - 1);
-			}
-		}
-		
-		params.put(key, new String[] { sortString } );
+		String key = facet.getFacet().getField().getAbbreviation();
+		params.remove(key);
 		
 		String url = ProcessorUtils.getUrl(baseUrl, params);
 		
-		attrs.put("class", classString);
 		attrs.put("href", url);
 		return attrs;
 	}

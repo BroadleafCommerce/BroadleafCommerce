@@ -80,6 +80,24 @@ public class ProductDaoImpl implements ProductDao {
         return (Product) em.find(ProductImpl.class, productId);
     }
 
+	@Override
+	public List<Product> readProductsByIds(List<Long> productIds) {
+		if (productIds == null || productIds.size() == 0) {
+			return null;
+		}
+		
+		// Set up the criteria query that specifies we want to return Products
+    	CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
+		Root<ProductImpl> product = criteria.from(ProductImpl.class);
+		criteria.select(product);
+		
+		// We only want results that match the product IDs
+		criteria.where(product.get("id").as(Long.class).in(productIds));
+		
+    	return (List<Product>) em.createQuery(criteria).getResultList();
+	}
+
     @Override
     public List<Product> readProductsByName(String searchName) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_NAME", Product.class);
@@ -264,10 +282,10 @@ public class ProductDaoImpl implements ProductDao {
 			if (key.contains("defaultSku.")) {
 				pathToUse = sku;
 				key = key.substring("defaultSku.".length());
-			} else if (key.contains("productAttribute.")) {
+			} else if (key.contains("productAttributes.")) {
 				pathToUse = product.join("productAttributes");
 				
-				key = key.substring("productAttribute.".length());
+				key = key.substring("productAttributes.".length());
 				restrictions.add(builder.equal(pathToUse.get("name").as(String.class), key));
 				
 				key = "value";
@@ -405,5 +423,29 @@ public class ProductDaoImpl implements ProductDao {
 		@SuppressWarnings("unchecked")
 		List<Product> results = (List<Product>) query.getResultList();
 		return results;
+	}
+
+	@Override
+	public List<Product> readAllActiveProducts(Date currentDate) {
+		// Set up the criteria query that specifies we want to return Products
+    	CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
+		
+		// The root of our search is Product
+		Root<ProductImpl> product = criteria.from(ProductImpl.class);
+		
+		// We need to filter on active date on the sku
+		Join<Product, Sku> sku = product.join("defaultSku");
+		
+		// Product objects are what we want back
+		criteria.select(product);
+		
+		// We only want results from the determine category
+		List<Predicate> restrictions = new ArrayList<Predicate>();
+		attachActiveRestriction(currentDate, product, sku, restrictions);
+		
+    	// Execute the query with the restrictions
+		criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+    	return (List<Product>) em.createQuery(criteria).getResultList();
 	}
 }
