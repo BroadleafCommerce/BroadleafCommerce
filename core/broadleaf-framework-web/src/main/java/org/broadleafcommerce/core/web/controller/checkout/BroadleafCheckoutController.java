@@ -2,6 +2,7 @@ package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -14,6 +15,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.MultiShipInstructionForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
@@ -42,11 +44,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
 
 
 /**
@@ -79,8 +80,21 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	if (!(cart instanceof NullOrderImpl)) {
 			model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
     	}
-	    model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
+    	
         model.addAttribute("validShipping", hasValidShippingAddresses(cart));
+        List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
+        if (hasValidShippingAddresses(cart)) {
+            Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
+            options.addAll(fulfillmentOptions);
+            FulfillmentEstimationResponse estimateResponse = null;
+            try {
+                estimateResponse = fulfillmentPricingService.estimateCostForFulfillmentGroup(cart.getFulfillmentGroups().get(0), options);
+            } catch (FulfillmentPriceException e) {
+                
+            }
+            model.addAttribute("estimateResponse", estimateResponse);
+        }
+        model.addAttribute("fulfillmentOptions", fulfillmentOptions);
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
         model.addAttribute("expirationMonths", populateExpirationMonths());
@@ -244,7 +258,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	FulfillmentGroup fulfillmentGroup = null;
     	
     	for (FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
-    		if (tempFulfillmentGroup.getId() == instructionForm.getfulfillmentGroupId()) {
+    		if (tempFulfillmentGroup.getId() == instructionForm.getFulfillmentGroupId()) {
     			fulfillmentGroup = tempFulfillmentGroup;
     		}
     	}

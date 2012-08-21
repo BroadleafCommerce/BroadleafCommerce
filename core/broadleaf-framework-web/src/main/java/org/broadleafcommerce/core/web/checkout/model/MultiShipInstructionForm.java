@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.web.checkout.model;
 import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
-import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
 
 import java.io.Serializable;
 
@@ -54,11 +53,11 @@ public class MultiShipInstructionForm extends CsrfProtectedForm implements Seria
 		this.personalMessage = personalMessage;
 	}
 
-	public Long getfulfillmentGroupId() {
+	public Long getFulfillmentGroupId() {
 		return fulfillmentGroupId;
 	}
 
-	public void setfulfillmentGroupId(Long id) {
+	public void setFulfillmentGroupId(Long id) {
 		this.fulfillmentGroupId = id;
 	}
 	

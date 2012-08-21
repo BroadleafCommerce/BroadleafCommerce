@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.PaymentInfoFactory;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
+import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
@@ -48,6 +49,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blFulfillmentOptionService")
     protected FulfillmentOptionService fulfillmentOptionService;
+    
+    @Resource(name = "blFulfillmentPricingService")
+    protected FulfillmentPricingService fulfillmentPricingService;
 
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
