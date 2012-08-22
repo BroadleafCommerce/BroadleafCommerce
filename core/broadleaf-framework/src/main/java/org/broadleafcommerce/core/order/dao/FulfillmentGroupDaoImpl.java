@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -71,14 +70,12 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     public FulfillmentGroup createDefault() {
         final FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroup"));
         fg.setPrimary(true);
-        fg.setType(FulfillmentType.SHIPPING);
         return fg;
     }
 
     @Override
     public FulfillmentGroup create() {
         final FulfillmentGroup fg =  ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroup"));
-        fg.setType(FulfillmentType.SHIPPING);
         return fg;
     }
 
