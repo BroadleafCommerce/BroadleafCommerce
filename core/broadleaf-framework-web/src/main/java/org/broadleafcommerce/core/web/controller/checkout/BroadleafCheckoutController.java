@@ -1,5 +1,22 @@
 package org.broadleafcommerce.core.web.controller.checkout;
 
+import java.beans.PropertyEditorSupport;
+import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.BooleanUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
@@ -33,23 +50,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.beans.PropertyEditorSupport;
-import java.text.DateFormatSymbols;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-
 /**
  * In charge of performing the various checkout operations
  * 
@@ -81,7 +81,17 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 			model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
     	}
     	
-        model.addAttribute("validShipping", hasValidShippingAddresses(cart));
+		String editShipping = request.getParameter("edit-shipping");
+		
+		boolean hasValidShipping; 
+		
+		if (BooleanUtils.toBoolean(editShipping)) {
+			hasValidShipping = false;
+		} else {
+			hasValidShipping = hasValidShippingAddresses(cart);
+		}
+        model.addAttribute("validShipping", hasValidShipping);
+
         List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
         if (hasValidShippingAddresses(cart)) {
             Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
@@ -147,7 +157,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         fulfillmentGroup.setAddress(shippingForm.getAddress());
         fulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
         fulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
-        FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOptionId());
+        FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOption().getId());
         fulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
         cart = orderService.save(cart, true);

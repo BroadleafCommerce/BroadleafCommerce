@@ -43,6 +43,6 @@ public class ShippingInfoFormValidator implements Validator {
             errors.rejectValue("address.country", "country.required", null, null);
         }
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fulfillmentOptionId", "fulfillmentOptionId.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fulfillmentOption.id", "fulfillmentOption.id.required");
     }
 }
