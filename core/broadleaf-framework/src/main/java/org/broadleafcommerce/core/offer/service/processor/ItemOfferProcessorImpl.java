@@ -52,9 +52,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
 	 */
-	@Override
-    public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
-		boolean isNewFormat = (offer.getQualifyingItemCriteria() != null && offer.getQualifyingItemCriteria().size() > 0) || offer.getTargetItemCriteria() != null;
+	public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
+		boolean isNewFormat = !CollectionUtils.isEmpty(offer.getQualifyingItemCriteria()) || !CollectionUtils.isEmpty(offer.getTargetItemCriteria());
 		boolean itemLevelQualification = false;
 		boolean offerCreated = false;
 		for (PromotableOrderItem promotableOrderItem : order.getDiscountableDiscreteOrderItems(offer.getApplyDiscountToSalePrice())) {
@@ -402,7 +401,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 			for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
 				totalQualifiersNeeded += itemCriteria.getQuantity();
 			}
-			int receiveQtyNeeded = promotion.getTargetItemCriteria().getQuantity();
+            int receiveQtyNeeded = 0;
+            for (OfferItemCriteria targetCriteria : promotion.getTargetItemCriteria()) {
+                receiveQtyNeeded += targetCriteria.getQuantity();
+            }
 			
 			checkAll: {
 				for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
