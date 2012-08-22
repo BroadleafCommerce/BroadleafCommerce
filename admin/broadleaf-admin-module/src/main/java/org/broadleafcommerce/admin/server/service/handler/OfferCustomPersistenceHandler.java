@@ -300,11 +300,6 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			updateRule(entity, offerInstance, "appliesToCustomerRules", OfferRuleType.CUSTOMER);
 			updateRule(entity, offerInstance, "appliesToFulfillmentGroupRules", OfferRuleType.FULFILLMENT_GROUP);
 			
-			if (entity.findProperty("type") != null && !entity.findProperty("type").getValue().equals("ORDER_ITEM") && offerInstance.getTargetItemCriteria() != null) {
-				offerInstance.getTargetItemCriteria().setOffer(null);
-				offerInstance.setTargetItemCriteria(null);
-			}
-			
 			dynamicEntityDao.merge(offerInstance);
 			
 			Property offerCodeId = entity.findProperty("offerCode.id");
@@ -343,7 +338,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             if (fgProperty != null) {
                 offerEntity.addProperty(fgProperty);
             }
-			
+
 			return offerEntity;
 		} catch (Exception e) {
             LOG.error("Unable to update entity for " + entity.getType()[0], e);
