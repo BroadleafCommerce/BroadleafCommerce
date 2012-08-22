@@ -92,19 +92,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 		}
         model.addAttribute("validShipping", hasValidShipping);
 
-        List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
-        if (hasValidShippingAddresses(cart)) {
-            Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
-            options.addAll(fulfillmentOptions);
-            FulfillmentEstimationResponse estimateResponse = null;
-            try {
-                estimateResponse = fulfillmentPricingService.estimateCostForFulfillmentGroup(cart.getFulfillmentGroups().get(0), options);
-            } catch (FulfillmentPriceException e) {
-                
-            }
-            model.addAttribute("estimateResponse", estimateResponse);
-        }
-        model.addAttribute("fulfillmentOptions", fulfillmentOptions);
+        putFulfillmentOptionsAndEstimationOnModel(model);
+        
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
         model.addAttribute("expirationMonths", populateExpirationMonths());
@@ -150,14 +139,20 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
-            return checkout(request, response, model);
+            putFulfillmentOptionsAndEstimationOnModel(model);
+        	model.addAttribute("states", stateService.findStates());
+            model.addAttribute("countries", countryService.findCountries());
+            model.addAttribute("expirationMonths", populateExpirationMonths());
+            model.addAttribute("expirationYears", populateExpirationYears());
+            model.addAttribute("validShipping", false);
+        	return getCheckoutView();
         }
 
         FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
         fulfillmentGroup.setAddress(shippingForm.getAddress());
         fulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
         fulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
-        FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOption().getId());
+        FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOptionId());
         fulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
         cart = orderService.save(cart, true);
@@ -424,6 +419,27 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         return true;
     }
 
+    /**
+     * A helper method to retrieve all fulfillment options for the cart
+     */
+    protected void putFulfillmentOptionsAndEstimationOnModel(Model model) {
+        List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
+        Order cart = CartState.getCart();
+        		
+        if (hasValidShippingAddresses(cart)) {
+            Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
+            options.addAll(fulfillmentOptions);
+            FulfillmentEstimationResponse estimateResponse = null;
+            try {
+                estimateResponse = fulfillmentPricingService.estimateCostForFulfillmentGroup(cart.getFulfillmentGroups().get(0), options);
+            } catch (FulfillmentPriceException e) {
+                
+            }
+            model.addAttribute("estimateResponse", estimateResponse);
+        }
+        model.addAttribute("fulfillmentOptions", fulfillmentOptions);
+    }
+    
     /**
      * A helper method used to construct a list of Credit Card Expiration Months
      * Useful for expiration dropdown menus.

@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
-import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 
@@ -37,10 +36,18 @@ public class ShippingInfoForm extends CsrfProtectedForm implements Serializable 
 	private static final long serialVersionUID = -7895489234675056031L;
 	protected Address address = new AddressImpl();
     protected String addressName;
-    protected FulfillmentOption fulfillmentOption = new FixedPriceFulfillmentOptionImpl();
+    protected FulfillmentOption fulfillmentOption;
     protected Long fulfillmentOptionId;
 	protected PersonalMessage personalMessage = new PersonalMessageImpl();
 	protected String deliveryMessage;
+	
+	public Long getFulfillmentOptionId() {
+		return fulfillmentOptionId;
+	}
+	
+	public void setFulfillmentOptionId(Long fulfillmentOptionId) {
+		this.fulfillmentOptionId = fulfillmentOptionId;
+	}
 	
     public FulfillmentOption getFulfillmentOption() {
         return fulfillmentOption;
