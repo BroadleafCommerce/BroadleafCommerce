@@ -524,7 +524,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         qualifyForAnotherPromoForm.setFields(qualifyForAnotherPromoRadio);
         advancedItemCriteria.addMember(qualifyForAnotherPromoForm);
 
-
         qualifyingItemSubTotalForm = new DynamicForm();
         qualifyingItemSubTotalForm.setNumCols(2);
         //qualifyingItemSubTotal = new TextItem();
@@ -541,7 +540,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         qualifyingItemSubTotal.setCellStyle("label-bold");
         qualifyingItemSubTotalForm.setFields(qualifyingItemSubTotal);
         requiredItemsLayout.addMember(qualifyingItemSubTotalForm);
-
 
         itemSectionLayout.addMember(requiredItemsLayout);
         itemSectionLayout.setLayoutBottomMargin(10);
@@ -560,11 +558,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         targetItemsLabel.setBackgroundColor("#eaeaea");
         targetItemsLabel.setStyleName("label-bold");
         targetItemsLayout.addMember(targetItemsLabel);
-
-
-
-
-
 
         targetItemBuilderViews.add(new ItemBuilderView(orderItemDataSource, true));
 
@@ -590,12 +583,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
             targetItemBuilderContainerLayout.addMember((ItemBuilderView) widget);
         }
         targetItemsLayout.addMember(newTargetItemBuilderLayout);
-
-
-
-
-
-
         targetItemsLayout.setLayoutBottomMargin(10);
 
         advancedItemCriteriaTarget = new VLayout();
@@ -740,8 +727,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         }
     }
 
-
-
     public ItemBuilderDisplay addTargetItemBuilder(DataSource orderItemDataSource) {
         ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
         builder.enable();
@@ -762,10 +747,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
             removeTargetItemBuilder(view);
         }
     }
-
-
-
-
 
     public Canvas asCanvas() {
         return this;
@@ -1047,7 +1028,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         return orderSection;
     }
 
-
     public FloatItem getQualifyingItemSubTotal() {
         return qualifyingItemSubTotal;
     }
@@ -1055,11 +1035,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
     public void setQualifyingItemSubTotal(FloatItem qualifyingItemSubTotal) {
         this.qualifyingItemSubTotal = qualifyingItemSubTotal;
     }
-
-
-
-
-
 
     public VLayout getNewTargetItemBuilderLayout() {
         return newTargetItemBuilderLayout;
