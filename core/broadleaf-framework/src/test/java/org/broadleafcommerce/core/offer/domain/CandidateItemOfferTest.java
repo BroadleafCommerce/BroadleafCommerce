@@ -16,11 +16,8 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestCase;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -38,7 +35,9 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.common.money.Money;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -141,23 +140,35 @@ public class CandidateItemOfferTest extends TestCase {
 	}
 	
 	public void testCalculateMaxUsesForItemCriteria() throws Exception {
-		int maxItemCriteriaUses = promotableCandidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
+        int maxItemCriteriaUses = 9999;
+        for (OfferItemCriteria targetCriteria : offer.getTargetItemCriteria()) {
+            int temp = promotableCandidate.calculateMaxUsesForItemCriteria(targetCriteria, offer);
+            maxItemCriteriaUses = Math.min(maxItemCriteriaUses, temp);
+        }
 		assertTrue(maxItemCriteriaUses == 2);
 		
 		PromotionQualifier qualifier = new PromotionQualifier();
 		qualifier.setPromotion(offer);
 		qualifier.setQuantity(1);
 		promotableOrderItem.getPromotionQualifiers().add(qualifier);
-		
-		maxItemCriteriaUses = promotableCandidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
+
+        maxItemCriteriaUses = 9999;
+        for (OfferItemCriteria targetCriteria : offer.getTargetItemCriteria()) {
+            int temp = promotableCandidate.calculateMaxUsesForItemCriteria(targetCriteria, offer);
+            maxItemCriteriaUses = Math.min(maxItemCriteriaUses, temp);
+        }
 		assertTrue(maxItemCriteriaUses == 1);
 		
 		PromotionDiscount discount = new PromotionDiscount();
 		discount.setPromotion(offer);
 		discount.setQuantity(1);
 		promotableOrderItem.getPromotionDiscounts().add(discount);
-		
-		maxItemCriteriaUses = promotableCandidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
+
+        maxItemCriteriaUses = 9999;
+        for (OfferItemCriteria targetCriteria : offer.getTargetItemCriteria()) {
+            int temp = promotableCandidate.calculateMaxUsesForItemCriteria(targetCriteria, offer);
+            maxItemCriteriaUses = Math.min(maxItemCriteriaUses, temp);
+        }
 		assertTrue(maxItemCriteriaUses == 0);
 	}
 }

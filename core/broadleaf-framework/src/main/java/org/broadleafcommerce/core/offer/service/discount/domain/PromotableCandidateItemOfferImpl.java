@@ -120,9 +120,16 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
 	 * ItemCriteria and promotion's maxQty setting.
 	 */
 	public int calculateMaximumNumberOfUses() {		
-		int maxMatchesFound = 9999; // set arbitrarily high / algorithm will adjust down	
-		
-		int numberOfUsesForThisItemCriteria = calculateMaxUsesForItemCriteria(delegate.getOffer().getTargetItemCriteria(), getOffer());
+		int maxMatchesFound = 9999; // set arbitrarily high / algorithm will adjust down
+
+        //iterate through the target criteria and find the least amount of max uses. This will be the overall
+        //max usage, since the target criteria are grouped together in "and" style.
+        int numberOfUsesForThisItemCriteria = maxMatchesFound;
+        for (OfferItemCriteria targetCriteria : delegate.getOffer().getTargetItemCriteria()) {
+            int temp = calculateMaxUsesForItemCriteria(targetCriteria, getOffer());
+            numberOfUsesForThisItemCriteria = Math.min(numberOfUsesForThisItemCriteria, temp);
+        }
+
 		maxMatchesFound = Math.min(maxMatchesFound, numberOfUsesForThisItemCriteria);
         int offerMaxUses = getOffer().getMaxUses()==0?maxMatchesFound:getOffer().getMaxUses();
 

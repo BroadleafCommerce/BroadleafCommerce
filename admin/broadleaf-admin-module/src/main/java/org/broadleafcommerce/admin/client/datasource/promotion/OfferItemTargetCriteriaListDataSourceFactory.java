@@ -36,9 +36,9 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  * @author jfischer
  *
  */
-public class OfferItemCriteriaListDataSourceFactory implements DataSourceFactory {
+public class OfferItemTargetCriteriaListDataSourceFactory implements DataSourceFactory {
 	
-	public static final String foreignKeyName = "qualifyingOffer";
+	public static final String foreignKeyName = "targetOffer";
 	public static DynamicEntityDataSource dataSource = null;
 	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
