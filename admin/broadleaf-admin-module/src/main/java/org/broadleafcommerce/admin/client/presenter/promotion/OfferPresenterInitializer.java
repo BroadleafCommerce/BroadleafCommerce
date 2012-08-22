@@ -51,9 +51,6 @@ public class OfferPresenterInitializer {
 	protected DynamicEntityDataSource offerItemCriteriaDataSource;
     protected DynamicEntityDataSource offerItemTargetCriteriaDataSource;
 	protected DynamicEntityDataSource orderItemDataSource;
-
-    private boolean qualifiersLoaded = false;
-    private boolean targetsLoaded = false;
 	
 	public OfferPresenterInitializer(OfferPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource offerItemTargetCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
 		this.presenter = presenter;
@@ -238,7 +235,6 @@ public class OfferPresenterInitializer {
 	}
 
     public void initItemTargets(final Record selectedRecord, final FilterRestartCallback cb) {
-        targetsLoaded = false;
         Criteria relationshipCriteria = offerItemTargetCriteriaDataSource.createRelationshipCriteria(offerItemTargetCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
         offerItemTargetCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
             public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -288,8 +284,7 @@ public class OfferPresenterInitializer {
                     getDisplay().removeAllTargetItemBuilders();
                     presenter.bindItemBuilderEvents(getDisplay().addTargetItemBuilder(orderItemDataSource), true);
                 }
-                targetsLoaded = true;
-                if (cb != null && qualifiersLoaded) {
+                if (cb != null) {
                     cb.processComplete();
                 }
             }
@@ -315,7 +310,6 @@ public class OfferPresenterInitializer {
     }
 
 	public void initItemQualifiers(final Record selectedRecord, final String type, final FilterRestartCallback cb) {
-        qualifiersLoaded = false;
 		Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
 		offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -378,8 +372,7 @@ public class OfferPresenterInitializer {
 					getDisplay().removeAllItemBuilders();
 					presenter.bindItemBuilderEvents(getDisplay().addItemBuilder(orderItemDataSource), false);
 				}
-                qualifiersLoaded = true;
-                if (cb != null && targetsLoaded) {
+                if (cb != null) {
                     cb.processComplete();
                 }
 			}

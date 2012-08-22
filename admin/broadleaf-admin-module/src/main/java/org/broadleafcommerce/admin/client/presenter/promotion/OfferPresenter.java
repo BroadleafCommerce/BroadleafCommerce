@@ -77,7 +77,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
     protected AdditionalFilterEventManager additionalFilterEventManager = new AdditionalFilterEventManager();
 
     @Override
-    protected void changeSelection(final Record selectedRecord) {
+    public void changeSelection(final Record selectedRecord) {
         additionalFilterEventManager.resetFilterState(new FilterStateRunnable() {
             @Override
             public void run(FilterRestartCallback cb) {
