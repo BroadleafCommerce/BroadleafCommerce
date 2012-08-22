@@ -59,10 +59,15 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
 		// instead of the first category in the list
 		List<Category> categories = catalogService.findCategoriesByName(parentCategory);
 		if (categories != null && categories.size() > 0) {
-			List<Category> subcategories = catalogService.findAllSubCategories(categories.get(0));
-			if (StringUtils.isNotEmpty(unparsedMaxResults)) {
-				int maxResults = Integer.parseInt(unparsedMaxResults);
-				subcategories = subcategories.subList(0, maxResults);
+			// gets child categories in order ONLY if they are in the xref table and active
+			List<Category> subcategories = categories.get(0).getChildCategories();
+			if (subcategories != null && !subcategories.isEmpty()) {
+				if (StringUtils.isNotEmpty(unparsedMaxResults)) {
+					int maxResults = Integer.parseInt(unparsedMaxResults);
+					if (subcategories.size() > maxResults) {
+						subcategories = subcategories.subList(0, maxResults);
+					}
+				}
 			}
 			
 			addToModel(resultVar, subcategories);
