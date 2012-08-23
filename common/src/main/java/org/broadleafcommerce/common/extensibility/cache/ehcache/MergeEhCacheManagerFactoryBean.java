@@ -23,14 +23,12 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
+
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -50,7 +48,7 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
 
     @PostConstruct
     public void configureMergedItems() {
-        Set<Resource> temp = new HashSet<Resource>();
+        List<Resource> temp = new ArrayList<Resource>();
         if (mergedCacheConfigLocations != null && !mergedCacheConfigLocations.isEmpty()) {
             for (String location : mergedCacheConfigLocations) {
                 temp.add(applicationContext.getResource(location));
