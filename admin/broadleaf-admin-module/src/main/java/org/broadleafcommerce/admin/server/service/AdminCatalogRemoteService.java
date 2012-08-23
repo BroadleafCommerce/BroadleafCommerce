@@ -61,17 +61,11 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
             return -1;
         }
         
-        /** Cascading deletes for a many-to-many doesn't actually delete the entities
-         * themselves so do it manually. By removing the actual entities themselves,
-         * it will cascade down to the xref and remove it from there as well. However,
-         * since I'm going to actually be dealing with the allSkus list further on,
-         * the transient list needs to get cleared also after deleting the individual Skus
-         */
-        if (product.getAllSkus().size() > 0) {
-            for (Sku sku : product.getAllSkus()) {
+        if (product.getAdditionalSkus().size() > 0) {
+            for (Sku sku : product.getAdditionalSkus()) {
                 skuDao.delete(sku);
             }
-            product.getAllSkus().clear();
+            product.getAdditionalSkus().clear();
         }
         
         List<List<ProductOptionValue>> allPermutations = generatePermutations(0, new ArrayList<ProductOptionValue>(), product.getProductOptions());
@@ -81,14 +75,12 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
         //For each permutation, I need them to map to a specific Sku
         for (List<ProductOptionValue> permutation : allPermutations) {
             Sku permutatedSku = catalogService.createSku();
-            permutatedSku.setDefaultProduct(product);
+            permutatedSku.setProduct(product);
             permutatedSku.setProductOptionValues(permutation);
-            Sku savedSku = catalogService.saveSku(permutatedSku);
-            
-            //Throw the newly generated Sku into the allSkus list to ensure the xref table is
-            //updated properly
-            product.getAllSkus().add(savedSku);
+            permutatedSku = catalogService.saveSku(permutatedSku);
+            product.getAdditionalSkus().add(permutatedSku);
         }
+        
         catalogService.saveProduct(product);
         
         return allPermutations.size();
