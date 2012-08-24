@@ -16,9 +16,8 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,34 +31,48 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_FACET")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class SearchFacetImpl implements SearchFacet {
+public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "SearchFacetId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SearchFacetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchFacetImpl", allocationSize = 50)
     @Column(name = "SEARCH_FACET_ID")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "FIELD_NAME", nullable = false)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_fieldName", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
     protected String fieldName;
     
     @Column(name = "QUERY_STRING_KEY", nullable = false)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_queryStringKey", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
     protected String queryStringKey;
     
     @Column(name = "LABEL")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 1, group = "SearchFacetImpl_description", groupOrder = 1)
     protected String label;
     
     @Column(name =  "SHOW_ON_SEARCH")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 1, group = "SearchFacetImpl_description", groupOrder = 1)
     protected Boolean showOnSearch = false;
     
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
     protected Integer searchDisplayPriority = 1;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
