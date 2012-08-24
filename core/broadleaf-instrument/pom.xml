@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>core</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.6.0.2</version>
+		<version>1.6.0.3</version>
 	</parent>
 	<artifactId>broadleaf-instrument</artifactId>
 	<name>BroadleafCommerce Instrument</name>
