@@ -372,7 +372,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 						if (receiveQtyNeeded > 0) {
 							int itemQtyAvailableToBeUsedAsTarget = chargeableItem.getQuantityAvailableToBeUsedAsTarget(promotion);
 							if (itemQtyAvailableToBeUsedAsTarget > 0) {
-                                if (promotion.getMaxUses() == 0 || itemOffer.getUses() <= promotion.getMaxUses()) {
+                                if (promotion.getMaxUses() == 0 || itemOffer.getUses() < promotion.getMaxUses()) {
 								    int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
 								    receiveQtyNeeded -= qtyToMarkAsTarget;
 								    //atLeastOneCriteriaMatched = true;
@@ -382,6 +382,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 						}
 						
 						if (receiveQtyNeeded == 0) {
+                            itemOffer.addUse();
 							break checkTargets;
 						}
 					}
