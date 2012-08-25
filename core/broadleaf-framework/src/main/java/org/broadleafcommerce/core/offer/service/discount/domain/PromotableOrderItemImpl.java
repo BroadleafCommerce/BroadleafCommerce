@@ -273,7 +273,6 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         pd.incrementQuantity(quantity);
         pd.setItemCriteria(itemCriteria);
         pd.setCandidateItemOffer(candidatePromotion);
-        candidatePromotion.addUse();
 	}
 	
 	public PromotionQualifier lookupOrCreatePromotionQualifier(PromotableCandidateItemOffer candidatePromotion) {
