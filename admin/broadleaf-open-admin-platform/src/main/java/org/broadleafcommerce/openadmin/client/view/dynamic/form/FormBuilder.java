@@ -16,15 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -57,6 +48,15 @@ import com.smartgwt.client.widgets.form.fields.UploadItem;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * 
@@ -435,7 +435,7 @@ public class FormBuilder {
 		return displayFormItem;
 	}
 
-	protected static FormItem buildField(final DataSource dataSource, DataSourceField field, String fieldType, Boolean largeEntry, DynamicForm form) {
+	public static FormItem buildField(final DataSource dataSource, DataSourceField field, String fieldType, Boolean largeEntry, DynamicForm form) {
 		final FormItem formItem;
 		switch(SupportedFieldType.valueOf(fieldType)){
 		case BOOLEAN:

@@ -87,5 +87,8 @@ public interface CustomerCareMessages extends ConstantsWithLookup {
     public String customerAddressListTitle();
     public String paymentResponseListTitle();
     public String paymentLogListTitle();
+    public String exportOrdersButtonTitle();
+    public String noOrderExporters();
+    public String selectExporterTitle();
 
 }

@@ -16,25 +16,22 @@
 
 package org.broadleafcommerce.admin.client.service;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
+import org.broadleafcommerce.admin.client.dto.AdminExporterType;
+import org.springframework.security.access.annotation.Secured;
+
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
+import java.util.List;
 
 /**
  * 
  * @author Phillip Verheyden
- *
  */
-public class AppServices {
-    
-    public static final AdminCatalogServiceAsync CATALOG = GWT.create(AdminCatalogService.class);
-    public static final AdminExporterServiceAsync EXPORT = GWT.create(AdminExporterService.class);
+public interface AdminExporterService extends RemoteService {
 
-    static {
-        ServiceDefTarget endpoint = (ServiceDefTarget) CATALOG;
-        endpoint.setServiceEntryPoint("admin.catalog.service");
-        
-        ServiceDefTarget endpoint2 = (ServiceDefTarget) EXPORT;
-        endpoint2.setServiceEntryPoint("admin.export.service");
-    }
-    
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public List<AdminExporterDTO> getExporters(AdminExporterType type) throws ApplicationSecurityException;
+
 }

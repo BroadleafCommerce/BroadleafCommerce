@@ -13,6 +13,7 @@
                 <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService" />
                 <entry key="/**/utility.service" value-ref="blUtilityRemoteService" />
                 <entry key="/**/admin.catalog.service" value-ref="blAdminCatalogRemoteService" />
+                <entry key="/**/admin.export.service" value-ref="blAdminExporterRemoteService" />
             </map>
         </property>
         <property name="serviceExporterFactory">
