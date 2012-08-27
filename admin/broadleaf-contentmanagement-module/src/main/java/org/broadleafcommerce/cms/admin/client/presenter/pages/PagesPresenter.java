@@ -307,7 +307,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
 	    public void onClick(ClickEvent event) {
             if (event.isLeftButtonDown()) {
-                final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+                final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
                 bindItemBuilderEvents(display);
                 display.setDirty(true);
                 resetButtons();
@@ -385,8 +385,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
 	    public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("product.id", "category.id", "sku.id");
-                initializer = new PagesRuleBasedPresenterInitializer(PagesPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
-                extractor = new PagesPresenterExtractor(PagesPresenter.this);
+            
             }}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageDS", new PageDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
@@ -397,6 +396,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                     getPresenterSequenceSetupManager().getDataSource("pageRequestDTODS"),
                     getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"),
                     getPresenterSequenceSetupManager().getDataSource("pageProductDS"));
+				    initializer = new PagesRuleBasedPresenterInitializer(PagesPresenter.this, getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"), getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
+			                extractor = new PagesPresenterExtractor(PagesPresenter.this);
 				    ((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
 			}
         }));
