@@ -17,11 +17,14 @@
 package org.broadleafcommerce.admin.server.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
 import org.broadleafcommerce.admin.client.dto.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AdminExporterService;
 import org.broadleafcommerce.admin.server.service.export.AdminExporter;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,8 @@ import java.util.List;
 @Service("blAdminExporterRemoteService")
 public class AdminExporterRemoteService implements AdminExporterService, ApplicationContextAware {
 
+    private static final Log LOG = LogFactory.getLog(AdminExporterRemoteService.class);
+    
     //Lazy initialization via the blAdminExporters bean definition because exporters are not
     //provided OOB in Broadleaf
     protected List<AdminExporter> exporters;
@@ -69,7 +74,13 @@ public class AdminExporterRemoteService implements AdminExporterService, Applica
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         if (exporters == null) {
-            setExporters((List<AdminExporter>)applicationContext.getBean("blAdminExporters"));
+            try {
+                setExporters((List<AdminExporter>)applicationContext.getBean("blAdminExporters"));
+            } catch (NoSuchBeanDefinitionException e) {
+                LOG.debug("blAdminExporters could not be found in your application context");
+            } catch (BeansException e) {
+                LOG.debug("blAdminExporters could not be obtained");
+            }
         }
     }
 
