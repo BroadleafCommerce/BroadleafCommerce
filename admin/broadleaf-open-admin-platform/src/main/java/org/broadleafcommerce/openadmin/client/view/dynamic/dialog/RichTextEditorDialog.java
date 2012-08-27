@@ -16,15 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.presenter.entity.HtmlEditingPresenter;
-import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
-import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.IButton;
@@ -36,6 +30,10 @@ import com.smartgwt.client.widgets.events.ResizedHandler;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.presenter.entity.HtmlEditingPresenter;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
 
 /**
  * 
@@ -47,81 +45,26 @@ public class RichTextEditorDialog extends Window {
     protected IButton saveButton;
     final HtmlEditingPresenter p = HtmlEditingPresenter.getInstance();
 
-    private final RichTextArea textArea;
-    private final RichTextToolbar toolBar;
     private HandlerRegistration handlerRegistration;
+    private VLayout mainLayout = null;
+    private RichTextToolbar toolBar = null;
+    private RichTextArea textArea = null;
 
-    public RichTextEditorDialog() {
-        setIsModal(true);
-
-        setShowModalMask(true);
-        setShowMinimizeButton(false);
-        setWidth(600);
-        setHeight(550);
-        setCanDragResize(true);
-        setOverflow(Overflow.AUTO);
-        setVisible(true);
+    protected void initItem(int width, int height) {
+        String legacyHtml = "";
+        if (toolBar != null) {
+            toolBar.removeFromParent();
+        }
+        if (textArea != null) {
+            legacyHtml = textArea.getHTML();
+            textArea.removeFromParent();
+        }
+        if (mainLayout != null) {
+            removeItem(mainLayout);
+            mainLayout.destroy();
+        }
         textArea = new RichTextArea();
-        // textArea.addInitializeHandler(new InitializeHandler() {
-        // @Override
-        // public void onInitialize(InitializeEvent ie) {
-        // IFrameElement fe = (IFrameElement) textArea.getElement().cast();
-        // if (fe == null) {
-        // return;
-        // }
-        // Style s = fe.getContentDocument().getBody().getStyle();
-        // s.setProperty("fontFamily", "helvetica, sans-serif");
-        // s.setProperty("fontSize", "12");
-        //
-        // }
-        // });
         toolBar = new RichTextToolbar(textArea, DisplayType.DETAILED);
-        VerticalPanel vp = new VerticalPanel();
-        // if(displayType == displayType.DETAILED) {
-        // getTextArea().setWidth("600px");
-        // getTextArea().setHeight("540px");
-        // toolBar.setWidth("100%");
-        // toolBar.setHeight("100%");
-        // } else {
-        // getTextArea().setWidth("500px");
-        // getTextArea().setHeight("160px");
-        // toolBar.setWidth("100%");
-        // toolBar.setHeight("40px");
-        // }
-        // htmlItem = new HTMLTextItem();
-        //
-        // htmlItem.setHeight(540);
-        // htmlItem.setWidth(600);
-        //
-        // htmlItem.addAssetHandler(new Command() {
-        // @Override
-        // public void execute() {
-        // p.displayAssetSearchDialog(htmlItem);
-        // };
-        // });
-
-        // htmlItem.setHeight100();
-        // htmlItem.setWidth100();
-        // staticAssetDataSource.setAssociatedGrid(tileGrid);
-        // staticAssetDataSource.setupGridFields(new String[]{"pictureLarge",
-        // "name"});
-        // tileGrid.setDataSource(staticAssetDataSource);
-        // tileGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
-        // @Override
-        // public void onSelectionChanged(SelectionChangedEvent event) {
-        // saveButton.enable();
-        // }
-        // });
-        // tileGrid.addClickHandler(new ClickHandler() {
-        // @Override
-        // public void onClick(ClickEvent event) {
-        // if (event.isLeftButtonDown()) {
-        // if (tileGrid.anySelected()) {
-        // saveButton.enable();
-        // }
-        // }
-        // }
-        // });
 
         saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
         saveButton.setIcon("[SKIN]/actions/ok.png");
@@ -137,7 +80,6 @@ public class RichTextEditorDialog extends Window {
         });
 
         final HtmlEditingPresenter pp = HtmlEditingPresenter.getInstance();
-        ;
 
         final HLayout buttonsLayout = new HLayout(10);
         buttonsLayout.setAlign(Alignment.CENTER);
@@ -148,14 +90,27 @@ public class RichTextEditorDialog extends Window {
         buttonsLayout.setWidth100();
         buttonsLayout.setHeight(25);
 
-        VLayout mainLayout = new VLayout();
+        mainLayout = new VLayout();
         mainLayout.setWidth100();
         mainLayout.setHeight100();
-        // textArea.setWidth("550px");
-        // textArea.setHeight("355px");
+
+        toolBar.setHeight("60px");
+        final VLayout toolbarLayout = new VLayout();
+        toolbarLayout.setWidth100();
+        toolbarLayout.setHeight(60);
+        toolbarLayout.addMember(toolBar);
+
+        int textHeight = height - 130;
+        textArea.setHeight(textHeight + "px");
+        textArea.setWidth(width + "px");
+        final VLayout textAreaLayout = new VLayout();
+        textAreaLayout.setWidth100();
+        textAreaLayout.setHeight(textHeight);
+        textAreaLayout.addMember(textArea);
+
+        mainLayout.addMember(toolbarLayout);
+        mainLayout.addMember(textAreaLayout);
         mainLayout.addMember(buttonsLayout);
-        mainLayout.addMember(toolBar);
-        mainLayout.addMember(textArea);
         addItem(mainLayout);
 
         toolBar.addAssetHandler(new Command() {
@@ -165,20 +120,28 @@ public class RichTextEditorDialog extends Window {
             }
         });
 
+        textArea.setHTML(legacyHtml);
+    }
+
+    public RichTextEditorDialog() {
+        setWidth(800);
+        setHeight(600);
+        setIsModal(true);
+        setShowModalMask(true);
+        setShowMinimizeButton(false);
+        setShowMaximizeButton(true);
+        setCanDragResize(true);
+        setOverflow(Overflow.AUTO);
+
         addResizedHandler(new ResizedHandler() {
 
             @Override
             public void onResized(ResizedEvent event) {
-                resizeGwtWidgets(event.getX(), event.getY());
+                initItem(RichTextEditorDialog.this.getInnerWidth(), RichTextEditorDialog.this.getInnerHeight());
+                mainLayout.redraw();
             }
         });
         
-    }
-
-    private void resizeGwtWidgets(int x, int y) {
-        textArea.setWidth(Math.abs(x - 14) + "px");
-        textArea.setHeight(Math.abs(y - 170) + "px");
-        toolBar.setWidth(Math.abs(x - 14) + "px");
     }
 
     public IButton getSaveButton() {
@@ -190,6 +153,7 @@ public class RichTextEditorDialog extends Window {
     }
 
     public void show(final CanvasItem richTextItem) {
+        initItem(788, 580);
         setTitle("Edit " + richTextItem.getFieldName());
         String htmlValueToEdit = (String) richTextItem.getValue();
         toolBar.setHTML(htmlValueToEdit);
@@ -206,8 +170,6 @@ public class RichTextEditorDialog extends Window {
             }
         });
         show();
-        resizeTo(800, 600);
-        resizeGwtWidgets(800,600);
     }
 
 }
