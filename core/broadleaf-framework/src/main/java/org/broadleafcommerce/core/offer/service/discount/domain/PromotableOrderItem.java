@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 
 import java.util.List;
+import java.util.Set;
 
 public interface PromotableOrderItem {
 	 
@@ -74,7 +75,7 @@ public interface PromotableOrderItem {
     
     public void addPromotionQualifier(PromotableCandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity);
 	
-	public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity);
+	public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, Set<OfferItemCriteria> itemCriteria, int quantity);
 	
 	public void clearAllNonFinalizedQuantities();
 	

@@ -96,5 +96,5 @@ public class SearchFacetRangeImpl implements SearchFacetRange {
 	public void setMaxValue(BigDecimal maxValue) {
 		this.maxValue = maxValue;
 	}
-
+	
 }

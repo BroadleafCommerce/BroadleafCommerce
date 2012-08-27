@@ -168,7 +168,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Index(name="FG_PHONE_INDEX", columnNames={"PHONE_ID"})
     protected Phone phone;
     
-    @ManyToOne(targetEntity = PersonalMessageImpl.class)
+    @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;

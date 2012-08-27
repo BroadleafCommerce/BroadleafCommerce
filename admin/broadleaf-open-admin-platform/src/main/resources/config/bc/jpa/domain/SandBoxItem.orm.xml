@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_SANDBOX_ITEM_BY_TEMP_ITEM_ID" >
-		<query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItem sandboxItem
+		<query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
 		       WHERE  sandboxItem.temporaryItemId = :temporaryItemId AND
                       sandboxItem.sandBoxId = :sandboxId AND
                       sandboxItem.archivedFlag = 'N' AND
@@ -13,14 +13,14 @@
 	</named-query>
 
     <named-query name="BC_READ_ALL_SANDBOX_ITEMS" >
-		<query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItem sandboxItem
+		<query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
 		       WHERE  sandboxItem.sandBoxId = :sandboxId AND
                       sandboxItem.archivedFlag = 'N'
 		</query>
 	</named-query>
 
     <named-query name="BC_READ_ALL_SANDBOX_ITEMS_BY_TYPE" >
-        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItem sandboxItem
+        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
                WHERE  sandboxItem.sandBoxId = :sandboxId AND
                       sandboxItem.sandBoxItemType = :sandBoxItemType AND
                       sandboxItem.archivedFlag = 'N'
@@ -29,7 +29,7 @@
     </named-query>
 
     <named-query name="BC_READ_ALL_SANDBOX_ITEMS_BY_TYPES" >
-        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItem sandboxItem
+        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
                WHERE  sandboxItem.sandBoxId = :sandboxId AND
                       sandboxItem.sandBoxItemType IN (:sandBoxItemTypes) AND
                       sandboxItem.archivedFlag = 'N'
@@ -38,7 +38,7 @@
     </named-query>
 
     <named-query name="BC_READ_SANDBOX_ITEM_BY_GROUP_NAME" >
-        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItem sandboxItem
+        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
                WHERE  sandboxItem.sandBoxId = :sandboxId AND
                       sandboxItem.archivedFlag = 'N' AND
                       sandboxItem.groupDescription = :groupName

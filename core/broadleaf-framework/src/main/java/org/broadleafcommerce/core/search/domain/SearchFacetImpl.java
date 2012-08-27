@@ -27,6 +27,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -55,13 +57,9 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
-    @Column(name = "FIELD_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "SearchFacetImpl_fieldName", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
-    protected String fieldName;
-    
-    @Column(name = "QUERY_STRING_KEY", nullable = false)
-    @AdminPresentation(friendlyName = "SearchFacetImpl_queryStringKey", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
-    protected String queryStringKey;
+    @ManyToOne(optional=false, targetEntity = FieldImpl.class)
+    @JoinColumn(name = "FIELD_ID")
+    protected Field field;
     
     @Column(name = "LABEL")
     @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 1, group = "SearchFacetImpl_description", groupOrder = 1)
@@ -74,6 +72,9 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
     @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
     protected Integer searchDisplayPriority = 1;
+    
+    @Column(name = "MULTISELECT")
+    protected Boolean canMultiselect = true;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -89,25 +90,15 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	@Override
-	public String getFieldName() {
-		return fieldName;
-	}
-
-	@Override
-	public void setFieldName(String fieldName) {
-		this.fieldName = fieldName;
-	}
 	
 	@Override
-	public String getQueryStringKey() {
-		return queryStringKey;
+	public Field getField() {
+		return field;
 	}
 
 	@Override
-	public void setQueryStringKey(String queryStringKey) {
-		this.queryStringKey = queryStringKey;
+	public void setField(Field field) {
+		this.field = field;
 	}
 
 	@Override
@@ -139,6 +130,16 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	public void setSearchDisplayPriority(Integer searchDisplayPriority) {
 		this.searchDisplayPriority = searchDisplayPriority;
 	}
+	
+	@Override
+	public Boolean getCanMultiselect() {
+		return canMultiselect;
+	}
+
+	@Override
+	public void setCanMultiselect(Boolean canMultiselect) {
+		this.canMultiselect = canMultiselect;
+	}
 
 	@Override
 	public List<SearchFacetRange> getSearchFacetRanges() {
@@ -150,6 +151,17 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 		this.searchFacetRanges = searchFacetRanges;
 	}
 	
-	
-    
+	@Override
+	public boolean equals(Object obj) {
+	   	if (this == obj)
+	        return true;
+	    if (obj == null)
+	        return false;
+	    if (getClass() != obj.getClass())
+	        return false;
+        SearchFacet other = (SearchFacet) obj;
+        
+        return getField().equals(other.getField());
+    }
+
 }

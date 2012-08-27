@@ -150,6 +150,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         formPresenter.bind();
         formPresenter.getSaveButtonHandlerRegistration().removeHandler();
         saveButtonHandlerRegistration = display.getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     saveClicked();
@@ -157,6 +158,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             }
         });
         addClickHandlerRegistration = display.getListDisplay().getAddButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     addClicked();
@@ -164,9 +166,11 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             }
         });
         removeClickHandlerRegistration = display.getListDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
+                        @Override
                         public void execute(Boolean value) {
                             if (value) {
                                 removeClicked();
@@ -186,6 +190,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             }
         });
         selectionChangedHandlerRegistration = display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            @Override
             public void onSelectionChanged(SelectionEvent event) {
                 ListGridRecord selectedRecord = event.getSelectedRecord();
                 if (event.getState() && selectedRecord != null) {
@@ -203,16 +208,20 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                             display.getListDisplay().getRemoveButton().enable();
                         }
                         changeSelection(selectedRecord);
+                        display.getDynamicFormDisplay().getSaveButton().disable();
+                        display.getDynamicFormDisplay().getRefreshButton().disable();
                     }
                 }
             }
         });
         entityTypeChangedHandlerRegistration = display.getListDisplay().getEntityType().addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(ChangedEvent event) {
                 ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).setDefaultNewEntityFullyQualifiedClassname((String) event.getItem().getValue());
             }
         });
         cellSavedHandlerRegistration = display.getListDisplay().getGrid().addCellSavedHandler(new CellSavedHandler() {
+            @Override
             public void onCellSaved(CellSavedEvent event) {
                 display.getListDisplay().getGrid().deselectAllRecords();
                 display.getListDisplay().getGrid().selectRecord(event.getRecord());
@@ -257,6 +266,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(lastSelectedRecord));
     }
 
+    @Override
     public void postSetup(Canvas container) {
         BLCMain.ISNEW = false;
         if (containsDisplay(container)) {
@@ -309,10 +319,12 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         return container.contains(display.asCanvas());
     }
 
+    @Override
     public DynamicEditDisplay getDisplay() {
         return display;
     }
 
+    @Override
     public void setDisplay(Display display) {
         this.display = (DynamicEditDisplay) display;
     }
@@ -351,6 +363,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         compileDefaultValuesFromCurrentFilter(initialValues);
         BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
+            @Override
             public void onItemEdited(ItemEdited event) {
                 ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
@@ -421,10 +434,12 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         return cellSavedHandlerRegistration;
     }
 
+    @Override
     public PresenterSequenceSetupManager getPresenterSequenceSetupManager() {
         return presenterSequenceSetupManager;
     }
 
+    @Override
     public Boolean getLoaded() {
         return loaded;
     }

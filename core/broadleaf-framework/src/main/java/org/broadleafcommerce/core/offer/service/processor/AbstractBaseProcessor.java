@@ -23,7 +23,6 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
@@ -37,7 +36,14 @@ import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -63,7 +69,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     	}
     	
     	if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
-	    	checkForItemRequirements(candidates, offer.getTargetItemCriteria(), promotableOrderItems, false);
+            for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
+	    	    checkForItemRequirements(candidates, criteria, promotableOrderItems, false);
+                if (!candidates.isMatchedQualifier()) {
+                    break;
+                }
+            }
     	}
     	
 		if (candidates.isMatchedQualifier()) {

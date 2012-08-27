@@ -41,35 +41,19 @@ public interface SearchFacet {
 	public void setId(Long id);
 
 	/**
-	 * Returns the fieldName associated with this facet. This represents the name of a field on the
-	 * Product entity (or an extension of the Product entity).
+	 * Returns the field associated with this facet. 
+	 * 
 	 * @return the fieldName
 	 */
-	public String getFieldName();
+	public Field getField();
 
 	/**
-	 * Sets the fieldName associated with this facet.
+	 * Sets the field associated with this facet.
 	 * 
 	 * @see #getFieldName()
 	 * @param fieldName
 	 */
-	public void setFieldName(String fieldName);
-
-	/**
-	 * Gets the query string key that's associated with this facet. This is what will show up in the URL
-	 * to identify that there is a facet filter on the current page
-	 * 
-	 * @return the query string key
-	 */
-	public String getQueryStringKey();
-
-	/**
-	 * Sets the query string key for this facet.
-	 * 
-	 * @see #getQueryStringKey()
-	 * @param queryStringKey
-	 */
-	public void setQueryStringKey(String queryStringKey);
+	public void setField(Field field);
 
 	/**
 	 * Gets the label of this SearchFacet. This is the label that will be used for the user-friendly
@@ -116,6 +100,20 @@ public interface SearchFacet {
 	 * @param searchDisplayPriority
 	 */
 	public void setSearchDisplayPriority(Integer searchDisplayPriority);
+	
+	/**
+	 * Sets whether or not you can multiselect values for this Facet.
+	 * 
+	 * @param canMultiselect
+	 */
+	public void setCanMultiselect(Boolean canMultiselect);
+
+	/**
+	 * Gets whether or not you can multiselect values for this Facet
+	 * 
+	 * @return the multiselect flag
+	 */
+	public Boolean getCanMultiselect();
 
 	/**
 	 * Gets the applicable ranges for this search facet, if any are specified. For example, the 

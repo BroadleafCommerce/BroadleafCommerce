@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -32,7 +33,6 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.compass.core.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,9 +52,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
 	 */
-	@Override
-    public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
-		boolean isNewFormat = (offer.getQualifyingItemCriteria() != null && offer.getQualifyingItemCriteria().size() > 0) || offer.getTargetItemCriteria() != null;
+	public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
+		boolean isNewFormat = !CollectionUtils.isEmpty(offer.getQualifyingItemCriteria()) || !CollectionUtils.isEmpty(offer.getTargetItemCriteria());
 		boolean itemLevelQualification = false;
 		boolean offerCreated = false;
 		for (PromotableOrderItem promotableOrderItem : order.getDiscountableDiscreteOrderItems(offer.getApplyDiscountToSalePrice())) {
@@ -402,7 +401,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 			for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
 				totalQualifiersNeeded += itemCriteria.getQuantity();
 			}
-			int receiveQtyNeeded = promotion.getTargetItemCriteria().getQuantity();
+            int receiveQtyNeeded = 0;
+            for (OfferItemCriteria targetCriteria : promotion.getTargetItemCriteria()) {
+                receiveQtyNeeded += targetCriteria.getQuantity();
+            }
 			
 			checkAll: {
 				for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
@@ -453,6 +455,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 						}
 						
 						if (receiveQtyNeeded == 0) {
+                            itemOffer.addUse();
 							break checkTargets;
 						}
 					}

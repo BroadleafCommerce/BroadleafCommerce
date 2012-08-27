@@ -18,9 +18,12 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
+import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
@@ -56,6 +59,16 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
         if (ratingSummary != null) {
             addToModel(getRatingsVar(element), ratingSummary);
         }
+        
+        Customer customer = CustomerState.getCustomer();
+        ReviewDetail reviewDetail = null;
+        if (!customer.isAnonymous()) {
+        	reviewDetail = ratingService.readReviewByCustomerAndItem(customer, itemId);
+        }
+        if (reviewDetail != null) {
+        	addToModel("currentCustomerReview", reviewDetail);
+        }
+        
     }
     
     private String getRatingsVar(Element element) {

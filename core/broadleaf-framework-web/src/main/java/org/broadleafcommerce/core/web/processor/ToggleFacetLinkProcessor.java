@@ -66,7 +66,7 @@ public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProce
 		
 		SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
 		
-		String key = facetService.getKey(result);
+		String key = facetService.getUrlKey(result);
 		String value = facetService.getValue(result);
 		String[] paramValues = params.get(key);
 		

@@ -76,8 +76,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * @author bTaylor
@@ -664,10 +662,9 @@ public class CategoryImpl implements Category, Status {
     
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
-    	List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
+    	final List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
     	returnFacets.addAll(getSearchFacets());
-    	Collections.sort(returnFacets, facetComparator);
-    	
+    	Collections.sort(returnFacets, facetPositionComparator);
     	
     	// Add in parent facets unless they are excluded
     	List<CategorySearchFacet> parentFacets = null;
@@ -677,7 +674,7 @@ public class CategoryImpl implements Category, Status {
     			@Override
     			public boolean evaluate(Object arg) {
     				CategorySearchFacet csf = (CategorySearchFacet) arg;
-    				return !getExcludedSearchFacets().contains(csf.getSearchFacet());
+    				return !getExcludedSearchFacets().contains(csf.getSearchFacet()) && !returnFacets.contains(csf.getSearchFacet());
     			}
         	});
     	}
@@ -753,7 +750,7 @@ public class CategoryImpl implements Category, Status {
         return true;
     }
     
-    protected static Comparator<CategorySearchFacet> facetComparator = new Comparator<CategorySearchFacet>() {
+    protected static Comparator<CategorySearchFacet> facetPositionComparator = new Comparator<CategorySearchFacet>() {
 		@Override
 		public int compare(CategorySearchFacet o1, CategorySearchFacet o2) {
 			return o1.getPosition().compareTo(o2.getPosition());

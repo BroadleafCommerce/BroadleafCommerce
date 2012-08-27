@@ -291,7 +291,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	}
 	
 	public String getResetPasswordUrl(HttpServletRequest request) {		
-		String url = request.getScheme() + "://" + request.getServerName() + getResetPasswordPort(request, request.getScheme());
+		String url = request.getScheme() + "://" + request.getServerName() + getResetPasswordPort(request, request.getScheme() + "/");
 		
 		if (request.getContextPath() != null && ! "".equals(request.getContextPath())) {
 			url = url + request.getContextPath() + getResetPasswordView();

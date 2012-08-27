@@ -30,7 +30,6 @@ import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVEL
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -41,7 +40,6 @@ import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 
 /**
  * 
@@ -123,11 +121,7 @@ public class StructuredContentPresenterExtractor {
                         final String newId = response.getAttribute("newId");
                         FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
                         final DynamicForm form = legacyForm.getForm();
-                        for (FormItem formItem : form.getFields()) {
-                        	 if (formItem instanceof HTMLTextItem) { 
-                        		 form.setValue(formItem.getFieldName(), ((HTMLTextItem) formItem).getHTMLValue());
-                        	 }
-                        }
+
                         StructuredContentTypeFormListDataSource dataSource = (StructuredContentTypeFormListDataSource) form.getDataSource();
                         dataSource.setCustomCriteria(new String[]{"constructForm", newId});
                         form.saveData(new DSCallback() {

@@ -17,6 +17,7 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper" class="org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.MediaWrapper" class="org.broadleafcommerce.core.web.api.wrapper.MediaWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentInfoWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentInfoWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper" scope="prototype" />
@@ -31,5 +32,9 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SkuWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SkuWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.StateWrapper" class="org.broadleafcommerce.core.web.api.wrapper.StateWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductOptionValueWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductOptionValueWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.SkuBundleItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SkuBundleItemWrapper" scope="prototype"/>
+    
 
 </beans>

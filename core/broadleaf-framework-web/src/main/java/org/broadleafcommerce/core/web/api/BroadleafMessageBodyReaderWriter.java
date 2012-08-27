@@ -20,14 +20,10 @@ import com.sun.jersey.core.impl.provider.entity.XMLRootElementProvider;
 import com.sun.jersey.json.impl.provider.entity.JSONListElementProvider;
 import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
 import com.sun.jersey.spi.inject.Injectable;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -47,7 +43,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -72,8 +67,6 @@ import java.util.Set;
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
 public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Object>, MessageBodyWriter<Object>, ApplicationContextAware {
-
-    private static final Log LOG = LogFactory.getLog(BroadleafMessageBodyReaderWriter.class);
 
     protected ApplicationContext applicationContext;
 
@@ -107,7 +100,8 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
         return false;
     }
 
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	public Object readFrom(Class<Object> type, Type genericType,
 			Annotation[] annotations, MediaType mediaType,
 			MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
@@ -155,7 +149,8 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
 		return -1;
 	}
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public void writeTo(
             Object t,
             Class<?> type,
@@ -234,7 +229,8 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
         * The default providers can then handle the actual serialization of the List or Root element safely.
         *
         */
-    protected Type getApiWrapper(Class<?> type, Type lookupType) {
+    @SuppressWarnings("rawtypes")
+	protected Type getApiWrapper(Class<?> type, Type lookupType) {
         Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
         Set<String> keySet = apiWrappers.keySet();
 
@@ -242,7 +238,7 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
             if (key.equals(((Class)lookupType).getName())) {
                 if (Collection.class.isAssignableFrom(type)) {
                     Type[] paramType = {apiWrappers.get(key).getClass()};
-                    return ParameterizedTypeImpl.make(type, paramType, null);
+                    return new ParameterizedTypeImpl(paramType, type, null);
                 } else if (type.isArray()) {
                     return Array.newInstance(apiWrappers.get(key).getClass(), 0).getClass();
                 } else {
@@ -258,4 +254,40 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
+    
+    /*
+     * This is based on the Sun / Oracle implementation of a similar class
+     */
+    private class ParameterizedTypeImpl implements ParameterizedType {
+		
+    	private Type[] actualTypeArguments;
+    	private Class<?> rawType;
+    	private Type ownerType;
+    	
+    	public ParameterizedTypeImpl(Type[] actualTypeArguments,
+				Class<?> rawType, Type ownerType) {
+			this.actualTypeArguments = actualTypeArguments;
+			this.rawType = rawType;
+			if (ownerType != null) {
+				this.ownerType = ownerType;
+			} else {
+				this.ownerType = rawType.getDeclaringClass();
+			}
+		}
+
+		@Override
+		public Type getRawType() {
+			return rawType;
+		}
+		
+		@Override
+		public Type getOwnerType() {
+			return ownerType;
+		}
+		
+		@Override
+		public Type[] getActualTypeArguments() {
+			return actualTypeArguments.clone();
+		}
+	}
 }

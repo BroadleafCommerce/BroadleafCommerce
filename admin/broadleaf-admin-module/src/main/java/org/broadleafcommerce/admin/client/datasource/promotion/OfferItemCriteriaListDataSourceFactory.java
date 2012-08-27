@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.admin.client.datasource.promotion;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.promotion.module.OfferItemCriteriaListModule;
@@ -29,9 +31,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DataSource;
-
 /**
  * 
  * @author jfischer
@@ -39,7 +38,7 @@ import com.smartgwt.client.data.DataSource;
  */
 public class OfferItemCriteriaListDataSourceFactory implements DataSourceFactory {
 	
-	public static final String foreignKeyName = "offer";
+	public static final String foreignKeyName = "qualifyingOffer";
 	public static DynamicEntityDataSource dataSource = null;
 	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {

@@ -63,7 +63,7 @@ public class MediaImpl implements Media {
     protected String url;
 	
     @Column(name = "TITLE")
-    @Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"})
+    @Index(name="MEDIA_TITLE_INDEX", columnNames={"TITLE"})
     @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order=2, prominent=true)
     protected String title;
     
@@ -156,9 +156,9 @@ public class MediaImpl implements Media {
 		} else if (!title.equals(other.title))
 			return false;
 		if (altText == null) {
-			if (other.title != null)
+			if (other.altText != null)
 				return false;
-		} else if (!title.equals(other.title))
+		} else if (!altText.equals(other.altText))
 			return false;
         if (tags == null) {
             if (other.tags != null)

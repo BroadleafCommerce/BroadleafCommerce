@@ -16,7 +16,40 @@
 
 package org.broadleafcommerce.core.content.service;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.core.content.dao.ContentDao;
+import org.broadleafcommerce.core.content.dao.ContentDetailsDao;
+import org.broadleafcommerce.core.content.domain.Content;
+import org.broadleafcommerce.core.content.domain.ContentDetails;
+import org.broadleafcommerce.core.content.domain.ContentDetailsImpl;
+import org.broadleafcommerce.core.content.domain.ContentImpl;
+import org.broadleafcommerce.core.content.domain.ContentPageInfo;
+import org.broadleafcommerce.core.content.domain.ContentXmlData;
+import org.mvel2.MVEL;
+import org.mvel2.ParserContext;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import javax.annotation.Resource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
@@ -30,39 +63,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.map.LRUMap;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.content.dao.ContentDao;
-import org.broadleafcommerce.core.content.dao.ContentDetailsDao;
-import org.broadleafcommerce.core.content.domain.Content;
-import org.broadleafcommerce.core.content.domain.ContentDetails;
-import org.broadleafcommerce.core.content.domain.ContentDetailsImpl;
-import org.broadleafcommerce.core.content.domain.ContentImpl;
-import org.broadleafcommerce.core.content.domain.ContentPageInfo;
-import org.broadleafcommerce.core.content.domain.ContentXmlData;
-import org.broadleafcommerce.common.time.SystemTime;
-import org.compass.core.util.reader.StringReader;
-import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
-import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 /**
  * @author dwtalk

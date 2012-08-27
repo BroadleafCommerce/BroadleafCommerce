@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class PromotableOrderItemImpl implements PromotableOrderItem {
 
@@ -269,7 +270,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 		pq.setItemCriteria(itemCriteria);
 	}
 	
-	public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity) {
+	public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, Set<OfferItemCriteria> itemCriteria, int quantity) {
 		PromotionDiscount pd = lookupOrCreatePromotionDiscount(candidatePromotion);
         if (pd == null) {
             return;
@@ -277,7 +278,6 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         pd.incrementQuantity(quantity);
         pd.setItemCriteria(itemCriteria);
         pd.setCandidateItemOffer(candidatePromotion);
-        candidatePromotion.addUse();
 	}
 	
 	public PromotionQualifier lookupOrCreatePromotionQualifier(PromotableCandidateItemOffer candidatePromotion) {

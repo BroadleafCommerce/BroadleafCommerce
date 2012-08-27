@@ -28,10 +28,14 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemTargetCriteriaListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -51,6 +55,7 @@ public class OfferPresenterExtractor {
 	private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
 	
 	protected OfferPresenter presenter;
+    protected StateManager stateManager = new StateManager();
 	
 	public OfferPresenterExtractor(OfferPresenter presenter) {
 		this.presenter = presenter;
@@ -65,12 +70,27 @@ public class OfferPresenterExtractor {
 			presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
 				public void execute(DSResponse response, Object rawData, DSRequest request) {
 					getDisplay().removeItemBuilder(builder);
+                    stateManager.finishWatchedItem(CriteriaType.QUALIFIER);
 				}
 			});
 		} else {
 			getDisplay().removeItemBuilder(builder);
+            stateManager.finishWatchedItem(CriteriaType.QUALIFIER);
 		}
 	}
+
+    public void removeItemTarget(final ItemBuilderDisplay builder) {
+        if (builder.getRecord() != null) {
+            presenter.getPresenterSequenceSetupManager().getDataSource("offerItemTargetCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    getDisplay().removeTargetItemBuilder(builder);
+                    stateManager.finishWatchedItem(CriteriaType.TARGET);
+                }
+            });
+        } else {
+            getDisplay().removeTargetItemBuilder(builder);
+        }
+    }
 	
 	protected void setData(Record record, String fieldName, Object value, Map<String, Object> dirtyValues) {
         String attr = record.getAttribute(fieldName);
@@ -83,6 +103,7 @@ public class OfferPresenterExtractor {
 	
 	public void applyData(final Record selectedRecord) {
 		try {
+            final int index = getDisplay().getListDisplay().getGrid().getRecordIndex(selectedRecord);
             Record tempRecord = new Record();
             for (String attribute : selectedRecord.getAttributes()) {
                 if (attribute.equals("_type")) {
@@ -105,23 +126,37 @@ public class OfferPresenterExtractor {
 			extractOrderData(tempRecord, type, dirtyValues);
 			
 			extractQualifierRuleType(tempRecord, dirtyValues);
-			extractTargetItemData(tempRecord, type, dirtyValues);
 			extractTargetRuleType(tempRecord, dirtyValues);
 			extractFulfillmentGroupData(tempRecord, type, dirtyValues);
 			
 			for (FormItem formItem : getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getFields()) {
 				setData(tempRecord, formItem.getName(), formItem.getValue(), dirtyValues);
 			}
-			
+
+            stateManager.clear();
+
+            extractTargetItemData(tempRecord, type, true, dirtyValues);
 			extractQualifierData(tempRecord, type, true, dirtyValues);
 			
 			DSRequest requestProperties = new DSRequest();
 			requestProperties.setAttribute("dirtyValues", dirtyValues);
 
+            stateManager.setStateFinishedCallback(new StateFinishedCallback() {
+                @Override
+                public void finished() {
+                    if (getDisplay().getListDisplay().getGrid().anySelected()) {
+                        getDisplay().getListDisplay().getGrid().deselectAllRecords();
+                    }
+                    getDisplay().getListDisplay().getGrid().selectRecord(index);
+                }
+            });
+
             if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().validate() && getDisplay().getQualifyingItemSubTotalForm().validate()) {
                 getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(tempRecord, new DSCallback() {
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                         try {
+                            stateManager.start();
+                            extractTargetItemData(selectedRecord, type, false, dirtyValues);
                             extractQualifierData(selectedRecord, type, false, dirtyValues);
                             getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                             getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
@@ -139,6 +174,13 @@ public class OfferPresenterExtractor {
 	}
 	
 	protected void extractQualifierData(final Record selectedRecord, final String type, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
+        int count = 0;
+        for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
+            if (builder.getDirty()) {
+                count++;
+            }
+        }
+        stateManager.setWatchedItem(CriteriaType.QUALIFIER, count);
 		if ((getDisplay().getBogoRadio().getValue().equals("YES") && type.equals("ORDER_ITEM")) || getDisplay().getItemRuleRadio().getValue().equals("ITEM_RULE") && !type.equals("ORDER_ITEM")) {
 			for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
 				if (builder.getDirty()) {
@@ -157,7 +199,7 @@ public class OfferPresenterExtractor {
 							presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									builder.setDirty(false);
-                                    getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(selectedRecord));
+                                    stateManager.finishWatchedItem(CriteriaType.QUALIFIER);
 								}
 							});
 						} else {
@@ -171,7 +213,7 @@ public class OfferPresenterExtractor {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									builder.setDirty(false);
 									builder.setRecord(temp);
-                                    getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(selectedRecord));
+                                    stateManager.finishWatchedItem(CriteriaType.QUALIFIER);
 								}
 							});
 						}
@@ -185,13 +227,70 @@ public class OfferPresenterExtractor {
 				for (final ItemBuilderDisplay builder : displays) {
 					removeItemQualifer(builder);
 				}
-                getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(selectedRecord));
 			}
 		}
 		if (type.equals("ORDER_ITEM")) {
 			setData(selectedRecord, "combinableWithOtherOffers", getDisplay().getOrderItemCombineRuleRadio().getValue().equals("YES"), dirtyValues);
 		}
 	}
+
+    protected void extractTargetItemData(final Record selectedRecord, final String type, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
+        int count = 0;
+        for (final ItemBuilderDisplay builder : getDisplay().getTargetItemBuilderViews()) {
+            if (builder.getDirty()) {
+                count++;
+            }
+        }
+        stateManager.setWatchedItem(CriteriaType.TARGET, count);
+        if (type.equals("ORDER_ITEM")) {
+            for (final ItemBuilderDisplay builder : getDisplay().getTargetItemBuilderViews()) {
+                if (builder.getDirty()) {
+                    String temper = builder.getItemQuantity().getValue().toString();
+                    Integer quantity = Integer.parseInt(temper);
+                    String mvel;
+                    if (builder.getIncompatibleMVEL()) {
+                        mvel = builder.getRawItemTextArea().getValueAsString();
+                    } else {
+                        mvel = TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(FilterType.ORDER_ITEM), builder.getItemFilterBuilder().getCriteria(), builder.getItemFilterBuilder().getDataSource());
+                    }
+                    if (!isValidation) {
+                        if (builder.getRecord() != null) {
+                            setData(builder.getRecord(), "quantity", quantity, dirtyValues);
+                            setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
+                            presenter.getPresenterSequenceSetupManager().getDataSource("offerItemTargetCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
+                                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                    builder.setDirty(false);
+                                    stateManager.finishWatchedItem(CriteriaType.TARGET);
+                                }
+                            });
+                        } else {
+                            final Record temp = new Record();
+                            temp.setAttribute("quantity", quantity);
+                            temp.setAttribute("orderItemMatchRule", mvel);
+                            temp.setAttribute("_type", new String[]{presenter.getPresenterSequenceSetupManager().getDataSource("offerItemTargetCriteriaDS").getDefaultNewEntityFullyQualifiedClassname()});
+                            temp.setAttribute(OfferItemTargetCriteriaListDataSourceFactory.foreignKeyName, presenter.getPresenterSequenceSetupManager().getDataSource("offerDS").getPrimaryKeyValue(selectedRecord));
+                            temp.setAttribute("id", "");
+                            presenter.getPresenterSequenceSetupManager().getDataSource("offerItemTargetCriteriaDS").addData(temp, new DSCallback() {
+                                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                    builder.setDirty(false);
+                                    builder.setRecord(temp);
+                                    stateManager.finishWatchedItem(CriteriaType.TARGET);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        } else {
+            if (!isValidation) {
+                ItemBuilderDisplay[] displays = new ItemBuilderDisplay[]{};
+                displays = getDisplay().getTargetItemBuilderViews().toArray(displays);
+                for (final ItemBuilderDisplay builder : displays) {
+                    removeItemTarget(builder);
+                }
+            }
+        }
+    }
 
 	protected void extractFulfillmentGroupData(final Record selectedRecord, final String type, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		if (type.equals("FULFILLMENT_GROUP")) {
@@ -237,25 +336,6 @@ public class OfferPresenterExtractor {
 			offerItemTargetRuleType = "NONE";
 		}
 		setData(selectedRecord, "offerItemTargetRuleType", offerItemTargetRuleType, dirtyValues);
-	}
-
-	protected void extractTargetItemData(final Record selectedRecord, final String type, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
-		if (type.equals("ORDER_ITEM")) {
-			String temp = getDisplay().getTargetItemBuilder().getItemQuantity().getValue().toString();
-			Integer quantity = Integer.parseInt(temp);
-			String mvel;
-			if (getDisplay().getTargetItemBuilder().getIncompatibleMVEL()) {
-				mvel = getDisplay().getTargetItemBuilder().getRawItemTextArea().getValueAsString();
-			} else {
-				mvel = TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(FilterType.ORDER_ITEM), getDisplay().getTargetItemBuilder().getItemFilterBuilder().getCriteria(), getDisplay().getTargetItemBuilder().getItemFilterBuilder().getDataSource());
-			}
-			setData(selectedRecord, "targetItemCriteria.quantity", quantity, dirtyValues);
-			setData(selectedRecord, "targetItemCriteria.orderItemMatchRule", mvel, dirtyValues);
-		} else {
-			setData(selectedRecord, "targetItemCriteria.quantity", 0, dirtyValues);
-			String attr = null;
-			setData(selectedRecord, "targetItemCriteria.orderItemMatchRule", attr, dirtyValues);
-		}
 	}
 
 	protected void extractQualifierRuleType(final Record selectedRecord, Map<String, Object> dirtyValues) {

@@ -25,13 +25,13 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemList
 import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.RequestDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -44,10 +44,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.FilterStateRunnable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Command;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -64,7 +62,6 @@ import com.smartgwt.client.widgets.form.events.FilterChangedEvent;
 import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 /**
@@ -72,7 +69,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
  * @author jfischer
  *
  */
-public class PagesPresenter extends HtmlEditingPresenter implements Instantiable {
+public class PagesPresenter extends DynamicEntityPresenter implements Instantiable {
 
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
@@ -168,23 +165,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
                             formOnlyView.getForm().enable();
                         }
-                        for (final FormItem formItem : formOnlyView.getForm().getFields()) {
-                        	if (formItem instanceof HTMLTextItem) {
-                        		((HTMLTextItem)	formItem).setHTMLValue((formOnlyView.getForm().getValue(formItem.getFieldName()))!=null?formOnlyView.getForm().getValue(formItem.getFieldName()).toString():"");
-                        		
 
-                                 	((HTMLTextItem)	formItem).addAssetHandler(new Command() {
-		
-                                 	@Override
-                                 	public void execute() {
-                                 		displayAssetSearchDialog(((HTMLTextItem)	formItem));
-                                 	}
-                                 	});
-                                 	//need to disable again in case the htmltextitem enabled the form on setting the value
-                                    getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-                                    getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
-                            }
-                        }
                         if (cb != null) {
                             cb.processComplete();
                         }
@@ -201,11 +182,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
             legacyForm.getForm().reset();
         }
 
-        for (FormItem formItem : legacyForm.getForm().getFields()) {
-            if (formItem instanceof CanvasItem) {
-            	((HTMLTextItem)	formItem).setHTMLValue((legacyForm.getForm().getValue(formItem.getFieldName()))!=null?legacyForm.getForm().getValue(formItem.getFieldName()).toString():"");
-            }
-        }
+   
         resetButtons();
     }
     @Override
@@ -330,7 +307,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
             @Override
 	    public void onClick(ClickEvent event) {
             if (event.isLeftButtonDown()) {
-                final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+                final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
                 bindItemBuilderEvents(display);
                 display.setDirty(true);
                 resetButtons();
@@ -393,7 +370,8 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 
 	@Override
 	public void setup() {
-        super.setup();
+//        super.setup();
+	   
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
 	        public void onSetupSuccess(DataSource result) {
@@ -407,8 +385,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
             @Override
 	    public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("product.id", "category.id", "sku.id");
-                initializer = new PagesRuleBasedPresenterInitializer(PagesPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
-                extractor = new PagesPresenterExtractor(PagesPresenter.this);
+            
             }}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageDS", new PageDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
@@ -419,6 +396,8 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                     getPresenterSequenceSetupManager().getDataSource("pageRequestDTODS"),
                     getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"),
                     getPresenterSequenceSetupManager().getDataSource("pageProductDS"));
+				    initializer = new PagesRuleBasedPresenterInitializer(PagesPresenter.this, getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"), getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
+			                extractor = new PagesPresenterExtractor(PagesPresenter.this);
 				    ((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
 			}
         }));

@@ -16,9 +16,11 @@
 
 package org.broadleafcommerce.core.web.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,20 +33,24 @@ import java.util.Map.Entry;
 
 @Service("blSearchFacetDTOService")
 public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
+    
+    @Value("${web.defaultPageSize}")
+    protected Integer defaultPageSize;
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public ProductSearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets) {
 		ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
+		searchCriteria.setPageSize(defaultPageSize);
 		
-		Map<String, String[]> convertedFacets = new HashMap<String, String[]>();
+		Map<String, String[]> facets = new HashMap<String, String[]>();
 		
 		for (Iterator<Entry<String,String[]>> iter = request.getParameterMap().entrySet().iterator(); iter.hasNext();){
 			Map.Entry<String, String[]> entry = iter.next();
 			String key = entry.getKey();
 			
 			if (key.equals(ProductSearchCriteria.SORT_STRING)) {
-				searchCriteria.setSortQuery(entry.getValue()[0]);
+				searchCriteria.setSortQuery(StringUtils.join(entry.getValue(), ","));
 			} else if (key.equals(ProductSearchCriteria.PAGE_NUMBER)) {
 				searchCriteria.setPage(Integer.parseInt(entry.getValue()[0]));
 			} else if (key.equals(ProductSearchCriteria.PAGE_SIZE_STRING)) {
@@ -52,14 +58,11 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
 			} else if (key.equals(ProductSearchCriteria.QUERY_STRING)) {
 				continue; // This is handled by the controller
 			} else {
-				String convertedKey = getConvertedKey(key, availableFacets);
-				if (convertedKey != null) {
-					convertedFacets.put(convertedKey, entry.getValue());
-				}
+				facets.put(key, entry.getValue());
 			}
 		}
 		
-		searchCriteria.setFilterCriteria(convertedFacets);
+		searchCriteria.setFilterCriteria(facets);
 		
 		return searchCriteria;
 	}
@@ -81,7 +84,7 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
 		Map<String, String[]> params = request.getParameterMap();
 		for (Entry<String, String[]> entry : params.entrySet()) {
 			String key = entry.getKey();
-			if (key.equals(getKey(result))) {
+			if (key.equals(getUrlKey(result))) {
 				for (String val : entry.getValue()) {
 					if (val.equals(getValue(result))) {
 						return true;
@@ -93,28 +96,13 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
 	}
 	
 	@Override
-	public String getKey(SearchFacetResultDTO result) {
-		return result.getFacet().getSearchFacet().getQueryStringKey();
+	public String getUrlKey(SearchFacetResultDTO result) {
+		return result.getFacet().getField().getAbbreviation();
 	}
 	
 	@Override
 	public String getValue(SearchFacetResultDTO result) {
-		String value = result.getValue();
-		
-		if (value == null) {
-			value = "range[" + result.getMinValue() + ":" + result.getMaxValue() + "]";
-		}
-		
-		return value;
-	}
-	
-	protected String getConvertedKey(String key, List<SearchFacetDTO> availableFacets) {
-		for (SearchFacetDTO dto : availableFacets) {
-			if (key.equals(dto.getFacet().getSearchFacet().getQueryStringKey())) {
-				return dto.getFacet().getSearchFacet().getFieldName();
-			}
-		}
-		return null;
+		return result.getValueKey();
 	}
 
 }

@@ -166,9 +166,9 @@ public interface Offer extends Serializable {
 
 	public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
 
-	public OfferItemCriteria getTargetItemCriteria();
+    public Set<OfferItemCriteria> getTargetItemCriteria();
 
-	public void setTargetItemCriteria(OfferItemCriteria targetItemCriteria);
+    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
 	
 	public Boolean isTotalitarianOffer();
 

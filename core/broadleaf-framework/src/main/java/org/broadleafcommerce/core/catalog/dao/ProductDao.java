@@ -42,6 +42,14 @@ public interface ProductDao {
      */
     @Nonnull
     public Product readProductById(@Nonnull Long productId);
+    
+    /**
+     * Retrieves a list of Product instances by their primary keys
+     * 
+     * @param productIds the list of primary keys for products
+     * @return the list of products specified by the primary keys
+     */
+    public List<Product> readProductsByIds(@Nonnull List<Long> productIds);
 
     /**
      * Persist a {@code Product} instance to the datastore
@@ -178,7 +186,16 @@ public interface ProductDao {
      * @return List of products that match the passed in URI.
      * 
      */
-	List<Product> findProductByURI(String key);
+	public List<Product> findProductByURI(String key);
+	
+	/**
+	 * Reads all products from the database that are currently active. That is, reads all products that
+	 * are not archived and whose start and end dates surround the currentDate
+	 * 
+	 * @param currentDate
+	 * @return a list of all active products
+	 */
+	public List<Product> readAllActiveProducts(@Nonnull Date currentDate);
 
 
 }

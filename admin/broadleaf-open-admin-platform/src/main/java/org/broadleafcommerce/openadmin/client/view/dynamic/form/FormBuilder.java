@@ -30,14 +30,11 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
@@ -242,7 +239,8 @@ public class FormBuilder {
         	String[] groups = new String[sectionNames.size()];
         	groups = sectionNames.keySet().toArray(groups);
         	Arrays.sort(groups, new Comparator<String>() {
-				public int compare(String o1, String o2) {
+				@Override
+                public int compare(String o1, String o2) {
 					if (o1.equals(o2)) {
 						return 0;
 					} else if (o1.equals("General")) {
@@ -271,16 +269,10 @@ public class FormBuilder {
                 List<FormItem> formItems = sections.get(group);
                 String[] ids = new String[formItems.size()];
                 int x=0;
-                Boolean containsRichTextItem = null;
+             
                 for (FormItem formItem : formItems) {
                 	ids[x] = formItem.getName();
                 	x++;
-                    if (containsRichTextItem == null && formItem instanceof HTMLTextItem) {
-                        containsRichTextItem = true;
-                    }
-                }
-                if (containsRichTextItem == null) {
-                    containsRichTextItem = false;
                 }
 
                 allItems.add(headerItem);
@@ -337,6 +329,7 @@ public class FormBuilder {
             if (
                 className.equals(FloatItem.class.getName()) ||
                 className.equals(TextItem.class.getName()) ||
+                className.equals(BLCRichTextItem.class.getName()) ||
                 className.equals(IntegerItem.class.getName()) ||
                 className.equals(TextAreaItem.class.getName())
             ) {
@@ -350,6 +343,7 @@ public class FormBuilder {
             if (
                 className.equals(FloatItem.class.getName()) ||
                 className.equals(TextItem.class.getName()) ||
+                className.equals(BLCRichTextItem.class.getName()) ||
                 className.equals(IntegerItem.class.getName()) ||
                 className.equals(TextAreaItem.class.getName())
             ) {
@@ -372,7 +366,8 @@ public class FormBuilder {
 						String otherFieldName = validator.getAttribute("otherField");
 						final FormItem otherItem = new PasswordItem();
 						form.addFetchDataHandler(new FetchDataHandler() {
-							public void onFilterData(FetchDataEvent event) {
+							@Override
+                            public void onFilterData(FetchDataEvent event) {
 								otherItem.setValue(formItem.getValue());
 							}
 						});
@@ -446,7 +441,8 @@ public class FormBuilder {
 		case BOOLEAN:
 			formItem = new BooleanItem();
 			formItem.setValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					if (value == null) {
 						item.setValue(false);
 						return "false";
@@ -476,7 +472,8 @@ public class FormBuilder {
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
 			formItem.setValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
 					if (value == null) {
 						response = "";
@@ -490,7 +487,8 @@ public class FormBuilder {
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
 			formItem.setValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
 					if (value == null) {
 						response = "";
@@ -505,8 +503,8 @@ public class FormBuilder {
 			formItem = new SelectItem();
 			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
 			String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
-			for (int j=0; j<enumerationValues.length; j++) {
-				valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
+			for (String[] enumerationValue : enumerationValues) {
+				valueMap.put(enumerationValue[0], enumerationValue[1]);
 			}
 			formItem.setValueMap(valueMap);
 			break;
@@ -514,8 +512,8 @@ public class FormBuilder {
 			formItem = new SelectItem();
 			LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
 			String[][] enumerationValues2 = (String[][]) field.getAttributeAsObject("enumerationValues");
-			for (int j=0; j<enumerationValues2.length; j++) {
-				valueMap2.put(enumerationValues2[j][0], enumerationValues2[j][1]);
+			for (String[] element : enumerationValues2) {
+				valueMap2.put(element[0], element[1]);
 			}
 			formItem.setValueMap(valueMap2);
 			break;
@@ -526,7 +524,8 @@ public class FormBuilder {
 			formItem = new TextItem();
 			((TextItem)formItem).setLength(field.getLength());
 			formItem.setValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					return value==null?"":((DynamicEntityDataSource) dataSource).stripDuplicateAllowSpecialCharacters(String.valueOf(value));
 				}
 			});
@@ -536,20 +535,13 @@ public class FormBuilder {
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
         case HTML:
-        	 HTMLTextItem cItem=new HTMLTextItem();
-             formItem=cItem;
-             formItem.setHeight(540);
-              formItem.setWidth(600);
-             // formItem.setShouldSaveValue(true);
-            break;
+            formItem = new BLCRichTextItem();
+            formItem.setHeight(500);         
+           break;
         case HTML_BASIC:
-        	 HTMLTextItem cItem2=new HTMLTextItem(DisplayType.BASIC);
-             formItem=cItem2;
-             formItem.setHeight(200);
-			 formItem.setWidth(500);
-			 formItem.setShouldSaveValue(true);
-      
-             break;
+            formItem = new BLCRichTextItem();
+            formItem.setHeight(150);         
+           break;
         case UPLOAD:
             formItem = new UploadItem();
             break;

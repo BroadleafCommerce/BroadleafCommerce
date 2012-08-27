@@ -13,25 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.broadleafcommerce.admin.client.presenter.promotion;
 
-package org.broadleafcommerce.openadmin.client.view.dynamic.form;
+/**
+ * @author Jeff Fischer
+ */
+public interface StateFinishedCallback {
 
-import com.smartgwt.client.widgets.form.fields.CanvasItem;
-@Deprecated
-public class RichTextCanvasItem extends CanvasItem {
-    
-	@Override
-	public Object getValue() {
-		return ((RichTextHTMLPane) getCanvas()).getValue();
-	}
+    public void finished();
 
-	@Override
-	public void setValue(String value) {
-		((RichTextHTMLPane) getCanvas()).setValue(value);
-	}
-
-    @Override
-    public void setDisabled(Boolean disabled) {
-        ((RichTextHTMLPane) getCanvas()).setDisabled(disabled);
-    }
 }

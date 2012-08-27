@@ -27,11 +27,11 @@ import java.util.Map;
 public class ProductSearchCriteria {
     
     public static String PAGE_SIZE_STRING = "pageSize";
-    public static String PAGE_NUMBER = "pageNumber";
+    public static String PAGE_NUMBER = "page";
     public static String SORT_STRING = "sort";
     public static String QUERY_STRING = "q";
     
-	protected Integer page;
+	protected Integer page = 1;
 	protected Integer pageSize;
 	protected String sortQuery;
 	protected Map<String, String[]> filterCriteria;
@@ -39,19 +39,19 @@ public class ProductSearchCriteria {
 	public Integer getPage() {
 		return page;
 	}
-	
+
 	public void setPage(Integer page) {
 		this.page = page;
 	}
-	
+
 	public Integer getPageSize() {
 		return pageSize;
 	}
-	
+
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
 	}
-	
+
 	public String getSortQuery() {
 		return sortQuery;
 	}

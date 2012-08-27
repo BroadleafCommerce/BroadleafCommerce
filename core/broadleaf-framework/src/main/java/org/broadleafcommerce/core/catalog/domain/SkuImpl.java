@@ -30,9 +30,6 @@ import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
-import org.compass.annotations.Searchable;
-import org.compass.annotations.SearchableId;
-import org.compass.annotations.SearchableProperty;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -94,7 +91,6 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@Searchable
 public class SkuImpl implements Sku {
 	
 	private static final Log LOG = LogFactory.getLog(SkuImpl.class);
@@ -117,7 +113,6 @@ public class SkuImpl implements Sku {
         }
     )
     @Column(name = "SKU_ID")
-    @SearchableId
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ID", group = "SkuImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
@@ -133,7 +128,6 @@ public class SkuImpl implements Sku {
 
     /** The name. */
     @Column(name = "NAME")
-    @SearchableProperty
     @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
     protected String name;

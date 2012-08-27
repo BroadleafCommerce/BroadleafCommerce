@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
@@ -46,8 +47,6 @@ import org.easymock.classextension.EasyMock;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -338,7 +337,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		).get(0);
 		offer1.setId(1L);
-		offer1.getTargetItemCriteria().setQuantity(2);
+		offer1.getTargetItemCriteria().iterator().next().setQuantity(2);
 		offer1.setCombinableWithOtherOffers(false);
 		Offer offer2 = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
@@ -424,7 +423,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		).get(0);
 		offer2.setId(2L);
-		offer2.getTargetItemCriteria().setQuantity(4);
+		offer2.getTargetItemCriteria().iterator().next().setQuantity(4);
 		offer2.getQualifyingItemCriteria().clear();
 		offer2.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.TARGET);
 		Offer offer3 = dataProvider.createItemBasedOfferWithItemCriteria(

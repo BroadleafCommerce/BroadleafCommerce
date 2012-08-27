@@ -105,6 +105,7 @@ public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor
 		} else {
 			sortString += " asc";
 			classString += "asc ";
+			params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
 		}
 		
 		if (allowMultipleSorts) {

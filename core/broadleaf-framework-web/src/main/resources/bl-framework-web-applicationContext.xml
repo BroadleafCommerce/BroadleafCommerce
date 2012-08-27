@@ -33,9 +33,13 @@
 			<bean class="org.broadleafcommerce.core.web.processor.CsrfTokenProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
             <bean class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
+            <bean class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.ProductOptionValueProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.ProductOptionsProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.RemoveFacetValuesLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.UrlRewriteProcessor" />
 		  </set>
