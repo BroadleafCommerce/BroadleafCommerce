@@ -42,7 +42,9 @@ public class BLCLaunch implements EntryPoint {
          
           String title = "BLC Admin Uncaught exception: ";
           java.util.logging.Logger.getLogger(BLCMain.class.getName()).log(Level.SEVERE,title,throwable);
-          SC.say(title, "Please see server logs for details.\n"+throwable.getMessage());
+         if(!throwable.getMessage().contains("(TypeError): Cannot call method 'create' of undefined")) {
+            SC.say(title, "Please see server logs for details.\n"+throwable.getMessage());
+        }
          }
         });
 

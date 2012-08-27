@@ -29,12 +29,9 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.presenter.entity.HtmlEditingPresenter;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
@@ -272,16 +269,10 @@ public class FormBuilder {
                 List<FormItem> formItems = sections.get(group);
                 String[] ids = new String[formItems.size()];
                 int x=0;
-                Boolean containsRichTextItem = null;
+             
                 for (FormItem formItem : formItems) {
                 	ids[x] = formItem.getName();
                 	x++;
-                    if (containsRichTextItem == null && formItem instanceof HTMLTextItem) {
-                        containsRichTextItem = true;
-                    }
-                }
-                if (containsRichTextItem == null) {
-                    containsRichTextItem = false;
                 }
 
                 allItems.add(headerItem);
@@ -338,6 +329,7 @@ public class FormBuilder {
             if (
                 className.equals(FloatItem.class.getName()) ||
                 className.equals(TextItem.class.getName()) ||
+                className.equals(BLCRichTextItem.class.getName()) ||
                 className.equals(IntegerItem.class.getName()) ||
                 className.equals(TextAreaItem.class.getName())
             ) {
@@ -351,6 +343,7 @@ public class FormBuilder {
             if (
                 className.equals(FloatItem.class.getName()) ||
                 className.equals(TextItem.class.getName()) ||
+                className.equals(BLCRichTextItem.class.getName()) ||
                 className.equals(IntegerItem.class.getName()) ||
                 className.equals(TextAreaItem.class.getName())
             ) {
@@ -542,34 +535,13 @@ public class FormBuilder {
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
         case HTML:
-            final HTMLTextItem cItem = new HTMLTextItem();
-            formItem = cItem;
-            formItem.setHeight(540);
-            formItem.setWidth(600);
-            final HtmlEditingPresenter p= HtmlEditingPresenter.getInstance();
-            cItem.addAssetHandler(new Command() {
-                @Override
-                public void execute() {
-                        p.displayAssetSearchDialog(cItem);
-                };
-        });
-            // formItem.setShouldSaveValue(true);
-            break;
+            formItem = new BLCRichTextItem();
+            formItem.setHeight(500);         
+           break;
         case HTML_BASIC:
-            final HTMLTextItem cItem2 = new HTMLTextItem(DisplayType.BASIC);
-            formItem = cItem2;
-            formItem.setHeight(200);
-            formItem.setWidth(500);
-            formItem.setShouldSaveValue(true);
-             final HtmlEditingPresenter pp= HtmlEditingPresenter.getInstance();;
-                
-            cItem2.addAssetHandler(new Command() {
-                @Override
-                public void execute() {
-                        pp.displayAssetSearchDialog(cItem2);
-                };
-        });
-            break;
+            formItem = new BLCRichTextItem();
+            formItem.setHeight(150);         
+           break;
         case UPLOAD:
             formItem = new UploadItem();
             break;

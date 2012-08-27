@@ -67,5 +67,5 @@ public interface GeneratedMessagesEntityOpenAdmin extends ConstantsWithLookup {
     public String AdminRoleImpl_Role();
     public String AdminUserImpl_Primary_Key();
     public String AdminUserImpl_User();
-
+    public String BLCRichTextItem_Edit();
 }

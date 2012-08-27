@@ -45,7 +45,7 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
 		
         setWidth100();
         setBackgroundColor("#eaeaea");
-        form = new BLCDynamicForm(); 
+        form = new DynamicForm(); 
         form.setHeight(175);
         form.setWidth100();
         form.setPadding(10);
@@ -62,11 +62,13 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         setOverflow(Overflow.AUTO);
 	}
 	
-	public void buildFields(final DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId, Record currentRecord) {
+	@Override
+    public void buildFields(final DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId, Record currentRecord) {
 		FormBuilder.buildForm(dataSource, form, showDisabedState, canEdit, showId, currentRecord);
 	}
 
-	public DynamicForm getForm() {
+	@Override
+    public DynamicForm getForm() {
 		return form;
 	}
 	

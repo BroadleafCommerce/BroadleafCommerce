@@ -45,7 +45,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.FilterStateRunnable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
@@ -64,7 +63,6 @@ import com.smartgwt.client.widgets.form.events.FilterChangedEvent;
 import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 /**
@@ -190,11 +188,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                 if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
                     formOnlyView.getForm().enable();
                 }
-                for (final FormItem formItem : formOnlyView.getForm().getFields()) {
-                 	if (formItem instanceof HTMLTextItem) {
-                		((HTMLTextItem)	formItem).setHTMLValue((formOnlyView.getForm().getValue(formItem.getFieldName()))!=null?formOnlyView.getForm().getValue(formItem.getFieldName()).toString():"");
-                    }
-                }
+
                 if (cb != null) {
                     cb.processComplete();
                 }
@@ -326,11 +320,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
             legacyForm.getForm().reset();
         }
 
-        for (FormItem formItem : legacyForm.getForm().getFields()) {
-            if (formItem instanceof CanvasItem) {
-            	((HTMLTextItem)	formItem).setHTMLValue((legacyForm.getForm().getValue(formItem.getFieldName()))!=null?legacyForm.getForm().getValue(formItem.getFieldName()).toString():"");
-            }
-        }
+
         resetButtons();
     }
 

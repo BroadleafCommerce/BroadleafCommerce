@@ -26,8 +26,8 @@ import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.openadmin.client.datasource.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 
 import com.google.gwt.user.client.Command;
 import com.smartgwt.client.data.DataSource;
@@ -48,7 +48,7 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
        setup();
     }
 
-    public void displayAssetSearchDialog(final HTMLTextItem item) {
+    public void displayAssetSearchDialog(final RichTextToolbar item) {
         HashMap<String, Object> initialValues = new HashMap<String, Object>(10);
         initialValues.put("operation", "add");
         initialValues.put("customCriteria", "assetListUi");
@@ -128,7 +128,7 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
      * Add a handler to the HTMLTextItem's "add BLC asset" button so that if
      * clicked, we show them the asset search dialog
      */
-    public void addListenerToFormItem(final HTMLTextItem formItem) {
+    public void addListenerToFormItem(final RichTextToolbar formItem) {
 
         (formItem).addAssetHandler(new Command() {
             @Override
