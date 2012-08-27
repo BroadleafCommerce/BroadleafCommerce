@@ -1,69 +1,27 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
+import com.smartgwt.client.widgets.form.fields.BlurbItem;
+import com.smartgwt.client.widgets.form.fields.FormItemIcon;
+import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.RichTextEditorDialog;
 
-import com.smartgwt.client.widgets.Button;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.RichTextEditor;
-import com.smartgwt.client.widgets.events.KeyPressEvent;
-import com.smartgwt.client.widgets.events.KeyPressHandler;
-import com.smartgwt.client.widgets.form.fields.RichTextItem;
-
-public class BLCRichTextItem extends RichTextItem {
+public class BLCRichTextItem extends BlurbItem {
 
     public BLCRichTextItem() {
+        setHeight(200);
+        setWidth(600);
+        setClipValue(true);
+        FormItemIcon formItemIcon = new FormItemIcon();
+        setIcons(formItemIcon);
 
-        setControlGroups();
-        setShowTitle(true);
-        final BLCRichTextItem item = this;
-
-       
-        BLCRichTextItem e = this;
-        RichTextEditor editor = new RichTextEditor();
-
-        editor.setControlGroups();
-        this.setCanvas(editor);
-        editor.setDisabled(false);
-        setDisabled(false);
-        editor.addKeyPressHandler(new KeyPressHandler() {
-            
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-           
+        addIconClickHandler(new IconClickHandler() {
+            public void onIconClick(IconClickEvent event) {
+                RichTextEditorDialog dialog = new RichTextEditorDialog();
+               dialog.show(BLCRichTextItem.this);
+               dialog.centerInPage();
             }
         });
-        Canvas canvas = e.getCanvas();
-
-        Button b = new Button();
-        b.setTitle(BLCMain.getMessageManager()
-                .getString("BLCRichTextItem_Edit"));
-        b.setIcon("[SKIN]/actions/edit.png");
-        b.setWidth(50);
-        canvas.addChild(b, "insertAsset", true);
-        b.addIconClickHandler(new com.smartgwt.client.widgets.events.IconClickHandler() {
-
-            @Override
-            public void onIconClick(
-                    com.smartgwt.client.widgets.events.IconClickEvent event) {
-                showDialog(item);
-            }
-
-        });
-        b.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
-
-            @Override
-            public void onClick(
-                    com.smartgwt.client.widgets.events.ClickEvent event) {
-                showDialog(item);
-            }
-        });
-
     }
 
-    private void showDialog(final BLCRichTextItem item) {
-        RichTextEditorDialog dialog = new RichTextEditorDialog();
-        dialog.show(item);
-        dialog.centerInPage();
-    }
 }
