@@ -44,7 +44,7 @@ public class FieldMetadata implements IsSerializable, Serializable {
 	private String foreignKeyProperty;
 	private String foreignKeyClass;
 	private String foreignKeyDisplayValueProperty;
-	private Boolean collection;
+	private Boolean foreignKeyCollection;
 	private MergedPropertyType mergedPropertyType;
 	private String[][] enumerationValues;
 	private String enumerationClass;
@@ -156,12 +156,12 @@ public class FieldMetadata implements IsSerializable, Serializable {
 		this.presentationAttributes = presentationAttributes;
 	}
 
-	public Boolean getCollection() {
-		return collection;
+	public Boolean getForeignKeyCollection() {
+		return foreignKeyCollection;
 	}
 
-	public void setCollection(Boolean collection) {
-		this.collection = collection;
+	public void setForeignKeyCollection(Boolean foreignKeyCollection) {
+		this.foreignKeyCollection = foreignKeyCollection;
 	}
 
 	public MergedPropertyType getMergedPropertyType() {
@@ -214,7 +214,7 @@ public class FieldMetadata implements IsSerializable, Serializable {
         metadata.foreignKeyProperty = foreignKeyProperty;
         metadata.foreignKeyClass = foreignKeyClass;
         metadata.foreignKeyDisplayValueProperty = foreignKeyDisplayValueProperty;
-        metadata.collection = collection;
+        metadata.foreignKeyCollection = foreignKeyCollection;
         metadata.mergedPropertyType = mergedPropertyType;
         metadata.enumerationClass = enumerationClass;
         if (enumerationValues != null) {

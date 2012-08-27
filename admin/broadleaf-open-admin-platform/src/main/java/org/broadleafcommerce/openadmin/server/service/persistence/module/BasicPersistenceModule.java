@@ -38,10 +38,10 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.common.presentation.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -374,7 +374,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         props.add(propertyItem);
                         String displayVal = null;
                         if (value != null) {
-                            if (metadata.getCollection()) {
+                            if (metadata.getForeignKeyCollection()) {
                                 propertyItem.getMetadata().setFieldType(metadata.getFieldType());
                                 strVal = null;
                             } else if (Date.class.isAssignableFrom(value.getClass())) {
@@ -610,7 +610,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             case FOREIGN_KEY:
                 if (cto.get(propertyName).getFilterValues().length > 0) {
                     ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-                    if (mergedProperties.get(propertyName).getCollection()) {
+                    if (mergedProperties.get(propertyName).getForeignKeyCollection()) {
                         if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey.getRestrictionType().toString())) {
                             ctoConverter.addCollectionSizeEqMapping(ceilingEntityFullyQualifiedClassname, propertyName, AssociationPath.ROOT, propertyName);
                         } else {
@@ -638,7 +638,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     });
                     ForeignKey foreignKey = persistencePerspective.getAdditionalForeignKeys()[additionalForeignKeyIndexPosition];
-                    if (mergedProperties.get(propertyName).getCollection()) {
+                    if (mergedProperties.get(propertyName).getForeignKeyCollection()) {
                         if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey.getRestrictionType().toString())) {
                             ctoConverter.addCollectionSizeEqMapping(ceilingEntityFullyQualifiedClassname, propertyName, AssociationPath.ROOT, propertyName);
                         } else {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.client.dto;
+package org.broadleafcommerce.common.presentation;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

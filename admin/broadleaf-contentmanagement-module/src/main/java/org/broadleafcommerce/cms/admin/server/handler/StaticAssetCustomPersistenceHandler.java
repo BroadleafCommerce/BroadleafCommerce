@@ -48,7 +48,7 @@ import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -411,7 +411,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
         fieldMetadata.setAvailableToTypes(new String[] {StaticAssetImpl.class.getName(), ImageStaticAssetImpl.class.getName()});
-        fieldMetadata.setCollection(false);
+        fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         FieldPresentationAttributes attributes = new FieldPresentationAttributes();
         fieldMetadata.setPresentationAttributes(attributes);
@@ -432,7 +432,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconMetadata.setMutable(true);
         iconMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
         iconMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName(), ImageStaticAssetImpl.class.getName()});
-        iconMetadata.setCollection(false);
+        iconMetadata.setForeignKeyCollection(false);
         iconMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
         iconMetadata.setPresentationAttributes(iconAttributes);
@@ -455,7 +455,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconLargeMetadata.setMutable(true);
         iconLargeMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
         iconLargeMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName(), ImageStaticAssetImpl.class.getName()});
-        iconLargeMetadata.setCollection(false);
+        iconLargeMetadata.setForeignKeyCollection(false);
         iconLargeMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         FieldPresentationAttributes iconLargeAttributes = new FieldPresentationAttributes();
         iconLargeMetadata.setPresentationAttributes(iconLargeAttributes);
@@ -508,7 +508,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
         fieldMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
-        fieldMetadata.setCollection(false);
+        fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         FieldPresentationAttributes attributes = new FieldPresentationAttributes();
         fieldMetadata.setPresentationAttributes(attributes);

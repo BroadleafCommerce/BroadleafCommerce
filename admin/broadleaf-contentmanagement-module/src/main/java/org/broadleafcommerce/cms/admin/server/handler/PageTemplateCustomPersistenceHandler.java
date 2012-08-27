@@ -130,7 +130,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     fieldMetadata.setMutable(true);
                     fieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
                     fieldMetadata.setAvailableToTypes(new String[] {PageTemplateImpl.class.getName()});
-                    fieldMetadata.setCollection(false);
+                    fieldMetadata.setForeignKeyCollection(false);
                     fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
                     fieldMetadata.setLength(definition.getMaxLength());
                     if (definition.getFieldEnumeration() != null && !CollectionUtils.isEmpty(definition.getFieldEnumeration().getEnumerationItems())) {
@@ -179,7 +179,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             fieldMetadata.setMutable(true);
             fieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
             fieldMetadata.setAvailableToTypes(new String[] {PageTemplateImpl.class.getName()});
-            fieldMetadata.setCollection(false);
+            fieldMetadata.setForeignKeyCollection(false);
             fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
             FieldPresentationAttributes attributes = new FieldPresentationAttributes();
             fieldMetadata.setPresentationAttributes(attributes);

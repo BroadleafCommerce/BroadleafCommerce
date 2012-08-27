@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
@@ -40,7 +41,7 @@ import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
@@ -855,9 +856,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				fieldMetadata.setRequired(!column.isNullable());
 				fieldMetadata.setUnique(column.isUnique());
 			}
-			fieldMetadata.setCollection(false);
+			fieldMetadata.setForeignKeyCollection(false);
 		} else {
-			fieldMetadata.setCollection(true);
+			fieldMetadata.setForeignKeyCollection(true);
 		}
 		fieldMetadata.setMutable(true);
 		fieldMetadata.setInheritedFromType(targetClass.getName());
@@ -1013,7 +1014,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			fields.put(propertyName, getFieldMetadata("", propertyName, null, SupportedFieldType.DECIMAL, null, parentClass, presentationAttribute, mergedPropertyType));
 		}
 		fields.get(propertyName).setLength(255);
-		fields.get(propertyName).setCollection(false);
+		fields.get(propertyName).setForeignKeyCollection(false);
 		fields.get(propertyName).setRequired(true);
 		fields.get(propertyName).setUnique(true);
 		fields.get(propertyName).setScale(100);
@@ -1189,6 +1190,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			boolean isPropertyForeignKey = testForeignProperty(foreignField, prefix, propertyName);
 			int additionalForeignKeyIndexPosition = findAdditionalForeignKeyIndex(additionalForeignFields, prefix, propertyName);
 			j++;
+            Field myField = FieldManager.getSingleField(targetClass, propertyName);
 			if (
 					!type.isAnyType() && !type.isCollectionType() ||
 					isPropertyForeignKey ||
@@ -1278,7 +1280,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                         returnedClass
                     );
 				}
-			}
+			} else if (myField != null && myField.getAnnotation(AdminPresentationCollection.class) != null) {
+                //TODO build the code to harvest collection information
+            }
 		}
 	}
 

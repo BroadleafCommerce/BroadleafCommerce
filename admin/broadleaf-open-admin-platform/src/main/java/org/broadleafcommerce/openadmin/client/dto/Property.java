@@ -34,6 +34,8 @@ public class Property implements IsSerializable, Serializable {
 	private String value;
 	private String displayValue;
 	private FieldMetadata metadata = new FieldMetadata();
+    private CollectionMetadata collectionMetadata = new CollectionMetadata();
+    private boolean isAdvancedCollection = false;
 	private Boolean isDirty = false;
     private String unHtmlEncodedValue;
     private String rawValue;
@@ -92,6 +94,22 @@ public class Property implements IsSerializable, Serializable {
 
     public void setRawValue(String rawValue) {
         this.rawValue = rawValue;
+    }
+
+    public CollectionMetadata getCollectionMetadata() {
+        return collectionMetadata;
+    }
+
+    public void setCollectionMetadata(CollectionMetadata collectionMetadata) {
+        this.collectionMetadata = collectionMetadata;
+    }
+
+    public boolean isAdvancedCollection() {
+        return isAdvancedCollection;
+    }
+
+    public void setAdvancedCollection(boolean advancedCollection) {
+        isAdvancedCollection = advancedCollection;
     }
 
     @Override

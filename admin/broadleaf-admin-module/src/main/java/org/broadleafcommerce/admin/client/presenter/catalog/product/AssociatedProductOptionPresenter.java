@@ -17,7 +17,7 @@
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructureAndListPresenter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.ExpandableGridStructureDisplay;
 
@@ -27,7 +27,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.ExpandableGridSt
  * @author Phillip Verheyden
  *
  */
-public class AssociatedProductOptionPresenter extends SimpleSearchJoinStructurePresenter {
+public class AssociatedProductOptionPresenter extends SimpleSearchJoinStructureAndListPresenter {
     
     public AssociatedProductOptionPresenter(ExpandableGridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
         super(display, searchDialog, searchDialogTitle);

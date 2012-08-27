@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.client.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
 
 import java.io.Serializable;
 import java.util.Arrays;

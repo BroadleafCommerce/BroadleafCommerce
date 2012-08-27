@@ -48,7 +48,7 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.common.presentation.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -275,7 +275,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         contentTypeFieldMetadata.setMutable(true);
         contentTypeFieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
         contentTypeFieldMetadata.setAvailableToTypes(new String[]{PageTemplateImpl.class.getName()});
-        contentTypeFieldMetadata.setCollection(false);
+        contentTypeFieldMetadata.setForeignKeyCollection(false);
         contentTypeFieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
         PersistencePackage pageTemplatePersistencePackage = new PersistencePackage();
@@ -316,7 +316,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         iconMetadata.setMutable(true);
         iconMetadata.setInheritedFromType(PageImpl.class.getName());
         iconMetadata.setAvailableToTypes(new String[]{PageImpl.class.getName()});
-        iconMetadata.setCollection(false);
+        iconMetadata.setForeignKeyCollection(false);
         iconMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
         iconMetadata.setPresentationAttributes(iconAttributes);
@@ -348,7 +348,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
            fieldMetadata.setMutable(true);
            fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
            fieldMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
-           fieldMetadata.setCollection(false);
+           fieldMetadata.setForeignKeyCollection(false);
            fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
            FieldPresentationAttributes attributes = new FieldPresentationAttributes();
            fieldMetadata.setPresentationAttributes(attributes);

@@ -100,7 +100,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 metadata.setMutable(true);
                 metadata.setInheritedFromType(SkuImpl.class.getName());
                 metadata.setAvailableToTypes(new String[]{SkuImpl.class.getName()});
-                metadata.setCollection(false);
+                metadata.setForeignKeyCollection(false);
                 metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
                 
                 //Set up the enumeration based on the product option values

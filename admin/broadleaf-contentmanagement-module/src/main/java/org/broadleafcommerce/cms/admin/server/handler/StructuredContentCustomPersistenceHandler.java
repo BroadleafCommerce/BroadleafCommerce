@@ -49,7 +49,7 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.common.presentation.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -133,7 +133,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(StructuredContentImpl.class.getName());
         fieldMetadata.setAvailableToTypes(new String[]{StructuredContentImpl.class.getName()});
-        fieldMetadata.setCollection(false);
+        fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
         PersistencePackage fetchPackage = new PersistencePackage();
@@ -174,7 +174,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         contentTypeFieldMetadata.setMutable(true);
         contentTypeFieldMetadata.setInheritedFromType(StructuredContentTypeImpl.class.getName());
         contentTypeFieldMetadata.setAvailableToTypes(new String[]{StructuredContentTypeImpl.class.getName()});
-        contentTypeFieldMetadata.setCollection(false);
+        contentTypeFieldMetadata.setForeignKeyCollection(false);
         contentTypeFieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
         PersistencePackage contentTypeFetchPackage = new PersistencePackage();
@@ -215,7 +215,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         iconMetadata.setMutable(true);
         iconMetadata.setInheritedFromType(StructuredContentImpl.class.getName());
         iconMetadata.setAvailableToTypes(new String[]{StructuredContentImpl.class.getName()});
-        iconMetadata.setCollection(false);
+        iconMetadata.setForeignKeyCollection(false);
         iconMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
         iconMetadata.setPresentationAttributes(iconAttributes);
@@ -245,7 +245,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
         fieldMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
-        fieldMetadata.setCollection(false);
+        fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         FieldPresentationAttributes attributes = new FieldPresentationAttributes();
         fieldMetadata.setPresentationAttributes(attributes);

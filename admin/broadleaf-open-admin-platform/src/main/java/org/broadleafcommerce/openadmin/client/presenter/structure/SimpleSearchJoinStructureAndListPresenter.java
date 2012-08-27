@@ -36,17 +36,19 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDa
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
 /**
- * 
+ * A simple presenter for list grids that is capable of displaying lists of
+ * JoinStructure associated items, as well as simple ForeignKey associated items.
+ *
  * @author jfischer
  *
  */
-public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
+public class SimpleSearchJoinStructureAndListPresenter extends AbstractSubPresentable {
 
 	protected EntitySearchDialog searchDialog;
 	protected String searchDialogTitle;
@@ -56,13 +58,13 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickedHandlerRegistration;
 	
-	public SimpleSearchJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
+	public SimpleSearchJoinStructureAndListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
 		super(display, availableToTypes);
 		this.searchDialog = searchDialog;
 		this.searchDialogTitle = searchDialogTitle;
 	}
 
-    public SimpleSearchJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
+    public SimpleSearchJoinStructureAndListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
 		this(display, searchDialog, null, searchDialogTitle);
 	}
 	
