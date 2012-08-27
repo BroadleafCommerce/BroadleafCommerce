@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.smartgwt.client.types.Alignment;
@@ -43,12 +42,10 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.Displ
 public class RichTextEditorDialog extends Window {
 
     protected IButton saveButton;
-    final HtmlEditingPresenter p = HtmlEditingPresenter.getInstance();
-
-    private HandlerRegistration handlerRegistration;
-    private VLayout mainLayout = null;
-    private RichTextToolbar toolBar = null;
-    private RichTextArea textArea = null;
+    protected CanvasItem richTextItem;
+    protected VLayout mainLayout = null;
+    protected RichTextToolbar toolBar = null;
+    protected RichTextArea textArea = null;
 
     protected void initItem(int width, int height) {
         String legacyHtml = "";
@@ -74,7 +71,6 @@ public class RichTextEditorDialog extends Window {
         cancelButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                handlerRegistration.removeHandler();
                 hide();
             }
         });
@@ -121,6 +117,18 @@ public class RichTextEditorDialog extends Window {
         });
 
         textArea.setHTML(legacyHtml);
+
+        saveButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (richTextItem != null) {
+                    richTextItem.storeValue(toolBar.getHTML());
+                    richTextItem.setValue(toolBar.getHTML());
+
+                }
+                hide();
+            }
+        });
     }
 
     public RichTextEditorDialog() {
@@ -153,22 +161,11 @@ public class RichTextEditorDialog extends Window {
     }
 
     public void show(final CanvasItem richTextItem) {
+        this.richTextItem = richTextItem;
         initItem(788, 580);
         setTitle("Edit " + richTextItem.getFieldName());
         String htmlValueToEdit = (String) richTextItem.getValue();
         toolBar.setHTML(htmlValueToEdit);
-        handlerRegistration = saveButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (richTextItem != null) {
-                    richTextItem.storeValue(toolBar.getHTML());
-                    richTextItem.setValue(toolBar.getHTML());
-                    
-                }
-                hide();
-                handlerRegistration.removeHandler();
-            }
-        });
         show();
     }
 
