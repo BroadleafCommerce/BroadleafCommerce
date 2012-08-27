@@ -110,7 +110,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             SkuWrapper skuWrapper = (SkuWrapper) context.getBean(SkuWrapper.class.getName());
             skuWrapper.wrap(doi.getSku(), request);
             this.sku = skuWrapper;
-
+            
             ProductWrapper productWrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
             productWrapper.wrap(doi.getProduct(), request);
             this.product = productWrapper;

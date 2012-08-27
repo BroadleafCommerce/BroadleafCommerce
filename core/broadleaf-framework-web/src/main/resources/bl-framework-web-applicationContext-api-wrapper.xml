@@ -35,6 +35,7 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductOptionValueWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductOptionValueWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SkuBundleItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SkuBundleItemWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper" scope="prototype"/>
     
 
 </beans>

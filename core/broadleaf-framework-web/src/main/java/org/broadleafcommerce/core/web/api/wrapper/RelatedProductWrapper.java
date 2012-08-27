@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,8 +52,11 @@ public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<Rel
         this.id = model.getId();
         this.sequence = model.getSequence();
         this.promotionalMessage = model.getPromotionMessage();
-
-        product = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
+        if (model.getRelatedProduct() instanceof ProductBundle) {
+        	product = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
+        } else {
+        	product = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
+        }
         product.wrap(model.getRelatedProduct(), request);
     }
 }

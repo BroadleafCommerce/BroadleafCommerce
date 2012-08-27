@@ -16,19 +16,19 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.*;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
 
 /**
  * This is a JAXB wrapper around Product.
@@ -48,9 +48,6 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
 
     @XmlElement
     protected String description;
-    
-    @XmlElement
-    protected Boolean bundle = Boolean.FALSE;
 
     @XmlElement
     protected Date activeStartDate;
@@ -74,23 +71,6 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     @XmlElementWrapper(name = "productOptions")
     protected List<ProductOptionWrapper> productOptions;
     
-    //The following are for Product Bundles
-    @XmlElement
-	protected Integer priority;
-	
-	@XmlElement
-	protected BigDecimal potentialSavings;
-	
-	@XmlElement
-	protected Money bundleItemsRetailPrice;
-	
-	@XmlElement
-	protected Money bundleItemsSalePrice;
-	
-	@XmlElement(name="skuBundleItem")
-	@XmlElementWrapper(name="skuBundleItems")
-	protected List<SkuBundleItemWrapper> skuBundleItems;
-
     @Override
     public void wrap(Product model, HttpServletRequest request) {
         this.id = model.getId();
@@ -115,25 +95,6 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         		optionWrapper.wrap(option, request);
         		this.productOptions.add(optionWrapper);
         	}
-        }
-        
-        if (model instanceof ProductBundle) {
-        	this.bundle = Boolean.TRUE;
-        	ProductBundle bundle = (ProductBundle)model;
-        	this.priority = bundle.getPriority();
-    		this.potentialSavings = bundle.getPotentialSavings();
-    		this.bundleItemsRetailPrice = bundle.getBundleItemsRetailPrice();
-    		this.bundleItemsSalePrice = bundle.getBundleItemsSalePrice();
-    		
-    		if (bundle.getSkuBundleItems() != null) {
-    			this.skuBundleItems = new ArrayList<SkuBundleItemWrapper>();
-    			List<SkuBundleItem> bundleItems = bundle.getSkuBundleItems();
-    			for (SkuBundleItem item : bundleItems) {
-    				SkuBundleItemWrapper skuBundleItemsWrapper = (SkuBundleItemWrapper)context.getBean(SkuBundleItemWrapper.class.getName());
-    				skuBundleItemsWrapper.wrap(item, request);
-    				this.skuBundleItems.add(skuBundleItemsWrapper);
-    			}
-    		}
         }
     }
 }
