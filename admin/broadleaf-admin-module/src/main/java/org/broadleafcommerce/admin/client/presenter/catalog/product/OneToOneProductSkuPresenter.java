@@ -36,8 +36,11 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOpti
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductSkusDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.SkuBundleItemsDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
+import org.broadleafcommerce.admin.client.dto.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
+import org.broadleafcommerce.admin.client.view.dialog.ExportListSelectionDialog;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
@@ -186,6 +189,30 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 });
 		    }
 		});
+		
+		getDisplay().getExportProductsButton().addClickHandler(new ClickHandler() {
+		    @Override
+		    public void onClick(ClickEvent event) {
+		        AppServices.EXPORT.getExporters(AdminExporterType.PRODUCT, new AsyncCallback<List<AdminExporterDTO>>() {
+		            @Override
+		            public void onSuccess(final List<AdminExporterDTO> result) {
+		                if (result == null || result.size() == 0) {
+		                    SC.say(BLCMain.getMessageManager().getString("noProductExporters"));
+		                } else {
+		                    ExportListSelectionDialog exportSelectionDialog = new ExportListSelectionDialog();
+		                    exportSelectionDialog.search(BLCMain.getMessageManager().getString("selectExporterTitle"), result);
+		                }
+		            }
+
+		            @Override
+		            public void onFailure(Throwable caught) {
+		                // TODO Auto-generated method stub
+                
+		            }
+		        });
+		    }
+		});
+
 	}
 	
 	@Override

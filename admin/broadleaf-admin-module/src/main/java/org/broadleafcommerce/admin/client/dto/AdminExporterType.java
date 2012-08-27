@@ -24,5 +24,5 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public enum AdminExporterType implements IsSerializable {
     ORDER,
-    CATALOG
+    PRODUCT
 }

@@ -50,4 +50,5 @@ public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
 	
 	public ToolStripButton getCloneProductButton();
 
+	public ToolStripButton getExportProductsButton();
 }
