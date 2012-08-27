@@ -56,7 +56,9 @@ public class FulfillmentGroupPricingActivity extends BaseActivity {
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             if (fulfillmentGroup != null) {
                 fulfillmentGroup = fulfillmentPricingService.calculateCostForFulfillmentGroup(fulfillmentGroup);
-                totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
+                if (fulfillmentGroup.getShippingPrice() != null) {
+                	totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
+                }
             }
         }
         order.setTotalShipping(totalShipping);
