@@ -16,13 +16,15 @@
 
 package org.broadleafcommerce.admin.server.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
 import org.broadleafcommerce.admin.client.dto.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AdminExporterService;
 import org.broadleafcommerce.admin.server.service.export.AdminExporter;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,21 +34,24 @@ import java.util.List;
  * @author Phillip Verheyden
  */
 @Service("blAdminExporterRemoteService")
-public class AdminExporterRemoteService implements AdminExporterService {
+public class AdminExporterRemoteService implements AdminExporterService, ApplicationContextAware {
 
-    @Resource(name = "blAdminExporters")
+    //Lazy initialization via the blAdminExporters bean definition because exporters are not
+    //provided OOB in Broadleaf
     protected List<AdminExporter> exporters;
-
+    
     @Override
     public List<AdminExporterDTO> getExporters(AdminExporterType type) {
         List<AdminExporterDTO> result = new ArrayList<AdminExporterDTO>();
-        for (AdminExporter exporter : exporters) {
-            if (type.equals(exporter.getType())) {
-                AdminExporterDTO dto = new AdminExporterDTO();
-                dto.setName(exporter.getName());
-                dto.setFriendlyName(exporter.getFriendlyName());
-                dto.setAdditionalCriteriaProperties(exporter.getCriteriaFields());
-                result.add(dto);
+        if (!CollectionUtils.isEmpty(getExporters())) {
+            for (AdminExporter exporter : getExporters()) {
+                if (type.equals(exporter.getType())) {
+                    AdminExporterDTO dto = new AdminExporterDTO();
+                    dto.setName(exporter.getName());
+                    dto.setFriendlyName(exporter.getFriendlyName());
+                    dto.setAdditionalCriteriaProperties(exporter.getCriteriaFields());
+                    result.add(dto);
+                }
             }
         }
         
@@ -59,6 +64,13 @@ public class AdminExporterRemoteService implements AdminExporterService {
     
     public void setExporters(List<AdminExporter> exporters) {
         this.exporters = exporters;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        if (exporters == null) {
+            setExporters((List<AdminExporter>)applicationContext.getBean("blAdminExporters"));
+        }
     }
 
 }
