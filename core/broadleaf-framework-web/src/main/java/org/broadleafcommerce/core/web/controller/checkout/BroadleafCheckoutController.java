@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
@@ -49,6 +52,7 @@ import org.joda.time.DateTime;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * In charge of performing the various checkout operations
@@ -58,6 +62,8 @@ import org.springframework.web.bind.ServletRequestDataBinder;
  */
 public class BroadleafCheckoutController extends AbstractCheckoutController {
 
+	private static final Log LOG = LogFactory.getLog(BroadleafCheckoutController.class);
+	
     protected static String cartPageRedirect = "redirect:/cart";
     protected static String checkoutView = "checkout/checkout";
 	protected static String checkoutPageRedirect = "redirect:/checkout";
@@ -66,7 +72,22 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     protected static String multishipAddAddressSuccessView = "redirect:/checkout/multiship";
 	protected static String multishipSuccessView = "redirect:/checkout";
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
+    protected static String loginRedirectView = "redirect:/login";
 
+    public String checkoutAnonymously(HttpServletRequest request, Model model) {
+    	Order cart = CartState.getCart();
+    	String customerEmail = request.getParameter("emailAddress");
+    	if (StringUtils.isNotBlank(customerEmail)) {
+    		cart.setEmailAddress(customerEmail);
+    		try {
+    			orderService.save(cart, false);
+    		} catch (PricingException pe) {
+    			LOG.error("Error when saving the email address for order confirmation to the cart", pe);
+    		}
+    	}
+    	return getCheckoutPageRedirect();
+    }
+    
     /**
      * Renders the default checkout page.
      *
@@ -75,29 +96,29 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param model
      * @return the return path
      */
-    public String checkout(HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String checkout(HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) {
+    	
+    	String orderConfirmationEmail = CartState.getCart().getEmailAddress();
+    	boolean customerIsAnonymous = CustomerState.getCustomer().isAnonymous();
+    	
+    	/* if the customer is anonymous and has not expressed they wish to check out as a guest, send to login page to either login or 
+    	 	continue checking out as guest checkout as guest
+    	 */
+    	if (customerIsAnonymous && StringUtils.isBlank(orderConfirmationEmail)) {
+    		redirectAttributes.addAttribute("postLoginUrl", "/checkout");
+    		return getLoginRedirectView();
+    	}
+    	
     	Order cart = CartState.getCart();
+    	
+    	
+    	
     	if (!(cart instanceof NullOrderImpl)) {
 			model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
     	}
     	
-		String editShipping = request.getParameter("edit-shipping");
-		
-		boolean hasValidShipping; 
-		
-		if (BooleanUtils.toBoolean(editShipping)) {
-			hasValidShipping = false;
-		} else {
-			hasValidShipping = hasValidShippingAddresses(cart);
-		}
-        model.addAttribute("validShipping", hasValidShipping);
-
-        putFulfillmentOptionsAndEstimationOnModel(model);
-        
-    	model.addAttribute("states", stateService.findStates());
-        model.addAttribute("countries", countryService.findCountries());
-        model.addAttribute("expirationMonths", populateExpirationMonths());
-        model.addAttribute("expirationYears", populateExpirationYears());
+    	populateModelWithShippingReferenceData(request, model);
+    	
         return getCheckoutView();
     }
     
@@ -313,7 +334,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             billingInfoFormValidator.validate(billingForm, result);
             if (result.hasErrors()) {
-                checkout(request, response, model);
+                populateModelWithShippingReferenceData(request, model);
                 return getCheckoutView();
             }
 
@@ -337,7 +358,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
                 processFailedOrderCheckout(cart);
-                checkout(request, response, model);
+                populateModelWithShippingReferenceData(request, model);
                 result.rejectValue("creditCardNumber", "payment.exception", null, null);
                 return getCheckoutView();
             }
@@ -498,6 +519,27 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             }
         });
     }
+    
+    private void populateModelWithShippingReferenceData(HttpServletRequest request, Model model) {
+		
+		String editShipping = request.getParameter("edit-shipping");
+    	
+    	boolean hasValidShipping; 
+		
+		if (BooleanUtils.toBoolean(editShipping)) {
+			hasValidShipping = false;
+		} else {
+			hasValidShipping = hasValidShippingAddresses(CartState.getCart());
+		}
+        model.addAttribute("validShipping", hasValidShipping);
+
+        putFulfillmentOptionsAndEstimationOnModel(model);
+        
+    	model.addAttribute("states", stateService.findStates());
+        model.addAttribute("countries", countryService.findCountries());
+        model.addAttribute("expirationMonths", populateExpirationMonths());
+        model.addAttribute("expirationYears", populateExpirationYears());
+    }
 
     public String getCartPageRedirect() {
         return cartPageRedirect;
@@ -529,6 +571,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
 	public String getBaseConfirmationView() {
 		return baseConfirmationView;
+	}
+	
+	public String getLoginRedirectView() {
+		return loginRedirectView;
 	}
 
     protected String getConfirmationView(String orderNumber) {
