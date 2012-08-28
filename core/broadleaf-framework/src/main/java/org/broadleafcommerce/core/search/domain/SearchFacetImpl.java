@@ -59,18 +59,19 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_field", group = "SearchFacetImpl_description", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Field field;
     
     @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 1, group = "SearchFacetImpl_description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description", groupOrder = 1)
     protected String label;
     
     @Column(name =  "SHOW_ON_SEARCH")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 1, group = "SearchFacetImpl_description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4, group = "SearchFacetImpl_description", groupOrder = 1)
     protected Boolean showOnSearch = false;
     
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority", order = 5, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
@@ -153,12 +154,15 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	
 	@Override
 	public boolean equals(Object obj) {
-	   	if (this == obj)
-	        return true;
-	    if (obj == null)
-	        return false;
-	    if (getClass() != obj.getClass())
-	        return false;
+	   	if (this == obj) {
+            return true;
+        }
+	    if (obj == null) {
+            return false;
+        }
+	    if (getClass() != obj.getClass()) {
+            return false;
+        }
         SearchFacet other = (SearchFacet) obj;
         
         return getField().equals(other.getField());
