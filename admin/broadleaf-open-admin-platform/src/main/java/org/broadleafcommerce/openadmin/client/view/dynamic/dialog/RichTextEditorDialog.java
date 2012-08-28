@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.presenter.entity.HtmlEditingPresenter;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.BLCRichTextItem;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.smartgwt.client.types.Alignment;
@@ -28,11 +34,6 @@ import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.presenter.entity.HtmlEditingPresenter;
-import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
-import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.BLCRichTextItem;
 
 /**
  * 
@@ -120,7 +121,7 @@ public class RichTextEditorDialog extends Window {
             @Override
             public void onClick(ClickEvent event) {
                 if (richTextItem != null) {
-                    richTextItem.setValue(toolBar.getHTML());
+                    richTextItem.storeValue(toolBar.getHTML());
                 }
                 hide();
             }
