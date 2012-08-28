@@ -75,7 +75,7 @@ public class ProductSearchResult {
 	}
 	
 	public Integer getStartResult() {
-		return ((page - 1) * pageSize) + 1;
+		return (products == null || products.size() == 0) ? 0 : ((page - 1) * pageSize) + 1;
 	}
 	
 	public Integer getEndResult() {
@@ -83,7 +83,7 @@ public class ProductSearchResult {
 	}
 	
 	public Integer getTotalPages() {
-		return (int) Math.ceil(totalResults * 1.0 / pageSize);
+		return (products == null || products.size() == 0) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
 	}
 
 }
