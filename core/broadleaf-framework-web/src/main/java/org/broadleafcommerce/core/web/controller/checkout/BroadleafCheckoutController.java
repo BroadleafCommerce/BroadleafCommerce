@@ -520,7 +520,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         });
     }
     
-    private void populateModelWithShippingReferenceData(HttpServletRequest request, Model model) {
+    protected void populateModelWithShippingReferenceData(HttpServletRequest request, Model model) {
 		
 		String editShipping = request.getParameter("edit-shipping");
     	
