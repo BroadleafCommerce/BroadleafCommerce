@@ -149,4 +149,21 @@ public class JoinStructure implements PersistencePerspectiveItem {
     public void setJoinStructureEntityPolymorphicType(String joinStructureEntityPolymorphicType) {
         this.joinStructureEntityPolymorphicType = joinStructureEntityPolymorphicType;
     }
+
+    @Override
+    public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
+        JoinStructure joinStructure = new JoinStructure();
+        joinStructure.name = name;
+        joinStructure.linkedObjectPath = linkedObjectPath;
+        joinStructure.targetObjectPath = targetObjectPath;
+        joinStructure.joinStructureEntityClassname = joinStructureEntityClassname;
+        joinStructure.joinStructureEntityPolymorphicType = joinStructureEntityPolymorphicType;
+        joinStructure.sortField = sortField;
+        joinStructure.sortAscending = sortAscending;
+        joinStructure.linkedIdProperty = linkedIdProperty;
+        joinStructure.targetIdProperty = targetIdProperty;
+        joinStructure.inverse = inverse;
+
+        return joinStructure;
+    }
 }

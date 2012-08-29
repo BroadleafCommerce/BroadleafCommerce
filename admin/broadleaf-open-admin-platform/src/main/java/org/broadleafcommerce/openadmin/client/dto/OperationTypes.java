@@ -194,4 +194,15 @@ public class OperationTypes implements IsSerializable, Serializable {
         this.inspectType = inspectType;
     }
 
+    public OperationTypes cloneOperationTypes() {
+        OperationTypes operationTypes = new OperationTypes();
+        operationTypes.setAddType(addType);
+        operationTypes.setFetchType(fetchType);
+        operationTypes.setInspectType(inspectType);
+        operationTypes.setRemoveType(removeType);
+        operationTypes.setUpdateType(updateType);
+
+        return  operationTypes;
+    }
+
 }

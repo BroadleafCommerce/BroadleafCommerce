@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.client.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.broadleafcommerce.common.presentation.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
 
 import java.io.Serializable;
@@ -115,7 +116,7 @@ public class ForeignKey implements IsSerializable, Serializable, PersistencePers
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(manyToField);
         sb.append(foreignKeyClass);
         sb.append(currentValue);
@@ -124,5 +125,22 @@ public class ForeignKey implements IsSerializable, Serializable, PersistencePers
         sb.append(displayValueProperty);
 
         return sb.toString();
+    }
+
+    public ForeignKey cloneForeignKey() {
+        ForeignKey foreignKey = new ForeignKey();
+        foreignKey.manyToField = manyToField;
+        foreignKey.foreignKeyClass = foreignKeyClass;
+        foreignKey.currentValue = currentValue;
+        foreignKey.dataSourceName = dataSourceName;
+        foreignKey.restrictionType = restrictionType;
+        foreignKey.displayValueProperty = displayValueProperty;
+
+        return foreignKey;
+    }
+
+    @Override
+    public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
+        return cloneForeignKey();
     }
 }

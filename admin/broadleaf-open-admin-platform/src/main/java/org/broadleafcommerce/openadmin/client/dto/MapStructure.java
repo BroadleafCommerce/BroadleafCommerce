@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
+
+import java.io.Serializable;
 
 /**
  * 
@@ -105,5 +105,18 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
 
 	public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
+        MapStructure mapStructure = new MapStructure();
+        mapStructure.keyClassName = keyClassName;
+        mapStructure.keyPropertyName = keyPropertyName;
+        mapStructure.keyPropertyFriendlyName = keyPropertyFriendlyName;
+        mapStructure.valueClassName = valueClassName;
+        mapStructure.mapProperty = mapProperty;
+        mapStructure.deleteValueEntity = deleteValueEntity;
+
+        return mapStructure;
     }
 }

@@ -33,7 +33,7 @@ public class Property implements IsSerializable, Serializable {
 	private String name;
 	private String value;
 	private String displayValue;
-	private FieldMetadata metadata = new FieldMetadata();
+	private FieldMetadata metadata;
     private CollectionMetadata collectionMetadata = new CollectionMetadata();
     private boolean isAdvancedCollection = false;
 	private Boolean isDirty = false;
@@ -116,7 +116,7 @@ public class Property implements IsSerializable, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((metadata == null || metadata.getMergedPropertyType() == null) ? 0 : metadata.getMergedPropertyType().hashCode());
+		result = prime * result + ((metadata == null || metadata instanceof CollectionMetadata || ((BasicFieldMetadata) metadata).getMergedPropertyType() == null) ? 0 : ((BasicFieldMetadata) metadata).getMergedPropertyType().hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -130,10 +130,10 @@ public class Property implements IsSerializable, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Property other = (Property) obj;
-		if (metadata == null || metadata.getMergedPropertyType() == null) {
-			if (other.metadata != null && other.metadata.getMergedPropertyType() != null)
+		if (metadata == null || metadata instanceof CollectionMetadata || ((BasicFieldMetadata) metadata).getMergedPropertyType() == null) {
+			if (other.metadata != null && other.metadata instanceof BasicFieldMetadata && ((BasicFieldMetadata) other.metadata).getMergedPropertyType() != null)
 				return false;
-		} else if (!metadata.getMergedPropertyType().equals(other.metadata.getMergedPropertyType()))
+		} else if (metadata instanceof BasicFieldMetadata && other.metadata instanceof BasicFieldMetadata && !((BasicFieldMetadata) metadata).getMergedPropertyType().equals(((BasicFieldMetadata) other.metadata).getMergedPropertyType()))
 			return false;
 		if (name == null) {
 			if (other.name != null)

@@ -1,17 +1,16 @@
 package org.broadleafcommerce.openadmin.client.dto;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import org.broadleafcommerce.common.presentation.AddType;
-
-import java.io.Serializable;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 
 /**
  * @author Jeff Fischer
  */
-public class CollectionMetadata implements IsSerializable, Serializable {
+public class CollectionMetadata extends FieldMetadata {
 
-    private OperationTypes operationTypes;
     private AddType addType;
+    private PersistencePerspective persistencePerspective;
+    private String collectionCeilingEntity;
 
     public AddType getAddType() {
         return addType;
@@ -21,19 +20,36 @@ public class CollectionMetadata implements IsSerializable, Serializable {
         this.addType = addType;
     }
 
-    public OperationTypes getOperationTypes() {
-        return operationTypes;
+    public PersistencePerspective getPersistencePerspective() {
+        return persistencePerspective;
     }
 
-    public void setOperationTypes(OperationTypes operationTypes) {
-        this.operationTypes = operationTypes;
+    public void setPersistencePerspective(PersistencePerspective persistencePerspective) {
+        this.persistencePerspective = persistencePerspective;
     }
 
-    public CollectionMetadata cloneCollectionMetadata() {
+    public String getCollectionCeilingEntity() {
+        return collectionCeilingEntity;
+    }
+
+    public void setCollectionCeilingEntity(String collectionCeilingEntity) {
+        this.collectionCeilingEntity = collectionCeilingEntity;
+    }
+
+    @Override
+    public FieldMetadata cloneFieldMetadata() {
         CollectionMetadata metadata = new CollectionMetadata();
         metadata.setAddType(addType);
-        metadata.setOperationTypes(operationTypes);
+        metadata.setPersistencePerspective(persistencePerspective.clonePersistencePerspective());
+        metadata.setCollectionCeilingEntity(collectionCeilingEntity);
+
+        metadata = (CollectionMetadata) populate(metadata);
 
         return metadata;
+    }
+
+    @Override
+    public void accept(MetadataVisitor visitor) {
+        visitor.visit(this);
     }
 }

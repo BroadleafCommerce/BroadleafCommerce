@@ -193,4 +193,44 @@ public class PersistencePerspective implements IsSerializable, Serializable {
     public void setShowArchivedFields(Boolean showArchivedFields) {
         this.showArchivedFields = showArchivedFields;
     }
+
+    public PersistencePerspective clonePersistencePerspective() {
+        PersistencePerspective persistencePerspective = new PersistencePerspective();
+        persistencePerspective.operationTypes = operationTypes.cloneOperationTypes();
+
+        if (additionalNonPersistentProperties != null) {
+            persistencePerspective.additionalNonPersistentProperties = new String[additionalNonPersistentProperties.length];
+            System.arraycopy(additionalNonPersistentProperties, 0, persistencePerspective.additionalNonPersistentProperties, 0, additionalNonPersistentProperties.length);
+        }
+
+        if (additionalForeignKeys != null) {
+            persistencePerspective.additionalForeignKeys = new ForeignKey[additionalForeignKeys.length];
+            for (int j=0; j<additionalForeignKeys.length;j++){
+                persistencePerspective.additionalForeignKeys[j] = additionalForeignKeys[j].cloneForeignKey();
+            }
+        }
+
+        if (persistencePerspectiveItems != null) {
+            Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>(this.persistencePerspectiveItems.size());
+            for (Map.Entry<PersistencePerspectiveItemType, PersistencePerspectiveItem> entry : this.persistencePerspectiveItems.entrySet()) {
+                persistencePerspectiveItems.put(entry.getKey(), entry.getValue().clonePersistencePerspectiveItem());
+            }
+        }
+
+        persistencePerspective.populateToOneFields = populateToOneFields;
+        persistencePerspective.configurationKey = configurationKey;
+        persistencePerspective.showArchivedFields = showArchivedFields;
+
+        if (excludeFields != null) {
+            persistencePerspective.excludeFields = new String[excludeFields.length];
+            System.arraycopy(excludeFields, 0, persistencePerspective.excludeFields, 0, excludeFields.length);
+        }
+
+        if (includeFields != null) {
+            persistencePerspective.includeFields = new String[includeFields.length];
+            System.arraycopy(includeFields, 0, persistencePerspective.includeFields, 0, includeFields.length);
+        }
+
+        return persistencePerspective;
+    }
 }

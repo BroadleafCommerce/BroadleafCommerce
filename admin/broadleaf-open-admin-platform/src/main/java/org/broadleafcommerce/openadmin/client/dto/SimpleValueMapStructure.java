@@ -40,7 +40,6 @@ public class SimpleValueMapStructure extends MapStructure {
 	 * @param keyPropertyFriendlyName
 	 * @param valueClassName
 	 * @param mapProperty
-	 * @param deleteValueEntity
 	 */
 	public SimpleValueMapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName, String valuePropertyName, String valuePropertyFriendlyName, String mapProperty) {
 		super(keyClassName, keyPropertyName, keyPropertyFriendlyName, valueClassName, mapProperty, false);
@@ -66,5 +65,20 @@ public class SimpleValueMapStructure extends MapStructure {
 	
 	public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
+        SimpleValueMapStructure mapStructure = new SimpleValueMapStructure();
+        mapStructure.setKeyClassName(getKeyClassName());
+        mapStructure.setKeyPropertyName(getKeyPropertyName());
+        mapStructure.setValuePropertyFriendlyName(getKeyPropertyFriendlyName());
+        mapStructure.setValueClassName(getValueClassName());
+        mapStructure.setMapProperty(getMapProperty());
+        mapStructure.setDeleteValueEntity(getDeleteValueEntity());
+        mapStructure.valuePropertyName = valuePropertyName;
+        mapStructure.valuePropertyFriendlyName = valuePropertyFriendlyName;
+
+        return mapStructure;
     }
 }

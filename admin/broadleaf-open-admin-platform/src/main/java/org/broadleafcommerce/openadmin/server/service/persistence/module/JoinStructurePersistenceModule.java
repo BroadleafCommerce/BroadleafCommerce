@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
@@ -115,7 +116,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				);
                 String idProp = null;
                 for (String key : joinMergedProperties.keySet()) {
-                    if (joinMergedProperties.get(key).getFieldType()== SupportedFieldType.ID) {
+                    if (joinMergedProperties.get(key) instanceof BasicFieldMetadata && ((BasicFieldMetadata) joinMergedProperties.get(key)).getFieldType()== SupportedFieldType.ID) {
                         idProp = key;
                         break;
                     }

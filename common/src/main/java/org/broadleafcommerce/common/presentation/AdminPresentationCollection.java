@@ -50,9 +50,29 @@ public @interface AdminPresentationCollection {
      * Define whether or not added items for this
      * collection are acquired via search or construction.
      *
-     * @return the item acquired via lookup or construction
+     * @return the item is acquired via lookup or construction
      */
-    AddType addType() default AddType.PERSIST;
+    AddType addType();
 
+    /**
+     * Define configuration for the operation types.
+     * OperationType.ENTITY and OperationType.FOREIGNKEY require annotation properties starting with "entity_"
+     * OperationType.JOINSTRUCTURE require annotation properties starting with "joinStructure_"
+     * OperationType.MAPSTRUCTURE require annotation properties starting with "mapStructure_"
+     *
+     * Review the javadocs for PersistencePerspectiveItem for field requirements, as the system under many
+     * circumstances will be able to infer the appropriate values, reducing the amount of information you
+     * need to specify.
+     *
+     * @return the configuration to support the operation types
+     */
+    PersistencePerspectiveItem persistencePerspectiveItem() default @PersistencePerspectiveItem;
+
+    /**
+     * The order in which this field will appear in a GUI relative to other fields from the same class
+     *
+     * @return the display order
+     */
+    int order() default 99999;
 
 }

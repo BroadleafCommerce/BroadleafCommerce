@@ -156,10 +156,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		 */
 		for (int i = 0; i < entities.length - 1; i++) {
 			for (Property myProperty : propertiesList) {
-				if (myProperty.getMetadata().getInheritedFromType().equals(entities[i].getName()) && myProperty.getMetadata().getPresentationAttributes().getOrder() != null) {
+				if (myProperty.getMetadata().getInheritedFromType().equals(entities[i].getName()) && myProperty.getMetadata().getOrder() != null) {
 					for (Property property : propertiesList) {
-						if (!property.getMetadata().getInheritedFromType().equals(entities[i].getName()) && property.getMetadata().getPresentationAttributes().getOrder() != null && property.getMetadata().getPresentationAttributes().getOrder() >= myProperty.getMetadata().getPresentationAttributes().getOrder()) {
-							property.getMetadata().getPresentationAttributes().setOrder(property.getMetadata().getPresentationAttributes().getOrder() + 1);
+						if (!property.getMetadata().getInheritedFromType().equals(entities[i].getName()) && property.getMetadata().getOrder() != null && property.getMetadata().getOrder() >= myProperty.getMetadata().getOrder()) {
+							property.getMetadata().setOrder(property.getMetadata().getOrder() + 1);
 						}
 					}
 				}
@@ -172,20 +172,20 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 				/*
 				 * First, compare properties based on order fields
 				 */
-				if (o1.getMetadata().getPresentationAttributes().getOrder() != null && o2.getMetadata().getPresentationAttributes().getOrder() != null) {
-					return o1.getMetadata().getPresentationAttributes().getOrder().compareTo(o2.getMetadata().getPresentationAttributes().getOrder());
-				} else if (o1.getMetadata().getPresentationAttributes().getOrder() != null && o2.getMetadata().getPresentationAttributes().getOrder() == null) {
+				if (o1.getMetadata().getOrder() != null && o2.getMetadata().getOrder() != null) {
+					return o1.getMetadata().getOrder().compareTo(o2.getMetadata().getOrder());
+				} else if (o1.getMetadata().getOrder() != null && o2.getMetadata().getOrder() == null) {
 					/*
 					 * Always favor fields that have an order identified
 					 */
 					return -1;
-				} else if (o1.getMetadata().getPresentationAttributes().getOrder() == null && o2.getMetadata().getPresentationAttributes().getOrder() != null) {
+				} else if (o1.getMetadata().getOrder() == null && o2.getMetadata().getOrder() != null) {
 					/*
 					 * Always favor fields that have an order identified
 					 */
 					return 1;
-				} else if (o1.getMetadata().getPresentationAttributes().getFriendlyName() != null && o2.getMetadata().getPresentationAttributes().getFriendlyName() != null) {
-					return o1.getMetadata().getPresentationAttributes().getFriendlyName().compareTo(o2.getMetadata().getPresentationAttributes().getFriendlyName());
+				} else if (o1.getMetadata().getFriendlyName() != null && o2.getMetadata().getFriendlyName() != null) {
+					return o1.getMetadata().getFriendlyName().compareTo(o2.getMetadata().getFriendlyName());
 				} else {
 					return o1.getName().compareTo(o2.getName());
 				}
