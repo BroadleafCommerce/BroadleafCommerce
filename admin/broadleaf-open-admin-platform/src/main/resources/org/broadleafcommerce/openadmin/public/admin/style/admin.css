@@ -145,3 +145,7 @@ textarea {
     resize: none;
 }
 
+.BLCRichTextItemEditButton {
+    display:inline-block;
+    padding:3px;
+}

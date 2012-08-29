@@ -16,10 +16,13 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
+import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -30,16 +33,11 @@ import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
-import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -73,7 +71,8 @@ public class StructuredContentPresenterExtractor {
 	public void removeItemQualifer(final ItemBuilderDisplay builder) {
 		if (builder.getRecord() != null) {
 			presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
-				public void execute(DSResponse response, Object rawData, DSRequest request) {
+				@Override
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
 					getDisplay().removeItemBuilder(builder);
 				}
 			});
@@ -120,11 +119,6 @@ public class StructuredContentPresenterExtractor {
                         final String newId = response.getAttribute("newId");
                         FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
                         final DynamicForm form = legacyForm.getForm();
-                        for (FormItem formItem : form.getFields()) {
-                            if (formItem instanceof RichTextCanvasItem) {
-                                form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
-                            }
-                        }
                         StructuredContentTypeFormListDataSource dataSource = (StructuredContentTypeFormListDataSource) form.getDataSource();
                         dataSource.setCustomCriteria(new String[]{"constructForm", newId});
                         form.saveData(new DSCallback() {
@@ -186,6 +180,7 @@ public class StructuredContentPresenterExtractor {
                         setData(builder.getRecord(), "quantity", quantity, dirtyValues);
                         setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
+                            @Override
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 resetButtonState();
@@ -200,6 +195,7 @@ public class StructuredContentPresenterExtractor {
                         temp.setAttribute("id", "");
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").setLinkedValue(id);
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").addData(temp, new DSCallback() {
+                            @Override
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 builder.setRecord(temp);

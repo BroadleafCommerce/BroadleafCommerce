@@ -121,7 +121,7 @@ public class RichTextEditorDialog extends Window {
             @Override
             public void onClick(ClickEvent event) {
                 if (richTextItem != null) {
-                    richTextItem.setValue(toolBar.getHTML());
+                    richTextItem.storeValue(toolBar.getHTML());
                 }
                 hide();
             }

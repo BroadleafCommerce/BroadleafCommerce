@@ -16,6 +16,36 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
+import org.broadleafcommerce.cms.admin.client.datasource.structure.CustomerListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.RequestDTOListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.AdditionalFilterEventManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.FilterBuilderAdditionalEventHandler;
+import org.broadleafcommerce.openadmin.client.view.dynamic.FilterRestartCallback;
+import org.broadleafcommerce.openadmin.client.view.dynamic.FilterStateRunnable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -34,43 +64,13 @@ import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.CustomerListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.RequestDTOListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
-import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.AdditionalFilterEventManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.FilterBuilderAdditionalEventHandler;
-import org.broadleafcommerce.openadmin.client.view.dynamic.FilterRestartCallback;
-import org.broadleafcommerce.openadmin.client.view.dynamic.FilterStateRunnable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class StructuredContentPresenter extends HtmlEditingPresenter implements Instantiable {
+public class StructuredContentPresenter extends DynamicEntityPresenter implements Instantiable {
 
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
@@ -172,6 +172,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             destroyContentTypeForm();
             final FormOnlyView formOnlyView = new FormOnlyView(dataSource, true, true, false);
             formOnlyView.getForm().addItemChangedHandler(new ItemChangedHandler() {
+                @Override
                 public void onItemChanged(ItemChangedEvent event) {
                 resetButtons();
                 }
@@ -186,11 +187,6 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                 if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
                     formOnlyView.getForm().enable();
-                }
-                for (FormItem formItem : formOnlyView.getForm().getFields()) {
-                    if (formItem instanceof RichTextCanvasItem) {
-                        formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
-                    }
                 }
                 if (cb != null) {
                     cb.processComplete();
@@ -207,14 +203,16 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         getSaveButtonHandlerRegistration().removeHandler();
         formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
+			@Override
+            public void onClick(ClickEvent event) {
             if (event.isLeftButtonDown()) {
                 refresh();
             }
         }
         });
         ruleRefreshButtonHandlerRegistration = getDisplay().getStructuredContentRefreshButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
+			@Override
+            public void onClick(ClickEvent event) {
             if (event.isLeftButtonDown()) {
                 extractor.getRemovedItemQualifiers().clear();
                 changeSelection(currentStructuredContentRecord);
@@ -222,6 +220,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         }
         });
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             //save the regular entity form and the page template form
             if (event.isLeftButtonDown()) {
@@ -230,6 +229,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             }
         });
         ruleSaveButtonHandlerRegistration = getDisplay().getStructuredContentSaveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             //save the regular entity form and the page template form
             if (event.isLeftButtonDown()) {
@@ -244,6 +244,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             }
         });
         getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             if (event.isLeftButtonDown()) {
                 final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
@@ -257,21 +258,25 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             bindItemBuilderEvents(itemBuilder);
         }
         getDisplay().getCustomerFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
             }
         });
         getDisplay().getProductFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
             }
         });
         getDisplay().getRequestFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
             }
         });
         getDisplay().getTimeFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
             }
@@ -313,16 +318,12 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             legacyForm.getForm().reset();
         }
 
-        for (FormItem formItem : legacyForm.getForm().getFields()) {
-            if (formItem instanceof RichTextCanvasItem) {
-                formItem.setValue(legacyForm.getForm().getValue(formItem.getFieldName()));
-            }
-        }
         resetButtons();
     }
 
     protected void bindItemBuilderEvents(final ItemBuilderDisplay display) {
         display.getRemoveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 extractor.getRemovedItemQualifiers().add(display);
                 additionalFilterEventManager.removeFilterBuilderAdditionalEventHandler(display.getItemFilterBuilder());
@@ -331,18 +332,21 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             }
         });
         display.getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 resetButtons();
                 display.setDirty(true);
             }
         });
         display.getItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 resetButtons();
                 display.setDirty(true);
             }
         });
         display.getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
                 display.setDirty(true);
@@ -364,10 +368,11 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         getDisplay().getStructuredContentRefreshButton().enable();
     }
 
+    @Override
     public void setup() {
-        super.setup();
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("id");
             }
@@ -376,12 +381,14 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("timeDTODS", new TimeDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("requestDTODS", new RequestDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scOrderItemDS", new OrderItemListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("product.id", "category.id", "sku.id");
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentTypeSearchDS", new StructuredContentTypeSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
             ListGridDataSource structuredContentTypeDataSource = (ListGridDataSource) result;
             structuredContentTypeDataSource.resetPermanentFieldVisibility(
                 "name","description"
@@ -415,6 +422,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 			}
 		}));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scItemCriteriaDS", new StructuredContentItemCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
             initializer = new StructuredContentPresenterInitializer(StructuredContentPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
             extractor = new StructuredContentPresenterExtractor(StructuredContentPresenter.this);

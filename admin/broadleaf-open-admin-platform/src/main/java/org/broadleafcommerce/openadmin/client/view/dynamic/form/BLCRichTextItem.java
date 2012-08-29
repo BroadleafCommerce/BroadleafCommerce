@@ -10,6 +10,8 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.form.fields.events.ShowValueEvent;
+import com.smartgwt.client.widgets.form.fields.events.ShowValueHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class BLCRichTextItem extends CanvasItem {
@@ -33,6 +35,7 @@ public class BLCRichTextItem extends CanvasItem {
                 dialog.centerInPage();                
             }
         });
+        editButton.setStyleName("BLCRichTextItemEditButton");
         
         VLayout layout = new VLayout();
         layout.setWidth100();
@@ -45,12 +48,12 @@ public class BLCRichTextItem extends CanvasItem {
         htmlPane.setDisabled(true);
         layout.addMember(htmlPane);
         
-//        addShowValueHandler(new ShowValueHandler() {
-//            @Override
-//            public void onShowValue(ShowValueEvent event) {
-//                htmlPane.setContents((String)event.getDataValue());
-//            }
-//        });
+        addShowValueHandler(new ShowValueHandler() {
+            @Override
+            public void onShowValue(ShowValueEvent event) {
+                htmlPane.setContents((String)event.getDataValue());
+            }
+        });
         
         addChangedHandler(new ChangedHandler() {
             @Override

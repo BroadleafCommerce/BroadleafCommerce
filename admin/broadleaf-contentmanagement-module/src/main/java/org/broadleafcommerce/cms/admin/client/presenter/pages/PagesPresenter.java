@@ -16,6 +16,23 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -25,7 +42,6 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -36,31 +52,13 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
-import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class PagesPresenter extends HtmlEditingPresenter implements Instantiable {
+public class PagesPresenter extends DynamicEntityPresenter implements Instantiable {
 
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
@@ -117,6 +115,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 destroyTemplateForm();
                 final FormOnlyView formOnlyView = new FormOnlyView(dataSource, true, true, false);
                 formOnlyView.getForm().addItemChangedHandler(new ItemChangedHandler() {
+                    @Override
                     public void onItemChanged(ItemChangedEvent event) {
                         getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                         getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
@@ -133,11 +132,6 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
                             formOnlyView.getForm().enable();
                         }
-                        for (FormItem formItem : formOnlyView.getForm().getFields()) {
-                            if (formItem instanceof RichTextCanvasItem) {
-                                formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
-                            }
-                        }
                     }
                 });
             }
@@ -150,7 +144,8 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
         getSaveButtonHandlerRegistration().removeHandler();
         formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
+			@Override
+            public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
                     FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
@@ -158,17 +153,13 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         legacyForm.getForm().reset();
                     }
 
-                    for (FormItem formItem : legacyForm.getForm().getFields()) {
-                        if (formItem instanceof RichTextCanvasItem) {
-                            formItem.setValue(legacyForm.getForm().getValue(formItem.getFieldName()));
-                        }
-                    }
 					getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                     getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
 				}
 			}
         });
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 //save the regular entity form and the page template form
                 if (event.isLeftButtonDown()) { 
@@ -182,11 +173,6 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                 final String newId = response.getAttribute("newId");
                                 FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
                                 final DynamicForm form = legacyForm.getForm();
-                                for (FormItem formItem : form.getFields()) {
-                                    if (formItem instanceof RichTextCanvasItem) {
-                                        form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
-                                    }
-                                }
                                 PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
                                 dataSource.setCustomCriteria(new String[]{"constructForm", newId});
                                 form.saveData(new DSCallback() {
@@ -236,16 +222,18 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 	}
 
 
-	public void setup() {
-        super.setup();
+	@Override
+    public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageDS", new PageDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
 			}
         }));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearchDS", new PageTemplateSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				ListGridDataSource pageTemplateDataSource = (ListGridDataSource) result;
 				pageTemplateDataSource.resetPermanentFieldVisibility(
 					"templateName",
