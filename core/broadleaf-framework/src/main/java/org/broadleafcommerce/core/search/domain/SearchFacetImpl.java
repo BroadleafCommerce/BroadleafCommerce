@@ -59,7 +59,7 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_field", group = "SearchFacetImpl_description", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_field",  order = 2,group = "SearchFacetImpl_description", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Field field;
     
     @Column(name = "LABEL")
@@ -75,6 +75,7 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
     protected Boolean canMultiselect = true;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})

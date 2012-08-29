@@ -49,7 +49,7 @@ public class FieldImpl implements Field {
     @GeneratedValue(generator = "FieldId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FieldId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldImpl", allocationSize = 50)
     @Column(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_descrpition",visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_descrpition",visibility=VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     // This is a broadleaf enumeration
