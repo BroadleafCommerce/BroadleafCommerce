@@ -30,10 +30,10 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.common.presentation.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
@@ -64,7 +64,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	private static final Log LOG = LogFactory.getLog(MapStructurePersistenceModule.class);
 	
 	public boolean isCompatible(OperationType operationType) {
-		return OperationType.MAPSTRUCTURE.equals(operationType);
+		return OperationType.MAP.equals(operationType);
 	}
 	
 	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
@@ -76,7 +76,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 		}
 	}
 
-	protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, BasicFieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException {
+	protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException {
 		FieldManager fieldManager = getFieldManager();
         Map map = null;
         try {
@@ -204,7 +204,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
-			LOG.warn("custom persistence handlers and custom criteria not supported for add types other than ENTITY");
+			LOG.warn("custom persistence handlers and custom criteria not supported for add types other than BASIC");
 		}
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -240,11 +240,11 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					""
 				);
 			}
-            Map<String, BasicFieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
+            Map<String, FieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
 			
 			if (persistentClass != null) {
 				Serializable valueInstance = (Serializable) Class.forName(mapStructure.getValueClassName()).newInstance();
-				valueInstance = createPopulatedInstance(valueInstance, entity, (Map<String, FieldMetadata>) valueMergedProperties, false);
+				valueInstance = createPopulatedInstance(valueInstance, entity, valueMergedProperties, false);
 				valueInstance = persistenceManager.getDynamicEntityDao().persist(valueInstance);
 				/*
 				 * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
@@ -273,20 +273,20 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 		}
 	}
 	
-	protected Object convertPrimitiveBasedOnType(String valuePropertyName, String value, Map<String, BasicFieldMetadata> valueMergedProperties) throws ParseException {
-		switch(valueMergedProperties.get(valuePropertyName).getFieldType()) {
-		case BOOLEAN :
-			return Boolean.parseBoolean(value);
-		case DATE :
-			return dateFormat.parse(value);
-		case DECIMAL :
-			return new BigDecimal(value);
-		case MONEY :
-			return new Money(value);
-		case INTEGER :
-			return Integer.parseInt(value);
-		default :
-			return value;
+	protected Object convertPrimitiveBasedOnType(String valuePropertyName, String value, Map<String, FieldMetadata> valueMergedProperties) throws ParseException {
+		switch(((BasicFieldMetadata) valueMergedProperties.get(valuePropertyName)).getFieldType()) {
+            case BOOLEAN :
+                return Boolean.parseBoolean(value);
+            case DATE :
+                return dateFormat.parse(value);
+            case DECIMAL :
+                return new BigDecimal(value);
+            case MONEY :
+                return new Money(value);
+            case INTEGER :
+                return Integer.parseInt(value);
+            default :
+                return value;
 		}
 	}
 
@@ -294,7 +294,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
-			LOG.warn("custom persistence handlers and custom criteria not supported for update types other than ENTITY");
+			LOG.warn("custom persistence handlers and custom criteria not supported for update types other than BASIC");
 		}
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -330,7 +330,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					""
 				);
 			}
-            Map<String, BasicFieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
+            Map<String, FieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
 			
 			if (persistentClass != null) {
 				Serializable valueInstance = (Serializable) map.get(entity.findProperty("priorKey").getValue());
@@ -361,7 +361,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	public void remove(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
-			LOG.warn("custom persistence handlers and custom criteria not supported for remove types other than ENTITY");
+			LOG.warn("custom persistence handlers and custom criteria not supported for remove types other than BASIC");
 		}
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -433,7 +433,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					""
 				);
 			}
-            Map<String, BasicFieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
+            Map<String, FieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
 			
 			BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);

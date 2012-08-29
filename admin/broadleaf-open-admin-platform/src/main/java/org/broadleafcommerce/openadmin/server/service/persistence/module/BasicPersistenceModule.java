@@ -30,9 +30,9 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.ForeignKeyRestrictionType;
-import org.broadleafcommerce.common.presentation.OperationType;
-import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
@@ -105,7 +105,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     public boolean isCompatible(OperationType operationType) {
-        return OperationType.ENTITY == operationType || OperationType.FOREIGNKEY == operationType;
+        return OperationType.BASIC == operationType || OperationType.NONDESTRUCTIVEREMOVE == operationType;
     }
 
     public FieldManager getFieldManager() {
@@ -847,7 +847,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
             switch (persistencePerspective.getOperationTypes().getRemoveType()) {
-                case FOREIGNKEY:
+                case NONDESTRUCTIVEREMOVE:
                     for (Property property : entity.getProperties()) {
                         String originalPropertyName = property.getName();
                         FieldManager fieldManager = getFieldManager();
@@ -865,7 +865,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     }
                     break;
-                case ENTITY:
+                case BASIC:
                     persistenceManager.getDynamicEntityDao().remove(instance);
                     break;
             }

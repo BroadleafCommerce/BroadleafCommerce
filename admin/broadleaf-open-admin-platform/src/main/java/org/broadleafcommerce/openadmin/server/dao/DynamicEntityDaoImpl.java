@@ -24,15 +24,16 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.presentation.client.AddType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.ForeignKeyRestrictionType;
-import org.broadleafcommerce.common.presentation.OperationTypes;
-import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
@@ -833,50 +834,58 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
 	protected FieldMetadata getFieldMetadata(
 		String prefix, 
-		String propertyName, 
-		List<Property> componentProperties,
-		SupportedFieldType type, 
-		SupportedFieldType secondaryType, 
-		Type entityType, 
+		final String propertyName,
+		final List<Property> componentProperties,
+		final SupportedFieldType type,
+		final SupportedFieldType secondaryType,
+		final Type entityType,
 		Class<?> targetClass, 
-		FieldMetadata presentationAttribute,
-		MergedPropertyType mergedPropertyType
+		final FieldMetadata presentationAttribute,
+		final MergedPropertyType mergedPropertyType
 	) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        Field targetField = FieldManager.getSingleField(targetClass, propertyName);
-        if (targetField == null) {
-            throw new IllegalArgumentException("Unable to find property("+propertyName+") in class("+targetClass.getName()+")");
-        }
         presentationAttribute.setInheritedFromType(targetClass.getName());
         presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
-        if (targetField.getAnnotation(AdminPresentation.class)!=null) {
-            BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) presentationAttribute;
-            fieldMetadata.setFieldType(type);
-            fieldMetadata.setSecondaryType(secondaryType);
-            if (entityType != null && !entityType.isCollectionType()) {
-                Column column = null;
-                for (Property property : componentProperties) {
-                    if (property.getName().equals(propertyName)) {
-                        column = (Column) property.getColumnIterator().next();
-                        break;
+        presentationAttribute.accept(new MetadataVisitor() {
+            @Override
+            public void visit(BasicFieldMetadata metadata) {
+                BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) presentationAttribute;
+                fieldMetadata.setFieldType(type);
+                fieldMetadata.setSecondaryType(secondaryType);
+                if (entityType != null && !entityType.isCollectionType()) {
+                    Column column = null;
+                    for (Property property : componentProperties) {
+                        if (property.getName().equals(propertyName)) {
+                            column = (Column) property.getColumnIterator().next();
+                            break;
+                        }
+                    }
+                    if (column != null) {
+                        fieldMetadata.setLength(column.getLength());
+                        fieldMetadata.setScale(column.getScale());
+                        fieldMetadata.setPrecision(column.getPrecision());
+                        fieldMetadata.setRequired(!column.isNullable());
+                        fieldMetadata.setUnique(column.isUnique());
+                    }
+                    fieldMetadata.setForeignKeyCollection(false);
+                } else {
+                    fieldMetadata.setForeignKeyCollection(true);
+                }
+                fieldMetadata.setMutable(true);
+                fieldMetadata.setMergedPropertyType(mergedPropertyType);
+                if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(type)) {
+                    try {
+                        setupBroadleafEnumeration(fieldMetadata.getBroadleafEnumeration(), fieldMetadata);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 }
-                if (column != null) {
-                    fieldMetadata.setLength(column.getLength());
-                    fieldMetadata.setScale(column.getScale());
-                    fieldMetadata.setPrecision(column.getPrecision());
-                    fieldMetadata.setRequired(!column.isNullable());
-                    fieldMetadata.setUnique(column.isUnique());
-                }
-                fieldMetadata.setForeignKeyCollection(false);
-            } else {
-                fieldMetadata.setForeignKeyCollection(true);
             }
-            fieldMetadata.setMutable(true);
-            fieldMetadata.setMergedPropertyType(mergedPropertyType);
-            if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(type)) {
-                setupBroadleafEnumeration(fieldMetadata.getBroadleafEnumeration(), fieldMetadata);
+
+            @Override
+            public void visit(CollectionMetadata metadata) {
+                //do nothing
             }
-        }
+        });
 		
 		return presentationAttribute;
 	}
@@ -971,62 +980,56 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             } else if (annotColl != null) {
                 CollectionMetadata metadata = new CollectionMetadata();
                 metadata.setAddType(annotColl.addType());
-
-                OperationTypes operationTypes = annotColl.operationTypes();
+                //use the default AdminPresentationOperationTypes
                 org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes();
-                dtoOperationTypes.setFetchType(operationTypes.fetchType());
-                dtoOperationTypes.setInspectType(operationTypes.inspectType());
-                dtoOperationTypes.setRemoveType(operationTypes.removeType());
-                dtoOperationTypes.setUpdateType(operationTypes.updateType());
-                dtoOperationTypes.setAddType(operationTypes.addType());
+                if (annotColl.addType()== AddType.LOOKUP) {
+                    dtoOperationTypes.setRemoveType(OperationType.NONDESTRUCTIVEREMOVE);
+                }
 
                 //don't allow additional non-persistent properties or additional foreign keys for an advanced collection datasource - they don't make sense in this context
                 PersistencePerspective persistencePerspective = new PersistencePerspective(dtoOperationTypes, new String[]{}, new ForeignKey[]{});
                 metadata.setPersistencePerspective(persistencePerspective);
 
-                switch (dtoOperationTypes.getFetchType()) {
-                    case ENTITY: {
-                        String foreignKeyName = null;
-                        //try to inspect the JPA annotation
-                        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-                        ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
-                        checkForeignKeyName: {
-                            if (!StringUtils.isEmpty(annotColl.persistencePerspectiveItem().entity_manyToField())) {
-                                foreignKeyName = annotColl.persistencePerspectiveItem().entity_manyToField();
-                                break checkForeignKeyName;
-                            }
-                            if (oneToMany != null && !StringUtils.isEmpty(oneToMany.mappedBy())) {
-                                foreignKeyName = oneToMany.mappedBy();
-                                break checkForeignKeyName;
-                            }
-                            if (manyToMany != null && !StringUtils.isEmpty(manyToMany.mappedBy())) {
-                                foreignKeyName = manyToMany.mappedBy();
-                                break checkForeignKeyName;
-                            }
-                            if (StringUtils.isEmpty(foreignKeyName)) {
-                                throw new IllegalArgumentException("Unable to infer a ManyToOne field name for the @AdminPresentationCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the entity_manyToField field of @PersistencePerspectiveItem");
-                            }
-                        }
-                        ForeignKey foreignKey = new ForeignKey(foreignKeyName, targetClass.getName(), null, ForeignKeyRestrictionType.ID_EQ, annotColl.persistencePerspectiveItem().entity_displayValueProperty());
-                        persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
-
-                        String ceiling = null;
-                        checkCeiling: {
-                            if (oneToMany != null && oneToMany.targetEntity() != void.class) {
-                                ceiling = oneToMany.targetEntity().getName();
-                                break checkCeiling;
-                            }
-                            if (manyToMany != null && manyToMany.targetEntity() != void.class) {
-                                ceiling = manyToMany.targetEntity().getName();
-                                break checkCeiling;
-                            }
-                        }
-                        if (!StringUtils.isEmpty(ceiling)) {
-                            metadata.setCollectionCeilingEntity(ceiling);
-                        }
+                String foreignKeyName = null;
+                //try to inspect the JPA annotation
+                OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+                ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+                checkForeignKeyName: {
+                    if (!StringUtils.isEmpty(annotColl.manyToField())) {
+                        foreignKeyName = annotColl.manyToField();
+                        break checkForeignKeyName;
                     }
-                    //TODO finish the other cases
+                    if (oneToMany != null && !StringUtils.isEmpty(oneToMany.mappedBy())) {
+                        foreignKeyName = oneToMany.mappedBy();
+                        break checkForeignKeyName;
+                    }
+                    if (manyToMany != null && !StringUtils.isEmpty(manyToMany.mappedBy())) {
+                        foreignKeyName = manyToMany.mappedBy();
+                        break checkForeignKeyName;
+                    }
+                    if (StringUtils.isEmpty(foreignKeyName)) {
+                        throw new IllegalArgumentException("Unable to infer a ManyToOne field name for the @AdminPresentationCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the manyToField property");
+                    }
                 }
+                ForeignKey foreignKey = new ForeignKey(foreignKeyName, targetClass.getName(), null, ForeignKeyRestrictionType.ID_EQ, annotColl.displayValueProperty());
+                persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
+
+                String ceiling = null;
+                checkCeiling: {
+                    if (oneToMany != null && oneToMany.targetEntity() != void.class) {
+                        ceiling = oneToMany.targetEntity().getName();
+                        break checkCeiling;
+                    }
+                    if (manyToMany != null && manyToMany.targetEntity() != void.class) {
+                        ceiling = manyToMany.targetEntity().getName();
+                        break checkCeiling;
+                    }
+                }
+                if (!StringUtils.isEmpty(ceiling)) {
+                    metadata.setCollectionCeilingEntity(ceiling);
+                }
+                //TODO finish the other cases
+                //TODO add in support for when the AdminPresentationOperationTypes annotation is used
 
                 metadata.setExcluded(annotColl.excluded());
                 metadata.setFriendlyName(annotColl.friendlyName());

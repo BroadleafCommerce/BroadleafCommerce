@@ -1,4 +1,4 @@
-package org.broadleafcommerce.common.presentation;
+package org.broadleafcommerce.common.presentation.client;
 
 /**
  * Define whether a new collection member is searched for or constructed.

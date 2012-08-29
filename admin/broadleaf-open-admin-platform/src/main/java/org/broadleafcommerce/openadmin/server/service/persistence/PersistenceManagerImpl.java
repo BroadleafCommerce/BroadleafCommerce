@@ -27,7 +27,7 @@ import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.common.presentation.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -232,7 +232,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 if (!handler.willHandleSecurity(persistencePackage)) {
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
                 }
-                DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                 return postFetch(results, persistencePackage);
             }
         }
@@ -254,7 +254,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 if (!handler.willHandleSecurity(persistencePackage)) {
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
                 }
-                Entity response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                Entity response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                 return postAdd(response, persistencePackage);
             }
         }
@@ -283,7 +283,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         }
                     }
                 }
-                Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                 return postUpdate(response, persistencePackage);
             }
         }
@@ -318,7 +318,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         }
                     }
                 }
-                handler.remove(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                handler.remove(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                 return;
             }
         }

@@ -35,20 +35,20 @@ import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
 /**
  * A simple presenter for list grids that is capable of displaying lists of
- * JoinStructure associated items, as well as simple ForeignKey associated items.
+ * AdornedTargetList associated items, as well as simple ForeignKey associated items.
  *
  * @author jfischer
  *
  */
-public class SimpleSearchJoinStructureAndListPresenter extends AbstractSubPresentable {
+public class SimpleSearchAdornedTargetAndBasicListPresenter extends AbstractSubPresentable {
 
 	protected EntitySearchDialog searchDialog;
 	protected String searchDialogTitle;
@@ -58,13 +58,13 @@ public class SimpleSearchJoinStructureAndListPresenter extends AbstractSubPresen
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickedHandlerRegistration;
 	
-	public SimpleSearchJoinStructureAndListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
+	public SimpleSearchAdornedTargetAndBasicListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
 		super(display, availableToTypes);
 		this.searchDialog = searchDialog;
 		this.searchDialogTitle = searchDialogTitle;
 	}
 
-    public SimpleSearchJoinStructureAndListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
+    public SimpleSearchAdornedTargetAndBasicListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
 		this(display, searchDialog, null, searchDialogTitle);
 	}
 	
@@ -98,7 +98,7 @@ public class SimpleSearchJoinStructureAndListPresenter extends AbstractSubPresen
 			}
 		});
 		/*
-		 * TODO add code to check if the JoinStructure has a sort field defined. If not,
+		 * TODO add code to check if the AdornedTargetList has a sort field defined. If not,
 		 * then disable the re-order functionality
 		 */
 		recordDroppedHandlerRegistration = display.getGrid().addRecordDropHandler(new RecordDropHandler() {
@@ -109,8 +109,8 @@ public class SimpleSearchJoinStructureAndListPresenter extends AbstractSubPresen
 				if (newIndex > originalIndex) {
 					newIndex--;
 				}
-				JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-				record.setAttribute(joinStructure.getSortField(), newIndex);
+				AdornedTargetList adornedTargetList = (AdornedTargetList) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+				record.setAttribute(adornedTargetList.getSortField(), newIndex);
 				display.getGrid().updateData(record);
 			}
 		});

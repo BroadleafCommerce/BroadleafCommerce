@@ -1,6 +1,6 @@
 package org.broadleafcommerce.openadmin.client.dto;
 
-import org.broadleafcommerce.common.presentation.AddType;
+import org.broadleafcommerce.common.presentation.client.AddType;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 
 /**

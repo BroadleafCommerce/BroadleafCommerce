@@ -30,7 +30,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.Entit
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.common.presentation.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
@@ -56,7 +56,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 
 	@Override
 	protected void executeFetch(final String requestId, final DSRequest request, final DSResponse response) {
-		CriteriaTransferObject criteriaTransferObject = getCompatibleModule(OperationType.ENTITY).getCto(request);
+		CriteriaTransferObject criteriaTransferObject = getCompatibleModule(OperationType.BASIC).getCto(request);
         String[] filterValues = criteriaTransferObject.get(CategoryTreeDataSourceFactory.foreignKeyName).getFilterValues();
 		String parentCategoryId = filterValues.length>0?filterValues[0]:null;
 		boolean hasChildren = true;
@@ -98,7 +98,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 		setLinkedValue(getPrimaryKeyValue(((ListGrid) getAssociatedGrid()).getSelectedRecord()));
 		JavaScriptObject data = request.getData();
         final TreeNode newRecord = new TreeNode(data);
-        final DataSourceModule entityModule = getCompatibleModule(OperationType.ENTITY);
+        final DataSourceModule entityModule = getCompatibleModule(OperationType.BASIC);
     	Entity entity = entityModule.buildEntity(newRecord, request);
     	//Add the new category entity
 		service.add(new PersistencePackage(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, new String[]{"addNewCategory"}, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {

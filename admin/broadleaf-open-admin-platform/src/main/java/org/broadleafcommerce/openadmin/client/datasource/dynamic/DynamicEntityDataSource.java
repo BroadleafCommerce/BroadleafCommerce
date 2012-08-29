@@ -24,8 +24,8 @@ import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.util.JSOHelper;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import org.broadleafcommerce.common.presentation.OperationType;
-import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
@@ -138,16 +138,16 @@ public class DynamicEntityDataSource extends AbstractDynamicDataSource {
 	
 	public Criteria createRelationshipCriteria(String relationshipValue) {
 		ForeignKey foreignField = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-		if (foreignField == null && joinStructure == null) {
-			throw new RuntimeException("Only datasources that utilize foreignField or joinStructure relationships may utilize this method");
+		AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+		if (foreignField == null && adornedTargetList == null) {
+			throw new RuntimeException("Only datasources that utilize foreignField or adornedTargetList relationships may utilize this method");
 		}
 		Criteria criteria = new Criteria();
 		String relationshipName;
 		if (foreignField != null) {
 			relationshipName = foreignField.getManyToField();
-		} else if (joinStructure != null) {
-			relationshipName = joinStructure.getName();
+		} else if (adornedTargetList != null) {
+			relationshipName = adornedTargetList.getName();
 		} else {
 			relationshipName = "containingEntityId";
 		}

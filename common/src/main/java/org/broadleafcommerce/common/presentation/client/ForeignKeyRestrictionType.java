@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.presentation;
+package org.broadleafcommerce.common.presentation.client;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -23,8 +23,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * @author jfischer
  *
  */
-public enum PersistencePerspectiveItemType implements IsSerializable {
-	FOREIGNKEY,
-	JOINSTRUCTURE,
-	MAPSTRUCTURE
+public enum ForeignKeyRestrictionType implements IsSerializable {
+	ID_EQ,
+	COLLECTION_SIZE_EQ
 }

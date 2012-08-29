@@ -33,16 +33,17 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.common.presentation.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -229,8 +230,8 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 					}
 				}
 			} else if (
-				property.getMetadata() != null && property.getMetadata().getFieldType() != null &&
-				property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
+				property.getMetadata() != null && ((BasicFieldMetadata) property.getMetadata()).getFieldType() != null &&
+				((BasicFieldMetadata) property.getMetadata()).getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
 			) {
 				record.setAttribute(attributeName, linkedValue);
 			} else {
@@ -359,6 +360,6 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 	
 	@Override
 	public boolean isCompatible(OperationType operationType) {
-    	return OperationType.MAPSTRUCTURE.equals(operationType);
+    	return OperationType.MAP.equals(operationType);
     }
 }

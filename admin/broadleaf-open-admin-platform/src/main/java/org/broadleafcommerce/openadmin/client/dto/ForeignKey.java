@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.client.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.broadleafcommerce.common.presentation.ForeignKeyRestrictionType;
+import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
 
 import java.io.Serializable;

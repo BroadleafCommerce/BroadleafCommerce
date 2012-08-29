@@ -6,11 +6,11 @@ import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryLi
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.common.presentation.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.common.presentation.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -27,9 +27,9 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        JoinStructure joinStructure = (JoinStructure) persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-        String targetPath = joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty();
-        String linkedPath = joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty();
+        AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+        String targetPath = adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty();
+        String linkedPath = adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty();
         
         Long parentId = Long.parseLong(persistencePackage.getEntity().findProperty(linkedPath).getValue());
         Long childId = Long.parseLong(persistencePackage.getEntity().findProperty(targetPath).getValue());
@@ -43,7 +43,7 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
 
         checkParents(child, parent);
         
-        return helper.getCompatibleModule(OperationType.JOINSTRUCTURE).add(persistencePackage);
+        return helper.getCompatibleModule(OperationType.ADORNEDTARGETLIST).add(persistencePackage);
     }
     
     protected void checkParents(Category child, Category parent) throws ServiceException {

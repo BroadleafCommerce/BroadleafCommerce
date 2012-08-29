@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.client.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.broadleafcommerce.common.presentation.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 
 import java.io.Serializable;
 
@@ -28,11 +28,11 @@ public class OperationTypes implements IsSerializable, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private OperationType fetchType = OperationType.ENTITY;
-    private OperationType removeType = OperationType.ENTITY;
-    private OperationType addType = OperationType.ENTITY;
-    private OperationType updateType = OperationType.ENTITY;
-    private OperationType inspectType = OperationType.ENTITY;
+    private OperationType fetchType = OperationType.BASIC;
+    private OperationType removeType = OperationType.BASIC;
+    private OperationType addType = OperationType.BASIC;
+    private OperationType updateType = OperationType.BASIC;
+    private OperationType inspectType = OperationType.BASIC;
 
     public OperationTypes() {
         //do nothing
@@ -49,12 +49,12 @@ public class OperationTypes implements IsSerializable, Serializable {
     /**
      * How should the system execute a removal of this item.
      * <p/>
-     * OperationType ENTITY will result in the item being removed based on its primary key
-     * OperationType FOREIGNKEY will result in the item being removed from the containing list in the containing entity. This
+     * OperationType BASIC will result in the item being removed based on its primary key
+     * OperationType NONDESTRUCTIVEREMOVE will result in the item being removed from the containing list in the containing entity. This
      * is useful when you don't want the item to actually be deleted, but simply removed from the parent collection.
-     * OperationType JOINSTRUCTURE will result in a join structure being deleted (not either of the associated entities).
+     * OperationType ADORNEDTARGETLIST will result in a join structure being deleted (not either of the associated entities).
      * org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl is an example of a join structure entity.
-     * OperationType MAPSTRUCTURE will result in the item being removed from the requisite map in the containing entity.
+     * OperationType MAP will result in the item being removed from the requisite map in the containing entity.
      *
      * @return the type of remove operation
      */
@@ -65,12 +65,12 @@ public class OperationTypes implements IsSerializable, Serializable {
     /**
      * How should the system execute a removal of this item.
      * <p/>
-     * OperationType ENTITY will result in the item being removed based on its primary key
-     * OperationType FOREIGNKEY will result in the item being removed from the containing list in the containing entity. This
+     * OperationType BASIC will result in the item being removed based on its primary key
+     * OperationType NONDESTRUCTIVEREMOVE will result in the item being removed from the containing list in the containing entity. This
      * is useful when you don't want the item to be removed to actually be deleted, but simply removed from the parent collection.
-     * OperationType JOINSTRUCTURE will result in a join structure being deleted (not either of the associated entities).
+     * OperationType ADORNEDTARGETLIST will result in a join structure being deleted (not either of the associated entities).
      * org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl is an example of a join structure entity.
-     * OperationType MAPSTRUCTURE will result in the item being removed from the requisite map in the containing entity.
+     * OperationType MAP will result in the item being removed from the requisite map in the containing entity.
      *
      * @param removeType
      */
@@ -81,12 +81,12 @@ public class OperationTypes implements IsSerializable, Serializable {
     /**
      * How should the system execute an addition for this item
      * <p/>
-     * OperationType ENTITY will result in the item being inserted
-     * OperationType FOREIGNKEY is not supported and will result in the same behavior as ENTITY. Note, any foreign key associations in the
-     * persistence perspective (@see PersistencePerspective) will be honored during the ENTITY based add.
-     * OperationType JOINSTRUCTURE will result in a join structure entity being added (not either of the associated entities).
+     * OperationType BASIC will result in the item being inserted
+     * OperationType NONDESTRUCTIVEREMOVE is not supported and will result in the same behavior as BASIC. Note, any foreign key associations in the
+     * persistence perspective (@see PersistencePerspective) will be honored during the BASIC based add.
+     * OperationType ADORNEDTARGETLIST will result in a join structure entity being added (not either of the associated entities).
      * org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl is an example of a join structure entity.
-     * OperationType MAPSTRUCTURE will result in the item being added to the requisite map in the containing entity.
+     * OperationType MAP will result in the item being added to the requisite map in the containing entity.
      *
      * @return the type of the add operation
      */
@@ -97,12 +97,12 @@ public class OperationTypes implements IsSerializable, Serializable {
     /**
      * How should the system execute an addition for this item
      * <p/>
-     * OperationType ENTITY will result in the item being inserted
-     * OperationType FOREIGNKEY is not supported and will result in the same behavior as ENTITY. Note, any foreign key associations in the
-     * persistence perspective (@see PersistencePerspective) will be honored during the ENTITY based add.
-     * OperationType JOINSTRUCTURE will result in a join structure entity being added (not either of the associated entities).
+     * OperationType BASIC will result in the item being inserted
+     * OperationType NONDESTRUCTIVEREMOVE is not supported and will result in the same behavior as BASIC. Note, any foreign key associations in the
+     * persistence perspective (@see PersistencePerspective) will be honored during the BASIC based add.
+     * OperationType ADORNEDTARGETLIST will result in a join structure entity being added (not either of the associated entities).
      * org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl is an example of a join structure entity.
-     * OperationType MAPSTRUCTURE will result in the item being added to the requisite map in the containing entity.
+     * OperationType MAP will result in the item being added to the requisite map in the containing entity.
      *
      * @param addType
      */
@@ -113,12 +113,12 @@ public class OperationTypes implements IsSerializable, Serializable {
     /**
      * How should the system execute an update for this item
      * <p/>
-     * OperationType ENTITY will result in the item being updated based on it's primary key
-     * OperationType FOREIGNKEY is not supported and will result in the same behavior as ENTITY. Note, any foreign key associations in the
-     * persistence perspective (@see PersistencePerspective) will be honored during the ENTITY based update.
-     * OperationType JOINSTRUCTURE will result in a join structure entity being updated (not either of the associated entities).
+     * OperationType BASIC will result in the item being updated based on it's primary key
+     * OperationType NONDESTRUCTIVEREMOVE is not supported and will result in the same behavior as BASIC. Note, any foreign key associations in the
+     * persistence perspective (@see PersistencePerspective) will be honored during the BASIC based update.
+     * OperationType ADORNEDTARGETLIST will result in a join structure entity being updated (not either of the associated entities).
      * org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl is an example of a join structure entity.
-     * OperationType MAPSTRUCTURE will result in the item being updated to the requisite map in the containing entity.
+     * OperationType MAP will result in the item being updated to the requisite map in the containing entity.
      *
      * @return the type of the update operation
      */
@@ -129,12 +129,12 @@ public class OperationTypes implements IsSerializable, Serializable {
     /**
      * How should the system execute an update for this item
      * <p/>
-     * OperationType ENTITY will result in the item being updated based on it's primary key
-     * OperationType FOREIGNKEY is not supported and will result in the same behavior as ENTITY. Note, any foreign key associations in the
-     * persistence perspective (@see PersistencePerspective) will be honored during the ENTITY based update.
-     * OperationType JOINSTRUCTURE will result in a join structure entity being updated (not either of the associated entities).
+     * OperationType BASIC will result in the item being updated based on it's primary key
+     * OperationType NONDESTRUCTIVEREMOVE is not supported and will result in the same behavior as BASIC. Note, any foreign key associations in the
+     * persistence perspective (@see PersistencePerspective) will be honored during the BASIC based update.
+     * OperationType ADORNEDTARGETLIST will result in a join structure entity being updated (not either of the associated entities).
      * org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl is an example of a join structure entity.
-     * OperationType MAPSTRUCTURE will result in the item being updated to the requisite map in the containing entity.
+     * OperationType MAP will result in the item being updated to the requisite map in the containing entity.
      *
      * @param updateType
      */
@@ -145,12 +145,12 @@ public class OperationTypes implements IsSerializable, Serializable {
     /**
      * How should the system execute a fetch
      * <p/>
-     * OperationType ENTITY will result in a search for items having one or more basic properties matches
-     * OperationType FOREINKEY is not support and will result in the same behavior as ENTITY. Note, any foreign key associations will be included
+     * OperationType BASIC will result in a search for items having one or more basic properties matches
+     * OperationType FOREINKEY is not support and will result in the same behavior as BASIC. Note, any foreign key associations will be included
      * as part of the query.
-     * OperationType JOINSTRUCTURE will result in search for items that match one of the associations in a join structure. For example, CategoryProductXrefImpl
-     * is used in a JoinStructure fetch to retrieve all products for a particular category.
-     * OperationType MAPSTRUCTURE will result retrieval of all map entries for the requisite map in the containing entity.
+     * OperationType ADORNEDTARGETLIST will result in search for items that match one of the associations in a join structure. For example, CategoryProductXrefImpl
+     * is used in a AdornedTargetList fetch to retrieve all products for a particular category.
+     * OperationType MAP will result retrieval of all map entries for the requisite map in the containing entity.
      *
      * @return the type of the fetch operation
      */
@@ -161,12 +161,12 @@ public class OperationTypes implements IsSerializable, Serializable {
     /**
      * How should the system execute a fetch
      * <p/>
-     * OperationType ENTITY will result in a search for items having one or more basic properties matches
-     * OperationType FOREINKEY is not support and will result in the same behavior as ENTITY. Note, any foreign key associations will be included
+     * OperationType BASIC will result in a search for items having one or more basic properties matches
+     * OperationType FOREINKEY is not support and will result in the same behavior as BASIC. Note, any foreign key associations will be included
      * as part of the query.
-     * OperationType JOINSTRUCTURE will result in search for items that match one of the associations in a join structure. For example, CategoryProductXrefImpl
-     * is used in a JoinStructure fetch to retrieve all products for a particular category.
-     * OperationType MAPSTRUCTURE will result retrieval of all map entries for the requisite map in the containing entity.
+     * OperationType ADORNEDTARGETLIST will result in search for items that match one of the associations in a join structure. For example, CategoryProductXrefImpl
+     * is used in a AdornedTargetList fetch to retrieve all products for a particular category.
+     * OperationType MAP will result retrieval of all map entries for the requisite map in the containing entity.
      *
      * @param fetchType
      */
@@ -175,7 +175,7 @@ public class OperationTypes implements IsSerializable, Serializable {
     }
 
     /**
-     * OperationType values are generally ignored for inspect and should be defined as ENTITY for consistency in most circumstances.
+     * OperationType values are generally ignored for inspect and should be defined as BASIC for consistency in most circumstances.
      * This API is meant to support future persistence modules where specialized inspect phase management may be required.
      *
      * @return the type of the inspect operation
@@ -185,7 +185,7 @@ public class OperationTypes implements IsSerializable, Serializable {
     }
 
     /**
-     * OperationType values are generally ignored for inspect and should be defined as ENTITY for consistency in most circumstances.
+     * OperationType values are generally ignored for inspect and should be defined as BASIC for consistency in most circumstances.
      * This API is meant to support future persistence modules where specialized inspect phase management may be required.
      *
      * @param inspectType

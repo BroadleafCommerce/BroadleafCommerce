@@ -43,7 +43,7 @@ import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.common.presentation.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
@@ -125,7 +125,7 @@ public class FileUploadDialog extends Window {
                                         props[j] = property;
                                     }
                                     entity.setProperties(props);
-                                    DataSourceModule module = ((DynamicEntityDataSource) dynamicForm.getDataSource()).getCompatibleModule(OperationType.ENTITY);
+                                    DataSourceModule module = ((DynamicEntityDataSource) dynamicForm.getDataSource()).getCompatibleModule(OperationType.BASIC);
                                     Record record = module.buildRecord(entity, false);
                                     if (handler != null) {
                                         handler.onItemEdited(new ItemEdited((ListGridRecord) record, dynamicForm.getDataSource()));
