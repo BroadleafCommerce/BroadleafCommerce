@@ -16,21 +16,17 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.ContentsType;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -49,12 +45,15 @@ import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
 import com.smartgwt.client.widgets.form.validator.Validator;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * 
@@ -238,7 +237,8 @@ public class FormBuilder {
         	String[] groups = new String[sectionNames.size()];
         	groups = sectionNames.keySet().toArray(groups);
         	Arrays.sort(groups, new Comparator<String>() {
-				public int compare(String o1, String o2) {
+				@Override
+                public int compare(String o1, String o2) {
 					if (o1.equals(o2)) {
 						return 0;
 					} else if (o1.equals("General")) {
@@ -350,7 +350,8 @@ public class FormBuilder {
 						String otherFieldName = validator.getAttribute("otherField");
 						final FormItem otherItem = new PasswordItem();
 						form.addFetchDataHandler(new FetchDataHandler() {
-							public void onFilterData(FetchDataEvent event) {
+							@Override
+                            public void onFilterData(FetchDataEvent event) {
 								otherItem.setValue(formItem.getValue());
 							}
 						});
@@ -424,7 +425,8 @@ public class FormBuilder {
 		case BOOLEAN:
 			formItem = new BooleanItem();
 			formItem.setValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					if (value == null) {
 						item.setValue(false);
 						return "false";
@@ -449,7 +451,8 @@ public class FormBuilder {
 		case MONEY:
 			formItem = new FloatItem();
 			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
 				}
 			});
@@ -457,7 +460,8 @@ public class FormBuilder {
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
 			formItem.setValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
 					if (value == null) {
 						response = "";
@@ -471,7 +475,8 @@ public class FormBuilder {
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
 			formItem.setValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
 					if (value == null) {
 						response = "";
@@ -507,7 +512,8 @@ public class FormBuilder {
 			formItem = new TextItem();
 			((TextItem)formItem).setLength(field.getLength());
 			formItem.setValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
+				@Override
+                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					return value==null?"":((DynamicEntityDataSource) dataSource).stripDuplicateAllowSpecialCharacters(String.valueOf(value));
 				}
 			});
@@ -517,35 +523,13 @@ public class FormBuilder {
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
         case HTML:
-        	RichTextCanvasItem richTextCanvasItem = new RichTextCanvasItem();
-        	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getHtmlEditorIFramePath(), form);
-            if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
-                throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
-            }
-        	richTextHTMLPane.setWidth(700);
-        	richTextHTMLPane.setHeight(450);
-            richTextHTMLPane.setContentsType(ContentsType.PAGE);
-            //richTextHTMLPane.init();
-        	richTextCanvasItem.setCanvas(richTextHTMLPane);
-            richTextCanvasItem.setShowTitle(true);
-        	
-        	formItem = richTextCanvasItem;
-            break;
+            formItem = new BLCRichTextItem();
+            formItem.setHeight(500);         
+           break;
         case HTML_BASIC:
-        	RichTextCanvasItem basicRichTextCanvasItem = new RichTextCanvasItem();
-        	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getBasicHtmlEditorIFramePath(), form);
-            if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
-                throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
-            }
-        	basicRichTextHTMLPane.setWidth(300);
-        	basicRichTextHTMLPane.setHeight(175);
-            basicRichTextHTMLPane.setContentsType(ContentsType.PAGE);
-            //basicRichTextHTMLPane.init();
-        	basicRichTextCanvasItem.setCanvas(basicRichTextHTMLPane);
-            basicRichTextCanvasItem.setShowTitle(true);
-        	
-        	formItem = basicRichTextCanvasItem;
-        	break;
+            formItem = new BLCRichTextItem();
+            formItem.setHeight(150);         
+           break;
         case UPLOAD:
             formItem = new UploadItem();
             break;
