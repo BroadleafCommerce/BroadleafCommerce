@@ -87,8 +87,10 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 
         this.modules = modules;
 
-        setWidth100();
-        setHeight100();
+        //setWidth100();
+        //setHeight100();
+        setWidth("90%");
+        setHeight("90%");
 
         //addMember(buildHeader());
         //addMember(buildPrimaryMenu(moduleKey));
