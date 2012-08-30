@@ -54,7 +54,6 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
@@ -77,9 +76,7 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
 import java.util.ArrayList;
@@ -1097,21 +1094,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 
                 @Override
                 public void visit(final CollectionMetadata metadata) {
-                    String dataSourceName;
-                    if (metadata.getDataSourceName() != null && metadata.getDataSourceName().length() > 0) {
-                        dataSourceName = metadata.getDataSourceName();
-                    } else {
-                        dataSourceName = property.getName() + "AdvancedCollectionDS";
-                    }
-                    if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
-                        throw new RuntimeException("The datasource name (" + dataSourceName + ") was found to already exist in PresenterSequenceSetupManager. The datasource name must be unique.");
-                    }
-                    presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(metadata), new AsyncCallbackAdapter() {
-                        @Override
-                        public void onSetupSuccess(DataSource result) {
-                            FormBuilder.buildAdvancedCollectionForm(result, metadata, property.getName(), (DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter());
-                        }
-                    }));
+                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
                 }
             });
 		}

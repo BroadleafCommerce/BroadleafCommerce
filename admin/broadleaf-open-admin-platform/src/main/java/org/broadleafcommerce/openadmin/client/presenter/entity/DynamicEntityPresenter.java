@@ -49,12 +49,18 @@ import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,6 +90,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected HandlerRegistration showArchivedButtonHandlerRegistration;
     protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
     protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();
+    protected Map<String, CollectionMetadata> collectionMetadatas = new HashMap<String, CollectionMetadata>();
 
     protected Boolean disabled = false;
 
@@ -215,7 +222,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                         }
                         changeSelection(selectedRecord);
                         for (SubPresentable subPresentable : subPresentables) {
-                            //this is only suitable when the no callback is required for the load - which is most cases
+                            //this is only suitable when no callback is required for the load - which is most cases
                             subPresentable.load(selectedRecord, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource());
                         }
                         display.getDynamicFormDisplay().getSaveButton().disable();
@@ -346,6 +353,37 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         getDisplay().build(entityDataSource, additionalDataSources);
         formPresenter = new DynamicFormPresenter(display.getDynamicFormDisplay());
         ((PresentationLayerAssociatedDataSource) entityDataSource).setAssociatedGrid(display.getListDisplay().getGrid());
+
+        for (final Map.Entry<String, CollectionMetadata> entry : collectionMetadatas.entrySet()) {
+            //only show this edit grid if the dynamic presenter's root managed entity is the direct parent of this collection
+            boolean shouldLoad = false;
+            ClassTree classTree = ((DynamicEntityDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).getPolymorphicEntityTree();
+            for (String availableType : entry.getValue().getAvailableToTypes()) {
+                ClassTree availableTypeResult = classTree.find(availableType);
+                if (availableTypeResult != null) {
+                    shouldLoad = true;
+                    break;
+                }
+            }
+            if (shouldLoad) {
+                String dataSourceName;
+                if (entry.getValue().getDataSourceName() != null && entry.getValue().getDataSourceName().length() > 0) {
+                    dataSourceName = entry.getValue().getDataSourceName();
+                } else {
+                    dataSourceName = entry.getKey() + "AdvancedCollectionDS";
+                }
+                if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
+                    java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE,"Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
+                    return;
+                }
+                presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(entry.getValue()), new AsyncCallbackAdapter() {
+                    @Override
+                    public void onSetupSuccess(DataSource result) {
+                        FormBuilder.buildAdvancedCollectionForm(result, entry.getValue(), entry.getKey(), DynamicEntityPresenter.this);
+                    }
+                }));
+            }
+        }
     }
 
     protected void changeSelection(Record selectedRecord) {
@@ -469,4 +507,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         this.gridFields = gridFields;
     }
 
+    public void addCollectionMetadata(String propertyName, CollectionMetadata collectionMetadata) {
+        collectionMetadatas.put(propertyName, collectionMetadata);
+    }
 }

@@ -1284,13 +1284,16 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 					presentationAttributes.containsKey(propertyName)
 			) {
                 if (myField != null && myField.getAnnotation(AdminPresentationCollection.class) != null) {
-                    CollectionMetadata fieldMetadata = (CollectionMetadata) presentationAttributes.get(propertyName);
-                    if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
-                        fieldMetadata.setCollectionCeilingEntity(type.getReturnedClass().getName());
+                    //only a collection that is a direct member of the ceiling entity may be included
+                    if (StringUtils.isEmpty(prefix)) {
+                        CollectionMetadata fieldMetadata = (CollectionMetadata) presentationAttributes.get(propertyName);
+                        if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
+                            fieldMetadata.setCollectionCeilingEntity(type.getReturnedClass().getName());
+                        }
+                        fieldMetadata.setInheritedFromType(targetClass.getName());
+                        fieldMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
+                        fields.put(propertyName, fieldMetadata);
                     }
-                    fieldMetadata.setInheritedFromType(targetClass.getName());
-                    fieldMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
-                    fields.put(propertyName, fieldMetadata);
                 } else {
                     FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
                     Boolean amIExcluded = isParentExcluded || !testPropertyInclusion(presentationAttribute);
