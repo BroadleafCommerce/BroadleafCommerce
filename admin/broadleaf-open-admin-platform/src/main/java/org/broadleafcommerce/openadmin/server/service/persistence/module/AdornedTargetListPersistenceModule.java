@@ -78,8 +78,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 
 	public BaseCtoConverter getAdornedTargetCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties, AdornedTargetList adornedTargetList) throws ClassNotFoundException {
 		BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, adornedTargetList.getAdornedTargetEntityClassname(), mergedProperties);
-		ctoConverter.addLongEQMapping(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetList.getName(), AssociationPath.ROOT, adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty());
-		ctoConverter.addLongEQMapping(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetList.getName() + "Target", AssociationPath.ROOT, adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty());
+		ctoConverter.addLongEQMapping(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetList.getCollectionFieldName(), AssociationPath.ROOT, adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty());
+		ctoConverter.addLongEQMapping(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetList.getCollectionFieldName() + "Target", AssociationPath.ROOT, adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty());
 		return ctoConverter;
 	}
 	
@@ -174,7 +174,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 			);
 			
 			CriteriaTransferObject ctoInserted = new CriteriaTransferObject();
-			FilterAndSortCriteria filterCriteriaInsertedLinked = ctoInserted.get(adornedTargetList.getName());
+			FilterAndSortCriteria filterCriteriaInsertedLinked = ctoInserted.get(adornedTargetList.getCollectionFieldName());
 			String linkedPath;
 			String targetPath;
 			if (adornedTargetList.getInverse()) {
@@ -185,7 +185,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 				linkedPath = adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty();
 			}
 			filterCriteriaInsertedLinked.setFilterValue(entity.findProperty(adornedTargetList.getInverse()?targetPath:linkedPath).getValue());
-			FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(adornedTargetList.getName()+"Target");
+			FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(adornedTargetList.getCollectionFieldName()+"Target");
 			filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(adornedTargetList.getInverse()?linkedPath:targetPath).getValue());
 			BaseCtoConverter ctoConverterInserted = getAdornedTargetCtoConverter(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
 			PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, adornedTargetList.getAdornedTargetEntityClassname());
@@ -202,7 +202,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 				}
 				if (adornedTargetList.getSortField() != null) {
 					CriteriaTransferObject cto = new CriteriaTransferObject();
-					FilterAndSortCriteria filterCriteria = cto.get(adornedTargetList.getName());
+					FilterAndSortCriteria filterCriteria = cto.get(adornedTargetList.getCollectionFieldName());
 					filterCriteria.setFilterValue(entity.findProperty(adornedTargetList.getInverse()?targetPath:linkedPath).getValue());
 					FilterAndSortCriteria sortCriteria = cto.get(adornedTargetList.getSortField());
 					sortCriteria.setSortAscending(adornedTargetList.getSortAscending());
@@ -312,9 +312,9 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 				""
 			);
 			CriteriaTransferObject ctoInserted = new CriteriaTransferObject();
-			FilterAndSortCriteria filterCriteriaInsertedLinked = ctoInserted.get(adornedTargetList.getName());
+			FilterAndSortCriteria filterCriteriaInsertedLinked = ctoInserted.get(adornedTargetList.getCollectionFieldName());
 			filterCriteriaInsertedLinked.setFilterValue(entity.findProperty(adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty()).getValue());
-			FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(adornedTargetList.getName()+"Target");
+			FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(adornedTargetList.getCollectionFieldName()+"Target");
 			filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty()).getValue());
 			BaseCtoConverter ctoConverterInserted = getAdornedTargetCtoConverter(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
 			PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, adornedTargetList.getAdornedTargetEntityClassname());
@@ -430,7 +430,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 
         public AdornedTargetRetrieval invoke() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, FieldNotAvailableException {
             CriteriaTransferObject cto = new CriteriaTransferObject();
-            FilterAndSortCriteria filterCriteria = cto.get(adornedTargetList.getName());
+            FilterAndSortCriteria filterCriteria = cto.get(adornedTargetList.getCollectionFieldName());
             filterCriteria.setFilterValue(entity.findProperty(adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty()).getValue());
             if (adornedTargetList.getSortField() != null) {
                 FilterAndSortCriteria sortCriteria = cto.get(adornedTargetList.getSortField());

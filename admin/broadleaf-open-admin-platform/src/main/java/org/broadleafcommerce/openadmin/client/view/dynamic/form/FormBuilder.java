@@ -48,12 +48,17 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import java.util.ArrayList;
@@ -72,7 +77,7 @@ import java.util.MissingResourceException;
  */
 public class FormBuilder {
 
-    public static void buildAdvancedCollectionForm(DataSource dataSource, CollectionMetadata metadata, String propertyName, DynamicEntityPresenter presenter) {
+    public static void buildAdvancedCollectionForm(final DataSource dataSource, final DataSource lookupDataSource, CollectionMetadata metadata, String propertyName, final DynamicEntityPresenter presenter) {
         Layout destination;
         if (metadata.getTargetElementId() != null && metadata.getTargetElementId().length() > 0) {
             destination = (Layout) ((Layout) presenter.getDisplay()).getMember(metadata.getTargetElementId());
@@ -80,25 +85,43 @@ public class FormBuilder {
             destination = (Layout) presenter.getDisplay().getDynamicFormDisplay().getFormOnlyDisplay();
         }
 
-        String viewTitle;
+        final String viewTitle;
         if (metadata.getFriendlyName() == null || metadata.getFriendlyName().length() == 0) {
             viewTitle = propertyName;
         } else {
+            String temp;
             try {
-                viewTitle = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
+                temp = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
             } catch (MissingResourceException e) {
-                viewTitle = metadata.getFriendlyName();
+                temp = metadata.getFriendlyName();
             }
+            viewTitle = temp;
         }
-        GridStructureView advancedCollectionView = new GridStructureView(viewTitle, false, true);
+        final GridStructureView advancedCollectionView = new GridStructureView(viewTitle, false, true);
         destination.addMember(advancedCollectionView);
 
-        SubPresentable subPresentable;
-        if (metadata.getAddType() == AddType.PERSIST) {
-            subPresentable = new CreateBasedListStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
-            subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
-            presenter.addSubPresentable(subPresentable);
-        }
+        metadata.accept(new MetadataVisitorAdapter() {
+            @Override
+            public void visit(BasicCollectionMetadata metadata) {
+                SubPresentable subPresentable;
+                if (metadata.getAddType() == AddType.PERSIST) {
+                    subPresentable = new CreateBasedListStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
+                } else {
+                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, new EntitySearchDialog((ListGridDataSource)lookupDataSource, true), metadata.getAvailableToTypes(), viewTitle);
+                }
+                subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+                presenter.addSubPresentable(subPresentable);
+            }
+
+            @Override
+            public void visit(AdornedTargetCollectionMetadata metadata) {
+                //TODO add support
+            }
+        });
+    }
+
+    public static void buildAdvancedCollectionForm(DataSource dataSource, CollectionMetadata metadata, String propertyName, DynamicEntityPresenter presenter) {
+        buildAdvancedCollectionForm(dataSource, null, metadata, propertyName, presenter);
     }
 
 	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showId, Record currentRecord) {

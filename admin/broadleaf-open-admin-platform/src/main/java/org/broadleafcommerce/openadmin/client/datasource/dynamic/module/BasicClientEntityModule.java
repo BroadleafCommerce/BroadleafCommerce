@@ -57,9 +57,10 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -69,7 +70,7 @@ import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -815,7 +816,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 			});
 		}
 		for (final Property property : metadata.getProperties()) {
-            property.getMetadata().accept(new MetadataVisitor() {
+            property.getMetadata().accept(new MetadataVisitorAdapter() {
                 @Override
                 public void visit(BasicFieldMetadata metadata) {
                     String mergedPropertyType = metadata.getMergedPropertyType().toString();
@@ -1093,7 +1094,12 @@ public class BasicClientEntityModule implements DataSourceModule {
                 }
 
                 @Override
-                public void visit(final CollectionMetadata metadata) {
+                public void visit(final BasicCollectionMetadata metadata) {
+                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
+                }
+
+                @Override
+                public void visit(AdornedTargetCollectionMetadata metadata) {
                     ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
                 }
             });

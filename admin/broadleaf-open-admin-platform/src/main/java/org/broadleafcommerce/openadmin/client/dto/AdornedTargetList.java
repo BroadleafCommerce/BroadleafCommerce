@@ -27,7 +27,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
 
 	private static final long serialVersionUID = 1L;
 
-	private String name;
+	private String collectionFieldName;
 	private String linkedObjectPath;
 	private String targetObjectPath;
 	private String adornedTargetEntityClassname;
@@ -42,20 +42,20 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
 		//do nothing
 	}
 	
-	public AdornedTargetList(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname) {
-		this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, null);
+	public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname) {
+		this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, null);
 	}
     
-    public AdornedTargetList(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType) {
-        this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, adornedTargetEntityPolymorphicType, null, null);
+    public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType) {
+        this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, adornedTargetEntityPolymorphicType, null, null);
     }
 
-    public AdornedTargetList(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String sortField, Boolean sortAscending) {
-        this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, sortField, sortAscending);
+    public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String sortField, Boolean sortAscending) {
+        this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, sortField, sortAscending);
     }
 	
-	public AdornedTargetList(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType, String sortField, Boolean sortAscending) {
-		this.name = name;
+	public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType, String sortField, Boolean sortAscending) {
+		this.collectionFieldName = collectionFieldName;
 		this.linkedObjectPath = linkedObjectPath;
 		this.targetObjectPath = targetObjectPath;
 		this.adornedTargetEntityClassname = adornedTargetEntityClassname;
@@ -66,12 +66,12 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
 		this.targetIdProperty = targetIdProperty;
 	}
 	
-	public String getName() {
-		return name;
+	public String getCollectionFieldName() {
+		return collectionFieldName;
 	}
 	
-	public void setName(String manyToField) {
-		this.name = manyToField;
+	public void setCollectionFieldName(String manyToField) {
+		this.collectionFieldName = manyToField;
 	}
 
 	public String getLinkedObjectPath() {
@@ -153,7 +153,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
     @Override
     public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
         AdornedTargetList adornedTargetList = new AdornedTargetList();
-        adornedTargetList.name = name;
+        adornedTargetList.collectionFieldName = collectionFieldName;
         adornedTargetList.linkedObjectPath = linkedObjectPath;
         adornedTargetList.targetObjectPath = targetObjectPath;
         adornedTargetList.adornedTargetEntityClassname = adornedTargetEntityClassname;

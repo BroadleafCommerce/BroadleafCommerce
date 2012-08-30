@@ -147,7 +147,7 @@ public class DynamicEntityDataSource extends AbstractDynamicDataSource {
 		if (foreignField != null) {
 			relationshipName = foreignField.getManyToField();
 		} else if (adornedTargetList != null) {
-			relationshipName = adornedTargetList.getName();
+			relationshipName = adornedTargetList.getCollectionFieldName();
 		} else {
 			relationshipName = "containingEntityId";
 		}

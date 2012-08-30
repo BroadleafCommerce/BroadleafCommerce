@@ -8,6 +8,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * This annotation is used to describe a simple persistent collection
+ * for use by the admin tool.
+ *
  * @author Jeff Fischer
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -80,7 +83,8 @@ public @interface AdminPresentationCollection {
      *
      * @return the display value field name for the collection entity
      */
-    String displayValueProperty() default "name";
+    //TODO this only required for foreign key when doing a manytoone lookup
+    //String displayValueProperty() default "name";
 
     /**
      * Optional - only required if you want to specify ordering for this field

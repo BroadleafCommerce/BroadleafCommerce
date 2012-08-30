@@ -18,9 +18,7 @@ package org.broadleafcommerce.openadmin.client.datasource;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.AdornedTargetListClientModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
@@ -39,26 +37,19 @@ import java.util.List;
  *
  * @author Jeff Fischer
  */
-public class AdvancedCollectionDataSourceFactory implements DataSourceFactory {
+public class AdvancedCollectionLookupDataSourceFactory implements DataSourceFactory {
 
     private CollectionMetadata collectionMetadata;
 
-    public AdvancedCollectionDataSourceFactory(CollectionMetadata collectionMetadata) {
+    public AdvancedCollectionLookupDataSourceFactory(CollectionMetadata collectionMetadata) {
         this.collectionMetadata = collectionMetadata;
     }
 
     @Override
     public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-        PersistencePerspective persistencePerspective = collectionMetadata.getPersistencePerspective();
+        PersistencePerspective persistencePerspective = new PersistencePerspective();
         List<DataSourceModule> dataSourceModuleList = new ArrayList<DataSourceModule>();
-        //The BasicClientEntityModule is always added, regardless
         dataSourceModuleList.add(new BasicClientEntityModule(collectionMetadata.getCollectionCeilingEntity(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
-        if (persistencePerspective.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST)) {
-            dataSourceModuleList.add(new AdornedTargetListClientModule(collectionMetadata.getCollectionCeilingEntity(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
-        }
-        if (persistencePerspective.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.MAPSTRUCTURE)) {
-            //TODO add a map module
-        }
         DataSourceModule[] modules = new DataSourceModule[dataSourceModuleList.size()];
         modules = dataSourceModuleList.toArray(modules);
 

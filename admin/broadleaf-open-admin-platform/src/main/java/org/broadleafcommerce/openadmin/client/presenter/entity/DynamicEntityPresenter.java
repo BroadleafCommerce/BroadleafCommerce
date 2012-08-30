@@ -44,18 +44,24 @@ import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+import org.broadleafcommerce.common.presentation.client.AddType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionLookupDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.Display;
@@ -366,7 +372,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 }
             }
             if (shouldLoad) {
-                String dataSourceName;
+                final String dataSourceName;
                 if (entry.getValue().getDataSourceName() != null && entry.getValue().getDataSourceName().length() > 0) {
                     dataSourceName = entry.getValue().getDataSourceName();
                 } else {
@@ -376,12 +382,44 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                     java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE,"Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
                     return;
                 }
-                presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(entry.getValue()), new AsyncCallbackAdapter() {
+                entry.getValue().accept(new MetadataVisitorAdapter() {
                     @Override
-                    public void onSetupSuccess(DataSource result) {
-                        FormBuilder.buildAdvancedCollectionForm(result, entry.getValue(), entry.getKey(), DynamicEntityPresenter.this);
+                    public void visit(final BasicCollectionMetadata metadata) {
+                        //These next two presenter setup item decalarations are tricky from a timing perspective.
+                        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(metadata), new AsyncCallbackAdapter() {
+                            @Override
+                            public void onSetupSuccess(final DataSource baseDS) {
+                                //only build the form if the add type for this item is persist - otherwise wait for the lookup datasource to be constructed
+                                if (metadata.getAddType() == AddType.PERSIST) {
+                                    FormBuilder.buildAdvancedCollectionForm(baseDS, metadata, entry.getKey(), DynamicEntityPresenter.this);
+                                }
+                            }
+                        }));
+                        //check if the interaction requires a lookup datasource
+                        if (metadata.getAddType() == AddType.LOOKUP) {
+                            String lookupDSName = dataSourceName + "Lookup";
+                            presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(lookupDSName, new AdvancedCollectionLookupDataSourceFactory(metadata), new AsyncCallbackAdapter() {
+                                @Override
+                                public void onSetupSuccess(DataSource lookupDS) {
+                                    FormBuilder.buildAdvancedCollectionForm(presenterSequenceSetupManager.getDataSource(dataSourceName), lookupDS, metadata, entry.getKey(), DynamicEntityPresenter.this);
+                                }
+                            }));
+                        }
                     }
-                }));
+
+                    @Override
+                    public void visit(final AdornedTargetCollectionMetadata metadata) {
+                        //These next two presenter setup item decalarations are tricky from a timing perspective.
+                        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(metadata), new NullAsyncCallbackAdapter()));
+                        String lookupDSName = dataSourceName + "Lookup";
+                        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(lookupDSName, new AdvancedCollectionLookupDataSourceFactory(metadata), new AsyncCallbackAdapter() {
+                            @Override
+                            public void onSetupSuccess(DataSource lookupDS) {
+                                FormBuilder.buildAdvancedCollectionForm(presenterSequenceSetupManager.getDataSource(dataSourceName), lookupDS, metadata, entry.getKey(), DynamicEntityPresenter.this);
+                            }
+                        }));
+                    }
+                });
             }
         }
     }
