@@ -101,7 +101,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 
         addMember(canvas);
 
-        buildFooter();
+        //buildFooter();
         bind();
     }
 
