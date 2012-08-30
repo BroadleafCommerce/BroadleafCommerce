@@ -69,6 +69,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
 		setQualifiedKeys(searchCriteria);
 		List<Product> products = catalogService.findFilteredActiveProductsByCategory(category, SystemTime.asDate(), searchCriteria);
 		List<SearchFacetDTO> facets = getCategoryFacets(category);
+		setActiveFacets(facets, searchCriteria);
 		result.setProducts(products);
 		result.setFacets(facets);
 		result.setTotalResults(products.size());
@@ -83,6 +84,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
 		setQualifiedKeys(searchCriteria);
 		List<Product> products = catalogService.findFilteredActiveProductsByQuery(query, SystemTime.asDate(), searchCriteria);
 		List<SearchFacetDTO> facets = getSearchFacets();
+		setActiveFacets(facets, searchCriteria);
 		result.setProducts(products);
 		result.setFacets(facets);
 	    result.setTotalResults(products.size());
@@ -187,6 +189,19 @@ public class DatabaseSearchServiceImpl implements SearchService {
 		}
 	}
 	
+	
+	protected void setActiveFacets(List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria) {
+		for (SearchFacetDTO facet : facets) {
+			String qualifiedFieldName = getDatabaseQualifiedFieldName(facet.getFacet().getField().getQualifiedFieldName());
+			for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
+				if (qualifiedFieldName.equals(entry.getKey())) {
+					facet.setActive(true);
+				}
+			}
+		}
+	}
+	
+	
 	/**
 	 * Create the wrapper DTO around the SearchFacet
 	 * @param categoryFacets
@@ -200,7 +215,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
 			dto.setFacet(facet);
 			dto.setShowQuantity(false);
 			dto.setFacetValues(getFacetValues(facet));
-			dto.setActive(true);
+			dto.setActive(false);
 			facets.add(dto);
 		}
 		
