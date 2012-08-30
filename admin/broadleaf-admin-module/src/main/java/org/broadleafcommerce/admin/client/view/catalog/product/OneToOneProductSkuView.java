@@ -91,8 +91,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         detailsTab.setID("productSkuDetailsTab");
         
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("productDetailsTitle"), entityDataSource);
-        attributesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productAttributesTitle"), false, true);
-        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(attributesDisplay);
         bundleItemsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productBundleItemsTitle"), false, true);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(bundleItemsDisplay);
         detailsTab.setPane(dynamicFormDisplay);

@@ -160,4 +160,8 @@ public class PresenterSequenceSetupManager {
     public DynamicEntityDataSource getDataSource(String dataURL) {
         return dataSourceLibrary.get(dataURL);
     }
+
+    public EntityPresenter getPresenter() {
+        return presenter;
+    }
 }

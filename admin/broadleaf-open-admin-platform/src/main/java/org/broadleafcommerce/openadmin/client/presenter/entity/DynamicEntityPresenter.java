@@ -16,24 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
-import org.broadleafcommerce.openadmin.client.view.Display;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -62,6 +44,25 @@ import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
+import org.broadleafcommerce.openadmin.client.view.Display;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author jfischer
@@ -82,6 +83,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration showArchivedButtonHandlerRegistration;
     protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
+    protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();
 
     protected Boolean disabled = false;
 
@@ -146,6 +148,10 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         }
     }
 
+    public void addSubPresentable(SubPresentable subPresentable) {
+        subPresentables.add(subPresentable);
+    }
+
     public void bind() {
         formPresenter.bind();
         formPresenter.getSaveButtonHandlerRegistration().removeHandler();
@@ -208,6 +214,10 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                             display.getListDisplay().getRemoveButton().enable();
                         }
                         changeSelection(selectedRecord);
+                        for (SubPresentable subPresentable : subPresentables) {
+                            //this is only suitable when the no callback is required for the load - which is most cases
+                            subPresentable.load(selectedRecord, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource());
+                        }
                         display.getDynamicFormDisplay().getSaveButton().disable();
                         display.getDynamicFormDisplay().getRefreshButton().disable();
                     }
@@ -273,6 +283,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             display.show();
         } else {
             bind();
+            for (SubPresentable subPresentable : subPresentables) {
+                subPresentable.bind();
+            }
             container.addChild(display.asCanvas());
             loaded = true;
         }

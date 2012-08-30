@@ -188,7 +188,7 @@ public class ProductImpl implements Product, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddType.PERSIST)
+    @AdminPresentationCollection(addType = AddType.PERSIST, friendlyName = "ProductImpl_Product_Attributes")
     protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductOptionImpl.class)

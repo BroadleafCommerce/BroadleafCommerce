@@ -42,11 +42,19 @@ import com.smartgwt.client.widgets.form.fields.UploadItem;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
+import com.smartgwt.client.widgets.layout.Layout;
+import org.broadleafcommerce.common.presentation.client.AddType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +71,35 @@ import java.util.MissingResourceException;
  *
  */
 public class FormBuilder {
+
+    public static void buildAdvancedCollectionForm(DataSource dataSource, CollectionMetadata metadata, String propertyName, DynamicEntityPresenter presenter) {
+        Layout destination;
+        if (metadata.getTargetElementId() != null && metadata.getTargetElementId().length() > 0) {
+            destination = (Layout) ((Layout) presenter.getDisplay()).getMember(metadata.getTargetElementId());
+        } else {
+            destination = (Layout) presenter.getDisplay().getDynamicFormDisplay().getFormOnlyDisplay();
+        }
+
+        String viewTitle;
+        if (metadata.getFriendlyName() == null || metadata.getFriendlyName().length() == 0) {
+            viewTitle = propertyName;
+        } else {
+            try {
+                viewTitle = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
+            } catch (MissingResourceException e) {
+                viewTitle = metadata.getFriendlyName();
+            }
+        }
+        GridStructureView advancedCollectionView = new GridStructureView(viewTitle, false, true);
+        destination.addMember(advancedCollectionView);
+
+        SubPresentable subPresentable;
+        if (metadata.getAddType() == AddType.PERSIST) {
+            subPresentable = new CreateBasedListStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
+            subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+            presenter.addSubPresentable(subPresentable);
+        }
+    }
 
 	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showId, Record currentRecord) {
 		buildForm(dataSource, form, null, null, showId, currentRecord);

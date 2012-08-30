@@ -45,7 +45,6 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
 	public String mediaSizeSmall();
 	public String mediaSizeMedium();
 	public String mediaSizeLarge();
-	public String newAttributeTitle();
 	public String categorySearchPrompt();
 	public String categoryListTitle();
 	public String orphanCategoryListTitle();
@@ -117,5 +116,6 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String BundleOrderItemImpl_bundleOrderItem();
     public String ProductImpl_bundleProduct();
     public String OrderItemImpl_baseOrderItem();
+    public String ProductImpl_Product_Attributes();
  
 }

@@ -105,7 +105,7 @@ public @interface AdminPresentationCollection {
 
     /**
      * Optional - unique name for the backing datasource. If unspecified, the datasource
-     * name will be the JPA entity field name with "DS" appended to the end.
+     * name will be the JPA entity field name with "AdvancedCollectionDS" appended to the end.
      *
      * The datasource can be retrieved programatically in admin code via
      * PresenterSequenceSetupManager.getDataSource(..)

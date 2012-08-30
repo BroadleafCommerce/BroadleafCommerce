@@ -210,11 +210,12 @@ public class PersistencePerspective implements IsSerializable, Serializable {
             }
         }
 
-        if (persistencePerspectiveItems != null) {
+        if (this.persistencePerspectiveItems != null) {
             Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>(this.persistencePerspectiveItems.size());
             for (Map.Entry<PersistencePerspectiveItemType, PersistencePerspectiveItem> entry : this.persistencePerspectiveItems.entrySet()) {
                 persistencePerspectiveItems.put(entry.getKey(), entry.getValue().clonePersistencePerspectiveItem());
             }
+            persistencePerspective.persistencePerspectiveItems = persistencePerspectiveItems;
         }
 
         persistencePerspective.populateToOneFields = populateToOneFields;

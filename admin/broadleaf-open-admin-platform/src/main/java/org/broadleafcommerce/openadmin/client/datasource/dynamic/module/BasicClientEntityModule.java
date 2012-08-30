@@ -71,6 +71,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
@@ -78,6 +79,7 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
 import java.util.ArrayList;
@@ -1099,7 +1101,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                     if (metadata.getDataSourceName() != null && metadata.getDataSourceName().length() > 0) {
                         dataSourceName = metadata.getDataSourceName();
                     } else {
-                        dataSourceName = property.getName() + "DS1";
+                        dataSourceName = property.getName() + "AdvancedCollectionDS";
                     }
                     if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
                         throw new RuntimeException("The datasource name (" + dataSourceName + ") was found to already exist in PresenterSequenceSetupManager. The datasource name must be unique.");
@@ -1107,12 +1109,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                     presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(metadata), new AsyncCallbackAdapter() {
                         @Override
                         public void onSetupSuccess(DataSource result) {
-                            //TODO finish setup of datasource concerns
-                            //TODO the foreign key from the server inspection is not making it through to here in the persistence perspective
-                            Map<String, Object> initialValues = new HashMap<String, Object>(1);
-                            //initialValues.put("name", "Untitled");
-                            //productAttributePresenter = new CreateBasedListStructurePresenter(getDisplay().getAttributesDisplay(), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("newAttributeTitle"), initialValues);
-                            //productAttributePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "value", "searchable"}, new Boolean[]{true, true, true});
+                            FormBuilder.buildAdvancedCollectionForm(result, metadata, property.getName(), (DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter());
                         }
                     }));
                 }

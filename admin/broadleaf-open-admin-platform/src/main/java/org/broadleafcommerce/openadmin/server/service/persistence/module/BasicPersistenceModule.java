@@ -481,17 +481,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
             Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    persistencePackage.getCeilingEntityFullyQualifiedClassname(),
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+                persistencePackage.getCeilingEntityFullyQualifiedClassname(),
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
             if (primaryKey == null) {
                 primaryKey = getPrimaryKey(entity, mergedProperties);
@@ -745,17 +745,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
             Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    ceilingEntityFullyQualifiedClassname,
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+                ceilingEntityFullyQualifiedClassname,
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
             allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
         } catch (Exception e) {
@@ -774,17 +774,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
             Map<String, FieldMetadata> mergedUnfilteredProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    persistencePackage.getCeilingEntityFullyQualifiedClassname(),
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+                persistencePackage.getCeilingEntityFullyQualifiedClassname(),
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
             Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
 
@@ -886,17 +886,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         try {
             Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
             Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    ceilingEntityFullyQualifiedClassname,
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+                ceilingEntityFullyQualifiedClassname,
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
             BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);

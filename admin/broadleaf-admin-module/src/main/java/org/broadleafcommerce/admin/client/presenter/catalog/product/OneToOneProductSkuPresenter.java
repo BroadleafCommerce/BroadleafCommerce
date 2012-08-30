@@ -17,7 +17,6 @@
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
@@ -35,7 +34,6 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.CrossSalePr
 import org.broadleafcommerce.admin.client.datasource.catalog.product.DefaultSkuMediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductAttributeDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionListDataSourceFactory;
@@ -45,6 +43,7 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.SkuBundleIt
 import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
@@ -53,12 +52,10 @@ import org.broadleafcommerce.openadmin.client.datasource.StaticAssetsTileGridDat
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
@@ -96,21 +93,13 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-		//display.getListDisplay().getAddButton().disable();
-		crossSalePresenter.load(selectedRecord, dataSource, new DSCallback() {
-			@Override
-            public void execute(DSResponse response, Object rawData, DSRequest request) {
-				//display.getListDisplay().getAddButton().enable();
-			}
-		});
+		crossSalePresenter.load(selectedRecord, dataSource, null);
 		upSalePresenter.load(selectedRecord, dataSource, null);
 		mediaPresenter.load(selectedRecord, dataSource, null);
-		productAttributePresenter.load(selectedRecord, dataSource, null);
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
         productOptionsPresenter.load(selectedRecord, dataSource, null);
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
-       // addListenerToFormItem(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm());
         getDisplay().getCloneProductButton().enable();
 	}
 
@@ -126,7 +115,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		crossSalePresenter.bind();
 		upSalePresenter.bind();
 		mediaPresenter.bind();
-		productAttributePresenter.bind();
 		parentCategoriesPresenter.bind();
 		productOptionsPresenter.bind();
 		skusPresenter.bind();
@@ -261,15 +249,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	            initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
 				mediaPresenter = new DefaultSkuMediaMapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
 				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "url", "title", "altText", "tags"}, new Boolean[]{true, true, true, true, true});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productAttributeDS", new ProductAttributeDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
-            public void onSetupSuccess(DataSource result) {
-				Map<String, Object> initialValues = new HashMap<String, Object>(1);
-				initialValues.put("name", "Untitled");
-				productAttributePresenter = new CreateBasedListStructurePresenter(getDisplay().getAttributesDisplay(), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("newAttributeTitle"), initialValues);
-				productAttributePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "value", "searchable"}, new Boolean[]{true, true, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
