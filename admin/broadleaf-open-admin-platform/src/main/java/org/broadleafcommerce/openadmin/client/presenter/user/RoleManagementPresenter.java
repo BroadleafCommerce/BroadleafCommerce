@@ -26,7 +26,7 @@ import org.broadleafcommerce.openadmin.client.datasource.user.AdminCreateRoleLis
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminPermissionRelatedToUserListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchAdornedTargetAndBasicListPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
@@ -69,7 +69,7 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionRelatedToUserListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
-				permissionsPresenter = new SimpleSearchAdornedTargetAndBasicListPresenter(getDisplay().getPermissionsDisplay(), new EntitySearchDialog((ListGridDataSource) dataSource), new String[]{EntityImplementations.ADMIN_ROLE}, BLCMain.getMessageManager().getString("searchForPermission"));
+				permissionsPresenter = new SimpleSearchListPresenter(getDisplay().getPermissionsDisplay(), new EntitySearchDialog((ListGridDataSource) dataSource), new String[]{EntityImplementations.ADMIN_ROLE}, BLCMain.getMessageManager().getString("searchForPermission"));
 				permissionsPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "description", "type"}, new Boolean[]{false, false, false});
             }
         }));

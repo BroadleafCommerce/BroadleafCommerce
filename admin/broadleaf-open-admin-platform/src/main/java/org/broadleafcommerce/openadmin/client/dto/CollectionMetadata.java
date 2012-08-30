@@ -11,6 +11,8 @@ public class CollectionMetadata extends FieldMetadata {
     private AddType addType;
     private PersistencePerspective persistencePerspective;
     private String collectionCeilingEntity;
+    private String targetElementId;
+    private String dataSourceName;
 
     public AddType getAddType() {
         return addType;
@@ -36,12 +38,30 @@ public class CollectionMetadata extends FieldMetadata {
         this.collectionCeilingEntity = collectionCeilingEntity;
     }
 
+    public String getTargetElementId() {
+        return targetElementId;
+    }
+
+    public void setTargetElementId(String targetElementId) {
+        this.targetElementId = targetElementId;
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
+
     @Override
     public FieldMetadata cloneFieldMetadata() {
         CollectionMetadata metadata = new CollectionMetadata();
         metadata.setAddType(addType);
         metadata.setPersistencePerspective(persistencePerspective.clonePersistencePerspective());
         metadata.setCollectionCeilingEntity(collectionCeilingEntity);
+        metadata.setTargetElementId(targetElementId);
+        metadata.setDataSourceName(dataSourceName);
 
         metadata = (CollectionMetadata) populate(metadata);
 

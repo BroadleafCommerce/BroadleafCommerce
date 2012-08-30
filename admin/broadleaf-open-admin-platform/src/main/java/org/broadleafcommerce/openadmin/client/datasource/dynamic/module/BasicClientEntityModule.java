@@ -54,6 +54,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
@@ -73,6 +74,9 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
@@ -732,7 +736,7 @@ public class BasicClientEntityModule implements DataSourceModule {
             public void onSuccess(DynamicResultSet result) {
                 super.onSuccess(result);
                 ClassMetadata metadata = result.getClassMetaData();
-                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.ADORNEDTARGETLIST}, overrideFieldSort);
+                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.ADORNEDTARGETLIST}, overrideFieldSort, ((AsyncCallbackAdapter) cb).getDataSourceSetupManager());
 
                 //Add a hidden field to store the polymorphic type for this entity
                 DataSourceField typeField = new DataSourceTextField("_type");
@@ -775,7 +779,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     	return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
     }
 	
-	protected void filterProperties(ClassMetadata metadata, final MergedPropertyType[] includeTypes, Boolean overrideFieldSort) throws IllegalStateException {
+	protected void filterProperties(ClassMetadata metadata, final MergedPropertyType[] includeTypes, Boolean overrideFieldSort, final PresenterSequenceSetupManager presenterSequenceSetupManager) throws IllegalStateException {
 		if (BLCMain.isLogDebugEnabled("classmetadata")) {
 			Map<String, List<String>> props = new HashMap<String, List<String>>();
 			for (Property property : metadata.getProperties()) {
@@ -1090,8 +1094,27 @@ public class BasicClientEntityModule implements DataSourceModule {
                 }
 
                 @Override
-                public void visit(CollectionMetadata metadata) {
-                    //TODO handle collection case
+                public void visit(final CollectionMetadata metadata) {
+                    String dataSourceName;
+                    if (metadata.getDataSourceName() != null && metadata.getDataSourceName().length() > 0) {
+                        dataSourceName = metadata.getDataSourceName();
+                    } else {
+                        dataSourceName = property.getName() + "DS1";
+                    }
+                    if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
+                        throw new RuntimeException("The datasource name (" + dataSourceName + ") was found to already exist in PresenterSequenceSetupManager. The datasource name must be unique.");
+                    }
+                    presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(metadata), new AsyncCallbackAdapter() {
+                        @Override
+                        public void onSetupSuccess(DataSource result) {
+                            //TODO finish setup of datasource concerns
+                            //TODO the foreign key from the server inspection is not making it through to here in the persistence perspective
+                            Map<String, Object> initialValues = new HashMap<String, Object>(1);
+                            //initialValues.put("name", "Untitled");
+                            //productAttributePresenter = new CreateBasedListStructurePresenter(getDisplay().getAttributesDisplay(), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("newAttributeTitle"), initialValues);
+                            //productAttributePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "value", "searchable"}, new Boolean[]{true, true, true});
+                        }
+                    }));
                 }
             });
 		}
@@ -1121,6 +1144,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 
 	public void setDataSource(AbstractDynamicDataSource dataSource) {
 		this.dataSource = dataSource;
+        this.dataSource.setAttribute("COLLECTION_PROPERTIES", new HashMap(), true);
 	}
 
 	public String getCeilingEntityFullyQualifiedClassname() {

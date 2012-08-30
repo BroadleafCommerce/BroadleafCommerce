@@ -91,4 +91,27 @@ public @interface AdminPresentationCollection {
      */
     int order() default 99999;
 
+    /**
+     * Optional - only required if you want the resulting collection grid element to
+     * appear somewhere other than below the main detail form
+     *
+     * Specify a UI element Id to which the collection grid should be added. This is useful
+     * if, for example, you want the resulting collection grid to appear in another tab, or
+     * some other location in the admin tool UI.
+     *
+     * @return UI element Id to which the collection grid should be added
+     */
+    String targetUIElementId() default "";
+
+    /**
+     * Optional - unique name for the backing datasource. If unspecified, the datasource
+     * name will be the JPA entity field name with "DS" appended to the end.
+     *
+     * The datasource can be retrieved programatically in admin code via
+     * PresenterSequenceSetupManager.getDataSource(..)
+     *
+     * @return unique name for the backing datasource
+     */
+    String dataSourceName() default "";
+
 }

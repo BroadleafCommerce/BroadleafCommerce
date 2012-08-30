@@ -48,7 +48,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDis
  * @author jfischer
  *
  */
-public class SimpleSearchAdornedTargetAndBasicListPresenter extends AbstractSubPresentable {
+public class SimpleSearchListPresenter extends AbstractSubPresentable {
 
 	protected EntitySearchDialog searchDialog;
 	protected String searchDialogTitle;
@@ -58,13 +58,13 @@ public class SimpleSearchAdornedTargetAndBasicListPresenter extends AbstractSubP
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickedHandlerRegistration;
 	
-	public SimpleSearchAdornedTargetAndBasicListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
+	public SimpleSearchListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
 		super(display, availableToTypes);
 		this.searchDialog = searchDialog;
 		this.searchDialogTitle = searchDialogTitle;
 	}
 
-    public SimpleSearchAdornedTargetAndBasicListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
+    public SimpleSearchListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
 		this(display, searchDialog, null, searchDialogTitle);
 	}
 	

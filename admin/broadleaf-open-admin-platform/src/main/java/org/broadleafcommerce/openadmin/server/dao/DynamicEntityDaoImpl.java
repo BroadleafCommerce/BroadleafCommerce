@@ -1036,6 +1036,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 metadata.setSecurityLevel(annotColl.securityLevel());
                 metadata.setOrder(annotColl.order());
 
+                if (!StringUtils.isEmpty(annotColl.targetUIElementId())) {
+                    metadata.setTargetElementId(annotColl.targetUIElementId());
+                }
+
+                if (!StringUtils.isEmpty(annotColl.dataSourceName())) {
+                    metadata.setDataSourceName(annotColl.dataSourceName());
+                }
+
                 attributes.put(field.getName(), metadata);
 			} else {
                 BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -1275,96 +1283,100 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 					additionalForeignKeyIndexPosition >= 0 ||
 					presentationAttributes.containsKey(propertyName)
 			) {
-                BasicFieldMetadata presentationAttribute = (BasicFieldMetadata) presentationAttributes.get(propertyName);
-                Boolean amIExcluded = isParentExcluded || !testPropertyInclusion(presentationAttribute);
-				Boolean includeField = testPropertyRecursion(prefix, parentClasses, propertyName, targetClass, ceilingEntityFullyQualifiedClassname);
+                if (myField != null && myField.getAnnotation(AdminPresentationCollection.class) != null) {
+                    CollectionMetadata fieldMetadata = (CollectionMetadata) presentationAttributes.get(propertyName);
+                    if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
+                        fieldMetadata.setCollectionCeilingEntity(type.getReturnedClass().getName());
+                    }
+                    fieldMetadata.setInheritedFromType(targetClass.getName());
+                    fieldMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
+                    fields.put(propertyName, fieldMetadata);
+                } else {
+                    FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
+                    Boolean amIExcluded = isParentExcluded || !testPropertyInclusion(presentationAttribute);
+                    Boolean includeField = testPropertyRecursion(prefix, parentClasses, propertyName, targetClass, ceilingEntityFullyQualifiedClassname);
 
-				SupportedFieldType explicitType = null;
-				if (presentationAttribute != null) {
-					explicitType = presentationAttribute.getExplicitFieldType();
-				}
-				Class<?> returnedClass = type.getReturnedClass();
-                checkProp: {
-                    if (type.isComponentType() && includeField) {
-                        buildComponentProperties(
+                    SupportedFieldType explicitType = null;
+                    if (presentationAttribute != null && presentationAttribute instanceof BasicFieldMetadata) {
+                        explicitType = ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType();
+                    }
+                    Class<?> returnedClass = type.getReturnedClass();
+                    checkProp: {
+                        if (type.isComponentType() && includeField) {
+                            buildComponentProperties(
+                                targetClass,
+                                foreignField,
+                                additionalForeignFields,
+                                additionalNonPersistentProperties,
+                                mergedPropertyType,
+                                fields,
+                                idProperty,
+                                populateManyToOneFields,
+                                includeFields,
+                                excludeFields,
+                                configurationKey,
+                                ceilingEntityFullyQualifiedClassname,
+                                propertyName,
+                                type,
+                                returnedClass,
+                                parentClasses,
+                                amIExcluded,
+                                prefix
+                            );
+                            break checkProp;
+                        }
+                        /*
+                         * Currently we do not support ManyToOne fields whose class type is the same
+                         * as the target type, since this forms an infinite loop and will cause a stack overflow.
+                         */
+                        if (
+                            type.isEntityType() &&
+                            !returnedClass.isAssignableFrom(targetClass) &&
+                            populateManyToOneFields &&
+                            includeField
+                        ) {
+                            buildEntityProperties(
+                                fields,
+                                foreignField,
+                                additionalForeignFields,
+                                additionalNonPersistentProperties,
+                                populateManyToOneFields,
+                                includeFields,
+                                excludeFields,
+                                configurationKey,
+                                ceilingEntityFullyQualifiedClassname,
+                                propertyName,
+                                returnedClass,
+                                targetClass,
+                                parentClasses,
+                                prefix,
+                                amIExcluded
+                            );
+                            break checkProp;
+                        }
+                    }
+                    //Don't include this property if it failed manyToOne inclusion and is not a specified foreign key
+                    if (includeField || isPropertyForeignKey || additionalForeignKeyIndexPosition >= 0) {
+                        buildProperty(
                             targetClass,
                             foreignField,
                             additionalForeignFields,
-                            additionalNonPersistentProperties,
                             mergedPropertyType,
+                            componentProperties,
                             fields,
                             idProperty,
-                            populateManyToOneFields,
-                            includeFields,
-                            excludeFields,
-                            configurationKey,
-                            ceilingEntityFullyQualifiedClassname,
+                            prefix,
                             propertyName,
                             type,
-                            returnedClass,
-                            parentClasses,
-                            amIExcluded,
-                            prefix
+                            isPropertyForeignKey,
+                            additionalForeignKeyIndexPosition,
+                            presentationAttribute,
+                            explicitType,
+                            returnedClass
                         );
-                        break checkProp;
-                    }
-                    /*
-                     * Currently we do not support ManyToOne fields whose class type is the same
-                     * as the target type, since this forms an infinite loop and will cause a stack overflow.
-                     */
-                    if (
-                        type.isEntityType() &&
-                        !returnedClass.isAssignableFrom(targetClass) &&
-                        populateManyToOneFields &&
-                        includeField
-                    ) {
-                        buildEntityProperties(
-                            fields,
-                            foreignField,
-                            additionalForeignFields,
-                            additionalNonPersistentProperties,
-                            populateManyToOneFields,
-                            includeFields,
-                            excludeFields,
-                            configurationKey,
-                            ceilingEntityFullyQualifiedClassname,
-                            propertyName,
-                            returnedClass,
-                            targetClass,
-                            parentClasses,
-                            prefix,
-                            amIExcluded
-                        );
-                        break checkProp;
                     }
                 }
-				//Don't include this property if it failed manyToOne inclusion and is not a specified foreign key
-				if (includeField || isPropertyForeignKey || additionalForeignKeyIndexPosition >= 0) {
-					buildProperty(
-                        targetClass,
-                        foreignField,
-                        additionalForeignFields,
-                        mergedPropertyType,
-                        componentProperties,
-                        fields,
-                        idProperty,
-                        prefix,
-                        propertyName,
-                        type,
-                        isPropertyForeignKey,
-                        additionalForeignKeyIndexPosition,
-                        presentationAttribute,
-                        explicitType,
-                        returnedClass
-                    );
-				}
-			} else if (myField != null && myField.getAnnotation(AdminPresentationCollection.class) != null) {
-                CollectionMetadata fieldMetadata = (CollectionMetadata) presentationAttributes.get(propertyName);
-                if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
-                    fieldMetadata.setCollectionCeilingEntity(type.getReturnedClass().getName());
-                }
-                fields.put(propertyName, fieldMetadata);
-            }
+			}
 		}
 	}
 

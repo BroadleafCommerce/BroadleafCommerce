@@ -48,6 +48,7 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 
 /**
  * 
@@ -328,7 +329,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
             public void onSuccess(DynamicResultSet result) {
                 super.onSuccess(result);
                 ClassMetadata metadata = result.getClassMetaData();
-                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.MAPSTRUCTUREKEY, MergedPropertyType.MAPSTRUCTUREVALUE}, overrideFieldSort);
+                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.MAPSTRUCTUREKEY, MergedPropertyType.MAPSTRUCTUREVALUE}, overrideFieldSort, ((AsyncCallbackAdapter) cb).getDataSourceSetupManager());
 
                 DataSourceField symbolicIdField = new DataSourceTextField("symbolicId");
                 symbolicIdField.setCanEdit(false);

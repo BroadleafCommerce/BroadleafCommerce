@@ -1,11 +1,13 @@
 package org.broadleafcommerce.common.presentation.client;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * Define whether a new collection member is searched for or constructed.
  *
  * @author Jeff Fischer
  */
-public enum AddType {
+public enum AddType implements IsSerializable {
     PERSIST,
     LOOKUP
 }
