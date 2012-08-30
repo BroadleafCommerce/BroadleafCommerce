@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.client.ui.RootPanel;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.callback.PostLaunch;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
@@ -237,7 +238,10 @@ public class BLCMain implements EntryPoint {
 
         modules.get(currentModuleKey).preDraw();
         MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, orderedModules);
-        MASTERVIEW.draw();
+        //MASTERVIEW.draw();
+
+        RootPanel.get("gwt-component").add(MASTERVIEW);
+
         AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
         modules.get(currentModuleKey).postDraw();
     }

@@ -90,9 +90,9 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         setWidth100();
         setHeight100();
 
-        addMember(buildHeader());
-        addMember(buildPrimaryMenu(moduleKey));
-        addMember(buildSecondaryMenu(pageKey, moduleKey));
+        //addMember(buildHeader());
+        //addMember(buildPrimaryMenu(moduleKey));
+        //addMember(buildSecondaryMenu(pageKey, moduleKey));
 
 
         canvas = new HLayout();
