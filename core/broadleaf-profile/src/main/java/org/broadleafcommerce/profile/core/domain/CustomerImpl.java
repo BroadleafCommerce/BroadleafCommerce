@@ -298,6 +298,16 @@ public class CustomerImpl implements Customer {
     public List<CustomerAttribute> getCustomerAttributes() {
 		return customerAttributes;
 	}
+    
+    @Override
+    public CustomerAttribute getCustomerAttributeByName(String name) {
+    	for (CustomerAttribute attribute : getCustomerAttributes()) {
+    		if (attribute.getName().equals(name)) {
+    			return attribute;
+    		}
+    	}
+    	return null;
+    }
 
 	public void setCustomerAttributes(List<CustomerAttribute> customerAttributes) {
 		this.customerAttributes = customerAttributes;
