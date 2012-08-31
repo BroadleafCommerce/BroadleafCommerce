@@ -162,7 +162,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
         if (checkForSandboxMatch(content.getSandbox(), destSandbox)) {
             if (content.getDeletedFlag()) {
-                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(content.getSandbox().getId(), SandBoxItemType.STRUCTURED_CONTENT, content.getId());
+                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(content.getSandbox()==null?null:content.getSandbox().getId(), SandBoxItemType.STRUCTURED_CONTENT, content.getId());
                 if (content.getOriginalItemId() == null && item != null) {
                     // This page was added in this sandbox and now needs to be deleted.
                     content.setArchivedFlag(true);
