@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +44,13 @@ import org.hibernate.annotations.Cascade;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class FieldImpl implements Field {
+public class FieldImpl implements Field,Serializable {
 	
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2915813511754425605L;
+
     @Id
     @GeneratedValue(generator = "FieldId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FieldId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldImpl", allocationSize = 50)

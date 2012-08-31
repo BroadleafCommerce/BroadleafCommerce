@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
@@ -29,10 +34,6 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 
 /**
  * 
@@ -71,13 +72,15 @@ public class EntitySearchDialog extends Window {
         searchGrid.setHeight(230);
         searchGrid.setEmptyMessage(BLCMain.getMessageManager().getString("emptyMessage"));
         searchGrid.setCanGroupBy(false);
-
+       
         dataSource.setAssociatedGrid(searchGrid);
 		dataSource.setupGridFields(new String[]{}, new Boolean[]{});
         searchGrid.setDataSource(dataSource);
         
+        searchGrid.setCanEdit(false);
         searchGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
+			@Override
+            public void onSelectionChanged(SelectionEvent event) {
                 if (searchGrid.anySelected()) {
 				    saveButton.enable();
                 }
@@ -88,6 +91,7 @@ public class EntitySearchDialog extends Window {
         
         saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
         saveButton.addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             	Record selectedRecord = searchGrid.getSelectedRecord();
                 EntitySearchDialog.this.handler.onSearchItemSelected(new SearchItemSelected((ListGridRecord) selectedRecord, searchGrid.getDataSource()));
@@ -97,6 +101,7 @@ public class EntitySearchDialog extends Window {
 
         IButton cancelButton = new IButton(BLCMain.getMessageManager().getString("cancel"));
         cancelButton.addClickHandler(new ClickHandler() {  
+            @Override
             public void onClick(ClickEvent event) {  
             	hide();
             }  

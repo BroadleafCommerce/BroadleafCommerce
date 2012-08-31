@@ -67,7 +67,7 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     protected String label;
     
     @Column(name =  "SHOW_ON_SEARCH")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4, group = "SearchFacetImpl_description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4, group = "SearchFacetImpl_description", groupOrder = 1,prominent=false)
     protected Boolean showOnSearch = false;
     
     @Column(name = "SEARCH_DISPLAY_PRIORITY")

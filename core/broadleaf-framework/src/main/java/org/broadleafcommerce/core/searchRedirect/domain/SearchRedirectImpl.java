@@ -42,7 +42,7 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable 
     private static final Log LOG = LogFactory.getLog(SearchRedirectImpl.class);
     @Id
     @GeneratedValue(generator = "SearchRedirectID", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SearchRedirectID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchRedirectID", allocationSize = 50)
+    @TableGenerator(name = "SearchRedirectID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchRedirectImpl", allocationSize = 50)
     @Column(name = "SEARCH_REDIRECT_ID")
     @AdminPresentation(friendlyName = "SearchRedirectImpl_ID", order = 1, group = "SearchRedirectImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
