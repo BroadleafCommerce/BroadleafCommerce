@@ -21,9 +21,12 @@ import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 import java.util.ArrayList;
@@ -47,9 +50,19 @@ public class AdvancedCollectionLookupDataSourceFactory implements DataSourceFact
 
     @Override
     public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-        PersistencePerspective persistencePerspective = new PersistencePerspective();
-        List<DataSourceModule> dataSourceModuleList = new ArrayList<DataSourceModule>();
-        dataSourceModuleList.add(new BasicClientEntityModule(collectionMetadata.getCollectionCeilingEntity(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
+        final PersistencePerspective persistencePerspective = new PersistencePerspective();
+        final List<DataSourceModule> dataSourceModuleList = new ArrayList<DataSourceModule>();
+        collectionMetadata.accept(new MetadataVisitorAdapter(){
+            @Override
+            public void visit(AdornedTargetCollectionMetadata metadata) {
+                dataSourceModuleList.add(new BasicClientEntityModule(metadata.getParentObjectClass(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
+            }
+
+            @Override
+            public void visit(BasicCollectionMetadata metadata) {
+                dataSourceModuleList.add(new BasicClientEntityModule(metadata.getCollectionCeilingEntity(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
+            }
+        });
         DataSourceModule[] modules = new DataSourceModule[dataSourceModuleList.size()];
         modules = dataSourceModuleList.toArray(modules);
 

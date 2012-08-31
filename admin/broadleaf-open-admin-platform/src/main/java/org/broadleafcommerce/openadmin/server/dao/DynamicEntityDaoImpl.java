@@ -1012,8 +1012,13 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 throw new IllegalArgumentException("Unable to infer a parentObjectProperty for the @AdminPresentationAdornedTargetCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the parentObjectProperty property");
             }
         }
-        AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, adornedTargetCollection.parentObjectIdProperty(), adornedTargetCollection.targetObjectProperty(), adornedTargetCollection.targetObjectIdProperty(), targetClass.getName(), null, adornedTargetCollection.sortProperty(), adornedTargetCollection.sortAscending());
-        persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, adornedTargetList);
+
+        String sortProperty;
+        if (StringUtils.isEmpty(adornedTargetCollection.sortProperty())) {
+            sortProperty = null;
+        } else {
+            sortProperty = adornedTargetCollection.sortProperty();
+        }
 
         String ceiling = null;
         checkCeiling: {
@@ -1029,6 +1034,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         if (!StringUtils.isEmpty(ceiling)) {
             metadata.setCollectionCeilingEntity(ceiling);
         }
+        metadata.setParentObjectClass(targetClass.getName());
+
+        AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, adornedTargetCollection.parentObjectIdProperty(), adornedTargetCollection.targetObjectProperty(), adornedTargetCollection.targetObjectIdProperty(), ceiling, sortProperty, adornedTargetCollection.sortAscending());
+        persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, adornedTargetList);
         //TODO finish the other cases
 
         metadata.setExcluded(adornedTargetCollection.excluded());
@@ -1154,10 +1163,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     }
 
     public Map<String, FieldMetadata> getPropertiesForPrimitiveClass(
-		String propertyName, 
-		String friendlyPropertyName, 
-		Class<?> targetClass, 
-		Class<?> parentClass, 
+		String propertyName,
+		String friendlyPropertyName,
+		Class<?> targetClass,
+		Class<?> parentClass,
 		MergedPropertyType mergedPropertyType
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
@@ -1242,13 +1251,13 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
 	@SuppressWarnings("unchecked")
 	protected Map<String, FieldMetadata> getPropertiesForEntityClass(
-		Class<?> targetClass, 
-		ForeignKey foreignField, 
-		String[] additionalNonPersistentProperties, 
-		ForeignKey[] additionalForeignFields, 
+		Class<?> targetClass,
+		ForeignKey foreignField,
+		String[] additionalNonPersistentProperties,
+		ForeignKey[] additionalForeignFields,
 		MergedPropertyType mergedPropertyType,
 		Boolean populateManyToOneFields,
-		String[] includeFields, 
+		String[] includeFields,
 		String[] excludeFields,
         String configurationKey,
         String ceilingEntityFullyQualifiedClassname,
@@ -1271,11 +1280,11 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		Type idType = (Type) idMetadata.get("type");
         List<Type> propertyTypes = getPropertyTypes(targetClass);
 		propertyTypes.add(idType);
-		
+
 		PersistentClass persistentClass = getPersistentClass(targetClass.getName());
 		Iterator<Property> testIter = persistentClass.getPropertyIterator();
         List<Property> propertyList = new ArrayList<Property>();
-		
+
 		//check the properties for problems
 		while(testIter.hasNext()) {
 			Property property = testIter.next();
@@ -1284,21 +1293,21 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			}
             propertyList.add(property);
 		}
-		
+
 		buildProperties(
-			targetClass, 
-			foreignField, 
-			additionalForeignFields, 
+			targetClass,
+			foreignField,
+			additionalForeignFields,
 			additionalNonPersistentProperties,
-			mergedPropertyType, 
-			presentationAttributes, 
+			mergedPropertyType,
+			presentationAttributes,
 			propertyList,
-			fields, 
-			propertyNames, 
-			propertyTypes, 
-			idProperty, 
+			fields,
+			propertyNames,
+			propertyTypes,
+			idProperty,
 			populateManyToOneFields,
-			includeFields, 
+			includeFields,
 			excludeFields,
             configurationKey,
             ceilingEntityFullyQualifiedClassname,
@@ -1343,24 +1352,24 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 }
 			}
 		}
-		
+
 		return fields;
 	}
 
 	protected void buildProperties(
-		Class<?> targetClass, 
-		ForeignKey foreignField, 
-		ForeignKey[] additionalForeignFields, 
+		Class<?> targetClass,
+		ForeignKey foreignField,
+		ForeignKey[] additionalForeignFields,
 		String[] additionalNonPersistentProperties,
-		MergedPropertyType mergedPropertyType, 
+		MergedPropertyType mergedPropertyType,
 		Map<String, FieldMetadata> presentationAttributes,
 		List<Property> componentProperties,
-		Map<String, FieldMetadata> fields, 
-		List<String> propertyNames, 
-		List<Type> propertyTypes, 
-		String idProperty, 
-		Boolean populateManyToOneFields, 
-		String[] includeFields, 
+		Map<String, FieldMetadata> fields,
+		List<String> propertyNames,
+		List<Type> propertyTypes,
+		String idProperty,
+		Boolean populateManyToOneFields,
+		String[] includeFields,
 		String[] excludeFields,
         String configurationKey,
         String ceilingEntityFullyQualifiedClassname,
@@ -1391,6 +1400,18 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                         fieldMetadata.setInheritedFromType(targetClass.getName());
                         fieldMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
                         fields.put(propertyName, fieldMetadata);
+                        fieldMetadata.accept(new MetadataVisitorAdapter() {
+                            @Override
+                            public void visit(AdornedTargetCollectionMetadata metadata) {
+                                AdornedTargetList targetList = ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST));
+                                targetList.setAdornedTargetEntityClassname(metadata.getCollectionCeilingEntity());
+                            }
+
+                            @Override
+                            public void visit(BasicCollectionMetadata metadata) {
+                                //do nothing
+                            }
+                        });
                     }
                 } else {
                     FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);

@@ -157,7 +157,7 @@ public class ProductImpl implements Product, Status {
 	@OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "ProductImpl_Cross_Sale_Products", targetUIElementId = "productSkuCrossLayout")
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "ProductImpl_Cross_Sale_Products", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence")
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})

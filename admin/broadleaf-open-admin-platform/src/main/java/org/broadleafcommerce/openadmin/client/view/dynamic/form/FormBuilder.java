@@ -59,6 +59,7 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
@@ -149,16 +150,16 @@ public class FormBuilder {
             @Override
             public void visit(AdornedTargetCollectionMetadata metadata) {
                 //TODO persistence is blowing up for this
-//                EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDataSource, true);
-//                SubPresentable subPresentable;
-//                if (metadata.isIgnoreAdornedProperties()) {
-//                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
-//                } else {
-//                    //TODO check how the secondary dialog after the lookup appears without explicitly defining the adorned fields in the following constructor
-//                    subPresentable = new EditableAdornedTargetListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle);
-//                }
-//                subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
-//                presenter.addSubPresentable(subPresentable);
+                EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDataSource, true);
+                SubPresentable subPresentable;
+                if (metadata.isIgnoreAdornedProperties()) {
+                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
+                } else {
+                    //TODO check how the secondary dialog after the lookup appears without explicitly defining the adorned fields in the following constructor
+                    subPresentable = new EditableAdornedTargetListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle);
+                }
+                subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+                presenter.addSubPresentable(subPresentable);
             }
         });
     }
