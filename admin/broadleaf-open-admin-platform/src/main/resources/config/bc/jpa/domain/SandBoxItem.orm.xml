@@ -12,6 +12,15 @@
 		</query>
 	</named-query>
 
+    <named-query name="BC_READ_SANDBOX_ITEM_BY_TEMP_ITEM_ID_AND_PROD_SANDBOX" >
+        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
+               WHERE  sandboxItem.temporaryItemId = :temporaryItemId AND
+                      sandboxItem.sandBoxId IS NULL AND
+                      sandboxItem.archivedFlag = 'N' AND
+                      sandboxItem.sandBoxItemType = :itemType
+        </query>
+    </named-query>
+
     <named-query name="BC_READ_ALL_SANDBOX_ITEMS" >
 		<query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
 		       WHERE  sandboxItem.sandBoxId = :sandboxId AND
