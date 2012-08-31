@@ -143,12 +143,10 @@ public class EntityEditDialog extends Window {
         addItem(vLayout);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
 		editNewRecord(null, dataSource, initialValues, handler, fieldNames, null);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
         pictureStack.setVisible(false);
         saveButton.enable();

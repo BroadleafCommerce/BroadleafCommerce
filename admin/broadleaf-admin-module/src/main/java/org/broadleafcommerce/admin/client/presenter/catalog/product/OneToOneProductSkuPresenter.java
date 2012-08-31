@@ -30,7 +30,6 @@ import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.CrossSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.DefaultSkuMediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
@@ -80,10 +79,10 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected EntitySearchDialog productSearchView;
 	protected EntitySearchDialog skuSearchView;	
-	protected SubPresentable crossSalePresenter;
+	//protected SubPresentable crossSalePresenter;
 	protected SubPresentable upSalePresenter;
 	protected SubPresentable mediaPresenter;
-	protected SubPresentable productAttributePresenter;
+	//protected SubPresentable productAttributePresenter;
 	protected SubPresentable parentCategoriesPresenter;
 	protected AssociatedProductOptionPresenterBasic productOptionsPresenter;
 	protected SubPresentable skusPresenter;
@@ -93,7 +92,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-		crossSalePresenter.load(selectedRecord, dataSource, null);
+		//crossSalePresenter.load(selectedRecord, dataSource, null);
 		upSalePresenter.load(selectedRecord, dataSource, null);
 		mediaPresenter.load(selectedRecord, dataSource, null);
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
@@ -112,7 +111,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	public void bind() {
 		super.bind();
-		crossSalePresenter.bind();
+		//crossSalePresenter.bind();
 		upSalePresenter.bind();
 		mediaPresenter.bind();
 		parentCategoriesPresenter.bind();
@@ -227,13 +226,13 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				productSearchView = new EntitySearchDialog(productSearchDataSource);
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("crossSaleProductsDS", new CrossSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
-            public void onSetupSuccess(DataSource result) {
-				crossSalePresenter = new EditableAdornedTargetListPresenter(getDisplay().getCrossSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
-				crossSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
-			}
-		}));
+		//getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("crossSaleProductsDS", new CrossSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
+			//@Override
+            //public void onSetupSuccess(DataSource result) {
+				//crossSalePresenter = new EditableAdornedTargetListPresenter(getDisplay().getCrossSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				//crossSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
+			//}
+		//}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("upSaleProductsDS", new UpSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {

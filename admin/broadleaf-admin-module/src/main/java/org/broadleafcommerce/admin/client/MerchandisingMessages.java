@@ -117,5 +117,5 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String ProductImpl_bundleProduct();
     public String OrderItemImpl_baseOrderItem();
     public String ProductImpl_Product_Attributes();
- 
+    public String ProductImpl_Cross_Sale_Products();
 }

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Adorned target collections are a variant of the basic collection type (@see AdminPresentationCollection).
- * This type of collection concept comes into play when you want to represent an association to an admin user, but
+ * This type of collection concept comes into play when you want to represent a "ToMany" association, but
  * you also want to capture some additional data around the association. CrossSaleProductImpl is an example of
  * this concept. CrossSaleProductImpl not only contains a product reference, but sequence and
  * promotional message fields as well. We want the admin user to choose the desired product for the association

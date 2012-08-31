@@ -48,11 +48,11 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 public class OneToOneProductSkuView extends HLayout implements Instantiable, OneToOneProductSkuDisplay {
 	
 	protected DynamicFormView dynamicFormDisplay;
-	protected GridStructureView crossSaleDisplay;
+	//protected GridStructureView crossSaleDisplay;
 	protected GridStructureView upSaleDisplay;
 	protected GridStructureView mediaDisplay;
 	protected DynamicEntityListView listDisplay;
-	protected GridStructureView attributesDisplay;
+	//protected GridStructureView attributesDisplay;
 	protected GridStructureView allCategoriesDisplay;
 	protected ExpandableGridStructureView productOptionsDisplay;
 	protected ToolStripButton generateSkusButton;
@@ -105,8 +105,8 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         crossLayout.setBackgroundColor("#eaeaea");
         crossLayout.setOverflow(Overflow.AUTO);
         
-        crossSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("crossSaleProductsTitle"), true, true);
-        crossLayout.addMember(crossSaleDisplay);
+        //crossSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("crossSaleProductsTitle"), true, true);
+        //crossLayout.addMember(crossSaleDisplay);
         
         upSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("upsaleProductsTitle"), true, true);
         crossLayout.addMember(upSaleDisplay);
@@ -180,10 +180,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		return this;
 	}
 
-	@Override
-    public GridStructureDisplay getCrossSaleDisplay() {
-		return crossSaleDisplay;
-	}
+	//@Override
+    //public GridStructureDisplay getCrossSaleDisplay() {
+		//return crossSaleDisplay;
+	//}
 
 	@Override
     public GridStructureDisplay getUpSaleDisplay() {
@@ -205,10 +205,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		return listDisplay;
 	}
 	
-	@Override
-    public GridStructureDisplay getAttributesDisplay() {
-		return attributesDisplay;
-	}
+	//@Override
+    //public GridStructureDisplay getAttributesDisplay() {
+		//return attributesDisplay;
+	//}
 
 	@Override
     public GridStructureDisplay getAllCategoriesDisplay() {

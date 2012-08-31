@@ -1381,7 +1381,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 					additionalForeignKeyIndexPosition >= 0 ||
 					presentationAttributes.containsKey(propertyName)
 			) {
-                if (myField != null && myField.getAnnotation(AdminPresentationCollection.class) != null) {
+                if (myField != null && (myField.getAnnotation(AdminPresentationCollection.class) != null || myField.getAnnotation(AdminPresentationAdornedTargetCollection.class) != null)) {
                     //only a collection that is a direct member of the ceiling entity may be included
                     if (StringUtils.isEmpty(prefix)) {
                         CollectionMetadata fieldMetadata = (CollectionMetadata) presentationAttributes.get(propertyName);

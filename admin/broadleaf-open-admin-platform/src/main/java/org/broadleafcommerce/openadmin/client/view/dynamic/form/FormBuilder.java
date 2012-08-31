@@ -21,6 +21,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -43,6 +44,8 @@ import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
 import org.broadleafcommerce.common.presentation.client.AddType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -77,10 +80,40 @@ import java.util.MissingResourceException;
  */
 public class FormBuilder {
 
+    public static Layout findMemberById(Layout parent, String id) {
+        Layout result = (Layout) parent.getMember(id);
+        if (result == null) {
+            check: {
+                for (Canvas member : parent.getMembers()) {
+                    if (member instanceof Layout) {
+                        result = findMemberById((Layout) member, id);
+                        if (result != null) {
+                            break check;
+                        }
+                    }
+                    if (member instanceof TabSet) {
+                        for (Tab tab : ((TabSet) member).getTabs()) {
+                            if (tab.getPane().getID().equals(id)) {
+                                result = (Layout) tab.getPane();
+                                break check;
+                            }
+                            result = findMemberById((Layout) tab.getPane(), id);
+                            if (result != null) {
+                                break check;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     public static void buildAdvancedCollectionForm(final DataSource dataSource, final DataSource lookupDataSource, CollectionMetadata metadata, String propertyName, final DynamicEntityPresenter presenter) {
         Layout destination;
         if (metadata.getTargetElementId() != null && metadata.getTargetElementId().length() > 0) {
-            destination = (Layout) ((Layout) presenter.getDisplay()).getMember(metadata.getTargetElementId());
+            destination = findMemberById((Layout) presenter.getDisplay(), metadata.getTargetElementId());
         } else {
             destination = (Layout) presenter.getDisplay().getDynamicFormDisplay().getFormOnlyDisplay();
         }
@@ -115,7 +148,17 @@ public class FormBuilder {
 
             @Override
             public void visit(AdornedTargetCollectionMetadata metadata) {
-                //TODO add support
+                //TODO persistence is blowing up for this
+//                EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDataSource, true);
+//                SubPresentable subPresentable;
+//                if (metadata.isIgnoreAdornedProperties()) {
+//                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
+//                } else {
+//                    //TODO check how the secondary dialog after the lookup appears without explicitly defining the adorned fields in the following constructor
+//                    subPresentable = new EditableAdornedTargetListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle);
+//                }
+//                subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+//                presenter.addSubPresentable(subPresentable);
             }
         });
     }
