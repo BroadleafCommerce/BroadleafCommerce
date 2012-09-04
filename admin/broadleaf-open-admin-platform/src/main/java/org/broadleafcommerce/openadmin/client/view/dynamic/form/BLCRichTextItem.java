@@ -42,9 +42,10 @@ public class BLCRichTextItem extends CanvasItem {
         layout.setHeight100();
         layout.addMember(editButton);
         htmlPane = new HTMLPane();
-        htmlPane.setBorder("1px solid black");
-        htmlPane.setPadding(5);
-        htmlPane.setMargin(5);
+        htmlPane.setStyleName("blcHtmlPane");
+        //htmlPane.setBorder("1px solid black");
+        //htmlPane.setPadding(5);
+        //htmlPane.setMargin(5);
         htmlPane.setDisabled(true);
         layout.addMember(htmlPane);
         

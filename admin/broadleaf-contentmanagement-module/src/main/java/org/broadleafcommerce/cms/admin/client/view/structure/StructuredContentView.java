@@ -130,7 +130,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         VLayout rulesLayout = new VLayout();
         rulesLayout.setHeight100();
         rulesLayout.setWidth100();
-        rulesLayout.setBackgroundColor("#eaeaea");
+        rulesLayout.setStyleName("blcFormBg");
         rulesLayout.setOverflow(Overflow.AUTO);
 
         structuredContentToolBar = new ToolStrip();
@@ -154,7 +154,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         VLayout innerLayout = new VLayout();
         innerLayout.setHeight100();
         innerLayout.setWidth100();
-        innerLayout.setBackgroundColor("#eaeaea");
+        innerLayout.setStyleName("blcFormBg");
         innerLayout.setLayoutMargin(20);
 
         customerLabel = new Label();

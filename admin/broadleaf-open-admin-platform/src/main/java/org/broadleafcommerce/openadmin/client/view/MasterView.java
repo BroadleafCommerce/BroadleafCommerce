@@ -88,9 +88,10 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         this.modules = modules;
 
         //setWidth100();
-        //setHeight100();
-        setWidth("90%");
-        setHeight("90%");
+        setHeight100();
+        setWidth("80.25%");
+        //setHeight("90%");
+        setZIndex(1);
 
         //addMember(buildHeader());
         //addMember(buildPrimaryMenu(moduleKey));
@@ -98,8 +99,8 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 
 
         canvas = new HLayout();
-        canvas.setWidth100();
-        canvas.setHeight100();
+        //canvas.setWidth100();
+        //canvas.setHeight100();
 
         addMember(canvas);
 
@@ -567,7 +568,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         bottomBar.addMember(BLCMain.NON_MODAL_PROGRESS);
         bottomBar.addSpacer(5);
 
-        addMember(bottomBar);
+        //addMember(bottomBar);
 
     }
 

@@ -189,7 +189,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label restrictLabel = new Label(BLCMain.getMessageManager().getString("restrictOnlyPromotionLabel"));
         restrictLabel.setWrap(false);
         restrictLabel.setHeight(30);
-        restrictLabel.setBackgroundColor("#eaeaea");
+        restrictLabel.setStyleName("blcFormBg");
         restrictLabel.setStyleName("label-bold");
         restrictLayout.addMember(restrictLabel);
 
@@ -222,7 +222,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label customerObtainLabel = new Label(BLCMain.getMessageManager().getString("customerObtainLabel"));
         customerObtainLabel.setWrap(false);
         customerObtainLabel.setHeight(30);
-        customerObtainLabel.setBackgroundColor("#eaeaea");
+        customerObtainLabel.setStyleName("blcFormBg");
         customerObtainLabel.setStyleName("label-bold");
         customerObtainHStack.addMember(customerObtainLabel);
         VStack helpCustomerObtainVStack = new VStack();
@@ -258,7 +258,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label whichCustomerLabel = new Label(BLCMain.getMessageManager().getString("whichCustomerLabel"));
         whichCustomerLabel.setWrap(false);
         whichCustomerLabel.setHeight(30);
-        whichCustomerLabel.setBackgroundColor("#eaeaea");
+        whichCustomerLabel.setStyleName("blcFormBg");
         whichCustomerLabel.setStyleName("label-bold");
         customerLayout.addMember(whichCustomerLabel);
 
@@ -311,7 +311,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label orderLabel = new Label(BLCMain.getMessageManager().getString("orderSectionLabel"));
         orderLabel.setWrap(false);
         orderLabel.setHeight(30);
-        orderLabel.setBackgroundColor("#eaeaea");
+        orderLabel.setStyleName("blcFormBg");
         orderLabel.setStyleName("label-bold");
         orderSectionLayout.addMember(orderLabel);
 
@@ -352,7 +352,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderCombineLabel.setVisible(false);
         orderCombineLabel.setWrap(false);
         orderCombineLabel.setHeight(30);
-        orderCombineLabel.setBackgroundColor("#eaeaea");
+        orderCombineLabel.setStyleName("blcFormBg");
         orderCombineLabel.setStyleName("label-bold");
         orderSectionLayout.addMember(orderCombineLabel);
 
@@ -384,7 +384,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderItemCombineLabel.setVisible(false);
         orderItemCombineLabel.setWrap(false);
         orderItemCombineLabel.setHeight(30);
-        orderItemCombineLabel.setBackgroundColor("#eaeaea");
+        orderItemCombineLabel.setStyleName("blcFormBg");
         orderItemCombineLabel.setStyleName("label-bold");
         itemSectionLayout.addMember(orderItemCombineLabel);
 
@@ -410,7 +410,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         bogoQuestionLabel = new Label(BLCMain.getMessageManager().getString("bogoQuestionLabel"));
         bogoQuestionLabel.setWrap(false);
         bogoQuestionLabel.setHeight(30);
-        bogoQuestionLabel.setBackgroundColor("#eaeaea");
+        bogoQuestionLabel.setStyleName("blcFormBg");
         bogoQuestionLabel.setStyleName("label-bold");
         hStackBogo.addMember(bogoQuestionLabel);
         VStack helpButtonBogoStack = new VStack();
@@ -442,7 +442,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         requiredItemsLabel = new Label(BLCMain.getMessageManager().getString("requiredItemsLabel"));
         requiredItemsLabel.setWrap(false);
         requiredItemsLabel.setHeight(30);
-        requiredItemsLabel.setBackgroundColor("#eaeaea");
+        requiredItemsLabel.setStyleName("blcFormBg");
         requiredItemsLabel.setStyleName("label-bold");
         requiredItemsLayout.addMember(requiredItemsLabel);
 
@@ -491,7 +491,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label receiveFromAnotherPromoLabel = new Label(BLCMain.getMessageManager().getString("receiveFromAnotherPromoLabel"));
         receiveFromAnotherPromoLabel.setWrap(false);
         receiveFromAnotherPromoLabel.setHeight(30);
-        receiveFromAnotherPromoLabel.setBackgroundColor("#eaeaea");
+        receiveFromAnotherPromoLabel.setStyleName("blcFormBg");
         advancedItemCriteria.addMember(receiveFromAnotherPromoLabel);
 
         receiveFromAnotherPromoForm = new DynamicForm();
@@ -509,7 +509,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label qualifiyForAnotherPromoLabel = new Label(BLCMain.getMessageManager().getString("qualifiyForAnotherPromoLabel"));
         qualifiyForAnotherPromoLabel.setWrap(false);
         qualifiyForAnotherPromoLabel.setHeight(30);
-        qualifiyForAnotherPromoLabel.setBackgroundColor("#eaeaea");
+        qualifiyForAnotherPromoLabel.setStyleName("blcFormBg");
         advancedItemCriteria.addMember(qualifiyForAnotherPromoLabel);
 
         qualifyForAnotherPromoForm = new DynamicForm();
@@ -555,7 +555,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         targetItemsLabel = new Label(BLCMain.getMessageManager().getString("targetItemsLabel"));
         targetItemsLabel.setWrap(false);
         targetItemsLabel.setHeight(30);
-        targetItemsLabel.setBackgroundColor("#eaeaea");
+        targetItemsLabel.setStyleName("blcFormBg");
         targetItemsLabel.setStyleName("label-bold");
         targetItemsLayout.addMember(targetItemsLabel);
 
@@ -591,7 +591,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label receiveFromAnotherPromoTargetLabel = new Label(BLCMain.getMessageManager().getString("receiveFromAnotherPromoTargetLabel"));
         receiveFromAnotherPromoTargetLabel.setWrap(false);
         receiveFromAnotherPromoTargetLabel.setHeight(30);
-        receiveFromAnotherPromoTargetLabel.setBackgroundColor("#eaeaea");
+        receiveFromAnotherPromoTargetLabel.setStyleName("blcFormBg");
         advancedItemCriteriaTarget.addMember(receiveFromAnotherPromoTargetLabel);
 
         receiveFromAnotherPromoTargetForm = new DynamicForm();
@@ -609,7 +609,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label qualifiyForAnotherPromoTargetLabel = new Label(BLCMain.getMessageManager().getString("qualifiyForAnotherPromoTargetLabel"));
         qualifiyForAnotherPromoTargetLabel.setWrap(false);
         qualifiyForAnotherPromoTargetLabel.setHeight(30);
-        qualifiyForAnotherPromoTargetLabel.setBackgroundColor("#eaeaea");
+        qualifiyForAnotherPromoTargetLabel.setStyleName("blcFormBg");
         advancedItemCriteriaTarget.addMember(qualifiyForAnotherPromoTargetLabel);
 
         qualifyForAnotherPromoTargetForm = new DynamicForm();
@@ -636,7 +636,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         Label fgCombineLabel = new Label(BLCMain.getMessageManager().getString("fgCombineLabel"));
         fgCombineLabel.setWrap(false);
         fgCombineLabel.setHeight(30);
-        fgCombineLabel.setBackgroundColor("#eaeaea");
+        fgCombineLabel.setStyleName("blcFormBg");
         fgCombineLabel.setStyleName("label-bold");
         fgQuestionLayout.addMember(fgCombineLabel);
 
@@ -655,7 +655,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         stepFGLabel = new Label(BLCMain.getMessageManager().getString("stepFGLabel"));
         stepFGLabel.setWrap(false);
         stepFGLabel.setHeight(30);
-        stepFGLabel.setBackgroundColor("#eaeaea");
+        stepFGLabel.setStyleName("blcFormBg");
         stepFGLabel.setStyleName("label-bold");
         fgQuestionLayout.addMember(stepFGLabel);
 

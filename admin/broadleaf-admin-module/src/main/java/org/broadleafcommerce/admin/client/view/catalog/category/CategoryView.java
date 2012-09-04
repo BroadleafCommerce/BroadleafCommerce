@@ -135,7 +135,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         crossLayout.setID("productSkuCrossLayout");
         crossLayout.setHeight100();
         crossLayout.setWidth100();
-        crossLayout.setBackgroundColor("#eaeaea");
+        crossLayout.setStyleName("blcFormBg");
         crossLayout.setOverflow(Overflow.AUTO);
         
         crossSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("crossSaleProductsTitle"), true, true);
@@ -154,7 +154,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         featuredLayout.setID("categoryFeaturedLayout");
         featuredLayout.setHeight100();
         featuredLayout.setWidth100();
-        featuredLayout.setBackgroundColor("#eaeaea");
+        featuredLayout.setStyleName("blcFormBg");
         featuredLayout.setOverflow(Overflow.AUTO);
         
         
@@ -170,7 +170,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         mediaLayout.setID("categoryMediaLayout");
         mediaLayout.setHeight100();
         mediaLayout.setWidth100();
-        mediaLayout.setBackgroundColor("#eaeaea");
+        mediaLayout.setStyleName("blcFormBg");
         mediaLayout.setOverflow(Overflow.AUTO);
         
         mediaDisplay = new GridStructureView(BLCMain.getMessageManager().getString("mediaListTitle"), false, true);
