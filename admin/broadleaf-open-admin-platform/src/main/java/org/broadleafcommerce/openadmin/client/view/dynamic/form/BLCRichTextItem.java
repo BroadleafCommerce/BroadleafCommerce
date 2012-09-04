@@ -5,65 +5,65 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.RichTextEditor
 
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.RichTextEditor;
-import com.smartgwt.client.widgets.events.KeyPressEvent;
-import com.smartgwt.client.widgets.events.KeyPressHandler;
-import com.smartgwt.client.widgets.form.fields.RichTextItem;
+import com.smartgwt.client.widgets.HTMLPane;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.CanvasItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.form.fields.events.ShowValueEvent;
+import com.smartgwt.client.widgets.form.fields.events.ShowValueHandler;
+import com.smartgwt.client.widgets.layout.VLayout;
 
-public class BLCRichTextItem extends RichTextItem {
+public class BLCRichTextItem extends CanvasItem {
+    
+    protected HTMLPane htmlPane;
 
     public BLCRichTextItem() {
-
-        setControlGroups();
+        setShouldSaveValue(true);
         setShowTitle(true);
-        final BLCRichTextItem item = this;
 
-       
-        BLCRichTextItem e = this;
-        RichTextEditor editor = new RichTextEditor();
-
-        editor.setControlGroups();
-        this.setCanvas(editor);
-        editor.setDisabled(false);
-        setDisabled(false);
-        editor.addKeyPressHandler(new KeyPressHandler() {
-            
+        Canvas canvas = new Canvas();
+        canvas.setHeight(200);
+        canvas.setWidth(600);
+        
+        Button editButton = new Button(BLCMain.getMessageManager().getString("editRichText"));
+        editButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onKeyPress(KeyPressEvent event) {
-           
+            public void onClick(ClickEvent event) {
+                RichTextEditorDialog dialog = new RichTextEditorDialog();
+                dialog.show(BLCRichTextItem.this);
+                dialog.centerInPage();                
             }
         });
-        Canvas canvas = e.getCanvas();
-
-        Button b = new Button();
-        b.setTitle(BLCMain.getMessageManager()
-                .getString("BLCRichTextItem_Edit"));
-        b.setIcon("[SKIN]/actions/edit.png");
-        b.setWidth(50);
-        canvas.addChild(b, "insertAsset", true);
-        b.addIconClickHandler(new com.smartgwt.client.widgets.events.IconClickHandler() {
-
+        
+        VLayout layout = new VLayout();
+        layout.setWidth100();
+        layout.setHeight100();
+        layout.addMember(editButton);
+        htmlPane = new HTMLPane();
+        htmlPane.setBorder("1px solid black");
+        htmlPane.setPadding(5);
+        htmlPane.setMargin(5);
+        htmlPane.setDisabled(true);
+        layout.addMember(htmlPane);
+        
+        addShowValueHandler(new ShowValueHandler() {
             @Override
-            public void onIconClick(
-                    com.smartgwt.client.widgets.events.IconClickEvent event) {
-                showDialog(item);
-            }
-
-        });
-        b.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
-
-            @Override
-            public void onClick(
-                    com.smartgwt.client.widgets.events.ClickEvent event) {
-                showDialog(item);
+            public void onShowValue(ShowValueEvent event) {
+                htmlPane.setContents((String)event.getDataValue());
             }
         });
-
+        
+        addChangedHandler(new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                htmlPane.setContents((String)event.getValue());
+            }
+        });
+        
+        canvas.addChild(layout);
+        setCanvas(canvas);
     }
 
-    private void showDialog(final BLCRichTextItem item) {
-        RichTextEditorDialog dialog = new RichTextEditorDialog();
-        dialog.show(item);
-        dialog.centerInPage();
-    }
 }

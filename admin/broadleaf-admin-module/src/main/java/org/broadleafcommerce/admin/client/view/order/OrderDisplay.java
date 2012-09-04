@@ -23,6 +23,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDispl
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+
 /**
  * 
  * @author jfischer
@@ -30,9 +32,11 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureVie
  */
 public interface OrderDisplay extends DynamicEditDisplay {
 	
-	public DynamicFormDisplay getDynamicFormDisplay();
+	@Override
+    public DynamicFormDisplay getDynamicFormDisplay();
 
-	public DynamicEntityListDisplay getListDisplay();
+	@Override
+    public DynamicEntityListDisplay getListDisplay();
 
 	public OrderItemDisplay getOrderItemsDisplay();
 	
@@ -55,5 +59,7 @@ public interface OrderDisplay extends DynamicEditDisplay {
     public GridStructureView getPaymentLogDisplay();
 
     public GridStructureView getPaymentResponseDisplay();
+    
+    public ToolStripButton getExportOrdersButton();
 	
 }

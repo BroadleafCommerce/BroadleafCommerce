@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
@@ -36,8 +32,11 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOpti
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductSkusDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.SkuBundleItemsDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
+import org.broadleafcommerce.admin.client.dto.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
+import org.broadleafcommerce.admin.client.view.dialog.ExportListSelectionDialog;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
@@ -73,6 +72,11 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -186,6 +190,30 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 });
 		    }
 		});
+		
+		getDisplay().getExportProductsButton().addClickHandler(new ClickHandler() {
+		    @Override
+		    public void onClick(ClickEvent event) {
+		        AppServices.EXPORT.getExporters(AdminExporterType.PRODUCT, new AsyncCallback<List<AdminExporterDTO>>() {
+		            @Override
+		            public void onSuccess(final List<AdminExporterDTO> result) {
+		                if (result == null || result.size() == 0) {
+		                    SC.say(BLCMain.getMessageManager().getString("noProductExporters"));
+		                } else {
+		                    ExportListSelectionDialog exportSelectionDialog = new ExportListSelectionDialog();
+		                    exportSelectionDialog.search(BLCMain.getMessageManager().getString("selectExporterTitle"), result);
+		                }
+		            }
+
+		            @Override
+		            public void onFailure(Throwable caught) {
+		                // TODO Auto-generated method stub
+                
+		            }
+		        });
+		    }
+		});
+
 	}
 	
 	@Override

@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.presenter.entity.HtmlEditingPresenter;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.BLCRichTextItem;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.smartgwt.client.types.Alignment;
@@ -26,13 +32,8 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
-import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.presenter.entity.HtmlEditingPresenter;
-import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
-import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
 
 /**
  * 
@@ -42,7 +43,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.Displ
 public class RichTextEditorDialog extends Window {
 
     protected IButton saveButton;
-    protected CanvasItem richTextItem;
+    protected BLCRichTextItem richTextItem;
     protected VLayout mainLayout = null;
     protected RichTextToolbar toolBar = null;
     protected RichTextArea textArea = null;
@@ -64,10 +65,8 @@ public class RichTextEditorDialog extends Window {
         toolBar = new RichTextToolbar(textArea, DisplayType.DETAILED);
 
         saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
-        saveButton.setIcon("[SKIN]/actions/ok.png");
         IButton cancelButton = new IButton(BLCMain.getMessageManager()
                 .getString("cancel"));
-        cancelButton.setIcon("[SKIN]/actions/undo.png");
         cancelButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -123,8 +122,6 @@ public class RichTextEditorDialog extends Window {
             public void onClick(ClickEvent event) {
                 if (richTextItem != null) {
                     richTextItem.storeValue(toolBar.getHTML());
-                    richTextItem.setValue(toolBar.getHTML());
-
                 }
                 hide();
             }
@@ -160,7 +157,7 @@ public class RichTextEditorDialog extends Window {
         this.saveButton = saveButton;
     }
 
-    public void show(final CanvasItem richTextItem) {
+    public void show(final BLCRichTextItem richTextItem) {
         this.richTextItem = richTextItem;
         initItem(788, 580);
         setTitle("Edit " + richTextItem.getFieldName());

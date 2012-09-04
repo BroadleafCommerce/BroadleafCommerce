@@ -124,7 +124,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
 
         if (checkForSandboxMatch(staticAsset.getSandbox(), destSandbox)) {
             if (staticAsset.getDeletedFlag()) {
-                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(staticAsset.getSandbox().getId(), SandBoxItemType.STATIC_ASSET, staticAsset.getId());
+                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(staticAsset.getSandbox()==null?null:staticAsset.getSandbox().getId(), SandBoxItemType.STATIC_ASSET, staticAsset.getId());
                 if (staticAsset.getOriginalAssetId() == null && item != null) {
                     // This item was added in this sandbox and now needs to be deleted.
                     staticAsset.setArchivedFlag(true);

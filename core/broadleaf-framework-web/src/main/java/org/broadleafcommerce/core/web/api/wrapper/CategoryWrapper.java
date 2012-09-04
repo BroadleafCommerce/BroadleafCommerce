@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -102,7 +103,12 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
                 }
 
                 for (Product p: productList) {
-                    ProductWrapper productWrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+                	ProductWrapper productWrapper;
+                	if (p instanceof ProductBundle) {
+                		productWrapper = (ProductWrapper) context.getBean(ProductBundleWrapper.class.getName());
+                	} else {
+                		productWrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+                	}
                     productWrapper.wrap(p, request);
                     products.add(productWrapper);
                 }
@@ -113,7 +119,7 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
     }
 
 
-    private List<CategoryWrapper> buildSubcategoryTree(List<CategoryWrapper> wrappers, Category root, HttpServletRequest request, int depth){
+    protected List<CategoryWrapper> buildSubcategoryTree(List<CategoryWrapper> wrappers, Category root, HttpServletRequest request, int depth){
         CatalogService catalogService = (CatalogService) context.getBean("blCatalogService");
 
         if (depth <= 0) {

@@ -206,6 +206,21 @@ public interface Product extends Serializable {
      */
     public void setDefaultSku(Sku defaultSku);
     
+	/**
+	 * @return whether or not the default sku can be used for a multi-sku product in the case that no 
+	 * product options are set. Defaults to false if not specified. Note that this only affects multi-sku
+	 * products.
+	 */
+	public Boolean getCanSellWithoutOptions();
+
+	/**
+	 * Sets whether or not the default sku can be sold in the case that no product options are specified. Note
+	 * that this only affects multi-sku products.
+	 * 
+	 * @param canSellWithoutOptions
+	 */
+	public void setCanSellWithoutOptions(Boolean canSellWithoutOptions);
+
     /**
      * Returns a list of {@link Sku}s filtered by whether the Skus are active or not.
      * This list does not contain the {@link #getDefaultSku()} and filters by {@link Sku#isActive()}.
@@ -692,6 +707,5 @@ public interface Product extends Serializable {
 	 * @return the cumulative upsale products
 	 */
 	public List<RelatedProduct> getCumulativeUpSaleProducts();
-
 
 }

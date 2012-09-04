@@ -428,11 +428,13 @@ public class SolrSearchServiceImpl implements SearchService {
 	    List<Product> products = productDao.readProductsByIds(productIds); 
 	    
 	    // We have to sort the products list by the order of the productIds list to maintain sortability in the UI
-	    Collections.sort(products, new Comparator<Product>() {
-			public int compare(Product o1, Product o2) {
-				return new Integer(productIds.indexOf(o1.getId())).compareTo(productIds.indexOf(o2.getId()));
-			}
-	    });
+	    if (products != null) {
+		    Collections.sort(products, new Comparator<Product>() {
+				public int compare(Product o1, Product o2) {
+					return new Integer(productIds.indexOf(o1.getId())).compareTo(productIds.indexOf(o2.getId()));
+				}
+		    });
+	    }
 	    
 		return products;
 	}

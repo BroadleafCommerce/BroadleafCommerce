@@ -19,6 +19,7 @@ import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
@@ -28,6 +29,7 @@ import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
@@ -92,8 +94,14 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public ProductWrapper findProductById(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-            ProductWrapper wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-            wrapper.wrap(product, request);
+        	ProductWrapper wrapper;
+        	if (product instanceof ProductBundle) {
+        		wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
+        	} else {
+                wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
+                
+        	}
+        	wrapper.wrap(product, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -124,8 +132,14 @@ public class CatalogEndpoint implements ApplicationContextAware {
         List<ProductWrapper> out = new ArrayList<ProductWrapper>();
         if (result != null) {
             for (Product product : result) {
-                ProductWrapper wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-                wrapper.wrap(product, request);
+            	ProductWrapper wrapper;
+            	if (product instanceof ProductBundle) {
+            		wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
+            	} else {
+                    wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
+                    
+            	}
+            	wrapper.wrap(product, request);
                 out.add(wrapper);
             }
         }
@@ -269,8 +283,14 @@ public class CatalogEndpoint implements ApplicationContextAware {
             }
             if (products != null) {
                 for (Product product : products) {
-                    ProductWrapper wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-                    wrapper.wrap(product, request);
+                	ProductWrapper wrapper;
+                	if (product instanceof ProductBundle) {
+                		wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
+                	} else {
+                        wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
+                        
+                	}
+                	wrapper.wrap(product, request);
                     out.add(wrapper);
                 }
             }

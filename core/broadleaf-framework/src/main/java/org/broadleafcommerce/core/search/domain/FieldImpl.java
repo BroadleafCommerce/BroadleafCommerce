@@ -86,7 +86,7 @@ public class FieldImpl implements Field,Serializable {
     @Column(name="SEARCHABLE_FIELD_TYPE")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-	private List<String> searchableFieldTypes = new ArrayList<String>();
+	protected List<String> searchableFieldTypes = new ArrayList<String>();
     
     @Override
     public String getQualifiedFieldName() {

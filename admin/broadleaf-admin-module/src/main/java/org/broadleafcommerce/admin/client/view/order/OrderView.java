@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.admin.client.view.order;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.Side;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
@@ -35,6 +28,15 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.Side;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 /**
  * 
@@ -56,13 +58,15 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 	protected GridStructureView fulfillmentGroupAdjustmentDisplay;
     protected GridStructureView paymentResponseDisplay;
     protected GridStructureView paymentLogDisplay;
+    protected ToolStripButton exportOrdersButton;
     
 	public OrderView() {
 		setHeight100();
 		setWidth100();
 	}
 	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+	@Override
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("orderLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
@@ -71,6 +75,9 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("ordersListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
+        
+        exportOrdersButton = new ToolStripButton(BLCMain.getMessageManager().getString("exportOrdersButtonTitle"));
+        listDisplay.getToolBar().addButton(exportOrdersButton);
         
         TabSet topTabSet = new TabSet(); 
         topTabSet.setID("orderTopTabSet");
@@ -140,59 +147,79 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         addMember(topTabSet);
 	}
 
-	public Canvas asCanvas() {
+	@Override
+    public Canvas asCanvas() {
 		return this;
 	}
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
+	@Override
+    public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
 	
-	public DynamicEntityListDisplay getListDisplay() {
+	@Override
+    public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
 	}
 
-	public OrderItemDisplay getOrderItemsDisplay() {
+	@Override
+    public OrderItemDisplay getOrderItemsDisplay() {
 		return orderItemsDisplay;
 	}
 
-	public SubItemDisplay getFulfillmentGroupDisplay() {
+	@Override
+    public SubItemDisplay getFulfillmentGroupDisplay() {
 		return fulfillmentGroupDisplay;
 	}
 
-	public SubItemDisplay getPaymentInfoDisplay() {
+	@Override
+    public SubItemDisplay getPaymentInfoDisplay() {
 		return paymentInfoDisplay;
 	}
 	
-	public SubItemDisplay getOfferCodeDisplay() {
+	@Override
+    public SubItemDisplay getOfferCodeDisplay() {
 		return offerCodeDisplay;
 	}
 
-	public GridStructureDisplay getAdditionalAttributesDisplay() {
+	@Override
+    public GridStructureDisplay getAdditionalAttributesDisplay() {
 		return additionalAttributesDisplay;
 	}
 	
-	public GridStructureDisplay getOrderAdjustmentDisplay() {
+	@Override
+    public GridStructureDisplay getOrderAdjustmentDisplay() {
 		return orderAdjustmentDisplay;
 	}
 	
-	public GridStructureDisplay getOrderItemAdjustmentDisplay() {
+	@Override
+    public GridStructureDisplay getOrderItemAdjustmentDisplay() {
 		return orderItemAdjustmentDisplay;
 	}
 	
-	public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay() {
+	@Override
+    public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay() {
 		return fulfillmentGroupAdjustmentDisplay;
 	}
 
-	public GridStructureView getOrderItemFeeDisplay() {
+	@Override
+    public GridStructureView getOrderItemFeeDisplay() {
 		return orderItemFeeDisplay;
 	}
 
+    @Override
     public GridStructureView getPaymentLogDisplay() {
         return paymentLogDisplay;
     }
 
+    @Override
     public GridStructureView getPaymentResponseDisplay() {
         return paymentResponseDisplay;
     }
+    
+    @Override
+    public ToolStripButton getExportOrdersButton() {
+        return exportOrdersButton;
+    }
+
 }
