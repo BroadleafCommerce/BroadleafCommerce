@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 
 import java.io.Serializable;
 
@@ -27,4 +28,8 @@ public class MetadataVisitorAdapter implements MetadataVisitor, Serializable, Is
         throw new IllegalArgumentException("Not supported in this context");
     }
 
+    @Override
+    public void visit(MapMetadata metadata) {
+        throw new IllegalArgumentException("Not supported in this context");
+    }
 }

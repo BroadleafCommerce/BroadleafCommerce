@@ -30,7 +30,6 @@ import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.DefaultSkuMediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
@@ -67,7 +66,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEn
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 
@@ -81,7 +79,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected EntitySearchDialog skuSearchView;	
 	//protected SubPresentable crossSalePresenter;
 	protected SubPresentable upSalePresenter;
-	protected SubPresentable mediaPresenter;
+	//protected SubPresentable mediaPresenter;
 	//protected SubPresentable productAttributePresenter;
 	protected SubPresentable parentCategoriesPresenter;
 	protected AssociatedProductOptionPresenterBasic productOptionsPresenter;
@@ -94,7 +92,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
 		//crossSalePresenter.load(selectedRecord, dataSource, null);
 		upSalePresenter.load(selectedRecord, dataSource, null);
-		mediaPresenter.load(selectedRecord, dataSource, null);
+		//mediaPresenter.load(selectedRecord, dataSource, null);
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
         productOptionsPresenter.load(selectedRecord, dataSource, null);
         skusPresenter.load(selectedRecord, dataSource, null);
@@ -113,7 +111,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		super.bind();
 		//crossSalePresenter.bind();
 		upSalePresenter.bind();
-		mediaPresenter.bind();
+		//mediaPresenter.bind();
 		parentCategoriesPresenter.bind();
 		productOptionsPresenter.bind();
 		skusPresenter.bind();
@@ -240,16 +238,16 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				upSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productMediaMapDS", new DefaultSkuMediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
-			@Override
-            public void onSetupSuccess(DataSource result) {
-	            Map<String, Object> initialValues = new HashMap<String, Object>(2);
-	            initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
-	            initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
-				mediaPresenter = new DefaultSkuMediaMapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
-				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "url", "title", "altText", "tags"}, new Boolean[]{true, true, true, true, true});
-			}
-		}));
+		//getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productMediaMapDS", new DefaultSkuMediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
+			//@Override
+            //public void onSetupSuccess(DataSource result) {
+	            //Map<String, Object> initialValues = new HashMap<String, Object>(2);
+	            //initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
+	            //initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
+				//mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
+				//mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "url", "title", "altText", "tags"}, new Boolean[]{true, true, true, true, true});
+			//}
+		//}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {

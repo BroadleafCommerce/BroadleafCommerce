@@ -83,6 +83,34 @@ public @interface AdminPresentationAdornedTargetCollection {
     String targetObjectProperty();
 
     /**
+     * Optional - only required if the adorned target has fields
+     * (other than the sort property) that should be populated
+     * by the user
+     *
+     * List of fields to include in the add/update form
+     * for the adorned target entity.
+     *
+     * @return user populated fields on the adorned target
+     */
+    String[] maintainedAdornedTargetFields() default {};
+
+    /**
+     * Optional - only required when it is desirable to override
+     * the property prominence settings from the adorned target and the
+     * target object
+     *
+     * List of fields visible in the adorned target grid UI in the
+     * admin tool. Fields are referenced relative to the adorned target
+     * entity, or the target entity. For example, in CrossSaleProductImpl,
+     * to show the product name and promotionMesssage fields, the
+     * gridVisibleFields value would be : {"defaultSku.name", "promotionMessage"}
+     *
+     *
+     * @return List of fields visible in the adorned target grid UI in the admin tool
+     */
+    String[] gridVisibleFields() default {};
+
+    /**
      * Optional - only required if the primary key property of the
      * target entity is called something other than "id"
      *

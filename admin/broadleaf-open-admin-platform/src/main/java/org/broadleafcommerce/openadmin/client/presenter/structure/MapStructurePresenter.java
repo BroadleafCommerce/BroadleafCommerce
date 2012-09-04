@@ -114,10 +114,7 @@ public class MapStructurePresenter extends AbstractSubPresentable {
                     if (event.isLeftButtonDown()) {
                         DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
                         initialValues.put("symbolicId", dataSource.getCompatibleModule(dataSource.getPersistencePerspective().getOperationTypes().getAddType()).getLinkedValue());
-                        String[] type = associatedRecord.getAttributeAsStringArray("_type");
-                        if (type == null) {
-                            type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
-                        }
+                        String[] type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
                         initialValues.put("_type", type);
                         entityEditDialog.editNewRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, gridFields, null);
                     }

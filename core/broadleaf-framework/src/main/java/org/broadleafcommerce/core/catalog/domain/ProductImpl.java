@@ -61,6 +61,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -157,7 +159,7 @@ public class ProductImpl implements Product, Status {
 	@OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "ProductImpl_Cross_Sale_Products", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence")
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "ProductImpl_Cross_Sale_Products", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence", dataSourceName = "crossSaleProductsDS", maintainedAdornedTargetFields = {"promotionMessage"}, gridVisibleFields = {"defaultSku.name", "promotionMessage"})
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
@@ -190,7 +192,7 @@ public class ProductImpl implements Product, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddType.PERSIST, friendlyName = "ProductImpl_Product_Attributes")
+    @AdminPresentationCollection(addType = AddType.PERSIST, friendlyName = "ProductImpl_Product_Attributes", dataSourceName = "productAttributeDS")
     protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductOptionImpl.class)

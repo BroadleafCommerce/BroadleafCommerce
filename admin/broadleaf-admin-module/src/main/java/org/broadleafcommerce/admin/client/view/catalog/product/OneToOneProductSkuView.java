@@ -50,7 +50,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected DynamicFormView dynamicFormDisplay;
 	//protected GridStructureView crossSaleDisplay;
 	protected GridStructureView upSaleDisplay;
-	protected GridStructureView mediaDisplay;
+	//protected GridStructureView mediaDisplay;
 	protected DynamicEntityListView listDisplay;
 	//protected GridStructureView attributesDisplay;
 	protected GridStructureView allCategoriesDisplay;
@@ -139,8 +139,8 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         productOptionsLayout.addMember(productOptionsDisplay);
         productOptionsTab.setPane(productOptionsLayout);
 
-        mediaDisplay = new GridStructureView(BLCMain.getMessageManager().getString("mediaListTitle"), false, true);
-        mediaLayout.addMember(mediaDisplay);
+        //mediaDisplay = new GridStructureView(BLCMain.getMessageManager().getString("mediaListTitle"), false, true);
+        //mediaLayout.addMember(mediaDisplay);
         
         mediaTab.setPane(mediaLayout);
         
@@ -190,10 +190,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		return upSaleDisplay;
 	}
 
-	@Override
-    public GridStructureDisplay getMediaDisplay() {
-		return mediaDisplay;
-	}
+	//@Override
+    //public GridStructureDisplay getMediaDisplay() {
+		//return mediaDisplay;
+	//}
 
 	@Override
     public DynamicFormDisplay getDynamicFormDisplay() {

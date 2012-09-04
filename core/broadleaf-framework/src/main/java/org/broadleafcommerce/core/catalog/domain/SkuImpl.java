@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -194,6 +195,7 @@ public class SkuImpl implements Sku {
     @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media", targetUIElementId = "productSkuMediaLayout", dataSourceName = "productMediaMapDS", keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key", deleteEntityUponRemove = true, valuePropertyFriendlyName = "SkuImpl_Sku_Media_Value")
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();
     
     /**
@@ -232,8 +234,7 @@ public class SkuImpl implements Sku {
     protected List<SkuFee> fees;
 
     @ElementCollection
-    @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES", 
-                   joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
+    @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
     @MapKeyJoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID")
     @MapKeyClass(FulfillmentOptionImpl.class)
     @Column(name = "RATE", precision=19, scale=5)

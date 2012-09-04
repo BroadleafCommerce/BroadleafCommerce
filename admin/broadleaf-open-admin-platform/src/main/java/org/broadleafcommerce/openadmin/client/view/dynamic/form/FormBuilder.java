@@ -149,16 +149,25 @@ public class FormBuilder {
 
             @Override
             public void visit(AdornedTargetCollectionMetadata metadata) {
-                //TODO persistence is blowing up for this
+                List<String> prominentNames = new ArrayList<String>();
+                for (DataSourceField field : lookupDataSource.getFields()) {
+                    if (field.getAttributeAsBoolean("prominent") && !field.getAttributeAsBoolean("permanentlyHidden")) {
+                        prominentNames.add(field.getName());
+                    }
+                }
+                ((ListGridDataSource) lookupDataSource).resetPermanentFieldVisibility(prominentNames.toArray(new String[prominentNames.size()]));
                 EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDataSource, true);
                 SubPresentable subPresentable;
-                if (metadata.isIgnoreAdornedProperties()) {
+                if (metadata.isIgnoreAdornedProperties() || metadata.getMaintainedAdornedTargetFields().length == 0) {
                     subPresentable = new SimpleSearchListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
                 } else {
-                    //TODO check how the secondary dialog after the lookup appears without explicitly defining the adorned fields in the following constructor
-                    subPresentable = new EditableAdornedTargetListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle);
+                    subPresentable = new EditableAdornedTargetListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle, metadata.getMaintainedAdornedTargetFields());
                 }
-                subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+                Boolean[] edits = new Boolean[metadata.getGridVisibleFields().length];
+                for (int j=0;j<edits.length;j++) {
+                    edits[j] = false;
+                }
+                subPresentable.setDataSource((ListGridDataSource) dataSource, metadata.getGridVisibleFields(), edits);
                 presenter.addSubPresentable(subPresentable);
             }
         });
