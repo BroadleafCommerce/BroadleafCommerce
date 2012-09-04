@@ -353,6 +353,7 @@ Button (also used as MenuButton base style)
   background: #dddddd;
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.1, #d3d3d3), color-stop(0.71, #f2f2f2), color-stop(0.77, #fcfcfc));
   background-image: -moz-linear-gradient(center bottom, #d3d3d3 10%, #f2f2f2 71%, #fcfcfc 77%);
+  background: url('images/ListGrid/headerSprite.png') repeat-x top left;
 }
 .headerButtonDown {
   border-left: 1px solid white;

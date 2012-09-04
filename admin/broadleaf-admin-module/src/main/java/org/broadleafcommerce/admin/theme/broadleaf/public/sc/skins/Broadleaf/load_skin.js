@@ -125,9 +125,12 @@ isc.loadSkin = function (theWindow) {
                 summaryRowHeight:21,
                 cellHeight:22,
                 normalCellHeight:22,
+
                 showHeaderMenuButton:true,
-                headerMenuButtonConstructor:"HeaderMenuButton",
+                headerMenuButtonConstructor:"HeaderImgButton",
                 headerMenuButtonWidth:17,
+                headerMenuButtonSrc:"[SKIN]/ListGrid/header_menu.png",
+                headerMenuButtonIcon:null,
 
                 groupLeadingIndent : 1,
                 groupIconPadding : 3,

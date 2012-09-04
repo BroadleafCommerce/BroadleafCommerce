@@ -89,7 +89,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 
         //setWidth100();
         setHeight100();
-        setWidth("80.25%");
+        setWidth("80.65%");
         //setHeight("90%");
         setZIndex(1);
 
