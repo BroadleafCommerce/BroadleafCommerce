@@ -16,19 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.catalog;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
@@ -42,6 +29,19 @@ import org.broadleafcommerce.core.searchRedirect.service.SearchRedirectService;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.ui.Model;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Handles searching the catalog for a given search term. Will apply product search criteria
@@ -100,6 +100,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
 				}
 			}
 			
+			parameters.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
 			parameters.put(fieldName, activeFieldFilters.toArray(new String[activeFieldFilters.size()]));
 			parameters.remove("facetField");
 			

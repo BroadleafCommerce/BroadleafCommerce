@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
@@ -76,6 +77,7 @@ public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProce
 			paramValues = (String[]) ArrayUtils.add(paramValues, value);
 		}
 		
+		params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
 		params.put(key, paramValues);
 		
 		String url = ProcessorUtils.getUrl(baseUrl, params);
