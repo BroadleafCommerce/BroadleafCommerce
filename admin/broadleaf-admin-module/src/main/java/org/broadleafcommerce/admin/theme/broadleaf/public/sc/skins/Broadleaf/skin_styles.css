@@ -1146,6 +1146,7 @@ Button (also used as MenuButton base style)
   line-height: 18px;
   color: black;
   background-color: #f4f4f4;
+  vertical-align: top;
 }
 /*============================================================
 	ListGrid cells

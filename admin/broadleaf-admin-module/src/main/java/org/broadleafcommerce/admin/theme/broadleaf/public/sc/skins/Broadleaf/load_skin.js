@@ -30,8 +30,12 @@ isc.loadSkin = function (theWindow) {
         if(isc.RPCManager) {
             isc.RPCManager.addClassProperties({ promptStyle:"cursor" });
         }
+
         isc.Button.addProperties({
-            height: 23
+            paddingTop: 4,
+            paddingBottom: 4,
+            paddingLeft: 14,
+            paddingRight: 14
         });
 
         // define IButton so examples that support the new SmartClient skin image-based
@@ -121,10 +125,11 @@ isc.loadSkin = function (theWindow) {
                 expansionFieldImageWidth : 16,
                 expansionFieldImageHeight : 16,
                 headerBaseStyle : "headerButton",
-                headerHeight:25,
-                summaryRowHeight:21,
-                cellHeight:22,
-                normalCellHeight:22,
+                headerHeight:28,
+                summaryRowHeight:28,
+                cellHeight:28,
+                normalCellHeight:28,
+                filterEditorHeight: 30,
 
                 showHeaderMenuButton:true,
                 headerMenuButtonConstructor:"HeaderImgButton",
@@ -448,8 +453,6 @@ isc.loadSkin = function (theWindow) {
 
         if (isc.DateChooser) {
             isc.DateChooser.addProperties({
-                showDoubleYearIcon:false,
-                skinImgDir:"images/DateChooser/",
                 headerStyle:"dateChooserButton",
                 weekendHeaderStyle:"dateChooserWeekendButton",
                 baseNavButtonStyle:"dateChooserNavButton",
@@ -457,11 +460,43 @@ isc.loadSkin = function (theWindow) {
                 baseWeekendStyle:"dateChooserWeekend",
                 baseBottomButtonStyle:"dateChooserBottomButton",
                 alternateWeekStyles:false,
-                todayButtonHeight:20,
-                edgeCenterBackgroundColor:"#FFFFFF",
-                backgroundColor:"#FFFFFF",
-                border:"1px solid #868686"
 
+                showEdges:true,
+
+                edgeImage: "[SKINIMG]Window/window.png",
+                edgeSize:6,
+                edgeTop:26,
+                edgeBottom:5,
+                edgeOffsetTop:1,
+                edgeOffsetRight:5,
+                edgeOffsetLeft:5,
+                edgeOffsetBottom:5,
+
+                todayButtonHeight:20,
+
+                headerHeight:24,
+
+                edgeCenterBackgroundColor:"#FFFFFF",
+                backgroundColor:null,
+
+                showShadow:false,
+                shadowDepth:6,
+                shadowOffset:5,
+
+                showDoubleYearIcon:false,
+                skinImgDir:"images/DateChooser/",
+                prevYearIcon:"[SKIN]doubleArrow_left.png",
+                prevYearIconWidth:16,
+                prevYearIconHeight:16,
+                nextYearIcon:"[SKIN]doubleArrow_right.png",
+                nextYearIconWidth:16,
+                nextYearIconHeight:16,
+                prevMonthIcon:"[SKIN]arrow_left.png",
+                prevMonthIconWidth:16,
+                prevMonthIconHeight:16,
+                nextMonthIcon:"[SKIN]arrow_right.png",
+                nextMonthIconWidth:16,
+                nextMonthIconHeight:16
             });
         }
 
