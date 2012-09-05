@@ -35,4 +35,11 @@ public @interface AdminPresentationOverrides {
 	 * @return one or more AdminPresentationOverride
 	 */
 	AdminPresentationOverride[] value() default {};
+
+    AdminPresentationCollectionOverride[] collections() default {};
+
+    AdminPresentationAdornedTargetCollectionOverride[] adornedTargetCollections() default {};
+
+    AdminPresentationMapOverride[] maps() default {};
+
 }
