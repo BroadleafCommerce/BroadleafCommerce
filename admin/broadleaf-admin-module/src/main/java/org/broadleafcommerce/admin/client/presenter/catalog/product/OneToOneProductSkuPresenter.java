@@ -23,6 +23,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
@@ -76,11 +77,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
 	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected EntitySearchDialog productSearchView;
-	protected EntitySearchDialog skuSearchView;	
-	//protected SubPresentable crossSalePresenter;
+	protected EntitySearchDialog skuSearchView;
 	protected SubPresentable upSalePresenter;
-	//protected SubPresentable mediaPresenter;
-	//protected SubPresentable productAttributePresenter;
 	protected SubPresentable parentCategoriesPresenter;
 	protected AssociatedProductOptionPresenterBasic productOptionsPresenter;
 	protected SubPresentable skusPresenter;
@@ -90,9 +88,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-		//crossSalePresenter.load(selectedRecord, dataSource, null);
 		upSalePresenter.load(selectedRecord, dataSource, null);
-		//mediaPresenter.load(selectedRecord, dataSource, null);
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
         productOptionsPresenter.load(selectedRecord, dataSource, null);
         skusPresenter.load(selectedRecord, dataSource, null);
@@ -109,9 +105,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	public void bind() {
 		super.bind();
-		//crossSalePresenter.bind();
 		upSalePresenter.bind();
-		//mediaPresenter.bind();
 		parentCategoriesPresenter.bind();
 		productOptionsPresenter.bind();
 		skusPresenter.bind();
@@ -224,13 +218,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				productSearchView = new EntitySearchDialog(productSearchDataSource);
 			}
 		}));
-		//getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("crossSaleProductsDS", new CrossSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
-			//@Override
-            //public void onSetupSuccess(DataSource result) {
-				//crossSalePresenter = new EditableAdornedTargetListPresenter(getDisplay().getCrossSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
-				//crossSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
-			//}
-		//}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("upSaleProductsDS", new UpSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
@@ -307,30 +294,33 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 HashMap<String, Object> initialValues = new HashMap<String, Object>(10);
                 initialValues.put("operation", "add");
                 initialValues.put("customCriteria", "assetListUi");
-                initialValues.put("ceilingEntityFullyQualifiedClassname",
-                        CeilingEntities.STATICASSETS);
-                // initialValues.put("_type", new String[]{((DynamicEntityDataSource)
-                // display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+                initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
                 initialValues.put("_type", CeilingEntities.STATICASSETS);
                 initialValues.put("csrfToken", BLCMain.csrfToken);
                 dialog.setInitialValues(initialValues);
 
-                getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
-                    @Override
-                    public void execute(final FormItem formItem) {
-                        dialog.search("Asset Search", new TileGridItemSelectedHandler() {
-                            @Override
-                            public void onSearchItemSelected(TileGridItemSelected event) {
-                                String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
-                                formItem.setValue(staticAssetFullUrl);
-                                getMediaEntityView().updateMedia(staticAssetFullUrl);
-                            }
-                        });
-                    }
-                });
+                library.put("staticAssetDialog", dialog);
             }
         }));
 	}
+
+    @Override
+    public void postSetup(Canvas container) {
+        getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
+            @Override
+            public void execute(final FormItem formItem) {
+                ((AssetSearchDialog) library.get("staticAssetDialog")).search("Asset Search", new TileGridItemSelectedHandler() {
+                    @Override
+                    public void onSearchItemSelected(TileGridItemSelected event) {
+                        String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
+                        formItem.setValue(staticAssetFullUrl);
+                        getMediaEntityView().updateMedia(staticAssetFullUrl);
+                    }
+                });
+            }
+        });
+        super.postSetup(container);
+    }
 
     protected LinkedHashMap<String, String> getMediaMapKeys() {
 		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>(3);

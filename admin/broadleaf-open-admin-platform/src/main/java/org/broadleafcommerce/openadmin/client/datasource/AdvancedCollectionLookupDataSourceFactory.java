@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSour
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
@@ -61,6 +62,11 @@ public class AdvancedCollectionLookupDataSourceFactory implements DataSourceFact
             @Override
             public void visit(BasicCollectionMetadata metadata) {
                 dataSourceModuleList.add(new BasicClientEntityModule(metadata.getCollectionCeilingEntity(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
+            }
+
+            @Override
+            public void visit(MapMetadata metadata) {
+                dataSourceModuleList.add(new BasicClientEntityModule(metadata.getMapKeyOptionEntityClass(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
             }
         });
         DataSourceModule[] modules = new DataSourceModule[dataSourceModuleList.size()];

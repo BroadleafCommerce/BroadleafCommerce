@@ -47,6 +47,7 @@ import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 import org.broadleafcommerce.common.presentation.client.AddType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -54,15 +55,19 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleMapStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import java.util.ArrayList;
@@ -144,6 +149,8 @@ public class FormBuilder {
                     subPresentable = new SimpleSearchListPresenter(advancedCollectionView, new EntitySearchDialog((ListGridDataSource)lookupDataSource, true), metadata.getAvailableToTypes(), viewTitle);
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+                subPresentable.setReadOnly(!metadata.isMutable());
+                subPresentable.disable();
                 presenter.addSubPresentable(subPresentable);
             }
 
@@ -168,6 +175,44 @@ public class FormBuilder {
                     edits[j] = false;
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, metadata.getGridVisibleFields(), edits);
+                subPresentable.setReadOnly(!metadata.isMutable());
+                subPresentable.disable();
+                presenter.addSubPresentable(subPresentable);
+            }
+
+            @Override
+            public void visit(MapMetadata metadata) {
+                SubPresentable subPresentable;
+                if (metadata.isSimpleValue()) {
+                    subPresentable = new SimpleMapStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), null);
+                } else {
+                    MapStructureEntityEditDialog mapEntityAdd;
+                    if (lookupDataSource != null) {
+                        mapEntityAdd = new MapStructureEntityEditDialog((MapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE), lookupDataSource, metadata.getMapKeyOptionEntityDisplayField(), metadata.getMapKeyOptionEntityValueField());
+                    } else {
+                        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+                        for (String[] key : metadata.getKeys()) {
+                            String temp;
+                            try {
+                                temp = BLCMain.getMessageManager().getString(key[1]);
+                            } catch (MissingResourceException e) {
+                                temp = key[1];
+                            }
+                            keys.put(key[0], temp);
+                        }
+                        mapEntityAdd = new MapStructureEntityEditDialog((MapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE), keys);
+                    }
+                    if (metadata.getMediaField() != null && metadata.getMediaField().length() > 0) {
+                        mapEntityAdd.setShowMedia(true);
+                        mapEntityAdd.setMediaField(metadata.getMediaField());
+                    } else {
+                        mapEntityAdd.setShowMedia(false);
+                    }
+                    subPresentable = new MapStructurePresenter(advancedCollectionView, mapEntityAdd, viewTitle, null);
+                }
+                subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+                subPresentable.setReadOnly(!metadata.isMutable());
+                subPresentable.disable();
                 presenter.addSubPresentable(subPresentable);
             }
         });

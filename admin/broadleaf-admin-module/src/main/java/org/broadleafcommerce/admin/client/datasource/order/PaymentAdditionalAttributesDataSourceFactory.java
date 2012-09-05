@@ -16,24 +16,22 @@
 
 package org.broadleafcommerce.admin.client.datasource.order;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.presenter.order.OrderPresenter;
-import org.broadleafcommerce.admin.client.view.order.OrderDisplay;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.MapStructureClientModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DataSource;
 
 /**
  * 
@@ -58,7 +56,7 @@ public class PaymentAdditionalAttributesDataSourceFactory implements DataSourceF
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.PAYMENT_INFO, null));
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new MapStructureClientModule(CeilingEntities.PAYMENT_INFO, persistencePerspective, AppServices.DYNAMIC_ENTITY, ((OrderDisplay) presenter.getDisplay()).getAdditionalAttributesDisplay().getGrid())
+				new MapStructureClientModule(CeilingEntities.PAYMENT_INFO, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);

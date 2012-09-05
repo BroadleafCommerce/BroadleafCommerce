@@ -16,6 +16,28 @@
 
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -35,24 +57,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
 
 /**
  * Created by bpolster.
@@ -119,6 +123,15 @@ public class StaticAssetImpl implements StaticAsset {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @BatchSize(size = 20)
+    @AdminPresentationMap(
+        friendlyName = "assetDescriptionTitle",
+        dataSourceName = "staticAssetDescriptionMapDS",
+        keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+        deleteEntityUponRemove = true,
+        mapKeyOptionEntityClass = LocaleImpl.class,
+        mapKeyOptionEntityDisplayField = "friendlyName",
+        mapKeyOptionEntityValueField = "localeCode"
+    )
     protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
 
     @ManyToOne (targetEntity = SandBoxImpl.class)

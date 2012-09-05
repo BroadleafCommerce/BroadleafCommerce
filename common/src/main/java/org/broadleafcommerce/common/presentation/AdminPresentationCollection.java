@@ -50,6 +50,16 @@ public @interface AdminPresentationCollection {
     boolean excluded() default false;
 
     /**
+     * Optional - only required if the collection grid UI
+     * should be in read only mode
+     *
+     * Whether or not the collection can be edited
+     *
+     * @return Whether or not the collection can be edited
+     */
+    boolean mutable() default true;
+
+    /**
      * Define whether or not added items for this
      * collection are acquired via search or construction.
      *
@@ -89,7 +99,7 @@ public @interface AdminPresentationCollection {
     /**
      * Optional - only required if you want to specify ordering for this field
      *
-     * The order in which this field will appear in a GUI relative to other fields from the same class
+     * The order in which this field will appear in a GUI relative to other collections from the same class
      *
      * @return the display order
      */
@@ -117,5 +127,18 @@ public @interface AdminPresentationCollection {
      * @return unique name for the backing datasource
      */
     String dataSourceName() default "";
+
+    /**
+     * Optional - only required if you need to specially handle crud operations for this
+     * specific collection on the server
+     *
+     * Custom string values that will be passed to the server during CRUB operations on this
+     * collection. These criteria values can be detected in a custom persistence handler
+     * (@CustomPersistenceHandler) in order to engage special handling through custom server
+     * side code for this collection.
+     *
+     * @return the custom string array to pass to the server during CRUD operations
+     */
+    String[] customCriteria() default {};
 
 }

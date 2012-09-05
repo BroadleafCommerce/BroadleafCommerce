@@ -66,6 +66,7 @@ import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -1100,6 +1101,11 @@ public class BasicClientEntityModule implements DataSourceModule {
 
                 @Override
                 public void visit(AdornedTargetCollectionMetadata metadata) {
+                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
+                }
+
+                @Override
+                public void visit(MapMetadata metadata) {
                     ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
                 }
             });

@@ -234,4 +234,44 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 
         return persistencePerspective;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PersistencePerspective)) return false;
+
+        PersistencePerspective that = (PersistencePerspective) o;
+
+        if (!Arrays.equals(additionalForeignKeys, that.additionalForeignKeys)) return false;
+        if (!Arrays.equals(additionalNonPersistentProperties, that.additionalNonPersistentProperties))
+            return false;
+        if (configurationKey != null ? !configurationKey.equals(that.configurationKey) : that.configurationKey != null)
+            return false;
+        if (!Arrays.equals(excludeFields, that.excludeFields)) return false;
+        if (!Arrays.equals(includeFields, that.includeFields)) return false;
+        if (operationTypes != null ? !operationTypes.equals(that.operationTypes) : that.operationTypes != null)
+            return false;
+        if (persistencePerspectiveItems != null ? !persistencePerspectiveItems.equals(that.persistencePerspectiveItems) : that.persistencePerspectiveItems != null)
+            return false;
+        if (populateToOneFields != null ? !populateToOneFields.equals(that.populateToOneFields) : that.populateToOneFields != null)
+            return false;
+        if (showArchivedFields != null ? !showArchivedFields.equals(that.showArchivedFields) : that.showArchivedFields != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = additionalNonPersistentProperties != null ? Arrays.hashCode(additionalNonPersistentProperties) : 0;
+        result = 31 * result + (additionalForeignKeys != null ? Arrays.hashCode(additionalForeignKeys) : 0);
+        result = 31 * result + (persistencePerspectiveItems != null ? persistencePerspectiveItems.hashCode() : 0);
+        result = 31 * result + (operationTypes != null ? operationTypes.hashCode() : 0);
+        result = 31 * result + (populateToOneFields != null ? populateToOneFields.hashCode() : 0);
+        result = 31 * result + (excludeFields != null ? Arrays.hashCode(excludeFields) : 0);
+        result = 31 * result + (includeFields != null ? Arrays.hashCode(includeFields) : 0);
+        result = 31 * result + (configurationKey != null ? configurationKey.hashCode() : 0);
+        result = 31 * result + (showArchivedFields != null ? showArchivedFields.hashCode() : 0);
+        return result;
+    }
 }

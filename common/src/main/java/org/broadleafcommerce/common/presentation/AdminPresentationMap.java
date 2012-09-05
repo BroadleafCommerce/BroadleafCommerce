@@ -6,13 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Adorned target collections are a variant of the basic collection type (@see AdminPresentationCollection).
- * This type of collection concept comes into play when you want to represent a "ToMany" association, but
- * you also want to capture some additional data around the association. CrossSaleProductImpl is an example of
- * this concept. CrossSaleProductImpl not only contains a product reference, but sequence and
- * promotional message fields as well. We want the admin user to choose the desired product for the association
- * and also specify the order and promotional message information to complete the interaction.
- * The Adorned target concept embodied in this annotation makes this possible.
+ * This annotation is used to describe a persisted map structure for use in the
+ * admin tool
  *
  * @author Jeff Fischer
  */
@@ -53,9 +48,19 @@ public @interface AdminPresentationMap {
     boolean excluded() default false;
 
     /**
+     * Optional - only required if the collection grid UI
+     * should be in read only mode
+     *
+     * Whether or not the collection can be edited
+     *
+     * @return Whether or not the collection can be edited
+     */
+    boolean mutable() default true;
+
+    /**
      * Optional - only required if you want to specify ordering for this field
      *
-     * The order in which this field will appear in a GUI relative to other fields from the same class
+     * The order in which this field will appear in a GUI relative to other collections from the same class
      *
      * @return the display order
      */
@@ -84,11 +89,6 @@ public @interface AdminPresentationMap {
      */
     String dataSourceName() default "";
 
-
-
-
-
-
     /**
      * Optional - only required if the type for the key of this map
      * is other than java.lang.String, or if the map is not a generic
@@ -98,7 +98,7 @@ public @interface AdminPresentationMap {
      *
      * @return The type for the key of this map
      */
-    String keyClassName() default "";
+    Class<?> keyClass() default String.class;
 
     /**
      * Optional - only required if the key field title for this
@@ -124,7 +124,7 @@ public @interface AdminPresentationMap {
      *
      * @return The type for the value of this map
      */
-    String valueClassName() default "";
+    Class<?> valueClass() default void.class;
 
     /**
      * Optional - only required if the value class is a
@@ -176,11 +176,61 @@ public @interface AdminPresentationMap {
 
     /**
      * Optional - only required when the user should select from a list of pre-defined
-     * keys when adding/editing this map
+     * keys when adding/editing this map. Either this value, or the mapKeyOptionEntityClass
+     * should be user - not both.
      *
      * Specify the keys available for the user to select from
      *
      * @return the array of keys from which the user can select
      */
     AdminPresentationMapKey[] keys() default {};
+
+    /**
+     * Optional - only required when the user should select from a list of database
+     * persisted values for keys when adding/editing this map. Either this value, or the
+     * keys parameter should be user - not both
+     *
+     * Specify the entity class that represents the table in the database that contains
+     * the key values for this map
+     *
+     * @return the entity class for the map keys
+     */
+    Class<?> mapKeyOptionEntityClass() default void.class;
+
+    /**
+     * Optional - only required when the user should select from a list of database
+     * persisted values for keys when adding/editing this map.
+     *
+     * Specify the field in the option entity class that contains the value that will
+     * be shown to the user. This can be the same field as the value field. This option
+     * does not support i18n out-of-the-box.
+     *
+     * @return the display field in the entity class
+     */
+    String mapKeyOptionEntityDisplayField() default "";
+
+    /**
+     * Optional - only required when the user should select from a list of database
+     * persisted values for keys when adding/editing this map.
+     *
+     * Specify the field in the option entity class that contains the value that will
+     * actually be saved for the selected key. This can be the same field as the display
+     * field.
+     *
+     * @return the value field in the entity class
+     */
+    String mapKeyOptionEntityValueField() default "";
+
+    /**
+     * Optional - only required if you need to specially handle crud operations for this
+     * specific collection on the server
+     *
+     * Custom string values that will be passed to the server during CRUD operations on this
+     * collection. These criteria values can be detected in a custom persistence handler
+     * (@CustomPersistenceHandler) in order to engage special handling through custom server
+     * side code for this collection.
+     *
+     * @return the custom string array to pass to the server during CRUD operations
+     */
+    String[] customCriteria() default {};
 }

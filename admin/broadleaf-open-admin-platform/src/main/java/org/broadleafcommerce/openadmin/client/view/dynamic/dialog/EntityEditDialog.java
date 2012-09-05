@@ -37,7 +37,6 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
-import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
@@ -105,7 +104,7 @@ public class EntityEditDialog extends Window {
             		dynamicForm.saveData(new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()== RPCResponse.STATUS_SUCCESS) {
-                                TreeNode record = (TreeNode) response.getData()[0];
+                                Record record = response.getData()[0];
                                 if (handler != null) {
                                     handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
                                 }

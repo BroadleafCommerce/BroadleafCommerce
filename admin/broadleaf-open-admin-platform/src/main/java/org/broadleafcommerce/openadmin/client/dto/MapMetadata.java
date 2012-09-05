@@ -7,43 +7,13 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
  */
 public class MapMetadata extends CollectionMetadata {
 
-    private String keyClassName;
-    private String keyPropertyFriendlyName;
     private String valueClassName;
-    private boolean deleteEntityUponRemove;
-    private String valuePropertyFriendlyName;
     private String[][] keys;
-
-    private String keyPropertyName;
-    private String valuePropertyName;
-    private String parentObjectClass;
-    private String parentObjectIdField;
     private boolean isSimpleValue;
     private String mediaField;
-
-    public boolean isDeleteEntityUponRemove() {
-        return deleteEntityUponRemove;
-    }
-
-    public void setDeleteEntityUponRemove(boolean deleteEntityUponRemove) {
-        this.deleteEntityUponRemove = deleteEntityUponRemove;
-    }
-
-    public String getKeyClassName() {
-        return keyClassName;
-    }
-
-    public void setKeyClassName(String keyClassName) {
-        this.keyClassName = keyClassName;
-    }
-
-    public String getKeyPropertyFriendlyName() {
-        return keyPropertyFriendlyName;
-    }
-
-    public void setKeyPropertyFriendlyName(String keyPropertyFriendlyName) {
-        this.keyPropertyFriendlyName = keyPropertyFriendlyName;
-    }
+    private String mapKeyOptionEntityClass;
+    private String mapKeyOptionEntityDisplayField;
+    private String mapKeyOptionEntityValueField;
 
     public String getValueClassName() {
         return valueClassName;
@@ -51,46 +21,6 @@ public class MapMetadata extends CollectionMetadata {
 
     public void setValueClassName(String valueClassName) {
         this.valueClassName = valueClassName;
-    }
-
-    public String getValuePropertyFriendlyName() {
-        return valuePropertyFriendlyName;
-    }
-
-    public void setValuePropertyFriendlyName(String valuePropertyFriendlyName) {
-        this.valuePropertyFriendlyName = valuePropertyFriendlyName;
-    }
-
-    public String getKeyPropertyName() {
-        return keyPropertyName;
-    }
-
-    public void setKeyPropertyName(String keyPropertyName) {
-        this.keyPropertyName = keyPropertyName;
-    }
-
-    public String getParentObjectClass() {
-        return parentObjectClass;
-    }
-
-    public void setParentObjectClass(String parentObjectClass) {
-        this.parentObjectClass = parentObjectClass;
-    }
-
-    public String getParentObjectIdField() {
-        return parentObjectIdField;
-    }
-
-    public void setParentObjectIdField(String parentObjectIdField) {
-        this.parentObjectIdField = parentObjectIdField;
-    }
-
-    public String getValuePropertyName() {
-        return valuePropertyName;
-    }
-
-    public void setValuePropertyName(String valuePropertyName) {
-        this.valuePropertyName = valuePropertyName;
     }
 
     public boolean isSimpleValue() {
@@ -117,6 +47,30 @@ public class MapMetadata extends CollectionMetadata {
         this.keys = keys;
     }
 
+    public String getMapKeyOptionEntityClass() {
+        return mapKeyOptionEntityClass;
+    }
+
+    public void setMapKeyOptionEntityClass(String mapKeyOptionEntityClass) {
+        this.mapKeyOptionEntityClass = mapKeyOptionEntityClass;
+    }
+
+    public String getMapKeyOptionEntityDisplayField() {
+        return mapKeyOptionEntityDisplayField;
+    }
+
+    public void setMapKeyOptionEntityDisplayField(String mapKeyOptionEntityDisplayField) {
+        this.mapKeyOptionEntityDisplayField = mapKeyOptionEntityDisplayField;
+    }
+
+    public String getMapKeyOptionEntityValueField() {
+        return mapKeyOptionEntityValueField;
+    }
+
+    public void setMapKeyOptionEntityValueField(String mapKeyOptionEntityValueField) {
+        this.mapKeyOptionEntityValueField = mapKeyOptionEntityValueField;
+    }
+
     @Override
     public void accept(MetadataVisitor visitor) {
         visitor.visit(this);
@@ -124,18 +78,13 @@ public class MapMetadata extends CollectionMetadata {
 
     @Override
     protected FieldMetadata populate(FieldMetadata metadata) {
-        ((MapMetadata) metadata).keyClassName = keyClassName;
-        ((MapMetadata) metadata).keyPropertyFriendlyName = keyPropertyFriendlyName;
         ((MapMetadata) metadata).valueClassName = valueClassName;
-        ((MapMetadata) metadata).deleteEntityUponRemove = deleteEntityUponRemove;
-        ((MapMetadata) metadata).valuePropertyFriendlyName = valuePropertyFriendlyName;
-        ((MapMetadata) metadata).keyPropertyName = keyPropertyName;
-        ((MapMetadata) metadata).valuePropertyName = valuePropertyName;
-        ((MapMetadata) metadata).parentObjectClass = parentObjectClass;
-        ((MapMetadata) metadata).parentObjectIdField = parentObjectIdField;
         ((MapMetadata) metadata).isSimpleValue = isSimpleValue;
         ((MapMetadata) metadata).mediaField = mediaField;
         ((MapMetadata) metadata).keys = keys;
+        ((MapMetadata) metadata).mapKeyOptionEntityClass = mapKeyOptionEntityClass;
+        ((MapMetadata) metadata).mapKeyOptionEntityDisplayField = mapKeyOptionEntityDisplayField;
+        ((MapMetadata) metadata).mapKeyOptionEntityValueField = mapKeyOptionEntityValueField;
 
         return super.populate(metadata);
     }

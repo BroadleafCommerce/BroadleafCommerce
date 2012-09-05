@@ -78,8 +78,8 @@ public class MapStructurePresenter extends AbstractSubPresentable {
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
-		this.gridFields = gridFields;
+		String[] finalGridFields = dataSource.setupGridFields(gridFields, editable);
+		this.gridFields = finalGridFields;
 	}
 	
 	public void bind() {
@@ -147,5 +147,13 @@ public class MapStructurePresenter extends AbstractSubPresentable {
 
     public HandlerRegistration getSelectionChangedHandlerRegistration() {
         return selectionChangedHandlerRegistration;
+    }
+
+    public String[] getGridFields() {
+        return gridFields;
+    }
+
+    public void setGridFields(String[] gridFields) {
+        this.gridFields = gridFields;
     }
 }

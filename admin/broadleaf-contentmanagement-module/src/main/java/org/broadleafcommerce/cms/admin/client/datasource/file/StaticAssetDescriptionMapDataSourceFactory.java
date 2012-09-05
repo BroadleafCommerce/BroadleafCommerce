@@ -57,7 +57,7 @@ public class StaticAssetDescriptionMapDataSourceFactory implements DataSourceFac
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.STATICASSETIMPL, null));
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new MapStructureClientModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY, presenter.getDisplay().getAssetDescriptionDisplay().getGrid())
+				new MapStructureClientModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, presenter.getPresenterSequenceSetupManager().getDataSource("localeDS"), "friendlyName", "localeCode");
 			dataSource.buildFields(null, false, cb);

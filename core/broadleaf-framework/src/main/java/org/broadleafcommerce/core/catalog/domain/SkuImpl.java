@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -195,7 +196,19 @@ public class SkuImpl implements Sku {
     @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media", targetUIElementId = "productSkuMediaLayout", dataSourceName = "productMediaMapDS", keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key", deleteEntityUponRemove = true, valuePropertyFriendlyName = "SkuImpl_Sku_Media_Value")
+    @AdminPresentationMap(
+        friendlyName = "SkuImpl_Sku_Media",
+        targetUIElementId = "productSkuMediaLayout",
+        dataSourceName = "productMediaMapDS",
+        keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+        deleteEntityUponRemove = true,
+        mediaField = "url",
+        keys = {
+            @AdminPresentationMapKey(keyName = "small", friendlyKeyName = "mediaSizeSmall"),
+            @AdminPresentationMapKey(keyName = "medium", friendlyKeyName = "mediaSizeMedium"),
+            @AdminPresentationMapKey(keyName = "large", friendlyKeyName = "mediaSizeLarge")
+        }
+    )
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();
     
     /**

@@ -166,4 +166,48 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
 
         return adornedTargetList;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AdornedTargetList)) return false;
+
+        AdornedTargetList that = (AdornedTargetList) o;
+
+        if (adornedTargetEntityClassname != null ? !adornedTargetEntityClassname.equals(that.adornedTargetEntityClassname) : that.adornedTargetEntityClassname != null)
+            return false;
+        if (adornedTargetEntityPolymorphicType != null ? !adornedTargetEntityPolymorphicType.equals(that.adornedTargetEntityPolymorphicType) : that.adornedTargetEntityPolymorphicType != null)
+            return false;
+        if (collectionFieldName != null ? !collectionFieldName.equals(that.collectionFieldName) : that.collectionFieldName != null)
+            return false;
+        if (inverse != null ? !inverse.equals(that.inverse) : that.inverse != null) return false;
+        if (linkedIdProperty != null ? !linkedIdProperty.equals(that.linkedIdProperty) : that.linkedIdProperty != null)
+            return false;
+        if (linkedObjectPath != null ? !linkedObjectPath.equals(that.linkedObjectPath) : that.linkedObjectPath != null)
+            return false;
+        if (sortAscending != null ? !sortAscending.equals(that.sortAscending) : that.sortAscending != null)
+            return false;
+        if (sortField != null ? !sortField.equals(that.sortField) : that.sortField != null) return false;
+        if (targetIdProperty != null ? !targetIdProperty.equals(that.targetIdProperty) : that.targetIdProperty != null)
+            return false;
+        if (targetObjectPath != null ? !targetObjectPath.equals(that.targetObjectPath) : that.targetObjectPath != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = collectionFieldName != null ? collectionFieldName.hashCode() : 0;
+        result = 31 * result + (linkedObjectPath != null ? linkedObjectPath.hashCode() : 0);
+        result = 31 * result + (targetObjectPath != null ? targetObjectPath.hashCode() : 0);
+        result = 31 * result + (adornedTargetEntityClassname != null ? adornedTargetEntityClassname.hashCode() : 0);
+        result = 31 * result + (adornedTargetEntityPolymorphicType != null ? adornedTargetEntityPolymorphicType.hashCode() : 0);
+        result = 31 * result + (sortField != null ? sortField.hashCode() : 0);
+        result = 31 * result + (sortAscending != null ? sortAscending.hashCode() : 0);
+        result = 31 * result + (linkedIdProperty != null ? linkedIdProperty.hashCode() : 0);
+        result = 31 * result + (targetIdProperty != null ? targetIdProperty.hashCode() : 0);
+        result = 31 * result + (inverse != null ? inverse.hashCode() : 0);
+        return result;
+    }
 }

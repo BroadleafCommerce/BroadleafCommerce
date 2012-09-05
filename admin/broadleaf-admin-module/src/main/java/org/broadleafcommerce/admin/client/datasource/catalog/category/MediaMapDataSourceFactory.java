@@ -16,26 +16,24 @@
 
 package org.broadleafcommerce.admin.client.datasource.catalog.category;
 
-import java.util.LinkedHashMap;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.presenter.catalog.category.CategoryPresenter;
-import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ComplexValueMapStructureDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.MapStructureClientModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DataSource;
+import java.util.LinkedHashMap;
 
 /**
  * 
@@ -61,7 +59,7 @@ public class MediaMapDataSourceFactory implements DataSourceFactory {
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.CATEGORY, null));
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new MapStructureClientModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY, ((CategoryDisplay) presenter.getDisplay()).getMediaDisplay().getGrid())
+				new MapStructureClientModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (LinkedHashMap<String, String>) additionalItems[0]);
 			dataSource.buildFields(null, false, cb);

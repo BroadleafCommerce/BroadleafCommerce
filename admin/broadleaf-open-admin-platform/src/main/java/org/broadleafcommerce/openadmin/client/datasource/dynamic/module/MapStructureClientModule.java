@@ -26,9 +26,10 @@ import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.FieldType;
-import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
@@ -40,10 +41,8 @@ import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -56,17 +55,13 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
  *
  */
 public class MapStructureClientModule extends BasicClientEntityModule {
-
-	protected ListGrid associatedGrid;
 	
-    public MapStructureClientModule(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, ListGrid associatedGrid) {
+    public MapStructureClientModule(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
         super(ceilingEntityFullyQualifiedClassname, fetchTypeFullyQualifiedClassname, persistencePerspective, service);
-        this.associatedGrid = associatedGrid;
     }
     
-	public MapStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, ListGrid associatedGrid) {
+	public MapStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
 		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
-		this.associatedGrid = associatedGrid;
 	}
 
 	@Override
@@ -97,18 +92,6 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
         Entity entity = buildEntity(temp, request);
-        //final ListGridRecord record = associatedGrid.getSelectedRecord();
-    	//Entity entity = buildEntity(record, request);
-    	//for (Property property : tempEntity.getProperties()) {
-    		//entity.findProperty(property.getName()).setValue(property.getValue());
-    	//}
-        //String componentId = request.getComponentId();
-        //if (componentId != null) {
-            //if (entity.getType() == null) {
-            	//String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-            	//entity.setType(type);
-            //}
-        //}
 		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
@@ -160,18 +143,6 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
         Entity entity = buildEntity(temp, request);
-//        final ListGridRecord record = associatedGrid.getSelectedRecord();
-//    	Entity entity = buildEntity(record, request);
-//    	for (Property property : tempEntity.getProperties()) {
-//    		entity.findProperty(property.getName()).setValue(property.getValue());
-//    	}
-//        String componentId = request.getComponentId();
-//        if (componentId != null) {
-//            if (entity.getType() == null) {
-//            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-//            	entity.setType(type);
-//            }
-//        }
         service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);

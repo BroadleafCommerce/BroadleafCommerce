@@ -205,4 +205,29 @@ public class OperationTypes implements IsSerializable, Serializable {
         return  operationTypes;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OperationTypes)) return false;
+
+        OperationTypes that = (OperationTypes) o;
+
+        if (addType != that.addType) return false;
+        if (fetchType != that.fetchType) return false;
+        if (inspectType != that.inspectType) return false;
+        if (removeType != that.removeType) return false;
+        if (updateType != that.updateType) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fetchType != null ? fetchType.hashCode() : 0;
+        result = 31 * result + (removeType != null ? removeType.hashCode() : 0);
+        result = 31 * result + (addType != null ? addType.hashCode() : 0);
+        result = 31 * result + (updateType != null ? updateType.hashCode() : 0);
+        result = 31 * result + (inspectType != null ? inspectType.hashCode() : 0);
+        return result;
+    }
 }

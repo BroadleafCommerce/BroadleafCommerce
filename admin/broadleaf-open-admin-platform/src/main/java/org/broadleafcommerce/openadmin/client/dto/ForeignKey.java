@@ -143,4 +143,35 @@ public class ForeignKey implements IsSerializable, Serializable, PersistencePers
     public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
         return cloneForeignKey();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ForeignKey)) return false;
+
+        ForeignKey that = (ForeignKey) o;
+
+        if (currentValue != null ? !currentValue.equals(that.currentValue) : that.currentValue != null) return false;
+        if (dataSourceName != null ? !dataSourceName.equals(that.dataSourceName) : that.dataSourceName != null)
+            return false;
+        if (displayValueProperty != null ? !displayValueProperty.equals(that.displayValueProperty) : that.displayValueProperty != null)
+            return false;
+        if (foreignKeyClass != null ? !foreignKeyClass.equals(that.foreignKeyClass) : that.foreignKeyClass != null)
+            return false;
+        if (manyToField != null ? !manyToField.equals(that.manyToField) : that.manyToField != null) return false;
+        if (restrictionType != that.restrictionType) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = manyToField != null ? manyToField.hashCode() : 0;
+        result = 31 * result + (foreignKeyClass != null ? foreignKeyClass.hashCode() : 0);
+        result = 31 * result + (currentValue != null ? currentValue.hashCode() : 0);
+        result = 31 * result + (dataSourceName != null ? dataSourceName.hashCode() : 0);
+        result = 31 * result + (restrictionType != null ? restrictionType.hashCode() : 0);
+        result = 31 * result + (displayValueProperty != null ? displayValueProperty.hashCode() : 0);
+        return result;
+    }
 }

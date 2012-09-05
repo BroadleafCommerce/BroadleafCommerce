@@ -52,8 +52,10 @@ import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
@@ -1004,6 +1006,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
     protected void buildMapMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, AdminPresentationMap map) {
         MapMetadata metadata = new MapMetadata();
+        metadata.setMutable(map.mutable());
 
         org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
         //TODO add in support for when the AdminPresentationOperationTypes annotation is used
@@ -1012,13 +1015,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         PersistencePerspective persistencePerspective = new PersistencePerspective(dtoOperationTypes, new String[]{}, new ForeignKey[]{});
         metadata.setPersistencePerspective(persistencePerspective);
 
-        metadata.setParentObjectClass(targetClass.getName());
+        String parentObjectClass = targetClass.getName();
         Map idMetadata = getIdMetadata(targetClass);
-        metadata.setParentObjectIdField((String) idMetadata.get("name"));
+        String parentObjectIdField = (String) idMetadata.get("name");
 
+        String keyClassName;
         checkProperty: {
-            if (!StringUtils.isEmpty(map.keyClassName())) {
-                metadata.setKeyClassName(map.keyClassName());
+            if (!String.class.equals(map.keyClass())) {
+                keyClassName = map.keyClass().getName();
                 break checkProperty;
             }
 
@@ -1029,23 +1033,23 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 if (!ArrayUtils.isEmpty(getAllPolymorphicEntitiesFromCeiling(clazz))) {
                     throw new RuntimeException("Key class for AdminPresentationMap was determined to be a JPA managed type. Only primitive types for the key type are currently supported.");
                 }
-                metadata.setKeyClassName(clazz.getName());
+                keyClassName = clazz.getName();
                 break checkProperty;
             }
 
-            metadata.setKeyClassName(String.class.getName());
+            keyClassName = String.class.getName();
         }
 
-        metadata.setKeyPropertyFriendlyName(map.keyPropertyFriendlyName());
-        metadata.setDeleteEntityUponRemove(map.deleteEntityUponRemove());
-        metadata.setValuePropertyFriendlyName(map.valuePropertyFriendlyName());
-        metadata.setKeyPropertyName("key");
-        metadata.setValuePropertyName("value");
+        String keyPropertyName = "key";
+        String keyPropertyFriendlyName = map.keyPropertyFriendlyName();
+        boolean deleteEntityUponRemove = map.deleteEntityUponRemove();
+        String valuePropertyName = "value";
+        String valuePropertyFriendlyName = map.valuePropertyFriendlyName();
         metadata.setMediaField(map.mediaField());
 
         checkProperty: {
-            if (!StringUtils.isEmpty(map.valueClassName())) {
-                metadata.setValueClassName(map.valueClassName());
+            if (!void.class.equals(map.valueClass())) {
+                metadata.setValueClassName(map.valueClass().getName());
                 break checkProperty;
             }
 
@@ -1101,11 +1105,49 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             metadata.setKeys(keys);
         }
 
+        if (!void.class.equals(map.mapKeyOptionEntityClass())) {
+            metadata.setMapKeyOptionEntityClass(map.mapKeyOptionEntityClass().getName());
+        } else {
+            metadata.setMapKeyOptionEntityClass("");
+        }
+        metadata.setMapKeyOptionEntityDisplayField(map.mapKeyOptionEntityDisplayField());
+        metadata.setMapKeyOptionEntityValueField(map.mapKeyOptionEntityValueField());
+
+        if (ArrayUtils.isEmpty(metadata.getKeys()) && (StringUtils.isEmpty(metadata.getMapKeyOptionEntityClass()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityValueField()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityDisplayField()))) {
+            throw new RuntimeException("Could not ascertain method for generating key options for the annotated map ("+field.getName()+"). Must specify either an array of AdminPresentationMapKey values for the keys property, or utilize the mapOptionKeyClass, mapOptionKeyDisplayField and mapOptionKeyValueField properties");
+        }
+
+        ForeignKey foreignKey = new ForeignKey(parentObjectIdField, parentObjectClass);
+        MapStructure mapStructure;
+        persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
+        if (metadata.isSimpleValue()) {
+            mapStructure = new SimpleValueMapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), valuePropertyName, valuePropertyFriendlyName, field.getName());
+        } else {
+            mapStructure = new MapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), field.getName(), deleteEntityUponRemove);
+        }
+        persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, mapStructure);
+
+        metadata.setExcluded(map.excluded());
+        metadata.setFriendlyName(map.friendlyName());
+        metadata.setSecurityLevel(map.securityLevel());
+        metadata.setOrder(map.order());
+
+        if (!StringUtils.isEmpty(map.targetUIElementId())) {
+            metadata.setTargetElementId(map.targetUIElementId());
+        }
+
+        if (!StringUtils.isEmpty(map.dataSourceName())) {
+            metadata.setDataSourceName(map.dataSourceName());
+        }
+
+        metadata.setCustomCriteria(map.customCriteria());
+
         attributes.put(field.getName(), metadata);
     }
 
     protected void buildAdornedTargetCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, AdminPresentationAdornedTargetCollection adornedTargetCollection) {
         AdornedTargetCollectionMetadata metadata = new AdornedTargetCollectionMetadata();
+        metadata.setMutable(adornedTargetCollection.mutable());
 
         org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC);
         //TODO add in support for when the AdminPresentationOperationTypes annotation is used
@@ -1178,6 +1220,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             metadata.setDataSourceName(adornedTargetCollection.dataSourceName());
         }
 
+        metadata.setCustomCriteria(adornedTargetCollection.customCriteria());
         metadata.setIgnoreAdornedProperties(adornedTargetCollection.ignoreAdornedProperties());
 
         attributes.put(field.getName(), metadata);
@@ -1185,6 +1228,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
     protected void buildCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, AdminPresentationCollection annotColl) {
         BasicCollectionMetadata metadata = new BasicCollectionMetadata();
+        metadata.setMutable(annotColl.mutable());
         metadata.setAddType(annotColl.addType());
         //use the default AdminPresentationOperationTypes
         org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes();
@@ -1248,6 +1292,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         if (!StringUtils.isEmpty(annotColl.dataSourceName())) {
             metadata.setDataSourceName(annotColl.dataSourceName());
         }
+
+        metadata.setCustomCriteria(annotColl.customCriteria());
 
         attributes.put(field.getName(), metadata);
     }
@@ -1517,11 +1563,11 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			) {
                 if (myField != null && (
                         myField.getAnnotation(AdminPresentationCollection.class) != null ||
-                        myField.getAnnotation(AdminPresentationAdornedTargetCollection.class) != null) ||
-                        myField.getAnnotation(AdminPresentationMap.class) != null
+                        myField.getAnnotation(AdminPresentationAdornedTargetCollection.class) != null ||
+                        myField.getAnnotation(AdminPresentationMap.class) != null)
                 ) {
                     //only a collection that is a direct member of the ceiling entity may be included
-                    if (StringUtils.isEmpty(prefix)) {
+                    //if (StringUtils.isEmpty(prefix)) {
                         CollectionMetadata fieldMetadata = (CollectionMetadata) presentationAttributes.get(propertyName);
                         if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
                             fieldMetadata.setCollectionCeilingEntity(type.getReturnedClass().getName());
@@ -1546,7 +1592,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 //do nothing
                             }
                         });
-                    }
+                    //}
                 } else {
                     FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
                     Boolean amIExcluded = isParentExcluded || !testPropertyInclusion(presentationAttribute);
