@@ -222,6 +222,7 @@ public class SolrSearchServiceImpl implements SearchService {
 		// Build the basic query
 	    SolrQuery solrQuery = new SolrQuery()
 	    	.setQuery(qualifiedSolrQuery)
+	    	.setFields("id")
     		.setRows(searchCriteria.getPageSize())
     		.setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
 	    
