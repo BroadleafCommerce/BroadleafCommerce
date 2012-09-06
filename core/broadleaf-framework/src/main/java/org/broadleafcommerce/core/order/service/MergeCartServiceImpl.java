@@ -97,8 +97,8 @@ public class MergeCartServiceImpl implements MergeCartService {
         
         // add anonymous cart items (make sure they are valid)
         if (anonymousCart != null && (customerCart == null || !customerCart.getId().equals(anonymousCart.getId()))) {
-	        // copy the customer's email to this order if one is not set
-	        if (customerCart != null && StringUtils.isBlank(customerCart.getEmailAddress())) {
+	        // copy the customer's email to this order, overriding any previously set email
+	        if (customerCart != null && StringUtils.isBlank(customer.getEmailAddress())) {
 	        	customerCart.setEmailAddress(customer.getEmailAddress());
 	        }
         	

@@ -82,8 +82,9 @@ public class BroadleafSearchController extends AbstractCatalogController {
 		if (query.length() == 0) {
 			return "redirect:/";
 		}
-		if (request.getMethod().equals("POST")) {
-			// If we receive a POST to a search url, we need to convert the POSTed fields to the 
+		
+		if (request.getParameterMap().containsKey("facetField")) {
+			// If we receive a facetField parameter, we need to convert the field to the 
 			// product search criteria expected format. This is used in multi-facet selection. We 
 			// will send a redirect to the appropriate URL to maintain canonical URLs
 			
