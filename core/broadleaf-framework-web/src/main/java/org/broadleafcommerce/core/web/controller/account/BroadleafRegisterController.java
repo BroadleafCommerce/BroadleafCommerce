@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -64,11 +65,18 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     @Resource(name="blLoginService")
     protected LoginService loginService;    
 	
-	public String register(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, 
+			HttpServletResponse response, Model model) {
+		String redirectUrl = request.getParameter("successUrl");
+		if (StringUtils.isNotBlank(redirectUrl)) {
+			registerCustomerForm.setRedirectUrl(redirectUrl);
+		}
 		return getRegisterView();
 	}
 	
-	public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, HttpServletRequest request, HttpServletResponse response, Model model) throws ServiceException {
+	public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, 
+			HttpServletRequest request, HttpServletResponse response, Model model) 
+			throws ServiceException {
 		exploitProtectionService.compareToken(registerCustomerForm.getCsrfToken());
 		
 		if (useEmailForLogin) {
@@ -77,15 +85,18 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 		}
 		
 	    registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
-	    if (! errors.hasErrors()) {
-	        Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
+	    if (!errors.hasErrors()) {
+	        Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), 
+	        		registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
 	        assert(newCustomer != null);
 	        
 	        // The next line needs to use the customer from the input form and not the customer returned after registration
         	// so that we still have the unencoded password for use by the authentication mechanism.
 	        Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
 	        mergeCartProcessor.execute(request, response, auth);	        
-	        return getRegisterSuccessView();
+	        
+	        String redirectUrl = registerCustomerForm.getRedirectUrl();
+	        return StringUtils.isBlank(redirectUrl) ? getRegisterSuccessView() : "redirect:" + redirectUrl;
 	    } else {
 	    	return getRegisterView();
 	    }

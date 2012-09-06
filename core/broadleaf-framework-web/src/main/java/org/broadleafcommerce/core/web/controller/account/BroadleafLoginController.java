@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.service.GenericResponse;
@@ -72,6 +73,9 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @return the return view
 	 */
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
+		if (StringUtils.isNotBlank(request.getParameter("successUrl"))) {
+			model.addAttribute("successUrl", request.getParameter("successUrl"));
+		}
 		return getLoginView();
 	}
 	
