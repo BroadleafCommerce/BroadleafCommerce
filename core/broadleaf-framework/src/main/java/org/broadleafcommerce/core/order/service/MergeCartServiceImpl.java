@@ -97,10 +97,12 @@ public class MergeCartServiceImpl implements MergeCartService {
         
         // add anonymous cart items (make sure they are valid)
         if (anonymousCart != null && (customerCart == null || !customerCart.getId().equals(anonymousCart.getId()))) {
+	        // copy the customer's email to this order if one is not set
+	        if (StringUtils.isBlank(customerCart.getEmailAddress())) {
+	        	customerCart.setEmailAddress(customer.getEmailAddress());
+	        }
+        	
             if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
-                if (customerCart == null) {
-                    customerCart = orderService.createNewCartForCustomer(customer);
-                }
                 Map<OrderItem, OrderItem> oldNewItemMap = new HashMap<OrderItem, OrderItem>();
                 customerCart = mergeRegularOrderItems(anonymousCart, mergeCartResponse, customerCart, oldNewItemMap);
                 customerCart = mergeOfferCodes(anonymousCart, customerCart);
@@ -108,15 +110,9 @@ public class MergeCartServiceImpl implements MergeCartService {
                 customerCart = mergeGiftWrapOrderItems(mergeCartResponse, customerCart, oldNewItemMap);
 
                 orderService.cancelOrder(anonymousCart);
+                customerCart = orderService.save(customerCart, priceOrder);
             }
         }
-        
-        // copy the customer's email to this order if one is not set
-        if (StringUtils.isBlank(customerCart.getEmailAddress())) {
-        	customerCart.setEmailAddress(customer.getEmailAddress());
-        }
-        
-        customerCart = orderService.save(customerCart, priceOrder);
         
         mergeCartResponse.setOrder(customerCart);
         return mergeCartResponse;
