@@ -67,9 +67,9 @@ public class FormProcessor extends AbstractElementProcessor {
 		}
 		
 		// Convert the <blc:form> node to a normal <form> node
-		Element e = element.cloneElementNodeWithNewName(element.getParent(), "form", false);
-		e.setRecomputeProcessorsImmediately(true);
-		element.getParent().addChild(e);
+		Element newElement = element.cloneElementNodeWithNewName(element.getParent(), "form", false);
+		newElement.setRecomputeProcessorsImmediately(true);
+		element.getParent().insertAfter(element, newElement);
 		element.getParent().removeChild(element);
         
 		return ProcessorResult.OK;
