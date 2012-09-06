@@ -169,6 +169,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
             putFulfillmentOptionsAndEstimationOnModel(model);
+            populateModelWithShippingReferenceData(request, model);
         	model.addAttribute("states", stateService.findStates());
             model.addAttribute("countries", countryService.findCountries());
             model.addAttribute("expirationMonths", populateExpirationMonths());
