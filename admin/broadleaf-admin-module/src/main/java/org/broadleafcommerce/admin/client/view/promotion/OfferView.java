@@ -16,6 +16,22 @@
 
 package org.broadleafcommerce.admin.client.view.promotion;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.BLCFilterBuilder;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
@@ -37,20 +53,6 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * @author jfischer
@@ -144,6 +146,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         setWidth100();
     }
 
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
         DataSource orderDataSource = additionalDataSources[0];
         final DataSource orderItemDataSource = additionalDataSources[1];
@@ -287,7 +290,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         customerLayout.addMember(rawCustomerForm);
 
-        customerFilterBuilder = new FilterBuilder();
+        customerFilterBuilder = new BLCFilterBuilder();
         customerFilterBuilder.setDataSource(customerDataSource);
         customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
         customerFilterBuilder.setVisible(false);
@@ -339,7 +342,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         orderSectionLayout.addMember(rawOrderForm);
 
-        orderFilterBuilder = new FilterBuilder();
+        orderFilterBuilder = new BLCFilterBuilder();
         orderFilterBuilder.setDataSource(orderDataSource);
         orderFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(orderDataSource));
         orderFilterBuilder.setVisible(false);
@@ -670,7 +673,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fgRuleRadio.setValueMap(valueMapFG);
         stepFGForm.setFields(fgRuleRadio);
         fgQuestionLayout.addMember(stepFGForm);
-        fulfillmentGroupFilterBuilder = new FilterBuilder();
+        fulfillmentGroupFilterBuilder = new BLCFilterBuilder();
         fulfillmentGroupFilterBuilder.setDataSource(fulfillmentGroupDataSource);
         fulfillmentGroupFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(fulfillmentGroupDataSource));
         fulfillmentGroupFilterBuilder.setVisible(false);
@@ -702,10 +705,12 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         addMember(rightVerticalLayout);
     }
 
+    @Override
     public DynamicForm getQualifyingItemSubTotalForm() {
         return qualifyingItemSubTotalForm;
     }
 
+    @Override
     public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
         ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
         builder.enable();
@@ -715,11 +720,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         return builder;
     }
 
+    @Override
     public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
         itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
         itemBuilderViews.remove(itemBuilder);
     }
 
+    @Override
     public void removeAllItemBuilders() {
         ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
         for (ItemBuilderView view : myViews) {
@@ -727,6 +734,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         }
     }
 
+    @Override
     public ItemBuilderDisplay addTargetItemBuilder(DataSource orderItemDataSource) {
         ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
         builder.enable();
@@ -736,11 +744,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         return builder;
     }
 
+    @Override
     public void removeTargetItemBuilder(ItemBuilderDisplay itemBuilder) {
         targetItemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
         targetItemBuilderViews.remove(itemBuilder);
     }
 
+    @Override
     public void removeAllTargetItemBuilders() {
         ItemBuilderView[] myViews = targetItemBuilderViews.toArray(new ItemBuilderView[]{});
         for (ItemBuilderView view : myViews) {
@@ -748,286 +758,357 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         }
     }
 
+    @Override
     public Canvas asCanvas() {
         return this;
     }
 
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
         return dynamicFormDisplay;
     }
 
+    @Override
     public DynamicEntityListDisplay getListDisplay() {
         return listDisplay;
     }
 
+    @Override
     public ToolStripButton getAdvancedButton() {
         return advancedButton;
     }
 
+    @Override
     public ImgButton getHelpButtonType() {
         return helpButtonType;
     }
 
+    @Override
     public RadioGroupItem getDeliveryTypeRadio() {
         return deliveryTypeRadio;
     }
 
+    @Override
     public TextItem getCodeField() {
         return codeField;
     }
 
+    @Override
     public FilterBuilder getCustomerFilterBuilder() {
         return customerFilterBuilder;
     }
 
+    @Override
     public RadioGroupItem getCustomerRuleRadio() {
         return customerRuleRadio;
     }
 
+    @Override
     public FilterBuilder getFulfillmentGroupFilterBuilder() {
         return fulfillmentGroupFilterBuilder;
     }
 
+    @Override
     public Label getStepFGLabel() {
         return stepFGLabel;
     }
 
+    @Override
     public RadioGroupItem getFgRuleRadio() {
         return fgRuleRadio;
     }
 
+    @Override
     public DynamicForm getStepFGForm() {
         return stepFGForm;
     }
 
+    @Override
     public Label getRequiredItemsLabel() {
         return requiredItemsLabel;
     }
 
+    @Override
     public Button getAddItemButton() {
         return addItemButton;
     }
 
+    @Override
     public RadioGroupItem getItemRuleRadio() {
         return itemRuleRadio;
     }
 
+    @Override
     public List<ItemBuilderDisplay> getItemBuilderViews() {
         return itemBuilderViews;
     }
 
+    @Override
     public ImgButton getHelpButtonBogo() {
         return helpButtonBogo;
     }
 
+    @Override
     public RadioGroupItem getBogoRadio() {
         return bogoRadio;
     }
 
+    @Override
     public Label getTargetItemsLabel() {
         return targetItemsLabel;
     }
 
+    @Override
     public Label getBogoQuestionLabel() {
         return bogoQuestionLabel;
     }
 
+    @Override
     public void setHelpButtonBogo(ImgButton helpButtonBogo) {
         this.helpButtonBogo = helpButtonBogo;
     }
 
+    @Override
     public DynamicForm getStepBogoForm() {
         return stepBogoForm;
     }
 
+    @Override
     public VLayout getBogoQuestionLayout() {
         return bogoQuestionLayout;
     }
 
+    @Override
     public VLayout getFgQuestionLayout() {
         return fgQuestionLayout;
     }
 
+    @Override
     public RadioGroupItem getOrderRuleRadio() {
         return orderRuleRadio;
     }
 
+    @Override
     public FilterBuilder getOrderFilterBuilder() {
         return orderFilterBuilder;
     }
 
+    @Override
     public VLayout getRequiredItemsLayout() {
         return requiredItemsLayout;
     }
 
+    @Override
     public VLayout getTargetItemsLayout() {
         return targetItemsLayout;
     }
 
+    @Override
     public VLayout getNewItemBuilderLayout() {
         return newItemBuilderLayout;
     }
 
+    @Override
     public VLayout getOrderItemLayout() {
         return orderItemLayout;
     }
 
+    @Override
     public SectionView getFgSectionView() {
         return fgSectionView;
     }
 
+    @Override
     public RadioGroupItem getReceiveFromAnotherPromoRadio() {
         return receiveFromAnotherPromoRadio;
     }
 
+    @Override
     public SectionView getItemTargetSectionView() {
         return itemTargetSectionView;
     }
 
+    @Override
     public RadioGroupItem getQualifyForAnotherPromoRadio() {
         return qualifyForAnotherPromoRadio;
     }
 
+    @Override
     public RadioGroupItem getReceiveFromAnotherPromoTargetRadio() {
         return receiveFromAnotherPromoTargetRadio;
     }
 
+    @Override
     public RadioGroupItem getQualifyForAnotherPromoTargetRadio() {
         return qualifyForAnotherPromoTargetRadio;
     }
 
+    @Override
     public VLayout getAdvancedItemCriteriaTarget() {
         return advancedItemCriteriaTarget;
     }
 
+    @Override
     public VLayout getAdvancedItemCriteria() {
         return advancedItemCriteria;
     }
 
+    @Override
     public Label getOrderCombineLabel() {
         return orderCombineLabel;
     }
 
+    @Override
     public DynamicForm getOrderCombineForm() {
         return orderCombineForm;
     }
 
+    @Override
     public RadioGroupItem getOrderCombineRuleRadio() {
         return orderCombineRuleRadio;
     }
 
+    @Override
     public RadioGroupItem getFgCombineRuleRadio() {
         return fgCombineRuleRadio;
     }
 
+    @Override
     public RadioGroupItem getRestrictRuleRadio() {
         return restrictRuleRadio;
     }
 
+    @Override
     public SectionView getRestrictionSectionView() {
         return restrictionSectionView;
     }
 
+    @Override
     public DynamicForm getRawCustomerForm() {
         return rawCustomerForm;
     }
 
+    @Override
     public TextAreaItem getRawCustomerTextArea() {
         return rawCustomerTextArea;
     }
 
+    @Override
     public DynamicForm getRawOrderForm() {
         return rawOrderForm;
     }
 
+    @Override
     public TextAreaItem getRawOrderTextArea() {
         return rawOrderTextArea;
     }
 
+    @Override
     public DynamicForm getRawFGForm() {
         return rawFGForm;
     }
 
+    @Override
     public TextAreaItem getRawFGTextArea() {
         return rawFGTextArea;
     }
 
+    @Override
     public SectionView getItemQualificationSectionView() {
         return itemQualificationSectionView;
     }
 
+    @Override
     public DynamicForm getRestrictForm() {
         return restrictForm;
     }
 
+    @Override
     public DynamicForm getCustomerObtainForm() {
         return customerObtainForm;
     }
 
+    @Override
     public DynamicForm getWhichCustomerForm() {
         return whichCustomerForm;
     }
 
+    @Override
     public DynamicForm getOrderForm() {
         return orderForm;
     }
 
+    @Override
     public DynamicForm getReceiveFromAnotherPromoForm() {
         return receiveFromAnotherPromoForm;
     }
 
+    @Override
     public DynamicForm getQualifyForAnotherPromoForm() {
         return qualifyForAnotherPromoForm;
     }
 
+    @Override
     public DynamicForm getReceiveFromAnotherPromoTargetForm() {
         return receiveFromAnotherPromoTargetForm;
     }
 
+    @Override
     public DynamicForm getQualifyForAnotherPromoTargetForm() {
         return qualifyForAnotherPromoTargetForm;
     }
 
+    @Override
     public DynamicForm getFGCombineForm() {
         return fgCombineForm;
     }
 
+    @Override
     public DynamicForm getStepItemForm() {
         return stepItemForm;
     }
 
+    @Override
     public ToolStripButton getCloneButton() {
         return cloneButton;
     }
 
+    @Override
     public DynamicForm getOrderItemCombineForm() {
         return orderItemCombineForm;
     }
 
+    @Override
     public RadioGroupItem getOrderItemCombineRuleRadio() {
         return orderItemCombineRuleRadio;
     }
 
+    @Override
     public Label getOrderItemCombineLabel() {
         return orderItemCombineLabel;
     }
 
+    @Override
     public VLayout getCustomerLayout() {
         return customerLayout;
     }
 
+    @Override
     public VLayout getOrderSectionLayout() {
         return orderSectionLayout;
     }
 
+    @Override
     public SectionView getCustomerSection() {
         return customerSection;
     }
 
+    @Override
     public SectionView getOrderSection() {
         return orderSection;
     }
 
+    @Override
     public FloatItem getQualifyingItemSubTotal() {
         return qualifyingItemSubTotal;
     }
@@ -1036,18 +1117,22 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         this.qualifyingItemSubTotal = qualifyingItemSubTotal;
     }
 
+    @Override
     public VLayout getNewTargetItemBuilderLayout() {
         return newTargetItemBuilderLayout;
     }
 
+    @Override
     public List<ItemBuilderDisplay> getTargetItemBuilderViews() {
         return targetItemBuilderViews;
     }
 
+    @Override
     public VLayout getTargetItemBuilderContainerLayout() {
         return targetItemBuilderContainerLayout;
     }
 
+    @Override
     public Button getTargetAddItemButton() {
         return targetAddItemButton;
     }

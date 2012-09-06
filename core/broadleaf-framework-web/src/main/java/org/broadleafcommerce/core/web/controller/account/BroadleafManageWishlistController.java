@@ -80,7 +80,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
 
         OrderItem orderItem = null;
         for (OrderItem item : orderItems) {
-            if (orderItemId == item.getId()) {
+            if (orderItemId.equals(item.getId())) {
                 orderItem = item;
                 break;
             }

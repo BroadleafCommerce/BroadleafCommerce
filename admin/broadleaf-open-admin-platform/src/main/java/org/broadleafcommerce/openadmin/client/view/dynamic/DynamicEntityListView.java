@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.ListGridEditEvent;
@@ -28,8 +31,6 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 
 /**
  * 
@@ -87,7 +88,7 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         grid.setCanReorderRecords(canReorder);
         grid.setAlternateRecordStyles(true);
         grid.setSelectionType(SelectionStyle.SINGLE);
-        grid.setCanEdit(true);
+        grid.setCanEdit(false);
         grid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
         grid.setEditByCell(true);
         grid.setAutoSaveEdits(true);
@@ -126,27 +127,33 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         addMember(grid);
 	}
 
-	public ToolStripButton getAddButton() {
+	@Override
+    public ToolStripButton getAddButton() {
 		return addButton;
 	}
 
-	public ToolStripButton getRemoveButton() {
+	@Override
+    public ToolStripButton getRemoveButton() {
 		return removeButton;
 	}
 
+    @Override
     public ToolStripButton getShowArchivedButton() {
         return showArchivedButton;
     }
 
-	public ComboBoxItem getEntityType() {
+	@Override
+    public ComboBoxItem getEntityType() {
 		return entityType;
 	}
 
-	public ListGrid getGrid() {
+	@Override
+    public ListGrid getGrid() {
 		return grid;
 	}
 
-	public ToolStrip getToolBar() {
+	@Override
+    public ToolStrip getToolBar() {
 		return toolBar;
 	}
 

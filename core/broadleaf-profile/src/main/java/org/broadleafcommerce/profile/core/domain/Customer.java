@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.locale.domain.Locale;
+
+import java.io.Serializable;
+import java.util.List;
 
 public interface Customer extends Serializable {
 
@@ -96,9 +96,17 @@ public interface Customer extends Serializable {
 
     public void setCustomerLocale(Locale customerLocale);
     
-    List<CustomerAttribute> getCustomerAttributes();
+    public List<CustomerAttribute> getCustomerAttributes();
+    
+	/**
+	 * Looks at all CustomerAttributes for this product and returns the attribute that matches the given name
+	 * 
+	 * @param name the name of the attribute
+	 * @return the matching CustomerAttribute (null if no match)
+	 */
+	public CustomerAttribute getCustomerAttributeByName(String name);
 
-	void setCustomerAttributes(List<CustomerAttribute> customerAttributes);  
+	public void setCustomerAttributes(List<CustomerAttribute> customerAttributes);  
 	
 	/**
 	 * Returns true if this user has been deactivated.
@@ -106,13 +114,13 @@ public interface Customer extends Serializable {
 	 * 
 	 * @return
 	 */
-	boolean isDeactivated();
+	public boolean isDeactivated();
 	
 	/**
 	 * Sets the users deactivated status.
 	 * 
 	 * @param deactivated
 	 */
-	void setDeactivated(boolean deactivated);
-    
+	public void setDeactivated(boolean deactivated);
+	
 }

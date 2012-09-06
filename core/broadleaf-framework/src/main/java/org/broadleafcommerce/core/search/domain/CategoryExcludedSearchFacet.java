@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 /**
  * @author Andre Azzolini (apazzolini)
  */
-public interface CategorySearchFacet {
+public interface CategoryExcludedSearchFacet {
 
 	/**
 	 * Gets the internal id
@@ -65,19 +65,6 @@ public interface CategorySearchFacet {
 	 */
 	public void setSearchFacet(SearchFacet searchFacet);
 
-	/**
-	 * Gets the priority of this search facet in relationship to other search facets in this category
-	 * 
-	 * @return the sequence of this search facet
-	 */
-	public Long getSequence();
 
-	/**
-	 * Sets the sequence of this search facet
-	 * 
-	 * @see #getPosition()
-	 * @param position
-	 */
-	public void setSequence(Long sequence);
 
 }

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic;
 
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
@@ -29,7 +31,6 @@ import com.smartgwt.client.widgets.form.fields.IntegerItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 
 /**
  * 
@@ -123,7 +124,7 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		innerBuilderLayout.setHeight(38);
 		innerBuilderLayout.setAlign(VerticalAlignment.CENTER);
 
-		itemFilterBuilder = new FilterBuilder();  
+		itemFilterBuilder = new BLCFilterBuilder();  
 		itemFilterBuilder.setDataSource(itemDataSource);
 		itemFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(itemDataSource));
 		itemFilterBuilder.setLayoutBottomMargin(10);
@@ -146,87 +147,105 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.admin.client.view.promotion.offer.ItemBuilderDisplay#getItemQuantity()
 	 */
-	public FormItem getItemQuantity() {
+	@Override
+    public FormItem getItemQuantity() {
 		return itemQuantity;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.admin.client.view.promotion.offer.ItemBuilderDisplay#getItemFilterBuilder()
 	 */
-	public FilterBuilder getItemFilterBuilder() {
+	@Override
+    public FilterBuilder getItemFilterBuilder() {
 		return itemFilterBuilder;
 	}
 
-	public ImgButton getRemoveButton() {
+	@Override
+    public ImgButton getRemoveButton() {
 		return removeButton;
 	}
 	
-	public DynamicForm getRawItemForm() {
+	@Override
+    public DynamicForm getRawItemForm() {
 		return rawItemForm;
 	}
 
-	public TextAreaItem getRawItemTextArea() {
+	@Override
+    public TextAreaItem getRawItemTextArea() {
 		return rawItemTextArea;
 	}
 	
-	public DynamicForm getItemForm() {
+	@Override
+    public DynamicForm getItemForm() {
 		return itemForm;
 	}
 
-	public Boolean getIncompatibleMVEL() {
+	@Override
+    public Boolean getIncompatibleMVEL() {
 		return incompatibleMVEL;
 	}
 
-	public void setIncompatibleMVEL(Boolean incompatibleMVEL) {
+	@Override
+    public void setIncompatibleMVEL(Boolean incompatibleMVEL) {
 		this.incompatibleMVEL = incompatibleMVEL;
 	}
 
-	public Boolean getDirty() {
+	@Override
+    public Boolean getDirty() {
 		return dirty;
 	}
 
-	public void setDirty(Boolean dirty) {
+	@Override
+    public void setDirty(Boolean dirty) {
 		this.dirty = dirty;
 	}
 
-	public Record getRecord() {
+	@Override
+    public Record getRecord() {
 		return record;
 	}
 
-	public void setRecord(Record record) {
+	@Override
+    public void setRecord(Record record) {
 		this.record = record;
 	}
 
-	public void enable() {
+	@Override
+    public void enable() {
 		removeButton.enable();
 		itemQuantity.enable();
 		itemFilterBuilder.enable();
 	}
 	
-	public void disable() {
+	@Override
+    public void disable() {
 		removeButton.disable();
 		itemQuantity.disable();
 		itemFilterBuilder.disable();
 	}
 	
-	public void hide() {
+	@Override
+    public void hide() {
 		removeButton.setVisible(false);
 		itemForm.setVisible(false);
 		itemFilterBuilder.setVisible(false);
 		label.setVisible(false);
 	}
 	
-	public void show() {
+	@Override
+    public void show() {
 		removeButton.setVisible(true);
 		itemForm.setVisible(true);
 		itemFilterBuilder.setVisible(true);
 		label.setVisible(true);
 	}
 
+    @Override
     public CriteriaCharacteristics getCharacteristics() {
         return characteristics;
     }
 
+    @Override
     public void setCharacteristics(CriteriaCharacteristics characteristics) {
         this.characteristics = characteristics;
     }
@@ -241,18 +260,23 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+            return true;
+        }
+		if (!super.equals(obj)) {
+            return false;
+        }
+		if (getClass() != obj.getClass()) {
+            return false;
+        }
 		ItemBuilderView other = (ItemBuilderView) obj;
 		if (itemForm == null) {
-			if (other.itemForm != null)
-				return false;
-		} else if (!itemForm.equals(other.itemForm))
-			return false;
+			if (other.itemForm != null) {
+                return false;
+            }
+		} else if (!itemForm.equals(other.itemForm)) {
+            return false;
+        }
 		return true;
 	}
 	

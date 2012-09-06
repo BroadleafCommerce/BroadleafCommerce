@@ -68,7 +68,7 @@ public class OrderAttributeImpl implements OrderAttribute {
     protected String name;
 
     /** The value. */
-    @Column(name = "VALUE", nullable=false)
+    @Column(name = "VALUE")
     @AdminPresentation(friendlyName = "OrderAttributeImpl_Attribute_Value", order=2, group = "OrderAttributeImpl_Description", prominent=true)
     protected String value;
     

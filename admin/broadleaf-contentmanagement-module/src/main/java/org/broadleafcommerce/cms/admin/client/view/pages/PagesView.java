@@ -23,6 +23,7 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
+import org.broadleafcommerce.openadmin.client.view.dynamic.BLCFilterBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
@@ -167,7 +168,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         customerLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(customerLabel);
         
-        customerFilterBuilder = new FilterBuilder();
+        customerFilterBuilder = new BLCFilterBuilder();
         customerFilterBuilder.setDataSource(customerDataSource);
         customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
         customerFilterBuilder.setLayoutBottomMargin(20);
@@ -182,7 +183,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         timeLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(timeLabel);
 
-        timeFilterBuilder = new FilterBuilder();
+        timeFilterBuilder = new BLCFilterBuilder();
         timeFilterBuilder.setDataSource(timeDataSource);
         timeFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(timeDataSource));
         timeFilterBuilder.setLayoutBottomMargin(20);
@@ -197,7 +198,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         requestLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(requestLabel);
 
-        requestFilterBuilder = new FilterBuilder();
+        requestFilterBuilder = new BLCFilterBuilder();
         requestFilterBuilder.setDataSource(requestDataSource);
         requestFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(requestDataSource));
         requestFilterBuilder.setLayoutBottomMargin(20);
@@ -212,7 +213,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         productLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(productLabel);
 
-        productFilterBuilder = new FilterBuilder();
+        productFilterBuilder = new BLCFilterBuilder();
         productFilterBuilder.setDataSource(productDataSource);
         productFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(productDataSource));
         productFilterBuilder.setLayoutBottomMargin(20);

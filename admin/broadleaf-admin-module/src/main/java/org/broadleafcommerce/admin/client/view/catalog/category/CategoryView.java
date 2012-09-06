@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.admin.client.view.catalog.category;
 
-import org.broadleafcommerce.admin.client.MerchandisingModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
@@ -60,13 +59,14 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
 	protected ToolStripButton removeOrphanedButton;
 	protected ToolStripButton insertOrphanButton;
 	protected ListGrid orphanedCategoryGrid;
-	
+	protected TabSet topTabSet;
 	public CategoryView() {
 		setHeight100();
 		setWidth100();
 	}
     
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+	@Override
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("categoryLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
@@ -110,7 +110,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         
         leftVerticalLayout.addMember(abandonedCategoryVerticalLayout);
         
-        TabSet topTabSet = new TabSet(); 
+         topTabSet = new TabSet(); 
         topTabSet.setID("categoryTopTabSet");
         topTabSet.setTabBarPosition(Side.TOP);  
         topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
@@ -187,50 +187,62 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         addMember(topTabSet);
 	}
 
-	public Canvas asCanvas() {
+	@Override
+    public Canvas asCanvas() {
 		return this;
 	}
 	
-	public DynamicEntityListDisplay getListDisplay() {
+	@Override
+    public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
 	}
 	
-	public GridStructureDisplay getMediaDisplay() {
+	@Override
+    public GridStructureDisplay getMediaDisplay() {
 		return mediaDisplay;
 	}
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
+	@Override
+    public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
 	
-	public GridStructureDisplay getFeaturedDisplay() {
+	@Override
+    public GridStructureDisplay getFeaturedDisplay() {
 		return featuredDisplay;
 	}
 
-	public ToolStripButton getRemoveOrphanedButton() {
+	@Override
+    public ToolStripButton getRemoveOrphanedButton() {
 		return removeOrphanedButton;
 	}
 
-	public ListGrid getOrphanedCategoryGrid() {
+	@Override
+    public ListGrid getOrphanedCategoryGrid() {
 		return orphanedCategoryGrid;
 	}
 
-	public ToolStripButton getInsertOrphanButton() {
+	@Override
+    public ToolStripButton getInsertOrphanButton() {
 		return insertOrphanButton;
 	}
 
-	public GridStructureDisplay getAllCategoriesDisplay() {
+	@Override
+    public GridStructureDisplay getAllCategoriesDisplay() {
 		return allCategoriesDisplay;
 	}
 
-	public GridStructureView getAllProductsDisplay() {
+	@Override
+    public GridStructureView getAllProductsDisplay() {
 		return allProductsDisplay;
 	}
-	public GridStructureDisplay getCrossSaleDisplay() {
+	@Override
+    public GridStructureDisplay getCrossSaleDisplay() {
 		return crossSaleDisplay;
 	}
 
-	public GridStructureDisplay getUpSaleDisplay() {
+	@Override
+    public GridStructureDisplay getUpSaleDisplay() {
 		return upSaleDisplay;
 	}
 }

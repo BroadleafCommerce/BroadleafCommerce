@@ -16,6 +16,21 @@
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.TabSet;
+import org.broadleafcommerce.openadmin.client.view.dynamic.BLCFilterBuilder;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
@@ -32,19 +47,6 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.TabSet;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -80,6 +82,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 		setWidth100();
 	}
 
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
         DataSource customerDataSource = additionalDataSources[0];
         DataSource timeDataSource = additionalDataSources[1];
@@ -163,7 +166,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         customerLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(customerLabel);
         
-        customerFilterBuilder = new FilterBuilder();
+        customerFilterBuilder = new BLCFilterBuilder();
         customerFilterBuilder.setDataSource(customerDataSource);
         customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
         customerFilterBuilder.setLayoutBottomMargin(20);
@@ -178,7 +181,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         timeLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(timeLabel);
 
-        timeFilterBuilder = new FilterBuilder();
+        timeFilterBuilder = new BLCFilterBuilder();
         timeFilterBuilder.setDataSource(timeDataSource);
         timeFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(timeDataSource));
         timeFilterBuilder.setLayoutBottomMargin(20);
@@ -193,7 +196,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         requestLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(requestLabel);
 
-        requestFilterBuilder = new FilterBuilder();
+        requestFilterBuilder = new BLCFilterBuilder();
         requestFilterBuilder.setDataSource(requestDataSource);
         requestFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(requestDataSource));
         requestFilterBuilder.setLayoutBottomMargin(20);
@@ -208,7 +211,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         productLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(productLabel);
 
-        productFilterBuilder = new FilterBuilder();
+        productFilterBuilder = new BLCFilterBuilder();
         productFilterBuilder.setDataSource(productDataSource);
         productFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(productDataSource));
         productFilterBuilder.setLayoutBottomMargin(20);
@@ -250,6 +253,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         addMember(topTabSet);
 	}
 
+    @Override
     public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
 		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
 		builder.enable();
@@ -259,154 +263,191 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 		return builder;
 	}
 
-	public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
+	@Override
+    public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
 		itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
 		itemBuilderViews.remove(itemBuilder);
 	}
 
-	public void removeAllItemBuilders() {
+	@Override
+    public void removeAllItemBuilders() {
 		ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
 		for (ItemBuilderView view : myViews) {
 			removeItemBuilder(view);
 		}
 	}
 
+    @Override
     public Canvas asCanvas() {
 		return this;
 	}
 
-	public DynamicEntityListDisplay getListDisplay() {
+	@Override
+    public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
 	}
 
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
 
+    @Override
     public FilterBuilder getCustomerFilterBuilder() {
         return customerFilterBuilder;
     }
 
+    @Override
     public void setCustomerFilterBuilder(FilterBuilder customerFilterBuilder) {
         this.customerFilterBuilder = customerFilterBuilder;
     }
 
+    @Override
     public FilterBuilder getProductFilterBuilder() {
         return productFilterBuilder;
     }
 
+    @Override
     public void setProductFilterBuilder(FilterBuilder productFilterBuilder) {
         this.productFilterBuilder = productFilterBuilder;
     }
 
+    @Override
     public FilterBuilder getTimeFilterBuilder() {
         return timeFilterBuilder;
     }
 
+    @Override
     public void setTimeFilterBuilder(FilterBuilder timeFilterBuilder) {
         this.timeFilterBuilder = timeFilterBuilder;
     }
 
+    @Override
     public FilterBuilder getRequestFilterBuilder() {
         return requestFilterBuilder;
     }
 
+    @Override
     public void setRequestFilterBuilder(FilterBuilder requestFilterBuilder) {
         this.requestFilterBuilder = requestFilterBuilder;
     }
 
+    @Override
     public ToolStrip getStructuredContentToolBar() {
         return structuredContentToolBar;
     }
 
+    @Override
     public void setStructuredContentToolBar(ToolStrip structuredContentToolBar) {
         this.structuredContentToolBar = structuredContentToolBar;
     }
 
+    @Override
     public ToolStripButton getRulesSaveButton() {
         return structuredContentSaveButton;
     }
 
+    @Override
     public void setStructuredContentSaveButton(ToolStripButton structuredContentSaveButton) {
         this.structuredContentSaveButton = structuredContentSaveButton;
     }
 
+    @Override
     public ToolStripButton getRulesRefreshButton() {
         return structuredContentRefreshButton;
     }
 
+    @Override
     public void setStructuredContentRefreshButton(ToolStripButton structuredContentRefreshButton) {
         this.structuredContentRefreshButton = structuredContentRefreshButton;
     }
 
+    @Override
     public List<ItemBuilderDisplay> getItemBuilderViews() {
         return itemBuilderViews;
     }
 
+    @Override
     public void setItemBuilderViews(List<ItemBuilderDisplay> itemBuilderViews) {
         this.itemBuilderViews = itemBuilderViews;
     }
 
+    @Override
     public VLayout getNewItemBuilderLayout() {
         return newItemBuilderLayout;
     }
 
+    @Override
     public void setNewItemBuilderLayout(VLayout newItemBuilderLayout) {
         this.newItemBuilderLayout = newItemBuilderLayout;
     }
 
+    @Override
     public Button getAddItemButton() {
         return addItemButton;
     }
 
+    @Override
     public void setAddItemButton(Button addItemButton) {
         this.addItemButton = addItemButton;
     }
 
+    @Override
     public VLayout getItemBuilderContainerLayout() {
         return itemBuilderContainerLayout;
     }
 
+    @Override
     public void setItemBuilderContainerLayout(VLayout itemBuilderContainerLayout) {
         this.itemBuilderContainerLayout = itemBuilderContainerLayout;
     }
 
+    @Override
     public Label getCustomerLabel() {
         return customerLabel;
     }
 
+    @Override
     public void setCustomerLabel(Label customerLabel) {
         this.customerLabel = customerLabel;
     }
 
+    @Override
     public Label getTimeLabel() {
         return timeLabel;
     }
 
+    @Override
     public void setTimeLabel(Label timeLabel) {
         this.timeLabel = timeLabel;
     }
 
+    @Override
     public Label getRequestLabel() {
         return requestLabel;
     }
 
+    @Override
     public void setRequestLabel(Label requestLabel) {
         this.requestLabel = requestLabel;
     }
 
+    @Override
     public Label getProductLabel() {
         return productLabel;
     }
 
+    @Override
     public void setProductLabel(Label productLabel) {
         this.productLabel = productLabel;
     }
 
+    @Override
     public Label getOrderItemLabel() {
         return orderItemLabel;
     }
 
+    @Override
     public void setOrderItemLabel(Label orderItemLabel) {
         this.orderItemLabel = orderItemLabel;
     }

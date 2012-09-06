@@ -1,0 +1,56 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.broadleafcommerce.core.searchRedirect.service;
+
+import javax.annotation.Resource;
+
+import org.broadleafcommerce.core.searchRedirect.dao.SearchRedirectDao;
+import org.broadleafcommerce.core.searchRedirect.domain.SearchRedirect;
+import org.springframework.stereotype.Service;
+
+/**
+ * Created by ppatel.
+ */
+@Service("blSearchRedirectService")
+public class SearchRedirectServiceImpl implements SearchRedirectService {
+
+  
+    @Resource(name = "blSearchRedirectDao")
+    protected SearchRedirectDao SearchRedirectDao;
+
+
+    /**
+     * Checks the passed in URL to determine if there is a matching
+     * SearchRedirect. Returns null if no handler was found.
+     * 
+     * @param uri
+     * @return
+     */
+    @Override
+    public SearchRedirect findSearchRedirectBySearchTerm(String uri) {
+
+        SearchRedirect SearchRedirect = SearchRedirectDao
+                .findSearchRedirectBySearchTerm(uri);
+        if (SearchRedirect != null) {
+            return SearchRedirect;
+        } else {
+            return null;
+        }
+
+    }
+
+}

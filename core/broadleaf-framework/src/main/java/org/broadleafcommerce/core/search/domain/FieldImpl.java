@@ -16,10 +16,9 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import org.broadleafcommerce.core.search.domain.solr.FieldType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -34,36 +33,51 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class FieldImpl implements Field {
+public class FieldImpl implements Field,Serializable {
 	
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2915813511754425605L;
+
     @Id
     @GeneratedValue(generator = "FieldId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FieldId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldImpl", allocationSize = 50)
     @Column(name = "FIELD_ID")
+    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_descrpition",visibility=VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     // This is a broadleaf enumeration
+    @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_descrpition")
     @Column(name = "ENTITY_TYPE", nullable = false)
     protected String entityType;
     
     @Column(name = "PROPERTY_NAME", nullable = false)
+    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition")
     protected String propertyName;
     
     @Column(name = "ABBREVIATION", unique = true)
+    @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition")
     protected String abbreviation;
     
     @Column(name =  "SEARCHABLE")
+    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition")
     protected Boolean searchable = false;
     
     // This is a broadleaf enumeration
     @Column(name =  "FACET_FIELD_TYPE")
+    @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_descrpition")
     protected String facetFieldType;
 
     // This is a broadleaf enumeration
@@ -72,7 +86,7 @@ public class FieldImpl implements Field {
     @Column(name="SEARCHABLE_FIELD_TYPE")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-	private List<String> searchableFieldTypes = new ArrayList<String>();
+	protected List<String> searchableFieldTypes = new ArrayList<String>();
     
     @Override
     public String getQualifiedFieldName() {
@@ -169,12 +183,15 @@ public class FieldImpl implements Field {
 	
 	@Override
 	public boolean equals(Object obj) {
-	   	if (this == obj)
-	        return true;
-	    if (obj == null)
-	        return false;
-	    if (getClass() != obj.getClass())
-	        return false;
+	   	if (this == obj) {
+            return true;
+        }
+	    if (obj == null) {
+            return false;
+        }
+	    if (getClass() != obj.getClass()) {
+            return false;
+        }
         Field other = (Field) obj;
         
         return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());

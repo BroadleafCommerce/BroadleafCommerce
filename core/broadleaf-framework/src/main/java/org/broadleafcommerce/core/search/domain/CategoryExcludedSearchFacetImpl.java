@@ -30,7 +30,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.hibernate.annotations.Cache;
@@ -38,71 +37,58 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CAT_SEARCH_FACET_XREF")
+@Table(name = "BLC_CAT_SEARCH_FACET_EXCL_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable {
-	
+public class CategoryExcludedSearchFacetImpl implements
+        CategoryExcludedSearchFacet, Serializable {
+
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CategorySearchFacetId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CategorySearchFacetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategorySearchFacetImpl", allocationSize = 50)
-    @Column(name = "CATEGORY_SEARCH_FACET_ID")
+    @GeneratedValue(generator = "CategoryExcludedSearchFacetId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CategoryExcludedSearchFacetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategoryExcludedSearchFacetImpl", allocationSize = 50)
+    @Column(name = "CAT_EXCL_SEARCH_FACET_ID")
     protected Long id;
-    
-	@ManyToOne(targetEntity = CategoryImpl.class)
+
+    @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category;
-    
-	@ManyToOne(targetEntity = SearchFacetImpl.class)
+
+    @ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
     protected SearchFacet searchFacet;
-    
-    @Column(name = "SEQUENCE",nullable=false)
-    @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence", prominent=true)
-    protected Long sequence;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public Category getCategory() {
-		return category;
-	}
+    @Override
+    public Category getCategory() {
+        return category;
+    }
 
-	@Override
-	public void setCategory(Category category) {
-		this.category = category;
-	}
+    @Override
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
-	@Override
-	public SearchFacet getSearchFacet() {
-		return searchFacet;
-	}
+    @Override
+    public SearchFacet getSearchFacet() {
+        return searchFacet;
+    }
 
-	@Override
-	public void setSearchFacet(SearchFacet searchFacet) {
-		this.searchFacet = searchFacet;
-	}
+    @Override
+    public void setSearchFacet(SearchFacet searchFacet) {
+        this.searchFacet = searchFacet;
+    }
 
-	@Override
-	public Long getSequence() {
-		return sequence;
-	}
-
-	@Override
-	public void setSequence(Long sequence) {
-		this.sequence = sequence;
-	}
-    
 }

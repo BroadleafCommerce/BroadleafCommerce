@@ -121,4 +121,21 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String ProductImpl_bundleProduct();
     public String OrderItemImpl_baseOrderItem();
  
+    public String SearchFacetImpl_ID();
+    public String SearchFacetImpl_description();
+    public String SearchFacetImpl_field();
+    public String SearchFacetImpl_label();
+    public String SearchFacetImpl_showOnSearch();
+    public String SearchFacetImpl_searchPriority();
+    public String SearchFacetImpl_multiselect();
+    public String FieldImpl_EntityType();
+    public String FieldImpl_descrpition();
+    public String FieldImpl_ID();
+    public String FieldImpl_propertyName();
+    public String FieldImpl_abbreviation();
+    public String FieldImpl_searchable();
+    public String FieldImpl_facetFieldType();
+    public String SearchFacetRangeImpl_MIN_VALUE();
+    public String SearchFacetRangeImpl_MAX_VALUE();
+    public String CategorySearchFacetImpl_sequence();
 }
