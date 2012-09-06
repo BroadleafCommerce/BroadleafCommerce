@@ -17,7 +17,6 @@
 package org.broadleafcommerce.core.web.checkout.model;
 
 import org.broadleafcommerce.common.payment.CreditCardType;
-import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
@@ -27,7 +26,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CheckoutForm extends CsrfProtectedForm implements Serializable {
+public class CheckoutForm implements Serializable {
 	
 	private static final long serialVersionUID = 8866879738364589339L;
 	

@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.web.checkout.model;
 
-import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
-
 import java.io.Serializable;
 
 /**
@@ -25,7 +23,7 @@ import java.io.Serializable;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class OrderInfoForm extends CsrfProtectedForm implements Serializable {
+public class OrderInfoForm implements Serializable {
 
 	private static final long serialVersionUID = 62974989700147353L;
 	

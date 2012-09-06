@@ -184,7 +184,6 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @throws ServiceException 
 	 */
     public String processResetPassword(ResetPasswordForm resetPasswordForm, HttpServletRequest request, HttpServletResponse response, Model model, BindingResult errors) throws ServiceException {
-		exploitProtectionService.compareToken(resetPasswordForm.getCsrfToken());
     	GenericResponse errorResponse = new GenericResponse();
     	resetPasswordValidator.validate(resetPasswordForm.getUsername(), resetPasswordForm.getPassword(), resetPasswordForm.getPasswordConfirm(), errors);
     	if (errorResponse.getHasErrors()) {

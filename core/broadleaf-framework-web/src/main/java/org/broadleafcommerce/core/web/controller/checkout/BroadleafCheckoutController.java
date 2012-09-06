@@ -122,8 +122,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String saveGlobalOrderDetails(HttpServletRequest request, Model model, 
     		OrderInfoForm orderInfoForm, BindingResult result) throws ServiceException {
-		exploitProtectionService.compareToken(orderInfoForm.getCsrfToken());
-		
     	Order cart = CartState.getCart();
 
         orderInfoFormValidator.validate(orderInfoForm, result);
@@ -166,7 +164,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
 	public String saveSingleShip(HttpServletRequest request, HttpServletResponse response, Model model,
 			ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
-		exploitProtectionService.compareToken(shippingForm.getCsrfToken());
         Order cart = CartState.getCart();
 
         shippingInfoFormValidator.validate(shippingForm, result);
@@ -236,7 +233,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	 */
     public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model,
     		OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException, ServiceException {
-		exploitProtectionService.compareToken(orderMultishipOptionForm.getCsrfToken());
     	Order cart = CartState.getCart();
     	orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
     	cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, true);
@@ -271,7 +267,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
     		 ShippingInfoForm addressForm, BindingResult result) throws ServiceException {
-		exploitProtectionService.compareToken(addressForm.getCsrfToken());
         multishipAddAddressFormValidator.validate(addressForm, result);
         if (result.hasErrors()) {
             return showMultishipAddAddress(request, response, model);
@@ -331,7 +326,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String completeSecureCreditCardCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
             BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
-		exploitProtectionService.compareToken(billingForm.getCsrfToken());
 
         Order cart = CartState.getCart();
         if (cart != null) {

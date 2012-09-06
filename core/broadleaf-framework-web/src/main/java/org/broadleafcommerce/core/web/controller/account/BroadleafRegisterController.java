@@ -77,7 +77,6 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 	public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, 
 			HttpServletRequest request, HttpServletResponse response, Model model) 
 			throws ServiceException {
-		exploitProtectionService.compareToken(registerCustomerForm.getCsrfToken());
 		
 		if (useEmailForLogin) {
 			Customer customer = registerCustomerForm.getCustomer();

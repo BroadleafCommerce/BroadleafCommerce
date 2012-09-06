@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.web.checkout.model;
 
-import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
 
 import java.io.Serializable;
@@ -31,7 +30,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class OrderMultishipOptionForm extends CsrfProtectedForm implements Serializable {
+public class OrderMultishipOptionForm implements Serializable {
 
 	private static final long serialVersionUID = -5989681894142759293L;
 	

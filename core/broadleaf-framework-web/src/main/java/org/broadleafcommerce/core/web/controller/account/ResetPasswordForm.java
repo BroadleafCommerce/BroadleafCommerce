@@ -1,13 +1,11 @@
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
-
 import java.io.Serializable;
 
 /**
  * Created by bpolster.
  */
-public class ResetPasswordForm extends CsrfProtectedForm implements Serializable {
+public class ResetPasswordForm implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private String username;

@@ -49,8 +49,6 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
     }
 
     public String processChangePassword(HttpServletRequest request, Model model, ChangePasswordForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
-		exploitProtectionService.compareToken(form.getCsrfToken());
-    	
         PasswordChange passwordChange = new PasswordChange(CustomerState.getCustomer().getUsername());
         passwordChange.setCurrentPassword(form.getCurrentPassword());
         passwordChange.setNewPassword(form.getNewPassword());
