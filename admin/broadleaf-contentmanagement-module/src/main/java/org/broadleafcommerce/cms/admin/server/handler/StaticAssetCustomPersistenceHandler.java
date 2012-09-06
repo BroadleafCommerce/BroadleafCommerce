@@ -388,7 +388,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         return mergedProperties;
     }
 
-    protected synchronized void createMergedProperties(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
+    protected synchronized void createMergedProperties(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
 		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
         HashMap<String, FieldMetadata> originalProps = (HashMap<String, FieldMetadata>) dynamicEntityDao.getMergedProperties(

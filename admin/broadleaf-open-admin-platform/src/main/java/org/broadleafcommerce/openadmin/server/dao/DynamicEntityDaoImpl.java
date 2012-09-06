@@ -26,21 +26,21 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollectionOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationAdornedTargetCollectionOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollectionOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapOverride;
-import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMapOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
-import org.broadleafcommerce.common.presentation.client.AddType;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -59,6 +59,10 @@ import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
+import org.broadleafcommerce.openadmin.client.dto.override.AdornedTargetCollectionMetadataOverride;
+import org.broadleafcommerce.openadmin.client.dto.override.BasicCollectionMetadataOverride;
+import org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride;
+import org.broadleafcommerce.openadmin.client.dto.override.MapMetadataOverride;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.EntityMode;
@@ -124,7 +128,16 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     protected EntityConfiguration entityConfiguration;
 
     @Resource(name="blMetadataOverrides")
-    protected Map<String, Map<String, Map<String, FieldMetadata>>> fieldMetadataOverrides;
+    protected Map<String, Map<String, Map<String, BasicFieldMetadataOverride>>> fieldMetadataOverrides;
+
+    @Resource(name="blCollectionMetadataOverrides")
+    protected Map<String, Map<String, Map<String, BasicCollectionMetadataOverride>>> collectionMetadataOverrides;
+
+    @Resource(name="blAdornedTargetCollectionMetadataOverrides")
+    protected Map<String, Map<String, Map<String, AdornedTargetCollectionMetadataOverride>>> adornedTargetCollectionMetadataOverrides;
+
+    @Resource(name="blMapMetadataOverrides")
+    protected Map<String, Map<String, Map<String, MapMetadataOverride>>> mapMetadataOverrides;
 
 	@Override
 	public Class<? extends Serializable> getEntityClass() {
@@ -380,7 +393,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String[] excludeFields,
         String configurationKey,
 		String prefix
-	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         Map<String, FieldMetadata> mergedProperties = getMergedPropertiesRecursively(
             ceilingEntityFullyQualifiedClassname,
             entities,
@@ -425,7 +438,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         List<Class<?>> parentClasses,
         String prefix,
         Boolean isParentExcluded
-    ) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    ) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		Map<String, FieldMetadata> mergedProperties = new HashMap<String, FieldMetadata>();
         Boolean classAnnotatedPopulateManyToOneFields = null;
 
@@ -489,6 +502,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
 
         applyMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
+        applyCollectionMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
+        applyAdornedTargetCollectionMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
+        applyMapMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
+
         applyIncludesAndExcludes(includeFields, excludeFields, prefix, isParentExcluded, mergedProperties);
         applyForeignKeyPrecedence(foreignField, additionalForeignFields, mergedProperties);
 
@@ -552,14 +569,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
     }
 
-    protected void applyMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
-        if (fieldMetadataOverrides != null && configurationKey != null) {
-            Map<String, Map<String, FieldMetadata>> configuredOverrides = fieldMetadataOverrides.get(configurationKey);
+    protected void applyMapMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
+        if (mapMetadataOverrides != null && configurationKey != null) {
+            Map<String, Map<String, MapMetadataOverride>> configuredOverrides = mapMetadataOverrides.get(configurationKey);
             if (configuredOverrides != null) {
-                Map<String, FieldMetadata> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
+                Map<String, MapMetadataOverride> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
                 if (entityOverrides != null) {
                     for (String propertyName : entityOverrides.keySet()) {
-                        final FieldMetadata localMetadata = entityOverrides.get(propertyName);
+                        final MapMetadataOverride localMetadata = entityOverrides.get(propertyName);
                         Boolean excluded = localMetadata.getExcluded();
                         if (excluded == null) {
                             excluded = false;
@@ -578,107 +595,229 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 }
                             }
                             if (key.equals(propertyName)) {
-                                FieldMetadata serverMetadata = mergedProperties.get(key);
-                                serverMetadata.accept(new MetadataVisitorAdapter() {
-                                    @Override
-                                    public void visit(BasicFieldMetadata serverMetadata) {
-                                        BasicFieldMetadata override = (BasicFieldMetadata) localMetadata;
-                                        if (override.getFriendlyName() != null) {
-                                            serverMetadata.setFriendlyName(override.getFriendlyName());
-                                        }
-                                        if (override.getSecurityLevel() != null) {
-                                            serverMetadata.setSecurityLevel(override.getSecurityLevel());
-                                        }
-                                        if (override.getVisibility() != null) {
-                                            serverMetadata.setVisibility(override.getVisibility());
-                                        }
-                                        if (override.getOrder() != null) {
-                                            serverMetadata.setOrder(override.getOrder());
-                                        }
-                                        if (override.getExplicitFieldType() != null) {
-                                            serverMetadata.setExplicitFieldType(override.getExplicitFieldType());
-                                            serverMetadata.setFieldType(override.getExplicitFieldType());
-                                        }
-                                        if (override.getGroup() != null) {
-                                            serverMetadata.setGroup(override.getGroup());
-                                        }
-                                        if (override.getGroupCollapsed() != null) {
-                                            serverMetadata.setGroupCollapsed(override.getGroupCollapsed());
-                                        }
-                                        if (override.getGroupOrder() != null) {
-                                            serverMetadata.setGroupOrder(override.getGroupOrder());
-                                        }
-                                        if (override.isLargeEntry() != null) {
-                                            serverMetadata.setLargeEntry(override.isLargeEntry());
-                                        }
-                                        if (override.isProminent() != null) {
-                                            serverMetadata.setProminent(override.isProminent());
-                                        }
-                                        if (override.getColumnWidth() != null) {
-                                            serverMetadata.setColumnWidth(override.getColumnWidth());
-                                        }
-                                        if (!StringUtils.isEmpty(override.getBroadleafEnumeration()) && !override.getBroadleafEnumeration().equals(serverMetadata.getBroadleafEnumeration())) {
-                                            serverMetadata.setBroadleafEnumeration(override.getBroadleafEnumeration());
-                                            try {
-                                                setupBroadleafEnumeration(override.getBroadleafEnumeration(), serverMetadata);
-                                            } catch (Exception e) {
-                                                throw new RuntimeException(e);
-                                            }
-                                        }
-                                        if (override.getReadOnly() != null) {
-                                            serverMetadata.setReadOnly(override.getReadOnly());
-                                        }
-                                        if (override.getExcluded() != null) {
-                                            serverMetadata.setExcluded(override.getExcluded());
-                                        }
-                                        if (isParentExcluded) {
-                                            serverMetadata.setExcluded(true);
-                                        }
-                                        if (override.getTooltip() != null) {
-                                            serverMetadata.setTooltip(override.getTooltip());
-                                        }
-                                        if (override.getHelpText() != null) {
-                                            serverMetadata.setHelpText(override.getHelpText());
-                                        }
-                                        if (override.getHint() != null) {
-                                            serverMetadata.setHint(override.getHint());
-                                        }
-                                        if (override.getRequiredOverride() != null) {
-                                            serverMetadata.setRequiredOverride(override.getRequiredOverride());
-                                        }
-                                        if (override.getValidationConfigurations() != null) {
-                                            serverMetadata.setValidationConfigurations(override.getValidationConfigurations());
-                                        }
-                                        if (override.getLength() != null) {
-                                            serverMetadata.setLength(override.getLength());
-                                        }
-                                        if (override.getUnique() != null) {
-                                            serverMetadata.setUnique(override.getUnique());
-                                        }
-                                        if (override.getScale() != null) {
-                                            serverMetadata.setScale(override.getScale());
-                                        }
-                                        if (override.getPrecision() != null) {
-                                            serverMetadata.setPrecision(override.getPrecision());
-                                        }
-                                    }
+                                MapMetadata serverMetadata = (MapMetadata) mergedProperties.get(key);
+                                Class<?> targetClass = Class.forName(((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getForeignKeyClass());
+                                String fieldName = ((MapStructure) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).getMapProperty();
+                                Field field = targetClass.getField(fieldName);
+                                Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                temp.put(field.getName(), serverMetadata);
+                                buildMapMetadata(targetClass, temp, field, localMetadata);
+                                mergedProperties.put(key, temp.get(field.getName()));
+                                if (localMetadata.getExcluded() != null) {
+                                    serverMetadata.setExcluded(localMetadata.getExcluded());
+                                }
+                                if (isParentExcluded) {
+                                    serverMetadata.setExcluded(true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-                                    @Override
-                                    public void visit(BasicCollectionMetadata metadata) {
-                                        //TODO handle collection case
-                                    }
+    protected void applyAdornedTargetCollectionMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
+        if (adornedTargetCollectionMetadataOverrides != null && configurationKey != null) {
+            Map<String, Map<String, AdornedTargetCollectionMetadataOverride>> configuredOverrides = adornedTargetCollectionMetadataOverrides.get(configurationKey);
+            if (configuredOverrides != null) {
+                Map<String, AdornedTargetCollectionMetadataOverride> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
+                if (entityOverrides != null) {
+                    for (String propertyName : entityOverrides.keySet()) {
+                        final AdornedTargetCollectionMetadataOverride localMetadata = entityOverrides.get(propertyName);
+                        Boolean excluded = localMetadata.getExcluded();
+                        if (excluded == null) {
+                            excluded = false;
+                        }
+                        for (String key : mergedProperties.keySet()) {
+                            String testKey = prefix + key;
+                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
+                                FieldMetadata metadata = mergedProperties.get(key);
+                                metadata.setExcluded(true);
+                                continue;
+                            }
+                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
+                                FieldMetadata metadata = mergedProperties.get(key);
+                                if (!isParentExcluded) {
+                                    metadata.setExcluded(false);
+                                }
+                            }
+                            if (key.equals(propertyName)) {
+                                AdornedTargetCollectionMetadata serverMetadata = (AdornedTargetCollectionMetadata) mergedProperties.get(key);
+                                Class<?> targetClass = Class.forName(serverMetadata.getParentObjectClass());
+                                String fieldName = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getCollectionFieldName();
+                                Field field = targetClass.getField(fieldName);
+                                Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                temp.put(field.getName(), serverMetadata);
+                                buildAdornedTargetCollectionMetadata(targetClass, temp, field, localMetadata);
+                                mergedProperties.put(key, temp.get(field.getName()));
+                                if (localMetadata.getExcluded() != null) {
+                                    serverMetadata.setExcluded(localMetadata.getExcluded());
+                                }
+                                if (isParentExcluded) {
+                                    serverMetadata.setExcluded(true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-                                    @Override
-                                    public void visit(AdornedTargetCollectionMetadata metadata) {
-                                        //TODO handle collection case
-                                    }
+    protected void applyCollectionMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
+        if (collectionMetadataOverrides != null && configurationKey != null) {
+            Map<String, Map<String, BasicCollectionMetadataOverride>> configuredOverrides = collectionMetadataOverrides.get(configurationKey);
+            if (configuredOverrides != null) {
+                Map<String, BasicCollectionMetadataOverride> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
+                if (entityOverrides != null) {
+                    for (String propertyName : entityOverrides.keySet()) {
+                        final BasicCollectionMetadataOverride localMetadata = entityOverrides.get(propertyName);
+                        Boolean excluded = localMetadata.getExcluded();
+                        if (excluded == null) {
+                            excluded = false;
+                        }
+                        for (String key : mergedProperties.keySet()) {
+                            String testKey = prefix + key;
+                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
+                                FieldMetadata metadata = mergedProperties.get(key);
+                                metadata.setExcluded(true);
+                                continue;
+                            }
+                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
+                                FieldMetadata metadata = mergedProperties.get(key);
+                                if (!isParentExcluded) {
+                                    metadata.setExcluded(false);
+                                }
+                            }
+                            if (key.equals(propertyName)) {
+                                BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) mergedProperties.get(key);
+                                Class<?> targetClass = Class.forName(((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getForeignKeyClass());
+                                String fieldName = serverMetadata.getCollectionFieldName();
+                                Field field = targetClass.getField(fieldName);
+                                Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                temp.put(field.getName(), serverMetadata);
+                                buildCollectionMetadata(targetClass, temp, field, localMetadata);
+                                mergedProperties.put(key, temp.get(field.getName()));
+                                if (localMetadata.getExcluded() != null) {
+                                    serverMetadata.setExcluded(localMetadata.getExcluded());
+                                }
+                                if (isParentExcluded) {
+                                    serverMetadata.setExcluded(true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-                                    @Override
-                                    public void visit(MapMetadata metadata) {
-                                        //TODO handle collection case
+    protected void applyMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
+        if (fieldMetadataOverrides != null && configurationKey != null) {
+            Map<String, Map<String, BasicFieldMetadataOverride>> configuredOverrides = fieldMetadataOverrides.get(configurationKey);
+            if (configuredOverrides != null) {
+                Map<String, BasicFieldMetadataOverride> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
+                if (entityOverrides != null) {
+                    for (String propertyName : entityOverrides.keySet()) {
+                        final BasicFieldMetadataOverride localMetadata = entityOverrides.get(propertyName);
+                        Boolean excluded = localMetadata.getExcluded();
+                        if (excluded == null) {
+                            excluded = false;
+                        }
+                        for (String key : mergedProperties.keySet()) {
+                            String testKey = prefix + key;
+                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
+                                FieldMetadata metadata = mergedProperties.get(key);
+                                metadata.setExcluded(true);
+                                continue;
+                            }
+                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
+                                FieldMetadata metadata = mergedProperties.get(key);
+                                if (!isParentExcluded) {
+                                    metadata.setExcluded(false);
+                                }
+                            }
+                            if (key.equals(propertyName)) {
+                                BasicFieldMetadata serverMetadata = (BasicFieldMetadata) mergedProperties.get(key);
+                                if (localMetadata.getFriendlyName() != null) {
+                                    serverMetadata.setFriendlyName(localMetadata.getFriendlyName());
+                                }
+                                if (localMetadata.getSecurityLevel() != null) {
+                                    serverMetadata.setSecurityLevel(localMetadata.getSecurityLevel());
+                                }
+                                if (localMetadata.getVisibility() != null) {
+                                    serverMetadata.setVisibility(localMetadata.getVisibility());
+                                }
+                                if (localMetadata.getOrder() != null) {
+                                    serverMetadata.setOrder(localMetadata.getOrder());
+                                }
+                                if (localMetadata.getExplicitFieldType() != null) {
+                                    serverMetadata.setExplicitFieldType(localMetadata.getExplicitFieldType());
+                                    serverMetadata.setFieldType(localMetadata.getExplicitFieldType());
+                                }
+                                if (localMetadata.getGroup() != null) {
+                                    serverMetadata.setGroup(localMetadata.getGroup());
+                                }
+                                if (localMetadata.getGroupCollapsed() != null) {
+                                    serverMetadata.setGroupCollapsed(localMetadata.getGroupCollapsed());
+                                }
+                                if (localMetadata.getGroupOrder() != null) {
+                                    serverMetadata.setGroupOrder(localMetadata.getGroupOrder());
+                                }
+                                if (localMetadata.isLargeEntry() != null) {
+                                    serverMetadata.setLargeEntry(localMetadata.isLargeEntry());
+                                }
+                                if (localMetadata.isProminent() != null) {
+                                    serverMetadata.setProminent(localMetadata.isProminent());
+                                }
+                                if (localMetadata.getColumnWidth() != null) {
+                                    serverMetadata.setColumnWidth(localMetadata.getColumnWidth());
+                                }
+                                if (!StringUtils.isEmpty(localMetadata.getBroadleafEnumeration()) && !localMetadata.getBroadleafEnumeration().equals(serverMetadata.getBroadleafEnumeration())) {
+                                    serverMetadata.setBroadleafEnumeration(localMetadata.getBroadleafEnumeration());
+                                    try {
+                                        setupBroadleafEnumeration(localMetadata.getBroadleafEnumeration(), serverMetadata);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
                                     }
-                                });
-                                
+                                }
+                                if (localMetadata.getReadOnly() != null) {
+                                    serverMetadata.setReadOnly(localMetadata.getReadOnly());
+                                }
+                                if (localMetadata.getExcluded() != null) {
+                                    serverMetadata.setExcluded(localMetadata.getExcluded());
+                                }
+                                if (isParentExcluded) {
+                                    serverMetadata.setExcluded(true);
+                                }
+                                if (localMetadata.getTooltip() != null) {
+                                    serverMetadata.setTooltip(localMetadata.getTooltip());
+                                }
+                                if (localMetadata.getHelpText() != null) {
+                                    serverMetadata.setHelpText(localMetadata.getHelpText());
+                                }
+                                if (localMetadata.getHint() != null) {
+                                    serverMetadata.setHint(localMetadata.getHint());
+                                }
+                                if (localMetadata.getRequiredOverride() != null) {
+                                    serverMetadata.setRequiredOverride(localMetadata.getRequiredOverride());
+                                }
+                                if (localMetadata.getValidationConfigurations() != null) {
+                                    serverMetadata.setValidationConfigurations(localMetadata.getValidationConfigurations());
+                                }
+                                if (localMetadata.getLength() != null) {
+                                    serverMetadata.setLength(localMetadata.getLength());
+                                }
+                                if (localMetadata.getUnique() != null) {
+                                    serverMetadata.setUnique(localMetadata.getUnique());
+                                }
+                                if (localMetadata.getScale() != null) {
+                                    serverMetadata.setScale(localMetadata.getScale());
+                                }
+                                if (localMetadata.getPrecision() != null) {
+                                    serverMetadata.setPrecision(localMetadata.getPrecision());
+                                }
                             }
                         }
                     }
@@ -688,151 +827,210 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     }
 
     protected void buildAdminPresentationMapOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationMapOverride> presentationMapOverrides, String propertyName, String key) {
-        AdminPresentationMap annot = presentationMapOverrides.get(propertyName).value();
-        if (annot != null) {
-            String testKey = prefix + key;
-            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
-                FieldMetadata metadata = mergedProperties.get(key);
-                metadata.setExcluded(true);
-                return;
-            }
-            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
-                FieldMetadata metadata = mergedProperties.get(key);
-                if (!isParentExcluded) {
-                    metadata.setExcluded(false);
+        AdminPresentationMapOverride override = presentationMapOverrides.get(propertyName);
+        if (override != null) {
+            AdminPresentationMap annot = override.value();
+            if (annot != null) {
+                String testKey = prefix + key;
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    metadata.setExcluded(true);
+                    return;
                 }
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    if (!isParentExcluded) {
+                        metadata.setExcluded(false);
+                    }
+                }
+                MapMetadata metadata = (MapMetadata) mergedProperties.get(key);
+                metadata.setFriendlyName(annot.friendlyName());
+                metadata.setSecurityLevel(annot.securityLevel());
+                metadata.setMutable(annot.mutable());
+                metadata.setOrder(annot.order());
+                metadata.setTargetElementId(annot.targetUIElementId());
+                metadata.setDataSourceName(annot.dataSourceName());
+                metadata.setCustomCriteria(annot.customCriteria());
+                if (!StringUtils.isEmpty(annot.configurationKey())) {
+                    metadata.getPersistencePerspective().setConfigurationKey(annot.configurationKey());
+                }
+                if (!void.class.equals(annot.keyClass())) {
+                    ((MapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).setKeyClassName(annot.keyClass().getName());
+                }
+                ((MapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).setKeyPropertyFriendlyName(annot.keyPropertyFriendlyName());
+                if (!void.class.equals(annot.valueClass())) {
+                    ((MapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).setValueClassName(annot.valueClass().getName());
+                }
+                if (annot.isSimpleValue()!=UnspecifiedBooleanType.UNSPECIFIED) {
+                    metadata.setSimpleValue(annot.isSimpleValue()==UnspecifiedBooleanType.TRUE);
+                }
+                if (metadata.isSimpleValue()) {
+                    ((MapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).setDeleteValueEntity(annot.deleteEntityUponRemove());
+                }
+                if (!metadata.isSimpleValue()) {
+                    ((SimpleValueMapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).setValuePropertyFriendlyName(annot.valuePropertyFriendlyName());
+                }
+                metadata.setMediaField(annot.mediaField());
+                if (!ArrayUtils.isEmpty(annot.keys())) {
+                    String[][] keys = new String[annot.keys().length][2];
+                    int j = 0;
+                    for (AdminPresentationMapKey mapKey : annot.keys()) {
+                        keys[j][0] = mapKey.keyName();
+                        keys[j][1] = mapKey.friendlyKeyName();
+                        j++;
+                    }
+                    metadata.setKeys(keys);
+                }
+                if (!void.class.equals(annot.mapKeyOptionEntityClass())) {
+                    metadata.setMapKeyOptionEntityClass(annot.mapKeyOptionEntityClass().getName());
+                }
+                metadata.setMapKeyOptionEntityDisplayField(annot.mapKeyOptionEntityDisplayField());
+                metadata.setMapKeyOptionEntityValueField(annot.mapKeyOptionEntityValueField());
             }
-            AdornedTargetCollectionMetadata metadata = (AdornedTargetCollectionMetadata) mergedProperties.get(key);
-            //TODO finsh map override code
         }
     }
 
     protected void buildAdminPresentationAdornedTargetCollectionOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationAdornedTargetCollectionOverride> presentationAdornedTargetCollectionOverrides, String propertyName, String key) {
-        AdminPresentationAdornedTargetCollection annot = presentationAdornedTargetCollectionOverrides.get(propertyName).value();
-        if (annot != null) {
-            String testKey = prefix + key;
-            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
-                FieldMetadata metadata = mergedProperties.get(key);
-                metadata.setExcluded(true);
-                return;
-            }
-            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
-                FieldMetadata metadata = mergedProperties.get(key);
-                if (!isParentExcluded) {
-                    metadata.setExcluded(false);
+        AdminPresentationAdornedTargetCollectionOverride override = presentationAdornedTargetCollectionOverrides.get(propertyName);
+        if (override != null) {
+            AdminPresentationAdornedTargetCollection annot = override.value();
+            if (annot != null) {
+                String testKey = prefix + key;
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    metadata.setExcluded(true);
+                    return;
                 }
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    if (!isParentExcluded) {
+                        metadata.setExcluded(false);
+                    }
+                }
+                AdornedTargetCollectionMetadata metadata = (AdornedTargetCollectionMetadata) mergedProperties.get(key);
+                metadata.setCustomCriteria(annot.customCriteria());
+                metadata.setMutable(annot.mutable());
+                metadata.setDataSourceName(annot.dataSourceName());
+                metadata.setFriendlyName(annot.friendlyName());
+                metadata.setOrder(annot.order());
+                metadata.setSecurityLevel(annot.securityLevel());
+                if (!StringUtils.isEmpty(annot.configurationKey())) {
+                    metadata.getPersistencePerspective().setConfigurationKey(annot.configurationKey());
+                }
+                if (!StringUtils.isEmpty(annot.parentObjectProperty())) {
+                    ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setLinkedObjectPath(annot.parentObjectProperty());
+                }
+                ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setLinkedIdProperty(annot.parentObjectIdProperty());
+                ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setTargetObjectPath(annot.targetObjectProperty());
+                ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setTargetIdProperty(annot.targetObjectIdProperty());
+                metadata.setMaintainedAdornedTargetFields(annot.maintainedAdornedTargetFields());
+                metadata.setGridVisibleFields(annot.gridVisibleFields());
+                String sortProperty;
+                if (StringUtils.isEmpty(annot.sortProperty())) {
+                    sortProperty = null;
+                } else {
+                    sortProperty = annot.sortProperty();
+                }
+                ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setSortField(sortProperty);
+                ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setSortAscending(annot.sortAscending());
+                metadata.setIgnoreAdornedProperties(annot.ignoreAdornedProperties());
+                metadata.setTargetElementId(annot.targetUIElementId());
             }
-            AdornedTargetCollectionMetadata metadata = (AdornedTargetCollectionMetadata) mergedProperties.get(key);
-            metadata.setCustomCriteria(annot.customCriteria());
-            metadata.setMutable(annot.mutable());
-            metadata.setDataSourceName(annot.dataSourceName());
-            metadata.setFriendlyName(annot.friendlyName());
-            metadata.setOrder(annot.order());
-            metadata.setSecurityLevel(annot.securityLevel());
-            if (!StringUtils.isEmpty(annot.parentObjectProperty())) {
-                ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setLinkedObjectPath(annot.parentObjectProperty());
-            }
-            ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setLinkedIdProperty(annot.parentObjectIdProperty());
-            ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setTargetObjectPath(annot.targetObjectProperty());
-            ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setTargetIdProperty(annot.targetObjectIdProperty());
-            metadata.setMaintainedAdornedTargetFields(annot.maintainedAdornedTargetFields());
-            metadata.setGridVisibleFields(annot.gridVisibleFields());
-            String sortProperty;
-            if (StringUtils.isEmpty(annot.sortProperty())) {
-                sortProperty = null;
-            } else {
-                sortProperty = annot.sortProperty();
-            }
-            ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setSortField(sortProperty);
-            ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).setSortAscending(annot.sortAscending());
-            metadata.setIgnoreAdornedProperties(annot.ignoreAdornedProperties());
-            metadata.setTargetElementId(annot.targetUIElementId());
         }
     }
 
     protected void buildAdminPresentationCollectionOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides, String propertyName, String key) {
-        AdminPresentationCollection annot = presentationCollectionOverrides.get(propertyName).value();
-        if (annot != null) {
-            String testKey = prefix + key;
-            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
-                FieldMetadata metadata = mergedProperties.get(key);
-                metadata.setExcluded(true);
-                return;
-            }
-            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
-                FieldMetadata metadata = mergedProperties.get(key);
-                if (!isParentExcluded) {
-                    metadata.setExcluded(false);
+        AdminPresentationCollectionOverride override = presentationCollectionOverrides.get(propertyName);
+        if (override != null) {
+            AdminPresentationCollection annot = override.value();
+            if (annot != null) {
+                String testKey = prefix + key;
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    metadata.setExcluded(true);
+                    return;
+                }
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    if (!isParentExcluded) {
+                        metadata.setExcluded(false);
+                    }
+                }
+                BasicCollectionMetadata metadata = (BasicCollectionMetadata) mergedProperties.get(key);
+                metadata.setCustomCriteria(annot.customCriteria());
+                metadata.setMutable(annot.mutable());
+                metadata.setAddMethodType(annot.addType());
+                metadata.setDataSourceName(annot.dataSourceName());
+                metadata.setFriendlyName(annot.friendlyName());
+                metadata.setOrder(annot.order());
+                metadata.setSecurityLevel(annot.securityLevel());
+                if (!StringUtils.isEmpty(annot.manyToField())) {
+                    ((ForeignKey) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).setManyToField(annot.manyToField());
+                }
+                metadata.setTargetElementId(annot.targetUIElementId());
+                if (!StringUtils.isEmpty(annot.configurationKey())) {
+                    metadata.getPersistencePerspective().setConfigurationKey(annot.configurationKey());
                 }
             }
-            BasicCollectionMetadata metadata = (BasicCollectionMetadata) mergedProperties.get(key);
-            metadata.setCustomCriteria(annot.customCriteria());
-            metadata.setMutable(annot.mutable());
-            metadata.setAddType(annot.addType());
-            metadata.setDataSourceName(annot.dataSourceName());
-            metadata.setFriendlyName(annot.friendlyName());
-            metadata.setOrder(annot.order());
-            metadata.setSecurityLevel(annot.securityLevel());
-            if (!StringUtils.isEmpty(annot.manyToField())) {
-                ((ForeignKey) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).setManyToField(annot.manyToField());
-            }
-            metadata.setTargetElementId(annot.targetUIElementId());
         }
     }
 
     protected void buildAdminPresentationOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationOverride> presentationOverrides, String propertyName, String key) {
-        AdminPresentation annot = presentationOverrides.get(propertyName).value();
-        if (annot != null) {
-            String testKey = prefix + key;
-            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
-                FieldMetadata metadata = mergedProperties.get(key);
-                metadata.setExcluded(true);
-                return;
-            }
-            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
-                FieldMetadata metadata = mergedProperties.get(key);
-                if (!isParentExcluded) {
-                    metadata.setExcluded(false);
+        AdminPresentationOverride override = presentationOverrides.get(propertyName);
+        if (override != null) {
+            AdminPresentation annot = override.value();
+            if (annot != null) {
+                String testKey = prefix + key;
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    metadata.setExcluded(true);
+                    return;
                 }
-            }
-            BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(key);
-            metadata.setFriendlyName(annot.friendlyName());
-            metadata.setSecurityLevel(annot.securityLevel());
-            metadata.setVisibility(annot.visibility());
-            metadata.setOrder(annot.order());
-            metadata.setExplicitFieldType(annot.fieldType());
-            if (annot.fieldType() != SupportedFieldType.UNKNOWN) {
-                metadata.setFieldType(annot.fieldType());
-            }
-            metadata.setGroup(annot.group());
-            metadata.setGroupCollapsed(annot.groupCollapsed());
-            metadata.setGroupOrder(annot.groupOrder());
-            metadata.setLargeEntry(annot.largeEntry());
-            metadata.setProminent(annot.prominent());
-            metadata.setColumnWidth(annot.columnWidth());
-            if (!StringUtils.isEmpty(annot.broadleafEnumeration()) && !annot.broadleafEnumeration().equals(metadata.getBroadleafEnumeration())) {
-                metadata.setBroadleafEnumeration(annot.broadleafEnumeration());
-                try {
-                    setupBroadleafEnumeration(annot.broadleafEnumeration(), metadata);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            metadata.setReadOnly(annot.readOnly());
-            metadata.setExcluded(isParentExcluded || annot.excluded());
-            metadata.setTooltip(annot.tooltip());
-            metadata.setHelpText(annot.helpText());
-            metadata.setHint(annot.hint());
-            metadata.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED);
-            if (annot.validationConfigurations().length != 0) {
-                ValidationConfiguration[] configurations = annot.validationConfigurations();
-                for (ValidationConfiguration configuration : configurations) {
-                    ConfigurationItem[] items = configuration.configurationItems();
-                    Map<String, String> itemMap = new HashMap<String, String>();
-                    for (ConfigurationItem item : items) {
-                        itemMap.put(item.itemName(), item.itemValue());
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    if (!isParentExcluded) {
+                        metadata.setExcluded(false);
                     }
-                    metadata.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+                }
+                BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(key);
+                metadata.setFriendlyName(annot.friendlyName());
+                metadata.setSecurityLevel(annot.securityLevel());
+                metadata.setVisibility(annot.visibility());
+                metadata.setOrder(annot.order());
+                metadata.setExplicitFieldType(annot.fieldType());
+                if (annot.fieldType() != SupportedFieldType.UNKNOWN) {
+                    metadata.setFieldType(annot.fieldType());
+                }
+                metadata.setGroup(annot.group());
+                metadata.setGroupCollapsed(annot.groupCollapsed());
+                metadata.setGroupOrder(annot.groupOrder());
+                metadata.setLargeEntry(annot.largeEntry());
+                metadata.setProminent(annot.prominent());
+                metadata.setColumnWidth(annot.columnWidth());
+                if (!StringUtils.isEmpty(annot.broadleafEnumeration()) && !annot.broadleafEnumeration().equals(metadata.getBroadleafEnumeration())) {
+                    metadata.setBroadleafEnumeration(annot.broadleafEnumeration());
+                    try {
+                        setupBroadleafEnumeration(annot.broadleafEnumeration(), metadata);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                metadata.setReadOnly(annot.readOnly());
+                metadata.setExcluded(isParentExcluded || annot.excluded());
+                metadata.setTooltip(annot.tooltip());
+                metadata.setHelpText(annot.helpText());
+                metadata.setHint(annot.hint());
+                metadata.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED);
+                if (annot.validationConfigurations().length != 0) {
+                    ValidationConfiguration[] configurations = annot.validationConfigurations();
+                    for (ValidationConfiguration configuration : configurations) {
+                        ConfigurationItem[] items = configuration.configurationItems();
+                        Map<String, String> itemMap = new HashMap<String, String>();
+                        for (ConfigurationItem item : items) {
+                            itemMap.put(item.itemName(), item.itemValue());
+                        }
+                        metadata.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+                    }
                 }
             }
         }
@@ -893,7 +1091,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         List<Class<?>> parentClasses,
 		String prefix,
         Boolean isParentExcluded
-	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		for (Class<?> clazz : entities) {
             String cacheKey = getCacheKey(foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
 
@@ -1081,11 +1279,88 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			if (annot != null) {
                 buildBasicMetadata(attributes, field, annot);
             } else if (annotColl != null) {
-                buildCollectionMetadata(targetClass, attributes, field, annotColl);
+                BasicCollectionMetadataOverride override = new BasicCollectionMetadataOverride();
+                override.setAddMethodType(annotColl.addType());
+                override.setConfigurationKey(annotColl.configurationKey());
+                override.setManyToField(annotColl.manyToField());
+                override.setCustomCriteria(annotColl.customCriteria());
+                override.setDataSourceName(annotColl.dataSourceName());
+                override.setExcluded(annotColl.excluded());
+                override.setFriendlyName(annotColl.friendlyName());
+                override.setMutable(annotColl.mutable());
+                override.setOrder(annotColl.order());
+                override.setSecurityLevel(annotColl.securityLevel());
+                override.setTargetElementId(annotColl.targetUIElementId());
+                override.setAddType(annotColl.operationTypes().addType());
+                override.setFetchType(annotColl.operationTypes().fetchType());
+                override.setRemoveType(annotColl.operationTypes().removeType());
+                override.setUpdateType(annotColl.operationTypes().updateType());
+                override.setInspectType(annotColl.operationTypes().inspectType());
+
+                buildCollectionMetadata(targetClass, attributes, field, override);
             } else if (adornedTargetCollection != null) {
-                buildAdornedTargetCollectionMetadata(targetClass, attributes, field, adornedTargetCollection);
+                AdornedTargetCollectionMetadataOverride override = new AdornedTargetCollectionMetadataOverride();
+                override.setConfigurationKey(adornedTargetCollection.configurationKey());
+                override.setGridVisibleFields(adornedTargetCollection.gridVisibleFields());
+                override.setIgnoreAdornedProperties(adornedTargetCollection.ignoreAdornedProperties());
+                override.setMaintainedAdornedTargetFields(adornedTargetCollection.maintainedAdornedTargetFields());
+                override.setParentObjectIdProperty(adornedTargetCollection.parentObjectIdProperty());
+                override.setParentObjectProperty(adornedTargetCollection.parentObjectProperty());
+                override.setSortAscending(adornedTargetCollection.sortAscending());
+                override.setSortProperty(adornedTargetCollection.sortProperty());
+                override.setTargetObjectIdProperty(adornedTargetCollection.targetObjectIdProperty());
+                override.setTargetObjectProperty(adornedTargetCollection.targetObjectProperty());
+                override.setCustomCriteria(adornedTargetCollection.customCriteria());
+                override.setDataSourceName(adornedTargetCollection.dataSourceName());
+                override.setExcluded(adornedTargetCollection.excluded());
+                override.setFriendlyName(adornedTargetCollection.friendlyName());
+                override.setMutable(adornedTargetCollection.mutable());
+                override.setOrder(adornedTargetCollection.order());
+                override.setSecurityLevel(adornedTargetCollection.securityLevel());
+                override.setTargetElementId(adornedTargetCollection.targetUIElementId());
+                override.setAddType(adornedTargetCollection.operationTypes().addType());
+                override.setFetchType(adornedTargetCollection.operationTypes().fetchType());
+                override.setRemoveType(adornedTargetCollection.operationTypes().removeType());
+                override.setUpdateType(adornedTargetCollection.operationTypes().updateType());
+                override.setInspectType(adornedTargetCollection.operationTypes().inspectType());
+
+                buildAdornedTargetCollectionMetadata(targetClass, attributes, field, override);
             } else if (map != null) {
-                buildMapMetadata(targetClass, attributes, field, map);
+                MapMetadataOverride override = new MapMetadataOverride();
+                override.setConfigurationKey(map.configurationKey());
+                override.setDeleteEntityUponRemove(map.deleteEntityUponRemove());
+                override.setKeyClass(map.keyClass().getName());
+                override.setKeyPropertyFriendlyName(map.keyPropertyFriendlyName());
+                if (!ArrayUtils.isEmpty(map.keys())) {
+                    String[][] keys = new String[map.keys().length][2];
+                    for (int j=0;j<keys.length;j++){
+                        keys[j][0] = map.keys()[j].keyName();
+                        keys[j][1] = map.keys()[j].friendlyKeyName();
+                    }
+                    override.setKeys(keys);
+                }
+                override.setMapKeyOptionEntityClass(map.mapKeyOptionEntityClass().getName());
+                override.setMapKeyOptionEntityDisplayField(map.mapKeyOptionEntityDisplayField());
+                override.setMapKeyOptionEntityValueField(map.mapKeyOptionEntityValueField());
+                override.setMediaField(map.mediaField());
+                override.setSimpleValue(map.isSimpleValue());
+                override.setValueClass(map.valueClass().getName());
+                override.setValuePropertyFriendlyName(map.valuePropertyFriendlyName());
+                override.setCustomCriteria(map.customCriteria());
+                override.setDataSourceName(map.dataSourceName());
+                override.setExcluded(map.excluded());
+                override.setFriendlyName(map.friendlyName());
+                override.setMutable(map.mutable());
+                override.setOrder(map.order());
+                override.setSecurityLevel(map.securityLevel());
+                override.setTargetElementId(map.targetUIElementId());
+                override.setAddType(map.operationTypes().addType());
+                override.setFetchType(map.operationTypes().fetchType());
+                override.setRemoveType(map.operationTypes().removeType());
+                override.setUpdateType(map.operationTypes().updateType());
+                override.setInspectType(map.operationTypes().inspectType());
+
+                buildMapMetadata(targetClass, attributes, field, override);
 			} else {
                 BasicFieldMetadata metadata = new BasicFieldMetadata();
                 metadata.setName(field.getName());
@@ -1096,22 +1371,52 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		return attributes;
 	}
 
-    protected void buildMapMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, AdminPresentationMap map) {
-        MapMetadata metadata = new MapMetadata();
-        metadata.setMutable(map.mutable());
+    protected void buildMapMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, MapMetadataOverride map) {
+        MapMetadata serverMetadata = (MapMetadata) attributes.get(field.getName());
 
-        org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
-        if (field.getAnnotation(AdminPresentationOperationTypes.class) != null) {
-            AdminPresentationOperationTypes operationTypes = field.getAnnotation(AdminPresentationOperationTypes.class);
-            dtoOperationTypes.setRemoveType(operationTypes.removeType());
-            dtoOperationTypes.setAddType(operationTypes.addType());
-            dtoOperationTypes.setInspectType(operationTypes.inspectType());
-            dtoOperationTypes.setUpdateType(operationTypes.updateType());
-            dtoOperationTypes.setFetchType(operationTypes.fetchType());
+        MapMetadata metadata = new MapMetadata();
+        if (serverMetadata != null && map.isMutable() == null) {
+            metadata.setMutable(serverMetadata.isMutable());
+        } else {
+            metadata.setMutable(map.isMutable());
+        }
+
+        org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes();
+        if (serverMetadata != null && map.getAddType() == null) {
+            dtoOperationTypes.setAddType(serverMetadata.getPersistencePerspective().getOperationTypes().getAddType());
+        } else {
+            dtoOperationTypes.setAddType(map.getAddType());
+        }
+        if (serverMetadata != null && map.getRemoveType() == null) {
+            dtoOperationTypes.setRemoveType(serverMetadata.getPersistencePerspective().getOperationTypes().getRemoveType());
+        } else {
+            dtoOperationTypes.setRemoveType(map.getRemoveType());
+        }
+        if (serverMetadata != null && map.getFetchType() == null) {
+            dtoOperationTypes.setFetchType(serverMetadata.getPersistencePerspective().getOperationTypes().getFetchType());
+        } else {
+            dtoOperationTypes.setFetchType(map.getFetchType());
+        }
+        if (serverMetadata != null && map.getInspectType() == null) {
+            dtoOperationTypes.setInspectType(serverMetadata.getPersistencePerspective().getOperationTypes().getInspectType());
+        } else {
+            dtoOperationTypes.setInspectType(map.getInspectType());
+        }
+        if (serverMetadata != null && map.getUpdateType() == null) {
+            dtoOperationTypes.setUpdateType(serverMetadata.getPersistencePerspective().getOperationTypes().getUpdateType());
+        } else {
+            dtoOperationTypes.setInspectType(map.getUpdateType());
         }
 
         //don't allow additional non-persistent properties or additional foreign keys for an advanced collection datasource - they don't make sense in this context
         PersistencePerspective persistencePerspective = new PersistencePerspective(dtoOperationTypes, new String[]{}, new ForeignKey[]{});
+        if (serverMetadata != null && map.getConfigurationKey() == null) {
+            serverMetadata.getPersistencePerspective().setConfigurationKey(serverMetadata.getPersistencePerspective().getConfigurationKey());
+        } else {
+            if (!StringUtils.isEmpty(map.getConfigurationKey())) {
+                persistencePerspective.setConfigurationKey(map.getConfigurationKey());
+            }
+        }
         metadata.setPersistencePerspective(persistencePerspective);
 
         String parentObjectClass = targetClass.getName();
@@ -1119,98 +1424,146 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         String parentObjectIdField = (String) idMetadata.get("name");
 
         String keyClassName;
-        checkProperty: {
-            if (!String.class.equals(map.keyClass())) {
-                keyClassName = map.keyClass().getName();
-                break checkProperty;
-            }
-
-            java.lang.reflect.Type type = field.getGenericType();
-            if (type instanceof ParameterizedType) {
-                ParameterizedType pType = (ParameterizedType) type;
-                Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[0];
-                if (!ArrayUtils.isEmpty(getAllPolymorphicEntitiesFromCeiling(clazz))) {
-                    throw new RuntimeException("Key class for AdminPresentationMap was determined to be a JPA managed type. Only primitive types for the key type are currently supported.");
+        if (serverMetadata != null && map.getKeyClass() == null) {
+            keyClassName = ((MapStructure) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).getKeyClassName();
+        } else {
+            checkProperty: {
+                if (!void.class.getName().equals(map.getKeyClass())) {
+                    keyClassName = map.getKeyClass();
+                    break checkProperty;
                 }
-                keyClassName = clazz.getName();
-                break checkProperty;
-            }
 
-            keyClassName = String.class.getName();
+                java.lang.reflect.Type type = field.getGenericType();
+                if (type instanceof ParameterizedType) {
+                    ParameterizedType pType = (ParameterizedType) type;
+                    Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[0];
+                    if (!ArrayUtils.isEmpty(getAllPolymorphicEntitiesFromCeiling(clazz))) {
+                        throw new RuntimeException("Key class for AdminPresentationMap was determined to be a JPA managed type. Only primitive types for the key type are currently supported.");
+                    }
+                    keyClassName = clazz.getName();
+                    break checkProperty;
+                }
+
+                keyClassName = String.class.getName();
+            }
         }
 
         String keyPropertyName = "key";
-        String keyPropertyFriendlyName = map.keyPropertyFriendlyName();
-        boolean deleteEntityUponRemove = map.deleteEntityUponRemove();
+        String keyPropertyFriendlyName;
+        if (serverMetadata != null && map.getKeyPropertyFriendlyName() == null) {
+            keyPropertyFriendlyName = ((MapStructure) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).getKeyPropertyFriendlyName();
+        } else {
+            keyPropertyFriendlyName = map.getKeyPropertyFriendlyName();
+        }
+        boolean deleteEntityUponRemove;
+        if (serverMetadata != null && map.isDeleteEntityUponRemove()==null) {
+            deleteEntityUponRemove = ((MapStructure) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).getDeleteValueEntity();
+        } else {
+            deleteEntityUponRemove = map.isDeleteEntityUponRemove();
+        }
         String valuePropertyName = "value";
-        String valuePropertyFriendlyName = map.valuePropertyFriendlyName();
-        metadata.setMediaField(map.mediaField());
-
-        checkProperty: {
-            if (!void.class.equals(map.valueClass())) {
-                metadata.setValueClassName(map.valueClass().getName());
-                break checkProperty;
+        String valuePropertyFriendlyName;
+        if (serverMetadata != null && map.getValuePropertyFriendlyName()==null) {
+            MapStructure structure = (MapStructure) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+            if (structure instanceof SimpleValueMapStructure) {
+                valuePropertyFriendlyName = ((SimpleValueMapStructure) structure).getValuePropertyFriendlyName();
+            } else {
+                valuePropertyFriendlyName = "";
             }
-
-            java.lang.reflect.Type type = field.getGenericType();
-            if (type instanceof ParameterizedType) {
-                ParameterizedType pType = (ParameterizedType) type;
-                Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
-                Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(clazz);
-                if (!ArrayUtils.isEmpty(entities)) {
-                    metadata.setValueClassName(entities[entities.length-1].getName());
-                    break checkProperty;
-                }
-            }
-
-            ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
-            if (manyToMany != null && !StringUtils.isEmpty(manyToMany.targetEntity().getName())) {
-                metadata.setValueClassName(manyToMany.mappedBy());
-                break checkProperty;
-            }
-
-            metadata.setValueClassName(String.class.getName());
+        } else {
+            valuePropertyFriendlyName = map.getValuePropertyFriendlyName();
+        }
+        if (serverMetadata != null && map.getMediaField() == null) {
+            metadata.setMediaField(serverMetadata.getMediaField());
+        } else {
+            metadata.setMediaField(map.getMediaField());
         }
 
-        checkProperty: {
-            java.lang.reflect.Type type = field.getGenericType();
-            if (type instanceof ParameterizedType) {
-                ParameterizedType pType = (ParameterizedType) type;
-                Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
-                Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(clazz);
-                if (!ArrayUtils.isEmpty(entities)) {
+        if (serverMetadata != null && map.getValueClass() == null) {
+            metadata.setValueClassName(serverMetadata.getValueClassName());
+        } else {
+            checkProperty: {
+                if (!void.class.getName().equals(map.getValueClass())) {
+                    metadata.setValueClassName(map.getValueClass());
+                    break checkProperty;
+                }
+
+                java.lang.reflect.Type type = field.getGenericType();
+                if (type instanceof ParameterizedType) {
+                    ParameterizedType pType = (ParameterizedType) type;
+                    Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
+                    Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(clazz);
+                    if (!ArrayUtils.isEmpty(entities)) {
+                        metadata.setValueClassName(entities[entities.length-1].getName());
+                        break checkProperty;
+                    }
+                }
+
+                ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+                if (manyToMany != null && !StringUtils.isEmpty(manyToMany.targetEntity().getName())) {
+                    metadata.setValueClassName(manyToMany.mappedBy());
+                    break checkProperty;
+                }
+
+                metadata.setValueClassName(String.class.getName());
+            }
+        }
+
+        if (serverMetadata != null &&  map.getSimpleValue()== null) {
+            metadata.setSimpleValue(serverMetadata.isSimpleValue());
+        } else {
+            checkProperty: {
+                java.lang.reflect.Type type = field.getGenericType();
+                if (type instanceof ParameterizedType) {
+                    ParameterizedType pType = (ParameterizedType) type;
+                    Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
+                    Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(clazz);
+                    if (!ArrayUtils.isEmpty(entities)) {
+                        metadata.setSimpleValue(false);
+                        break checkProperty;
+                    }
+                }
+
+                ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+                if (manyToMany != null && !StringUtils.isEmpty(manyToMany.targetEntity().getName())) {
                     metadata.setSimpleValue(false);
                     break checkProperty;
                 }
-            }
 
-            ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
-            if (manyToMany != null && !StringUtils.isEmpty(manyToMany.targetEntity().getName())) {
-                metadata.setSimpleValue(false);
-                break checkProperty;
+                if (map.getSimpleValue()== UnspecifiedBooleanType.UNSPECIFIED) {
+                    throw new RuntimeException("Unable to infer if the value for the map is of a complex or simple type based on any parameterized type or ManyToMany annotation. Please explicitly set the isSimpleValue property.");
+                }
+                metadata.setSimpleValue(map.getSimpleValue()==UnspecifiedBooleanType.TRUE);
             }
-
-            metadata.setSimpleValue(map.isSimpleValue());
         }
 
-        if (!ArrayUtils.isEmpty(map.keys())) {
-            String[][] keys = new String[map.keys().length][2];
-            int j = 0;
-            for (AdminPresentationMapKey mapKey : map.keys()) {
-                keys[j][0] = mapKey.keyName();
-                keys[j][1] = mapKey.friendlyKeyName();
-                j++;
-            }
-            metadata.setKeys(keys);
-        }
-
-        if (!void.class.equals(map.mapKeyOptionEntityClass())) {
-            metadata.setMapKeyOptionEntityClass(map.mapKeyOptionEntityClass().getName());
+        if (serverMetadata != null &&  map.getKeys() == null) {
+            metadata.setKeys(serverMetadata.getKeys());
         } else {
-            metadata.setMapKeyOptionEntityClass("");
+            if (!ArrayUtils.isEmpty(map.getKeys())) {
+                metadata.setKeys(map.getKeys());
+            }
         }
-        metadata.setMapKeyOptionEntityDisplayField(map.mapKeyOptionEntityDisplayField());
-        metadata.setMapKeyOptionEntityValueField(map.mapKeyOptionEntityValueField());
+
+        if (serverMetadata != null && map.getMapKeyOptionEntityClass()==null) {
+            metadata.setMapKeyOptionEntityClass(serverMetadata.getMapKeyOptionEntityClass());
+        } else {
+            if (!void.class.getName().equals(map.getMapKeyOptionEntityClass())) {
+                metadata.setMapKeyOptionEntityClass(map.getMapKeyOptionEntityClass());
+            } else {
+                metadata.setMapKeyOptionEntityClass("");
+            }
+        }
+        if (serverMetadata != null && map.getMapKeyOptionEntityDisplayField() == null) {
+            metadata.setMapKeyOptionEntityDisplayField(serverMetadata.getMapKeyOptionEntityDisplayField());
+        } else {
+            metadata.setMapKeyOptionEntityDisplayField(map.getMapKeyOptionEntityDisplayField());
+        }
+        if (serverMetadata != null && map.getMapKeyOptionEntityValueField()==null) {
+            metadata.setMapKeyOptionEntityValueField(serverMetadata.getMapKeyOptionEntityValueField());
+        } else {
+            metadata.setMapKeyOptionEntityValueField(map.getMapKeyOptionEntityValueField());
+        }
 
         if (ArrayUtils.isEmpty(metadata.getKeys()) && (StringUtils.isEmpty(metadata.getMapKeyOptionEntityClass()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityValueField()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityDisplayField()))) {
             throw new RuntimeException("Could not ascertain method for generating key options for the annotated map ("+field.getName()+"). Must specify either an array of AdminPresentationMapKey values for the keys property, or utilize the mapOptionKeyClass, mapOptionKeyDisplayField and mapOptionKeyValueField properties");
@@ -1226,69 +1579,135 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
         persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, mapStructure);
 
-        metadata.setExcluded(map.excluded());
-        metadata.setFriendlyName(map.friendlyName());
-        metadata.setSecurityLevel(map.securityLevel());
-        metadata.setOrder(map.order());
-
-        if (!StringUtils.isEmpty(map.targetUIElementId())) {
-            metadata.setTargetElementId(map.targetUIElementId());
+        if (serverMetadata != null && map.getExcluded() == null) {
+            metadata.setExcluded(serverMetadata.getExcluded());
+        } else {
+            metadata.setExcluded(map.getExcluded());
+        }
+        if (serverMetadata != null && map.getFriendlyName() == null) {
+            metadata.setFriendlyName(serverMetadata.getFriendlyName());
+        } else {
+            metadata.setFriendlyName(map.getFriendlyName());
+        }
+        if (serverMetadata != null && map.getSecurityLevel() == null) {
+            metadata.setSecurityLevel(serverMetadata.getSecurityLevel());
+        } else {
+            metadata.setSecurityLevel(map.getSecurityLevel());
+        }
+        if (serverMetadata != null && map.getOrder() == null) {
+            metadata.setOrder(serverMetadata.getOrder());
+        } else {
+            metadata.setOrder(map.getOrder());
         }
 
-        if (!StringUtils.isEmpty(map.dataSourceName())) {
-            metadata.setDataSourceName(map.dataSourceName());
+        if (serverMetadata != null && map.getTargetElementId() == null) {
+            metadata.setTargetElementId(serverMetadata.getTargetElementId());
+        } else {
+            if (!StringUtils.isEmpty(map.getTargetElementId())) {
+                metadata.setTargetElementId(map.getTargetElementId());
+            }
         }
 
-        metadata.setCustomCriteria(map.customCriteria());
+        if (serverMetadata != null && map.getDataSourceName() == null) {
+            metadata.setDataSourceName(serverMetadata.getDataSourceName());
+        } else {
+            if (!StringUtils.isEmpty(map.getDataSourceName())) {
+                metadata.setDataSourceName(map.getDataSourceName());
+            }
+        }
+
+        if (serverMetadata != null &&  map.getCustomCriteria() == null) {
+            metadata.setCustomCriteria(serverMetadata.getCustomCriteria());
+        } else {
+            metadata.setCustomCriteria(map.getCustomCriteria());
+        }
 
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildAdornedTargetCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, AdminPresentationAdornedTargetCollection adornedTargetCollection) {
-        AdornedTargetCollectionMetadata metadata = new AdornedTargetCollectionMetadata();
-        metadata.setMutable(adornedTargetCollection.mutable());
+    protected void buildAdornedTargetCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, AdornedTargetCollectionMetadataOverride adornedTargetCollectionMetadata) {
+        AdornedTargetCollectionMetadata serverMetadata = (AdornedTargetCollectionMetadata) attributes.get(field.getName());
 
-        org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC);
-        if (field.getAnnotation(AdminPresentationOperationTypes.class) != null) {
-            AdminPresentationOperationTypes operationTypes = field.getAnnotation(AdminPresentationOperationTypes.class);
-            dtoOperationTypes.setRemoveType(operationTypes.removeType());
-            dtoOperationTypes.setAddType(operationTypes.addType());
-            dtoOperationTypes.setInspectType(operationTypes.inspectType());
-            dtoOperationTypes.setUpdateType(operationTypes.updateType());
-            dtoOperationTypes.setFetchType(operationTypes.fetchType());
+        AdornedTargetCollectionMetadata metadata = new AdornedTargetCollectionMetadata();
+        if (serverMetadata != null && adornedTargetCollectionMetadata.isMutable() == null) {
+            metadata.setMutable(serverMetadata.isMutable());
+        } else {
+            metadata.setMutable(adornedTargetCollectionMetadata.isMutable());
+        }
+
+        org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes();
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getAddType() == null) {
+            dtoOperationTypes.setAddType(serverMetadata.getPersistencePerspective().getOperationTypes().getAddType());
+        } else {
+            dtoOperationTypes.setAddType(adornedTargetCollectionMetadata.getAddType());
+        }
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getRemoveType() == null) {
+            dtoOperationTypes.setRemoveType(serverMetadata.getPersistencePerspective().getOperationTypes().getRemoveType());
+        } else {
+            dtoOperationTypes.setRemoveType(adornedTargetCollectionMetadata.getRemoveType());
+        }
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getFetchType() == null) {
+            dtoOperationTypes.setFetchType(serverMetadata.getPersistencePerspective().getOperationTypes().getFetchType());
+        } else {
+            dtoOperationTypes.setFetchType(adornedTargetCollectionMetadata.getFetchType());
+        }
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getInspectType() == null) {
+            dtoOperationTypes.setInspectType(serverMetadata.getPersistencePerspective().getOperationTypes().getInspectType());
+        } else {
+            dtoOperationTypes.setInspectType(adornedTargetCollectionMetadata.getInspectType());
+        }
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getUpdateType() == null) {
+            dtoOperationTypes.setUpdateType(serverMetadata.getPersistencePerspective().getOperationTypes().getUpdateType());
+        } else {
+            dtoOperationTypes.setInspectType(adornedTargetCollectionMetadata.getUpdateType());
         }
 
         //don't allow additional non-persistent properties or additional foreign keys for an advanced collection datasource - they don't make sense in this context
         PersistencePerspective persistencePerspective = new PersistencePerspective(dtoOperationTypes, new String[]{}, new ForeignKey[]{});
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getConfigurationKey() == null) {
+            serverMetadata.getPersistencePerspective().setConfigurationKey(serverMetadata.getPersistencePerspective().getConfigurationKey());
+        } else {
+            if (!StringUtils.isEmpty(adornedTargetCollectionMetadata.getConfigurationKey())) {
+                persistencePerspective.setConfigurationKey(adornedTargetCollectionMetadata.getConfigurationKey());
+            }
+        }
         metadata.setPersistencePerspective(persistencePerspective);
 
-        String parentObjectProperty = null;
         //try to inspect the JPA annotation
         OneToMany oneToMany = field.getAnnotation(OneToMany.class);
         ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
-        checkProperty: {
-            if (!StringUtils.isEmpty(adornedTargetCollection.parentObjectProperty())) {
-                parentObjectProperty = adornedTargetCollection.parentObjectProperty();
-                break checkProperty;
-            }
-            if (oneToMany != null && !StringUtils.isEmpty(oneToMany.mappedBy())) {
-                parentObjectProperty = oneToMany.mappedBy();
-                break checkProperty;
-            }
-            if (manyToMany != null && !StringUtils.isEmpty(manyToMany.mappedBy())) {
-                parentObjectProperty = manyToMany.mappedBy();
-                break checkProperty;
-            }
-            if (StringUtils.isEmpty(parentObjectProperty)) {
-                throw new IllegalArgumentException("Unable to infer a parentObjectProperty for the @AdminPresentationAdornedTargetCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the parentObjectProperty property");
+        String parentObjectProperty = null;
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getParentObjectProperty() == null) {
+            parentObjectProperty = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getLinkedObjectPath();
+        } else {
+            checkProperty: {
+                if (!StringUtils.isEmpty(adornedTargetCollectionMetadata.getParentObjectProperty())) {
+                    parentObjectProperty = adornedTargetCollectionMetadata.getParentObjectProperty();
+                    break checkProperty;
+                }
+                if (oneToMany != null && !StringUtils.isEmpty(oneToMany.mappedBy())) {
+                    parentObjectProperty = oneToMany.mappedBy();
+                    break checkProperty;
+                }
+                if (manyToMany != null && !StringUtils.isEmpty(manyToMany.mappedBy())) {
+                    parentObjectProperty = manyToMany.mappedBy();
+                    break checkProperty;
+                }
+                if (StringUtils.isEmpty(parentObjectProperty)) {
+                    throw new IllegalArgumentException("Unable to infer a parentObjectProperty for the @AdminPresentationAdornedTargetCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the parentObjectProperty property");
+                }
             }
         }
 
         String sortProperty;
-        if (StringUtils.isEmpty(adornedTargetCollection.sortProperty())) {
-            sortProperty = null;
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getSortProperty() == null) {
+            sortProperty = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getSortField();
         } else {
-            sortProperty = adornedTargetCollection.sortProperty();
+            if (StringUtils.isEmpty(adornedTargetCollectionMetadata.getSortProperty())) {
+                sortProperty = null;
+            } else {
+                sortProperty = adornedTargetCollectionMetadata.getSortProperty();
+            }
         }
 
         String ceiling = null;
@@ -1306,72 +1725,177 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             metadata.setCollectionCeilingEntity(ceiling);
         }
         metadata.setParentObjectClass(targetClass.getName());
-        metadata.setMaintainedAdornedTargetFields(adornedTargetCollection.maintainedAdornedTargetFields());
-        metadata.setGridVisibleFields(adornedTargetCollection.gridVisibleFields());
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getMaintainedAdornedTargetFields() == null) {
+            metadata.setMaintainedAdornedTargetFields(serverMetadata.getMaintainedAdornedTargetFields());
+        } else {
+            metadata.setMaintainedAdornedTargetFields(adornedTargetCollectionMetadata.getMaintainedAdornedTargetFields());
+        }
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getGridVisibleFields() == null) {
+            metadata.setGridVisibleFields(serverMetadata.getGridVisibleFields());
+        } else {
+            metadata.setGridVisibleFields(adornedTargetCollectionMetadata.getGridVisibleFields());
+        }
+        String parentObjectIdProperty;
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getParentObjectIdProperty()==null) {
+            parentObjectIdProperty = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getLinkedIdProperty();
+        } else {
+            parentObjectIdProperty = adornedTargetCollectionMetadata.getParentObjectIdProperty();
+        }
+        String targetObjectProperty;
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getTargetObjectProperty()==null) {
+            targetObjectProperty = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getTargetObjectPath();
+        } else {
+            targetObjectProperty = adornedTargetCollectionMetadata.getTargetObjectProperty();
+        }
+        String targetObjectIdProperty;
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getTargetObjectIdProperty()==null) {
+            targetObjectIdProperty = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getTargetIdProperty();
+        } else {
+            targetObjectIdProperty = adornedTargetCollectionMetadata.getTargetObjectIdProperty();
+        }
+        Boolean isAscending;
+        if (serverMetadata != null && adornedTargetCollectionMetadata.isSortAscending()==null) {
+            isAscending = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getSortAscending();
+        } else {
+            isAscending = adornedTargetCollectionMetadata.isSortAscending();
+        }
 
-        AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, adornedTargetCollection.parentObjectIdProperty(), adornedTargetCollection.targetObjectProperty(), adornedTargetCollection.targetObjectIdProperty(), ceiling, sortProperty, adornedTargetCollection.sortAscending());
+        AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, parentObjectIdProperty, targetObjectProperty, targetObjectIdProperty, ceiling, sortProperty, isAscending);
         persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, adornedTargetList);
 
-        metadata.setExcluded(adornedTargetCollection.excluded());
-        metadata.setFriendlyName(adornedTargetCollection.friendlyName());
-        metadata.setSecurityLevel(adornedTargetCollection.securityLevel());
-        metadata.setOrder(adornedTargetCollection.order());
-
-        if (!StringUtils.isEmpty(adornedTargetCollection.targetUIElementId())) {
-            metadata.setTargetElementId(adornedTargetCollection.targetUIElementId());
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getExcluded() == null) {
+            metadata.setExcluded(serverMetadata.getExcluded());
+        } else {
+            metadata.setExcluded(adornedTargetCollectionMetadata.getExcluded());
+        }
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getFriendlyName() == null) {
+            metadata.setFriendlyName(serverMetadata.getFriendlyName());
+        } else {
+            metadata.setFriendlyName(adornedTargetCollectionMetadata.getFriendlyName());
+        }
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getSecurityLevel() == null) {
+            metadata.setSecurityLevel(serverMetadata.getSecurityLevel());
+        } else {
+            metadata.setSecurityLevel(adornedTargetCollectionMetadata.getSecurityLevel());
+        }
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getOrder() == null) {
+            metadata.setOrder(serverMetadata.getOrder());
+        } else {
+            metadata.setOrder(adornedTargetCollectionMetadata.getOrder());
         }
 
-        if (!StringUtils.isEmpty(adornedTargetCollection.dataSourceName())) {
-            metadata.setDataSourceName(adornedTargetCollection.dataSourceName());
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getTargetElementId() == null) {
+            metadata.setTargetElementId(serverMetadata.getTargetElementId());
+        } else {
+            if (!StringUtils.isEmpty(adornedTargetCollectionMetadata.getTargetElementId())) {
+                metadata.setTargetElementId(adornedTargetCollectionMetadata.getTargetElementId());
+            }
         }
 
-        metadata.setCustomCriteria(adornedTargetCollection.customCriteria());
-        metadata.setIgnoreAdornedProperties(adornedTargetCollection.ignoreAdornedProperties());
+        if (serverMetadata != null && adornedTargetCollectionMetadata.getDataSourceName() == null) {
+            metadata.setDataSourceName(serverMetadata.getDataSourceName());
+        } else {
+            if (!StringUtils.isEmpty(adornedTargetCollectionMetadata.getDataSourceName())) {
+                metadata.setDataSourceName(adornedTargetCollectionMetadata.getDataSourceName());
+            }
+        }
+
+        if (serverMetadata != null &&  adornedTargetCollectionMetadata.getCustomCriteria() == null) {
+            metadata.setCustomCriteria(serverMetadata.getCustomCriteria());
+        } else {
+            metadata.setCustomCriteria(adornedTargetCollectionMetadata.getCustomCriteria());
+        }
+
+        if (serverMetadata != null && adornedTargetCollectionMetadata.isIgnoreAdornedProperties() == null) {
+            metadata.setIgnoreAdornedProperties(serverMetadata.isIgnoreAdornedProperties());
+        } else {
+            metadata.setIgnoreAdornedProperties(adornedTargetCollectionMetadata.isIgnoreAdornedProperties());
+        }
 
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, AdminPresentationCollection annotColl) {
+    protected void buildCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, BasicCollectionMetadataOverride collectionMetadata) {
+        BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) attributes.get(field.getName());
+
         BasicCollectionMetadata metadata = new BasicCollectionMetadata();
-        metadata.setMutable(annotColl.mutable());
-        metadata.setAddType(annotColl.addType());
-        //use the default AdminPresentationOperationTypes
-        org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes();
-        if (field.getAnnotation(AdminPresentationOperationTypes.class) != null) {
-            AdminPresentationOperationTypes operationTypes = field.getAnnotation(AdminPresentationOperationTypes.class);
-            dtoOperationTypes.setRemoveType(operationTypes.removeType());
-            dtoOperationTypes.setAddType(operationTypes.addType());
-            dtoOperationTypes.setInspectType(operationTypes.inspectType());
-            dtoOperationTypes.setUpdateType(operationTypes.updateType());
-            dtoOperationTypes.setFetchType(operationTypes.fetchType());
+        metadata.setCollectionFieldName(field.getName());
+        if (serverMetadata != null && collectionMetadata.isMutable() == null) {
+            metadata.setMutable(serverMetadata.isMutable());
+        } else {
+            metadata.setMutable(collectionMetadata.isMutable());
         }
-        if (annotColl.addType()== AddType.LOOKUP) {
+        if (serverMetadata != null && collectionMetadata.getAddMethodType() == null) {
+            metadata.setAddMethodType(serverMetadata.getAddMethodType());
+        } else {
+            metadata.setAddMethodType(collectionMetadata.getAddMethodType());
+        }
+
+        org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes();
+        if (serverMetadata != null && collectionMetadata.getAddType() == null) {
+            dtoOperationTypes.setAddType(serverMetadata.getPersistencePerspective().getOperationTypes().getAddType());
+        } else {
+            dtoOperationTypes.setAddType(collectionMetadata.getAddType());
+        }
+        if (serverMetadata != null && collectionMetadata.getRemoveType() == null) {
+            dtoOperationTypes.setRemoveType(serverMetadata.getPersistencePerspective().getOperationTypes().getRemoveType());
+        } else {
+            dtoOperationTypes.setRemoveType(collectionMetadata.getRemoveType());
+        }
+        if (serverMetadata != null && collectionMetadata.getFetchType() == null) {
+            dtoOperationTypes.setFetchType(serverMetadata.getPersistencePerspective().getOperationTypes().getFetchType());
+        } else {
+            dtoOperationTypes.setFetchType(collectionMetadata.getFetchType());
+        }
+        if (serverMetadata != null && collectionMetadata.getInspectType() == null) {
+            dtoOperationTypes.setInspectType(serverMetadata.getPersistencePerspective().getOperationTypes().getInspectType());
+        } else {
+            dtoOperationTypes.setInspectType(collectionMetadata.getInspectType());
+        }
+        if (serverMetadata != null && collectionMetadata.getUpdateType() == null) {
+            dtoOperationTypes.setUpdateType(serverMetadata.getPersistencePerspective().getOperationTypes().getUpdateType());
+        } else {
+            dtoOperationTypes.setInspectType(collectionMetadata.getUpdateType());
+        }
+
+        if (collectionMetadata.getAddMethodType()== AddMethodType.LOOKUP) {
             dtoOperationTypes.setRemoveType(OperationType.NONDESTRUCTIVEREMOVE);
         }
 
         //don't allow additional non-persistent properties or additional foreign keys for an advanced collection datasource - they don't make sense in this context
         PersistencePerspective persistencePerspective = new PersistencePerspective(dtoOperationTypes, new String[]{}, new ForeignKey[]{});
+        if (serverMetadata != null && collectionMetadata.getConfigurationKey() == null) {
+            serverMetadata.getPersistencePerspective().setConfigurationKey(serverMetadata.getPersistencePerspective().getConfigurationKey());
+        } else {
+            if (!StringUtils.isEmpty(collectionMetadata.getConfigurationKey())) {
+                persistencePerspective.setConfigurationKey(collectionMetadata.getConfigurationKey());
+            }
+        }
         metadata.setPersistencePerspective(persistencePerspective);
 
         String foreignKeyName = null;
         //try to inspect the JPA annotation
         OneToMany oneToMany = field.getAnnotation(OneToMany.class);
         ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
-        checkForeignKeyName: {
-            if (!StringUtils.isEmpty(annotColl.manyToField())) {
-                foreignKeyName = annotColl.manyToField();
-                break checkForeignKeyName;
-            }
-            if (oneToMany != null && !StringUtils.isEmpty(oneToMany.mappedBy())) {
-                foreignKeyName = oneToMany.mappedBy();
-                break checkForeignKeyName;
-            }
-            if (manyToMany != null && !StringUtils.isEmpty(manyToMany.mappedBy())) {
-                foreignKeyName = manyToMany.mappedBy();
-                break checkForeignKeyName;
-            }
-            if (StringUtils.isEmpty(foreignKeyName)) {
-                throw new IllegalArgumentException("Unable to infer a ManyToOne field name for the @AdminPresentationCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the manyToField property");
+        if (serverMetadata != null && collectionMetadata.getManyToField() == null) {
+            foreignKeyName = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getManyToField();
+        } else {
+            checkForeignKeyName: {
+                if (!StringUtils.isEmpty(collectionMetadata.getManyToField())) {
+                    foreignKeyName = collectionMetadata.getManyToField();
+                    break checkForeignKeyName;
+                }
+                if (oneToMany != null && !StringUtils.isEmpty(oneToMany.mappedBy())) {
+                    foreignKeyName = oneToMany.mappedBy();
+                    break checkForeignKeyName;
+                }
+                if (manyToMany != null && !StringUtils.isEmpty(manyToMany.mappedBy())) {
+                    foreignKeyName = manyToMany.mappedBy();
+                    break checkForeignKeyName;
+                }
+                if (StringUtils.isEmpty(foreignKeyName)) {
+                    throw new IllegalArgumentException("Unable to infer a ManyToOne field name for the @AdminPresentationCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the manyToField property");
+                }
             }
         }
         ForeignKey foreignKey = new ForeignKey(foreignKeyName, targetClass.getName(), null, ForeignKeyRestrictionType.ID_EQ);
@@ -1392,20 +1916,48 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             metadata.setCollectionCeilingEntity(ceiling);
         }
 
-        metadata.setExcluded(annotColl.excluded());
-        metadata.setFriendlyName(annotColl.friendlyName());
-        metadata.setSecurityLevel(annotColl.securityLevel());
-        metadata.setOrder(annotColl.order());
-
-        if (!StringUtils.isEmpty(annotColl.targetUIElementId())) {
-            metadata.setTargetElementId(annotColl.targetUIElementId());
+        if (serverMetadata != null && collectionMetadata.getExcluded() == null) {
+            metadata.setExcluded(serverMetadata.getExcluded());
+        } else {
+            metadata.setExcluded(collectionMetadata.getExcluded());
+        }
+        if (serverMetadata != null && collectionMetadata.getFriendlyName() == null) {
+            metadata.setFriendlyName(serverMetadata.getFriendlyName());
+        } else {
+            metadata.setFriendlyName(collectionMetadata.getFriendlyName());
+        }
+        if (serverMetadata != null && collectionMetadata.getSecurityLevel() == null) {
+            metadata.setSecurityLevel(serverMetadata.getSecurityLevel());
+        } else {
+            metadata.setSecurityLevel(collectionMetadata.getSecurityLevel());
+        }
+        if (serverMetadata != null && collectionMetadata.getOrder() == null) {
+            metadata.setOrder(serverMetadata.getOrder());
+        } else {
+            metadata.setOrder(collectionMetadata.getOrder());
         }
 
-        if (!StringUtils.isEmpty(annotColl.dataSourceName())) {
-            metadata.setDataSourceName(annotColl.dataSourceName());
+        if (serverMetadata != null && collectionMetadata.getTargetElementId() == null) {
+            metadata.setTargetElementId(serverMetadata.getTargetElementId());
+        } else {
+            if (!StringUtils.isEmpty(collectionMetadata.getTargetElementId())) {
+                metadata.setTargetElementId(collectionMetadata.getTargetElementId());
+            }
         }
 
-        metadata.setCustomCriteria(annotColl.customCriteria());
+        if (serverMetadata != null && collectionMetadata.getDataSourceName() == null) {
+            metadata.setDataSourceName(serverMetadata.getDataSourceName());
+        } else {
+            if (!StringUtils.isEmpty(collectionMetadata.getDataSourceName())) {
+                metadata.setDataSourceName(collectionMetadata.getDataSourceName());
+            }
+        }
+
+        if (serverMetadata != null &&  collectionMetadata.getCustomCriteria() == null) {
+            metadata.setCustomCriteria(serverMetadata.getCustomCriteria());
+        } else {
+            metadata.setCustomCriteria(collectionMetadata.getCustomCriteria());
+        }
 
         attributes.put(field.getName(), metadata);
     }
@@ -1547,7 +2099,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         List<Class<?>> parentClasses,
 		String prefix,
         Boolean isParentExcluded
-	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		Map<String, FieldMetadata> presentationAttributes = getFieldPresentationAttributes(targetClass);
         if (isParentExcluded) {
             for (String key : presentationAttributes.keySet()) {
@@ -1659,7 +2211,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         List<Class<?>> parentClasses,
 		String prefix,
         Boolean isParentExcluded
-	) throws HibernateException, ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	) throws HibernateException, ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		int j = 0;
 		for (String propertyName : propertyNames) {
 			Type type = propertyTypes.get(j);
@@ -2005,7 +2557,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         List<Class<?>> parentClasses,
 		String prefix,
         Boolean isParentExcluded
-	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		Class<?>[] polymorphicEntities = getAllPolymorphicEntitiesFromCeiling(returnedClass);
         List<Class<?>> clonedParentClasses = new ArrayList<Class<?>>();
         for (Class<?> parentClass : parentClasses) {
@@ -2057,7 +2609,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         List<Class<?>> parentClasses,
         Boolean isParentExcluded,
         String prefix
-	) throws MappingException, HibernateException, ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	) throws MappingException, HibernateException, ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		String[] componentProperties = ((ComponentType) type).getPropertyNames();
 		List<String> componentPropertyNames = Arrays.asList(componentProperties);
 		Type[] componentTypes = ((ComponentType) type).getSubtypes();
@@ -2138,11 +2690,35 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         this.entityConfiguration = entityConfiguration;
     }
 
-    public Map<String, Map<String, Map<String, FieldMetadata>>> getFieldMetadataOverrides() {
+    public Map<String, Map<String, Map<String, BasicFieldMetadataOverride>>> getFieldMetadataOverrides() {
         return fieldMetadataOverrides;
     }
 
-    public void setFieldMetadataOverrides(Map<String, Map<String, Map<String, FieldMetadata>>> fieldMetadataOverrides) {
+    public void setFieldMetadataOverrides(Map<String, Map<String, Map<String, BasicFieldMetadataOverride>>> fieldMetadataOverrides) {
         this.fieldMetadataOverrides = fieldMetadataOverrides;
+    }
+
+    public Map<String, Map<String, Map<String, MapMetadataOverride>>> getMapMetadataOverrides() {
+        return mapMetadataOverrides;
+    }
+
+    public void setMapMetadataOverrides(Map<String, Map<String, Map<String, MapMetadataOverride>>> mapMetadataOverrides) {
+        this.mapMetadataOverrides = mapMetadataOverrides;
+    }
+
+    public Map<String, Map<String, Map<String, AdornedTargetCollectionMetadataOverride>>> getAdornedTargetCollectionMetadataOverrides() {
+        return adornedTargetCollectionMetadataOverrides;
+    }
+
+    public void setAdornedTargetCollectionMetadataOverrides(Map<String, Map<String, Map<String, AdornedTargetCollectionMetadataOverride>>> adornedTargetCollectionMetadataOverrides) {
+        this.adornedTargetCollectionMetadataOverrides = adornedTargetCollectionMetadataOverrides;
+    }
+
+    public Map<String, Map<String, Map<String, BasicCollectionMetadataOverride>>> getCollectionMetadataOverrides() {
+        return collectionMetadataOverrides;
+    }
+
+    public void setCollectionMetadataOverrides(Map<String, Map<String, Map<String, BasicCollectionMetadataOverride>>> collectionMetadataOverrides) {
+        this.collectionMetadataOverrides = collectionMetadataOverrides;
     }
 }

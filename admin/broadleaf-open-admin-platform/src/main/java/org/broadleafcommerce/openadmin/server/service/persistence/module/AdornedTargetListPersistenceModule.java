@@ -428,7 +428,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             return index;
         }
 
-        public AdornedTargetRetrieval invoke() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, FieldNotAvailableException {
+        public AdornedTargetRetrieval invoke() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, FieldNotAvailableException, NoSuchFieldException {
             CriteriaTransferObject cto = new CriteriaTransferObject();
             FilterAndSortCriteria filterCriteria = cto.get(adornedTargetList.getCollectionFieldName());
             filterCriteria.setFilterValue(entity.findProperty(adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty()).getValue());

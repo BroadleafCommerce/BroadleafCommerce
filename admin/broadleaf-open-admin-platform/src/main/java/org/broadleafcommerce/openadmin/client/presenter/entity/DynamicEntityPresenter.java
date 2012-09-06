@@ -44,7 +44,7 @@ import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-import org.broadleafcommerce.common.presentation.client.AddType;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
@@ -400,13 +400,13 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                             @Override
                             public void onSetupSuccess(final DataSource baseDS) {
                                 //only build the form if the add type for this item is persist - otherwise wait for the lookup datasource to be constructed
-                                if (metadata.getAddType() == AddType.PERSIST) {
+                                if (metadata.getAddMethodType() == AddMethodType.PERSIST) {
                                     FormBuilder.buildAdvancedCollectionForm(baseDS, metadata, entry.getKey(), DynamicEntityPresenter.this);
                                 }
                             }
                         }));
                         //check if the interaction requires a lookup datasource
-                        if (metadata.getAddType() == AddType.LOOKUP) {
+                        if (metadata.getAddMethodType() == AddMethodType.LOOKUP) {
                             String lookupDSName = dataSourceName + "Lookup";
                             presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(lookupDSName, new AdvancedCollectionLookupDataSourceFactory(metadata), new AsyncCallbackAdapter() {
                                 @Override

@@ -1,5 +1,8 @@
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,6 +17,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface AdminPresentationMap {
+
+    /**
+     * Optional - only required when targeting a metadata override
+     * via application context xml.
+     *
+     * When a configuration key is present, the system will look for configuration
+     * override specified in application context xml for this collection.
+     *
+     * @return the key tied to the override configuration
+     */
+    String configurationKey() default "";
 
     /**
      * Optional - field name will be used if not specified
@@ -98,7 +112,7 @@ public @interface AdminPresentationMap {
      *
      * @return The type for the key of this map
      */
-    Class<?> keyClass() default String.class;
+    Class<?> keyClass() default void.class;
 
     /**
      * Optional - only required if the key field title for this
@@ -162,7 +176,7 @@ public @interface AdminPresentationMap {
      *
      * @return Whether or not the value type for the map is complex
      */
-    boolean isSimpleValue() default true;
+    UnspecifiedBooleanType isSimpleValue() default UnspecifiedBooleanType.UNSPECIFIED;
 
     /**
      * Optional - only required if the value type for the map is complex (JPA managed) and one of the fields
@@ -233,4 +247,14 @@ public @interface AdminPresentationMap {
      * @return the custom string array to pass to the server during CRUD operations
      */
     String[] customCriteria() default {};
+
+    /**
+     * Optional - only required if a special operation type is required for a CRUD operation. This
+     * setting is not normally changed and is an advanced setting
+     *
+     * The operation type for a CRUD operation
+     *
+     * @return the operation type
+     */
+    AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(addType = OperationType.MAP, fetchType = OperationType.MAP, inspectType = OperationType.MAP, removeType = OperationType.MAP, updateType = OperationType.MAP);
 }

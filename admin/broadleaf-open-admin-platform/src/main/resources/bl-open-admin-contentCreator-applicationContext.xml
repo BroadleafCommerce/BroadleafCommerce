@@ -73,4 +73,27 @@
         </property>
     </bean>
 
+    <bean id="blMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map/>
+        </property>
+    </bean>
+
+    <bean id="blCollectionMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map/>
+        </property>
+    </bean>
+
+    <bean id="blAdornedTargetCollectionMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map/>
+        </property>
+    </bean>
+
+    <bean id="blMapMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map/>
+        </property>
+    </bean>
 </beans>

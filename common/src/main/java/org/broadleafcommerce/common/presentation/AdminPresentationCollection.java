@@ -1,6 +1,7 @@
 package org.broadleafcommerce.common.presentation;
 
-import org.broadleafcommerce.common.presentation.client.AddType;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,6 +17,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface AdminPresentationCollection {
+
+    /**
+     * Optional - only required when targeting a metadata override
+     * via application context xml.
+     *
+     * When a configuration key is present, the system will look for configuration
+     * override specified in application context xml for this collection.
+     *
+     * @return the key tied to the override configuration
+     */
+    String configurationKey() default "";
 
     /**
      * Optional - field name will be used if not specified
@@ -65,7 +77,7 @@ public @interface AdminPresentationCollection {
      *
      * @return the item is acquired via lookup or construction
      */
-    AddType addType();
+    AddMethodType addType();
 
     /**
      * Optional - only required in the absence of a "mappedBy" property
@@ -82,19 +94,6 @@ public @interface AdminPresentationCollection {
      * @return the parent entity referring field name
      */
     String manyToField() default "";
-
-    /**
-     * Optional - Only required if the display value field is called
-     * something other than "name"
-     *
-     * For the target entity of this collection, specify the field
-     * name of the field that will provide the display value in
-     * the admin gui.
-     *
-     * @return the display value field name for the collection entity
-     */
-    //TODO this only required for foreign key when doing a manytoone lookup
-    //String displayValueProperty() default "name";
 
     /**
      * Optional - only required if you want to specify ordering for this field
@@ -140,5 +139,15 @@ public @interface AdminPresentationCollection {
      * @return the custom string array to pass to the server during CRUD operations
      */
     String[] customCriteria() default {};
+
+    /**
+     * Optional - only required if a special operation type is required for a CRUD operation. This
+     * setting is not normally changed and is an advanced setting
+     *
+     * The operation type for a CRUD operation
+     *
+     * @return the operation type
+     */
+    AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(addType = OperationType.BASIC, fetchType = OperationType.BASIC, inspectType = OperationType.BASIC, removeType = OperationType.BASIC, updateType = OperationType.BASIC);
 
 }

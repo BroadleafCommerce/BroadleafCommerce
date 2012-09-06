@@ -1,9 +1,11 @@
-package org.broadleafcommerce.common.presentation;
+package org.broadleafcommerce.common.presentation.override;
+
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 
 /**
  * @author Jeff Fischer
  */
-public @interface AdminPresentationAdornedTargetCollectionOverride {
+public @interface AdminPresentationCollectionOverride {
 
     /**
      * The name of the property whose AdminPresentation annotation should be overwritten
@@ -17,6 +19,6 @@ public @interface AdminPresentationAdornedTargetCollectionOverride {
      *
      * @return the AdminPresentation being mapped to the attribute
      */
-    AdminPresentationAdornedTargetCollection value();
+    AdminPresentationCollection value();
 
 }

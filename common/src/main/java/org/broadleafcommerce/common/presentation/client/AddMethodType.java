@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  *
  * @author Jeff Fischer
  */
-public enum AddType implements IsSerializable {
+public enum AddMethodType implements IsSerializable {
     PERSIST,
     LOOKUP
 }

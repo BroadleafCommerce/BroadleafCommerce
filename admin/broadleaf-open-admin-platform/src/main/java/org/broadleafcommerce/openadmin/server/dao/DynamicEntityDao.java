@@ -17,11 +17,15 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import org.broadleafcommerce.openadmin.client.dto.override.AdornedTargetCollectionMetadataOverride;
+import org.broadleafcommerce.openadmin.client.dto.override.BasicCollectionMetadataOverride;
+import org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.override.MapMetadataOverride;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.Criteria;
@@ -49,7 +53,7 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 	
 	public abstract Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 	
-	public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+	public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
 	
 	public abstract Serializable persist(Serializable entity);
 	
@@ -98,8 +102,20 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
     public Criteria createCriteria(Class<?> entityClass);
 
-    public Map<String, Map<String, Map<String, FieldMetadata>>> getFieldMetadataOverrides();
+    public Map<String, Map<String, Map<String, BasicFieldMetadataOverride>>> getFieldMetadataOverrides();
 
-    public void setFieldMetadataOverrides(Map<String, Map<String, Map<String, FieldMetadata>>> metadataOverrides);
+    public void setFieldMetadataOverrides(Map<String, Map<String, Map<String, BasicFieldMetadataOverride>>> metadataOverrides);
+
+    public Map<String, Map<String, Map<String, MapMetadataOverride>>> getMapMetadataOverrides();
+
+    public void setMapMetadataOverrides(Map<String, Map<String, Map<String, MapMetadataOverride>>> mapMetadataOverrides);
+
+    public Map<String, Map<String, Map<String, AdornedTargetCollectionMetadataOverride>>> getAdornedTargetCollectionMetadataOverrides();
+
+    public void setAdornedTargetCollectionMetadataOverrides(Map<String, Map<String, Map<String, AdornedTargetCollectionMetadataOverride>>> adornedTargetCollectionMetadataOverrides);
+
+    public Map<String, Map<String, Map<String, BasicCollectionMetadataOverride>>> getCollectionMetadataOverrides();
+
+    public void setCollectionMetadataOverrides(Map<String, Map<String, Map<String, BasicCollectionMetadataOverride>>> collectionMetadataOverrides);
 
 }

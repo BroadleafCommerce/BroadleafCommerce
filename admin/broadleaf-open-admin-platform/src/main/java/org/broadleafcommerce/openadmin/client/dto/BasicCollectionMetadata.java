@@ -1,6 +1,6 @@
 package org.broadleafcommerce.openadmin.client.dto;
 
-import org.broadleafcommerce.common.presentation.client.AddType;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 
 /**
@@ -8,14 +8,23 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
  */
 public class BasicCollectionMetadata extends CollectionMetadata {
 
-    private AddType addType;
+    private AddMethodType addMethodType;
+    private String collectionFieldName;
 
-    public AddType getAddType() {
-        return addType;
+    public AddMethodType getAddMethodType() {
+        return addMethodType;
     }
 
-    public void setAddType(AddType addType) {
-        this.addType = addType;
+    public void setAddMethodType(AddMethodType addMethodType) {
+        this.addMethodType = addMethodType;
+    }
+
+    public String getCollectionFieldName() {
+        return collectionFieldName;
+    }
+
+    public void setCollectionFieldName(String collectionFieldName) {
+        this.collectionFieldName = collectionFieldName;
     }
 
     @Override
@@ -25,7 +34,8 @@ public class BasicCollectionMetadata extends CollectionMetadata {
 
     @Override
     protected FieldMetadata populate(FieldMetadata metadata) {
-        ((BasicCollectionMetadata) metadata).addType = addType;
+        ((BasicCollectionMetadata) metadata).addMethodType = addMethodType;
+        ((BasicCollectionMetadata) metadata).collectionFieldName = collectionFieldName;
         return super.populate(metadata);
     }
 

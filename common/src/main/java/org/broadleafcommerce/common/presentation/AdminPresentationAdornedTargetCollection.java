@@ -1,5 +1,7 @@
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.client.OperationType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,6 +21,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface AdminPresentationAdornedTargetCollection {
+
+    /**
+     * Optional - only required when targeting a metadata override
+     * via application context xml.
+     *
+     * When a configuration key is present, the system will look for configuration
+     * override specified in application context xml for this collection.
+     *
+     * @return the key tied to the override configuration
+     */
+    String configurationKey() default "";
 
     /**
      * Optional - field name will be used if not specified
@@ -209,4 +222,13 @@ public @interface AdminPresentationAdornedTargetCollection {
      */
     String[] customCriteria() default {};
 
+    /**
+     * Optional - only required if a special operation type is required for a CRUD operation. This
+     * setting is not normally changed and is an advanced setting
+     *
+     * The operation type for a CRUD operation
+     *
+     * @return the operation type
+     */
+    AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(addType = OperationType.ADORNEDTARGETLIST, fetchType = OperationType.ADORNEDTARGETLIST, inspectType = OperationType.BASIC, removeType = OperationType.ADORNEDTARGETLIST, updateType = OperationType.ADORNEDTARGETLIST);
 }

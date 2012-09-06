@@ -74,10 +74,10 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         List<DataSourceField> prominentFields = new ArrayList<DataSourceField>();
         String keyProperty = null;
         for (DataSourceField field : fields) {
-        	if (field.getAttributeAsBoolean("prominent")) {
+        	if (field.getAttributeAsBoolean("prominent") && !prominentFields.contains(field)) {
         		prominentFields.add(field);
         	}
-            if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
+            if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType")) && !prominentFields.contains(field)) {
                 resetPermanentFieldVisibility(field.getName());
                 prominentFields.add(field);
                 keyProperty = field.getName();
@@ -143,24 +143,26 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         }
         final String finalKeyProperty = keyProperty;
         //sort so the key field appears first
-        Arrays.sort(gridFields, new Comparator<ListGridField>() {
-            @Override
-            public int compare(ListGridField o1, ListGridField o2) {
-                if (finalKeyProperty != null) {
-                    if (o1.getName().equals(o2.getName())) {
-                        return 0;
-                    } else if (o1.getName().equals(finalKeyProperty)) {
-                        return -1;
-                    } else if (o2.getName().equals(finalKeyProperty)) {
-                        return 1;
+        if (fieldNames == null || fieldNames.length == 0) {
+            Arrays.sort(gridFields, new Comparator<ListGridField>() {
+                @Override
+                public int compare(ListGridField o1, ListGridField o2) {
+                    if (finalKeyProperty != null) {
+                        if (o1.getName().equals(o2.getName())) {
+                            return 0;
+                        } else if (o1.getName().equals(finalKeyProperty)) {
+                            return -1;
+                        } else if (o2.getName().equals(finalKeyProperty)) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
                     } else {
                         return 0;
                     }
-                } else {
-                    return 0;
                 }
-            }
-        });
+            });
+        }
         ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
         	int pos = 0;
