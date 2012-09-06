@@ -45,6 +45,9 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String tooltip;
     private String helpText;
     private String hint;
+    private String lookupDisplayProperty;
+    private String lookupParentDataSourceName;
+    private String targetDynamicFormDisplayId;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -294,6 +297,30 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.visibility = visibility;
     }
 
+    public String getLookupDisplayProperty() {
+        return lookupDisplayProperty;
+    }
+
+    public void setLookupDisplayProperty(String lookupDisplayProperty) {
+        this.lookupDisplayProperty = lookupDisplayProperty;
+    }
+
+    public String getLookupParentDataSourceName() {
+        return lookupParentDataSourceName;
+    }
+
+    public void setLookupParentDataSourceName(String lookupParentDataSourceName) {
+        this.lookupParentDataSourceName = lookupParentDataSourceName;
+    }
+
+    public String getTargetDynamicFormDisplayId() {
+        return targetDynamicFormDisplayId;
+    }
+
+    public void setTargetDynamicFormDisplayId(String targetDynamicFormDisplayId) {
+        this.targetDynamicFormDisplayId = targetDynamicFormDisplayId;
+    }
+
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
         metadata.fieldType = fieldType;
@@ -340,6 +367,9 @@ public class BasicFieldMetadata extends FieldMetadata {
             }
             metadata.validationConfigurations.put(entry.getKey(), clone);
         }
+        metadata.lookupDisplayProperty = lookupDisplayProperty;
+        metadata.lookupParentDataSourceName = lookupParentDataSourceName;
+        metadata.targetDynamicFormDisplayId = targetDynamicFormDisplayId;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

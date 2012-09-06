@@ -45,6 +45,9 @@ public class BasicFieldMetadataOverride extends FieldMetadataOverride {
     private String tooltip;
     private String helpText;
     private String hint;
+    private String lookupDisplayProperty;
+    private String lookupParentDataSourceName;
+    private String targetDynamicFormDisplayId;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -292,5 +295,29 @@ public class BasicFieldMetadataOverride extends FieldMetadataOverride {
 
     public void setVisibility(VisibilityEnum visibility) {
         this.visibility = visibility;
+    }
+
+    public String getLookupDisplayProperty() {
+        return lookupDisplayProperty;
+    }
+
+    public void setLookupDisplayProperty(String lookupDisplayProperty) {
+        this.lookupDisplayProperty = lookupDisplayProperty;
+    }
+
+    public String getLookupParentDataSourceName() {
+        return lookupParentDataSourceName;
+    }
+
+    public void setLookupParentDataSourceName(String lookupParentDataSourceName) {
+        this.lookupParentDataSourceName = lookupParentDataSourceName;
+    }
+
+    public String getTargetDynamicFormDisplayId() {
+        return targetDynamicFormDisplayId;
+    }
+
+    public void setTargetDynamicFormDisplayId(String targetDynamicFormDisplayId) {
+        this.targetDynamicFormDisplayId = targetDynamicFormDisplayId;
     }
 }

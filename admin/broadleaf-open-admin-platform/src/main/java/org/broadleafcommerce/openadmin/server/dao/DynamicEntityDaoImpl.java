@@ -822,6 +822,15 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 if (localMetadata.getHint() != null) {
                                     serverMetadata.setHint(localMetadata.getHint());
                                 }
+                                if (localMetadata.getLookupDisplayProperty() != null) {
+                                    serverMetadata.setLookupDisplayProperty(localMetadata.getLookupDisplayProperty());
+                                }
+                                if (localMetadata.getLookupParentDataSourceName() != null) {
+                                    serverMetadata.setLookupParentDataSourceName(localMetadata.getLookupParentDataSourceName());
+                                }
+                                if (localMetadata.getTargetDynamicFormDisplayId() != null) {
+                                    serverMetadata.setTargetDynamicFormDisplayId(localMetadata.getTargetDynamicFormDisplayId());
+                                }
                                 if (localMetadata.getRequiredOverride() != null) {
                                     serverMetadata.setRequiredOverride(localMetadata.getRequiredOverride());
                                 }
@@ -1042,6 +1051,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 metadata.setTooltip(annot.tooltip());
                 metadata.setHelpText(annot.helpText());
                 metadata.setHint(annot.hint());
+                metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
+                metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
+                metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
                 metadata.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED);
                 if (annot.validationConfigurations().length != 0) {
                     ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -2000,6 +2012,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         metadata.setVisibility(annot.visibility());
         metadata.setOrder(annot.order());
         metadata.setExplicitFieldType(annot.fieldType());
+        if (annot.fieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
+            //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
+            metadata.setExcluded(true);
+        } else {
+            metadata.setExcluded(annot.excluded());
+        }
         metadata.setGroup(annot.group());
         metadata.setGroupOrder(annot.groupOrder());
         metadata.setGroupCollapsed(annot.groupCollapsed());
@@ -2008,10 +2026,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         metadata.setColumnWidth(annot.columnWidth());
         metadata.setBroadleafEnumeration(annot.broadleafEnumeration());
         metadata.setReadOnly(annot.readOnly());
-        metadata.setExcluded(annot.excluded());
         metadata.setTooltip(annot.tooltip());
         metadata.setHelpText(annot.helpText());
         metadata.setHint(annot.hint());
+        metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
+        metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
+        metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
         metadata.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED);
         if (annot.validationConfigurations().length != 0) {
             ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -2471,10 +2491,21 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             isPropertyForeignKey
         ) {
 			ClassMetadata foreignMetadata;
-            try {
-                foreignMetadata = getSessionFactory().getClassMetadata(Class.forName(foreignField.getForeignKeyClass()));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            String foreignKeyClass;
+            String lookupDisplayProperty;
+            if (foreignField == null) {
+                Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(type.getReturnedClass());
+                foreignMetadata = getSessionFactory().getClassMetadata(entities[entities.length-1]);
+                foreignKeyClass = entities[entities.length-1].getName();
+                lookupDisplayProperty = ((BasicFieldMetadata) presentationAttribute).getLookupDisplayProperty();
+            } else {
+                try {
+                    foreignMetadata = getSessionFactory().getClassMetadata(Class.forName(foreignField.getForeignKeyClass()));
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                foreignKeyClass = foreignField.getForeignKeyClass();
+                lookupDisplayProperty = foreignField.getDisplayValueProperty();
             }
             Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
 			if (foreignResponseType.equals(String.class)) {
@@ -2483,8 +2514,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.FOREIGN_KEY, SupportedFieldType.INTEGER, type, targetClass, presentationAttribute, mergedPropertyType));
 			}
 			((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyProperty(foreignMetadata.getIdentifierPropertyName());
-            ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyClass(foreignField.getForeignKeyClass());
-            ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyDisplayValueProperty(foreignField.getDisplayValueProperty());
+            ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyClass(foreignKeyClass);
+            ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
 		} else if (
             explicitType != null &&
             explicitType == SupportedFieldType.ADDITIONAL_FOREIGN_KEY
@@ -2492,11 +2523,25 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             additionalForeignFields != null &&
             additionalForeignKeyIndexPosition >= 0
         ) {
+            if (!type.isEntityType()) {
+                throw new RuntimeException("Only ManyToOne and OneToOne fields can be marked as a SupportedFieldType of ADDITIONAL_FOREIGN_KEY");
+            }
 			ClassMetadata foreignMetadata;
-            try {
-                foreignMetadata = getSessionFactory().getClassMetadata(Class.forName(additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass()));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            String foreignKeyClass;
+            String lookupDisplayProperty;
+            if (foreignField == null) {
+                Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(type.getReturnedClass());
+                foreignMetadata = getSessionFactory().getClassMetadata(entities[entities.length-1]);
+                foreignKeyClass = entities[entities.length-1].getName();
+                lookupDisplayProperty = ((BasicFieldMetadata) presentationAttribute).getLookupDisplayProperty();
+            } else {
+                try {
+                    foreignMetadata = getSessionFactory().getClassMetadata(Class.forName(additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass()));
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                foreignKeyClass = additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass();
+                lookupDisplayProperty = additionalForeignFields[additionalForeignKeyIndexPosition].getDisplayValueProperty();
             }
             Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
 			if (foreignResponseType.equals(String.class)) {
@@ -2505,8 +2550,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.ADDITIONAL_FOREIGN_KEY, SupportedFieldType.INTEGER, type, targetClass, presentationAttribute, mergedPropertyType));
 			}
             ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyProperty(foreignMetadata.getIdentifierPropertyName());
-            ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyClass(additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass());
-            ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyDisplayValueProperty(additionalForeignFields[additionalForeignKeyIndexPosition].getDisplayValueProperty());
+            ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyClass(foreignKeyClass);
+            ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
 		}
 		//return type not supported - just skip this property
 	}

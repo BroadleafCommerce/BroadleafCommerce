@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
@@ -176,7 +177,7 @@ public class ProductImpl implements Product, Status {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order=3, group = "ProductImpl_Product_Description", excluded = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order=3, group = "ProductImpl_Product_Description", requiredOverride = RequiredOverride.REQUIRED, fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
     protected Category defaultCategory;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})

@@ -48,9 +48,9 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 	public PersistencePerspective() {
 	}
 	
-	public PersistencePerspective(OperationTypes operationTypes, String[] additionalNonPersistentProperties, ForeignKey[] additionalNonPersistentForeignKeys) {
+	public PersistencePerspective(OperationTypes operationTypes, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignKeys) {
 		setAdditionalNonPersistentProperties(additionalNonPersistentProperties);
-		setAdditionalForeignKeys(additionalNonPersistentForeignKeys);
+		setAdditionalForeignKeys(additionalForeignKeys);
 		this.operationTypes = operationTypes;
 	}
 
@@ -67,8 +67,8 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 		return additionalForeignKeys;
 	}
 
-	public void setAdditionalForeignKeys(ForeignKey[] additionalNonPersistentForeignKeys) {
-		this.additionalForeignKeys = additionalNonPersistentForeignKeys;
+	public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
+		this.additionalForeignKeys = additionalForeignKeys;
 		Arrays.sort(this.additionalForeignKeys, new Comparator<ForeignKey>() {
 			public int compare(ForeignKey o1, ForeignKey o2) {
 				return o1.getManyToField().compareTo(o2.getManyToField());

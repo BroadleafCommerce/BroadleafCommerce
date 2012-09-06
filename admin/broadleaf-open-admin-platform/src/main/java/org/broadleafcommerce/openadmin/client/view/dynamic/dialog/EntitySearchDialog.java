@@ -73,8 +73,8 @@ public class EntitySearchDialog extends Window {
         searchGrid.setCanGroupBy(false);
 
         dataSource.setAssociatedGrid(searchGrid);
-		dataSource.setupGridFields(new String[]{}, new Boolean[]{});
         searchGrid.setDataSource(dataSource);
+		dataSource.setupGridFields(new String[]{}, new Boolean[]{});
         
         searchGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {

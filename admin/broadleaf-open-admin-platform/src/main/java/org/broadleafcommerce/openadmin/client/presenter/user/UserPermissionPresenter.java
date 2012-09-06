@@ -16,12 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import java.util.Arrays;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
@@ -38,6 +37,8 @@ import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserPermissionDisplay;
+
+import java.util.Arrays;
 
 /**
  * 
@@ -65,7 +66,12 @@ public class UserPermissionPresenter implements SubPresentable {
 		dataSource.setupGridFields(gridFields, editable);
 	}
 
-	public void setStartState() {
+    @Override
+    public Canvas getDisplay() {
+        return (Canvas) display;
+    }
+
+    public void setStartState() {
 		if (!disabled) {
 			display.getAddButton().enable();
 			display.getGrid().enable();

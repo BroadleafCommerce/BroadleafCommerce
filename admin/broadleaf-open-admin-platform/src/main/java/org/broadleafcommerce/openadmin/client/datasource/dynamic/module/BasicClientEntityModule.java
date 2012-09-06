@@ -54,6 +54,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.LookupMetadata;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
@@ -972,6 +973,16 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 hidden = true;
                             }
                             field.setRequired(required);
+                            if (metadata.getForeignKeyDisplayValueProperty() != null) {
+                                ForeignKey foreignKey = new ForeignKey(foreignKeyProperty, foreignKeyClass);
+                                foreignKey.setDisplayValueProperty(metadata.getForeignKeyDisplayValueProperty());
+                                LookupMetadata lookupMetadata = new LookupMetadata();
+                                lookupMetadata.setLookupForeignKey(foreignKey);
+                                lookupMetadata.setParentDataSourceName(metadata.getLookupParentDataSourceName());
+                                lookupMetadata.setTargetDynamicFormDisplayId(metadata.getTargetDynamicFormDisplayId());
+                                lookupMetadata.setFriendlyName(friendlyName);
+                                ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addLookupMetadata(property.getName(), lookupMetadata);
+                            }
                             //field.setValidOperators(getBasicNumericOperators());
                             break;}
                         case BROADLEAF_ENUMERATION:

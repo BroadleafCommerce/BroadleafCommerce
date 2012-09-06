@@ -156,4 +156,12 @@ public class MapStructurePresenter extends AbstractSubPresentable {
     public void setGridFields(String[] gridFields) {
         this.gridFields = gridFields;
     }
+
+    public MapStructureEntityEditDialog getEntityEditDialog() {
+        return entityEditDialog;
+    }
+
+    public void setEntityEditDialog(MapStructureEntityEditDialog entityEditDialog) {
+        this.entityEditDialog = entityEditDialog;
+    }
 }

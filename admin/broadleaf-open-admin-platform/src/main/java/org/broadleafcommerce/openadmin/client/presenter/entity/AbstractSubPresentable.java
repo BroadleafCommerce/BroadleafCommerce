@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
-
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
 
 import java.util.Arrays;
 
@@ -154,4 +154,9 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 		dataSource.permanentlyShowFields(gridFields);
 		dataSource.setupGridFields(gridFields, editable);
 	}
+
+    @Override
+    public Canvas getDisplay() {
+        return (Canvas) display;
+    }
 }

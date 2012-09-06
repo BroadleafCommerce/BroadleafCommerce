@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 
 /**
  * 
@@ -44,5 +44,7 @@ public interface SubPresentable {
 	public void setReadOnly(Boolean readOnly);
 	
 	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable);
+
+    public Canvas getDisplay();
 	
 }

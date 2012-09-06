@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.datasource.catalog.product;
+package org.broadleafcommerce.openadmin.client.datasource;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
-import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
-import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
@@ -29,21 +26,33 @@ import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * 
- * @author jfischer
+ * This factory is responsible for generating a datasource from a ForeignKey instance. It is primarily
+ * used to generate the datasource that drives the search grid for ManyToOne and OneToOne lookups.
  *
+ * @author Jeff Fischer
  */
-public class ProductListDataSourceFactory implements DataSourceFactory {
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-        operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
-        PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-        DataSourceModule[] modules = new DataSourceModule[]{
-            new BasicClientEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-        };
+public class ForeignKeyLookupDataSourceFactory implements DataSourceFactory {
+
+    private ForeignKey foreignKey;
+
+    public ForeignKeyLookupDataSourceFactory(ForeignKey foreignKey) {
+        this.foreignKey = foreignKey;
+    }
+
+    @Override
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        final PersistencePerspective persistencePerspective = new PersistencePerspective();
+        final List<DataSourceModule> dataSourceModuleList = new ArrayList<DataSourceModule>();
+        dataSourceModuleList.add(new BasicClientEntityModule(foreignKey.getForeignKeyClass(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
+
+        DataSourceModule[] modules = new DataSourceModule[dataSourceModuleList.size()];
+        modules = dataSourceModuleList.toArray(modules);
+
         ListGridDataSource dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
         dataSource.buildFields(null, false, cb);
-	}
-
+    }
 }

@@ -139,6 +139,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
 	            	if (pos >= 0) {
 	            		gridFields[j].setCanEdit(canEdit[pos]);
 	            	}
+                    prominentFields.add(field);
 	        		availableSlots--;
 	        	}
                 setupDecimalFormatters(gridFields[j], field);

@@ -29,7 +29,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
@@ -56,6 +55,7 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPres
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -63,10 +63,9 @@ import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * 
@@ -75,7 +74,6 @@ import java.util.LinkedHashMap;
  */
 public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implements Instantiable {
 
-	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected EntitySearchDialog productSearchView;
 	protected EntitySearchDialog skuSearchView;
 	protected SubPresentable upSalePresenter;
@@ -174,7 +172,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
 	@Override
     public void setup() {
-
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productDS", new OneToOneProductSkuDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource top) {
@@ -186,35 +183,14 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 			@Override
             public void onSetupSuccess(DataSource result) {
 				ListGridDataSource categorySearchDataSource = (ListGridDataSource) result;
-				categorySearchDataSource.resetPermanentFieldVisibility(
-					"name",
-					"urlKey",
-					"activeStartDate",
-					"activeEndDate"
-				);
 				EntitySearchDialog categorySearchView = new EntitySearchDialog(categorySearchDataSource);
 				library.put("categorySearchView", categorySearchView);
-				getPresenterSequenceSetupManager().getDataSource("productDS").
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"defaultCategory", 
-					categorySearchView, 
-					BLCMain.getMessageManager().getString("categorySearchTitle"),
-					getDisplay().getDynamicFormDisplay()
-				);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("oneToOneProductSearchDS", new ProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
 				final ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
-				productSearchDataSource.resetPermanentFieldVisibility(
-					"defaultSku.name",
-					"defaultSku.description",
-					"model",
-					"manufacturer",
-					"defaultSku.activeStartDate",
-					"defaultSku.activeEndDate"
-				);
 				productSearchView = new EntitySearchDialog(productSearchDataSource);
 			}
 		}));
@@ -225,16 +201,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				upSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
-		//getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productMediaMapDS", new DefaultSkuMediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
-			//@Override
-            //public void onSetupSuccess(DataSource result) {
-	            //Map<String, Object> initialValues = new HashMap<String, Object>(2);
-	            //initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
-	            //initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
-				//mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
-				//mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "url", "title", "altText", "tags"}, new Boolean[]{true, true, true, true, true});
-			//}
-		//}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
@@ -314,31 +280,18 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                     public void onSearchItemSelected(TileGridItemSelected event) {
                         String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
                         formItem.setValue(staticAssetFullUrl);
-                        getMediaEntityView().updateMedia(staticAssetFullUrl);
+                        for (SubPresentable subPresentable : subPresentables) {
+                            if (((GridStructureDisplay) subPresentable.getDisplay()).getGrid().getDataSource().getDataURL().equals(getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getDataURL())) {
+                                ((MapStructurePresenter) subPresentable).getEntityEditDialog().updateMedia(staticAssetFullUrl);
+                                break;
+                            }
+                        }
                     }
                 });
             }
         });
         super.postSetup(container);
     }
-
-    protected LinkedHashMap<String, String> getMediaMapKeys() {
-		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>(3);
-		keys.put("small", BLCMain.getMessageManager().getString("mediaSizeSmall"));
-		keys.put("medium", BLCMain.getMessageManager().getString("mediaSizeMedium"));
-		keys.put("large", BLCMain.getMessageManager().getString("mediaSizeLarge"));
-
-		return keys;
-	}
-	
-	protected MapStructureEntityEditDialog getMediaEntityView() {
-		 if (mapEntityAdd == null) {
-			 mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE, getMediaMapKeys());
-                         mapEntityAdd.setShowMedia(true);
-                         mapEntityAdd.setMediaField("url");
-		 }
-		 return mapEntityAdd;
-	}
 
 	@Override
 	public OneToOneProductSkuDisplay getDisplay() {
