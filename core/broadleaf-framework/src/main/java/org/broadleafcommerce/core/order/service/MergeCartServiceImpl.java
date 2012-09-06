@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
+import org.broadleafcommerce.core.order.service.legacy.LegacyOrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
@@ -410,12 +411,15 @@ public class MergeCartServiceImpl implements MergeCartService {
         newOrderItem = orderItemService.saveOrderItem(newOrderItem);
         orderItems.add(newOrderItem);
         
-    	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
-    	fgItemRequest.setFulfillmentGroup(null);
-    	fgItemRequest.setOrderItem(newOrderItem);
-    	fgItemRequest.setOrder(order);
-    	fgItemRequest.setQuantity(newOrderItem.getQuantity());
-    	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
+        // The legacy services did not expect this behavior, so we will not implement it for those services
+        if (!LegacyOrderService.class.isAssignableFrom(orderService.getClass())) {
+	    	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
+	    	fgItemRequest.setFulfillmentGroup(null);
+	    	fgItemRequest.setOrderItem(newOrderItem);
+	    	fgItemRequest.setOrder(order);
+	    	fgItemRequest.setQuantity(newOrderItem.getQuantity());
+	    	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
+        }
         
         order = orderService.save(order, priceOrder);
     	
