@@ -1,5 +1,6 @@
 package org.broadleafcommerce.openadmin.client.datasource;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 
 /**
@@ -11,6 +12,7 @@ public class LookupMetadata {
     private String targetDynamicFormDisplayId;
     private ForeignKey lookupForeignKey;
     private String friendlyName;
+    private SupportedFieldType fieldType;
 
     public ForeignKey getLookupForeignKey() {
         return lookupForeignKey;
@@ -42,5 +44,13 @@ public class LookupMetadata {
 
     public void setTargetDynamicFormDisplayId(String targetDynamicFormDisplayId) {
         this.targetDynamicFormDisplayId = targetDynamicFormDisplayId;
+    }
+
+    public SupportedFieldType getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(SupportedFieldType fieldType) {
+        this.fieldType = fieldType;
     }
 }

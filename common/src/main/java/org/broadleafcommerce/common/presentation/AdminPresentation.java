@@ -238,6 +238,7 @@ public @interface AdminPresentation {
      */
     String hint() default "";
 
+    //************************* START SupportedFieldType.ADDITIONAL_FOREIGN_KEY properties ******************************
     /**
      * Optional - only required when the fieldType property is set to SupportedFieldType.ADDITIONAL_FOREIGN_KEY.
      *
@@ -267,4 +268,50 @@ public @interface AdminPresentation {
      * @return alternate DynamicFormDisplay for lookup display
      */
     String targetDynamicFormDisplayId() default "";
+
+    //************************* END SupportedFieldType.ADDITIONAL_FOREIGN_KEY properties ********************************
+
+    //************************* START SupportedFieldType.DATA_DRIVEN_ENUMERATION properties *****************************
+    /**
+     * Optional - only required if the fieldType property is set to SupportedFieldType.DATA_DRIVEN_ENUMERATION. The annotated
+     * field must be of type String.
+     *
+     * Specify the target entity that should be queried for the list of options that will be presented to the user in a
+     * drop down list. The value selected from the dropdown will become the String value for this field.
+     *
+     * @return the entity class representing the data to populate a dropdown field in the admin tool
+     */
+    Class<?> optionListEntity() default void.class;
+
+    /**
+     * Optional - only required if the fieldType property is set to SupportedFieldType.DATA_DRIVEN_ENUMERATION. The annotated
+     * field must be of type String.
+     *
+     * Specify the field in the target entity that contains the value that will be persisted into this annotated field.
+     *
+     * @return the value field in the target entity
+     */
+    String optionValueFieldName() default "";
+
+    /**
+     * Optional - only required if the fieldType property is set to SupportedFieldType.DATA_DRIVEN_ENUMERATION. The annotated
+     * field must be of type String.
+     *
+     * Specify the field in the target entity that contains the display value that will be shown to the user in the dropdown field
+     *
+     * @return the display field in the target entity
+     */
+    String optionDisplayFieldName() default "";
+
+    /**
+     * Optional - only required if you want to allow users to edit (or enter new values) in the dropdown. If true, users will
+     * be able to type their own value or select from one of the data-driven values
+     *
+     * Whether or not the user can type in the data-driven field
+     *
+     * @return whether or not the user can type in the data-driven field
+     */
+    boolean optionCanEditValues() default false;
+
+    //************************* END SupportedFieldType.DATA_DRIVEN_ENUMERATION properties *******************************
 }

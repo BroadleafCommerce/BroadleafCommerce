@@ -48,6 +48,10 @@ public class BasicFieldMetadataOverride extends FieldMetadataOverride {
     private String lookupDisplayProperty;
     private String lookupParentDataSourceName;
     private String targetDynamicFormDisplayId;
+    private String optionListEntity;
+    private String optionValueFieldName;
+    private String optionDisplayFieldName;
+    private Boolean optionCanEditValues;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -319,5 +323,37 @@ public class BasicFieldMetadataOverride extends FieldMetadataOverride {
 
     public void setTargetDynamicFormDisplayId(String targetDynamicFormDisplayId) {
         this.targetDynamicFormDisplayId = targetDynamicFormDisplayId;
+    }
+
+    public Boolean getOptionCanEditValues() {
+        return optionCanEditValues;
+    }
+
+    public void setOptionCanEditValues(Boolean optionCanEditValues) {
+        this.optionCanEditValues = optionCanEditValues;
+    }
+
+    public String getOptionDisplayFieldName() {
+        return optionDisplayFieldName;
+    }
+
+    public void setOptionDisplayFieldName(String optionDisplayFieldName) {
+        this.optionDisplayFieldName = optionDisplayFieldName;
+    }
+
+    public String getOptionListEntity() {
+        return optionListEntity;
+    }
+
+    public void setOptionListEntity(String optionListEntity) {
+        this.optionListEntity = optionListEntity;
+    }
+
+    public String getOptionValueFieldName() {
+        return optionValueFieldName;
+    }
+
+    public void setOptionValueFieldName(String optionValueFieldName) {
+        this.optionValueFieldName = optionValueFieldName;
     }
 }

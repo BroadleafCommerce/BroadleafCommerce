@@ -849,6 +849,27 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 if (localMetadata.getPrecision() != null) {
                                     serverMetadata.setPrecision(localMetadata.getPrecision());
                                 }
+                                if (serverMetadata.getFieldType()==SupportedFieldType.DATA_DRIVEN_ENUMERATION) {
+                                    if (
+                                            (StringUtils.isEmpty(localMetadata.getOptionListEntity()) && StringUtils.isEmpty(serverMetadata.getOptionListEntity())) ||
+                                            (StringUtils.isEmpty(localMetadata.getOptionDisplayFieldName()) && StringUtils.isEmpty(serverMetadata.getOptionDisplayFieldName())) ||
+                                            (StringUtils.isEmpty(localMetadata.getOptionValueFieldName()) && StringUtils.isEmpty(serverMetadata.getOptionValueFieldName()))
+                                    ) {
+                                        throw new IllegalArgumentException("Problem setting up data driven enumeration for ("+propertyName+"). For SupportedFieldType of DATA_DRIVEN_ENUMERATION, the optionListEntity, optionValueFieldName and optionDisplayFieldName properties must all be filled out.");
+                                    }
+                                }
+                                if (localMetadata.getOptionListEntity() != null) {
+                                    serverMetadata.setOptionListEntity(localMetadata.getOptionListEntity());
+                                }
+                                if (localMetadata.getOptionCanEditValues() != null) {
+                                    serverMetadata.setOptionCanEditValues(localMetadata.getOptionCanEditValues());
+                                }
+                                if (localMetadata.getOptionDisplayFieldName() != null) {
+                                    serverMetadata.setOptionDisplayFieldName(localMetadata.getOptionDisplayFieldName());
+                                }
+                                if (localMetadata.getOptionValueFieldName() != null) {
+                                    serverMetadata.setOptionValueFieldName(localMetadata.getOptionValueFieldName());
+                                }
                             }
                         }
                     }
@@ -1054,6 +1075,21 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
                 metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
                 metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
+
+                if (annot.fieldType()==SupportedFieldType.DATA_DRIVEN_ENUMERATION) {
+                    if (
+                            annot.optionListEntity()==void.class ||
+                            StringUtils.isEmpty(annot.optionValueFieldName()) ||
+                            StringUtils.isEmpty(annot.optionDisplayFieldName())
+                    ) {
+                        throw new IllegalArgumentException("Problem setting up data driven enumeration for ("+propertyName+"). For SupportedFieldType of DATA_DRIVEN_ENUMERATION, the optionListEntity, optionValueFieldName and optionDisplayFieldName properties of @AdminPresentation must all be filled out.");
+                    }
+                }
+                metadata.setOptionCanEditValues(annot.optionCanEditValues());
+                metadata.setOptionDisplayFieldName(annot.optionDisplayFieldName());
+                metadata.setOptionListEntity(annot.optionListEntity().getName());
+                metadata.setOptionValueFieldName(annot.optionValueFieldName());
+
                 metadata.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED);
                 if (annot.validationConfigurations().length != 0) {
                     ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -1480,7 +1516,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     ParameterizedType pType = (ParameterizedType) type;
                     Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[0];
                     if (!ArrayUtils.isEmpty(getAllPolymorphicEntitiesFromCeiling(clazz))) {
-                        throw new RuntimeException("Key class for AdminPresentationMap was determined to be a JPA managed type. Only primitive types for the key type are currently supported.");
+                        throw new IllegalArgumentException("Key class for AdminPresentationMap was determined to be a JPA managed type. Only primitive types for the key type are currently supported.");
                     }
                     keyClassName = clazz.getName();
                     break checkProperty;
@@ -1573,7 +1609,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 }
 
                 if (map.getSimpleValue()== UnspecifiedBooleanType.UNSPECIFIED) {
-                    throw new RuntimeException("Unable to infer if the value for the map is of a complex or simple type based on any parameterized type or ManyToMany annotation. Please explicitly set the isSimpleValue property.");
+                    throw new IllegalArgumentException("Unable to infer if the value for the map is of a complex or simple type based on any parameterized type or ManyToMany annotation. Please explicitly set the isSimpleValue property.");
                 }
                 metadata.setSimpleValue(map.getSimpleValue()==UnspecifiedBooleanType.TRUE);
             }
@@ -1608,7 +1644,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
 
         if (ArrayUtils.isEmpty(metadata.getKeys()) && (StringUtils.isEmpty(metadata.getMapKeyOptionEntityClass()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityValueField()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityDisplayField()))) {
-            throw new RuntimeException("Could not ascertain method for generating key options for the annotated map ("+field.getName()+"). Must specify either an array of AdminPresentationMapKey values for the keys property, or utilize the mapOptionKeyClass, mapOptionKeyDisplayField and mapOptionKeyValueField properties");
+            throw new IllegalArgumentException("Could not ascertain method for generating key options for the annotated map ("+field.getName()+"). Must specify either an array of AdminPresentationMapKey values for the keys property, or utilize the mapOptionKeyClass, mapOptionKeyDisplayField and mapOptionKeyValueField properties");
         }
 
         ForeignKey foreignKey = new ForeignKey(parentObjectIdField, parentObjectClass);
@@ -2032,6 +2068,19 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
         metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
         metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
+        if (annot.fieldType()==SupportedFieldType.DATA_DRIVEN_ENUMERATION) {
+            if (
+                    annot.optionListEntity()==void.class ||
+                    StringUtils.isEmpty(annot.optionValueFieldName()) ||
+                    StringUtils.isEmpty(annot.optionDisplayFieldName())
+            ) {
+                throw new IllegalArgumentException("Problem setting up data driven enumeration for ("+field.getName()+"). For SupportedFieldType of DATA_DRIVEN_ENUMERATION, the optionListEntity, optionValueFieldName and optionDisplayFieldName properties of @AdminPresentation must all be filled out.");
+            }
+        }
+        metadata.setOptionCanEditValues(annot.optionCanEditValues());
+        metadata.setOptionDisplayFieldName(annot.optionDisplayFieldName());
+        metadata.setOptionListEntity(annot.optionListEntity().getName());
+        metadata.setOptionValueFieldName(annot.optionValueFieldName());
         metadata.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED);
         if (annot.validationConfigurations().length != 0) {
             ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -2524,7 +2573,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             additionalForeignKeyIndexPosition >= 0
         ) {
             if (!type.isEntityType()) {
-                throw new RuntimeException("Only ManyToOne and OneToOne fields can be marked as a SupportedFieldType of ADDITIONAL_FOREIGN_KEY");
+                throw new IllegalArgumentException("Only ManyToOne and OneToOne fields can be marked as a SupportedFieldType of ADDITIONAL_FOREIGN_KEY");
             }
 			ClassMetadata foreignMetadata;
             String foreignKeyClass;

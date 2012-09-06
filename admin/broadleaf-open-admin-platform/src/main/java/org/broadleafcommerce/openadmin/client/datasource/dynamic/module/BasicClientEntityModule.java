@@ -46,6 +46,7 @@ import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
@@ -981,6 +982,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 lookupMetadata.setParentDataSourceName(metadata.getLookupParentDataSourceName());
                                 lookupMetadata.setTargetDynamicFormDisplayId(metadata.getTargetDynamicFormDisplayId());
                                 lookupMetadata.setFriendlyName(friendlyName);
+                                lookupMetadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                                 ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addLookupMetadata(property.getName(), lookupMetadata);
                             }
                             //field.setValidOperators(getBasicNumericOperators());
@@ -1005,6 +1007,25 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 valueMap2.put(enumerationValues[j][0], enumerationValues[j][1]);
                             }
                             field.setValueMap(valueMap2);
+                            //field.setValidOperators(getBasicEnumerationOperators());
+                            break;
+                        case DATA_DRIVEN_ENUMERATION:
+                            field = new DataSourceTextField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            SelectItem item = new SelectItem();
+                            item.setShowOptionsFromDataSource(true);
+                            //item.setOptionDataSource();
+                            item.setDisplayField(metadata.getOptionDisplayFieldName());
+                            item.setValueField(metadata.getOptionValueFieldName());
+                            //TODO do a property synchronization manager for each iteration of these properties
+                            //that will allow me to immediately create the datasource and execute
+                            //a callback to make the manager progress to the next iteration.
+                            item.setAutoFetchData(false);
+                            item.setDefaultToFirstOption(true);
+                            //TODO populate the option datasource
+
+                            field.setEditorType(item);
                             //field.setValidOperators(getBasicEnumerationOperators());
                             break;
                         case PASSWORD:
