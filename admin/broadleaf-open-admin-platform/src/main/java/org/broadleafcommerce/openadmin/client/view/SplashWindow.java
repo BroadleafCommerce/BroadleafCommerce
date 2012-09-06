@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.view;
 
+import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.core.KeyIdentifier;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.KeyNames;
@@ -110,9 +111,9 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
     }
 
 	public void startProgress() {
-        showClientBuildDate();
-        simpleProgress.setVisible(true);
-		show();
+        //showClientBuildDate();
+        //simpleProgress.setVisible(true);
+		//show();
 		simpleProgress.startProgress();
 	}
 	
@@ -121,7 +122,11 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
 	}
 	
 	public void finalizeProgress() {
-		hide();
+		//hide();
+
+        if (RootPanel.get("loading-placeholder") != null ) {
+            RootPanel.get("loading-placeholder").setVisible(false);
+        }
 	}
 	
 	public Boolean isActive() {
