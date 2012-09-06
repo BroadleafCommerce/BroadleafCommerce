@@ -662,9 +662,15 @@ Button (also used as MenuButton base style)
 /*============================================================
   Forms
 ============================================================*/
-.blcFormView,
 .blcFormBg {
   background: none repeat scroll 0 0 #F9F9F9;
+  border: 1px solid #A7ABB4;
+}
+.blcFormView {
+  background: none repeat scroll 0 0 #F9F9F9;
+}
+.tabSetContainer .blcFormBg {
+  border: none;
 }
 .blcFormView table tr {
   border-top: 1px solid white;

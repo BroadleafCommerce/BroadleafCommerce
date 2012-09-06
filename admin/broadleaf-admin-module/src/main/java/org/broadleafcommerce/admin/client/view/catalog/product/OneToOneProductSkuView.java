@@ -45,7 +45,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  * @author jfischer
  *
  */
-public class OneToOneProductSkuView extends HLayout implements Instantiable, OneToOneProductSkuDisplay {
+public class OneToOneProductSkuView extends VLayout implements Instantiable, OneToOneProductSkuDisplay {
 	
 	protected DynamicFormView dynamicFormDisplay;
 	protected GridStructureView crossSaleDisplay;
@@ -70,8 +70,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("productSkuLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
+		leftVerticalLayout.setHeight("25%");
+        leftVerticalLayout.setWidth100();
+		//leftVerticalLayout.setHeight100();
+		//leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productsListTitle"), entityDataSource);
@@ -86,8 +88,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         topTabSet.setID("productSkuTopTabSet");
         topTabSet.setTabBarPosition(Side.TOP);  
         topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
-        topTabSet.setWidth("50%");  
-        topTabSet.setHeight100();
+        topTabSet.setHeight("75%");
+        topTabSet.setWidth100();
+        //topTabSet.setWidth("50%");
+        //topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
         Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("detailsTabTitle"));
