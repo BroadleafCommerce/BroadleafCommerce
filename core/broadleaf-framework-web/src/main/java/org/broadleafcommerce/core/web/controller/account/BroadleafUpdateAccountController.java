@@ -35,7 +35,6 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
     }
 
     public String processUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
-		exploitProtectionService.compareToken(form.getCsrfToken());
         updateAccountValidator.validate(form, result);
         if (result.hasErrors()) {
             return getUpdateAccountView();

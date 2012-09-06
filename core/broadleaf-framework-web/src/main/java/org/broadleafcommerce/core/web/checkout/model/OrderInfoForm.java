@@ -1,11 +1,11 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web.form;
+package org.broadleafcommerce.core.web.checkout.model;
+
+import java.io.Serializable;
 
 /**
- * A form that will provided a CSRF token field
+ * A form to model checking out as guest
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class CsrfProtectedForm {
+public class OrderInfoForm implements Serializable {
+
+	private static final long serialVersionUID = 62974989700147353L;
 	
-	protected String csrfToken;
+	protected String emailAddress;
 
-	public String getCsrfToken() {
-		return csrfToken;
+	public String getEmailAddress() {
+		return emailAddress;
 	}
 
-	public void setCsrfToken(String csrfToken) {
-		this.csrfToken = csrfToken;
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
 	}
+	
 	
 }

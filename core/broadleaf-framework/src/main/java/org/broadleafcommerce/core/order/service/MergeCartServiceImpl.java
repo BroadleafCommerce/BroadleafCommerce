@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
@@ -93,22 +94,26 @@ public class MergeCartServiceImpl implements MergeCartService {
             mergeCartResponse.setMerged(customerCart != null && customerCart.getOrderItems().size() > 0);
         }
 
+        
         // add anonymous cart items (make sure they are valid)
         if (anonymousCart != null && (customerCart == null || !customerCart.getId().equals(anonymousCart.getId()))) {
+	        // copy the customer's email to this order if one is not set
+	        if (StringUtils.isBlank(customerCart.getEmailAddress())) {
+	        	customerCart.setEmailAddress(customer.getEmailAddress());
+	        }
+        	
             if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
-                if (customerCart == null) {
-                    customerCart = orderService.createNewCartForCustomer(customer);
-                }
                 Map<OrderItem, OrderItem> oldNewItemMap = new HashMap<OrderItem, OrderItem>();
                 customerCart = mergeRegularOrderItems(anonymousCart, mergeCartResponse, customerCart, oldNewItemMap);
                 customerCart = mergeOfferCodes(anonymousCart, customerCart);
                 customerCart = removeExpiredGiftWrapOrderItems(mergeCartResponse, customerCart, oldNewItemMap);
                 customerCart = mergeGiftWrapOrderItems(mergeCartResponse, customerCart, oldNewItemMap);
 
-                customerCart = orderService.save(customerCart, priceOrder);
                 orderService.cancelOrder(anonymousCart);
+                customerCart = orderService.save(customerCart, priceOrder);
             }
         }
+        
         mergeCartResponse.setOrder(customerCart);
         return mergeCartResponse;
 	}
