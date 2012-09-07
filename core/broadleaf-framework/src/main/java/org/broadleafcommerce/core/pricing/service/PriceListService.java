@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricelist.service;
+package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.core.pricing.domain.PriceList;
 

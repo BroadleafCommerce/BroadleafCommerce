@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.pricelist.service;
+package org.broadleafcommerce.core.pricing.dao;
 
 import org.broadleafcommerce.core.pricing.domain.PriceList;
 

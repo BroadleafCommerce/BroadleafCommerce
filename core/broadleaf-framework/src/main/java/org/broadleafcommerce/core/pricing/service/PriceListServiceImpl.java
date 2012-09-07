@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricelist.service;
+package org.broadleafcommerce.core.pricing.service;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.core.pricing.dao.PriceListDao;
 import org.broadleafcommerce.core.pricing.domain.NullPriceList;
 import org.broadleafcommerce.core.pricing.domain.PriceList;
 import org.springframework.stereotype.Service;
