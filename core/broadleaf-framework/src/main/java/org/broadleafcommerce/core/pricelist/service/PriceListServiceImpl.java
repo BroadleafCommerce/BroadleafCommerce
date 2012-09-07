@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.service.dynamic;
+package org.broadleafcommerce.core.pricelist.service;
 
-import java.util.HashMap;
+import javax.annotation.Resource;
 
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.pricing.domain.PriceData;
+import org.springframework.stereotype.Service;
 
-/**
- * 
- * @author jfischer
- *
- */
-public interface DynamicSkuPricingService  {
+@Service("blPriceListService")
+public class PriceListServiceImpl implements PriceListService {
 
-	public DynamicSkuPrices getSkuPrices(Sku sku, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
-	public DynamicSkuPrices getPriceAdjustment(ProductOptionValue sku, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
-	
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
+
+    @Override
+    public PriceData getPriceData(Sku sku) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

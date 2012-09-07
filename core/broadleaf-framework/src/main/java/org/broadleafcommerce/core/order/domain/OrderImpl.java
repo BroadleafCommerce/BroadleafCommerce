@@ -16,8 +16,37 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -46,34 +75,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyManyToMany;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -189,31 +190,42 @@ public class OrderImpl implements Order {
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="value")
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
+    @Column (name = "CURRENCY",nullable=true)
+    @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", order=1, group = "PriceListImpl_Details", prominent=true)
+    private BroadleafCurrency currency;
 
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Auditable getAuditable() {
         return auditable;
     }
 
+    @Override
     public void setAuditable(Auditable auditable) {
         this.auditable = auditable;
     }
 
+    @Override
     public Money getSubTotal() {
         return subTotal == null ? null : new Money(subTotal);
     }
 
+    @Override
     public void setSubTotal(Money subTotal) {
         this.subTotal = Money.toAmount(subTotal);
     }
 
+    @Override
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
@@ -231,20 +243,24 @@ public class OrderImpl implements Order {
     /**
      * Assigns a final price to all the order items
      */
+    @Override
     public void assignOrderItemsFinalPrice() {
         for (OrderItem orderItem : orderItems) {
             orderItem.assignFinalPrice();
         }
     }
 
+    @Override
     public Money getTotal() {
         return total == null ? null : new Money(total);
     }
 
+    @Override
     public void setTotal(Money orderTotal) {
         this.total = Money.toAmount(orderTotal);
     }
 
+    @Override
     public Money getRemainingTotal() {
         Money myTotal = getTotal();
         if (myTotal == null) {
@@ -259,90 +275,112 @@ public class OrderImpl implements Order {
         return myTotal.subtract(totalPayments);
     }
 
+    @Override
     public Date getSubmitDate() {
         return submitDate;
     }
 
+    @Override
     public void setSubmitDate(Date submitDate) {
         this.submitDate = submitDate;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
+    @Override
     public OrderStatus getStatus() {
         return OrderStatus.getInstance(status);
     }
 
+    @Override
     public void setStatus(OrderStatus status) {
         this.status = status.getType();
     }
 
+    @Override
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }
 
+    @Override
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
+    @Override
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
     }
 
+    @Override
     public List<FulfillmentGroup> getFulfillmentGroups() {
         return fulfillmentGroups;
     }
 
+    @Override
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups) {
         this.fulfillmentGroups = fulfillmentGroups;
     }
 
+    @Override
     public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers) {
         this.candidateOrderOffers = candidateOrderOffers;
     }
 
+    @Override
     public List<CandidateOrderOffer> getCandidateOrderOffers() {
         return candidateOrderOffers;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Money getTotalTax() {
         return totalTax == null ? null : new Money(totalTax);
     }
 
+    @Override
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
     }
 
+    @Override
     public Money getTotalShipping() {
         return totalShipping == null ? null : new Money(totalShipping);
     }
 
+    @Override
     public void setTotalShipping(Money totalShipping) {
         this.totalShipping = Money.toAmount(totalShipping);
     }
 
+    @Override
     public List<PaymentInfo> getPaymentInfos() {
         return paymentInfos;
     }
 
+    @Override
     public void setPaymentInfos(List<PaymentInfo> paymentInfos) {
         this.paymentInfos = paymentInfos;
     }
 
+    @Override
     public boolean hasCategoryItem(String categoryName) {
         for (OrderItem orderItem : orderItems) {
             if(orderItem.isInCategory(categoryName)) {
@@ -352,6 +390,7 @@ public class OrderImpl implements Order {
         return false;
     }
 
+    @Override
     public List<OrderAdjustment> getOrderAdjustments() {
         return this.orderAdjustments;
     }
@@ -360,6 +399,7 @@ public class OrderImpl implements Order {
         this.orderAdjustments = orderAdjustments;
     }
 
+    @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
@@ -387,38 +427,47 @@ public class OrderImpl implements Order {
     	return false;
     }
 
+    @Override
     public List<OfferCode> getAddedOfferCodes() {
         return addedOfferCodes;
     }
 
+    @Override
     public String getOrderNumber() {
         return orderNumber;
     }
 
+    @Override
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
     }
 
+    @Override
     public String getFulfillmentStatus() {
         return null;
     }
 
+    @Override
     public String getEmailAddress() {
         return emailAddress;
     }
 
+    @Override
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 
+    @Override
     public Map<Offer, OfferInfo> getAdditionalOfferInformation() {
         return additionalOfferInformation;
     }
 
+    @Override
     public void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation) {
         this.additionalOfferInformation = additionalOfferInformation;
     }
 
+    @Override
     public Money getItemAdjustmentsValue() {
         Money itemAdjustmentsValue = new Money(0);
         for (OrderItem orderItem : orderItems) {
@@ -427,6 +476,7 @@ public class OrderImpl implements Order {
         return itemAdjustmentsValue;
     }
     
+    @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
     	Money adjustmentValue = new Money(0);
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
@@ -435,6 +485,7 @@ public class OrderImpl implements Order {
         return adjustmentValue;
     }
 
+    @Override
     public Money getOrderAdjustmentsValue() {
         Money orderAdjustmentsValue = new Money(0);
         for (OrderAdjustment orderAdjustment : orderAdjustments) {
@@ -443,6 +494,7 @@ public class OrderImpl implements Order {
         return orderAdjustmentsValue;
     }
 
+    @Override
     public Money getTotalAdjustmentsValue() {
         Money totalAdjustmentsValue = getItemAdjustmentsValue();
         totalAdjustmentsValue = totalAdjustmentsValue.add(getOrderAdjustmentsValue());
@@ -450,7 +502,8 @@ public class OrderImpl implements Order {
         return totalAdjustmentsValue;
     }
 
-	public boolean updatePrices() {
+	@Override
+    public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
             if (orderItem.updatePrices()) {
@@ -460,24 +513,37 @@ public class OrderImpl implements Order {
         return updated;
     }
 
+    @Override
     public Map<String, OrderAttribute> getOrderAttributes() {
         return orderAttributes;
     }
 
+    @Override
     public void setOrderAttributes(Map<String, OrderAttribute> orderAttributes) {
         this.orderAttributes = orderAttributes;
     }
 
+    @Override
     @Deprecated
 	public void addAddedOfferCode(OfferCode offerCode) {
 		addOfferCode(offerCode);
 	}
 	
-	public void addOfferCode(OfferCode offerCode) {
+	@Override
+    public void addOfferCode(OfferCode offerCode) {
         getAddedOfferCodes().add(offerCode);
     }
-	
+    
+    @Override
+    public BroadleafCurrency getCurrency() {
+        return currency;
+    }
 	@Override
+    public void setCurrency(BroadleafCurrency currency) {
+        this.currency = currency;
+    }
+
+    @Override
 	public int getItemCount() {
 		int count = 0;
 		for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
@@ -487,13 +553,17 @@ public class OrderImpl implements Order {
 	}
 
 
-	public boolean equals(Object obj) {
-	   	if (this == obj)
-	        return true;
-	    if (obj == null)
-	        return false;
-	    if (getClass() != obj.getClass())
-	        return false;
+	@Override
+    public boolean equals(Object obj) {
+	   	if (this == obj) {
+            return true;
+        }
+	    if (obj == null) {
+            return false;
+        }
+	    if (getClass() != obj.getClass()) {
+            return false;
+        }
         OrderImpl other = (OrderImpl) obj;
 
         if (id != null && other.id != null) {
@@ -501,20 +571,25 @@ public class OrderImpl implements Order {
         }
 
         if (customer == null) {
-            if (other.customer != null)
+            if (other.customer != null) {
                 return false;
-        } else if (!customer.equals(other.customer))
+            }
+        } else if (!customer.equals(other.customer)) {
             return false;
+        }
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         Date otherDateCreated = other.auditable != null ? other.auditable.getDateCreated() : null;
         if (myDateCreated == null) {
-            if (otherDateCreated != null)
+            if (otherDateCreated != null) {
                 return false;
-        } else if (!myDateCreated.equals(otherDateCreated))
+            }
+        } else if (!myDateCreated.equals(otherDateCreated)) {
             return false;
+        }
         return true;
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

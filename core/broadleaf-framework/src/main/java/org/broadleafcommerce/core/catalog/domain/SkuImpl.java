@@ -16,29 +16,13 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -63,13 +47,31 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
+import org.broadleafcommerce.core.pricing.domain.PriceData;
+import org.broadleafcommerce.core.pricing.domain.PriceDataImpl;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -172,6 +174,7 @@ public class SkuImpl implements Sku {
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "ProductImpl_Product_Description", tooltip="skuEndDateTooltip", groupOrder=1)
     protected Date activeEndDate;
+
     
     /** The product dimensions **/
     @Embedded
@@ -249,7 +252,15 @@ public class SkuImpl implements Sku {
     @BatchSize(size = 50)
     protected List<FulfillmentOption> excludedFulfillmentOptions;
 
+    /** The pricelist/pricedata. */
+    @ManyToMany(targetEntity = PriceDataImpl.class)
+    @JoinTable(name = "BLC_SKU_PRICE_DATA", inverseJoinColumns = @JoinColumn(name = "PRICE_DATA_ID", referencedColumnName = "PRICE_DATA_ID"))
+    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected Map<String, PriceData> priceDataMap = new HashMap<String , PriceData>();
 
+   
     @Override
     public Long getId() {
         return id;
@@ -286,9 +297,10 @@ public class SkuImpl implements Sku {
             for (ProductOptionValue value : getProductOptionValues()) {
                 if (value.getPriceAdjustment() != null) {
                     if (optionValuePriceAdjustments == null) {
-                        optionValuePriceAdjustments = Money.ZERO;
+                        optionValuePriceAdjustments = value.getPriceAdjustment();
+                    } else {
+                        optionValuePriceAdjustments = optionValuePriceAdjustments.add(value.getPriceAdjustment());
                     }
-                    optionValuePriceAdjustments = optionValuePriceAdjustments.add(value.getPriceAdjustment());
                 }
             }
         }
@@ -297,32 +309,37 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getSalePrice() {
+        Money returnPrice=null;
+        
         if (salePrice == null && hasDefaultSku()) {
-            return lookupDefaultSku().getSalePrice();
-        }
-
-    	if (dynamicPrices != null) {
-    		return dynamicPrices.getSalePrice();
-    	}
-    	if (
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
-    			SkuPricingConsiderationContext.getSkuPricingService() != null
+            returnPrice = lookupDefaultSku().getSalePrice();
+        } else if (dynamicPrices != null) {
+    	    return dynamicPrices.getSalePrice();
+    	} else if (
+    		SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
+    		SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
+    		SkuPricingConsiderationContext.getSkuPricingService() != null
     	) {
     		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
     		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
     		
     		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
     		handler.reset();
-    		return dynamicPrices.getSalePrice();
-    	} else {
-    	    if (getProductOptionValueAdjustments() == null) {
-    	        return salePrice == null ? null : new Money(salePrice);
-    	    } else {
-    	        return salePrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(salePrice));
-    	    }
+    		return  dynamicPrices.getSalePrice();
+    	} 
+        
+        if (returnPrice == null) {
+    	    returnPrice = (salePrice == null ? null : new Money(salePrice));
         }
+        
+        if (getProductOptionValueAdjustments() == null) {
+            return returnPrice;
+        } else {
+            return returnPrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(returnPrice);             
+        }
+    	
     }
+
 
     @Override
     public void setSalePrice(Money salePrice) {
@@ -331,14 +348,12 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getRetailPrice() {
+       Money returnPrice=null;
         if (retailPrice == null && hasDefaultSku()) {
-            return lookupDefaultSku().getRetailPrice();
-        }
-
-    	if (dynamicPrices != null) {
+            returnPrice = lookupDefaultSku().getRetailPrice();
+        } else if (dynamicPrices != null) {
     		return dynamicPrices.getRetailPrice();
-    	}
-    	if (
+    	} else if (
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
     			SkuPricingConsiderationContext.getSkuPricingService() != null
@@ -350,10 +365,13 @@ public class SkuImpl implements Sku {
     		handler.reset();
     		return dynamicPrices.getRetailPrice();
     	}
+        if (returnPrice == null) {
+            returnPrice = (retailPrice == null ? null : new Money(retailPrice));
+        }
     	if (getProductOptionValueAdjustments() == null) {
-            return retailPrice == null ? null : new Money(retailPrice);
+            return returnPrice;
         } else {
-            return retailPrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(retailPrice));
+            return retailPrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(returnPrice);
         }
     }
 
@@ -668,15 +686,27 @@ public class SkuImpl implements Sku {
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions) {
         this.excludedFulfillmentOptions = excludedFulfillmentOptions;
     }
-    
+    @Override
+    public Map<String, PriceData> getPriceDataMap() {
+        return priceDataMap;
+    }
+
+    @Override
+    public void setPriceDataMap(Map<String, PriceData> priceDataMap) {
+        this.priceDataMap = priceDataMap;
+    }
+
 	@Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         SkuImpl other = (SkuImpl) obj;
 
         if (id != null && other.id != null) {
@@ -684,10 +714,12 @@ public class SkuImpl implements Sku {
         }
 
         if (getName() == null) {
-            if (other.getName() != null)
+            if (other.getName() != null) {
                 return false;
-        } else if (!getName().equals(other.getName()))
+            }
+        } else if (!getName().equals(other.getName())) {
             return false;
+        }
         return true;
     }
 

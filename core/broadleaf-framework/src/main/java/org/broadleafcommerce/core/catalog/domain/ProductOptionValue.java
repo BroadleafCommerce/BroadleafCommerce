@@ -16,9 +16,11 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.money.Money;
-
 import java.io.Serializable;
+import java.util.Map;
+
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.pricing.domain.PriceData;
 
 /**
  * 
@@ -107,5 +109,9 @@ public interface ProductOptionValue extends Serializable {
      * @param productOption
      */
     public void setProductOption(ProductOption productOption);
+
+    Map<String, PriceData> getPriceDataMap();
+
+    void setPriceDataMap(Map<String, PriceData> priceDataMap);
     
 }

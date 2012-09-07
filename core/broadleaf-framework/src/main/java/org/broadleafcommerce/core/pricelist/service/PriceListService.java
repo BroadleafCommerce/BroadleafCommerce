@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.service.dynamic;
+package org.broadleafcommerce.core.pricelist.service;
 
-import java.util.HashMap;
-
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.pricing.domain.PriceData;
 
-/**
- * 
- * @author jfischer
- *
- */
-public interface DynamicSkuPricingService  {
+public interface PriceListService {
 
-	public DynamicSkuPrices getSkuPrices(Sku sku, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
-	public DynamicSkuPrices getPriceAdjustment(ProductOptionValue sku, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
-	
+    public PriceData getPriceData(Sku sku);;
+
+  
 }

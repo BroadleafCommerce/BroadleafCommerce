@@ -16,17 +16,18 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.pricing.domain.PriceData;
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
@@ -415,5 +416,7 @@ public interface Sku extends Serializable {
      * @param excludedFulfillmentOptions
      */
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
-    
+    public Map<String, PriceData> getPriceDataMap();
+
+    public void setPriceDataMap(Map<String, PriceData> priceDataMap);
 }

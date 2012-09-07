@@ -16,7 +16,12 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
@@ -27,10 +32,6 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * NullOrderImpl is a class that represents an unmodifiable, empty order. This class is used as the default order
@@ -313,4 +314,14 @@ public class NullOrderImpl implements Order {
 	public int getItemCount() {
 		return 0;
 	}
+
+       @Override
+        public BroadleafCurrency getCurrency() {
+              return null;
+        }
+
+        @Override
+        public void setCurrency(BroadleafCurrency currency) {
+            throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+        }
 }

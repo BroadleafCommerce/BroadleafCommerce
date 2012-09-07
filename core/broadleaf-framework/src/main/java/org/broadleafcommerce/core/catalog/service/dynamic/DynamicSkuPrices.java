@@ -31,7 +31,7 @@ public class DynamicSkuPrices implements Serializable {
 	
 	protected Money retailPrice;
 	protected Money salePrice;
-	
+	protected Money priceAdjustment;
 	public Money getRetailPrice() {
 		return retailPrice;
 	}
@@ -47,5 +47,12 @@ public class DynamicSkuPrices implements Serializable {
 	public void setSalePrice(Money salePrice) {
 		this.salePrice = salePrice;
 	}
-	
+
+        public Money getPriceAdjustment() {
+                return priceAdjustment;
+        }
+
+        public void setPriceAdjustment(Money priceAdjustment) {
+               this.priceAdjustment = priceAdjustment;
+        }
 }

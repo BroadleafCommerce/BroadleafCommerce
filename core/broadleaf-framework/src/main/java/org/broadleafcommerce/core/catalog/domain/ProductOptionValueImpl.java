@@ -16,14 +16,9 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,10 +27,25 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.pricing.domain.PriceData;
+import org.broadleafcommerce.core.pricing.domain.PriceDataImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -74,7 +84,16 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @ManyToOne(targetEntity = ProductOptionImpl.class)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption;
-
+    
+    /** The pricelist/pricedata. */
+    @ManyToMany(targetEntity = PriceDataImpl.class)
+    @JoinTable(name = "BLC_SKU_PRICE_DATA", inverseJoinColumns = @JoinColumn(name = "PRICE_DATA_ID", referencedColumnName = "PRICE_DATA_ID"))
+    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected Map<String, PriceData> priceDataMap = new HashMap<String , PriceData>();
+    
+    
     @Override
     public Long getId() {
         return id;
@@ -107,6 +126,24 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     
     @Override
     public Money getPriceAdjustment() {
+        /*
+         * if (
+                 
+                        SkuPricingConsiderationContext.getSkuPricingService() != null
+        ) {
+ 
+ // TODO:  handle productOptionValue
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getOptionValuePrice(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());                
+                returnPrice = dynamicPrices.getSalePrice();
+        } else {
+            returnPrice = (salePrice == null ? null : new Money(salePrice));
+        }
+         */
+        if(SkuPricingConsiderationContext.hasDynamicPricing()) {
+            DynamicSkuPrices prices=SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this,SkuPricingConsiderationContext.getSkuPricingConsiderationContext());                
+            return prices.getPriceAdjustment();
+        }
+        
         return priceAdjustment == null ? null : new Money(priceAdjustment);
     }
 
@@ -123,6 +160,15 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @Override
     public void setProductOption(ProductOption productOption) {
         this.productOption = productOption;
+    }
+    @Override
+    public Map<String, PriceData> getPriceDataMap() {
+        return priceDataMap;
+    }
+
+    @Override
+    public void setPriceDataMap(Map<String, PriceData> priceDataMap) {
+        this.priceDataMap = priceDataMap;
     }
 
 }
