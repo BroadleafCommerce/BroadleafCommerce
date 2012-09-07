@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
@@ -52,6 +53,9 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
 
     @Resource(name = "blCurrencyResolver")
     private BroadleafCurrencyResolver currencyResolver;
+
+    @Resource(name = "blPriceListResovler")
+    private BroadleafPricelistResolver pricelistResolver;
 
     @Resource(name = "blSandBoxResolver")
     private BroadleafSandBoxResolver sandboxResolver;
@@ -114,6 +118,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         Site site = siteResolver.resolveSite(request);
         Locale locale = localeResolver.resolveLocale(request);
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
+        PriceList priceList = pricelistResolver.resolvePricelist(request);
         Theme theme = themeResolver.resolveTheme(request, site);
 	
 	SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
@@ -127,6 +132,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         brc.setSite(site);
         brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
+        brc.setPriceList(priceList);
         brc.setRequest(request);
         brc.setSandbox(currentSandbox);
         brc.setResponse(response);
