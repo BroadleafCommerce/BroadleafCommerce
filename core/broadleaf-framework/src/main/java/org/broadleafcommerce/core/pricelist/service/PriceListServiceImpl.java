@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 @Service("blPriceListService")
 public class PriceListServiceImpl implements PriceListService {
     private final NullPriceList NULL_PRICE_LIST = new NullPriceList();
+
     @Resource(name="blPriceListDao")
     protected PriceListDao priceListDao;
 

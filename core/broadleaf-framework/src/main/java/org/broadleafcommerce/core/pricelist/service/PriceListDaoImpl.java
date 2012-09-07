@@ -9,7 +9,9 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.pricing.domain.PriceList;
+import org.springframework.stereotype.Repository;
 
+@Repository("blPriceListDao")
 public class PriceListDaoImpl implements PriceListDao{
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
