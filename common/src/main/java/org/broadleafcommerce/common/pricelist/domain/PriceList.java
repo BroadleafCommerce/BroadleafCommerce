@@ -14,18 +14,30 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.service.pricelist;
+package org.broadleafcommerce.common.pricelist.domain;
 
-import org.broadleafcommerce.core.pricing.domain.PriceList;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
- * Responsible for returning the price list to use for the current request.
- *
- * Author: jerryocanas
- * Date: 9/7/12
+ * 
  */
-public interface BroadleafPricelistResolver {
-    public PriceList resolvePricelist(HttpServletRequest request);
+public interface PriceList extends Serializable {
+
+    BroadleafCurrency getCurrencyCode();
+
+    void setCurrencyCode(BroadleafCurrency currencyCode);
+
+    public String getFriendlyName();
+
+    public void setFriendlyName(String friendlyName);
+
+    public Boolean getDefaultFlag();
+
+    public void setDefaultFlag(Boolean defaultFlag);
+
+    public String getKey();
+
+    public void setKey(String key);
 }

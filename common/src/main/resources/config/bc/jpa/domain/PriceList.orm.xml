@@ -6,7 +6,7 @@
 
     <named-query name="BC_READ_PRICE_LIST" >
 		<query>SELECT priceList
-               FROM org.broadleafcommerce.core.pricing.domain.PriceListImpl priceList
+               FROM org.broadleafcommerce.common.pricelist.domain.PriceListImpl priceList
                WHERE
                  priceList.key = :key 
 		</query>

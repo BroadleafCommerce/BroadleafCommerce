@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.domain;
+package org.broadleafcommerce.common.pricelist.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,8 +55,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     @Column (name = "FRIENDLY_NAME")
     @AdminPresentation(friendlyName = "PriceListImpl_Name", order=2, group = "PriceListImpl_Details", prominent=true)
     protected String friendlyName;
-
-
 
     @Column (name = "KEY",nullable=false)
     @AdminPresentation(friendlyName = "PriceListImpl_Key", order=2, group = "PriceListImpl_Details", prominent=true)

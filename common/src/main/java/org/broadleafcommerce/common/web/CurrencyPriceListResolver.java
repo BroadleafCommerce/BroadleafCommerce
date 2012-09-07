@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.service.pricelist;
+package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.core.pricing.domain.PriceList;
-import org.broadleafcommerce.core.pricing.service.PriceListService;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.common.pricelist.service.PriceListService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -50,7 +49,7 @@ public class CurrencyPriceListResolver implements BroadleafPricelistResolver {
         if (currency != null){
             String key = currency.getCurrencyCode();
             if (key != null){
-                priceList = priceListService.getPriceList(key);
+                priceList = priceListService.findPriceListByKey(key);
             }
         }
 
