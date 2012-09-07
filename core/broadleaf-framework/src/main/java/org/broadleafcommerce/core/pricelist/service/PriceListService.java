@@ -16,12 +16,10 @@
 
 package org.broadleafcommerce.core.pricelist.service;
 
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.pricing.domain.PriceData;
+import org.broadleafcommerce.core.pricing.domain.PriceList;
 
 public interface PriceListService {
 
-    public PriceData getPriceData(Sku sku);;
+    PriceList getPriceList(String key);;
 
-  
 }

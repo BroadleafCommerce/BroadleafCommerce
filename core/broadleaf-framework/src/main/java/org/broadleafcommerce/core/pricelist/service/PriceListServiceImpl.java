@@ -18,21 +18,24 @@ package org.broadleafcommerce.core.pricelist.service;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.pricing.domain.PriceData;
+import org.broadleafcommerce.core.pricing.domain.NullPriceList;
+import org.broadleafcommerce.core.pricing.domain.PriceList;
 import org.springframework.stereotype.Service;
 
 @Service("blPriceListService")
 public class PriceListServiceImpl implements PriceListService {
-
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
+    private final NullPriceList NULL_PRICE_LIST = new NullPriceList();
+    @Resource(name="blPriceListDao")
+    protected PriceListDao priceListDao;
 
     @Override
-    public PriceData getPriceData(Sku sku) {
-        // TODO Auto-generated method stub
-        return null;
+    public PriceList getPriceList(String key) {
+        PriceList priceList = priceListDao.findbyKey(key);
+        if (priceList != null) {
+                return priceList;
+        } else {
+                return NULL_PRICE_LIST;
+        }
     }
 
 }

@@ -58,9 +58,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
 
-    @Column (name = "NAME",nullable=false)
-    @AdminPresentation(friendlyName = "PriceListImpl_Name", order=2, group = "PriceListImpl_Details", prominent=true)
-    protected String name;
+    @Column (name = "KEY",nullable=false)
+    @AdminPresentation(friendlyName = "PriceListImpl_Key", order=2, group = "PriceListImpl_Details", prominent=true)
+    protected String key;
 
     @Column (name = "USE_DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "PriceListImpl_Is_Default", order=3, group = "PriceListImpl_Details", prominent=true)
@@ -72,12 +72,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
     @Override
     public String getFriendlyName() {
-        return name;
+        return friendlyName;
     }
 
     @Override
     public void setFriendlyName(String friendlyName) {
-        this.name = friendlyName;
+        this.friendlyName = friendlyName;
     }
 
     @Override
@@ -104,7 +104,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
         if (currency != null ? !currency.equals(priceList.currency) : priceList.currency != null) {
             return false;
         }
-        if (name != null ? !name.equals(priceList.name) : priceList.name != null) {
+        if (key != null ? !key.equals(priceList.key) : priceList.key != null) {
             return false;
         }
 
@@ -114,18 +114,18 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     @Override
     public int hashCode() {
         int result = currency != null ? currency.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (key != null ? key.hashCode() : 0);
         return result;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getKey() {
+        return key;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setKey(String name) {
+        this.key = name;
     }
 
     public Boolean getUseDefaultIfNotFound() {

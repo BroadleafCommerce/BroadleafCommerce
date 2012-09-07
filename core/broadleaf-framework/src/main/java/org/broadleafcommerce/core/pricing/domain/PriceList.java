@@ -37,7 +37,7 @@ public interface PriceList extends Serializable {
 
     public Boolean getDefaultFlag();
 
-    public String getName();
+    public String getKey();
 
-    public void setName(String name);
+    public void setKey(String key);
 }
