@@ -43,6 +43,11 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
      */
     public static String LOCALE_VAR = "blLocale";
 
+    /**
+     * Parameter/Attribute name for the current currency
+     */
+    public static String CURRENCY_VAR = "blCurrency";
+
     @Resource(name = "blCurrencyService")
     private BroadleafCurrencyService broadleafCurrencyService;
 
@@ -55,28 +60,21 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
     @Override
     public BroadleafCurrency resolveCurrency(HttpServletRequest request) {
         BroadleafCurrency currency = null;
-        Locale locale = null;
 
         // 1) Check request for currency
-        locale = ((Locale) request.getAttribute(LOCALE_VAR));
-        if (locale != null){
-            currency = locale.getDefaultCurrency();
-        }
+        currency = (BroadleafCurrency) request.getAttribute(CURRENCY_VAR);
 
         // 2) Check session for currency
         if (currency == null){
             HttpSession session = request.getSession(true);
             if(session != null){
-                locale = (Locale) session.getAttribute(LOCALE_VAR);
-                if (locale != null){
-                    currency = locale.getDefaultCurrency();
-                }
+                currency = (BroadleafCurrency) session.getAttribute(CURRENCY_VAR);
             }
         }
 
         // 3) Check locale for currency
         if(currency == null){
-            locale = (Locale)localeService.findDefaultLocale();
+            Locale locale = (Locale)localeService.findDefaultLocale();
             if (locale != null){
                 currency = locale.getDefaultCurrency();
             }
@@ -87,8 +85,7 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
             currency = broadleafCurrencyService.findDefaultBroadleafCurrency();
         }
 
-        // 5) Check default currency from system
-
+        request.getSession().setAttribute(CURRENCY_VAR, currency);
         return currency;
     }
 }
