@@ -48,6 +48,11 @@ import java.io.Serializable;
  * pricing a FulfillmentGroup. Typical third-party implementations of this paradigm would have a 1 FulfillmentOption
  * entity implementation and 1 FulfillmentPricingProvider implementation for that particular service.
  * 
+ * <p>
+ * <b>Note: even though the default Broadleaf implementation of this is non-abstract ({@link FulfillmentOptionImpl}),
+ * it is very rare that you would actually want to instantiate a raw {@link FulfillmentOptionImpl} rather than using
+ * a subclass of this.
+ * </p>
  * @author Phillip Verheyden
  * @see {@link FulfillmentPricingProvider}, {@link FulfillmentGroup}
  */
