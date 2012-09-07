@@ -102,7 +102,6 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     }
 
     public String addCustomerAddress(HttpServletRequest request, Model model, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
-		exploitProtectionService.compareToken(form.getCsrfToken());
     	customerAddressValidator.validate(form, result);
     	if (result.hasErrors()) {
     		return getCustomerAddressesView();
@@ -125,7 +124,6 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     }
     
     public String updateCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
-		exploitProtectionService.compareToken(form.getCsrfToken());
     	customerAddressValidator.validate(form, result);
     	if (result.hasErrors()) {
     		return getCustomerAddressesView();
