@@ -52,6 +52,7 @@ public class BasicFieldMetadataOverride extends FieldMetadataOverride {
     private String optionValueFieldName;
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
+    private String[][] optionFilterValues;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -355,5 +356,13 @@ public class BasicFieldMetadataOverride extends FieldMetadataOverride {
 
     public void setOptionValueFieldName(String optionValueFieldName) {
         this.optionValueFieldName = optionValueFieldName;
+    }
+
+    public String[][] getOptionFilterValues() {
+        return optionFilterValues;
+    }
+
+    public void setOptionFilterValues(String[][] optionFilterValues) {
+        this.optionFilterValues = optionFilterValues;
     }
 }

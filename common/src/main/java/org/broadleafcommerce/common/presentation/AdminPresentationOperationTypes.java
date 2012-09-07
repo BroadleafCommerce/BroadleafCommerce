@@ -2,12 +2,19 @@ package org.broadleafcommerce.common.presentation;
 
 import org.broadleafcommerce.common.presentation.client.OperationType;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Annotation for defining how CRUD operations are performed on an advanced collection in Broadleaf Commerce.
  * This is an advanced configuration, as the default operation settings are appropriate in most cases.
  *
  * @author Jeff Fischer
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
 public @interface AdminPresentationOperationTypes {
 
     /**

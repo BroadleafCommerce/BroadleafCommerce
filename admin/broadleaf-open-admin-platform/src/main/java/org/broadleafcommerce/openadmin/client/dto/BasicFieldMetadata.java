@@ -52,6 +52,10 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String optionValueFieldName;
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
+    private String[][] optionFilterParams;
+
+    //temporary fields
+    private String targetClass;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -357,6 +361,22 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.optionValueFieldName = optionValueFieldName;
     }
 
+    public String[][] getOptionFilterParams() {
+        return optionFilterParams;
+    }
+
+    public void setOptionFilterParams(String[][] optionFilterParams) {
+        this.optionFilterParams = optionFilterParams;
+    }
+
+    public String getTargetClass() {
+        return targetClass;
+    }
+
+    public void setTargetClass(String targetClass) {
+        this.targetClass = targetClass;
+    }
+
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
         metadata.fieldType = fieldType;
@@ -410,6 +430,14 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.optionCanEditValues = optionCanEditValues;
         metadata.optionDisplayFieldName = optionDisplayFieldName;
         metadata.optionValueFieldName = optionValueFieldName;
+        if (optionFilterParams != null) {
+            metadata.optionFilterParams = new String[optionFilterParams.length][];
+            for (int j=0;j<optionFilterParams.length;j++) {
+                metadata.optionFilterParams[j] = new String[optionFilterParams[j].length];
+                System.arraycopy(optionFilterParams[j], 0, metadata.optionFilterParams[j], 0, optionFilterParams[j].length);
+            }
+        }
+        metadata.targetClass = targetClass;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

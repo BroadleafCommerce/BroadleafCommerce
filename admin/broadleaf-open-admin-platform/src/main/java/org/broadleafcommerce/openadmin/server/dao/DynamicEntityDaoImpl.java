@@ -21,31 +21,36 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationAdornedTargetCollectionOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
+import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMapOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationAdornedTargetCollectionOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMapOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationToOneLookupOverride;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
@@ -66,7 +71,6 @@ import org.broadleafcommerce.openadmin.client.dto.override.MapMetadataOverride;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.EntityMode;
-import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
@@ -85,7 +89,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -453,6 +456,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         Boolean classAnnotatedPopulateManyToOneFields = null;
 
         Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
+        Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new HashMap<String, AdminPresentationToOneLookupOverride>();
         Map<String, AdminPresentationMapOverride> presentationMapOverrides = new HashMap<String, AdminPresentationMapOverride>();
         Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
         Map<String, AdminPresentationAdornedTargetCollectionOverride> presentationAdornedTargetCollectionOverrides = new HashMap<String, AdminPresentationAdornedTargetCollectionOverride>();
@@ -463,6 +467,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             if (myOverrides != null) {
                 for (AdminPresentationOverride myOverride : myOverrides.value()) {
                     presentationOverrides.put(myOverride.name(), myOverride);
+                }
+                for (AdminPresentationToOneLookupOverride myOverride : myOverrides.toOneLookups()) {
+                    presentationToOneLookupOverrides.put(myOverride.name(), myOverride);
                 }
                 for (AdminPresentationMapOverride myOverride : myOverrides.maps()) {
                     presentationMapOverrides.put(myOverride.name(), myOverride);
@@ -504,6 +511,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             for (String key : mergedProperties.keySet()) {
                 if (key.equals(propertyName)) {
                     buildAdminPresentationOverride(prefix, isParentExcluded, mergedProperties, presentationOverrides, propertyName, key);
+                    buildAdminPresentationToOneLookupOverride(mergedProperties, presentationToOneLookupOverrides, propertyName, key);
                     buildAdminPresentationCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationCollectionOverrides, propertyName, key);
                     buildAdminPresentationAdornedTargetCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationAdornedTargetCollectionOverrides, propertyName, key);
                     buildAdminPresentationMapOverride(prefix, isParentExcluded, mergedProperties, presentationMapOverrides, propertyName, key);
@@ -761,114 +769,23 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 }
                             }
                             if (key.equals(propertyName)) {
-                                BasicFieldMetadata serverMetadata = (BasicFieldMetadata) mergedProperties.get(key);
-                                if (localMetadata.getFriendlyName() != null) {
-                                    serverMetadata.setFriendlyName(localMetadata.getFriendlyName());
-                                }
-                                if (localMetadata.getSecurityLevel() != null) {
-                                    serverMetadata.setSecurityLevel(localMetadata.getSecurityLevel());
-                                }
-                                if (localMetadata.getVisibility() != null) {
-                                    serverMetadata.setVisibility(localMetadata.getVisibility());
-                                }
-                                if (localMetadata.getOrder() != null) {
-                                    serverMetadata.setOrder(localMetadata.getOrder());
-                                }
-                                if (localMetadata.getExplicitFieldType() != null) {
-                                    serverMetadata.setExplicitFieldType(localMetadata.getExplicitFieldType());
-                                    serverMetadata.setFieldType(localMetadata.getExplicitFieldType());
-                                }
-                                if (localMetadata.getGroup() != null) {
-                                    serverMetadata.setGroup(localMetadata.getGroup());
-                                }
-                                if (localMetadata.getGroupCollapsed() != null) {
-                                    serverMetadata.setGroupCollapsed(localMetadata.getGroupCollapsed());
-                                }
-                                if (localMetadata.getGroupOrder() != null) {
-                                    serverMetadata.setGroupOrder(localMetadata.getGroupOrder());
-                                }
-                                if (localMetadata.isLargeEntry() != null) {
-                                    serverMetadata.setLargeEntry(localMetadata.isLargeEntry());
-                                }
-                                if (localMetadata.isProminent() != null) {
-                                    serverMetadata.setProminent(localMetadata.isProminent());
-                                }
-                                if (localMetadata.getColumnWidth() != null) {
-                                    serverMetadata.setColumnWidth(localMetadata.getColumnWidth());
-                                }
-                                if (!StringUtils.isEmpty(localMetadata.getBroadleafEnumeration()) && !localMetadata.getBroadleafEnumeration().equals(serverMetadata.getBroadleafEnumeration())) {
-                                    serverMetadata.setBroadleafEnumeration(localMetadata.getBroadleafEnumeration());
-                                    try {
-                                        setupBroadleafEnumeration(localMetadata.getBroadleafEnumeration(), serverMetadata);
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
+                                try {
+                                    BasicFieldMetadata serverMetadata = (BasicFieldMetadata) mergedProperties.get(key);
+                                    Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
+                                    String fieldName = serverMetadata.getName();
+                                    Field field = targetClass.getField(fieldName);
+                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                    temp.put(field.getName(), serverMetadata);
+                                    buildBasicMetadata(targetClass, temp, field, localMetadata);
+                                    mergedProperties.put(key, temp.get(field.getName()));
+                                    if (localMetadata.getExcluded() != null) {
+                                        serverMetadata.setExcluded(localMetadata.getExcluded());
                                     }
-                                }
-                                if (localMetadata.getReadOnly() != null) {
-                                    serverMetadata.setReadOnly(localMetadata.getReadOnly());
-                                }
-                                if (localMetadata.getExcluded() != null) {
-                                    serverMetadata.setExcluded(localMetadata.getExcluded());
-                                }
-                                if (isParentExcluded) {
-                                    serverMetadata.setExcluded(true);
-                                }
-                                if (localMetadata.getTooltip() != null) {
-                                    serverMetadata.setTooltip(localMetadata.getTooltip());
-                                }
-                                if (localMetadata.getHelpText() != null) {
-                                    serverMetadata.setHelpText(localMetadata.getHelpText());
-                                }
-                                if (localMetadata.getHint() != null) {
-                                    serverMetadata.setHint(localMetadata.getHint());
-                                }
-                                if (localMetadata.getLookupDisplayProperty() != null) {
-                                    serverMetadata.setLookupDisplayProperty(localMetadata.getLookupDisplayProperty());
-                                }
-                                if (localMetadata.getLookupParentDataSourceName() != null) {
-                                    serverMetadata.setLookupParentDataSourceName(localMetadata.getLookupParentDataSourceName());
-                                }
-                                if (localMetadata.getTargetDynamicFormDisplayId() != null) {
-                                    serverMetadata.setTargetDynamicFormDisplayId(localMetadata.getTargetDynamicFormDisplayId());
-                                }
-                                if (localMetadata.getRequiredOverride() != null) {
-                                    serverMetadata.setRequiredOverride(localMetadata.getRequiredOverride());
-                                }
-                                if (localMetadata.getValidationConfigurations() != null) {
-                                    serverMetadata.setValidationConfigurations(localMetadata.getValidationConfigurations());
-                                }
-                                if (localMetadata.getLength() != null) {
-                                    serverMetadata.setLength(localMetadata.getLength());
-                                }
-                                if (localMetadata.getUnique() != null) {
-                                    serverMetadata.setUnique(localMetadata.getUnique());
-                                }
-                                if (localMetadata.getScale() != null) {
-                                    serverMetadata.setScale(localMetadata.getScale());
-                                }
-                                if (localMetadata.getPrecision() != null) {
-                                    serverMetadata.setPrecision(localMetadata.getPrecision());
-                                }
-                                if (serverMetadata.getFieldType()==SupportedFieldType.DATA_DRIVEN_ENUMERATION) {
-                                    if (
-                                            (StringUtils.isEmpty(localMetadata.getOptionListEntity()) && StringUtils.isEmpty(serverMetadata.getOptionListEntity())) ||
-                                            (StringUtils.isEmpty(localMetadata.getOptionDisplayFieldName()) && StringUtils.isEmpty(serverMetadata.getOptionDisplayFieldName())) ||
-                                            (StringUtils.isEmpty(localMetadata.getOptionValueFieldName()) && StringUtils.isEmpty(serverMetadata.getOptionValueFieldName()))
-                                    ) {
-                                        throw new IllegalArgumentException("Problem setting up data driven enumeration for ("+propertyName+"). For SupportedFieldType of DATA_DRIVEN_ENUMERATION, the optionListEntity, optionValueFieldName and optionDisplayFieldName properties must all be filled out.");
+                                    if (isParentExcluded) {
+                                        serverMetadata.setExcluded(true);
                                     }
-                                }
-                                if (localMetadata.getOptionListEntity() != null) {
-                                    serverMetadata.setOptionListEntity(localMetadata.getOptionListEntity());
-                                }
-                                if (localMetadata.getOptionCanEditValues() != null) {
-                                    serverMetadata.setOptionCanEditValues(localMetadata.getOptionCanEditValues());
-                                }
-                                if (localMetadata.getOptionDisplayFieldName() != null) {
-                                    serverMetadata.setOptionDisplayFieldName(localMetadata.getOptionDisplayFieldName());
-                                }
-                                if (localMetadata.getOptionValueFieldName() != null) {
-                                    serverMetadata.setOptionValueFieldName(localMetadata.getOptionValueFieldName());
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
                                 }
                             }
                         }
@@ -1027,6 +944,19 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
     }
 
+    protected void buildAdminPresentationToOneLookupOverride(Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationToOneLookupOverride> presentationOverrides, String propertyName, String key) {
+        AdminPresentationToOneLookupOverride override = presentationOverrides.get(propertyName);
+        if (override != null) {
+            AdminPresentationToOneLookup annot = override.value();
+            if (annot != null) {
+                BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(key);
+                metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
+                metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
+                metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
+            }
+        }
+    }
+
     protected void buildAdminPresentationOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationOverride> presentationOverrides, String propertyName, String key) {
         AdminPresentationOverride override = presentationOverrides.get(propertyName);
         if (override != null) {
@@ -1072,7 +1002,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 metadata.setTooltip(annot.tooltip());
                 metadata.setHelpText(annot.helpText());
                 metadata.setHint(annot.hint());
-                metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
+                /*metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
                 metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
                 metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
 
@@ -1088,7 +1018,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 metadata.setOptionCanEditValues(annot.optionCanEditValues());
                 metadata.setOptionDisplayFieldName(annot.optionDisplayFieldName());
                 metadata.setOptionListEntity(annot.optionListEntity().getName());
-                metadata.setOptionValueFieldName(annot.optionValueFieldName());
+                metadata.setOptionValueFieldName(annot.optionValueFieldName());*/
 
                 metadata.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED);
                 if (annot.validationConfigurations().length != 0) {
@@ -1355,7 +1285,69 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             AdminPresentationAdornedTargetCollection adornedTargetCollection = field.getAnnotation(AdminPresentationAdornedTargetCollection.class);
             AdminPresentationMap map = field.getAnnotation(AdminPresentationMap.class);
 			if (annot != null) {
-                buildBasicMetadata(attributes, field, annot);
+                BasicFieldMetadataOverride override = new BasicFieldMetadataOverride();
+                override.setBroadleafEnumeration(annot.broadleafEnumeration());
+                override.setColumnWidth(annot.columnWidth());
+                override.setExplicitFieldType(annot.fieldType());
+                override.setFieldType(annot.fieldType());
+                override.setGroup(annot.group());
+                override.setGroupCollapsed(annot.groupCollapsed());
+                override.setGroupOrder(annot.groupOrder());
+                override.setHelpText(annot.helpText());
+                override.setHint(annot.hint());
+                override.setLargeEntry(annot.largeEntry());
+                override.setFriendlyName(annot.friendlyName());
+                override.setSecurityLevel(annot.securityLevel());
+                override.setOrder(annot.order());
+                override.setVisibility(annot.visibility());
+                override.setProminent(annot.prominent());
+                override.setReadOnly(annot.readOnly());
+                if (annot.validationConfigurations().length != 0) {
+                    ValidationConfiguration[] configurations = annot.validationConfigurations();
+                    for (ValidationConfiguration configuration : configurations) {
+                        ConfigurationItem[] items = configuration.configurationItems();
+                        Map<String, String> itemMap = new HashMap<String, String>();
+                        for (ConfigurationItem item : items) {
+                            itemMap.put(item.itemName(), item.itemValue());
+                        }
+                        override.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+                    }
+                }
+                if (annot.requiredOverride()!=RequiredOverride.IGNORED) {
+                    override.setRequiredOverride(annot.requiredOverride()==RequiredOverride.REQUIRED);
+                }
+                override.setExcluded(annot.excluded());
+                override.setTooltip(annot.tooltip());
+
+                //the following annotations are complimentary to AdminPresentation
+                AdminPresentationToOneLookup toOneLookup = field.getAnnotation(AdminPresentationToOneLookup.class);
+                if (toOneLookup != null) {
+                    override.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
+                    override.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
+                    override.setLookupDisplayProperty(toOneLookup.lookupDisplayProperty());
+                    override.setLookupParentDataSourceName(toOneLookup.lookupParentDataSourceName());
+                    override.setTargetDynamicFormDisplayId(toOneLookup.targetDynamicFormDisplayId());
+                }
+
+                AdminPresentationDataDrivenEnumeration dataDrivenEnumeration = field.getAnnotation(AdminPresentationDataDrivenEnumeration.class);
+                if (dataDrivenEnumeration != null) {
+                    override.setExplicitFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
+                    override.setFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
+                    override.setOptionCanEditValues(dataDrivenEnumeration.optionCanEditValues());
+                    override.setOptionDisplayFieldName(dataDrivenEnumeration.optionDisplayFieldName());
+                    if (!ArrayUtils.isEmpty(dataDrivenEnumeration.optionFilterParams())) {
+                        String[][] params = new String[dataDrivenEnumeration.optionFilterParams().length][2];
+                        for (int j=0;j<params.length;j++) {
+                            params[j][0] = dataDrivenEnumeration.optionFilterParams()[j].param();
+                            params[j][1] = dataDrivenEnumeration.optionFilterParams()[j].value();
+                        }
+                        override.setOptionFilterValues(params);
+                    }
+                    override.setOptionListEntity(dataDrivenEnumeration.optionListEntity().getName());
+                    override.setOptionValueFieldName(dataDrivenEnumeration.optionValueFieldName());
+                }
+
+                buildBasicMetadata(targetClass, attributes, field, override);
             } else if (annotColl != null) {
                 BasicCollectionMetadataOverride override = new BasicCollectionMetadataOverride();
                 override.setAddMethodType(annotColl.addType());
@@ -2040,59 +2032,172 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildBasicMetadata(Map<String, FieldMetadata> attributes, Field field, AdminPresentation annot) {
+    protected void buildBasicMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, BasicFieldMetadataOverride basicFieldMetadata) {
+        BasicFieldMetadata serverMetadata = (BasicFieldMetadata) attributes.get(field.getName());
+
         BasicFieldMetadata metadata = new BasicFieldMetadata();
         metadata.setName(field.getName());
-        metadata.setFriendlyName(annot.friendlyName());
-        metadata.setSecurityLevel(annot.securityLevel());
-        metadata.setVisibility(annot.visibility());
-        metadata.setOrder(annot.order());
-        metadata.setExplicitFieldType(annot.fieldType());
-        if (annot.fieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
+        metadata.setTargetClass(targetClass.getName());
+
+        if (serverMetadata != null && basicFieldMetadata.getFriendlyName() == null) {
+            metadata.setFriendlyName(serverMetadata.getFriendlyName());
+        } else {
+            metadata.setFriendlyName(basicFieldMetadata.getFriendlyName());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getSecurityLevel() == null) {
+            metadata.setSecurityLevel(serverMetadata.getSecurityLevel());
+        } else {
+            metadata.setSecurityLevel(basicFieldMetadata.getSecurityLevel());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getVisibility() == null) {
+            metadata.setVisibility(serverMetadata.getVisibility());
+        } else {
+            metadata.setVisibility(basicFieldMetadata.getVisibility());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getOrder() == null) {
+            metadata.setOrder(serverMetadata.getOrder());
+        } else {
+            metadata.setOrder(basicFieldMetadata.getOrder());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getExplicitFieldType() == null) {
+            metadata.setExplicitFieldType(serverMetadata.getExplicitFieldType());
+        } else {
+            metadata.setExplicitFieldType(basicFieldMetadata.getFieldType());
+        }
+        if (basicFieldMetadata.getFieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
             metadata.setExcluded(true);
         } else {
-            metadata.setExcluded(annot.excluded());
+            if (serverMetadata != null && basicFieldMetadata.getExcluded()==null) {
+                metadata.setExcluded(serverMetadata.getExcluded());
+            } else {
+                metadata.setExcluded(basicFieldMetadata.getExcluded());
+            }
         }
-        metadata.setGroup(annot.group());
-        metadata.setGroupOrder(annot.groupOrder());
-        metadata.setGroupCollapsed(annot.groupCollapsed());
-        metadata.setLargeEntry(annot.largeEntry());
-        metadata.setProminent(annot.prominent());
-        metadata.setColumnWidth(annot.columnWidth());
-        metadata.setBroadleafEnumeration(annot.broadleafEnumeration());
-        metadata.setReadOnly(annot.readOnly());
-        metadata.setTooltip(annot.tooltip());
-        metadata.setHelpText(annot.helpText());
-        metadata.setHint(annot.hint());
-        metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
-        metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
-        metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
-        if (annot.fieldType()==SupportedFieldType.DATA_DRIVEN_ENUMERATION) {
+        if (serverMetadata != null &&  basicFieldMetadata.getGroup()==null) {
+            metadata.setGroup(serverMetadata.getGroup());
+        } else {
+            metadata.setGroup(basicFieldMetadata.getGroup());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getGroupOrder()==null) {
+            metadata.setGroupOrder(serverMetadata.getGroupOrder());
+        } else {
+            metadata.setGroupOrder(basicFieldMetadata.getGroupOrder());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getGroupCollapsed()==null) {
+            metadata.setGroupCollapsed(serverMetadata.getGroupCollapsed());
+        } else {
+            metadata.setGroupCollapsed(basicFieldMetadata.getGroupCollapsed());
+        }
+        if (serverMetadata != null && basicFieldMetadata.isLargeEntry()==null) {
+            metadata.setLargeEntry(serverMetadata.isLargeEntry());
+        } else {
+            metadata.setLargeEntry(basicFieldMetadata.isLargeEntry());
+        }
+        if (serverMetadata != null && basicFieldMetadata.isProminent()==null) {
+            metadata.setProminent(serverMetadata.isProminent());
+        } else {
+            metadata.setProminent(basicFieldMetadata.isProminent());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getColumnWidth()==null) {
+            metadata.setColumnWidth(serverMetadata.getColumnWidth());
+        } else {
+            metadata.setColumnWidth(basicFieldMetadata.getColumnWidth());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getBroadleafEnumeration()==null) {
+            metadata.setBroadleafEnumeration(serverMetadata.getBroadleafEnumeration());
+        } else {
+            metadata.setBroadleafEnumeration(basicFieldMetadata.getBroadleafEnumeration());
+        }
+        if (!StringUtils.isEmpty(metadata.getBroadleafEnumeration()) && metadata.getFieldType()==SupportedFieldType.BROADLEAF_ENUMERATION) {
+            try {
+                setupBroadleafEnumeration(metadata.getBroadleafEnumeration(), metadata);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (serverMetadata != null && basicFieldMetadata.getReadOnly()==null) {
+            metadata.setReadOnly(serverMetadata.getReadOnly());
+        } else {
+            metadata.setReadOnly(basicFieldMetadata.getReadOnly());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getTooltip()==null) {
+            metadata.setTooltip(serverMetadata.getTooltip());
+        } else {
+            metadata.setTooltip(basicFieldMetadata.getTooltip());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getHelpText()==null) {
+            metadata.setHelpText(serverMetadata.getHelpText());
+        } else {
+            metadata.setHelpText(basicFieldMetadata.getHelpText());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getHint()==null) {
+            metadata.setHint(serverMetadata.getHint());
+        } else {
+            metadata.setHint(basicFieldMetadata.getHint());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getLookupDisplayProperty()==null) {
+            metadata.setLookupDisplayProperty(serverMetadata.getLookupDisplayProperty());
+        } else {
+            metadata.setLookupDisplayProperty(basicFieldMetadata.getLookupDisplayProperty());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getLookupParentDataSourceName()==null) {
+            metadata.setLookupParentDataSourceName(serverMetadata.getLookupParentDataSourceName());
+        } else {
+            metadata.setLookupParentDataSourceName(basicFieldMetadata.getLookupParentDataSourceName());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getTargetDynamicFormDisplayId()==null) {
+            metadata.setTargetDynamicFormDisplayId(serverMetadata.getTargetDynamicFormDisplayId());
+        } else {
+            metadata.setTargetDynamicFormDisplayId(basicFieldMetadata.getTargetDynamicFormDisplayId());
+        }
+        if (serverMetadata != null && basicFieldMetadata.getOptionListEntity()==null) {
+            metadata.setOptionListEntity(serverMetadata.getOptionListEntity());
+        } else {
+            metadata.setOptionListEntity(basicFieldMetadata.getOptionListEntity());
+        }
+        if (metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
+            metadata.setOptionValueFieldName("key");
+            metadata.setOptionDisplayFieldName("display");
+        } else if (metadata.getOptionListEntity() == null && (StringUtils.isEmpty(metadata.getOptionValueFieldName()) || StringUtils.isEmpty(metadata.getOptionDisplayFieldName()))) {
+            throw new IllegalArgumentException("Problem setting up data driven enumeration for ("+field.getName()+"). For SupportedFieldType of DATA_DRIVEN_ENUMERATION, the optionListEntity, optionValueFieldName and optionDisplayFieldName properties of @AdminPresentationDataDrivenEnumeration must all be filled out.");
+        } else {
+            if (serverMetadata != null && basicFieldMetadata.getOptionValueFieldName()==null) {
+                metadata.setOptionValueFieldName(serverMetadata.getOptionValueFieldName());
+            } else {
+                metadata.setOptionValueFieldName(basicFieldMetadata.getOptionValueFieldName());
+            }
+            if (serverMetadata != null &&  basicFieldMetadata.getOptionDisplayFieldName()==null) {
+                metadata.setOptionDisplayFieldName(serverMetadata.getOptionDisplayFieldName());
+            } else {
+                metadata.setOptionDisplayFieldName(basicFieldMetadata.getOptionDisplayFieldName());
+            }
+        }
+
+        /*if (override.fieldType()==SupportedFieldType.DATA_DRIVEN_ENUMERATION) {
             if (
-                    annot.optionListEntity()==void.class ||
-                    StringUtils.isEmpty(annot.optionValueFieldName()) ||
-                    StringUtils.isEmpty(annot.optionDisplayFieldName())
+                    override.optionListEntity()==void.class ||
+                    StringUtils.isEmpty(override.optionValueFieldName()) ||
+                    StringUtils.isEmpty(override.optionDisplayFieldName())
             ) {
                 throw new IllegalArgumentException("Problem setting up data driven enumeration for ("+field.getName()+"). For SupportedFieldType of DATA_DRIVEN_ENUMERATION, the optionListEntity, optionValueFieldName and optionDisplayFieldName properties of @AdminPresentation must all be filled out.");
             }
         }
-        metadata.setOptionCanEditValues(annot.optionCanEditValues());
-        metadata.setOptionDisplayFieldName(annot.optionDisplayFieldName());
-        metadata.setOptionListEntity(annot.optionListEntity().getName());
-        metadata.setOptionValueFieldName(annot.optionValueFieldName());
-        metadata.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED);
-        if (annot.validationConfigurations().length != 0) {
-            ValidationConfiguration[] configurations = annot.validationConfigurations();
-            for (ValidationConfiguration configuration : configurations) {
-                ConfigurationItem[] items = configuration.configurationItems();
-                Map<String, String> itemMap = new HashMap<String, String>();
-                for (ConfigurationItem item : items) {
-                    itemMap.put(item.itemName(), item.itemValue());
-                }
-                metadata.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
-            }
+        metadata.setOptionCanEditValues(override.optionCanEditValues());
+        metadata.setOptionDisplayFieldName(override.optionDisplayFieldName());
+        metadata.setOptionListEntity(override.optionListEntity().getName());
+        metadata.setOptionValueFieldName(override.optionValueFieldName());*/
+        if (serverMetadata != null && basicFieldMetadata.getRequiredOverride()==null) {
+            metadata.setRequiredOverride(serverMetadata.getRequiredOverride());
+        } else {
+            metadata.setRequiredOverride(basicFieldMetadata.getRequiredOverride());
         }
+        if (serverMetadata != null && basicFieldMetadata.getValidationConfigurations()==null) {
+            metadata.setValidationConfigurations(serverMetadata.getValidationConfigurations());
+        } else {
+            metadata.setValidationConfigurations(basicFieldMetadata.getValidationConfigurations());
+        }
+
         attributes.put(field.getName(), metadata);
     }
 

@@ -1,16 +1,13 @@
 package org.broadleafcommerce.common.enumeration.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 public interface DataDrivenEnumeration extends Serializable {
     
     public Long getId();
 
     public void setId(Long id);
-
-    public DataDrivenEnumeration getType();
-
-    public void setType(DataDrivenEnumeration type);
 
     public String getKey();
 
@@ -20,12 +17,12 @@ public interface DataDrivenEnumeration extends Serializable {
 
     public void setDisplay(String display);
 
-    public Boolean getHidden();
-
-    public void setHidden(Boolean hidden);
-
     public Boolean getModifiable();
 
     public void setModifiable(Boolean modifiable);
+
+    public List<DataDrivenEnumerationValue> getOrderItems();
+
+    public void setOrderItems(List<DataDrivenEnumerationValue> orderItems);
 
 }

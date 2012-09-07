@@ -1,11 +1,18 @@
 package org.broadleafcommerce.common.presentation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Represents a single key value presented to a user in a selectable
  * list when editing a map value in the admin tool
  *
  * @author Jeff Fischer
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
 public @interface AdminPresentationMapKey {
 
     /**

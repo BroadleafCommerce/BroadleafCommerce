@@ -30,10 +30,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface AdminPresentationOverrides {
 
-	/**
-	 * 
-	 * @return one or more AdminPresentationOverride
-	 */
 	AdminPresentationOverride[] value() default {};
 
     AdminPresentationCollectionOverride[] collections() default {};
@@ -42,4 +38,7 @@ public @interface AdminPresentationOverrides {
 
     AdminPresentationMapOverride[] maps() default {};
 
+    AdminPresentationToOneLookupOverride[] toOneLookups() default{};
+
+    AdminPresentationDataDrivenEnumerationOverride[] dataDrivenEnums() default{};
 }
