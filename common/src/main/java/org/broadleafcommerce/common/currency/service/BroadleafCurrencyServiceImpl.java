@@ -2,6 +2,7 @@ package org.broadleafcommerce.common.currency.service;
 
 import org.broadleafcommerce.common.currency.dao.BroadleafCurrencyDao;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.List;
  * Author: jerryocanas
  * Date: 9/6/12
  */
+
+@Service("blCurrencyService")
 public class BroadleafCurrencyServiceImpl implements BroadleafCurrencyService {
 
     @Resource(name="blCurrencyDao")

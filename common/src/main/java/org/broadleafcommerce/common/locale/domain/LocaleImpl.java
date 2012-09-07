@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.locale.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -53,6 +54,10 @@ public class LocaleImpl implements Locale {
     @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order=3, group = "LocaleImpl_Details", prominent=true)
     protected Boolean defaultFlag;
 
+    @Column(name = "DEFAULT_CURRENCY")
+    @AdminPresentation(friendlyName = "LocaleImpl_Name", order=2, group = "LocaleImpl_Details", prominent=true)
+    protected BroadleafCurrency defaultCurrency;
+
     @Override
     public String getLocaleCode() {
         return localeCode;
@@ -81,6 +86,16 @@ public class LocaleImpl implements Locale {
     @Override
     public Boolean getDefaultFlag() {
         return defaultFlag;
+    }
+
+    @Override
+    public BroadleafCurrency getDefaultCurrency() {
+        return defaultCurrency;
+    }
+
+    @Override
+    public void setDefaultCurrency(BroadleafCurrency defaultCurrency) {
+        this.defaultCurrency = defaultCurrency;
     }
 
     @Override

@@ -16,22 +16,18 @@
 
 package org.broadleafcommerce.common.money;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Currency;
-import java.util.Locale;
+import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Currency;
+import java.util.Locale;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
@@ -368,6 +364,13 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
             CurrencyConsiderationContext.getCurrencyDeterminationService() != null
         ) {
             return Currency.getInstance(CurrencyConsiderationContext.getCurrencyDeterminationService().getCurrencyCode(CurrencyConsiderationContext.getCurrencyConsiderationContext()));
+        }
+
+        // Check the BLC Thread
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+
+        if (brc != null && brc.getBroadleafCurrency() != null) {
+            return Currency.getInstance(brc.getBroadleafCurrency().getCurrencyCode());
         }
         if (System.getProperty("currency.default") != null) {
             return Currency.getInstance(System.getProperty("currency.default"));

@@ -14,31 +14,20 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.locale.domain;
+package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 
-import java.io.Serializable;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by jfischer
+ * Author: jerryocanas
+ * Date: 9/6/12
  */
-public interface Locale extends Serializable {
 
-    String getLocaleCode();
-
-    void setLocaleCode(String localeCode);
-
-    public String getFriendlyName();
-
-    public void setFriendlyName(String friendlyName);
-
-    public void setDefaultFlag(Boolean defaultFlag);
-
-    public Boolean getDefaultFlag();
-
-    public BroadleafCurrency getDefaultCurrency();
-
-    public void setDefaultCurrency(BroadleafCurrency currency);
-
+/**
+ * Responsible for returning the currency to use for the current request.
+ */
+public interface BroadleafCurrencyResolver {
+    public BroadleafCurrency resolveCurrency(HttpServletRequest request);
 }

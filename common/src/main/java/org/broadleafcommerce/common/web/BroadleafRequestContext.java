@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.web;
 
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
@@ -42,6 +43,7 @@ public class BroadleafRequestContext {
     private HttpServletResponse response;
     private SandBox sandbox;
     private Locale locale;
+    private BroadleafCurrency broadleafCurrency;
     private Site site;
     private Theme theme;
     public java.util.Locale javaLocale;
@@ -99,7 +101,7 @@ public class BroadleafRequestContext {
     }
 
     public String getRequestURIWithoutContext() {
-    	String requestURIWithoutContext; 
+    	String requestURIWithoutContext;
     	
     	if (request.getContextPath() != null) {
     		requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
@@ -153,5 +155,13 @@ public class BroadleafRequestContext {
 
     public void setTheme(Theme theme) {
         this.theme = theme;
+    }
+
+    public BroadleafCurrency getBroadleafCurrency() {
+        return broadleafCurrency;
+    }
+
+    public void setBroadleafCurrency(BroadleafCurrency broadleafCurrency) {
+        this.broadleafCurrency = broadleafCurrency;
     }
 }
