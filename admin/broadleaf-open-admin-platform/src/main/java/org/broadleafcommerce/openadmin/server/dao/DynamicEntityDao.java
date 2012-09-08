@@ -23,10 +23,6 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.override.AdornedTargetCollectionMetadataOverride;
-import org.broadleafcommerce.openadmin.client.dto.override.BasicCollectionMetadataOverride;
-import org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride;
-import org.broadleafcommerce.openadmin.client.dto.override.MapMetadataOverride;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.Criteria;
 import org.hibernate.mapping.PersistentClass;
@@ -34,6 +30,7 @@ import org.hibernate.type.Type;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -101,20 +98,6 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
     public Criteria createCriteria(Class<?> entityClass);
 
-    public Map<String, Map<String, Map<String, BasicFieldMetadataOverride>>> getFieldMetadataOverrides();
-
-    public void setFieldMetadataOverrides(Map<String, Map<String, Map<String, BasicFieldMetadataOverride>>> metadataOverrides);
-
-    public Map<String, Map<String, Map<String, MapMetadataOverride>>> getMapMetadataOverrides();
-
-    public void setMapMetadataOverrides(Map<String, Map<String, Map<String, MapMetadataOverride>>> mapMetadataOverrides);
-
-    public Map<String, Map<String, Map<String, AdornedTargetCollectionMetadataOverride>>> getAdornedTargetCollectionMetadataOverrides();
-
-    public void setAdornedTargetCollectionMetadataOverrides(Map<String, Map<String, Map<String, AdornedTargetCollectionMetadataOverride>>> adornedTargetCollectionMetadataOverrides);
-
-    public Map<String, Map<String, Map<String, BasicCollectionMetadataOverride>>> getCollectionMetadataOverrides();
-
-    public void setCollectionMetadataOverrides(Map<String, Map<String, Map<String, BasicCollectionMetadataOverride>>> collectionMetadataOverrides);
+    public Field[] getAllFields(Class<?> targetClass);
 
 }

@@ -16,15 +16,15 @@ import java.lang.annotation.Target;
 public @interface AdminPresentationMapKey {
 
     /**
-     * A simple name for this key
+     * <p>A simple name for this key</p>
      *
      * @return the simple name
      */
     String keyName();
 
     /**
-     * The friendly name to present to a user for this value field title in a GUI. If supporting i18N,
-     * the friendly name may be a key to retrieve a localized friendly name using
+     * <p>The friendly name to present to a user for this value field title in a GUI. If supporting i18N,
+     * the friendly name may be a key to retrieve a localized friendly name using</p>
      * the GWT support for i18N.
      *
      * @return The friendly name

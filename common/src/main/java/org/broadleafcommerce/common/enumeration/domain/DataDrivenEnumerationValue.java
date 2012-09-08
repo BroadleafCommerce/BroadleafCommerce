@@ -8,9 +8,9 @@ public interface DataDrivenEnumerationValue {
 
     void setDisplay(String display);
 
-    public Boolean getVisible();
+    public Boolean getHidden();
 
-    public void setVisible(Boolean visible);
+    public void setHidden(Boolean hidden);
 
     Long getId();
 

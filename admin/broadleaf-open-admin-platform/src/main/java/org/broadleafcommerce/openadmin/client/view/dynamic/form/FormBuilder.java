@@ -656,24 +656,45 @@ public class FormBuilder {
 				}
 			});
 			break;
-		case BROADLEAF_ENUMERATION:
-			formItem = new SelectItem();
-			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-			String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
-			for (String[] enumerationValue : enumerationValues) {
-				valueMap.put(enumerationValue[0], enumerationValue[1]);
-			}
-			formItem.setValueMap(valueMap);
-			break;
-        case EXPLICIT_ENUMERATION:
-			formItem = new SelectItem();
-			LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
-			String[][] enumerationValues2 = (String[][]) field.getAttributeAsObject("enumerationValues");
-			for (String[] element : enumerationValues2) {
-				valueMap2.put(element[0], element[1]);
-			}
-			formItem.setValueMap(valueMap2);
-			break;
+		case BROADLEAF_ENUMERATION:{
+            if (field.getAttributeAsBoolean("canEditEnumeration")) {
+                formItem = new ComboBoxItem();
+            } else {
+                formItem = new SelectItem();
+            }
+            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+            String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
+            for (String[] enumerationValue : enumerationValues) {
+                valueMap.put(enumerationValue[0], enumerationValue[1]);
+            }
+            formItem.setValueMap(valueMap);
+			break;}
+        case EXPLICIT_ENUMERATION:{
+            if (field.getAttributeAsBoolean("canEditEnumeration")) {
+                formItem = new ComboBoxItem();
+            } else {
+                formItem = new SelectItem();
+            }
+            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+            String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
+            for (String[] enumerationValue : enumerationValues) {
+                valueMap.put(enumerationValue[0], enumerationValue[1]);
+            }
+            formItem.setValueMap(valueMap);
+            break;}
+        case DATA_DRIVEN_ENUMERATION:{
+            if (field.getAttributeAsBoolean("canEditEnumeration")) {
+                formItem = new ComboBoxItem();
+            } else {
+                formItem = new SelectItem();
+            }
+            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+            String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
+            for (String[] enumerationValue : enumerationValues) {
+                valueMap.put(enumerationValue[0], enumerationValue[1]);
+            }
+            formItem.setValueMap(valueMap);
+            break;}
 		case EMPTY_ENUMERATION:
 			formItem = new SelectItem();
 			break;

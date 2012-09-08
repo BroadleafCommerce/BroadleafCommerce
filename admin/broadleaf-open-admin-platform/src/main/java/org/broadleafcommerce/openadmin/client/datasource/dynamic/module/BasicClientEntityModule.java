@@ -46,7 +46,7 @@ import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
@@ -896,6 +896,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                         String columnWidth = metadata.getColumnWidth();
                         String[][] enumerationValues = metadata.getEnumerationValues();
                         String enumerationClass = metadata.getEnumerationClass();
+                        Boolean canEditEnumeration = metadata.getOptionCanEditValues()!=null && metadata.getOptionCanEditValues();
                         if (mutable) {
                             Boolean isReadOnly = metadata.getReadOnly();
                             if (isReadOnly != null) {
@@ -987,47 +988,81 @@ public class BasicClientEntityModule implements DataSourceModule {
                             }
                             //field.setValidOperators(getBasicNumericOperators());
                             break;}
-                        case BROADLEAF_ENUMERATION:
-                            field = new DataSourceEnumField(propertyName, friendlyName);
-                            field.setCanEdit(mutable);
-                            field.setRequired(required);
-                            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-                            for (int j=0; j<enumerationValues.length; j++) {
-                                valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
+                        case BROADLEAF_ENUMERATION:{
+                            if (canEditEnumeration) {
+                                field = new DataSourceTextField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                ComboBoxItem item = new ComboBoxItem();
+                                item.setDefaultToFirstOption(true);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                item.setValueMap(valueMap);
+                                field.setEditorType(item);
+                            } else {
+                                field = new DataSourceEnumField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
                             }
-                            field.setValueMap(valueMap);
                             //field.setValidOperators(getBasicEnumerationOperators());
-                            break;
-                        case EXPLICIT_ENUMERATION:
-                            field = new DataSourceEnumField(propertyName, friendlyName);
-                            field.setCanEdit(mutable);
-                            field.setRequired(required);
-                            LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
-                            for (int j=0; j<enumerationValues.length; j++) {
-                                valueMap2.put(enumerationValues[j][0], enumerationValues[j][1]);
+                            break;}
+                        case EXPLICIT_ENUMERATION:{
+                            if (canEditEnumeration) {
+                                field = new DataSourceTextField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                ComboBoxItem item = new ComboBoxItem();
+                                item.setDefaultToFirstOption(true);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                item.setValueMap(valueMap);
+                                field.setEditorType(item);
+                            } else {
+                                field = new DataSourceEnumField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
                             }
-                            field.setValueMap(valueMap2);
                             //field.setValidOperators(getBasicEnumerationOperators());
-                            break;
-                        case DATA_DRIVEN_ENUMERATION:
-                            field = new DataSourceTextField(propertyName, friendlyName);
-                            field.setCanEdit(mutable);
-                            field.setRequired(required);
-                            SelectItem item = new SelectItem();
-                            item.setShowOptionsFromDataSource(true);
-                            //item.setOptionDataSource();
-                            item.setDisplayField(metadata.getOptionDisplayFieldName());
-                            item.setValueField(metadata.getOptionValueFieldName());
-                            //TODO do a property synchronization manager for each iteration of these properties
-                            //that will allow me to immediately create the datasource and execute
-                            //a callback to make the manager progress to the next iteration.
-                            item.setAutoFetchData(false);
-                            item.setDefaultToFirstOption(true);
-                            //TODO populate the option datasource
-
-                            field.setEditorType(item);
+                            break;}
+                        case DATA_DRIVEN_ENUMERATION:{
+                            if (canEditEnumeration) {
+                                field = new DataSourceTextField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                ComboBoxItem item = new ComboBoxItem();
+                                item.setDefaultToFirstOption(true);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                item.setValueMap(valueMap);
+                                field.setEditorType(item);
+                            } else {
+                                field = new DataSourceEnumField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
+                            }
                             //field.setValidOperators(getBasicEnumerationOperators());
-                            break;
+                            break;}
                         case PASSWORD:
                             field = new DataSourcePasswordField(propertyName, friendlyName);
                             field.setCanEdit(mutable);
@@ -1105,12 +1140,10 @@ public class BasicClientEntityModule implements DataSourceModule {
                         if (enumerationValues != null) {
                             field.setAttribute("enumerationValues", enumerationValues);
                         }
-                        if (enumerationValues != null) {
-                            field.setAttribute("enumerationValues", enumerationValues);
-                        }
                         if (enumerationClass != null) {
                             field.setAttribute("enumerationClass", enumerationClass);
                         }
+                        field.setAttribute("canEditEnumeration", canEditEnumeration);
                         if (isDirty != null) {
                             field.setAttribute("isEdited", isDirty);
                         } else {

@@ -47,9 +47,9 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     @Column(name = "DISPLAY")
     protected String display;
 
-    @Column(name = "VISIBLE")
-    @Index(name = "VISIBLE_INDEX", columnNames = {"VISIBLE"})
-    protected Boolean visible;
+    @Column(name = "HIDDEN")
+    @Index(name = "HIDDEN_INDEX", columnNames = {"HIDDEN"})
+    protected Boolean hidden;
 
     @Override
     public String getDisplay() {
@@ -62,13 +62,13 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     }
 
     @Override
-    public Boolean getVisible() {
-        return visible;
+    public Boolean getHidden() {
+        return hidden;
     }
 
     @Override
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
     }
 
     @Override

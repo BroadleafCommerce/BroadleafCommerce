@@ -35,11 +35,11 @@ import java.lang.annotation.Target;
 public @interface AdminPresentation {
 	
 	/**
-     * Optional - only required if you want to display a friendly name to the user
+     * <p>Optional - only required if you want to display a friendly name to the user</p>
      *
-	 * The friendly name to present to a user for this field in a GUI. If supporting i18N,
+	 * <p><The friendly name to present to a user for this field in a GUI. If supporting i18N,
 	 * the friendly name may be a key to retrieve a localized friendly name using
-	 * the GWT support for i18N.
+	 * the GWT support for i18N.</p>
 	 *
 	 * @return the friendly name
 	 */

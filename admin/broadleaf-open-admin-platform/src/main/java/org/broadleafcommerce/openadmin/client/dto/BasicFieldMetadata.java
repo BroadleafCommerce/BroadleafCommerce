@@ -52,7 +52,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String optionValueFieldName;
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
-    private String[][] optionFilterParams;
+    private Object[][] optionFilterParams;
 
     //temporary fields
     private String targetClass;
@@ -361,11 +361,11 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.optionValueFieldName = optionValueFieldName;
     }
 
-    public String[][] getOptionFilterParams() {
+    public Object[][] getOptionFilterParams() {
         return optionFilterParams;
     }
 
-    public void setOptionFilterParams(String[][] optionFilterParams) {
+    public void setOptionFilterParams(Object[][] optionFilterParams) {
         this.optionFilterParams = optionFilterParams;
     }
 
