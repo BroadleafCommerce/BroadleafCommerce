@@ -10,6 +10,13 @@
         </query>
 	</named-query>
 
+    <named-query name="BC_READ_CURRENCY_BY_CODE" >
+        <query>SELECT currency
+            FROM org.broadleafcommerce.common.currency.domain.BroadleafCurrency currency
+            WHERE currency.currencyCode = :currencyCode
+        </query>
+    </named-query>
+
     <named-query name="BC_READ_ALL_CURRENCIES" >
 		<query>SELECT currency
             FROM org.broadleafcommerce.common.currency.domain.BroadleafCurrency currency

@@ -2,6 +2,7 @@ package org.broadleafcommerce.common.currency.service;
 
 import org.broadleafcommerce.common.currency.dao.BroadleafCurrencyDao;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,6 +26,14 @@ public class BroadleafCurrencyServiceImpl implements BroadleafCurrencyService {
     @Override
     public BroadleafCurrency findDefaultBroadleafCurrency() {
         return currencyDao.findDefaultBroadleafCurrency();
+    }
+
+    /**
+     * @return The currency for the passed in code
+     */
+    @Override
+    public BroadleafCurrency findCurrencyByCode(String currencyCode) {
+        return currencyDao.findCurrencyByCode(currencyCode);
     }
 
     /**

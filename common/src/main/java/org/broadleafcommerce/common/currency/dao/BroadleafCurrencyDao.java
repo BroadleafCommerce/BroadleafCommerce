@@ -17,6 +17,12 @@ public interface BroadleafCurrencyDao {
     public BroadleafCurrency findDefaultBroadleafCurrency();
 
     /**
+     * Returns a Broadleaf currency found by a code
+     * @return The currency
+     */
+    public BroadleafCurrency findCurrencyByCode(String currencyCode);
+
+    /**
      * Returns a list of all the Broadleaf Currencies
      * @return List of currencies
      */
