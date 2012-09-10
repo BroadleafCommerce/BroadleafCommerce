@@ -45,7 +45,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_FULFILLMENT_OPTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(friendlyName = "Base Fulfillment Option")
-public abstract class FulfillmentOptionImpl implements FulfillmentOption {
+public class FulfillmentOptionImpl implements FulfillmentOption {
 
     private static final long serialVersionUID = 1L;
 
