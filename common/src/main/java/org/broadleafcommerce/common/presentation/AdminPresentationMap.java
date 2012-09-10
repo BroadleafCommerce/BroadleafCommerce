@@ -62,14 +62,13 @@ public @interface AdminPresentationMap {
     boolean excluded() default false;
 
     /**
-     * <p>Optional - only required if the collection grid UI
-     * should be in read only mode</p>
+     * Optional - only required if you want to make the field immutable
      *
-     * <p>Whether or not the collection can be edited</p>
+     * Explicityly specify whether or not this field is mutable.
      *
-     * @return Whether or not the collection can be edited
+     * @return whether or not this field is read only
      */
-    boolean mutable() default true;
+    boolean readOnly() default false;
 
     /**
      * <p>Optional - only required if you want to specify ordering for this field</p>

@@ -88,7 +88,7 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
     public void setEntityConfiguration(EntityConfiguration entityConfiguration);
 
-    public Map<String, Class<?>> getIdMetadata(Class<?> entityClass);
+    public Map<String, Object> getIdMetadata(Class<?> entityClass);
 
     public List<Type> getPropertyTypes(Class<?> entityClass);
 

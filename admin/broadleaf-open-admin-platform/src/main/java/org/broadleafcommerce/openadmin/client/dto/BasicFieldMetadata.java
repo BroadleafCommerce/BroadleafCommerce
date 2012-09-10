@@ -4,6 +4,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String optionValueFieldName;
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
-    private Object[][] optionFilterParams;
+    private Serializable[][] optionFilterParams;
 
     //temporary fields
     private String targetClass;
@@ -361,11 +362,11 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.optionValueFieldName = optionValueFieldName;
     }
 
-    public Object[][] getOptionFilterParams() {
+    public Serializable[][] getOptionFilterParams() {
         return optionFilterParams;
     }
 
-    public void setOptionFilterParams(Object[][] optionFilterParams) {
+    public void setOptionFilterParams(Serializable[][] optionFilterParams) {
         this.optionFilterParams = optionFilterParams;
     }
 

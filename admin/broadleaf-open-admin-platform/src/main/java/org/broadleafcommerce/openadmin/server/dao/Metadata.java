@@ -40,10 +40,7 @@ import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
-import org.broadleafcommerce.openadmin.client.dto.override.AdornedTargetCollectionMetadataOverride;
-import org.broadleafcommerce.openadmin.client.dto.override.BasicCollectionMetadataOverride;
-import org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride;
-import org.broadleafcommerce.openadmin.client.dto.override.MapMetadataOverride;
+import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
@@ -51,12 +48,13 @@ import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
 import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -70,21 +68,12 @@ import java.util.TreeMap;
 /**
  * @author Jeff Fischer
  */
-@Service("blMetadataTranslation")
+@Component("blMetadata")
 @Scope("prototype")
-public class MetadataTranslation {
+public class Metadata {
 
     @Resource(name="blMetadataOverrides")
-    protected Map<String, Map<String, Map<String, BasicFieldMetadataOverride>>> fieldMetadataOverrides;
-
-    @Resource(name="blCollectionMetadataOverrides")
-    protected Map<String, Map<String, Map<String, BasicCollectionMetadataOverride>>> collectionMetadataOverrides;
-
-    @Resource(name="blAdornedTargetCollectionMetadataOverrides")
-    protected Map<String, Map<String, Map<String, AdornedTargetCollectionMetadataOverride>>> adornedTargetCollectionMetadataOverrides;
-
-    @Resource(name="blMapMetadataOverrides")
-    protected Map<String, Map<String, Map<String, MapMetadataOverride>>> mapMetadataOverrides;
+    protected Map<String, Map<String, FieldMetadataOverride>> metadataOverrides;
 
     public Map<String, FieldMetadata> getFieldPresentationAttributes(Class<?> targetClass, DynamicEntityDao dynamicEntityDao) {
         Map<String, FieldMetadata> attributes = new HashMap<String, FieldMetadata>();
@@ -95,16 +84,16 @@ public class MetadataTranslation {
             AdminPresentationAdornedTargetCollection adornedTargetCollection = field.getAnnotation(AdminPresentationAdornedTargetCollection.class);
             AdminPresentationMap map = field.getAnnotation(AdminPresentationMap.class);
             if (annot != null) {
-                BasicFieldMetadataOverride override = constructBasicMetadataOverride(field);
+                FieldMetadataOverride override = constructBasicMetadataOverride(field);
                 buildBasicMetadata(targetClass, attributes, field, override, dynamicEntityDao);
             } else if (annotColl != null) {
-                BasicCollectionMetadataOverride override = constructBasicCollectionMetadataOverride(field);
+                FieldMetadataOverride override = constructBasicCollectionMetadataOverride(field);
                 buildCollectionMetadata(targetClass, attributes, field, override);
             } else if (adornedTargetCollection != null) {
-                AdornedTargetCollectionMetadataOverride override = constructAdornedTargetCollectionMetadataOverride(field);
+                FieldMetadataOverride override = constructAdornedTargetCollectionMetadataOverride(field);
                 buildAdornedTargetCollectionMetadata(targetClass, attributes, field, override);
             } else if (map != null) {
-                MapMetadataOverride override = constructMapMetadataOverride(field);
+                FieldMetadataOverride override = constructMapMetadataOverride(field);
                 buildMapMetadata(targetClass, attributes, field, override, dynamicEntityDao);
             } else {
                 BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -115,11 +104,155 @@ public class MetadataTranslation {
         }
         return attributes;
     }
+    
+    public Map<String, FieldMetadata> overrideMetadata(Class<?>[] entities, PropertyBuilder propertyBuilder, String prefix, Boolean isParentExcluded, String ceilingEntityFullyQualifiedClassname, String configurationKey, DynamicEntityDao dynamicEntityDao) {
+        Boolean classAnnotatedPopulateManyToOneFields = null;
+        Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
+        Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new HashMap<String, AdminPresentationToOneLookupOverride>();
+        Map<String, AdminPresentationDataDrivenEnumerationOverride> presentationDataDrivenEnumerationOverrides = new HashMap<String, AdminPresentationDataDrivenEnumerationOverride>();
+        Map<String, AdminPresentationMapOverride> presentationMapOverrides = new HashMap<String, AdminPresentationMapOverride>();
+        Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
+        Map<String, AdminPresentationAdornedTargetCollectionOverride> presentationAdornedTargetCollectionOverrides = new HashMap<String, AdminPresentationAdornedTargetCollectionOverride>();
 
-    protected MapMetadataOverride constructMapMetadataOverride(Field field) {
+        //go in reverse order since I want the lowest subclass override to come last to guarantee that it takes effect
+        for (int i = entities.length-1;i >= 0; i--) {
+            AdminPresentationOverrides myOverrides = entities[i].getAnnotation(AdminPresentationOverrides.class);
+            if (myOverrides != null) {
+                for (AdminPresentationOverride myOverride : myOverrides.value()) {
+                    presentationOverrides.put(myOverride.name(), myOverride);
+                }
+                for (AdminPresentationToOneLookupOverride myOverride : myOverrides.toOneLookups()) {
+                    presentationToOneLookupOverrides.put(myOverride.name(), myOverride);
+                }
+                for (AdminPresentationMapOverride myOverride : myOverrides.maps()) {
+                    presentationMapOverrides.put(myOverride.name(), myOverride);
+                }
+                for (AdminPresentationCollectionOverride myOverride : myOverrides.collections()) {
+                    presentationCollectionOverrides.put(myOverride.name(), myOverride);
+                }
+                for (AdminPresentationAdornedTargetCollectionOverride myOverride : myOverrides.adornedTargetCollections()) {
+                    presentationAdornedTargetCollectionOverrides.put(myOverride.name(), myOverride);
+                }
+                for (AdminPresentationDataDrivenEnumerationOverride myOverride : myOverrides.dataDrivenEnums()) {
+                    presentationDataDrivenEnumerationOverrides.put(myOverride.name(), myOverride);
+                }
+            }
+            AdminPresentationClass adminPresentationClass = entities[i].getAnnotation(AdminPresentationClass.class);
+            if (adminPresentationClass != null && classAnnotatedPopulateManyToOneFields == null && adminPresentationClass.populateToOneFields() != PopulateToOneFieldsEnum.NOT_SPECIFIED) {
+                classAnnotatedPopulateManyToOneFields = adminPresentationClass.populateToOneFields()==PopulateToOneFieldsEnum.TRUE;
+            }
+        }
+
+        Map<String, FieldMetadata> mergedProperties = propertyBuilder.execute(classAnnotatedPopulateManyToOneFields);
+
+        for (String propertyName : presentationOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.equals(propertyName)) {
+                    buildAdminPresentationOverride(prefix, isParentExcluded, mergedProperties, presentationOverrides, propertyName, key, dynamicEntityDao);
+                    buildAdminPresentationToOneLookupOverride(mergedProperties, presentationToOneLookupOverrides, propertyName, key);
+                    buildAdminPresentationDataDrivenEnumerationOverride(mergedProperties, presentationDataDrivenEnumerationOverrides, propertyName, key, dynamicEntityDao);
+                    buildAdminPresentationCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationCollectionOverrides, propertyName, key);
+                    buildAdminPresentationAdornedTargetCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationAdornedTargetCollectionOverrides, propertyName, key);
+                    buildAdminPresentationMapOverride(prefix, isParentExcluded, mergedProperties, presentationMapOverrides, propertyName, key);
+                }
+            }
+        }
+
+        applyMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties, dynamicEntityDao);
+        applyCollectionMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
+        applyAdornedTargetCollectionMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
+        applyMapMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
+
+        return mergedProperties;
+    }
+
+    public FieldMetadata getFieldMetadata(
+        String prefix,
+        String propertyName,
+        List<Property> componentProperties,
+        SupportedFieldType type,
+        Type entityType,
+        Class<?> targetClass,
+        FieldMetadata presentationAttribute,
+        MergedPropertyType mergedPropertyType,
+        DynamicEntityDao dynamicEntityDao
+    ) {
+        return getFieldMetadata(prefix, propertyName, componentProperties, type, null, entityType, targetClass, presentationAttribute, mergedPropertyType, dynamicEntityDao);
+    }
+
+    public FieldMetadata getFieldMetadata(
+        String prefix,
+        final String propertyName,
+        final List<Property> componentProperties,
+        final SupportedFieldType type,
+        final SupportedFieldType secondaryType,
+        final Type entityType,
+        Class<?> targetClass,
+        final FieldMetadata presentationAttribute,
+        final MergedPropertyType mergedPropertyType,
+        final DynamicEntityDao dynamicEntityDao
+    ) {
+        presentationAttribute.setInheritedFromType(targetClass.getName());
+        presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
+        presentationAttribute.accept(new MetadataVisitorAdapter() {
+            @Override
+            public void visit(BasicFieldMetadata metadata) {
+                BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) presentationAttribute;
+                fieldMetadata.setFieldType(type);
+                fieldMetadata.setSecondaryType(secondaryType);
+                if (entityType != null && !entityType.isCollectionType()) {
+                    Column column = null;
+                    for (Property property : componentProperties) {
+                        if (property.getName().equals(propertyName)) {
+                            column = (Column) property.getColumnIterator().next();
+                            break;
+                        }
+                    }
+                    if (column != null) {
+                        fieldMetadata.setLength(column.getLength());
+                        fieldMetadata.setScale(column.getScale());
+                        fieldMetadata.setPrecision(column.getPrecision());
+                        fieldMetadata.setRequired(!column.isNullable());
+                        fieldMetadata.setUnique(column.isUnique());
+                    }
+                    fieldMetadata.setForeignKeyCollection(false);
+                } else {
+                    fieldMetadata.setForeignKeyCollection(true);
+                }
+                fieldMetadata.setMutable(true);
+                fieldMetadata.setMergedPropertyType(mergedPropertyType);
+                if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(type)) {
+                    try {
+                        setupBroadleafEnumeration(fieldMetadata.getBroadleafEnumeration(), fieldMetadata, dynamicEntityDao);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void visit(BasicCollectionMetadata metadata) {
+                //do nothing
+            }
+
+            @Override
+            public void visit(AdornedTargetCollectionMetadata metadata) {
+                //do nothing
+            }
+
+            @Override
+            public void visit(MapMetadata metadata) {
+                //do nothing
+            }
+        });
+
+        return presentationAttribute;
+    }
+
+    protected FieldMetadataOverride constructMapMetadataOverride(Field field) {
         AdminPresentationMap map = field.getAnnotation(AdminPresentationMap.class);
         if (map != null) {
-            MapMetadataOverride override = new MapMetadataOverride();
+            FieldMetadataOverride override = new FieldMetadataOverride();
             override.setConfigurationKey(map.configurationKey());
             override.setDeleteEntityUponRemove(map.deleteEntityUponRemove());
             override.setKeyClass(map.keyClass().getName());
@@ -143,7 +276,7 @@ public class MetadataTranslation {
             override.setDataSourceName(map.dataSourceName());
             override.setExcluded(map.excluded());
             override.setFriendlyName(map.friendlyName());
-            override.setMutable(map.mutable());
+            override.setMutable(!map.readOnly());
             override.setOrder(map.order());
             override.setSecurityLevel(map.securityLevel());
             override.setTargetElementId(map.targetUIElementId());
@@ -157,10 +290,10 @@ public class MetadataTranslation {
         throw new IllegalArgumentException("AdminPresentationMap annotation not found on field");
     }
 
-    protected AdornedTargetCollectionMetadataOverride constructAdornedTargetCollectionMetadataOverride(Field field) {
+    protected FieldMetadataOverride constructAdornedTargetCollectionMetadataOverride(Field field) {
         AdminPresentationAdornedTargetCollection adornedTargetCollection = field.getAnnotation(AdminPresentationAdornedTargetCollection.class);
         if (adornedTargetCollection != null) {
-            AdornedTargetCollectionMetadataOverride override = new AdornedTargetCollectionMetadataOverride();
+            FieldMetadataOverride override = new FieldMetadataOverride();
             override.setConfigurationKey(adornedTargetCollection.configurationKey());
             override.setGridVisibleFields(adornedTargetCollection.gridVisibleFields());
             override.setIgnoreAdornedProperties(adornedTargetCollection.ignoreAdornedProperties());
@@ -175,7 +308,7 @@ public class MetadataTranslation {
             override.setDataSourceName(adornedTargetCollection.dataSourceName());
             override.setExcluded(adornedTargetCollection.excluded());
             override.setFriendlyName(adornedTargetCollection.friendlyName());
-            override.setMutable(adornedTargetCollection.mutable());
+            override.setMutable(!adornedTargetCollection.readOnly());
             override.setOrder(adornedTargetCollection.order());
             override.setSecurityLevel(adornedTargetCollection.securityLevel());
             override.setTargetElementId(adornedTargetCollection.targetUIElementId());
@@ -189,10 +322,10 @@ public class MetadataTranslation {
         throw new IllegalArgumentException("AdminPresentationAdornedTargetCollection annotation not found on field.");
     }
 
-    protected BasicCollectionMetadataOverride constructBasicCollectionMetadataOverride(Field field) {
+    protected FieldMetadataOverride constructBasicCollectionMetadataOverride(Field field) {
         AdminPresentationCollection annotColl = field.getAnnotation(AdminPresentationCollection.class);
         if (annotColl != null) {
-            BasicCollectionMetadataOverride override = new BasicCollectionMetadataOverride();
+            FieldMetadataOverride override = new FieldMetadataOverride();
             override.setAddMethodType(annotColl.addType());
             override.setConfigurationKey(annotColl.configurationKey());
             override.setManyToField(annotColl.manyToField());
@@ -200,7 +333,7 @@ public class MetadataTranslation {
             override.setDataSourceName(annotColl.dataSourceName());
             override.setExcluded(annotColl.excluded());
             override.setFriendlyName(annotColl.friendlyName());
-            override.setMutable(annotColl.mutable());
+            override.setMutable(!annotColl.readOnly());
             override.setOrder(annotColl.order());
             override.setSecurityLevel(annotColl.securityLevel());
             override.setTargetElementId(annotColl.targetUIElementId());
@@ -214,10 +347,10 @@ public class MetadataTranslation {
         throw new IllegalArgumentException("AdminPresentationCollection annotation not found on Field");
     }
 
-    protected BasicFieldMetadataOverride constructBasicMetadataOverride(Field field) {
+    protected FieldMetadataOverride constructBasicMetadataOverride(Field field) {
         AdminPresentation annot = field.getAnnotation(AdminPresentation.class);
         if (annot != null) {
-            BasicFieldMetadataOverride override = new BasicFieldMetadataOverride();
+            FieldMetadataOverride override = new FieldMetadataOverride();
             override.setBroadleafEnumeration(annot.broadleafEnumeration());
             override.setColumnWidth(annot.columnWidth());
             override.setExplicitFieldType(annot.fieldType());
@@ -268,7 +401,7 @@ public class MetadataTranslation {
                 override.setOptionCanEditValues(dataDrivenEnumeration.optionCanEditValues());
                 override.setOptionDisplayFieldName(dataDrivenEnumeration.optionDisplayFieldName());
                 if (!ArrayUtils.isEmpty(dataDrivenEnumeration.optionFilterParams())) {
-                    Object[][] params = new Object[dataDrivenEnumeration.optionFilterParams().length][3];
+                    Serializable[][] params = new Serializable[dataDrivenEnumeration.optionFilterParams().length][3];
                     for (int j=0;j<params.length;j++) {
                         params[j][0] = dataDrivenEnumeration.optionFilterParams()[j].param();
                         params[j][1] = dataDrivenEnumeration.optionFilterParams()[j].value();
@@ -284,7 +417,7 @@ public class MetadataTranslation {
         throw new IllegalArgumentException("AdminPresentation annotation not found on field");
     }
 
-    protected void buildBasicMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, BasicFieldMetadataOverride basicFieldMetadata, DynamicEntityDao dynamicEntityDao) {
+    protected void buildBasicMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride basicFieldMetadata, DynamicEntityDao dynamicEntityDao) {
         BasicFieldMetadata serverMetadata = (BasicFieldMetadata) attributes.get(field.getName());
 
         BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -314,9 +447,9 @@ public class MetadataTranslation {
         if (serverMetadata != null && basicFieldMetadata.getExplicitFieldType() == null) {
             metadata.setExplicitFieldType(serverMetadata.getExplicitFieldType());
         } else {
-            metadata.setExplicitFieldType(basicFieldMetadata.getFieldType());
+            metadata.setExplicitFieldType(basicFieldMetadata.getExplicitFieldType());
         }
-        if (basicFieldMetadata.getFieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
+        if (basicFieldMetadata.getExplicitFieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
             metadata.setExcluded(true);
         } else {
@@ -447,7 +580,7 @@ public class MetadataTranslation {
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildMapMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, MapMetadataOverride map, DynamicEntityDao dynamicEntityDao) {
+    protected void buildMapMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride map, DynamicEntityDao dynamicEntityDao) {
         MapMetadata serverMetadata = (MapMetadata) attributes.get(field.getName());
 
         MapMetadata metadata = new MapMetadata();
@@ -701,7 +834,7 @@ public class MetadataTranslation {
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildAdornedTargetCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, AdornedTargetCollectionMetadataOverride adornedTargetCollectionMetadata) {
+    protected void buildAdornedTargetCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride adornedTargetCollectionMetadata) {
         AdornedTargetCollectionMetadata serverMetadata = (AdornedTargetCollectionMetadata) attributes.get(field.getName());
 
         AdornedTargetCollectionMetadata metadata = new AdornedTargetCollectionMetadata();
@@ -891,7 +1024,7 @@ public class MetadataTranslation {
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, BasicCollectionMetadataOverride collectionMetadata) {
+    protected void buildCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride collectionMetadata) {
         BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) attributes.get(field.getName());
 
         BasicCollectionMetadata metadata = new BasicCollectionMetadata();
@@ -1038,51 +1171,61 @@ public class MetadataTranslation {
         attributes.put(field.getName(), metadata);
     }
 
-    public void applyMapMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
-        if (mapMetadataOverrides != null && configurationKey != null) {
-            Map<String, Map<String, MapMetadataOverride>> configuredOverrides = mapMetadataOverrides.get(configurationKey);
-            if (configuredOverrides != null) {
-                Map<String, MapMetadataOverride> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
-                if (entityOverrides != null) {
-                    for (String propertyName : entityOverrides.keySet()) {
-                        final MapMetadataOverride localMetadata = entityOverrides.get(propertyName);
-                        Boolean excluded = localMetadata.getExcluded();
-                        if (excluded == null) {
-                            excluded = false;
+    protected Map<String, FieldMetadataOverride> getTargetedOverride(String configurationKey, String ceilingEntityFullyQualifiedClassname, OverrideType overrideType) {
+        if (metadataOverrides != null && configurationKey != null && ceilingEntityFullyQualifiedClassname != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(configurationKey);
+            sb.append("_");
+            sb.append(ceilingEntityFullyQualifiedClassname);
+            sb.append("_");
+            sb.append(overrideType);
+
+            return metadataOverrides.get(sb.toString());
+        }
+        return null;
+    }
+
+    protected void applyMapMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
+        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(configurationKey, ceilingEntityFullyQualifiedClassname, OverrideType.MAP);
+        if (overrides != null) {
+            for (String propertyName : overrides.keySet()) {
+                final FieldMetadataOverride localMetadata = overrides.get(propertyName);
+                Boolean excluded = localMetadata.getExcluded();
+                if (excluded == null) {
+                    excluded = false;
+                }
+                for (String key : mergedProperties.keySet()) {
+                    String testKey = prefix + key;
+                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
+                        FieldMetadata metadata = mergedProperties.get(key);
+                        metadata.setExcluded(true);
+                        continue;
+                    }
+                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
+                        FieldMetadata metadata = mergedProperties.get(key);
+                        if (!isParentExcluded) {
+                            metadata.setExcluded(false);
                         }
-                        for (String key : mergedProperties.keySet()) {
-                            String testKey = prefix + key;
-                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
-                                FieldMetadata metadata = mergedProperties.get(key);
-                                metadata.setExcluded(true);
-                                continue;
+                    }
+                    if (key.equals(propertyName)) {
+                        try {
+                            MapMetadata serverMetadata = null;
+                            if (mergedProperties.containsKey(key) && mergedProperties.get(key) instanceof MapMetadata) {
+                                serverMetadata = (MapMetadata) mergedProperties.get(key);
                             }
-                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
-                                FieldMetadata metadata = mergedProperties.get(key);
-                                if (!isParentExcluded) {
-                                    metadata.setExcluded(false);
-                                }
+                            Class<?> targetClass = Class.forName(((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getForeignKeyClass());
+                            String fieldName = ((MapStructure) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).getMapProperty();
+                            Field field = targetClass.getField(fieldName);
+                            Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                            temp.put(field.getName(), serverMetadata);
+                            buildMapMetadata(targetClass, temp, field, localMetadata, null);
+                            serverMetadata = (MapMetadata) temp.get(field.getName());
+                            mergedProperties.put(key, serverMetadata);
+                            if (isParentExcluded) {
+                                serverMetadata.setExcluded(true);
                             }
-                            if (key.equals(propertyName)) {
-                                try {
-                                    MapMetadata serverMetadata = (MapMetadata) mergedProperties.get(key);
-                                    Class<?> targetClass = Class.forName(((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getForeignKeyClass());
-                                    String fieldName = ((MapStructure) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).getMapProperty();
-                                    Field field = targetClass.getField(fieldName);
-                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                                    temp.put(field.getName(), serverMetadata);
-                                    buildMapMetadata(targetClass, temp, field, localMetadata, null);
-                                    mergedProperties.put(key, temp.get(field.getName()));
-                                    if (localMetadata.getExcluded() != null) {
-                                        serverMetadata.setExcluded(localMetadata.getExcluded());
-                                    }
-                                    if (isParentExcluded) {
-                                        serverMetadata.setExcluded(true);
-                                    }
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }
@@ -1090,51 +1233,47 @@ public class MetadataTranslation {
         }
     }
 
-    public void applyAdornedTargetCollectionMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
-        if (adornedTargetCollectionMetadataOverrides != null && configurationKey != null) {
-            Map<String, Map<String, AdornedTargetCollectionMetadataOverride>> configuredOverrides = adornedTargetCollectionMetadataOverrides.get(configurationKey);
-            if (configuredOverrides != null) {
-                Map<String, AdornedTargetCollectionMetadataOverride> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
-                if (entityOverrides != null) {
-                    for (String propertyName : entityOverrides.keySet()) {
-                        final AdornedTargetCollectionMetadataOverride localMetadata = entityOverrides.get(propertyName);
-                        Boolean excluded = localMetadata.getExcluded();
-                        if (excluded == null) {
-                            excluded = false;
+    protected void applyAdornedTargetCollectionMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
+        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(configurationKey, ceilingEntityFullyQualifiedClassname, OverrideType.ADORNEDTARGETCOLLECTION);
+        if (overrides != null) {
+            for (String propertyName : overrides.keySet()) {
+                final FieldMetadataOverride localMetadata = overrides.get(propertyName);
+                Boolean excluded = localMetadata.getExcluded();
+                if (excluded == null) {
+                    excluded = false;
+                }
+                for (String key : mergedProperties.keySet()) {
+                    String testKey = prefix + key;
+                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
+                        FieldMetadata metadata = mergedProperties.get(key);
+                        metadata.setExcluded(true);
+                        continue;
+                    }
+                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
+                        FieldMetadata metadata = mergedProperties.get(key);
+                        if (!isParentExcluded) {
+                            metadata.setExcluded(false);
                         }
-                        for (String key : mergedProperties.keySet()) {
-                            String testKey = prefix + key;
-                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
-                                FieldMetadata metadata = mergedProperties.get(key);
-                                metadata.setExcluded(true);
-                                continue;
+                    }
+                    if (key.equals(propertyName)) {
+                        try {
+                            AdornedTargetCollectionMetadata serverMetadata = null;
+                            if (mergedProperties.containsKey(key) && mergedProperties.get(key) instanceof AdornedTargetCollectionMetadata) {
+                                serverMetadata = (AdornedTargetCollectionMetadata) mergedProperties.get(key);
                             }
-                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
-                                FieldMetadata metadata = mergedProperties.get(key);
-                                if (!isParentExcluded) {
-                                    metadata.setExcluded(false);
-                                }
+                            Class<?> targetClass = Class.forName(serverMetadata.getParentObjectClass());
+                            String fieldName = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getCollectionFieldName();
+                            Field field = targetClass.getField(fieldName);
+                            Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                            temp.put(field.getName(), serverMetadata);
+                            buildAdornedTargetCollectionMetadata(targetClass, temp, field, localMetadata);
+                            serverMetadata = (AdornedTargetCollectionMetadata) temp.get(field.getName());
+                            mergedProperties.put(key, serverMetadata);
+                            if (isParentExcluded) {
+                                serverMetadata.setExcluded(true);
                             }
-                            if (key.equals(propertyName)) {
-                                try {
-                                    AdornedTargetCollectionMetadata serverMetadata = (AdornedTargetCollectionMetadata) mergedProperties.get(key);
-                                    Class<?> targetClass = Class.forName(serverMetadata.getParentObjectClass());
-                                    String fieldName = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getCollectionFieldName();
-                                    Field field = targetClass.getField(fieldName);
-                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                                    temp.put(field.getName(), serverMetadata);
-                                    buildAdornedTargetCollectionMetadata(targetClass, temp, field, localMetadata);
-                                    mergedProperties.put(key, temp.get(field.getName()));
-                                    if (localMetadata.getExcluded() != null) {
-                                        serverMetadata.setExcluded(localMetadata.getExcluded());
-                                    }
-                                    if (isParentExcluded) {
-                                        serverMetadata.setExcluded(true);
-                                    }
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }
@@ -1142,51 +1281,47 @@ public class MetadataTranslation {
         }
     }
 
-    public void applyCollectionMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
-        if (collectionMetadataOverrides != null && configurationKey != null) {
-            Map<String, Map<String, BasicCollectionMetadataOverride>> configuredOverrides = collectionMetadataOverrides.get(configurationKey);
-            if (configuredOverrides != null) {
-                Map<String, BasicCollectionMetadataOverride> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
-                if (entityOverrides != null) {
-                    for (String propertyName : entityOverrides.keySet()) {
-                        final BasicCollectionMetadataOverride localMetadata = entityOverrides.get(propertyName);
-                        Boolean excluded = localMetadata.getExcluded();
-                        if (excluded == null) {
-                            excluded = false;
+    protected void applyCollectionMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
+        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(configurationKey, ceilingEntityFullyQualifiedClassname, OverrideType.COLLECTION);
+        if (overrides != null) {
+            for (String propertyName : overrides.keySet()) {
+                final FieldMetadataOverride localMetadata = overrides.get(propertyName);
+                Boolean excluded = localMetadata.getExcluded();
+                if (excluded == null) {
+                    excluded = false;
+                }
+                for (String key : mergedProperties.keySet()) {
+                    String testKey = prefix + key;
+                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
+                        FieldMetadata metadata = mergedProperties.get(key);
+                        metadata.setExcluded(true);
+                        continue;
+                    }
+                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
+                        FieldMetadata metadata = mergedProperties.get(key);
+                        if (!isParentExcluded) {
+                            metadata.setExcluded(false);
                         }
-                        for (String key : mergedProperties.keySet()) {
-                            String testKey = prefix + key;
-                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
-                                FieldMetadata metadata = mergedProperties.get(key);
-                                metadata.setExcluded(true);
-                                continue;
+                    }
+                    if (key.equals(propertyName)) {
+                        try {
+                            BasicCollectionMetadata serverMetadata = null;
+                            if (mergedProperties.containsKey(key) && mergedProperties.get(key) instanceof BasicCollectionMetadata) {
+                                serverMetadata = (BasicCollectionMetadata) mergedProperties.get(key);
                             }
-                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
-                                FieldMetadata metadata = mergedProperties.get(key);
-                                if (!isParentExcluded) {
-                                    metadata.setExcluded(false);
-                                }
+                            Class<?> targetClass = Class.forName(((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getForeignKeyClass());
+                            String fieldName = serverMetadata.getCollectionFieldName();
+                            Field field = targetClass.getField(fieldName);
+                            Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                            temp.put(field.getName(), serverMetadata);
+                            buildCollectionMetadata(targetClass, temp, field, localMetadata);
+                            serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
+                            mergedProperties.put(key, serverMetadata);
+                            if (isParentExcluded) {
+                                serverMetadata.setExcluded(true);
                             }
-                            if (key.equals(propertyName)) {
-                                try {
-                                    BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) mergedProperties.get(key);
-                                    Class<?> targetClass = Class.forName(((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getForeignKeyClass());
-                                    String fieldName = serverMetadata.getCollectionFieldName();
-                                    Field field = targetClass.getField(fieldName);
-                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                                    temp.put(field.getName(), serverMetadata);
-                                    buildCollectionMetadata(targetClass, temp, field, localMetadata);
-                                    mergedProperties.put(key, temp.get(field.getName()));
-                                    if (localMetadata.getExcluded() != null) {
-                                        serverMetadata.setExcluded(localMetadata.getExcluded());
-                                    }
-                                    if (isParentExcluded) {
-                                        serverMetadata.setExcluded(true);
-                                    }
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }
@@ -1194,51 +1329,47 @@ public class MetadataTranslation {
         }
     }
 
-    public void applyMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, DynamicEntityDao dynamicEntityDao) {
-        if (fieldMetadataOverrides != null && configurationKey != null) {
-            Map<String, Map<String, BasicFieldMetadataOverride>> configuredOverrides = fieldMetadataOverrides.get(configurationKey);
-            if (configuredOverrides != null) {
-                Map<String, BasicFieldMetadataOverride> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
-                if (entityOverrides != null) {
-                    for (String propertyName : entityOverrides.keySet()) {
-                        final BasicFieldMetadataOverride localMetadata = entityOverrides.get(propertyName);
-                        Boolean excluded = localMetadata.getExcluded();
-                        if (excluded == null) {
-                            excluded = false;
+    protected void applyMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, DynamicEntityDao dynamicEntityDao) {
+        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(configurationKey, ceilingEntityFullyQualifiedClassname, OverrideType.BASIC);
+        if (overrides != null) {
+            for (String propertyName : overrides.keySet()) {
+                final FieldMetadataOverride localMetadata = overrides.get(propertyName);
+                Boolean excluded = localMetadata.getExcluded();
+                if (excluded == null) {
+                    excluded = false;
+                }
+                for (String key : mergedProperties.keySet()) {
+                    String testKey = prefix + key;
+                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
+                        FieldMetadata metadata = mergedProperties.get(key);
+                        metadata.setExcluded(true);
+                        continue;
+                    }
+                    if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
+                        FieldMetadata metadata = mergedProperties.get(key);
+                        if (!isParentExcluded) {
+                            metadata.setExcluded(false);
                         }
-                        for (String key : mergedProperties.keySet()) {
-                            String testKey = prefix + key;
-                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded) {
-                                FieldMetadata metadata = mergedProperties.get(key);
-                                metadata.setExcluded(true);
-                                continue;
+                    }
+                    if (key.equals(propertyName)) {
+                        try {
+                            BasicFieldMetadata serverMetadata = null;
+                            if (mergedProperties.containsKey(key) && mergedProperties.get(key) instanceof BasicFieldMetadata) {
+                                serverMetadata = (BasicFieldMetadata) mergedProperties.get(key);
                             }
-                            if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !excluded) {
-                                FieldMetadata metadata = mergedProperties.get(key);
-                                if (!isParentExcluded) {
-                                    metadata.setExcluded(false);
-                                }
+                            Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
+                            String fieldName = serverMetadata.getName();
+                            Field field = targetClass.getField(fieldName);
+                            Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                            temp.put(field.getName(), serverMetadata);
+                            buildBasicMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao);
+                            serverMetadata = (BasicFieldMetadata) temp.get(field.getName());
+                            mergedProperties.put(key, serverMetadata);
+                            if (isParentExcluded) {
+                                serverMetadata.setExcluded(true);
                             }
-                            if (key.equals(propertyName)) {
-                                try {
-                                    BasicFieldMetadata serverMetadata = (BasicFieldMetadata) mergedProperties.get(key);
-                                    Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
-                                    String fieldName = serverMetadata.getName();
-                                    Field field = targetClass.getField(fieldName);
-                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                                    temp.put(field.getName(), serverMetadata);
-                                    buildBasicMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao);
-                                    mergedProperties.put(key, temp.get(field.getName()));
-                                    if (localMetadata.getExcluded() != null) {
-                                        serverMetadata.setExcluded(localMetadata.getExcluded());
-                                    }
-                                    if (isParentExcluded) {
-                                        serverMetadata.setExcluded(true);
-                                    }
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }
@@ -1417,7 +1548,7 @@ public class MetadataTranslation {
                 MapMetadata metadata = (MapMetadata) mergedProperties.get(key);
                 metadata.setFriendlyName(annot.friendlyName());
                 metadata.setSecurityLevel(annot.securityLevel());
-                metadata.setMutable(annot.mutable());
+                metadata.setMutable(!annot.readOnly());
                 metadata.setOrder(annot.order());
                 metadata.setTargetElementId(annot.targetUIElementId());
                 metadata.setDataSourceName(annot.dataSourceName());
@@ -1480,7 +1611,7 @@ public class MetadataTranslation {
                 }
                 AdornedTargetCollectionMetadata metadata = (AdornedTargetCollectionMetadata) mergedProperties.get(key);
                 metadata.setCustomCriteria(annot.customCriteria());
-                metadata.setMutable(annot.mutable());
+                metadata.setMutable(!annot.readOnly());
                 metadata.setDataSourceName(annot.dataSourceName());
                 metadata.setFriendlyName(annot.friendlyName());
                 metadata.setOrder(annot.order());
@@ -1529,7 +1660,7 @@ public class MetadataTranslation {
                 }
                 BasicCollectionMetadata metadata = (BasicCollectionMetadata) mergedProperties.get(key);
                 metadata.setCustomCriteria(annot.customCriteria());
-                metadata.setMutable(annot.mutable());
+                metadata.setMutable(!annot.readOnly());
                 metadata.setAddMethodType(annot.addType());
                 metadata.setDataSourceName(annot.dataSourceName());
                 metadata.setFriendlyName(annot.friendlyName());
@@ -1580,7 +1711,7 @@ public class MetadataTranslation {
                     metadata.setOptionDisplayFieldName(annot.optionDisplayFieldName());
                 }
                 if (!ArrayUtils.isEmpty(annot.optionFilterParams())) {
-                    Object[][] params = new Object[annot.optionFilterParams().length][3];
+                    Serializable[][] params = new Serializable[annot.optionFilterParams().length][3];
                     for (int j=0;j<params.length;j++) {
                         params[j][0] = annot.optionFilterParams()[j].param();
                         params[j][1] = annot.optionFilterParams()[j].value();
@@ -1593,150 +1724,6 @@ public class MetadataTranslation {
                 }
             }
         }
-    }
-
-    protected FieldMetadata getFieldMetadata(
-        String prefix,
-        String propertyName,
-        List<Property> componentProperties,
-        SupportedFieldType type,
-        Type entityType,
-        Class<?> targetClass,
-        FieldMetadata presentationAttribute,
-        MergedPropertyType mergedPropertyType,
-        DynamicEntityDao dynamicEntityDao
-    ) {
-        return getFieldMetadata(prefix, propertyName, componentProperties, type, null, entityType, targetClass, presentationAttribute, mergedPropertyType, dynamicEntityDao);
-    }
-
-    protected FieldMetadata getFieldMetadata(
-        String prefix,
-        final String propertyName,
-        final List<Property> componentProperties,
-        final SupportedFieldType type,
-        final SupportedFieldType secondaryType,
-        final Type entityType,
-        Class<?> targetClass,
-        final FieldMetadata presentationAttribute,
-        final MergedPropertyType mergedPropertyType,
-        final DynamicEntityDao dynamicEntityDao
-    ) {
-        presentationAttribute.setInheritedFromType(targetClass.getName());
-        presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
-        presentationAttribute.accept(new MetadataVisitorAdapter() {
-            @Override
-            public void visit(BasicFieldMetadata metadata) {
-                BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) presentationAttribute;
-                fieldMetadata.setFieldType(type);
-                fieldMetadata.setSecondaryType(secondaryType);
-                if (entityType != null && !entityType.isCollectionType()) {
-                    Column column = null;
-                    for (Property property : componentProperties) {
-                        if (property.getName().equals(propertyName)) {
-                            column = (Column) property.getColumnIterator().next();
-                            break;
-                        }
-                    }
-                    if (column != null) {
-                        fieldMetadata.setLength(column.getLength());
-                        fieldMetadata.setScale(column.getScale());
-                        fieldMetadata.setPrecision(column.getPrecision());
-                        fieldMetadata.setRequired(!column.isNullable());
-                        fieldMetadata.setUnique(column.isUnique());
-                    }
-                    fieldMetadata.setForeignKeyCollection(false);
-                } else {
-                    fieldMetadata.setForeignKeyCollection(true);
-                }
-                fieldMetadata.setMutable(true);
-                fieldMetadata.setMergedPropertyType(mergedPropertyType);
-                if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(type)) {
-                    try {
-                        setupBroadleafEnumeration(fieldMetadata.getBroadleafEnumeration(), fieldMetadata, dynamicEntityDao);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-
-            @Override
-            public void visit(BasicCollectionMetadata metadata) {
-                //do nothing
-            }
-
-            @Override
-            public void visit(AdornedTargetCollectionMetadata metadata) {
-                //do nothing
-            }
-
-            @Override
-            public void visit(MapMetadata metadata) {
-                //do nothing
-            }
-        });
-
-        return presentationAttribute;
-    }
-
-    public Map<String, FieldMetadata> overrideMetadata(Class<?>[] entities, PropertyBuilder propertyBuilder, String prefix, Boolean isParentExcluded, DynamicEntityDao dynamicEntityDao, String ceilingEntityFullyQualifiedClassname, String configurationKey) {
-        Boolean classAnnotatedPopulateManyToOneFields = null;
-        Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
-        Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new HashMap<String, AdminPresentationToOneLookupOverride>();
-        Map<String, AdminPresentationDataDrivenEnumerationOverride> presentationDataDrivenEnumerationOverrides = new HashMap<String, AdminPresentationDataDrivenEnumerationOverride>();
-        Map<String, AdminPresentationMapOverride> presentationMapOverrides = new HashMap<String, AdminPresentationMapOverride>();
-        Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
-        Map<String, AdminPresentationAdornedTargetCollectionOverride> presentationAdornedTargetCollectionOverrides = new HashMap<String, AdminPresentationAdornedTargetCollectionOverride>();
-
-        //go in reverse order since I want the lowest subclass override to come last to guarantee that it takes effect
-        for (int i = entities.length-1;i >= 0; i--) {
-            AdminPresentationOverrides myOverrides = entities[i].getAnnotation(AdminPresentationOverrides.class);
-            if (myOverrides != null) {
-                for (AdminPresentationOverride myOverride : myOverrides.value()) {
-                    presentationOverrides.put(myOverride.name(), myOverride);
-                }
-                for (AdminPresentationToOneLookupOverride myOverride : myOverrides.toOneLookups()) {
-                    presentationToOneLookupOverrides.put(myOverride.name(), myOverride);
-                }
-                for (AdminPresentationMapOverride myOverride : myOverrides.maps()) {
-                    presentationMapOverrides.put(myOverride.name(), myOverride);
-                }
-                for (AdminPresentationCollectionOverride myOverride : myOverrides.collections()) {
-                    presentationCollectionOverrides.put(myOverride.name(), myOverride);
-                }
-                for (AdminPresentationAdornedTargetCollectionOverride myOverride : myOverrides.adornedTargetCollections()) {
-                    presentationAdornedTargetCollectionOverrides.put(myOverride.name(), myOverride);
-                }
-                for (AdminPresentationDataDrivenEnumerationOverride myOverride : myOverrides.dataDrivenEnums()) {
-                    presentationDataDrivenEnumerationOverrides.put(myOverride.name(), myOverride);
-                }
-            }
-            AdminPresentationClass adminPresentationClass = entities[i].getAnnotation(AdminPresentationClass.class);
-            if (adminPresentationClass != null && classAnnotatedPopulateManyToOneFields == null && adminPresentationClass.populateToOneFields() != PopulateToOneFieldsEnum.NOT_SPECIFIED) {
-                classAnnotatedPopulateManyToOneFields = adminPresentationClass.populateToOneFields()==PopulateToOneFieldsEnum.TRUE;
-            }
-        }
-
-        Map<String, FieldMetadata> mergedProperties = propertyBuilder.execute(classAnnotatedPopulateManyToOneFields);
-
-        for (String propertyName : presentationOverrides.keySet()) {
-            for (String key : mergedProperties.keySet()) {
-                if (key.equals(propertyName)) {
-                    buildAdminPresentationOverride(prefix, isParentExcluded, mergedProperties, presentationOverrides, propertyName, key, dynamicEntityDao);
-                    buildAdminPresentationToOneLookupOverride(mergedProperties, presentationToOneLookupOverrides, propertyName, key);
-                    buildAdminPresentationDataDrivenEnumerationOverride(mergedProperties, presentationDataDrivenEnumerationOverrides, propertyName, key, dynamicEntityDao);
-                    buildAdminPresentationCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationCollectionOverrides, propertyName, key);
-                    buildAdminPresentationAdornedTargetCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationAdornedTargetCollectionOverrides, propertyName, key);
-                    buildAdminPresentationMapOverride(prefix, isParentExcluded, mergedProperties, presentationMapOverrides, propertyName, key);
-                }
-            }
-        }
-
-        applyMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties, dynamicEntityDao);
-        applyCollectionMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
-        applyAdornedTargetCollectionMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
-        applyMapMetadataOverrides(ceilingEntityFullyQualifiedClassname, configurationKey, prefix, isParentExcluded, mergedProperties);
-
-        return mergedProperties;
     }
 
 }

@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mo="http://www.broadleafcommerce.org/schema/mo"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -11,7 +12,9 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
            http://www.springframework.org/schema/aop
-           http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+           http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+           http://www.broadleafcommerce.org/schema/mo
+           http://www.broadleafcommerce.org/schema/mo/mo.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.admin"/>
 
@@ -30,6 +33,14 @@
             </list>
         </property>
     </bean>
+
+    <mo:override id="blMetadataOverrides">
+        <mo:overrideItem configurationKey="promotionOrderItem" ceilingEntity="org.broadleafcommerce.core.order.domain.OrderItem" type="BASIC">
+            <mo:field name="category">
+                <mo:property name="excluded" value="false"/>
+            </mo:field>
+        </mo:overrideItem>
+    </mo:override>
 
     <bean id="blMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
