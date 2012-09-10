@@ -109,6 +109,7 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String noProductExporters();
     public String selectExporterTitle();
     public String exportProductsButtonTitle();
+    public String uniqueSkuError();
     
     public String SkuImpl_Sku_Inventory();
     public String ProductWeight_Shipping();
