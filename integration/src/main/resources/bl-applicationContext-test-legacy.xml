@@ -8,5 +8,6 @@
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
     <bean id="blOrderService" class="org.broadleafcommerce.core.order.service.legacy.LegacyCartServiceImpl" />
-
+    <bean id="blMergeCartService" class="org.broadleafcommerce.core.order.service.legacy.LegacyMergeCartServiceImpl" />
+    
 </beans>
