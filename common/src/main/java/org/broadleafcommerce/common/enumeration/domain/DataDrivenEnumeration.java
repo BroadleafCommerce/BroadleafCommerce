@@ -13,10 +13,6 @@ public interface DataDrivenEnumeration extends Serializable {
 
     public void setKey(String key);
 
-    public String getDisplay();
-
-    public void setDisplay(String display);
-
     public Boolean getModifiable();
 
     public void setModifiable(Boolean modifiable);

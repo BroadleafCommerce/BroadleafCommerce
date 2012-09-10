@@ -41,9 +41,6 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     @Index(name = "KEY_INDEX", columnNames = {"KEY"})
     protected String key;
     
-    @Column(name = "DISPLAY")
-    protected String display;
-    
     @Column(name = "MODIFIABLE")
     protected Boolean modifiable;
 
@@ -69,16 +66,6 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     @Override
     public void setKey(String key) {
         this.key = key;
-    }
-
-    @Override
-    public String getDisplay() {
-        return display;
-    }
-
-    @Override
-    public void setDisplay(String display) {
-        this.display = display;
     }
 
     @Override

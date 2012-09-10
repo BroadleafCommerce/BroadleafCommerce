@@ -53,10 +53,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String optionValueFieldName;
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
-    private Serializable[][] optionFilterParams;
-
-    //temporary fields
-    private String targetClass;
+    private String[][] optionFilterParams;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -362,20 +359,12 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.optionValueFieldName = optionValueFieldName;
     }
 
-    public Serializable[][] getOptionFilterParams() {
+    public String[][] getOptionFilterParams() {
         return optionFilterParams;
     }
 
-    public void setOptionFilterParams(Serializable[][] optionFilterParams) {
+    public void setOptionFilterParams(String[][] optionFilterParams) {
         this.optionFilterParams = optionFilterParams;
-    }
-
-    public String getTargetClass() {
-        return targetClass;
-    }
-
-    public void setTargetClass(String targetClass) {
-        this.targetClass = targetClass;
     }
 
     public FieldMetadata cloneFieldMetadata() {
@@ -438,7 +427,6 @@ public class BasicFieldMetadata extends FieldMetadata {
                 System.arraycopy(optionFilterParams[j], 0, metadata.optionFilterParams[j], 0, optionFilterParams[j].length);
             }
         }
-        metadata.targetClass = targetClass;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

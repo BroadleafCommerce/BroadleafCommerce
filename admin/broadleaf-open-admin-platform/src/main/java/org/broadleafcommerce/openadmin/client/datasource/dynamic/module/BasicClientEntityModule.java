@@ -999,7 +999,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 for (String[] enumerationValue : enumerationValues) {
                                     valueMap.put(enumerationValue[0], enumerationValue[1]);
                                 }
-                                item.setValueMap(valueMap);
+                                field.setValueMap(valueMap);
                                 field.setEditorType(item);
                             } else {
                                 field = new DataSourceEnumField(propertyName, friendlyName);
@@ -1024,7 +1024,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 for (String[] enumerationValue : enumerationValues) {
                                     valueMap.put(enumerationValue[0], enumerationValue[1]);
                                 }
-                                item.setValueMap(valueMap);
+                                field.setValueMap(valueMap);
                                 field.setEditorType(item);
                             } else {
                                 field = new DataSourceEnumField(propertyName, friendlyName);
@@ -1049,7 +1049,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 for (String[] enumerationValue : enumerationValues) {
                                     valueMap.put(enumerationValue[0], enumerationValue[1]);
                                 }
-                                item.setValueMap(valueMap);
+                                field.setValueMap(valueMap);
                                 field.setEditorType(item);
                             } else {
                                 field = new DataSourceEnumField(propertyName, friendlyName);

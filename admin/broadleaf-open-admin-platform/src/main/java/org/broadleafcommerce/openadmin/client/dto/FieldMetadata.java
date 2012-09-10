@@ -38,6 +38,9 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     private String securityLevel;
     private Integer order;
 
+    //temporary fields
+    private String targetClass;
+
 	public String[] getAvailableToTypes() {
 		return availableToTypes;
 	}
@@ -73,6 +76,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         metadata.friendlyName = friendlyName;
         metadata.securityLevel = securityLevel;
         metadata.order = order;
+        metadata.targetClass = targetClass;
 
         return metadata;
     }
@@ -99,6 +103,14 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public String getTargetClass() {
+        return targetClass;
+    }
+
+    public void setTargetClass(String targetClass) {
+        this.targetClass = targetClass;
     }
 
     public abstract FieldMetadata cloneFieldMetadata();

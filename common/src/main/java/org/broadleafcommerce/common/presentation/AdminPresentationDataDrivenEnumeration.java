@@ -31,7 +31,7 @@ public @interface AdminPresentationDataDrivenEnumeration {
      * only want to present part of a table as options in the data driven enumeration. Note, when configuring for optionListEntity
      * equals DataDrivenEnumerationValueImpl, it is generally appropriate to denote:</p>
      *
-     * <p>@OptionFilterParam(param="type.key", value="[the key value of the DataDrivenEnumerationImpl instance]")</p>
+     * <p>@OptionFilterParam(param="type.key", value="[the key value of the DataDrivenEnumerationImpl instance]", paramType=[your param type])</p>
      *
      * <p>Additional parameters with which to filter the list of options shown to the user in the admin tool</p>
      *
