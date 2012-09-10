@@ -19,17 +19,25 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
 public class CartTest extends OrderBaseTest {
+    
+    @Resource(name="blMergeCartService")
+    private MergeCartService mergeCartService;
 	
 	protected boolean cartContainsOnlyTheseItems(Order cart, List<OrderItem> orderItems) {
     	List<OrderItem> cartOrderItems = new ArrayList<OrderItem>(cart.getOrderItems());
@@ -159,5 +167,178 @@ public class CartTest extends OrderBaseTest {
     	assert namedOrder.getOrderItems().size() == 0;
     	assert cartContainsOnlyTheseItems(cart, movedOrderItems);
     }
+    
+    @Transactional
+    @Test(groups = { "testMergeCart" }) 
+    public void testMergeWithNoAnonymousCart() throws PricingException, RemoveFromCartException, AddToCartException {
+    	Order anonymousCart = null;
+    	Order customerCart = setUpCartWithActiveSku();
+    	Customer customer = customerCart.getCustomer();
+    	
+    	MergeCartResponse response = mergeCartService.mergeCart(customer, anonymousCart);
+    	
+    	assert response.getOrder().getOrderItems().size() == 1;
+    	assert response.getOrder().getId().equals(customerCart.getId());
+    	assert response.isMerged() == false;
+    }
+    
+    @Transactional
+    @Test(groups = { "testMergeCart" }) 
+    public void testMergeWithNoCustomerCart() throws PricingException, RemoveFromCartException, AddToCartException {
+    	Order anonymousCart = setUpCartWithActiveSku();
+    	Order customerCart = null;
+    	Customer customer = customerService.saveCustomer(createNamedCustomer());
+    	
+    	MergeCartResponse response = mergeCartService.mergeCart(customer, anonymousCart);
+    	
+    	assert response.getOrder().getOrderItems().size() == 1;
+    	assert response.getOrder().getId().equals(anonymousCart.getId());
+    	assert response.isMerged() == false;
+    }
+    
+    @Transactional
+    @Test(groups = { "testMergeCart" }) 
+    public void testMergeWithBothCarts() throws PricingException, RemoveFromCartException, AddToCartException {
+    	Order anonymousCart = setUpCartWithActiveSku();
+    	Order customerCart = setUpCartWithActiveSku();
+    	
+    	Customer customer = customerCart.getCustomer();
+    	
+    	MergeCartResponse response = mergeCartService.mergeCart(customer, anonymousCart);
+    	
+    	assert response.getOrder().getOrderItems().size() == 1;
+    	assert response.getOrder().getId().equals(anonymousCart.getId());
+    	assert response.isMerged() == false;
+    	
+    	List<Order> savedCarts = orderService.findOrdersForCustomer(customerCart.getCustomer(), OrderStatus.NAMED);
+    	assert savedCarts.size() == 1;
+    	assert savedCarts.get(0).getId().equals(customerCart.getId());
+    }
+    
+    @Transactional
+    @Test(groups = { "testMergeCart" }) 
+    public void testMergeWithInactiveAnonymousCart() throws PricingException, RemoveFromCartException, AddToCartException {
+    	Order anonymousCart = null;
+    	Order customerCart = setUpCartWithInactiveSku();
+    	
+    	Customer customer = customerCart.getCustomer();
+    	
+    	MergeCartResponse response = mergeCartService.mergeCart(customer, anonymousCart);
+    	
+    	assert response.getOrder().getOrderItems().size() == 0;
+    	assert response.getOrder().getId().equals(customerCart.getId());
+    	assert response.isMerged() == false;
+    }
+    
+    /*
+    @Transactional
+    @Test(groups = { "testMergeCartLegacy" }) 
+    public void testMergeToExistingCart() throws PricingException {
+    	//sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
+    	Order anonymousCart = setUpAnonymousCartWithInactiveSku();
+    	Customer customer = customerService.saveCustomer(createNamedCustomer());
+    	
+    	//sets up existing cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
+    	initializeExistingCartWithInactiveSkuAndInactiveBundle(customer);
+    	MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
+    	
+    	assert response.getAddedItems().size() == 2;
+    	assert response.getOrder().getOrderItems().size() == 4;
+    	assert response.isMerged();
+    	assert response.getRemovedItems().size() == 4;
+    }
+
+    @Transactional
+    @Test(groups = { "testMergeCartLegacy" })
+    public void testMergeToExistingCartWithGiftWrapOrderItems() throws PricingException {
+        //sets up anonymous cart with two DiscreteOrderItems, and a GiftWrapOrderItem
+        Order anonymousCart = setUpAnonymousCartWithGiftWrap();
+        Customer customer = customerService.saveCustomer(createNamedCustomer());
+
+        //sets up existing cart with two active DiscreteOrderItems
+        initializeExistingCart(customer);
+        MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
+
+        assert response.getAddedItems().size() == 3;
+        assert response.getOrder().getOrderItems().size() == 5;
+        assert response.isMerged();
+        assert response.getRemovedItems().size() == 0;
+
+        //sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem and inactive GiftWrapOrderItem (due to inactive wrapped item)
+        anonymousCart = setUpAnonymousCartWithInactiveGiftWrap();
+        customer = customerService.saveCustomer(createNamedCustomer());
+
+        //sets up existing cart with two active DiscreteOrderItems
+        initializeExistingCart(customer);
+        response = cartService.mergeCart(customer, anonymousCart);
+
+        assert response.getAddedItems().size() == 1;
+        assert response.getOrder().getOrderItems().size() == 3;
+        assert response.isMerged();
+        assert response.getRemovedItems().size() == 2;
+
+        //sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem and inactive GiftWrapOrderItem (due to inactive wrapped item) inside a BundleOrderItem
+        anonymousCart = setUpAnonymousCartWithInactiveBundleGiftWrap();
+        customer = customerService.saveCustomer(createNamedCustomer());
+
+        //sets up existing cart with two active DiscreteOrderItems
+        initializeExistingCart(customer);
+        response = cartService.mergeCart(customer, anonymousCart);
+
+        assert response.getAddedItems().size() == 0;
+        assert response.getOrder().getOrderItems().size() == 2;
+        assert response.isMerged();
+        assert response.getRemovedItems().size() == 1;
+
+        //sets up anonymous cart with active DiscreteOrderItems, and active GiftWrapOrderItem inside a BundleOrderItem
+        anonymousCart = setUpAnonymousCartWithBundleGiftWrap();
+        customer = customerService.saveCustomer(createNamedCustomer());
+
+        //sets up existing cart with two active DiscreteOrderItems
+        initializeExistingCart(customer);
+        response = cartService.mergeCart(customer, anonymousCart);
+
+        assert response.getAddedItems().size() == 1;
+        assert response.getOrder().getOrderItems().size() == 3;
+        assert response.isMerged();
+        assert response.getRemovedItems().size() == 0;
+
+        //sets up anonymous cart with active DiscreteOrderItems, and active GiftWrapOrderItem inside a BundleOrderItem. Active OrderItems are also in the root of the order and the bundled GiftWrapOrderItem wraps the root OrderItems
+        anonymousCart = setUpAnonymousCartWithBundleGiftWrapReferringToRootItems();
+        customer = customerService.saveCustomer(createNamedCustomer());
+
+        //sets up existing cart with two active DiscreteOrderItems
+        initializeExistingCart(customer);
+        response = cartService.mergeCart(customer, anonymousCart);
+
+        assert response.getAddedItems().size() == 3;
+        assert response.getOrder().getOrderItems().size() == 5;
+        assert response.isMerged();
+        assert response.getRemovedItems().size() == 0;
+
+        //sets up anonymous cart with two BundleOrderItems, one of which has a GiftWrapOrderItem. The GiftWrapOrderItem wraps the DiscreteOrderItems from the other bundle, which makes its bundle inactive.
+        anonymousCart = setUpAnonymousCartWithBundleGiftWrapReferringItemsInAnotherBundle();
+        customer = customerService.saveCustomer(createNamedCustomer());
+
+        //sets up existing cart with two active DiscreteOrderItems
+        initializeExistingCart(customer);
+        response = cartService.mergeCart(customer, anonymousCart);
+
+        assert response.getAddedItems().size() == 1;
+        assert response.getOrder().getOrderItems().size() == 3;
+        assert response.isMerged();
+        assert response.getRemovedItems().size() == 1;
+    }
+    */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }
