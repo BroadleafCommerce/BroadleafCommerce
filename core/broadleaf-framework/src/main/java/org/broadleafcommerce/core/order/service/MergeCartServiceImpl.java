@@ -152,7 +152,7 @@ public class MergeCartServiceImpl implements MergeCartService {
     }
     
     protected void setSavedCartAttributes(Order cart) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, 'yy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, ''yy");
         Date cartLastUpdated = cart.getAuditable().getDateUpdated();
         
         cart.setName("Previously saved cart - " + sdf.format(cartLastUpdated));
