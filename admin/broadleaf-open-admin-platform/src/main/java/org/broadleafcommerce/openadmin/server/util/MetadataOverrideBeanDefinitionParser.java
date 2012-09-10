@@ -23,7 +23,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
         BeanDefinitionBuilder overallMapBuilder = BeanDefinitionBuilder.rootBeanDefinition(MapFactoryBean.class);
         Map<String, BeanDefinition> overallMap = new ManagedMap<String, BeanDefinition>();
-        List<Element> overrideItemElements = DomUtils.getChildElementsByTagName(element, "args");
+        List<Element> overrideItemElements = DomUtils.getChildElementsByTagName(element, "overrideItem");
         for (Element overrideItem : overrideItemElements) {
             String configKey = overrideItem.getAttribute("configurationKey");
             String ceilingEntity = overrideItem.getAttribute("ceilingEntity");
@@ -52,8 +52,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    Element validationConfigElement = DomUtils.getChildElementByTagName(fieldElement, "validationConfig");
-                    List<Element> validationElements = DomUtils.getChildElementsByTagName(validationConfigElement, "validation");
+                    List<Element> validationElements = DomUtils.getChildElementsByTagName(fieldElement, "validation");
                     Map<String, Map<String, String>> validationConfigMap = new ManagedMap<String, Map<String, String>>();
                     for (Element validationElement : validationElements) {
                         Map<String, String> validationMap = new ManagedMap<String, String>();
@@ -70,8 +69,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    Element optionFilterValuesElement = DomUtils.getChildElementByTagName(fieldElement, "optionFilterValues");
-                    List<Element> optionElements = DomUtils.getChildElementsByTagName(optionFilterValuesElement, "option");
+                    List<Element> optionElements = DomUtils.getChildElementsByTagName(fieldElement, "optionFilterValue");
                     String[][] optionFilterValues = new String[optionElements.size()][3];
                     int j = 0;
                     for (Element optionElement : optionElements) {
@@ -84,8 +82,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    Element mapKeysElement = DomUtils.getChildElementByTagName(fieldElement, "mapKeys");
-                    List<Element> keyElements = DomUtils.getChildElementsByTagName(mapKeysElement, "key");
+                    List<Element> keyElements = DomUtils.getChildElementsByTagName(fieldElement, "mapKey");
                     String[][] keyValues = new String[keyElements.size()][2];
                     int j = 0;
                     for (Element keyElement : keyElements) {
@@ -97,8 +94,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    Element elem = DomUtils.getChildElementByTagName(fieldElement, "customCriteria");
-                    List<Element> children = DomUtils.getChildElementsByTagName(elem, "criteria");
+                    List<Element> children = DomUtils.getChildElementsByTagName(fieldElement, "customCriteria");
                     String[] values = new String[children.size()];
                     int j = 0;
                     for (Element childElem : children) {
@@ -109,8 +105,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    Element elem = DomUtils.getChildElementByTagName(fieldElement, "maintainedAdornedTargetFields");
-                    List<Element> children = DomUtils.getChildElementsByTagName(elem, "field");
+                    List<Element> children = DomUtils.getChildElementsByTagName(fieldElement, "maintainedAdornedTargetField");
                     String[] values = new String[children.size()];
                     int j = 0;
                     for (Element childElem : children) {
@@ -121,8 +116,7 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    Element elem = DomUtils.getChildElementByTagName(fieldElement, "gridVisibleFields");
-                    List<Element> children = DomUtils.getChildElementsByTagName(elem, "field");
+                    List<Element> children = DomUtils.getChildElementsByTagName(fieldElement, "gridVisibleField");
                     String[] values = new String[children.size()];
                     int j = 0;
                     for (Element childElem : children) {

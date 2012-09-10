@@ -19,95 +19,59 @@
                   <xsd:attribute name="value" use="required"/>
               </xsd:complexType>
           </xsd:element>
-          <xsd:element ref="validationConfig" minOccurs="0" maxOccurs="1"/>
-          <xsd:element ref="optionFilterValues" minOccurs="0" maxOccurs="1"/>
-          <xsd:element ref="mapKeys" minOccurs="0" maxOccurs="1"/>
-          <xsd:element ref="customCriteria" minOccurs="0" maxOccurs="1"/>
-          <xsd:element ref="maintainedAdornedTargetFields" minOccurs="0" maxOccurs="1"/>
-          <xsd:element ref="gridVisibleFields" minOccurs="0" maxOccurs="1"/>
+          <xsd:element ref="validation" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="optionFilterValue" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="mapKey" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="customCriteria" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="maintainedAdornedTargetField" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="gridVisibleField" minOccurs="0" maxOccurs="unbounded"/>
       </xsd:sequence>
     </xsd:group>
 
-    <xsd:element name="optionFilterValues">
+    <xsd:element name="optionFilterValue">
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="option" minOccurs="1" maxOccurs="unbounded">
-                    <xsd:complexType>
-                        <xsd:attribute name="name" use="required"/>
-                        <xsd:attribute name="value" use="required"/>
-                        <xsd:attribute name="type" type="field-type" use="required"/>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:sequence>
+            <xsd:attribute name="name" use="required"/>
+            <xsd:attribute name="value" use="required"/>
+            <xsd:attribute name="type" type="field-type" use="required"/>
         </xsd:complexType>
     </xsd:element>
 
     <xsd:element name="customCriteria">
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="criteria" minOccurs="1" maxOccurs="unbounded">
-                    <xsd:complexType>
-                        <xsd:attribute name="value" use="required"/>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:sequence>
+            <xsd:attribute name="value" use="required"/>
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="maintainedAdornedTargetFields">
+    <xsd:element name="maintainedAdornedTargetField">
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="field" minOccurs="1" maxOccurs="unbounded">
-                    <xsd:complexType>
-                        <xsd:attribute name="value" use="required"/>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:sequence>
+            <xsd:attribute name="value" use="required"/>
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="gridVisibleFields">
+    <xsd:element name="gridVisibleField">
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="field" minOccurs="1" maxOccurs="unbounded">
-                    <xsd:complexType>
-                        <xsd:attribute name="value" use="required"/>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:sequence>
+            <xsd:attribute name="value" use="required"/>
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="mapKeys">
+    <xsd:element name="mapKey">
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="key" minOccurs="1" maxOccurs="unbounded">
-                    <xsd:complexType>
-                        <xsd:attribute name="value" use="required"/>
-                        <xsd:attribute name="displayValue" use="required"/>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:sequence>
+            <xsd:attribute name="value" use="required"/>
+            <xsd:attribute name="displayValue" use="required"/>
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="validationConfig">
+    <xsd:element name="validation">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="validation" minOccurs="1" maxOccurs="unbounded">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="property" minOccurs="1" maxOccurs="unbounded">
-                              <xsd:complexType>
-                                  <xsd:attribute name="name" use="required"/>
-                                  <xsd:attribute name="value" use="required"/>
-                              </xsd:complexType>
-                            </xsd:element>
-                        </xsd:sequence>
-                        <xsd:attribute name="className" use="required"/>
-                    </xsd:complexType>
+                <xsd:element name="property" minOccurs="1" maxOccurs="unbounded">
+                  <xsd:complexType>
+                      <xsd:attribute name="name" use="required"/>
+                      <xsd:attribute name="value" use="required"/>
+                  </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>
+            <xsd:attribute name="className" use="required"/>
         </xsd:complexType>
     </xsd:element>
 
@@ -125,7 +89,7 @@
     <xsd:element name="override">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="overrideItem" minOccurs="1" maxOccurs="unbounded"/>
+                <xsd:element ref="overrideItem" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
             <xsd:attribute name="id" use="required"/>
         </xsd:complexType>

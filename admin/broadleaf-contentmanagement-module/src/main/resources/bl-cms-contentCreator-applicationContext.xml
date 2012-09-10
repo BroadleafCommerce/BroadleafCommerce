@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mo="http://www.broadleafcommerce.org/schema/mo"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.broadleafcommerce.org/schema/mo
+           http://www.broadleafcommerce.org/schema/mo/mo.xsd">
 
     <bean id="blUtilityRemoteService" class="org.broadleafcommerce.cms.admin.server.CMSUtilityRemoteService"/>
 
@@ -25,74 +28,42 @@
         </property>
     </bean>
 
-    <bean id="blMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="targetProduct">
-                    <map>
-                        <entry key="org.broadleafcommerce.core.catalog.domain.Product">
-                            <map>
-                                <entry key="defaultCategory">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="false"/>
-                                    </bean>
-                                </entry>
-                                <entry key="id">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="description">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="longDescription">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="activeStartDate">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="activeEndDate">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="defaultCategory.activeStartDate">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="defaultCategory.activeEndDate">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="sku.name">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="sku.salePrice">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                                <entry key="sku.retailPrice">
-                                    <bean class="org.broadleafcommerce.openadmin.client.dto.override.BasicFieldMetadataOverride">
-                                        <property name="excluded" value="true"/>
-                                    </bean>
-                                </entry>
-                            </map>
-                        </entry>
-                    </map>
-                </entry>
-            </map>
-        </property>
-    </bean>
+   <mo:override id="blMetadataOverrides">
+        <mo:overrideItem configurationKey="targetProduct" ceilingEntity="org.broadleafcommerce.core.catalog.domain.Product" type="BASIC">
+            <mo:field name="defaultCategory">
+                <mo:property name="excluded" value="false"/>
+            </mo:field>
+            <mo:field name="id">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="description">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="longDescription">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="activeStartDate">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="activeEndDate">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="defaultCategory.activeStartDate">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="defaultCategory.activeEndDate">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="sku.name">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="sku.salePrice">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+            <mo:field name="sku.retailPrice">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
+        </mo:overrideItem>
+    </mo:override>
 
 </beans>

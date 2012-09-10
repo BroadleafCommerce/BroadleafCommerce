@@ -9,7 +9,7 @@ public class MetadataOverrideNamespaceHandler extends NamespaceHandlerSupport {
 
     @Override
     public void init() {
-        registerBeanDefinitionParser("mo", new MetadataOverrideBeanDefinitionParser());
+        registerBeanDefinitionParser("override", new MetadataOverrideBeanDefinitionParser());
     }
 
 }
