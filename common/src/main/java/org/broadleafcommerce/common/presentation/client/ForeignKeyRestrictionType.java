@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.client.dto;
+package org.broadleafcommerce.common.presentation.client;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -23,9 +23,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * @author jfischer
  *
  */
-public enum OperationType implements IsSerializable {
-	FOREIGNKEY,
-	ENTITY,
-	JOINSTRUCTURE,
-	MAPSTRUCTURE
+public enum ForeignKeyRestrictionType implements IsSerializable {
+	ID_EQ,
+	COLLECTION_SIZE_EQ
 }

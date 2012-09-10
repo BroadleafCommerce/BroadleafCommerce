@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.presentation;
+package org.broadleafcommerce.common.presentation.override;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

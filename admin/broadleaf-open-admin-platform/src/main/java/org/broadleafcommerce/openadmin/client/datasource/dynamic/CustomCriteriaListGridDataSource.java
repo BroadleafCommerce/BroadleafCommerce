@@ -61,6 +61,26 @@ public class CustomCriteriaListGridDataSource extends ListGridDataSource {
         this.customCriteria = customCriteria;
     }
 
+    public void setUseForAdd(boolean useForAdd) {
+        this.useForAdd = useForAdd;
+    }
+
+    public void setUseForFetch(boolean useForFetch) {
+        this.useForFetch = useForFetch;
+    }
+
+    public void setUseForInspect(boolean useForInspect) {
+        this.useForInspect = useForInspect;
+    }
+
+    public void setUseForRemove(boolean useForRemove) {
+        this.useForRemove = useForRemove;
+    }
+
+    public void setUseForUpdate(boolean useForUpdate) {
+        this.useForUpdate = useForUpdate;
+    }
+
     @Override
     protected void executeFetch(String requestId, DSRequest request, DSResponse response, String[] customCriteria, AsyncCallback<DataSource> cb) {
         if (useForFetch) {

@@ -30,18 +30,19 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -74,6 +75,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -103,7 +105,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     public boolean isCompatible(OperationType operationType) {
-        return OperationType.ENTITY == operationType || OperationType.FOREIGNKEY == operationType;
+        return OperationType.BASIC == operationType || OperationType.NONDESTRUCTIVEREMOVE == operationType;
     }
 
     public FieldManager getFieldManager() {
@@ -114,7 +116,22 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return dateFormat.parse(value);
     }
 
-    public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> mergedProperties, Boolean setId) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParseException, NumberFormatException, InstantiationException, ClassNotFoundException {
+    protected Map<String, FieldMetadata> filterOutCollectionMetadata(Map<String, FieldMetadata> metadata) {
+        if (metadata == null) {
+            return null;
+        }
+        Map<String, FieldMetadata> newMap = new HashMap<String, FieldMetadata>();
+        for (Map.Entry<String, FieldMetadata> entry : metadata.entrySet()) {
+            if (entry.getValue() instanceof BasicFieldMetadata) {
+                newMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return newMap;
+    }
+
+    public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParseException, NumberFormatException, InstantiationException, ClassNotFoundException {
+        Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
         FieldManager fieldManager = getFieldManager();
         for (Property property : entity.getProperties()) {
             Field field = fieldManager.getField(instance.getClass(), property.getName());
@@ -124,12 +141,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
             Class<?> returnType = field.getType();
             String value = property.getValue();
-            if (mergedProperties.get(property.getName()) != null) {
-                Boolean mutable = mergedProperties.get(property.getName()).getMutable();
-                Boolean readOnly = mergedProperties.get(property.getName()).getPresentationAttributes().getReadOnly();
+            BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
+            if (metadata != null) {
+                Boolean mutable = metadata.getMutable();
+                Boolean readOnly = metadata.getReadOnly();
                 if ((mutable == null || mutable) && (readOnly == null || !readOnly)) {
                     if (value != null) {
-                        switch (mergedProperties.get(property.getName()).getFieldType()) {
+                        switch (metadata.getFieldType()) {
                             case BOOLEAN:
                                 if (Character.class.isAssignableFrom(returnType)) {
                                     fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value) ? 'Y' : 'N');
@@ -178,10 +196,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 if (StringUtils.isEmpty(value)) {
                                     foreignInstance = null;
                                 } else {
-                                    if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-                                        foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+                                    if (SupportedFieldType.INTEGER.toString().equals(metadata.getSecondaryType().toString())) {
+                                        foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(metadata.getForeignKeyClass()), Long.valueOf(value));
                                     } else {
-                                        foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+                                        foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(metadata.getForeignKeyClass()), value);
                                     }
                                 }
 
@@ -207,10 +225,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 if (StringUtils.isEmpty(value)) {
                                     foreignInstance = null;
                                 } else {
-                                    if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-                                        foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+                                    if (SupportedFieldType.INTEGER.toString().equals(metadata.getSecondaryType().toString())) {
+                                        foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(metadata.getForeignKeyClass()), Long.valueOf(value));
                                     } else {
-                                        foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+                                        foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(metadata.getForeignKeyClass()), value);
                                     }
                                 }
 
@@ -233,7 +251,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             }
                             case ID:
                                 if (setId) {
-                                    switch (mergedProperties.get(property.getName()).getSecondaryType()) {
+                                    switch (metadata.getSecondaryType()) {
                                         case INTEGER:
                                             fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
                                             break;
@@ -246,7 +264,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     } else {
                         try {
-                            if (fieldManager.getFieldValue(instance, property.getName()) != null && (mergedProperties.get(property.getName()).getFieldType() != SupportedFieldType.ID || setId)) {
+                            if (fieldManager.getFieldValue(instance, property.getName()) != null && (metadata.getFieldType() != SupportedFieldType.ID || setId)) {
                                 fieldManager.setFieldValue(instance, property.getName(), null);
                             }
                         } catch (FieldNotAvailableException e) {
@@ -285,7 +303,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return getRecords(primaryMergedProperties, records, null, null);
     }
 
-    public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {
+    public Entity[] getRecords(Map<String, FieldMetadata> primaryUnfilteredMergedProperties, List<Serializable> records, Map<String, FieldMetadata> alternateUnfilteredMergedProperties, String pathToTargetObject) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {
+        Map<String, FieldMetadata> primaryMergedProperties = filterOutCollectionMetadata(primaryUnfilteredMergedProperties);
+        Map<String, FieldMetadata> alternateMergedProperties = filterOutCollectionMetadata(alternateUnfilteredMergedProperties);
         Entity[] entities = new Entity[records.size()];
         int j = 0;
         for (Serializable recordEntity : records) {
@@ -321,7 +341,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FieldManager fieldManager = getFieldManager();
         for (Map.Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
             String property = entry.getKey();
-            FieldMetadata metadata = mergedProperties.get(property);
+            BasicFieldMetadata metadata = (BasicFieldMetadata) entry.getValue();
             if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(entity.getClass()) || entity.getClass().isAssignableFrom(Class.forName(metadata.getInheritedFromType()))) {
                 boolean proceed = true;
                 if (property.contains(".")) {
@@ -374,8 +394,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         props.add(propertyItem);
                         String displayVal = null;
                         if (value != null) {
-                            if (metadata.getCollection()) {
-                                propertyItem.getMetadata().setFieldType(metadata.getFieldType());
+                            if (metadata.getForeignKeyCollection()) {
+                                ((BasicFieldMetadata) propertyItem.getMetadata()).setFieldType(metadata.getFieldType());
                                 strVal = null;
                             } else if (Date.class.isAssignableFrom(value.getClass())) {
                                 strVal = dateFormat.format((Date) value);
@@ -461,17 +481,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
             Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    persistencePackage.getCeilingEntityFullyQualifiedClassname(),
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+                persistencePackage.getCeilingEntityFullyQualifiedClassname(),
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
             if (primaryKey == null) {
                 primaryKey = getPrimaryKey(entity, mergedProperties);
@@ -490,14 +510,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
-    public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties) throws RuntimeException {
+    public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedUnfilteredProperties) throws RuntimeException {
+        Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         Object primaryKey = null;
         String idPropertyName = null;
-        FieldMetadata metaData = null;
+        BasicFieldMetadata metaData = null;
         for (String property : mergedProperties.keySet()) {
-            if (mergedProperties.get(property).getFieldType() == SupportedFieldType.ID && !property.contains(".")) {
+            BasicFieldMetadata temp = (BasicFieldMetadata) mergedProperties.get(property);
+            if (temp.getFieldType() == SupportedFieldType.ID && !property.contains(".")) {
                 idPropertyName = property;
-                metaData = mergedProperties.get(property);
+                metaData = temp;
                 break;
             }
         }
@@ -523,7 +545,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return primaryKey;
     }
 
-    public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties) throws ClassNotFoundException {
+    public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedUnfilteredProperties) throws ClassNotFoundException {
+        Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         BaseCtoConverter ctoConverter = (BaseCtoConverter) applicationContext.getBean("blBaseCtoConverter");
         for (String propertyId : cto.getPropertyIdSet()) {
             if (mergedProperties.containsKey(propertyId)) {
@@ -581,7 +604,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             associationPath = AssociationPath.ROOT;
         }
         String convertedProperty = property.toString();
-        switch (mergedProperties.get(propertyName).getFieldType()) {
+        BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(propertyName);
+        switch (metadata.getFieldType()) {
             case BOOLEAN:
                 if (targetType == null || targetType.equals(Boolean.class) || targetType.equals(boolean.class)) {
                     ctoConverter.addBooleanMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
@@ -610,21 +634,21 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             case FOREIGN_KEY:
                 if (cto.get(propertyName).getFilterValues().length > 0) {
                     ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-                    if (mergedProperties.get(propertyName).getCollection()) {
+                    if (metadata.getForeignKeyCollection()) {
                         if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey.getRestrictionType().toString())) {
                             ctoConverter.addCollectionSizeEqMapping(ceilingEntityFullyQualifiedClassname, propertyName, AssociationPath.ROOT, propertyName);
                         } else {
                             AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                            ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
+                            ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
                         }
                     } else if (cto.get(propertyName).getFilterValues()[0] == null || "null".equals(cto.get(propertyName).getFilterValues()[0])) {
                         ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, propertyName);
-                    } else if (mergedProperties.get(propertyName).getSecondaryType() == SupportedFieldType.STRING) {
+                    } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
                         AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                        ctoConverter.addStringEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
+                        ctoConverter.addStringEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
                     } else {
                         AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                        ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
+                        ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
                     }
                 } else {
                     ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, propertyName);
@@ -638,28 +662,28 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     });
                     ForeignKey foreignKey = persistencePerspective.getAdditionalForeignKeys()[additionalForeignKeyIndexPosition];
-                    if (mergedProperties.get(propertyName).getCollection()) {
+                    if (metadata.getForeignKeyCollection()) {
                         if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey.getRestrictionType().toString())) {
                             ctoConverter.addCollectionSizeEqMapping(ceilingEntityFullyQualifiedClassname, propertyName, AssociationPath.ROOT, propertyName);
                         } else {
                             AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                            ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
+                            ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
                         }
                     } else if (cto.get(propertyName).getFilterValues()[0] == null || "null".equals(cto.get(propertyName).getFilterValues()[0])) {
                         ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, propertyName);
-                    } else if (mergedProperties.get(propertyName).getSecondaryType() == SupportedFieldType.STRING) {
+                    } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
                         AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                        ctoConverter.addStringEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
+                        ctoConverter.addStringEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
                     } else {
                         AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                        ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
+                        ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
                     }
                 } else {
                     ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, propertyName);
                 }
                 break;
             case ID:
-                switch (mergedProperties.get(propertyName).getSecondaryType()) {
+                switch (metadata.getSecondaryType()) {
                     case INTEGER:
                         ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
                         break;
@@ -708,8 +732,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
             properties.add(prop);
             prop.setMetadata(metadata);
-            if (isHiddenOverride) {
-                prop.getMetadata().getPresentationAttributes().setVisibility(VisibilityEnum.HIDDEN_ALL);
+            if (isHiddenOverride && prop.getMetadata() instanceof BasicFieldMetadata) {
+                //this only makes sense for non collection types
+                ((BasicFieldMetadata) prop.getMetadata()).setVisibility(VisibilityEnum.HIDDEN_ALL);
             }
         }
     }
@@ -720,17 +745,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
             Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    ceilingEntityFullyQualifiedClassname,
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+                ceilingEntityFullyQualifiedClassname,
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
             allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
         } catch (Exception e) {
@@ -748,23 +773,24 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             Entity entity = persistencePackage.getEntity();
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
-            Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    persistencePackage.getCeilingEntityFullyQualifiedClassname(),
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+            Map<String, FieldMetadata> mergedUnfilteredProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
+                persistencePackage.getCeilingEntityFullyQualifiedClassname(),
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
+            Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
 
             String idProperty = null;
             for (String property : mergedProperties.keySet()) {
-                if (mergedProperties.get(property).getFieldType() == SupportedFieldType.ID) {
+                if (((BasicFieldMetadata) mergedProperties.get(property)).getFieldType() == SupportedFieldType.ID) {
                     idProperty = property;
                     break;
                 }
@@ -803,7 +829,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             Entity entity = persistencePackage.getEntity();
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
-            Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
+            Map<String, FieldMetadata> mergedUnfilteredProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
                 persistencePackage.getCeilingEntityFullyQualifiedClassname(),
                 entities,
                 (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
@@ -816,11 +842,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 persistencePerspective.getConfigurationKey(),
                 ""
             );
+            Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
             Object primaryKey = getPrimaryKey(entity, mergedProperties);
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
             switch (persistencePerspective.getOperationTypes().getRemoveType()) {
-                case FOREIGNKEY:
+                case NONDESTRUCTIVEREMOVE:
                     for (Property property : entity.getProperties()) {
                         String originalPropertyName = property.getName();
                         FieldManager fieldManager = getFieldManager();
@@ -828,7 +855,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             LOG.debug("Unable to find a bean property for the reported property: " + originalPropertyName + ". Ignoring property.");
                             continue;
                         }
-                        if (SupportedFieldType.FOREIGN_KEY == mergedProperties.get(originalPropertyName).getFieldType()) {
+                        if (SupportedFieldType.FOREIGN_KEY == ((BasicFieldMetadata) mergedProperties.get(originalPropertyName)).getFieldType()) {
                             String value = property.getValue();
                             ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
                             Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), Long.valueOf(value));
@@ -838,7 +865,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     }
                     break;
-                case ENTITY:
+                case BASIC:
                     persistenceManager.getDynamicEntityDao().remove(instance);
                     break;
             }
@@ -859,17 +886,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         try {
             Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
             Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    ceilingEntityFullyQualifiedClassname,
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+                ceilingEntityFullyQualifiedClassname,
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
             BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);

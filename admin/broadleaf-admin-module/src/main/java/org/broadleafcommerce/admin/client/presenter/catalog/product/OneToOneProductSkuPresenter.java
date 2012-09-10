@@ -16,15 +16,22 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.CrossSaleProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.DefaultSkuMediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductAttributeDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionListDataSourceFactory;
@@ -37,6 +44,7 @@ import org.broadleafcommerce.admin.client.dto.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
 import org.broadleafcommerce.admin.client.view.dialog.ExportListSelectionDialog;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
@@ -45,38 +53,23 @@ import org.broadleafcommerce.openadmin.client.datasource.StaticAssetsTileGridDat
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -85,15 +78,11 @@ import java.util.Map;
  */
 public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implements Instantiable {
 
-	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected EntitySearchDialog productSearchView;
-	protected EntitySearchDialog skuSearchView;	
-	protected SubPresentable crossSalePresenter;
+	protected EntitySearchDialog skuSearchView;
 	protected SubPresentable upSalePresenter;
-	protected SubPresentable mediaPresenter;
-	protected SubPresentable productAttributePresenter;
 	protected SubPresentable parentCategoriesPresenter;
-	protected AssociatedProductOptionPresenter productOptionsPresenter;
+	protected AssociatedProductOptionPresenterBasic productOptionsPresenter;
 	protected SubPresentable skusPresenter;
 	protected SubPresentable bundleItemsPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
@@ -101,21 +90,11 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-		//display.getListDisplay().getAddButton().disable();
-		crossSalePresenter.load(selectedRecord, dataSource, new DSCallback() {
-			@Override
-            public void execute(DSResponse response, Object rawData, DSRequest request) {
-				//display.getListDisplay().getAddButton().enable();
-			}
-		});
 		upSalePresenter.load(selectedRecord, dataSource, null);
-		mediaPresenter.load(selectedRecord, dataSource, null);
-		productAttributePresenter.load(selectedRecord, dataSource, null);
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
         productOptionsPresenter.load(selectedRecord, dataSource, null);
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
-       // addListenerToFormItem(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm());
         getDisplay().getCloneProductButton().enable();
 	}
 
@@ -128,10 +107,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	public void bind() {
 		super.bind();
-		crossSalePresenter.bind();
 		upSalePresenter.bind();
-		mediaPresenter.bind();
-		productAttributePresenter.bind();
 		parentCategoriesPresenter.bind();
 		productOptionsPresenter.bind();
 		skusPresenter.bind();
@@ -224,7 +200,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
 	@Override
     public void setup() {
-
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productDS", new OneToOneProductSkuDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource top) {
@@ -232,79 +207,32 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				((ListGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{});
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearch", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.JOINSTRUCTURE, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearch", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.ADORNEDTARGETLIST, OperationType.BASIC, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
 				ListGridDataSource categorySearchDataSource = (ListGridDataSource) result;
-				categorySearchDataSource.resetPermanentFieldVisibility(
-					"name",
-					"urlKey",
-					"activeStartDate",
-					"activeEndDate"
-				);
 				EntitySearchDialog categorySearchView = new EntitySearchDialog(categorySearchDataSource);
 				library.put("categorySearchView", categorySearchView);
-				getPresenterSequenceSetupManager().getDataSource("productDS").
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"defaultCategory", 
-					categorySearchView, 
-					BLCMain.getMessageManager().getString("categorySearchTitle"),
-					getDisplay().getDynamicFormDisplay()
-				);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("oneToOneProductSearchDS", new ProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
 				final ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
-				productSearchDataSource.resetPermanentFieldVisibility(
-					"defaultSku.name",
-					"defaultSku.description",
-					"model",
-					"manufacturer",
-					"defaultSku.activeStartDate",
-					"defaultSku.activeEndDate"
-				);
 				productSearchView = new EntitySearchDialog(productSearchDataSource);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("crossSaleProductsDS", new CrossSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
-            public void onSetupSuccess(DataSource result) {
-				crossSalePresenter = new EditableJoinStructurePresenter(getDisplay().getCrossSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
-				crossSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("upSaleProductsDS", new UpSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				upSalePresenter = new EditableJoinStructurePresenter(getDisplay().getUpSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				upSalePresenter = new EditableAdornedTargetListPresenter(getDisplay().getUpSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				upSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productMediaMapDS", new DefaultSkuMediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-	            Map<String, Object> initialValues = new HashMap<String, Object>(2);
-	            initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
-	            initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
-				mediaPresenter = new DefaultSkuMediaMapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
-				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "url", "title", "altText", "tags"}, new Boolean[]{true, true, true, true, true});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productAttributeDS", new ProductAttributeDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
-            public void onSetupSuccess(DataSource result) {
-				Map<String, Object> initialValues = new HashMap<String, Object>(1);
-				initialValues.put("name", "Untitled");
-				productAttributePresenter = new CreateBasedListStructurePresenter(getDisplay().getAttributesDisplay(), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("newAttributeTitle"), initialValues);
-				productAttributePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "value", "searchable"}, new Boolean[]{true, true, true});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			@Override
-            public void onSetupSuccess(DataSource result) {
-				parentCategoriesPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("categorySearchPrompt"));
+				parentCategoriesPresenter = new SimpleSearchListPresenter(getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("categorySearchPrompt"));
 				parentCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
@@ -321,7 +249,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionsDS", new ProductOptionDataSourceFactory(), new AsyncCallbackAdapter() {
 		    @Override
             public void onSetupSuccess(DataSource result) {
-		        productOptionsPresenter = new AssociatedProductOptionPresenter(getDisplay().getProductOptionsDisplay(), (EntitySearchDialog)library.get("productOptionSearchView"), BLCMain.getMessageManager().getString("productOptionSearchPrompt"));
+		        productOptionsPresenter = new AssociatedProductOptionPresenterBasic(getDisplay().getProductOptionsDisplay(), (EntitySearchDialog)library.get("productOptionSearchView"), BLCMain.getMessageManager().getString("productOptionSearchPrompt"));
 		        productOptionsPresenter.setDataSource((ListGridDataSource) result, new String[]{"label", "type", "required"}, new Boolean[]{true, true, true});
 		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"value", "displayOrder"}, new Boolean[]{false, false});
 		    }
@@ -348,7 +276,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleSkusDS", new SkuBundleItemsDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                bundleItemsPresenter = new EditableJoinStructurePresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "salePrice"});
+                bundleItemsPresenter = new EditableAdornedTargetListPresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "salePrice"});
                 bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"sku.name", "quantity"}, new Boolean[]{false, true});
             }
         }));
@@ -360,48 +288,38 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 HashMap<String, Object> initialValues = new HashMap<String, Object>(10);
                 initialValues.put("operation", "add");
                 initialValues.put("customCriteria", "assetListUi");
-                initialValues.put("ceilingEntityFullyQualifiedClassname",
-                        CeilingEntities.STATICASSETS);
-                // initialValues.put("_type", new String[]{((DynamicEntityDataSource)
-                // display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+                initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
                 initialValues.put("_type", CeilingEntities.STATICASSETS);
                 initialValues.put("csrfToken", BLCMain.csrfToken);
                 dialog.setInitialValues(initialValues);
 
-                getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
-                    @Override
-                    public void execute(final FormItem formItem) {
-                        dialog.search("Asset Search", new TileGridItemSelectedHandler() {
-                            @Override
-                            public void onSearchItemSelected(TileGridItemSelected event) {
-                                String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
-                                formItem.setValue(staticAssetFullUrl);
-                                getMediaEntityView().updateMedia(staticAssetFullUrl);
-                            }
-                        });
-                    }
-                });
+                library.put("staticAssetDialog", dialog);
             }
         }));
 	}
 
-    protected LinkedHashMap<String, String> getMediaMapKeys() {
-		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>(3);
-		keys.put("small", BLCMain.getMessageManager().getString("mediaSizeSmall"));
-		keys.put("medium", BLCMain.getMessageManager().getString("mediaSizeMedium"));
-		keys.put("large", BLCMain.getMessageManager().getString("mediaSizeLarge"));
-
-		return keys;
-	}
-	
-	protected MapStructureEntityEditDialog getMediaEntityView() {
-		 if (mapEntityAdd == null) {
-			 mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE, getMediaMapKeys());
-                         mapEntityAdd.setShowMedia(true);
-                         mapEntityAdd.setMediaField("url");
-		 }
-		 return mapEntityAdd;
-	}
+    @Override
+    public void postSetup(Canvas container) {
+        getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
+            @Override
+            public void execute(final FormItem formItem) {
+                ((AssetSearchDialog) library.get("staticAssetDialog")).search("Asset Search", new TileGridItemSelectedHandler() {
+                    @Override
+                    public void onSearchItemSelected(TileGridItemSelected event) {
+                        String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
+                        formItem.setValue(staticAssetFullUrl);
+                        for (SubPresentable subPresentable : subPresentables) {
+                            if (((GridStructureDisplay) subPresentable.getDisplay()).getGrid().getDataSource().getDataURL().equals(getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getDataURL())) {
+                                ((MapStructurePresenter) subPresentable).getEntityEditDialog().updateMedia(staticAssetFullUrl);
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        super.postSetup(container);
+    }
 
 	@Override
 	public OneToOneProductSkuDisplay getDisplay() {

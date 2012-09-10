@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 

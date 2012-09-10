@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.client.view.dialog;
 
 import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 
@@ -90,19 +91,19 @@ public class ExportCriteriaDialog extends Window {
             
             ArrayList<FormItem> formItems = new ArrayList<FormItem>();
             for (Property property : exporter.getAdditionalCriteriaProperties()) {
-                Boolean presentationLargeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
+                Boolean presentationLargeEntry = ((BasicFieldMetadata) property.getMetadata()).isLargeEntry();
                 boolean largeEntry = (presentationLargeEntry) == null ? false : presentationLargeEntry;
                 //created in order to not throw NPEs when creating the initial form item
                 DataSourceField lengthField = new DataSourceField();
-                lengthField.setLength(property.getMetadata().getLength() == null ? 255 : property.getMetadata().getLength());
-                FormItem formItem = FormBuilder.buildField(null, lengthField, property.getMetadata().getFieldType().toString(), largeEntry, form);
+                lengthField.setLength(((BasicFieldMetadata) property.getMetadata()).getLength() == null ? 255 : ((BasicFieldMetadata) property.getMetadata()).getLength());
+                FormItem formItem = FormBuilder.buildField(null, lengthField, ((BasicFieldMetadata) property.getMetadata()).getFieldType().toString(), largeEntry, form);
                 
                 formItem.setName(property.getName());
-                formItem.setTitle(property.getMetadata().getPresentationAttributes().getFriendlyName());
+                formItem.setTitle(property.getMetadata().getFriendlyName());
                 formItem.setWrapTitle(false);
-                Boolean required = property.getMetadata().getPresentationAttributes().getRequiredOverride() == null ? false : property.getMetadata().getPresentationAttributes().getRequiredOverride();
+                Boolean required = ((BasicFieldMetadata) property.getMetadata()).getRequiredOverride() == null ? false : ((BasicFieldMetadata) property.getMetadata()).getRequiredOverride();
                 formItem.setRequired(required);
-                String prompt = property.getMetadata().getPresentationAttributes().getTooltip() == null ? "" : property.getMetadata().getPresentationAttributes().getTooltip();
+                String prompt = ((BasicFieldMetadata) property.getMetadata()).getTooltip() == null ? "" : ((BasicFieldMetadata) property.getMetadata()).getTooltip();
                 formItem.setPrompt(prompt);
                 
                 formItems.add(formItem);

@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
+
+import java.io.Serializable;
 
 /**
  * 
@@ -105,5 +105,50 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
 
 	public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
+        MapStructure mapStructure = new MapStructure();
+        mapStructure.keyClassName = keyClassName;
+        mapStructure.keyPropertyName = keyPropertyName;
+        mapStructure.keyPropertyFriendlyName = keyPropertyFriendlyName;
+        mapStructure.valueClassName = valueClassName;
+        mapStructure.mapProperty = mapProperty;
+        mapStructure.deleteValueEntity = deleteValueEntity;
+
+        return mapStructure;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MapStructure)) return false;
+
+        MapStructure that = (MapStructure) o;
+
+        if (deleteValueEntity != null ? !deleteValueEntity.equals(that.deleteValueEntity) : that.deleteValueEntity != null)
+            return false;
+        if (keyClassName != null ? !keyClassName.equals(that.keyClassName) : that.keyClassName != null) return false;
+        if (keyPropertyFriendlyName != null ? !keyPropertyFriendlyName.equals(that.keyPropertyFriendlyName) : that.keyPropertyFriendlyName != null)
+            return false;
+        if (keyPropertyName != null ? !keyPropertyName.equals(that.keyPropertyName) : that.keyPropertyName != null)
+            return false;
+        if (mapProperty != null ? !mapProperty.equals(that.mapProperty) : that.mapProperty != null) return false;
+        if (valueClassName != null ? !valueClassName.equals(that.valueClassName) : that.valueClassName != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = keyClassName != null ? keyClassName.hashCode() : 0;
+        result = 31 * result + (keyPropertyName != null ? keyPropertyName.hashCode() : 0);
+        result = 31 * result + (keyPropertyFriendlyName != null ? keyPropertyFriendlyName.hashCode() : 0);
+        result = 31 * result + (valueClassName != null ? valueClassName.hashCode() : 0);
+        result = 31 * result + (mapProperty != null ? mapProperty.hashCode() : 0);
+        result = 31 * result + (deleteValueEntity != null ? deleteValueEntity.hashCode() : 0);
+        return result;
     }
 }

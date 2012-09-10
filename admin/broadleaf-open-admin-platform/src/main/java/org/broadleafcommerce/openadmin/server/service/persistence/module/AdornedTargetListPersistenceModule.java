@@ -30,16 +30,17 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.hibernate.criterion.Criterion;
@@ -59,33 +60,33 @@ import java.util.Map;
  * @author jfischer
  *
  */
-@Component("blJoinStructurePersistenceModule")
+@Component("blAdornedTargetListPersistenceModule")
 @Scope("prototype")
-public class JoinStructurePersistenceModule extends BasicPersistenceModule {
+public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 	
-	private static final Log LOG = LogFactory.getLog(JoinStructurePersistenceModule.class);
+	private static final Log LOG = LogFactory.getLog(AdornedTargetListPersistenceModule.class);
 	
 	public boolean isCompatible(OperationType operationType) {
-		return OperationType.JOINSTRUCTURE.equals(operationType);
+		return OperationType.ADORNEDTARGETLIST.equals(operationType);
 	}
 	
 	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
-		if (mergedProperties.get(MergedPropertyType.JOINSTRUCTURE) != null) {
-			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.JOINSTRUCTURE), properties, true);
+		if (mergedProperties.get(MergedPropertyType.ADORNEDTARGETLIST) != null) {
+			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.ADORNEDTARGETLIST), properties, true);
 		}
 	}
 
-	public BaseCtoConverter getJoinStructureCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties, JoinStructure joinStructure) throws ClassNotFoundException {
-		BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, joinStructure.getJoinStructureEntityClassname(), mergedProperties);
-		ctoConverter.addLongEQMapping(joinStructure.getJoinStructureEntityClassname(), joinStructure.getName(), AssociationPath.ROOT, joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty());
-		ctoConverter.addLongEQMapping(joinStructure.getJoinStructureEntityClassname(), joinStructure.getName() + "Target", AssociationPath.ROOT, joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty());
+	public BaseCtoConverter getAdornedTargetCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties, AdornedTargetList adornedTargetList) throws ClassNotFoundException {
+		BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, adornedTargetList.getAdornedTargetEntityClassname(), mergedProperties);
+		ctoConverter.addLongEQMapping(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetList.getCollectionFieldName(), AssociationPath.ROOT, adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty());
+		ctoConverter.addLongEQMapping(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetList.getCollectionFieldName() + "Target", AssociationPath.ROOT, adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty());
 		return ctoConverter;
 	}
 	
-	protected Serializable createPopulatedJoinStructureInstance(JoinStructure joinStructure, Entity entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException, NumberFormatException, InvocationTargetException, NoSuchMethodException {
-		Serializable instance = (Serializable) Class.forName(StringUtils.isEmpty(joinStructure.getJoinStructureEntityPolymorphicType())?joinStructure.getJoinStructureEntityClassname():joinStructure.getJoinStructureEntityPolymorphicType()).newInstance();
-		String targetPath = joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty();
-		String linkedPath = joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty();
+	protected Serializable createPopulatedAdornedTargetInstance(AdornedTargetList adornedTargetList, Entity entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException, NumberFormatException, InvocationTargetException, NoSuchMethodException {
+		Serializable instance = (Serializable) Class.forName(StringUtils.isEmpty(adornedTargetList.getAdornedTargetEntityPolymorphicType())? adornedTargetList.getAdornedTargetEntityClassname(): adornedTargetList.getAdornedTargetEntityPolymorphicType()).newInstance();
+		String targetPath = adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty();
+		String linkedPath = adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty();
 		getFieldManager().setFieldValue(instance, linkedPath, Long.valueOf(entity.findProperty(linkedPath).getValue()));
 		getFieldManager().setFieldValue(instance, targetPath, Long.valueOf(entity.findProperty(targetPath).getValue()));
 		
@@ -97,16 +98,16 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-			if (joinStructure != null) {
-                Class<?>[] entities = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
+			AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+			if (adornedTargetList != null) {
+                Class<?>[] entities = persistenceManager.getPolymorphicEntities(adornedTargetList.getAdornedTargetEntityClassname());
 				Map<String, FieldMetadata> joinMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-					joinStructure.getJoinStructureEntityClassname(), 
+					adornedTargetList.getAdornedTargetEntityClassname(),
                     entities,
 					null, 
 					new String[]{}, 
 					new ForeignKey[]{},
-					MergedPropertyType.JOINSTRUCTURE,
+					MergedPropertyType.ADORNEDTARGETLIST,
 					persistencePerspective.getPopulateToOneFields(), 
 					persistencePerspective.getIncludeFields(), 
 					persistencePerspective.getExcludeFields(),
@@ -115,7 +116,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				);
                 String idProp = null;
                 for (String key : joinMergedProperties.keySet()) {
-                    if (joinMergedProperties.get(key).getFieldType()== SupportedFieldType.ID) {
+                    if (joinMergedProperties.get(key) instanceof BasicFieldMetadata && ((BasicFieldMetadata) joinMergedProperties.get(key)).getFieldType()== SupportedFieldType.ID) {
                         idProp = key;
                         break;
                     }
@@ -123,7 +124,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
                 if (idProp != null) {
                     joinMergedProperties.remove(idProp);
                 }
-				allMergedProperties.put(MergedPropertyType.JOINSTRUCTURE, joinMergedProperties);
+				allMergedProperties.put(MergedPropertyType.ADORNEDTARGETLIST, joinMergedProperties);
 			}
 		} catch (Exception e) {
 			LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
@@ -135,12 +136,12 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
-			LOG.warn("custom persistence handlers and custom criteria not supported for add types other than ENTITY");
+			LOG.warn("custom persistence handlers and custom criteria not supported for add types other than BASIC");
 		}
 		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		Entity entity = persistencePackage.getEntity();
-		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+		AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 		Entity payload;
 		try {
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
@@ -157,14 +158,14 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
                 persistencePerspective.getConfigurationKey(),
 				""
 			);
-            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
+            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(adornedTargetList.getAdornedTargetEntityClassname());
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-				joinStructure.getJoinStructureEntityClassname(), 
+				adornedTargetList.getAdornedTargetEntityClassname(),
                 entities2,
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},
-				MergedPropertyType.JOINSTRUCTURE,
+				MergedPropertyType.ADORNEDTARGETLIST,
 				false,
 				new String[]{},
 				new String[]{},
@@ -173,49 +174,49 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			);
 			
 			CriteriaTransferObject ctoInserted = new CriteriaTransferObject();
-			FilterAndSortCriteria filterCriteriaInsertedLinked = ctoInserted.get(joinStructure.getName());
+			FilterAndSortCriteria filterCriteriaInsertedLinked = ctoInserted.get(adornedTargetList.getCollectionFieldName());
 			String linkedPath;
 			String targetPath;
-			if (joinStructure.getInverse()) {
-				linkedPath = joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty();
-				targetPath = joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty();
+			if (adornedTargetList.getInverse()) {
+				linkedPath = adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty();
+				targetPath = adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty();
 			} else {
-				targetPath = joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty();
-				linkedPath = joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty();
+				targetPath = adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty();
+				linkedPath = adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty();
 			}
-			filterCriteriaInsertedLinked.setFilterValue(entity.findProperty(joinStructure.getInverse()?targetPath:linkedPath).getValue());
-			FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(joinStructure.getName()+"Target");
-			filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(joinStructure.getInverse()?linkedPath:targetPath).getValue());
-			BaseCtoConverter ctoConverterInserted = getJoinStructureCtoConverter(persistencePerspective, ctoInserted, mergedProperties, joinStructure);
-			PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, joinStructure.getJoinStructureEntityClassname());
-			List<Serializable> recordsInserted = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+			filterCriteriaInsertedLinked.setFilterValue(entity.findProperty(adornedTargetList.getInverse()?targetPath:linkedPath).getValue());
+			FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(adornedTargetList.getCollectionFieldName()+"Target");
+			filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(adornedTargetList.getInverse()?linkedPath:targetPath).getValue());
+			BaseCtoConverter ctoConverterInserted = getAdornedTargetCtoConverter(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
+			PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, adornedTargetList.getAdornedTargetEntityClassname());
+			List<Serializable> recordsInserted = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
 			if (recordsInserted.size() > 0) {
-				payload = getRecords(mergedPropertiesTarget, recordsInserted, mergedProperties, joinStructure.getTargetObjectPath())[0];
+				payload = getRecords(mergedPropertiesTarget, recordsInserted, mergedProperties, adornedTargetList.getTargetObjectPath())[0];
 			} else {
-				Serializable instance = createPopulatedJoinStructureInstance(joinStructure, entity);
+				Serializable instance = createPopulatedAdornedTargetInstance(adornedTargetList, entity);
 				instance = createPopulatedInstance(instance, entity, mergedProperties, false);
 				instance = createPopulatedInstance(instance, entity, mergedPropertiesTarget, false);
 				FieldManager fieldManager = getFieldManager();
 				if (fieldManager.getField(instance.getClass(), "id") != null) {
 					fieldManager.setFieldValue(instance, "id", null);
 				}
-				if (joinStructure.getSortField() != null) {
+				if (adornedTargetList.getSortField() != null) {
 					CriteriaTransferObject cto = new CriteriaTransferObject();
-					FilterAndSortCriteria filterCriteria = cto.get(joinStructure.getName());
-					filterCriteria.setFilterValue(entity.findProperty(joinStructure.getInverse()?targetPath:linkedPath).getValue());
-					FilterAndSortCriteria sortCriteria = cto.get(joinStructure.getSortField());
-					sortCriteria.setSortAscending(joinStructure.getSortAscending());
-					BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
+					FilterAndSortCriteria filterCriteria = cto.get(adornedTargetList.getCollectionFieldName());
+					filterCriteria.setFilterValue(entity.findProperty(adornedTargetList.getInverse()?targetPath:linkedPath).getValue());
+					FilterAndSortCriteria sortCriteria = cto.get(adornedTargetList.getSortField());
+					sortCriteria.setSortAscending(adornedTargetList.getSortAscending());
+					BaseCtoConverter ctoConverter = getAdornedTargetCtoConverter(persistencePerspective, cto, mergedProperties, adornedTargetList);
 					int totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
-					fieldManager.setFieldValue(instance, joinStructure.getSortField(), Long.valueOf(totalRecords + 1));
+					fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Long.valueOf(totalRecords + 1));
 				}
 				instance = persistenceManager.getDynamicEntityDao().merge(instance);
 				persistenceManager.getDynamicEntityDao().flush();
 				persistenceManager.getDynamicEntityDao().clear();
 				
-				List<Serializable> recordsInserted2 = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+				List<Serializable> recordsInserted2 = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
 				
-				payload = getRecords(mergedPropertiesTarget, recordsInserted2, mergedProperties, joinStructure.getTargetObjectPath())[0];
+				payload = getRecords(mergedPropertiesTarget, recordsInserted2, mergedProperties, adornedTargetList.getTargetObjectPath())[0];
 			}
 		} catch (Exception e) {
 			LOG.error("Problem editing entity", e);
@@ -229,21 +230,21 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
-			LOG.warn("custom persistence handlers and custom criteria not supported for update types other than ENTITY");
+			LOG.warn("custom persistence handlers and custom criteria not supported for update types other than BASIC");
 		}
 		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 		Entity entity = persistencePackage.getEntity();
-		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+		AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 		try {
-            JoinStructureRetrieval joinStructureRetrieval = new JoinStructureRetrieval(persistencePerspective, entity, joinStructure).invoke();
-            List<Serializable> records = joinStructureRetrieval.getRecords();
-            int index = joinStructureRetrieval.getIndex();
-            Map<String, FieldMetadata> mergedProperties = joinStructureRetrieval.getMergedProperties();
+            AdornedTargetRetrieval adornedTargetRetrieval = new AdornedTargetRetrieval(persistencePerspective, entity, adornedTargetList).invoke();
+            List<Serializable> records = adornedTargetRetrieval.getRecords();
+            int index = adornedTargetRetrieval.getIndex();
+            Map<String, FieldMetadata> mergedProperties = adornedTargetRetrieval.getMergedProperties();
             FieldManager fieldManager = getFieldManager();
-			if (joinStructure.getSortField() != null && entity.findProperty(joinStructure.getSortField()).getValue() != null) {
+			if (adornedTargetList.getSortField() != null && entity.findProperty(adornedTargetList.getSortField()).getValue() != null) {
 				Serializable myRecord = records.remove(index);
 				myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
-				Integer newPos = Integer.valueOf(entity.findProperty(joinStructure.getSortField()).getValue());
+				Integer newPos = Integer.valueOf(entity.findProperty(adornedTargetList.getSortField()).getValue());
                 if (CollectionUtils.isEmpty(records)) {
                     records.add(myRecord);
                 } else {
@@ -251,7 +252,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
                 }
 				index = 1;
 				for (Serializable record : records) {
-					fieldManager.setFieldValue(record, joinStructure.getSortField(), Long.valueOf(index));
+					fieldManager.setFieldValue(record, adornedTargetList.getSortField(), Long.valueOf(index));
 					index++;
 				}
 			} else {
@@ -275,7 +276,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				myRecord = persistenceManager.getDynamicEntityDao().merge(myRecord);
                 List<Serializable> myList = new ArrayList<Serializable>();
                 myList.add(myRecord);
-                Entity[] payload = getRecords(mergedPropertiesTarget, myList, mergedProperties, joinStructure.getTargetObjectPath());
+                Entity[] payload = getRecords(mergedPropertiesTarget, myList, mergedProperties, adornedTargetList.getTargetObjectPath());
                 entity = payload[0];
 			}
 			
@@ -290,20 +291,20 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	public void remove(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
-			LOG.warn("custom persistence handlers and custom criteria not supported for remove types other than ENTITY");
+			LOG.warn("custom persistence handlers and custom criteria not supported for remove types other than BASIC");
 		}
 		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 		Entity entity = persistencePackage.getEntity();
 		try {
-			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-            Class<?>[] entities = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
+			AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+            Class<?>[] entities = persistenceManager.getPolymorphicEntities(adornedTargetList.getAdornedTargetEntityClassname());
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-				joinStructure.getJoinStructureEntityClassname(), 
+				adornedTargetList.getAdornedTargetEntityClassname(),
                 entities,
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},
-				MergedPropertyType.JOINSTRUCTURE,
+				MergedPropertyType.ADORNEDTARGETLIST,
 				false,
 				new String[]{},
 				new String[]{},
@@ -311,13 +312,13 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				""
 			);
 			CriteriaTransferObject ctoInserted = new CriteriaTransferObject();
-			FilterAndSortCriteria filterCriteriaInsertedLinked = ctoInserted.get(joinStructure.getName());
-			filterCriteriaInsertedLinked.setFilterValue(entity.findProperty(joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty()).getValue());
-			FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(joinStructure.getName()+"Target");
-			filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty()).getValue());
-			BaseCtoConverter ctoConverterInserted = getJoinStructureCtoConverter(persistencePerspective, ctoInserted, mergedProperties, joinStructure);
-			PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, joinStructure.getJoinStructureEntityClassname());
-			List<Serializable> recordsInserted = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+			FilterAndSortCriteria filterCriteriaInsertedLinked = ctoInserted.get(adornedTargetList.getCollectionFieldName());
+			filterCriteriaInsertedLinked.setFilterValue(entity.findProperty(adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty()).getValue());
+			FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(adornedTargetList.getCollectionFieldName()+"Target");
+			filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty()).getValue());
+			BaseCtoConverter ctoConverterInserted = getAdornedTargetCtoConverter(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
+			PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, adornedTargetList.getAdornedTargetEntityClassname());
+			List<Serializable> recordsInserted = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
 			
 			persistenceManager.getDynamicEntityDao().remove(recordsInserted.get(0));
 		} catch (Exception e) {
@@ -328,9 +329,9 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 
     @Override
     public int getTotalRecords(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
-        JoinStructure joinStructure = (JoinStructure) persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-        PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), joinStructure.getJoinStructureEntityClassname());
-        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(joinStructure.getJoinStructureEntityClassname()));
+        AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+        PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), adornedTargetList.getAdornedTargetEntityClassname());
+        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
         boolean isArchivable = false;
         for (Class<?> entity : entities) {
             if (Status.class.isAssignableFrom(entity)) {
@@ -347,14 +348,14 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
             FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
             ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
         }
-        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
     }
 	
 	@Override
 	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
 		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+		AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 		Entity[] payload;
 		int totalRecords;
 		try {
@@ -372,28 +373,28 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
                 persistencePerspective.getConfigurationKey(),
 				""
 			);
-            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
+            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(adornedTargetList.getAdornedTargetEntityClassname());
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-				joinStructure.getJoinStructureEntityClassname(), 
+				adornedTargetList.getAdornedTargetEntityClassname(),
                 entities2,
 				null,
 				new String[]{}, 
 				new ForeignKey[]{},
-				MergedPropertyType.JOINSTRUCTURE,
+				MergedPropertyType.ADORNEDTARGETLIST,
 				false,
 				new String[]{},
 				new String[]{},
                 null,
 				""
 			);
-			BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
-			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, joinStructure.getJoinStructureEntityClassname());
-			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
-			payload = getRecords(mergedPropertiesTarget, records, mergedProperties, joinStructure.getTargetObjectPath());
+			BaseCtoConverter ctoConverter = getAdornedTargetCtoConverter(persistencePerspective, cto, mergedProperties, adornedTargetList);
+			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, adornedTargetList.getAdornedTargetEntityClassname());
+			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+			payload = getRecords(mergedPropertiesTarget, records, mergedProperties, adornedTargetList.getTargetObjectPath());
 			totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
 		} catch (Exception e) {
-			LOG.error("Problem fetching results for " + joinStructure.getJoinStructureEntityClassname(), e);
-			throw new ServiceException("Unable to fetch results for " + joinStructure.getJoinStructureEntityClassname(), e);
+			LOG.error("Problem fetching results for " + adornedTargetList.getAdornedTargetEntityClassname(), e);
+			throw new ServiceException("Unable to fetch results for " + adornedTargetList.getAdornedTargetEntityClassname(), e);
 		}
 		
 		DynamicResultSet results = new DynamicResultSet(null, payload, totalRecords);
@@ -401,18 +402,18 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		return results;
 	}
 
-    public class JoinStructureRetrieval {
+    public class AdornedTargetRetrieval {
         private PersistencePerspective persistencePerspective;
         private Entity entity;
-        private JoinStructure joinStructure;
+        private AdornedTargetList adornedTargetList;
         private Map<String, FieldMetadata> mergedProperties;
         private List<Serializable> records;
         private int index;
 
-        public JoinStructureRetrieval(PersistencePerspective persistencePerspective, Entity entity, JoinStructure joinStructure) {
+        public AdornedTargetRetrieval(PersistencePerspective persistencePerspective, Entity entity, AdornedTargetList adornedTargetList) {
             this.persistencePerspective = persistencePerspective;
             this.entity = entity;
-            this.joinStructure = joinStructure;
+            this.adornedTargetList = adornedTargetList;
         }
 
         public Map<String, FieldMetadata> getMergedProperties() {
@@ -427,38 +428,38 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
             return index;
         }
 
-        public JoinStructureRetrieval invoke() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, FieldNotAvailableException {
+        public AdornedTargetRetrieval invoke() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, FieldNotAvailableException, NoSuchFieldException {
             CriteriaTransferObject cto = new CriteriaTransferObject();
-            FilterAndSortCriteria filterCriteria = cto.get(joinStructure.getName());
-            filterCriteria.setFilterValue(entity.findProperty(joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty()).getValue());
-            if (joinStructure.getSortField() != null) {
-                FilterAndSortCriteria sortCriteria = cto.get(joinStructure.getSortField());
-                sortCriteria.setSortAscending(joinStructure.getSortAscending());
+            FilterAndSortCriteria filterCriteria = cto.get(adornedTargetList.getCollectionFieldName());
+            filterCriteria.setFilterValue(entity.findProperty(adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty()).getValue());
+            if (adornedTargetList.getSortField() != null) {
+                FilterAndSortCriteria sortCriteria = cto.get(adornedTargetList.getSortField());
+                sortCriteria.setSortAscending(adornedTargetList.getSortAscending());
             }
 
-            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
+            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(adornedTargetList.getAdornedTargetEntityClassname());
             mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    joinStructure.getJoinStructureEntityClassname(),
+                    adornedTargetList.getAdornedTargetEntityClassname(),
                     entities2,
                     null,
                     new String[]{},
                     new ForeignKey[]{},
-                    MergedPropertyType.JOINSTRUCTURE,
+                    MergedPropertyType.ADORNEDTARGETLIST,
                     persistencePerspective.getPopulateToOneFields(),
                     persistencePerspective.getIncludeFields(),
                     persistencePerspective.getExcludeFields(),
                     persistencePerspective.getConfigurationKey(),
                     ""
             );
-            BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
-            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, joinStructure.getJoinStructureEntityClassname());
-            records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+            BaseCtoConverter ctoConverter = getAdornedTargetCtoConverter(persistencePerspective, cto, mergedProperties, adornedTargetList);
+            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, adornedTargetList.getAdornedTargetEntityClassname());
+            records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
 
             index = 0;
-            Long myEntityId = Long.valueOf(entity.findProperty(joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty()).getValue());
+            Long myEntityId = Long.valueOf(entity.findProperty(adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty()).getValue());
             FieldManager fieldManager = getFieldManager();
             for (Serializable record : records) {
-                Long targetId = (Long) fieldManager.getFieldValue(record, joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty());
+                Long targetId = (Long) fieldManager.getFieldValue(record, adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty());
                 if (myEntityId.equals(targetId)) {
                     break;
                 }

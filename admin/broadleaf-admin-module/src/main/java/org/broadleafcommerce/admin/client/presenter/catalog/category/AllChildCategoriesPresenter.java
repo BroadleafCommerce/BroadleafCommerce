@@ -33,8 +33,8 @@ import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
@@ -82,7 +82,7 @@ public class AllChildCategoriesPresenter extends AbstractSubPresentable {
 			}
 		});
 		/*
-		 * TODO add code to check if the JoinStructure has a sort field defined. If not,
+		 * TODO add code to check if the AdornedTargetList has a sort field defined. If not,
 		 * then disable the re-order functionality
 		 */
 		display.getGrid().addRecordDropHandler(new RecordDropHandler() {
@@ -93,8 +93,8 @@ public class AllChildCategoriesPresenter extends AbstractSubPresentable {
 				if (newIndex > originalIndex) {
 					newIndex--;
 				}
-				JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) categoryPresenter.getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS")).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-				record.setAttribute(joinStructure.getSortField(), newIndex);
+				AdornedTargetList adornedTargetList = (AdornedTargetList) ((DynamicEntityDataSource) categoryPresenter.getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS")).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+				record.setAttribute(adornedTargetList.getSortField(), newIndex);
 				display.getGrid().updateData(record, new DSCallback() {
 					public void execute(DSResponse response, Object rawData, DSRequest request) {
 						categoryPresenter.reloadParentTreeNodeRecords(false);

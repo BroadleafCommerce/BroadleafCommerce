@@ -39,6 +39,10 @@ public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> 
 		//override to custom handle failures
 	}
 
+    public final PresenterSequenceSetupManager getDataSourceSetupManager() {
+        return manager;
+    }
+
 	public final void onSuccess(DataSource dataSource) {
 		onSetupSuccess(dataSource);
         if (manager != null) {

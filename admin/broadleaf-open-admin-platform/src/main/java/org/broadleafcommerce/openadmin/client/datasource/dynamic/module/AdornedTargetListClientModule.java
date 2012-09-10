@@ -18,13 +18,13 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.Record;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
@@ -36,20 +36,20 @@ import java.util.List;
  * @author jfischer
  *
  */
-public class JoinStructureClientModule extends BasicClientEntityModule {
+public class AdornedTargetListClientModule extends BasicClientEntityModule {
 	
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname
 	 * @param persistencePerspective
 	 * @param service
 	 */
-	public JoinStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+	public AdornedTargetListClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
 		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
 	}
 
 	@Override
 	public CriteriaTransferObject getCto(DSRequest request) {
-		JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+		AdornedTargetList joinTable = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 		CriteriaTransferObject cto = super.getCto(request);
 		if (joinTable.getSortField() != null) {
 			FilterAndSortCriteria sortCriteria = cto.get(joinTable.getSortField());
@@ -60,15 +60,15 @@ public class JoinStructureClientModule extends BasicClientEntityModule {
 	
 	@Override
 	public boolean isCompatible(OperationType operationType) {
-    	return OperationType.JOINSTRUCTURE.equals(operationType);
+    	return OperationType.ADORNEDTARGETLIST.equals(operationType);
     }
 	
 	@Override
 	public Entity buildEntity(Record record, DSRequest request) {
-		JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+		AdornedTargetList joinTable = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 		Entity entity = super.buildEntity(record, request);
-		//JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-		entity.setType(new String[]{joinTable.getJoinStructureEntityClassname()});
+		//AdornedTargetList joinTable = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+		entity.setType(new String[]{joinTable.getAdornedTargetEntityClassname()});
 		List<Property> properties = new ArrayList<Property>();
 		{
 			Property property = new Property();

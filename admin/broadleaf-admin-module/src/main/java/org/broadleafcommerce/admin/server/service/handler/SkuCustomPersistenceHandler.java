@@ -31,11 +31,11 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -95,12 +95,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             List<ProductOption> options = catalogService.readAllProductOptions();
             int order = 0;
             for (ProductOption option : options) {
-                FieldMetadata metadata = new FieldMetadata();
+                BasicFieldMetadata metadata = new BasicFieldMetadata();
                 metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
                 metadata.setMutable(true);
                 metadata.setInheritedFromType(SkuImpl.class.getName());
                 metadata.setAvailableToTypes(new String[]{SkuImpl.class.getName()});
-                metadata.setCollection(false);
+                metadata.setForeignKeyCollection(false);
                 metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
                 
                 //Set up the enumeration based on the product option values
@@ -111,18 +111,16 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                     optionValues[i][1] = value.getAttributeValue();
                 }
                 metadata.setEnumerationValues(optionValues);
-                
-                FieldPresentationAttributes attributes = new FieldPresentationAttributes();
-                metadata.setPresentationAttributes(attributes);
-                attributes.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
-                attributes.setFriendlyName(option.getLabel());
-                attributes.setGroup("");
-                attributes.setOrder(order);
-                attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-                attributes.setProminent(true);
-                attributes.setBroadleafEnumeration("");
-                attributes.setReadOnly(false);
-                attributes.setRequiredOverride(true);
+
+                metadata.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
+                metadata.setFriendlyName(option.getLabel());
+                metadata.setGroup("");
+                metadata.setOrder(order);
+                metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+                metadata.setProminent(true);
+                metadata.setBroadleafEnumeration("");
+                metadata.setReadOnly(false);
+                metadata.setRequiredOverride(true);
                 
                 //add this to the built Sku properties
                 properties.put("productOption" + option.getId(), metadata);

@@ -45,7 +45,6 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
 	public String mediaSizeSmall();
 	public String mediaSizeMedium();
 	public String mediaSizeLarge();
-	public String newAttributeTitle();
 	public String categorySearchPrompt();
 	public String categoryListTitle();
 	public String orphanCategoryListTitle();
@@ -120,7 +119,6 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String BundleOrderItemImpl_bundleOrderItem();
     public String ProductImpl_bundleProduct();
     public String OrderItemImpl_baseOrderItem();
- 
     public String SearchFacetImpl_ID();
     public String SearchFacetImpl_description();
     public String SearchFacetImpl_field();
@@ -138,4 +136,9 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String SearchFacetRangeImpl_MIN_VALUE();
     public String SearchFacetRangeImpl_MAX_VALUE();
     public String CategorySearchFacetImpl_sequence();
+    public String ProductImpl_Product_Attributes();
+    public String ProductImpl_Cross_Sale_Products();
+
+    public String SkuImpl_Sku_Media();
+    public String SkuImpl_Sku_Media_Key();
 }

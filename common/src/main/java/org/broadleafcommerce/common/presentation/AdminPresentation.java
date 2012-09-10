@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
 
 /**
@@ -35,15 +35,19 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 public @interface AdminPresentation {
 	
 	/**
-	 * The friendly name to present to a user for this field in a GUI. If supporting i18N,
+     * <p>Optional - only required if you want to display a friendly name to the user</p>
+     *
+	 * <p><The friendly name to present to a user for this field in a GUI. If supporting i18N,
 	 * the friendly name may be a key to retrieve a localized friendly name using
-	 * the GWT support for i18N.
+	 * the GWT support for i18N.</p>
 	 *
 	 * @return the friendly name
 	 */
 	String friendlyName() default "";
 	
 	/**
+     * Optional - only required if you want to restrict this field
+     *
 	 * If a security level is specified, it is registered with org.broadleafcommerce.openadmin.client.security.SecurityManager
 	 * The SecurityManager checks the permission of the current user to 
 	 * determine if this field should be disabled based on the specified level.
@@ -53,6 +57,8 @@ public @interface AdminPresentation {
 	String securityLevel() default "";
 	
 	/**
+     * Optional - only required if you want to order the appearance of this field in the UI
+     *
 	 * The order in which this field will appear in a GUI relative to other fields from the same class
 	 * 
 	 * @return the display order
@@ -60,6 +66,8 @@ public @interface AdminPresentation {
 	int order() default 99999;
 
     /**
+     * Optional - only required if you want to restrict the visibility of this field in the admin tool
+     *
      * Describes how the field is shown in admin GUI.
      *
      * @return whether or not to hide the form field.
@@ -67,6 +75,9 @@ public @interface AdminPresentation {
     VisibilityEnum visibility() default VisibilityEnum.VISIBLE_ALL;
 	
 	/**
+     * Optional - only required if you want to explicitly specify the field type. This
+     * value is normally inferred by the system based on the field type in the entity class.
+     *
 	 * Explicity specify the type the GUI should consider this field
 	 * Specifying UNKNOWN will cause the system to make its best guess
 	 * 
@@ -75,6 +86,8 @@ public @interface AdminPresentation {
 	SupportedFieldType fieldType() default SupportedFieldType.UNKNOWN;
 	
 	/**
+     * Optional - only required if you want to specify a grouping for this field
+     *
 	 * Specify a GUI grouping for this field
 	 * Fields in the same group will be visually grouped together in the GUI
 	 * <br />
@@ -86,6 +99,8 @@ public @interface AdminPresentation {
 	String group() default "General";
 	
 	/**
+     * Optional - only required if you want to order the appearance of groups in the UI
+     *
 	 * Specify an order for this group. Groups will be sorted in the resulting
 	 * form in ascending order based on this parameter.
 	 * 
@@ -94,6 +109,8 @@ public @interface AdminPresentation {
 	int groupOrder() default 99999;
 
     /**
+     * Optional - only required if you want to control the initial collapsed state of the group
+     *
      * Specify whether a group is collapsed by default in the admin UI.
      *
      * @return whether or not the group is collapsed by default
@@ -101,6 +118,9 @@ public @interface AdminPresentation {
     boolean groupCollapsed() default false;
 	
 	/**
+     * Optional - only required if you want to give the user extra room to enter a value
+     * for this field in the UI
+     *
 	 * If the field is a string, specify that the GUI
 	 * provide a text area
 	 * 
@@ -109,6 +129,9 @@ public @interface AdminPresentation {
 	boolean largeEntry() default false;
 	
 	/**
+     * Optional - only required if you want this field to appear as one of the default
+     * columns in a grid in the admin tool
+     *
 	 * Provide a hint to the GUI about the prominence of this field.
 	 * For example, prominent fields will show up as a column in any
 	 * list grid in the admin that displays this entity.
@@ -118,6 +141,9 @@ public @interface AdminPresentation {
 	boolean prominent() default false;
 	
 	/**
+     * Optional - only required if you want to explicitly control column width
+     * for this field in a grid in the admin tool
+     *
 	 * Specify the column space this field will occupy in grid widgets.
 	 * This value can be an absolute integer or a percentage. A value
 	 * of "*" will make this field use up equally distributed space.
@@ -127,6 +153,8 @@ public @interface AdminPresentation {
 	String columnWidth() default "*";
 	
 	/**
+     * Optional - only required for BROADLEAF_ENUMERATION field types
+     *
 	 * For fields with a SupportedFieldType of BROADLEAF_ENUMERATION,
 	 * you must specify the fully qualified class name of the Broadleaf Enumeration here.
 	 * 
@@ -135,6 +163,8 @@ public @interface AdminPresentation {
 	String broadleafEnumeration() default "";
 	
 	/**
+     * Optional - only required if you want to make the field immutable
+     *
 	 * Explicityly specify whether or not this field is mutable.
 	 * 
 	 * @return whether or not this field is read only
@@ -142,14 +172,18 @@ public @interface AdminPresentation {
 	boolean readOnly() default false;
 	
 	/**
+     * Optional - only required if you want to provide validation for this field
+     *
 	 * Specify the validation to use for this field in the admin, if any
 	 * 
 	 * @return the configuration for the validation
 	 */
 	ValidationConfiguration[] validationConfigurations() default {};
 
-
     /**
+     * Optional - only required if you want to explicitly make a field required. This
+     * setting is normally inferred by the JPA annotations on the field.
+     *
      * Specify whether you would like the admin to require this field,
      * even if it is not required by the ORM.
      *
@@ -158,6 +192,9 @@ public @interface AdminPresentation {
     RequiredOverride requiredOverride() default RequiredOverride.IGNORED;
 
     /**
+     * Optional - only required if you want to explicitly exclude this field from
+     * dynamic management by the admin tool
+     *
      * Specify if this field should be excluded from inclusion in the
      * admin presentation layer
      *
@@ -166,6 +203,8 @@ public @interface AdminPresentation {
     boolean excluded() default false;
     
     /**
+     * Optional - only required if you want to provide a tooltip for the field
+     *
      * Helpful tooltip to be displayed when the admin user hovers over the field.
      * This can be localized by providing a key which will use the GWT
      * support for i18N.
@@ -174,6 +213,8 @@ public @interface AdminPresentation {
     String tooltip() default "";
     
     /**
+     * Optional - only required if you want to provide help text for this field
+     *
      * On the form for this entity, this will show a question
      * mark icon next to the field. When the user clicks on the icon, whatever
      * HTML that is specified in this helpText is shown in a popup.
@@ -186,6 +227,8 @@ public @interface AdminPresentation {
     String helpText() default "";
     
     /**
+     * Optional - only required if you want to provide a hint for this field
+     *
      * Text to display immediately to the right of a form field. For instance, if the user needs
      * to put in a date, the hint could be the format the date needs to be in like 'MM/YYYY'.
      * 
@@ -194,5 +237,5 @@ public @interface AdminPresentation {
      * Reference implementation: http://www.smartclient.com/smartgwt/showcase/#form_details_hints
      */
     String hint() default "";
-    
+
 }

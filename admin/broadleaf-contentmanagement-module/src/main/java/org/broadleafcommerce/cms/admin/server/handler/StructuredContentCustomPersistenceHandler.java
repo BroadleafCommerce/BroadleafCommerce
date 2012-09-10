@@ -16,15 +16,10 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
@@ -38,18 +33,18 @@ import org.broadleafcommerce.cms.structure.service.type.StructuredContentRuleTyp
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.web.SandBoxContext;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -64,17 +59,16 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.hibernate.Criteria;
 import org.hibernate.tool.hbm2x.StringUtils;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 8/23/11
- * Time: 1:56 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class StructuredContentCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
@@ -128,12 +122,12 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     protected synchronized void createModifiedProperties(DynamicEntityDao dynamicEntityDao, InspectHelper helper, PersistencePerspective persistencePerspective) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, ServiceException, NoSuchFieldException {
         mergedProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
 
-        FieldMetadata fieldMetadata = new FieldMetadata();
+        BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
         fieldMetadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(StructuredContentImpl.class.getName());
         fieldMetadata.setAvailableToTypes(new String[]{StructuredContentImpl.class.getName()});
-        fieldMetadata.setCollection(false);
+        fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
         PersistencePackage fetchPackage = new PersistencePackage();
@@ -141,7 +135,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         PersistencePerspective fetchPerspective = new PersistencePerspective();
         fetchPackage.setPersistencePerspective(fetchPerspective);
         fetchPerspective.setAdditionalForeignKeys(new ForeignKey[]{});
-        fetchPerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY));
+        fetchPerspective.setOperationTypes(new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC));
         fetchPerspective.setAdditionalNonPersistentProperties(new String[]{});
         DynamicResultSet resultSet = ((PersistenceManager) helper).fetch(fetchPackage, new CriteriaTransferObject());
 
@@ -154,27 +148,25 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         }
 
         fieldMetadata.setEnumerationValues(enums);
-        FieldPresentationAttributes attributes = new FieldPresentationAttributes();
-        fieldMetadata.setPresentationAttributes(attributes);
-        attributes.setName("locale");
-        attributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Locale");
-        attributes.setGroup("StructuredContentCustomPersistenceHandler_Description");
-        attributes.setOrder(3);
-        attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-        attributes.setProminent(true);
-        attributes.setBroadleafEnumeration("");
-        attributes.setReadOnly(false);
-        attributes.setVisibility(VisibilityEnum.VISIBLE_ALL);
-        attributes.setRequiredOverride(true);
+        fieldMetadata.setName("locale");
+        fieldMetadata.setFriendlyName("StructuredContentCustomPersistenceHandler_Locale");
+        fieldMetadata.setGroup("StructuredContentCustomPersistenceHandler_Description");
+        fieldMetadata.setOrder(3);
+        fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        fieldMetadata.setProminent(true);
+        fieldMetadata.setBroadleafEnumeration("");
+        fieldMetadata.setReadOnly(false);
+        fieldMetadata.setVisibility(VisibilityEnum.VISIBLE_ALL);
+        fieldMetadata.setRequiredOverride(true);
 
         mergedProperties.put("locale", fieldMetadata);
 
-        FieldMetadata contentTypeFieldMetadata = new FieldMetadata();
+        BasicFieldMetadata contentTypeFieldMetadata = new BasicFieldMetadata();
         contentTypeFieldMetadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
         contentTypeFieldMetadata.setMutable(true);
         contentTypeFieldMetadata.setInheritedFromType(StructuredContentTypeImpl.class.getName());
         contentTypeFieldMetadata.setAvailableToTypes(new String[]{StructuredContentTypeImpl.class.getName()});
-        contentTypeFieldMetadata.setCollection(false);
+        contentTypeFieldMetadata.setForeignKeyCollection(false);
         contentTypeFieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
         PersistencePackage contentTypeFetchPackage = new PersistencePackage();
@@ -182,7 +174,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         PersistencePerspective contentTypeFetchPerspective = new PersistencePerspective();
         contentTypeFetchPackage.setPersistencePerspective(contentTypeFetchPerspective);
         contentTypeFetchPerspective.setAdditionalForeignKeys(new ForeignKey[]{});
-        contentTypeFetchPerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY));
+        contentTypeFetchPerspective.setOperationTypes(new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC));
         contentTypeFetchPerspective.setAdditionalNonPersistentProperties(new String[]{});
         DynamicResultSet contentTypeResultSet = ((PersistenceManager) helper).fetch(contentTypeFetchPackage, new CriteriaTransferObject());
 
@@ -195,41 +187,37 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         }
 
         contentTypeFieldMetadata.setEnumerationValues(contentTypeEnums);
-        FieldPresentationAttributes contentTypeAttributes = new FieldPresentationAttributes();
-        contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
-        contentTypeAttributes.setName("structuredContentType_Grid");
-        contentTypeAttributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Content_Type");
-        contentTypeAttributes.setGroup("StructuredContentCustomPersistenceHandler_Description");
-        contentTypeAttributes.setOrder(2);
-        contentTypeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-        contentTypeAttributes.setProminent(true);
-        contentTypeAttributes.setBroadleafEnumeration("");
-        contentTypeAttributes.setReadOnly(false);
-        contentTypeAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
-        contentTypeAttributes.setRequiredOverride(true);
+        contentTypeFieldMetadata.setName("structuredContentType_Grid");
+        contentTypeFieldMetadata.setFriendlyName("StructuredContentCustomPersistenceHandler_Content_Type");
+        contentTypeFieldMetadata.setGroup("StructuredContentCustomPersistenceHandler_Description");
+        contentTypeFieldMetadata.setOrder(2);
+        contentTypeFieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        contentTypeFieldMetadata.setProminent(true);
+        contentTypeFieldMetadata.setBroadleafEnumeration("");
+        contentTypeFieldMetadata.setReadOnly(false);
+        contentTypeFieldMetadata.setVisibility(VisibilityEnum.FORM_HIDDEN);
+        contentTypeFieldMetadata.setRequiredOverride(true);
 
         mergedProperties.put("structuredContentType_Grid", contentTypeFieldMetadata);
 
-        FieldMetadata iconMetadata = new FieldMetadata();
+        BasicFieldMetadata iconMetadata = new BasicFieldMetadata();
         iconMetadata.setFieldType(SupportedFieldType.ASSET);
         iconMetadata.setMutable(true);
         iconMetadata.setInheritedFromType(StructuredContentImpl.class.getName());
         iconMetadata.setAvailableToTypes(new String[]{StructuredContentImpl.class.getName()});
-        iconMetadata.setCollection(false);
+        iconMetadata.setForeignKeyCollection(false);
         iconMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-        FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
-        iconMetadata.setPresentationAttributes(iconAttributes);
-        iconAttributes.setName("picture");
-        iconAttributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Lock");
-        iconAttributes.setGroup("StructuredContentCustomPersistenceHandler_Locked_Details");
-        iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-        iconAttributes.setProminent(true);
-        iconAttributes.setBroadleafEnumeration("");
-        iconAttributes.setReadOnly(false);
-        iconAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
-        iconAttributes.setColumnWidth("30");
-        iconAttributes.setOrder(0);
-        iconAttributes.setRequiredOverride(true);
+        iconMetadata.setName("picture");
+        iconMetadata.setFriendlyName("StructuredContentCustomPersistenceHandler_Lock");
+        iconMetadata.setGroup("StructuredContentCustomPersistenceHandler_Locked_Details");
+        iconMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        iconMetadata.setProminent(true);
+        iconMetadata.setBroadleafEnumeration("");
+        iconMetadata.setReadOnly(false);
+        iconMetadata.setVisibility(VisibilityEnum.FORM_HIDDEN);
+        iconMetadata.setColumnWidth("30");
+        iconMetadata.setOrder(0);
+        iconMetadata.setRequiredOverride(true);
 
         mergedProperties.put("locked", iconMetadata);
 
@@ -240,23 +228,22 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     }
 
     protected FieldMetadata createHiddenField(String name) {
-        FieldMetadata fieldMetadata = new FieldMetadata();
+        BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
         fieldMetadata.setFieldType(SupportedFieldType.HIDDEN);
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
         fieldMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
-        fieldMetadata.setCollection(false);
+        fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-        FieldPresentationAttributes attributes = new FieldPresentationAttributes();
-        fieldMetadata.setPresentationAttributes(attributes);
-        attributes.setName(name);
-        attributes.setFriendlyName(name);
-        attributes.setGroup("StructuredContentCustomPersistenceHandler_Rules");
-        attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-        attributes.setProminent(false);
-        attributes.setBroadleafEnumeration("");
-        attributes.setReadOnly(false);
-        attributes.setVisibility(VisibilityEnum.HIDDEN_ALL);
+        fieldMetadata.setName(name);
+        fieldMetadata.setFriendlyName(name);
+        fieldMetadata.setGroup("StructuredContentCustomPersistenceHandler_Rules");
+        fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        fieldMetadata.setProminent(false);
+        fieldMetadata.setBroadleafEnumeration("");
+        fieldMetadata.setReadOnly(false);
+        fieldMetadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
+
         return fieldMetadata;
     }
 

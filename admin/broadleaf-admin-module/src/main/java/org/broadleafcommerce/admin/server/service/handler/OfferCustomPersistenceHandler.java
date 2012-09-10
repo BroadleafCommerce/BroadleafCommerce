@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -107,11 +108,11 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			
 			PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
 			Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
-			FieldMetadata metadata = offerCodeMergedProperties.get("offerCode");
-			metadata.getPresentationAttributes().setVisibility(VisibilityEnum.HIDDEN_ALL);
+			BasicFieldMetadata metadata = (BasicFieldMetadata) offerCodeMergedProperties.get("offerCode");
+			metadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
 			mergedProperties.put("offerCode.offerCode", metadata);
-			FieldMetadata metadata2 = offerCodeMergedProperties.get("id");
-			metadata2.getPresentationAttributes().setVisibility(VisibilityEnum.HIDDEN_ALL);
+            BasicFieldMetadata metadata2 = (BasicFieldMetadata) offerCodeMergedProperties.get("id");
+			metadata2.setVisibility(VisibilityEnum.HIDDEN_ALL);
 			mergedProperties.put("offerCode.id", metadata2);
 
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);

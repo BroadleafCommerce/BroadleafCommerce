@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
-import java.util.Map;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -38,6 +36,7 @@ import com.smartgwt.client.widgets.grid.events.RecordDropHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
@@ -45,23 +44,24 @@ import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+
+import java.util.Map;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class EditableJoinStructurePresenter extends AbstractSubPresentable {
+public class EditableAdornedTargetListPresenter extends AbstractSubPresentable {
 
 	protected EntitySearchDialog searchDialog;
 	protected String searchDialogTitle;
-	protected String joinStructureEditTitle;
-	protected String[] joinStructureFields;
+	protected String adornedTargetEditTitle;
+	protected String[] adornedTargetFields;
     protected HandlerRegistration addClickedHandlerRegistration;
     protected HandlerRegistration editCompletedHandlerRegistration;
     protected HandlerRegistration recordDropHandlerRegistration;
@@ -69,16 +69,16 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
     protected HandlerRegistration removedClickedHandlerRegistration;
     protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 	
-	public EditableJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle, String joinStructureEditTitle, String... joinStructureFields) {
+	public EditableAdornedTargetListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle, String adornedTargetEditTitle, String... adornedTargetFields) {
 		super(display, availableToTypes);
 		this.searchDialog = searchDialog;
 		this.searchDialogTitle = searchDialogTitle;
-		this.joinStructureEditTitle = joinStructureEditTitle;
-		this.joinStructureFields = joinStructureFields;
+		this.adornedTargetEditTitle = adornedTargetEditTitle;
+		this.adornedTargetFields = adornedTargetFields;
 	}
 
-    public EditableJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle, String joinStructureEditTitle, String... joinStructureFields) {
-		this(display, searchDialog, null, searchDialogTitle, joinStructureEditTitle, joinStructureFields);
+    public EditableAdornedTargetListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle, String adornedTargetEditTitle, String... adornedTargetFields) {
+		this(display, searchDialog, null, searchDialogTitle, adornedTargetEditTitle, adornedTargetFields);
 	}
 	
 	public void bind() {
@@ -90,7 +90,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 						public void onSearchItemSelected(SearchItemSelected event) {
 							Map initialValues = ((DynamicEntityDataSource) display.getGrid().getDataSource()).extractRecordValues((TreeNode) event.getRecord());
 							initialValues.put("backup_id", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPrimaryKeyValue(event.getRecord()));
-							BLCMain.ENTITY_ADD.editNewRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
+							BLCMain.ENTITY_ADD.editNewRecord(adornedTargetEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
                                 public void onItemEdited(ItemEdited event) {
                                     ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
                                     DSResponse updateResponse = new DSResponse();
@@ -118,7 +118,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
                                             });
                                     }
                                 }
-                            }, joinStructureFields, null);
+                            }, adornedTargetFields, null);
 						}
 					});
 				}
@@ -131,7 +131,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 			}
 		});
 		/*
-		 * TODO add code to check if the JoinStructure has a sort field defined. If not,
+		 * TODO add code to check if the AdornedTargetList has a sort field defined. If not,
 		 * then disable the re-order functionality
 		 */
 		recordDropHandlerRegistration = display.getGrid().addRecordDropHandler(new RecordDropHandler() {
@@ -142,8 +142,8 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 				if (newIndex > originalIndex) {
 					newIndex--;
 				}
-				JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-				record.setAttribute(joinStructure.getSortField(), newIndex);
+				AdornedTargetList adornedTargetList = (AdornedTargetList) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+				record.setAttribute(adornedTargetList.getSortField(), newIndex);
 				display.getGrid().updateData(record);
 			}
 		});
@@ -170,14 +170,14 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
         rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
             @Override
             public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
-                JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-                display.getGrid().getSelectedRecord().setAttribute(joinStructure.getSortField(), Integer.parseInt(display.getGrid().getSelectedRecord().getAttribute(joinStructure.getSortField()))-1);
-                BLCMain.ENTITY_ADD.editRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), new ItemEditedHandler() {
+                AdornedTargetList adornedTargetList = (AdornedTargetList) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                display.getGrid().getSelectedRecord().setAttribute(adornedTargetList.getSortField(), Integer.parseInt(display.getGrid().getSelectedRecord().getAttribute(adornedTargetList.getSortField()))-1);
+                BLCMain.ENTITY_ADD.editRecord(adornedTargetEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), new ItemEditedHandler() {
                     @Override
                     public void onItemEdited(ItemEdited event) {
                         display.getRemoveButton().disable();
                     }
-                }, joinStructureFields, null, readOnly);
+                }, adornedTargetFields, null, readOnly);
             }
         });
 	}
