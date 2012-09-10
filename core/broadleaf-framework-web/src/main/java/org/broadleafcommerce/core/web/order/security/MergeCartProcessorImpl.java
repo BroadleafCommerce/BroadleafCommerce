@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.MergeCartService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -58,6 +59,8 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
         try {
             mergeCartResponse = mergeCartService.mergeCart(loggedInCustomer, cart);
         } catch (PricingException e) {
+            throw new RuntimeException(e);
+        } catch (RemoveFromCartException e) {
             throw new RuntimeException(e);
         }
 
