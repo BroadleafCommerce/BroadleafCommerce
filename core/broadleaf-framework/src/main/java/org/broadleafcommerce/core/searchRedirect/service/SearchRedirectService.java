@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web.form;
+package org.broadleafcommerce.core.searchRedirect.service;
+
+import org.broadleafcommerce.core.searchRedirect.domain.SearchRedirect;
+
 
 /**
- * A form that will provided a CSRF token field
- * 
- * @author Andre Azzolini (apazzolini)
+ * Created by bpolster.
  */
-public class CsrfProtectedForm {
-	
-	protected String csrfToken;
+public interface SearchRedirectService {
 
-	public String getCsrfToken() {
-		return csrfToken;
-	}
+	/**
+	 * Checks the passed in URL to determine if there is a matching SearchRedirect.
+	 * Returns null if no handler was found.
+	 * 
+	 * @param uri
+	 * @return
+	 */
+    public SearchRedirect findSearchRedirectBySearchTerm(String uri);
 
-	public void setCsrfToken(String csrfToken) {
-		this.csrfToken = csrfToken;
-	}
-	
 }

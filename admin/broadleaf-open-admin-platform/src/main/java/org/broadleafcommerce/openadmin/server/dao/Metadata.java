@@ -161,7 +161,7 @@ public class Metadata {
 
         for (String propertyName : presentationOverrides.keySet()) {
             for (String key : mergedProperties.keySet()) {
-                if (key.equals(propertyName)) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationOverride(prefix, isParentExcluded, mergedProperties, presentationOverrides, propertyName, key, dynamicEntityDao);
                     buildAdminPresentationToOneLookupOverride(mergedProperties, presentationToOneLookupOverrides, propertyName, key);
                     buildAdminPresentationDataDrivenEnumerationOverride(mergedProperties, presentationDataDrivenEnumerationOverrides, propertyName, key, dynamicEntityDao);
@@ -1415,6 +1415,9 @@ public class Metadata {
                         metadata.setExcluded(false);
                     }
                 }
+                if (!(mergedProperties.get(key) instanceof BasicFieldMetadata)) {
+                    return;
+                }
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(key);
                 metadata.setFriendlyName(annot.friendlyName());
                 metadata.setSecurityLevel(annot.securityLevel());
@@ -1475,6 +1478,9 @@ public class Metadata {
                     if (!isParentExcluded) {
                         metadata.setExcluded(false);
                     }
+                }
+                if (!(mergedProperties.get(key) instanceof MapMetadata)) {
+                    return;
                 }
                 MapMetadata metadata = (MapMetadata) mergedProperties.get(key);
                 metadata.setFriendlyName(annot.friendlyName());
@@ -1540,6 +1546,9 @@ public class Metadata {
                         metadata.setExcluded(false);
                     }
                 }
+                if (!(mergedProperties.get(key) instanceof AdornedTargetCollectionMetadata)) {
+                    return;
+                }
                 AdornedTargetCollectionMetadata metadata = (AdornedTargetCollectionMetadata) mergedProperties.get(key);
                 metadata.setCustomCriteria(annot.customCriteria());
                 metadata.setMutable(!annot.readOnly());
@@ -1589,6 +1598,9 @@ public class Metadata {
                         metadata.setExcluded(false);
                     }
                 }
+                if (!(mergedProperties.get(key) instanceof BasicCollectionMetadata)) {
+                    return;
+                }
                 BasicCollectionMetadata metadata = (BasicCollectionMetadata) mergedProperties.get(key);
                 metadata.setCustomCriteria(annot.customCriteria());
                 metadata.setMutable(!annot.readOnly());
@@ -1613,6 +1625,9 @@ public class Metadata {
         if (override != null) {
             AdminPresentationToOneLookup annot = override.value();
             if (annot != null) {
+                if (!(mergedProperties.get(key) instanceof BasicFieldMetadata)) {
+                    return;
+                }
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(key);
                 metadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 metadata.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
@@ -1628,6 +1643,9 @@ public class Metadata {
         if (override != null) {
             AdminPresentationDataDrivenEnumeration annot = override.value();
             if (annot != null) {
+                if (!(mergedProperties.get(key) instanceof BasicFieldMetadata)) {
+                    return;
+                }
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(key);
                 metadata.setFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);
                 metadata.setExplicitFieldType(SupportedFieldType.DATA_DRIVEN_ENUMERATION);

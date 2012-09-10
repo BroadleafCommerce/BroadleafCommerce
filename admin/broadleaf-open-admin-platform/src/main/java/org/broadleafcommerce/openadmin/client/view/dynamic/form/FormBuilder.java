@@ -592,7 +592,7 @@ public class FormBuilder {
 		return displayFormItem;
 	}
 
-	protected static FormItem buildField(final DataSource dataSource, DataSourceField field, String fieldType, Boolean largeEntry, DynamicForm form) {
+	public static FormItem buildField(final DataSource dataSource, DataSourceField field, String fieldType, Boolean largeEntry, DynamicForm form) {
 		final FormItem formItem;
 		switch(SupportedFieldType.valueOf(fieldType)){
 		case BOOLEAN:

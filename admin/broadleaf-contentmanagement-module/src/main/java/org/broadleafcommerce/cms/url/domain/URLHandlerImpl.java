@@ -37,7 +37,7 @@ public class URLHandlerImpl implements URLHandler,java.io.Serializable {
 
 	    @Id
 	    @GeneratedValue(generator = "URLHandlerID", strategy = GenerationType.TABLE)
-	    @TableGenerator(name = "URLHandlerID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "URLHandlerID", allocationSize = 50)
+	    @TableGenerator(name = "URLHandlerID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "URLHandlerImpl", allocationSize = 50)
 	    @Column(name = "URL_HANDLER_ID")
 	    @AdminPresentation(friendlyName = "URLHandlerImpl_ID", order=1, group = "URLHandlerImpl_friendyName", groupOrder=1, visibility = VisibilityEnum.HIDDEN_ALL)
 	    	  protected Long id;
@@ -99,11 +99,13 @@ public class URLHandlerImpl implements URLHandler,java.io.Serializable {
 		public void setNewURL(String newURL) {
 			this.newURL = newURL;
 		}
-	    public URLRedirectType getUrlRedirectType() {
+	    @Override
+        public URLRedirectType getUrlRedirectType() {
 	        return URLRedirectType.getInstance(urlRedirectType);
 	    }
 
-	    public void setUrlRedirectType(URLRedirectType redirectType) {
+	    @Override
+        public void setUrlRedirectType(URLRedirectType redirectType) {
 	        this.urlRedirectType = redirectType.getType();
 	    }
 	    

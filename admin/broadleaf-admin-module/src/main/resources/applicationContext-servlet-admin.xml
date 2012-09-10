@@ -2,8 +2,7 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <bean id="adminUrlMapping" class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredHandler">
         <property name="mappings">
@@ -13,6 +12,7 @@
                 <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService" />
                 <entry key="/**/utility.service" value-ref="blUtilityRemoteService" />
                 <entry key="/**/admin.catalog.service" value-ref="blAdminCatalogRemoteService" />
+                <entry key="/**/admin.export.service" value-ref="blAdminExporterRemoteService" />
             </map>
         </property>
         <property name="serviceExporterFactory">

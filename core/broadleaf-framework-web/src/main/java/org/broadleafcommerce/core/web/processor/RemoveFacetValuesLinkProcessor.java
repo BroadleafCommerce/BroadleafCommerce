@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
@@ -65,6 +66,8 @@ public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAtt
 		
 		String key = facet.getFacet().getField().getAbbreviation();
 		params.remove(key);
+		params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
+
 		
 		String url = ProcessorUtils.getUrl(baseUrl, params);
 		

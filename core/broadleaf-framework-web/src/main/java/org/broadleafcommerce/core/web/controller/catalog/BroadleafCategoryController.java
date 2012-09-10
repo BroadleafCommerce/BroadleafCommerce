@@ -50,8 +50,8 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView model = new ModelAndView();
 		
-		if (request.getMethod().equals("POST")) {
-			// If we receive a POST to a category url, we need to convert the POSTed fields to the 
+		if (request.getParameterMap().containsKey("facetField")) {
+			// If we receive a facetField parameter, we need to convert the field to the 
 			// product search criteria expected format. This is used in multi-facet selection. We 
 			// will send a redirect to the appropriate URL to maintain canonical URLs
 			
@@ -68,6 +68,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 				}
 			}
 			
+			parameters.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
 			parameters.put(fieldName, activeFieldFilters.toArray(new String[activeFieldFilters.size()]));
 			parameters.remove("facetField");
 			

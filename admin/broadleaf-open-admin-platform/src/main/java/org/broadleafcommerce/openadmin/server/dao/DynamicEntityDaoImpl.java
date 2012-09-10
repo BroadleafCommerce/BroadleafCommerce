@@ -1107,7 +1107,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			ClassMetadata foreignMetadata;
             String foreignKeyClass;
             String lookupDisplayProperty;
-            if (foreignField == null) {
+            if (additionalForeignKeyIndexPosition < 0) {
                 Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(type.getReturnedClass());
                 foreignMetadata = getSessionFactory().getClassMetadata(entities[entities.length-1]);
                 foreignKeyClass = entities[entities.length-1].getName();

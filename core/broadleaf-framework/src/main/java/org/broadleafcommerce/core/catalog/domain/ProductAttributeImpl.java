@@ -72,7 +72,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     protected String name;
 
     /** The value. */
-    @Column(name = "VALUE", nullable=false)
+    @Column(name = "VALUE")
     @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
     protected String value;
 

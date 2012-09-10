@@ -16,10 +16,7 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,12 +30,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CAT_SEARCH_FACET_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class CategorySearchFacetImpl implements CategorySearchFacet {
+public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable {
 	
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "CategorySearchFacetId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "CategorySearchFacetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategorySearchFacetImpl", allocationSize = 50)
@@ -53,8 +61,9 @@ public class CategorySearchFacetImpl implements CategorySearchFacet {
     @JoinColumn(name = "SEARCH_FACET_ID")
     protected SearchFacet searchFacet;
     
-    @Column(name =  "POSITION")
-    protected Integer position;
+    @Column(name = "SEQUENCE",nullable=false)
+    @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence", prominent=true)
+    protected Long sequence;
 
 	@Override
 	public Long getId() {
@@ -87,13 +96,13 @@ public class CategorySearchFacetImpl implements CategorySearchFacet {
 	}
 
 	@Override
-	public Integer getPosition() {
-		return position;
+	public Long getSequence() {
+		return sequence;
 	}
 
 	@Override
-	public void setPosition(Integer position) {
-		this.position = position;
+	public void setSequence(Long sequence) {
+		this.sequence = sequence;
 	}
     
 }

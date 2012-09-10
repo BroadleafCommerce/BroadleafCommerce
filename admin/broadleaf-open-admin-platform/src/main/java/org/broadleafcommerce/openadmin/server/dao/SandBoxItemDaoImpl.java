@@ -55,12 +55,20 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
 
     @Override
     public SandBoxItem retrieveBySandboxAndTemporaryItemId(Long sandBoxId, SandBoxItemType type, Long tempItemId) {
-        Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMP_ITEM_ID");
-        query.setParameter("sandboxId", sandBoxId);
-        query.setParameter("itemType", type.getType());
-        query.setParameter("temporaryItemId", tempItemId);
-        List<SandBoxItem> items = query.getResultList();
-        return items == null || items.isEmpty() ? null : items.get(0);
+        if (sandBoxId != null) {
+            Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMP_ITEM_ID");
+            query.setParameter("sandboxId", sandBoxId);
+            query.setParameter("itemType", type.getType());
+            query.setParameter("temporaryItemId", tempItemId);
+            List<SandBoxItem> items = query.getResultList();
+            return items == null || items.isEmpty() ? null : items.get(0);
+        } else {
+            Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMP_ITEM_ID_AND_PROD_SANDBOX");
+            query.setParameter("itemType", type.getType());
+            query.setParameter("temporaryItemId", tempItemId);
+            List<SandBoxItem> items = query.getResultList();
+            return items == null || items.isEmpty() ? null : items.get(0);
+        }
     }
 
     @Override

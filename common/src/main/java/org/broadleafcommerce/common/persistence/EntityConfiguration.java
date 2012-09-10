@@ -26,8 +26,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Component("blEntityConfiguration")
@@ -50,7 +51,7 @@ public class EntityConfiguration implements ApplicationContextAware {
 
     @PostConstruct
     public void configureMergedItems() {
-        Set<Resource> temp = new HashSet<Resource>();
+        Set<Resource> temp = new LinkedHashSet<Resource>();
         if (mergedEntityContexts != null && !mergedEntityContexts.isEmpty()) {
             for (String location : mergedEntityContexts) {
                 temp.add(webApplicationContext.getResource(location));

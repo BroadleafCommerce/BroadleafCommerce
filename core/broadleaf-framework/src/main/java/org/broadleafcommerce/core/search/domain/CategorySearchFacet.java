@@ -68,16 +68,16 @@ public interface CategorySearchFacet {
 	/**
 	 * Gets the priority of this search facet in relationship to other search facets in this category
 	 * 
-	 * @return the position of this search facet
+	 * @return the sequence of this search facet
 	 */
-	public Integer getPosition();
+	public Long getSequence();
 
 	/**
-	 * Sets the position of this search facet
+	 * Sets the sequence of this search facet
 	 * 
 	 * @see #getPosition()
 	 * @param position
 	 */
-	public void setPosition(Integer position);
+	public void setSequence(Long sequence);
 
 }

@@ -29,4 +29,28 @@ public class UrlUtil {
             return StringUtils.uncapitalize(toConvert);
         }
 	}
+	
+	    /**
+	     * If the url does not include "//" then the system will ensure that the
+	     * application context is added to the start of the URL.
+	     * 
+	     * @param url
+	     * @return
+	     */
+	    public static String fixRedirectUrl(String contextPath, String url) {
+	        if (url.indexOf("//") < 0) {
+
+	            if (contextPath != null && (!"".equals(contextPath))) {
+	                if (!url.startsWith("/")) {
+	                    url = "/" + url;
+	                }
+	                if (!url.startsWith(contextPath)) {
+	                    url = contextPath + url;
+	                }
+	            }
+	        }
+	        return url;
+
+	    }
+	    
 }

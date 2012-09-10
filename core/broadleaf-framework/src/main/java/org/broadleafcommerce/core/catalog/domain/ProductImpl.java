@@ -26,10 +26,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -144,12 +141,16 @@ public class ProductImpl implements Product, Status {
     
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=11, group = "ProductImpl_Product_Description", prominent=false)
-    protected boolean isFeaturedProduct = false;
+    protected Boolean isFeaturedProduct = false;
     
     @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL})
     @JoinColumn(name = "DEFAULT_SKU_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Sku defaultSku;
+    
+    @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
+    @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options", order=12, group = "ProductImpl_Product_Description", prominent=false)
+    protected Boolean canSellWithoutOptions = false;
     
     /** The skus. */
     @Transient
@@ -242,7 +243,6 @@ public class ProductImpl implements Product, Status {
         return getDefaultSku().getLongDescription();
     }
 
-
     @Override
     public void setLongDescription(String longDescription) {
         getDefaultSku().setLongDescription(longDescription);
@@ -315,8 +315,18 @@ public class ProductImpl implements Product, Status {
     public Sku getDefaultSku() {
 		return defaultSku;
 	}
+    
+    @Override
+	public Boolean getCanSellWithoutOptions() {
+		return canSellWithoutOptions == null ? false : canSellWithoutOptions;
+	}
 
     @Override
+	public void setCanSellWithoutOptions(Boolean canSellWithoutOptions) {
+		this.canSellWithoutOptions = canSellWithoutOptions;
+	}
+
+	@Override
 	public void setDefaultSku(Sku defaultSku) {
 		this.defaultSku = defaultSku;
 	}

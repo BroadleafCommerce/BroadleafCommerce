@@ -59,6 +59,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected SubItemView skusDisplay;
 	protected GridStructureView bundleItemsDisplay;
 	protected ToolStripButton cloneProductButton;
+	protected ToolStripButton exportProductsButton;
     
 	public OneToOneProductSkuView() {
 		setHeight100();
@@ -75,8 +76,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productsListTitle"), entityDataSource);
 		cloneProductButton = new ToolStripButton(BLCMain.getMessageManager().getString("cloneButtonTitle"));
-		cloneProductButton.disable();
+        cloneProductButton.disable();
+		exportProductsButton = new ToolStripButton(BLCMain.getMessageManager().getString("exportProductsButtonTitle"));
 		listDisplay.getToolBar().addButton(cloneProductButton);
+		listDisplay.getToolBar().addButton(exportProductsButton);
 		leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet(); 
@@ -238,6 +241,11 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	@Override
 	public ToolStripButton getCloneProductButton() {
 	    return cloneProductButton;
+	}
+	
+	@Override
+	public ToolStripButton getExportProductsButton() {
+	    return exportProductsButton;
 	}
 
 }

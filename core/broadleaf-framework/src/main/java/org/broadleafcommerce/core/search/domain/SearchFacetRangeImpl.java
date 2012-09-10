@@ -16,9 +16,8 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,14 +31,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_FACET_RANGE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class SearchFacetRangeImpl implements SearchFacetRange {
+public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
 	
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "SearchFacetRangeId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SearchFacetRangeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchFacetRangeImpl", allocationSize = 50)
@@ -52,9 +59,11 @@ public class SearchFacetRangeImpl implements SearchFacetRange {
     protected SearchFacet searchFacet = new SearchFacetImpl();
     
     @Column(name = "MIN_VALUE", precision=19, scale=5, nullable = false)
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_MIN_VALUE", order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
     protected BigDecimal minValue;
     
     @Column(name = "MAX_VALUE", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_MAX_VALUE", order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
     protected BigDecimal maxValue;
     
 	@Override

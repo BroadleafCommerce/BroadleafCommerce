@@ -87,16 +87,16 @@ public class SolrSearchServiceImpl implements SearchService {
 	
 	protected SolrServer server;
 
-	public SolrSearchServiceImpl(String solrHome) throws IOException, ParserConfigurationException, SAXException {
-		System.setProperty("solr.solr.home", solrHome);
+	public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
+		System.setProperty("solr.solr.home", solrServer);
 		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
 		CoreContainer coreContainer = initializer.initialize();
 		EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, "");
 		this.server = server;
 	}
 	
-	public SolrSearchServiceImpl(SolrServer server) {
-		this.server = server;
+	public SolrSearchServiceImpl(SolrServer solrServer) {
+		this.server = solrServer;
 	}
 	
 	@Override
@@ -116,6 +116,10 @@ public class SolrSearchServiceImpl implements SearchService {
 			document.addField("id", product.getId());
 			for (Category category : product.getAllParentCategories()) {
 				document.addField("category", category.getId());
+				
+				String categorySortField = getCategorySortField(category);
+				int listIndex = category.getAllProducts().indexOf(product);
+				document.addField(categorySortField, listIndex);
 			}
 			
 			// Add data-driven user specified searchable fields
@@ -125,7 +129,8 @@ public class SolrSearchServiceImpl implements SearchService {
 				try {
 					String propertyName = field.getPropertyName();
 					if (propertyName.contains("productAttributes.")) {
-						propertyName = convertToMappedProperty(propertyName, "productAttributes", "mappedProductAttributes");
+						propertyName = convertToMappedProperty(propertyName, "productAttributes", 
+								"mappedProductAttributes");
 					}
 					Object propertyValue = PropertyUtils.getProperty(product, propertyName);
 					
@@ -146,7 +151,8 @@ public class SolrSearchServiceImpl implements SearchService {
 						}
 					}
 				} catch (Exception e) {
-					LOG.debug("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id[" + product.getId() + "]");
+					LOG.debug("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
+							+ product.getId() + "]");
 				}
 			}
 			document.addField("searchable", StringUtils.join(copyFieldValue, " "));
@@ -167,17 +173,19 @@ public class SolrSearchServiceImpl implements SearchService {
 	}
 	
 	@Override
-	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException {
+	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) 
+			throws ServiceException {
 		List<SearchFacetDTO> facets = getCategoryFacets(category);
 		String query = "category:" + category.getId();
-		return findProducts(query, facets, searchCriteria);
+		return findProducts(query, facets, searchCriteria, getCategorySortField(category) + " asc");
 	}
 	
 	@Override
-	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) throws ServiceException {
+	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) 
+			throws ServiceException {
 		List<SearchFacetDTO> facets = getSearchFacets();
 		query = "searchable:*" + query + "*"; // Surrounding with * allows partial word matches
-		return findProducts(query, facets, searchCriteria);
+		return findProducts(query, facets, searchCriteria, null);
 	}
 	
 	@Override
@@ -207,17 +215,19 @@ public class SolrSearchServiceImpl implements SearchService {
 	 * @return the ProductSearchResult of the search
 	 * @throws ServiceException
 	 */
-	protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria) throws ServiceException {
+	protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets, 
+			ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
 		Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 		
 		// Build the basic query
 	    SolrQuery solrQuery = new SolrQuery()
 	    	.setQuery(qualifiedSolrQuery)
+	    	.setFields("id")
     		.setRows(searchCriteria.getPageSize())
     		.setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
 	    
 	    // Attach additional restrictions
-	    attachSortClause(solrQuery, searchCriteria);
+	    attachSortClause(solrQuery, searchCriteria, defaultSort);
 	    attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
 	    attachFacets(solrQuery, namedFacetMap);
 
@@ -250,12 +260,21 @@ public class SolrSearchServiceImpl implements SearchService {
 	 * @param query
 	 * @param searchCriteria
 	 */
-	protected void attachSortClause(SolrQuery query, ProductSearchCriteria searchCriteria) {
+	protected void attachSortClause(SolrQuery query, ProductSearchCriteria searchCriteria, String defaultSort) {
 		Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria);
-		if (StringUtils.isNotBlank(searchCriteria.getSortQuery())) {
-			String[] sortFields = searchCriteria.getSortQuery().split(",");
+		
+		String sortQuery = searchCriteria.getSortQuery();
+		if (StringUtils.isBlank(sortQuery)) {
+			sortQuery = defaultSort;
+		}
+		
+		if (StringUtils.isNotBlank(sortQuery)) {
+			String[] sortFields = sortQuery.split(",");
 			for (String sortField : sortFields) {
-				String field = solrFieldKeyMap.get(sortField.split(" ")[0]);
+				String field = sortField.split(" ")[0];
+				if (solrFieldKeyMap.containsKey(field)) {
+					field = solrFieldKeyMap.get(field);
+				}
 				ORDER order = "desc".equals(sortField.split(" ")[1]) ? ORDER.desc : ORDER.asc;
 				
 				if (field != null) {
@@ -272,7 +291,8 @@ public class SolrSearchServiceImpl implements SearchService {
 	 * @param namedFacetMap
 	 * @param searchCriteria
 	 */
-	protected void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, ProductSearchCriteria searchCriteria) {
+	protected void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, 
+			ProductSearchCriteria searchCriteria) {
 		for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
 			String solrKey = null;
 			for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
@@ -288,7 +308,8 @@ public class SolrSearchServiceImpl implements SearchService {
 				String[] selectedValues = entry.getValue().clone();
 				for (int i = 0; i < selectedValues.length; i++) {
 					if (selectedValues[i].contains("range[")) {
-						String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1, selectedValues[i].indexOf(']'));
+						String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1, 
+								selectedValues[i].indexOf(']'));
 						String[] rangeValues = StringUtils.split(rangeValue, ':');
 						if (rangeValues[1].equals("null")) {
 							rangeValues[1] = "*";
@@ -354,11 +375,12 @@ public class SolrSearchServiceImpl implements SearchService {
 	    
 	    if (response.getFacetQuery() != null) {
 		    for (Entry<String, Integer> entry : response.getFacetQuery().entrySet()) {
-	    		String facetFieldName = entry.getKey().substring(entry.getKey().indexOf("}") + 1, entry.getKey().indexOf(':'));
+		    	String key = entry.getKey();
+	    		String facetFieldName = key.substring(key.indexOf("}") + 1, key.indexOf(':'));
 	    		SearchFacetDTO facetDTO = namedFacetMap.get(facetFieldName);
 	    		
-	    		String minValue = entry.getKey().substring(entry.getKey().indexOf("[") + 1, entry.getKey().indexOf(" TO"));
-	    		String maxValue = entry.getKey().substring(entry.getKey().indexOf(" TO ") + 4, entry.getKey().indexOf("]"));
+	    		String minValue = key.substring(key.indexOf("[") + 1, key.indexOf(" TO"));
+	    		String maxValue = key.substring(key.indexOf(" TO ") + 4, key.indexOf("]"));
 	    		if (maxValue.equals("*")) {
 	    			maxValue = null;
 	    		}
@@ -404,7 +426,8 @@ public class SolrSearchServiceImpl implements SearchService {
 	 * @param response
 	 * @param searchCriteria
 	 */
-	public void setPagingAttributes(ProductSearchResult result, QueryResponse response, ProductSearchCriteria searchCriteria) {
+	public void setPagingAttributes(ProductSearchResult result, QueryResponse response, 
+			ProductSearchCriteria searchCriteria) {
 	    result.setTotalResults(new Long(response.getResults().getNumFound()).intValue());
 	    result.setPage(searchCriteria.getPage());
 	    result.setPageSize(searchCriteria.getPageSize());
@@ -428,11 +451,13 @@ public class SolrSearchServiceImpl implements SearchService {
 	    List<Product> products = productDao.readProductsByIds(productIds); 
 	    
 	    // We have to sort the products list by the order of the productIds list to maintain sortability in the UI
-	    Collections.sort(products, new Comparator<Product>() {
-			public int compare(Product o1, Product o2) {
-				return new Integer(productIds.indexOf(o1.getId())).compareTo(productIds.indexOf(o2.getId()));
-			}
-	    });
+	    if (products != null) {
+		    Collections.sort(products, new Comparator<Product>() {
+				public int compare(Product o1, Product o2) {
+					return new Integer(productIds.indexOf(o1.getId())).compareTo(productIds.indexOf(o2.getId()));
+				}
+		    });
+	    }
 	    
 		return products;
 	}
@@ -473,6 +498,10 @@ public class SolrSearchServiceImpl implements SearchService {
 		}
 		
 		return sb.toString();
+	}
+	
+	protected String getCategorySortField(Category category) {
+		return "category_" + category.getId() + "_sort_i";
 	}
 	
 	/**
@@ -564,7 +593,8 @@ public class SolrSearchServiceImpl implements SearchService {
 	 * @param searchCriteria
 	 * @return a map of fully qualified solr index field key to the searchFacetDTO object
 	 */
-	protected Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria) {
+	protected Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets, 
+			ProductSearchCriteria searchCriteria) {
 		Map<String, SearchFacetDTO> namedFacetMap = new HashMap<String, SearchFacetDTO>();
 		for (SearchFacetDTO facet : facets) {
 			Field facetField = facet.getFacet().getField();

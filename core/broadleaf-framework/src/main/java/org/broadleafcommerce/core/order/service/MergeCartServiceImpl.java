@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
@@ -25,8 +26,10 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
+import org.broadleafcommerce.core.order.service.legacy.LegacyOrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
@@ -93,22 +96,31 @@ public class MergeCartServiceImpl implements MergeCartService {
             mergeCartResponse.setMerged(customerCart != null && customerCart.getOrderItems().size() > 0);
         }
 
+        
         // add anonymous cart items (make sure they are valid)
         if (anonymousCart != null && (customerCart == null || !customerCart.getId().equals(anonymousCart.getId()))) {
             if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
                 if (customerCart == null) {
                     customerCart = orderService.createNewCartForCustomer(customer);
                 }
+                
                 Map<OrderItem, OrderItem> oldNewItemMap = new HashMap<OrderItem, OrderItem>();
                 customerCart = mergeRegularOrderItems(anonymousCart, mergeCartResponse, customerCart, oldNewItemMap);
                 customerCart = mergeOfferCodes(anonymousCart, customerCart);
                 customerCart = removeExpiredGiftWrapOrderItems(mergeCartResponse, customerCart, oldNewItemMap);
                 customerCart = mergeGiftWrapOrderItems(mergeCartResponse, customerCart, oldNewItemMap);
 
-                customerCart = orderService.save(customerCart, priceOrder);
                 orderService.cancelOrder(anonymousCart);
+                customerCart = fulfillmentGroupService.collapseToOneFulfillmentGroup(customerCart, priceOrder);
             }
         }
+        
+	    // copy the customer's email to this order, overriding any previously set email
+        if (customerCart != null && StringUtils.isNotBlank(customer.getEmailAddress())) {
+        	customerCart.setEmailAddress(customer.getEmailAddress());
+            customerCart = orderService.save(customerCart, priceOrder);
+        }
+        
         mergeCartResponse.setOrder(customerCart);
         return mergeCartResponse;
 	}
@@ -398,7 +410,19 @@ public class MergeCartServiceImpl implements MergeCartService {
         newOrderItem.setOrder(order);
         newOrderItem = orderItemService.saveOrderItem(newOrderItem);
         orderItems.add(newOrderItem);
+        
+        // The legacy services did not expect this behavior, so we will not implement it for those services
+        if (!LegacyOrderService.class.isAssignableFrom(orderService.getClass())) {
+	    	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
+	    	fgItemRequest.setFulfillmentGroup(null);
+	    	fgItemRequest.setOrderItem(newOrderItem);
+	    	fgItemRequest.setOrder(order);
+	    	fgItemRequest.setQuantity(newOrderItem.getQuantity());
+	    	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
+        }
+        
         order = orderService.save(order, priceOrder);
+    	
         return newOrderItem;
     }
     
