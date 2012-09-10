@@ -281,7 +281,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 initialValues.put("_type", CeilingEntities.STATICASSETS);
                 initialValues.put("csrfToken", BLCMain.csrfToken);
                 dialog.setInitialValues(initialValues);
-
                 library.put("staticAssetDialog", dialog);
             }
         }));
@@ -308,7 +307,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             }
         });
         super.postSetup(container);
-    }
+
 
 	@Override
 	public OneToOneProductSkuDisplay getDisplay() {

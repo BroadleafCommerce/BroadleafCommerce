@@ -45,6 +45,9 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
 	public String mediaSizeSmall();
 	public String mediaSizeMedium();
 	public String mediaSizeLarge();
+	public String mediaPrimary();
+	public String mediaAlternate();
+	public String newAttributeTitle();
 	public String categorySearchPrompt();
 	public String categoryListTitle();
 	public String orphanCategoryListTitle();

@@ -16,6 +16,45 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
+import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryTreeDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.FeaturedProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.OrphanedCategoryListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.CategoryCrossSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.CategoryUpSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.openadmin.client.datasource.StaticAssetsTileGridDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
+
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -35,44 +74,6 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import com.smartgwt.client.widgets.tree.events.DataArrivedEvent;
 import com.smartgwt.client.widgets.tree.events.DataArrivedHandler;
-import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryTreeDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.FeaturedProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.OrphanedCategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.CategoryCrossSaleProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.CategoryUpSaleProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
-import org.broadleafcommerce.openadmin.client.datasource.StaticAssetsTileGridDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
-import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -396,9 +397,13 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 
     protected LinkedHashMap<String, String> getMediaMapKeys() {
 		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>(3);
-		keys.put("small", BLCMain.getMessageManager().getString("mediaSizeSmall"));
-		keys.put("medium", BLCMain.getMessageManager().getString("mediaSizeMedium"));
-		keys.put("large", BLCMain.getMessageManager().getString("mediaSizeLarge"));
+        keys.put("primary", BLCMain.getMessageManager().getString("mediaPrimary"));
+        keys.put("alt1", BLCMain.getMessageManager().getString("mediaAlternate") + " 1");
+        keys.put("alt2", BLCMain.getMessageManager().getString("mediaAlternate") + " 2");
+        keys.put("alt3", BLCMain.getMessageManager().getString("mediaAlternate") + " 3");
+        keys.put("alt4", BLCMain.getMessageManager().getString("mediaAlternate") + " 4");
+        keys.put("alt5", BLCMain.getMessageManager().getString("mediaAlternate") + " 5");
+        keys.put("alt6", BLCMain.getMessageManager().getString("mediaAlternate") + " 6");
 
 		return keys;
 	}
