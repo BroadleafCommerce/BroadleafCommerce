@@ -158,15 +158,44 @@ public class Metadata {
         }
 
         Map<String, FieldMetadata> mergedProperties = propertyBuilder.execute(classAnnotatedPopulateManyToOneFields);
-
         for (String propertyName : presentationOverrides.keySet()) {
             for (String key : mergedProperties.keySet()) {
                 if (key.startsWith(propertyName)) {
                     buildAdminPresentationOverride(prefix, isParentExcluded, mergedProperties, presentationOverrides, propertyName, key, dynamicEntityDao);
+                }
+            }
+        }
+        for (String propertyName : presentationToOneLookupOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationToOneLookupOverride(mergedProperties, presentationToOneLookupOverrides, propertyName, key);
+                }
+            }
+        }
+        for (String propertyName : presentationDataDrivenEnumerationOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationDataDrivenEnumerationOverride(mergedProperties, presentationDataDrivenEnumerationOverrides, propertyName, key, dynamicEntityDao);
+                }
+            }
+        }
+        for (String propertyName : presentationCollectionOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationCollectionOverrides, propertyName, key);
+                }
+            }
+        }
+        for (String propertyName : presentationAdornedTargetCollectionOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationAdornedTargetCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationAdornedTargetCollectionOverrides, propertyName, key);
+                }
+            }
+        }
+        for (String propertyName : presentationAdornedTargetCollectionOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationMapOverride(prefix, isParentExcluded, mergedProperties, presentationMapOverrides, propertyName, key);
                 }
             }

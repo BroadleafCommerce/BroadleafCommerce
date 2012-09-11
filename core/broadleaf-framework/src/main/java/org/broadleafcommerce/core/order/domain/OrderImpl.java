@@ -21,10 +21,13 @@ import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
@@ -67,7 +70,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,14 +83,15 @@ import java.util.Map;
 @Table(name = "BLC_ORDER")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationOverrides(
-    {
+    value = {
         @AdminPresentationOverride(name="customer.auditable", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="customer.challengeQuestion", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="customer.challengeAnswer", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="customer.passwordChangeRequired", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="customer.receiveEmail", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="customer.registered", value=@AdminPresentation(excluded = true))
-    }
+    },
+    collections = @AdminPresentationCollectionOverride(name="customer.customerAttributes", value=@AdminPresentationCollection(excluded = true, addType = AddMethodType.PERSIST))
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder")
 public class OrderImpl implements Order {

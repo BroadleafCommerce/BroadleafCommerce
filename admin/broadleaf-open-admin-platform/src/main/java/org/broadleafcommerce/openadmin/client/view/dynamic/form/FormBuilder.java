@@ -159,6 +159,7 @@ public class FormBuilder {
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
+                ((GridStructureView) subPresentable.getDisplay()).getToolBar().disable();
                 presenter.addSubPresentable(subPresentable);
             }
 
