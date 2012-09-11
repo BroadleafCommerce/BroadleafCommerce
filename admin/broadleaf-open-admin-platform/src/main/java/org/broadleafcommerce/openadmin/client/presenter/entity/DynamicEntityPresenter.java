@@ -76,8 +76,11 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDispl
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -104,7 +107,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected HandlerRegistration showArchivedButtonHandlerRegistration;
     protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
     protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();
-    protected Map<String, CollectionMetadata> collectionMetadatas = new HashMap<String, CollectionMetadata>();
+    protected Map<String, CollectionMetadata> collectionMetadatas = new LinkedHashMap<String, CollectionMetadata>();
     protected Map<String, LookupMetadata> lookupMetadatas = new HashMap<String, LookupMetadata>();
 
     protected Boolean disabled = false;
@@ -268,7 +271,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).setShowArchived(!((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).isShowArchived());
-                    String title = ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).isShowArchived()?BLCMain.getMessageManager().getString("hideArchivedRecords"):BLCMain.getMessageManager().getString("showArchivedRecords");
+                    String title = ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).isShowArchived() ? BLCMain.getMessageManager().getString("hideArchivedRecords") : BLCMain.getMessageManager().getString("showArchivedRecords");
                     display.getListDisplay().getShowArchivedButton().setTitle(title);
                     ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPersistencePerspective().setShowArchivedFields(((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).isShowArchived());
                     display.getListDisplay().getGrid().invalidateCache();
@@ -279,12 +282,12 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     protected void saveClicked() {
         DSRequest requestProperties = new DSRequest();
-        
-	    try {
-	   	 requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
-	   	} catch (Exception e) {
-	   	 	   Logger.getLogger(this.getClass().toString()).log(Level.WARNING,"ignore, usually thown in gwt-run mode",e);  
-	   	}	
+
+        try {
+            requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+        } catch (Exception e) {
+            Logger.getLogger(this.getClass().toString()).log(Level.WARNING, "ignore, usually thown in gwt-run mode", e);
+        }
         display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -334,23 +337,23 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             BLCMain.SPLASH_PROGRESS.stopProgress();
         }
     }
-    
+
     protected void loadInitialItem() {
         DataSource ds = getDisplay().getListDisplay().getGrid().getDataSource();
         if (ds instanceof DynamicEntityDataSource) {
             Criteria criteria = new Criteria();
             criteria.addCriteria(ds.getPrimaryKeyFieldName(), getDefaultItemId());
             ds.fetchData(criteria, new DSCallback() {
-                  @Override
-                  public void execute(DSResponse response, Object rawData, DSRequest request) {
-                      if (response != null && response.getData() != null && response.getData().length > 0) {
+                @Override
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    if (response != null && response.getData() != null && response.getData().length > 0) {
                         getDisplay().getListDisplay().getGrid().setData(response.getData());
                         getDisplay().getListDisplay().getGrid().selectRecord(0);
-                      }
-                  }
-              });                    
+                    }
+                }
+            });
         }
-                
+
 
     }
 
@@ -406,19 +409,33 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                         target = (DynamicFormDisplay) temp;
                     }
                     parentDataSource.
-                    getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                        entry.getKey(),
-                        searchView,
-                        viewTitle,
-                        target,
-                        entry.getValue().getLookupForeignKey(),
-                        null
+                            getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                            entry.getKey(),
+                            searchView,
+                            viewTitle,
+                            target,
+                            entry.getValue().getLookupForeignKey(),
+                            null
                     );
                 }
             }));
         }
 
-        for (final Map.Entry<String, CollectionMetadata> entry : collectionMetadatas.entrySet()) {
+        //sort the collection metadatas based on their order attribute
+        List<Map.Entry<String, CollectionMetadata>> list = new LinkedList<Map.Entry<String, CollectionMetadata>>(collectionMetadatas.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, CollectionMetadata>>() {
+            @Override
+            public int compare(Map.Entry<String, CollectionMetadata> o1, Map.Entry<String, CollectionMetadata> o2) {
+                return o1.getValue().getOrder().compareTo(o2.getValue().getOrder());
+            }
+        });
+
+        Map<String, CollectionMetadata> sortedMetadatas = new LinkedHashMap<String, CollectionMetadata>();
+        for (Map.Entry<String, CollectionMetadata> entry : list) {
+            sortedMetadatas.put(entry.getKey(), entry.getValue());
+        }
+
+        for (final Map.Entry<String, CollectionMetadata> entry : sortedMetadatas.entrySet()) {
             //only show this edit grid if the collection type inherits from the dynamic presenter's root managed entity
             boolean shouldLoad = false;
             ClassTree classTree = ((DynamicEntityDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).getPolymorphicEntityTree();

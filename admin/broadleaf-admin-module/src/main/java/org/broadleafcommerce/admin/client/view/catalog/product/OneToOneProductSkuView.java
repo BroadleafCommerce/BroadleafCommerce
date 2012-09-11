@@ -48,11 +48,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 public class OneToOneProductSkuView extends HLayout implements Instantiable, OneToOneProductSkuDisplay {
 	
 	protected DynamicFormView dynamicFormDisplay;
-	//protected GridStructureView crossSaleDisplay;
-	protected GridStructureView upSaleDisplay;
-	//protected GridStructureView mediaDisplay;
 	protected DynamicEntityListView listDisplay;
-	//protected GridStructureView attributesDisplay;
 	protected GridStructureView allCategoriesDisplay;
 	protected ExpandableGridStructureView productOptionsDisplay;
 	protected ToolStripButton generateSkusButton;
@@ -107,13 +103,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         crossLayout.setWidth100();
         crossLayout.setBackgroundColor("#eaeaea");
         crossLayout.setOverflow(Overflow.AUTO);
-        
-        //crossSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("crossSaleProductsTitle"), true, true);
-        //crossLayout.addMember(crossSaleDisplay);
-        
-        upSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("upsaleProductsTitle"), true, true);
-        crossLayout.addMember(upSaleDisplay);
-        
         crossSaleTab.setPane(crossLayout);
         
         Tab mediaTab = new Tab(BLCMain.getMessageManager().getString("mediaTabTitle"));
@@ -141,9 +130,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         productOptionsDisplay.getToolBar().addButton(generateSkusButton);
         productOptionsLayout.addMember(productOptionsDisplay);
         productOptionsTab.setPane(productOptionsLayout);
-
-        //mediaDisplay = new GridStructureView(BLCMain.getMessageManager().getString("mediaListTitle"), false, true);
-        //mediaLayout.addMember(mediaDisplay);
         
         mediaTab.setPane(mediaLayout);
         
@@ -183,21 +169,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		return this;
 	}
 
-	//@Override
-    //public GridStructureDisplay getCrossSaleDisplay() {
-		//return crossSaleDisplay;
-	//}
-
-	@Override
-    public GridStructureDisplay getUpSaleDisplay() {
-		return upSaleDisplay;
-	}
-
-	//@Override
-    //public GridStructureDisplay getMediaDisplay() {
-		//return mediaDisplay;
-	//}
-
 	@Override
     public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
@@ -207,11 +178,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
     public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
 	}
-	
-	//@Override
-    //public GridStructureDisplay getAttributesDisplay() {
-		//return attributesDisplay;
-	//}
 
 	@Override
     public GridStructureDisplay getAllCategoriesDisplay() {
