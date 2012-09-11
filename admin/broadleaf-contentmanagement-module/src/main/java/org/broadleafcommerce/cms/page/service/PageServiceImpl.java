@@ -417,11 +417,23 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     	return returnList;
     }
     
-    protected PageDTO evaluatePageRules(List<PageDTO> pageDTOList, Map<String, Object> ruleDTOs) {
+    protected PageDTO evaluatePageRules(List<PageDTO> pageDTOList, Locale locale, Map<String, Object> ruleDTOs) {
     	if (pageDTOList == null) {
     		return NULL_PAGE;
     	}
-    	
+
+        // First check to see if we have a page that matches on the full locale.
+        for(PageDTO page : pageDTOList) {
+            if (locale != null && locale.getLocaleCode() != null) {
+                if (page.getLocaleCode().equals(locale.getLocaleCode())) {
+                    if (passesPageRules(page, ruleDTOs)) {
+                        return page;
+                    }
+                }
+            }
+        }
+
+        // Otherwise, we look for a match using just the language.
     	for(PageDTO page : pageDTOList) {
     		if (passesPageRules(page, ruleDTOs)) {
     			return page;
@@ -443,6 +455,22 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         return true;
     }
 
+    private Locale findLanguageOnlyLocale(Locale locale) {
+        if (locale != null && locale.getLocaleCode() != null && locale.getLocaleCode().indexOf("_") > 0) {
+            int endIndex = locale.getLocaleCode().indexOf("_");
+            char[] localeCodeChars = locale.getLocaleCode().toCharArray();
+            StringBuffer sb = new StringBuffer();
+            for(int i=0; i < endIndex; i++){
+                sb.append(localeCodeChars[i]);
+            }
+            Locale languageOnlyLocale = localeService.findLocaleByCode(sb.toString());
+            if (languageOnlyLocale != null) {
+                return languageOnlyLocale;
+            }
+        }
+        return locale;
+    }
+
     /**
      * Retrieve the page if one is available for the passed in uri.
      */
@@ -454,6 +482,8 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
             if (currentSandbox != null && currentSandbox.getSite() != null) {
                 productionSandbox = currentSandbox.getSite().getProductionSandbox();
             }
+
+            Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
     
             String key = buildKey(productionSandbox, locale, uri);
             key = key + "-" + secure;
@@ -462,7 +492,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Page not found in cache, searching DB for key: " + key);
                 }
-                List<Page> productionPages = pageDao.findPageByURI(productionSandbox, locale, uri);
+                List<Page> productionPages = pageDao.findPageByURI(productionSandbox, locale, languageOnlyLocale, uri);
                 
                 if (productionPages != null) {
                     if (LOG.isTraceEnabled()) {
@@ -482,14 +512,14 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
             // If the request is from a non-production SandBox, we need to check to see if the SandBox has an override 
             // for this page before returning.  No caching is used for Sandbox pages.
             if (currentSandbox != null && ! currentSandbox.getSandBoxType().equals(SandBoxType.PRODUCTION)) {
-                List<Page> sandboxPages = pageDao.findPageByURI(currentSandbox, locale, uri);
+                List<Page> sandboxPages = pageDao.findPageByURI(currentSandbox, locale, languageOnlyLocale, uri);
                 if (sandboxPages != null && sandboxPages.size() > 0) {                	                
                 	returnList = mergePages(returnList, sandboxPages, secure);                	                  
                 }
             }
         }
         
-        return evaluatePageRules(returnList, ruleDTOs);
+        return evaluatePageRules(returnList, locale, ruleDTOs);
     }
 
     @Override
