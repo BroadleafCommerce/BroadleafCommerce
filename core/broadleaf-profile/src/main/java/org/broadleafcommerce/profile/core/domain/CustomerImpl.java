@@ -16,19 +16,8 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import org.broadleafcommerce.common.audit.Auditable;
-import org.broadleafcommerce.common.audit.AuditableListener;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,8 +34,21 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -122,6 +124,7 @@ public class CustomerImpl implements Customer {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Attributes", dataSourceName = "customerAttributeDS")
     protected List<CustomerAttribute> customerAttributes  = new ArrayList<CustomerAttribute>();    
 
     @Transient
@@ -139,130 +142,162 @@ public class CustomerImpl implements Customer {
     @Transient
     protected boolean loggedIn;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Override
     public boolean isPasswordChangeRequired() {
         return passwordChangeRequired;
     }
 
+    @Override
     public void setPasswordChangeRequired(boolean passwordChangeRequired) {
         this.passwordChangeRequired = passwordChangeRequired;
     }
 
+    @Override
     public String getFirstName() {
         return firstName;
     }
 
+    @Override
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @Override
     public String getLastName() {
         return lastName;
     }
 
+    @Override
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    @Override
     public String getEmailAddress() {
         return emailAddress;
     }
 
+    @Override
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 
+    @Override
     public ChallengeQuestion getChallengeQuestion() {
 		return challengeQuestion;
 	}
 
-	public void setChallengeQuestion(ChallengeQuestion challengeQuestion) {
+	@Override
+    public void setChallengeQuestion(ChallengeQuestion challengeQuestion) {
 		this.challengeQuestion = challengeQuestion;
 	}
 
-	public String getChallengeAnswer() {
+	@Override
+    public String getChallengeAnswer() {
         return challengeAnswer;
     }
 
+    @Override
     public void setChallengeAnswer(String challengeAnswer) {
         this.challengeAnswer = challengeAnswer;
     }
 
+    @Override
     public String getUnencodedPassword() {
         return unencodedPassword;
     }
 
+    @Override
     public void setUnencodedPassword(String unencodedPassword) {
         this.unencodedPassword = unencodedPassword;
     }
 
+    @Override
     public boolean isReceiveEmail() {
         return receiveEmail;
     }
 
+    @Override
     public void setReceiveEmail(boolean receiveEmail) {
         this.receiveEmail = receiveEmail;
     }
 
+    @Override
     public boolean isRegistered() {
         return registered;
     }
 
+    @Override
     public void setRegistered(boolean registered) {
         this.registered = registered;
     }
 
+    @Override
     public String getUnencodedChallengeAnswer() {
         return unencodedChallengeAnswer;
     }
 
+    @Override
     public void setUnencodedChallengeAnswer(String unencodedChallengeAnswer) {
         this.unencodedChallengeAnswer = unencodedChallengeAnswer;
     }
 
+    @Override
     public Auditable getAuditable() {
         return auditable;
     }
 
+    @Override
     public void setAuditable(Auditable auditable) {
         this.auditable = auditable;
     }
 
+    @Override
     public boolean isAnonymous() {
         return anonymous;
     }
 
+    @Override
     public boolean isCookied() {
         return cookied;
     }
 
+    @Override
     public boolean isLoggedIn() {
         return loggedIn;
     }
 
+    @Override
     public void setAnonymous(boolean anonymous) {
         this.anonymous = anonymous;
         if (anonymous) {
@@ -271,6 +306,7 @@ public class CustomerImpl implements Customer {
         }
     }
 
+    @Override
     public void setCookied(boolean cookied) {
         this.cookied = cookied;
         if (cookied) {
@@ -279,6 +315,7 @@ public class CustomerImpl implements Customer {
         }
     }
 
+    @Override
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
         if (loggedIn) {
@@ -287,14 +324,17 @@ public class CustomerImpl implements Customer {
         }
     }
 
+    @Override
     public Locale getCustomerLocale() {
         return customerLocale;
     }
 
+    @Override
     public void setCustomerLocale(Locale customerLocale) {
         this.customerLocale = customerLocale;
     }
 
+    @Override
     public List<CustomerAttribute> getCustomerAttributes() {
 		return customerAttributes;
 	}
@@ -309,11 +349,13 @@ public class CustomerImpl implements Customer {
     	return null;
     }
 
-	public void setCustomerAttributes(List<CustomerAttribute> customerAttributes) {
+	@Override
+    public void setCustomerAttributes(List<CustomerAttribute> customerAttributes) {
 		this.customerAttributes = customerAttributes;
 	}
 	
-	public boolean isDeactivated() {
+	@Override
+    public boolean isDeactivated() {
 		if (deactivated == null) {
 			return false;
 		} else {
@@ -321,18 +363,22 @@ public class CustomerImpl implements Customer {
 		}
 	}
 
-	public void setDeactivated(boolean deactivated) {
+	@Override
+    public void setDeactivated(boolean deactivated) {
 		this.deactivated = Boolean.valueOf(deactivated);
 	}
 
 	@Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CustomerImpl other = (CustomerImpl) obj;
 
         if (id != null && other.id != null) {
@@ -340,10 +386,12 @@ public class CustomerImpl implements Customer {
         }
 
         if (username == null) {
-            if (other.username != null)
+            if (other.username != null) {
                 return false;
-        } else if (!username.equals(other.username))
+            }
+        } else if (!username.equals(other.username)) {
             return false;
+        }
         return true;
     }
 
