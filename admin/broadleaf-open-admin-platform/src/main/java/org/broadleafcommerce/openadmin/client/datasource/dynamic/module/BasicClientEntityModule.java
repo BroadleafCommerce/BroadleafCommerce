@@ -46,31 +46,40 @@ import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.LookupMetadata;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
@@ -346,7 +355,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     }
     
     public boolean isCompatible(OperationType operationType) {
-    	return OperationType.ENTITY.equals(operationType) || OperationType.FOREIGNKEY.equals(operationType);
+    	return OperationType.BASIC.equals(operationType) || OperationType.NONDESTRUCTIVEREMOVE.equals(operationType);
     }
     
     public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
@@ -601,8 +610,8 @@ public class BasicClientEntityModule implements DataSourceModule {
                         }
                     }
                 } else if (
-                    property.getMetadata() != null && property.getMetadata().getFieldType() != null &&
-                    property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
+                    property.getMetadata() != null && ((BasicFieldMetadata) property.getMetadata()).getFieldType() != null &&
+                    ((BasicFieldMetadata) property.getMetadata()).getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
                 ) {
                     record.setAttribute(attributeName, linkedValue);
                 } else if (
@@ -730,7 +739,7 @@ public class BasicClientEntityModule implements DataSourceModule {
             public void onSuccess(DynamicResultSet result) {
                 super.onSuccess(result);
                 ClassMetadata metadata = result.getClassMetaData();
-                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE}, overrideFieldSort);
+                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.ADORNEDTARGETLIST}, overrideFieldSort, ((AsyncCallbackAdapter) cb).getDataSourceSetupManager());
 
                 //Add a hidden field to store the polymorphic type for this entity
                 DataSourceField typeField = new DataSourceTextField("_type");
@@ -773,7 +782,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     	return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
     }
 	
-	protected void filterProperties(ClassMetadata metadata, MergedPropertyType[] includeTypes, Boolean overrideFieldSort) throws IllegalStateException {
+	protected void filterProperties(ClassMetadata metadata, final MergedPropertyType[] includeTypes, Boolean overrideFieldSort, final PresenterSequenceSetupManager presenterSequenceSetupManager) throws IllegalStateException {
 		if (BLCMain.isLogDebugEnabled("classmetadata")) {
 			Map<String, List<String>> props = new HashMap<String, List<String>>();
 			for (Property property : metadata.getProperties()) {
@@ -797,291 +806,374 @@ public class BasicClientEntityModule implements DataSourceModule {
 		if (overrideFieldSort) {
 			Arrays.sort(properties, new Comparator<Property>() {
 				public int compare(Property o1, Property o2) {
-					if (o1.getMetadata().getPresentationAttributes().getFriendlyName() == null && o2.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
+					if (o1.getMetadata().getFriendlyName() == null && o2.getMetadata().getFriendlyName() == null) {
 						return 0;
-					} else if (o1.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
+					} else if (o1.getMetadata().getFriendlyName() == null) {
 						return -1;
-					} else if (o2.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
+					} else if (o2.getMetadata().getFriendlyName() == null) {
 						return 1;
 					} else {
-						return o1.getMetadata().getPresentationAttributes().getFriendlyName().compareTo(o2.getMetadata().getPresentationAttributes().getFriendlyName());
+						return o1.getMetadata().getFriendlyName().compareTo(o2.getMetadata().getFriendlyName());
 					}
 				}
 			});
 		}
-		for (Property property : metadata.getProperties()) {
-			String mergedPropertyType = property.getMetadata().getMergedPropertyType().toString();
-			if (Arrays.binarySearch(includeTypes, MergedPropertyType.valueOf(mergedPropertyType)) >= 0) {
-                Boolean isDirty = property.getIsDirty();
-				String rawName = property.getName();
-				String propertyName = rawName;
-				String fieldType = property.getMetadata().getFieldType()==null?null:property.getMetadata().getFieldType().toString();
-				String secondaryFieldType = property.getMetadata().getSecondaryType()==null?null:property.getMetadata().getSecondaryType().toString();
-				Long length = property.getMetadata().getLength()==null?null:property.getMetadata().getLength().longValue();
-                Boolean required;
-                if (property.getMetadata().getPresentationAttributes().getRequiredOverride() != null) {
-                    required = property.getMetadata().getPresentationAttributes().getRequiredOverride();
-                } else {
-                    required = property.getMetadata().getRequired();
-                    if (required == null) {
-                        required = false;
+		for (final Property property : metadata.getProperties()) {
+            property.getMetadata().accept(new MetadataVisitorAdapter() {
+                @Override
+                public void visit(BasicFieldMetadata metadata) {
+                    String mergedPropertyType = metadata.getMergedPropertyType().toString();
+                    if (Arrays.binarySearch(includeTypes, MergedPropertyType.valueOf(mergedPropertyType)) >= 0) {
+                        Boolean isDirty = property.getIsDirty();
+                        String rawName = property.getName();
+                        String propertyName = rawName;
+                        String fieldType = metadata.getFieldType()==null?null:metadata.getFieldType().toString();
+                        String secondaryFieldType = metadata.getSecondaryType()==null?null:metadata.getSecondaryType().toString();
+                        Long length = metadata.getLength()==null?null:metadata.getLength().longValue();
+                        Boolean required;
+                        if (metadata.getRequiredOverride() != null) {
+                            required = metadata.getRequiredOverride();
+                        } else {
+                            required = metadata.getRequired();
+                            if (required == null) {
+                                required = false;
+                            }
+                        }
+                        Boolean mutable = metadata.getMutable();
+                        String inheritedFromType = metadata.getInheritedFromType();
+                        String[] availableToTypes = metadata.getAvailableToTypes();
+                        String foreignKeyClass = metadata.getForeignKeyClass();
+                        String foreignKeyProperty = metadata.getForeignKeyProperty();
+                        String friendlyName = metadata.getFriendlyName();
+                        if (friendlyName == null || friendlyName.equals("")) {
+                            friendlyName = property.getName();
+                        } else {
+                            friendlyName = getLocalizedString(friendlyName);
+                        }
+                        String securityLevel = metadata.getSecurityLevel();
+                        VisibilityEnum visibility = metadata.getVisibility();
+                        if (visibility == null) {
+                            visibility = VisibilityEnum.HIDDEN_ALL;
+                        }
+                        Boolean hidden = visibility == VisibilityEnum.HIDDEN_ALL || visibility == VisibilityEnum.GRID_HIDDEN;
+                        FormHiddenEnum formHidden;
+                        switch (visibility) {
+                            case FORM_HIDDEN:
+                                formHidden = FormHiddenEnum.HIDDEN;
+                                break;
+                            default:
+                                formHidden = FormHiddenEnum.NOT_SPECIFIED;
+                                break;
+                            case GRID_HIDDEN:
+                                formHidden = FormHiddenEnum.VISIBLE;
+                                break;
+                        }
+                        String group = metadata.getGroup();
+                        if (group != null && !group.equals("")) {
+                            group = getLocalizedString(group);
+                        }
+                        Integer groupOrder = metadata.getGroupOrder();
+                        Boolean groupCollapsed = metadata.getGroupCollapsed();
+
+                        String tooltip = metadata.getTooltip();
+                        if (tooltip != null && !tooltip.equals("")) {
+                            tooltip = getLocalizedString(tooltip);
+                        }
+
+                        String helpText = metadata.getHelpText();
+                        if (helpText != null && !helpText.equals("")) {
+                            helpText = getLocalizedString(helpText);
+                        }
+
+                        String hint = metadata.getHint();
+                        if (hint != null && !hint.equals("")) {
+                            hint = getLocalizedString(hint);
+                        }
+
+                        Boolean largeEntry = metadata.isLargeEntry();
+                        Boolean prominent = metadata.isProminent();
+                        Integer order = metadata.getOrder();
+                        String columnWidth = metadata.getColumnWidth();
+                        String[][] enumerationValues = metadata.getEnumerationValues();
+                        String enumerationClass = metadata.getEnumerationClass();
+                        Boolean canEditEnumeration = metadata.getOptionCanEditValues()!=null && metadata.getOptionCanEditValues();
+                        if (mutable) {
+                            Boolean isReadOnly = metadata.getReadOnly();
+                            if (isReadOnly != null) {
+                                mutable = !isReadOnly;
+                            }
+                        }
+                        DataSourceField field;
+                        switch(SupportedFieldType.valueOf(fieldType)){
+                        case ID:
+                            field = new DataSourceTextField(propertyName, friendlyName);
+                            if (propertyName.indexOf(".") < 0) {
+                                field.setPrimaryKey(true);
+                            }
+                            field.setCanEdit(false);
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicIdOperators());
+                            break;
+                        case BOOLEAN:
+                            field = new DataSourceBooleanField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            //field.setValidOperators(getBasicBooleanOperators());
+                            break;
+                        case DATE:
+                            field = new DataSourceDateTimeField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicDateOperators());
+                            break;
+                        case INTEGER:
+                            field = new DataSourceIntegerField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicNumericOperators());
+                            break;
+                        case DECIMAL:
+                            field = new DataSourceFloatField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicNumericOperators());
+                            break;
+                        case EMAIL:
+                            field = new DataSourceTextField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicTextOperators());
+                            break;
+                        case MONEY:
+                            field = new DataSourceFloatField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicNumericOperators());
+                            break;
+                        case FOREIGN_KEY:{
+                            field = new DataSourceTextField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            String dataSourceName = null;
+                            ForeignKey foreignField = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                            if (foreignField != null && foreignField.getForeignKeyClass().equals(foreignKeyClass)) {
+                                dataSourceName = foreignField.getDataSourceName();
+                            }
+                            if (dataSourceName == null) {
+                                field.setForeignKey(foreignKeyProperty);
+                            } else {
+                                field.setForeignKey(dataSourceName+"."+foreignKeyProperty);
+                            }
+                            if (hidden == null) {
+                                hidden = true;
+                            }
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicNumericOperators());
+                            break;}
+                        case ADDITIONAL_FOREIGN_KEY:{
+                            field = new DataSourceTextField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            if (hidden == null) {
+                                hidden = true;
+                            }
+                            field.setRequired(required);
+                            if (metadata.getForeignKeyDisplayValueProperty() != null) {
+                                ForeignKey foreignKey = new ForeignKey(foreignKeyProperty, foreignKeyClass);
+                                foreignKey.setDisplayValueProperty(metadata.getForeignKeyDisplayValueProperty());
+                                LookupMetadata lookupMetadata = new LookupMetadata();
+                                lookupMetadata.setLookupForeignKey(foreignKey);
+                                lookupMetadata.setParentDataSourceName(metadata.getLookupParentDataSourceName());
+                                lookupMetadata.setTargetDynamicFormDisplayId(metadata.getTargetDynamicFormDisplayId());
+                                lookupMetadata.setFriendlyName(friendlyName);
+                                lookupMetadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
+                                ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addLookupMetadata(property.getName(), lookupMetadata);
+                            }
+                            //field.setValidOperators(getBasicNumericOperators());
+                            break;}
+                        case BROADLEAF_ENUMERATION:{
+                            if (canEditEnumeration) {
+                                field = new DataSourceTextField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                ComboBoxItem item = new ComboBoxItem();
+                                item.setDefaultToFirstOption(true);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
+                                field.setEditorType(item);
+                            } else {
+                                field = new DataSourceEnumField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
+                            }
+                            //field.setValidOperators(getBasicEnumerationOperators());
+                            break;}
+                        case EXPLICIT_ENUMERATION:{
+                            if (canEditEnumeration) {
+                                field = new DataSourceTextField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                ComboBoxItem item = new ComboBoxItem();
+                                item.setDefaultToFirstOption(true);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
+                                field.setEditorType(item);
+                            } else {
+                                field = new DataSourceEnumField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
+                            }
+                            //field.setValidOperators(getBasicEnumerationOperators());
+                            break;}
+                        case DATA_DRIVEN_ENUMERATION:{
+                            if (canEditEnumeration) {
+                                field = new DataSourceTextField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                ComboBoxItem item = new ComboBoxItem();
+                                item.setDefaultToFirstOption(true);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
+                                field.setEditorType(item);
+                            } else {
+                                field = new DataSourceEnumField(propertyName, friendlyName);
+                                field.setCanEdit(mutable);
+                                field.setRequired(required);
+                                LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                                for (String[] enumerationValue : enumerationValues) {
+                                    valueMap.put(enumerationValue[0], enumerationValue[1]);
+                                }
+                                field.setValueMap(valueMap);
+                            }
+                            //field.setValidOperators(getBasicEnumerationOperators());
+                            break;}
+                        case PASSWORD:
+                            field = new DataSourcePasswordField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicTextOperators());
+                            break;
+                        case ASSET:
+                            field = new DataSourceImageField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            break;
+                        default:
+                            field = new DataSourceTextField(propertyName, friendlyName);
+                            field.setCanEdit(mutable);
+                            field.setRequired(required);
+                            //field.setValidOperators(getBasicTextOperators());
+                            break;
+                        }
+                        field.setAttribute("friendlyName", friendlyName);
+                        if (metadata.getValidationConfigurations().size() > 0) {
+                            field.setValidators(ValidationFactoryManager.getInstance().createValidators(metadata.getValidationConfigurations(), propertyName));
+                        }
+                        if (fieldType.equals(SupportedFieldType.ID.toString())) {
+                            field.setHidden(hidden);
+                            field.setAttribute("permanentlyHidden", hidden);
+                            formHidden = FormHiddenEnum.VISIBLE;
+                        } else if (hidden != null) {
+                            field.setHidden(hidden);
+                            field.setAttribute("permanentlyHidden", hidden);
+                        } else if (field.getAttribute("permanentlyHidden")==null){
+                            field.setHidden(false);
+                            field.setAttribute("permanentlyHidden", false);
+                        }
+
+                        if (securityLevel != null && !"".equals(securityLevel)){
+                            String uniqueID = ceilingEntityFullyQualifiedClassname + field.getName();
+                            org.broadleafcommerce.openadmin.client.security.SecurityManager.getInstance().registerField(uniqueID, securityLevel);
+                            field.setAttribute("uniqueID", uniqueID);
+                            field.setAttribute("securityLevel", securityLevel);
+                        }
+                        field.setAttribute("formHidden", formHidden);
+                        if (group != null) {
+                            field.setAttribute("formGroup", group);
+                        }
+                        if (groupOrder != null) {
+                            field.setAttribute("formGroupOrder", groupOrder);
+                        }
+                        if (groupCollapsed != null) {
+                            field.setAttribute("formGroupCollapsed", groupCollapsed);
+                        }
+                        if (tooltip != null) {
+                            field.setPrompt(tooltip);
+                        }
+                        if (helpText != null) {
+                            field.setAttribute("helpText", helpText);
+                        }
+                        if (hint != null) {
+                            field.setAttribute("hint", hint);
+                        }
+                        if (largeEntry != null) {
+                            field.setAttribute("largeEntry", largeEntry);
+                        }
+                        if (prominent != null) {
+                            field.setAttribute("prominent", prominent);
+                        }
+                        if (order != null) {
+                            field.setAttribute("presentationLayerOrder", order);
+                        }
+                        if (length != null) {
+                            field.setLength(length.intValue());
+                        }
+                        if (columnWidth != null) {
+                            field.setAttribute("columnWidth", columnWidth);
+                        }
+                        if (enumerationValues != null) {
+                            field.setAttribute("enumerationValues", enumerationValues);
+                        }
+                        if (enumerationClass != null) {
+                            field.setAttribute("enumerationClass", enumerationClass);
+                        }
+                        field.setAttribute("canEditEnumeration", canEditEnumeration);
+                        if (isDirty != null) {
+                            field.setAttribute("isEdited", isDirty);
+                        } else {
+                            field.setAttribute("isEdited", false);
+                        }
+                        field.setAttribute("inheritedFromType", inheritedFromType);
+                        field.setAttribute("availableToTypes", availableToTypes);
+                        field.setAttribute("fieldType", fieldType);
+                        field.setAttribute("secondaryFieldType", secondaryFieldType);
+                        field.setAttribute("mergedPropertyType", mergedPropertyType);
+                        field.setAttribute("rawName", rawName);
+                        dataSource.addField(field);
                     }
                 }
-				Boolean mutable = property.getMetadata().getMutable();
-				String inheritedFromType = property.getMetadata().getInheritedFromType();
-				String[] availableToTypes = property.getMetadata().getAvailableToTypes();
-				String foreignKeyClass = property.getMetadata().getForeignKeyClass();
-				String foreignKeyProperty = property.getMetadata().getForeignKeyProperty();
-				String friendlyName = property.getMetadata().getPresentationAttributes().getFriendlyName();
-				if (friendlyName == null || friendlyName.equals("")) {
-					friendlyName = property.getName();
-				} else {
-					friendlyName = getLocalizedString(friendlyName);
-				}
-				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
-                VisibilityEnum visibility = property.getMetadata().getPresentationAttributes().getVisibility();
-                if (visibility == null) {
-                    visibility = VisibilityEnum.HIDDEN_ALL;
-                }
-				Boolean hidden = visibility == VisibilityEnum.HIDDEN_ALL || visibility == VisibilityEnum.GRID_HIDDEN;
-                FormHiddenEnum formHidden;
-                switch (visibility) {
-                    case FORM_HIDDEN:
-                        formHidden = FormHiddenEnum.HIDDEN;
-                        break;
-                    default:
-                        formHidden = FormHiddenEnum.NOT_SPECIFIED;
-                        break;
-                    case GRID_HIDDEN:
-                        formHidden = FormHiddenEnum.VISIBLE;
-                        break;
-                }
-				String group = property.getMetadata().getPresentationAttributes().getGroup();
-                if (group != null && !group.equals("")) {
-                    group = getLocalizedString(group);
-                }
-				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
-                Boolean groupCollapsed = property.getMetadata().getPresentationAttributes().getGroupCollapsed();
-                
-                String tooltip = property.getMetadata().getPresentationAttributes().getTooltip();
-                if (tooltip != null && !tooltip.equals("")) {
-                    tooltip = getLocalizedString(tooltip);
-                }
-                
-                String helpText = property.getMetadata().getPresentationAttributes().getHelpText();
-                if (helpText != null && !helpText.equals("")) {
-                    helpText = getLocalizedString(helpText);
-                }
-                
-                String hint = property.getMetadata().getPresentationAttributes().getHint();
-                if (hint != null && !hint.equals("")) {
-                    hint = getLocalizedString(hint);
-                }
-                
-				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
-				Boolean prominent = property.getMetadata().getPresentationAttributes().isProminent();
-				Integer order = property.getMetadata().getPresentationAttributes().getOrder();
-				String columnWidth = property.getMetadata().getPresentationAttributes().getColumnWidth();
-				String[][] enumerationValues = property.getMetadata().getEnumerationValues();
-				String enumerationClass = property.getMetadata().getEnumerationClass();
-				if (mutable) {
-					Boolean isReadOnly = property.getMetadata().getPresentationAttributes().getReadOnly();
-					if (isReadOnly != null) {
-						mutable = !isReadOnly;
-					}
-				}
-				DataSourceField field;
-				switch(SupportedFieldType.valueOf(fieldType)){
-				case ID:
-					field = new DataSourceTextField(propertyName, friendlyName);
-					if (propertyName.indexOf(".") < 0) {
-						field.setPrimaryKey(true);
-					}
-					field.setCanEdit(false);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicIdOperators());
-					break;
-				case BOOLEAN:
-					field = new DataSourceBooleanField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					//field.setValidOperators(getBasicBooleanOperators());
-					break;
-				case DATE:
-					field = new DataSourceDateTimeField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicDateOperators());
-					break;
-				case INTEGER:
-					field = new DataSourceIntegerField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicNumericOperators());
-					break;
-				case DECIMAL:
-					field = new DataSourceFloatField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicNumericOperators());
-					break;
-				case EMAIL:
-					field = new DataSourceTextField(propertyName, friendlyName);
-			        field.setCanEdit(mutable);
-			        field.setRequired(required);
-			        //field.setValidOperators(getBasicTextOperators());
-			        break;
-				case MONEY:
-					field = new DataSourceFloatField(propertyName, friendlyName);
-			        field.setCanEdit(mutable);
-			        field.setRequired(required);
-			        //field.setValidOperators(getBasicNumericOperators());
-			        break;
-				case FOREIGN_KEY:{
-					field = new DataSourceTextField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					String dataSourceName = null;
-					ForeignKey foreignField = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-					if (foreignField != null && foreignField.getForeignKeyClass().equals(foreignKeyClass)) {
-						dataSourceName = foreignField.getDataSourceName();
-					}
-					if (dataSourceName == null) {
-						field.setForeignKey(foreignKeyProperty);
-					} else {
-						field.setForeignKey(dataSourceName+"."+foreignKeyProperty);
-					}
-					if (hidden == null) {
-						hidden = true;
-					}
-					field.setRequired(required);
-					//field.setValidOperators(getBasicNumericOperators());
-					break;}
-				case ADDITIONAL_FOREIGN_KEY:{
-					field = new DataSourceTextField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					if (hidden == null) {
-						hidden = true;
-					}
-					field.setRequired(required);
-					//field.setValidOperators(getBasicNumericOperators());
-					break;}
-				case BROADLEAF_ENUMERATION:
-					field = new DataSourceEnumField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-					for (int j=0; j<enumerationValues.length; j++) {
-						valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
-					}
-	        		field.setValueMap(valueMap);
-	        		//field.setValidOperators(getBasicEnumerationOperators());
-					break;
-                case EXPLICIT_ENUMERATION:
-					field = new DataSourceEnumField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
-					for (int j=0; j<enumerationValues.length; j++) {
-						valueMap2.put(enumerationValues[j][0], enumerationValues[j][1]);
-					}
-	        		field.setValueMap(valueMap2);
-	        		//field.setValidOperators(getBasicEnumerationOperators());
-					break;
-				case PASSWORD:
-					field = new DataSourcePasswordField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicTextOperators());
-					break;
-                case ASSET:
-                    field = new DataSourceImageField(propertyName, friendlyName);
-                    field.setCanEdit(mutable);
-					field.setRequired(required);
-                    break;
-				default:
-					field = new DataSourceTextField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicTextOperators());
-					break;
-				}
-				field.setAttribute("friendlyName", friendlyName);
-				if (property.getMetadata().getPresentationAttributes().getValidationConfigurations().size() > 0) {
-					field.setValidators(ValidationFactoryManager.getInstance().createValidators(property.getMetadata().getPresentationAttributes().getValidationConfigurations(), propertyName));
-				}
-				if (fieldType.equals(SupportedFieldType.ID.toString())) {
-					field.setHidden(hidden);
-					field.setAttribute("permanentlyHidden", hidden);
-                    formHidden = FormHiddenEnum.VISIBLE;
-				} else if (hidden != null) {
-					field.setHidden(hidden);
-					field.setAttribute("permanentlyHidden", hidden);
-				} else if (field.getAttribute("permanentlyHidden")==null){
-					field.setHidden(false);
-					field.setAttribute("permanentlyHidden", false);
-				}
 
-				if (securityLevel != null && !"".equals(securityLevel)){
-					String uniqueID = ceilingEntityFullyQualifiedClassname + field.getName();
-					SecurityManager.getInstance().registerField(uniqueID, securityLevel);
-					field.setAttribute("uniqueID", uniqueID);
-					field.setAttribute("securityLevel", securityLevel);
-				}
-                field.setAttribute("formHidden", formHidden);
-				if (group != null) {
-					field.setAttribute("formGroup", group);
-				}
-				if (groupOrder != null) {
-					field.setAttribute("formGroupOrder", groupOrder);
-				}
-                if (groupCollapsed != null) {
-                    field.setAttribute("formGroupCollapsed", groupCollapsed);
+                @Override
+                public void visit(final BasicCollectionMetadata metadata) {
+                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
                 }
-                if (tooltip != null) {
-                    field.setPrompt(tooltip);
+
+                @Override
+                public void visit(AdornedTargetCollectionMetadata metadata) {
+                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
                 }
-                if (helpText != null) {
-                    field.setAttribute("helpText", helpText);
+
+                @Override
+                public void visit(MapMetadata metadata) {
+                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
                 }
-                if (hint != null) {
-                    field.setAttribute("hint", hint);
-                }
-				if (largeEntry != null) {
-					field.setAttribute("largeEntry", largeEntry);
-				}
-				if (prominent != null) {
-					field.setAttribute("prominent", prominent);
-				}
-				if (order != null) {
-					field.setAttribute("presentationLayerOrder", order);
-				}
-				if (length != null) {
-					field.setLength(length.intValue());
-				}
-				if (columnWidth != null) {
-					field.setAttribute("columnWidth", columnWidth);
-				}
-				if (enumerationValues != null) {
-					field.setAttribute("enumerationValues", enumerationValues);
-				}
-                if (enumerationValues != null) {
-					field.setAttribute("enumerationValues", enumerationValues);
-				}
-				if (enumerationClass != null) {
-					field.setAttribute("enumerationClass", enumerationClass);
-				}
-                if (isDirty != null) {
-                    field.setAttribute("isEdited", isDirty);
-                } else {
-                    field.setAttribute("isEdited", false);
-                }
-				field.setAttribute("inheritedFromType", inheritedFromType);
-				field.setAttribute("availableToTypes", availableToTypes);
-				field.setAttribute("fieldType", fieldType);
-				field.setAttribute("secondaryFieldType", secondaryFieldType);
-				field.setAttribute("mergedPropertyType", mergedPropertyType);
-				field.setAttribute("rawName", rawName);
-				dataSource.addField(field);
-			}
+            });
 		}
         dataSource.setAttribute("blcCurrencyCode", metadata.getCurrencyCode(), true);
 	}
@@ -1109,6 +1201,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 
 	public void setDataSource(AbstractDynamicDataSource dataSource) {
 		this.dataSource = dataSource;
+        this.dataSource.setAttribute("COLLECTION_PROPERTIES", new HashMap(), true);
 	}
 
 	public String getCeilingEntityFullyQualifiedClassname() {

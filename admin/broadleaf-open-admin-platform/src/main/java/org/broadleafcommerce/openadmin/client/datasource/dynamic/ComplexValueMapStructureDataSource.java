@@ -29,6 +29,7 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -37,7 +38,7 @@ import java.util.List;
  * @author jfischer
  *
  */
-public class ComplexValueMapStructureDataSource extends ListGridDataSource {
+public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDataSource {
 	
 	protected LinkedHashMap<String, String> keyMap;
     protected DataSource optionDataSource;
@@ -63,7 +64,7 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
 	}
 	
 	@Override
-	public void setupGridFields(String[] fieldNames, Boolean[] canEdit) {
+	public String[] setupGridFields(String[] fieldNames, Boolean[] canEdit) {
 		if (fieldNames.length > 0) {
 			resetPermanentFieldVisibility(fieldNames);
 		}
@@ -71,10 +72,16 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
 		ListGridField[] gridFields = new ListGridField[fields.length];
         int j = 0;
         List<DataSourceField> prominentFields = new ArrayList<DataSourceField>();
+        String keyProperty = null;
         for (DataSourceField field : fields) {
-        	if (field.getAttributeAsBoolean("prominent")) {
+        	if (field.getAttributeAsBoolean("prominent") && !prominentFields.contains(field)) {
         		prominentFields.add(field);
         	}
+            if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType")) && !prominentFields.contains(field)) {
+                resetPermanentFieldVisibility(field.getName());
+                prominentFields.add(field);
+                keyProperty = field.getName();
+            }
         }
         int availableSlots = 4;
         for (DataSourceField field : prominentFields) {
@@ -95,11 +102,6 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         		selectItem.setDefaultToFirstOption(true);
         		selectItem.setAutoFetchData(false);
         		gridFields[j].setEditorType(selectItem);
-        	}
-        	if (j == 0) {
-        		if (fieldNames == null || fieldNames.length == 0) {
-        			gridFields[j].setFrozen(true);
-        		}
         	}
         	gridFields[j].setHidden(false);
         	gridFields[j].setWidth("*");
@@ -129,11 +131,6 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         		} else if (availableSlots <= 0) {
 	        		gridFields[j].setHidden(true);
 	        	} else {
-	        		if (j == 0) {
-	        			if (fieldNames == null || fieldNames.length == 0) {
-	            			gridFields[j].setFrozen(true);
-	            		}
-		        	}
 	        		gridFields[j].setWidth("*");
 	        		int pos = Arrays.binarySearch(fieldNames, field.getName());
 	            	if (pos >= 0) {
@@ -144,6 +141,28 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         		j++;
         	}
         }
+        final String finalKeyProperty = keyProperty;
+        //sort so the key field appears first
+        if (fieldNames == null || fieldNames.length == 0) {
+            Arrays.sort(gridFields, new Comparator<ListGridField>() {
+                @Override
+                public int compare(ListGridField o1, ListGridField o2) {
+                    if (finalKeyProperty != null) {
+                        if (o1.getName().equals(o2.getName())) {
+                            return 0;
+                        } else if (o1.getName().equals(finalKeyProperty)) {
+                            return -1;
+                        } else if (o2.getName().equals(finalKeyProperty)) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+        }
         ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
         	int pos = 0;
@@ -152,7 +171,15 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         		((ListGrid) getAssociatedGrid()).reorderField(originalPos, pos);
         		pos++;
         	}
+        } else {
+            fieldNames = new String[gridFields.length];
+            for (int x=0;x<gridFields.length;x++){
+                fieldNames[x] = gridFields[x].getName();
+                getField(gridFields[x].getName()).setHidden(false);
+            }
         }
         getAssociatedGrid().setHilites(hilites);
+
+        return fieldNames;
 	}
 }

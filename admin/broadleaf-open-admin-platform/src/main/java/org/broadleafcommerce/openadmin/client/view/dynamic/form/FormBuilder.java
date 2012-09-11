@@ -16,17 +16,12 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -48,6 +43,32 @@ import com.smartgwt.client.widgets.form.fields.UploadItem;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
+import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleMapStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +85,142 @@ import java.util.MissingResourceException;
  *
  */
 public class FormBuilder {
+
+    public static Layout findMemberById(Layout parent, String id) {
+        Layout result = (Layout) parent.getMember(id);
+        if (result == null) {
+            check: {
+                for (Canvas member : parent.getMembers()) {
+                    if (member instanceof Layout) {
+                        result = findMemberById((Layout) member, id);
+                        if (result != null) {
+                            break check;
+                        }
+                    }
+                    if (member instanceof TabSet) {
+                        for (Tab tab : ((TabSet) member).getTabs()) {
+                            if (tab.getPane().getID().equals(id)) {
+                                result = (Layout) tab.getPane();
+                                break check;
+                            }
+                            result = findMemberById((Layout) tab.getPane(), id);
+                            if (result != null) {
+                                break check;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public static void buildAdvancedCollectionForm(final DataSource dataSource, final DataSource lookupDataSource, CollectionMetadata metadata, String propertyName, final DynamicEntityPresenter presenter) {
+        Layout destination;
+        if (metadata.getTargetElementId() != null && metadata.getTargetElementId().length() > 0) {
+            destination = findMemberById((Layout) presenter.getDisplay(), metadata.getTargetElementId());
+        } else {
+            destination = (Layout) presenter.getDisplay().getDynamicFormDisplay().getFormOnlyDisplay();
+        }
+
+        final String viewTitle;
+        if (metadata.getFriendlyName() == null || metadata.getFriendlyName().length() == 0) {
+            viewTitle = propertyName;
+        } else {
+            String temp;
+            try {
+                temp = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
+            } catch (MissingResourceException e) {
+                temp = metadata.getFriendlyName();
+            }
+            viewTitle = temp;
+        }
+        final GridStructureView advancedCollectionView = new GridStructureView(viewTitle, false, true);
+        destination.addMember(advancedCollectionView);
+
+        metadata.accept(new MetadataVisitorAdapter() {
+            @Override
+            public void visit(BasicCollectionMetadata metadata) {
+                SubPresentable subPresentable;
+                if (metadata.getAddMethodType() == AddMethodType.PERSIST) {
+                    subPresentable = new CreateBasedListStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
+                } else {
+                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, new EntitySearchDialog((ListGridDataSource)lookupDataSource, true), metadata.getAvailableToTypes(), viewTitle);
+                }
+                subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+                subPresentable.setReadOnly(!metadata.isMutable());
+                subPresentable.disable();
+                presenter.addSubPresentable(subPresentable);
+            }
+
+            @Override
+            public void visit(AdornedTargetCollectionMetadata metadata) {
+                List<String> prominentNames = new ArrayList<String>();
+                for (DataSourceField field : lookupDataSource.getFields()) {
+                    if (field.getAttributeAsBoolean("prominent") && !field.getAttributeAsBoolean("permanentlyHidden")) {
+                        prominentNames.add(field.getName());
+                    }
+                }
+                ((ListGridDataSource) lookupDataSource).resetPermanentFieldVisibility(prominentNames.toArray(new String[prominentNames.size()]));
+                EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDataSource, true);
+                SubPresentable subPresentable;
+                if (metadata.isIgnoreAdornedProperties() || metadata.getMaintainedAdornedTargetFields().length == 0) {
+                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
+                } else {
+                    subPresentable = new EditableAdornedTargetListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle, metadata.getMaintainedAdornedTargetFields());
+                }
+                Boolean[] edits = new Boolean[metadata.getGridVisibleFields().length];
+                for (int j=0;j<edits.length;j++) {
+                    edits[j] = false;
+                }
+                subPresentable.setDataSource((ListGridDataSource) dataSource, metadata.getGridVisibleFields(), edits);
+                subPresentable.setReadOnly(!metadata.isMutable());
+                subPresentable.disable();
+                presenter.addSubPresentable(subPresentable);
+            }
+
+            @Override
+            public void visit(MapMetadata metadata) {
+                SubPresentable subPresentable;
+                if (metadata.isSimpleValue()) {
+                    subPresentable = new SimpleMapStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), null);
+                } else {
+                    MapStructureEntityEditDialog mapEntityAdd;
+                    if (lookupDataSource != null) {
+                        mapEntityAdd = new MapStructureEntityEditDialog((MapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE), lookupDataSource, metadata.getMapKeyOptionEntityDisplayField(), metadata.getMapKeyOptionEntityValueField());
+                    } else {
+                        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+                        for (String[] key : metadata.getKeys()) {
+                            String temp;
+                            try {
+                                temp = BLCMain.getMessageManager().getString(key[1]);
+                            } catch (MissingResourceException e) {
+                                temp = key[1];
+                            }
+                            keys.put(key[0], temp);
+                        }
+                        mapEntityAdd = new MapStructureEntityEditDialog((MapStructure) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE), keys);
+                    }
+                    if (metadata.getMediaField() != null && metadata.getMediaField().length() > 0) {
+                        mapEntityAdd.setShowMedia(true);
+                        mapEntityAdd.setMediaField(metadata.getMediaField());
+                    } else {
+                        mapEntityAdd.setShowMedia(false);
+                    }
+                    subPresentable = new MapStructurePresenter(advancedCollectionView, mapEntityAdd, viewTitle, null);
+                }
+                subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
+                subPresentable.setReadOnly(!metadata.isMutable());
+                subPresentable.disable();
+                presenter.addSubPresentable(subPresentable);
+            }
+        });
+    }
+
+    public static void buildAdvancedCollectionForm(DataSource dataSource, CollectionMetadata metadata, String propertyName, DynamicEntityPresenter presenter) {
+        buildAdvancedCollectionForm(dataSource, null, metadata, propertyName, presenter);
+    }
 
 	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showId, Record currentRecord) {
 		buildForm(dataSource, form, null, null, showId, currentRecord);
@@ -499,24 +656,45 @@ public class FormBuilder {
 				}
 			});
 			break;
-		case BROADLEAF_ENUMERATION:
-			formItem = new SelectItem();
-			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-			String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
-			for (String[] enumerationValue : enumerationValues) {
-				valueMap.put(enumerationValue[0], enumerationValue[1]);
-			}
-			formItem.setValueMap(valueMap);
-			break;
-        case EXPLICIT_ENUMERATION:
-			formItem = new SelectItem();
-			LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
-			String[][] enumerationValues2 = (String[][]) field.getAttributeAsObject("enumerationValues");
-			for (String[] element : enumerationValues2) {
-				valueMap2.put(element[0], element[1]);
-			}
-			formItem.setValueMap(valueMap2);
-			break;
+		case BROADLEAF_ENUMERATION:{
+            if (field.getAttributeAsBoolean("canEditEnumeration")) {
+                formItem = new ComboBoxItem();
+            } else {
+                formItem = new SelectItem();
+            }
+            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+            String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
+            for (String[] enumerationValue : enumerationValues) {
+                valueMap.put(enumerationValue[0], enumerationValue[1]);
+            }
+            formItem.setValueMap(valueMap);
+			break;}
+        case EXPLICIT_ENUMERATION:{
+            if (field.getAttributeAsBoolean("canEditEnumeration")) {
+                formItem = new ComboBoxItem();
+            } else {
+                formItem = new SelectItem();
+            }
+            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+            String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
+            for (String[] enumerationValue : enumerationValues) {
+                valueMap.put(enumerationValue[0], enumerationValue[1]);
+            }
+            formItem.setValueMap(valueMap);
+            break;}
+        case DATA_DRIVEN_ENUMERATION:{
+            if (field.getAttributeAsBoolean("canEditEnumeration")) {
+                formItem = new ComboBoxItem();
+            } else {
+                formItem = new SelectItem();
+            }
+            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+            String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
+            for (String[] enumerationValue : enumerationValues) {
+                valueMap.put(enumerationValue[0], enumerationValue[1]);
+            }
+            formItem.setValueMap(valueMap);
+            break;}
 		case EMPTY_ENUMERATION:
 			formItem = new SelectItem();
 			break;

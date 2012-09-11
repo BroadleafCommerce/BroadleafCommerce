@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.presentation;
+package org.broadleafcommerce.common.presentation.client;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * 
- * @author pverheyden
+ * @author jfischer
  *
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface AdminPresentationOverrides {
-
-	/**
-	 * 
-	 * @return one or more AdminPresentationOverride
-	 */
-	AdminPresentationOverride[] value() default {};
+public enum PersistencePerspectiveItemType implements IsSerializable {
+	FOREIGNKEY,
+    ADORNEDTARGETLIST,
+	MAPSTRUCTURE
 }

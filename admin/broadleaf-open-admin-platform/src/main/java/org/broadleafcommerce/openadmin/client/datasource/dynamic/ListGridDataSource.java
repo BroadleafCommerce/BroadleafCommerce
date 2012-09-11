@@ -67,7 +67,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         ((ListGrid) this.associatedGrid).setCanAutoFitFields(false);
     }
 
-    public void setupGridFields(final String[] fieldNames, final Boolean[] canEdit) {
+    public String[] setupGridFields(String[] fieldNames, final Boolean[] canEdit) {
         if (fieldNames.length != canEdit.length) {
             throw new IllegalArgumentException("The fieldNames and canEdit array parameters must be of equal length");
         }
@@ -139,6 +139,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
 	            	if (pos >= 0) {
 	            		gridFields[j].setCanEdit(canEdit[pos]);
 	            	}
+                    prominentFields.add(field);
 	        		availableSlots--;
 	        	}
                 setupDecimalFormatters(gridFields[j], field);
@@ -160,8 +161,15 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         		}
         		pos++;
         	}
+        } else {
+            fieldNames = new String[gridFields.length];
+            for (int k=0;k<gridFields.length;k++) {
+                fieldNames[k] = gridFields[k].getName();
+            }
         }
         getAssociatedGrid().setHilites(hilites);
+
+        return fieldNames;
 	}
 
     protected void setupDecimalFormatters(ListGridField gridField, DataSourceField field) {

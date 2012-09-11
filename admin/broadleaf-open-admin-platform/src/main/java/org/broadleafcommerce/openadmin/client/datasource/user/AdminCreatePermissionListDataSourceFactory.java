@@ -22,7 +22,7 @@ import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.openadmin.client.datasource.SimpleDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -40,7 +40,7 @@ public class AdminCreatePermissionListDataSourceFactory extends SimpleDataSource
     }
 
     public PersistencePerspective setupPersistencePerspective(PersistencePerspective persistencePerspective) {
-        persistencePerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY));
+        persistencePerspective.setOperationTypes(new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC));
         return persistencePerspective;
     }
     

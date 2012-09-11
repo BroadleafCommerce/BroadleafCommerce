@@ -103,6 +103,7 @@ public class AssetSearchDialog extends Window {
 		
         saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
         saveButton.addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             	//getSelectedRecord() throws a ClassCastException from SmartGWT, maybe a bug.  this seems to work instead:
             	Record selectedRecord = tileGrid.getSelection()[0];
@@ -113,6 +114,7 @@ public class AssetSearchDialog extends Window {
 
         IButton cancelButton = new IButton(BLCMain.getMessageManager().getString("cancel"));
         cancelButton.addClickHandler(new ClickHandler() {  
+            @Override
             public void onClick(ClickEvent event) {  
             	hide();
             }  
@@ -147,6 +149,7 @@ public class AssetSearchDialog extends Window {
 
         IButton searchButton = new IButton("Search");
         searchButton.addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             	Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
                 tileGrid.fetchData(valuesAsCriteria);
@@ -154,6 +157,7 @@ public class AssetSearchDialog extends Window {
         });
         final IButton addAssetButton = new IButton("Upload Asset");
         addAssetButton.addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             	addNewItem("Add a New Asset",staticAssetDataSource);
             }
@@ -171,7 +175,8 @@ public class AssetSearchDialog extends Window {
         addItem(mainLayout); 
         addAssetButton.hide();
         SecurityManager.getInstance().doSecure("PERMISSION_CREATE_ASSET", new  SecureCallbackAdapter() {
-			 public void succeed() {
+			 @Override
+            public void succeed() {
 				addAssetButton.show();
 			}
 			 @Override
@@ -188,6 +193,7 @@ public class AssetSearchDialog extends Window {
         hints.put("name", BLCMain.getMessageManager().getString("assetUploadNameHint"));
         hints.put("fullUrl", BLCMain.getMessageManager().getString("assetUploadFullUrlHint"));
 		FILE_UPLOAD.editNewRecord("Upload Artifact", staticAssetDataSource, initialValues, hints, new ItemEditedHandler() {
+            @Override
             public void onItemEdited(ItemEdited event) {
                 ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
@@ -200,6 +206,7 @@ public class AssetSearchDialog extends Window {
 	}
 	public void search(String title, TileGridItemSelectedHandler handler) {
 		this.setTitle(title);
+	        tileGrid.invalidateCache(); //BLC-637, invalidate cache, so that a fetch is performed every time the dialog window is opened
 		this.handler = handler;
 		centerInPage();
 		saveButton.disable();

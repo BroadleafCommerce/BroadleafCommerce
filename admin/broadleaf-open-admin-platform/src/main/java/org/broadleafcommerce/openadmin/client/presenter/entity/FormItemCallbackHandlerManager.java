@@ -24,7 +24,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamic
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
@@ -45,45 +45,53 @@ public class FormItemCallbackHandlerManager {
         addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null);
     }
 
-	public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
-		callbacks.put(fieldName, new FormItemCallback() {
-			public void execute(final FormItem formItem) {
-				searchView.search(searchDialogTitle, new SearchItemSelectedHandler() {
-					public void onSearchItemSelected(SearchItemSelected event) {
-						final String myId = ((AbstractDynamicDataSource) event.getDataSource()).getPrimaryKeyValue(event.getRecord());
-						PersistencePerspective persistencePerspective = ((DynamicEntityDataSource) dynamicFormDisplay.getFormOnlyDisplay().getForm().getDataSource()).getPersistencePerspective();
-						ForeignKey mainForeignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-						String displayFieldName = "name";
-						if (mainForeignKey != null && mainForeignKey.getManyToField().equals(formItem.getName())) {
-							displayFieldName = mainForeignKey.getDisplayValueProperty();
-						} else {
-							ForeignKey[] additionalKeys = persistencePerspective.getAdditionalForeignKeys();
-							if (additionalKeys != null) {
-								for (ForeignKey foreignKey : additionalKeys) {
-									if (foreignKey.getManyToField().equals(formItem.getName())) {
-										displayFieldName = foreignKey.getDisplayValueProperty();
-										break;
-									}
-								}
-							}
-						}
-						String myName = event.getRecord().getAttribute(displayFieldName);
-						formItem.getForm().getField("__display_"+formItem.getName()).setValue(myName);
-						Timer timer = new Timer() {  
-				            public void run() {  
-				            	formItem.setValue(myId);
-				            	dynamicFormDisplay.getSaveButton().enable();
+    public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final ForeignKey foreignKey, final FormItemCallback cb) {
+        callbacks.put(fieldName, new FormItemCallback() {
+            public void execute(final FormItem formItem) {
+                searchView.search(searchDialogTitle, new SearchItemSelectedHandler() {
+                    public void onSearchItemSelected(SearchItemSelected event) {
+                        final String myId = ((AbstractDynamicDataSource) event.getDataSource()).getPrimaryKeyValue(event.getRecord());
+                        String displayFieldName = "name";
+                        if (foreignKey != null) {
+                            displayFieldName = foreignKey.getDisplayValueProperty();
+                        } else {
+                            PersistencePerspective persistencePerspective = ((DynamicEntityDataSource) dynamicFormDisplay.getFormOnlyDisplay().getForm().getDataSource()).getPersistencePerspective();
+                            ForeignKey mainForeignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                            if (mainForeignKey != null && mainForeignKey.getManyToField().equals(formItem.getName())) {
+                                displayFieldName = mainForeignKey.getDisplayValueProperty();
+                            } else {
+                                ForeignKey[] additionalKeys = persistencePerspective.getAdditionalForeignKeys();
+                                if (additionalKeys != null) {
+                                    for (ForeignKey foreignKey : additionalKeys) {
+                                        if (foreignKey.getManyToField().equals(formItem.getName())) {
+                                            displayFieldName = foreignKey.getDisplayValueProperty();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        String myName = event.getRecord().getAttribute(displayFieldName);
+                        formItem.getForm().getField("__display_"+formItem.getName()).setValue(myName);
+                        Timer timer = new Timer() {
+                            public void run() {
+                                formItem.setValue(myId);
+                                dynamicFormDisplay.getSaveButton().enable();
                                 dynamicFormDisplay.getRefreshButton().enable();
                                 if (cb != null) {
                                     cb.execute(formItem);
                                 }
-				            }  
-				        };
-				        timer.schedule(100);
-					}
-				});
-			}	
-		});
+                            }
+                        };
+                        timer.schedule(100);
+                    }
+                });
+            }
+        });
+    }
+
+	public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
+		addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null, cb);
 	}
 	
 	public void addFormItemCallback(String fieldName, FormItemCallback formItemCallback) {

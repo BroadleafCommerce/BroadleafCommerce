@@ -32,15 +32,15 @@ import java.lang.annotation.Target;
 public @interface ValidationConfiguration {
 	
 	/**
-	 * The fully qualified classname of the com.smartgwt.client.widgets.form.validator.Validator
-	 * instance to use for validation
+	 * <p>The fully qualified classname of the com.smartgwt.client.widgets.form.validator.Validator
+	 * instance to use for validation</p>
 	 * 
 	 * @return the validator classname
 	 */
 	String validationImplementation();
 	
 	/**
-	 * Optional configuration items that can be used to setup the validator
+	 * <p>Optional configuration items that can be used to setup the validator</p>
 	 * 
 	 * @return validator configuration attributes
 	 */

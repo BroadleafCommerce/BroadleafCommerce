@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.admin.client.datasource.catalog.category.module;
 
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.JoinStructureClientModule;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.AdornedTargetListClientModule;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
@@ -28,14 +28,14 @@ import com.smartgwt.client.data.Record;
  * @author jfischer
  *
  */
-public class CategoryTreeJoinStructureModule extends JoinStructureClientModule {
+public class CategoryTreeAdornedTargetListModule extends AdornedTargetListClientModule {
 
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname
 	 * @param persistencePerspective
 	 * @param service
 	 */
-	public CategoryTreeJoinStructureModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+	public CategoryTreeAdornedTargetListModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
 		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
 	}
 

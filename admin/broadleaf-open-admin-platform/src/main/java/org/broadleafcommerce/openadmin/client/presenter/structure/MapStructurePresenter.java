@@ -78,8 +78,8 @@ public class MapStructurePresenter extends AbstractSubPresentable {
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
-		this.gridFields = gridFields;
+		String[] finalGridFields = dataSource.setupGridFields(gridFields, editable);
+		this.gridFields = finalGridFields;
 	}
 	
 	public void bind() {
@@ -114,10 +114,7 @@ public class MapStructurePresenter extends AbstractSubPresentable {
                     if (event.isLeftButtonDown()) {
                         DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
                         initialValues.put("symbolicId", dataSource.getCompatibleModule(dataSource.getPersistencePerspective().getOperationTypes().getAddType()).getLinkedValue());
-                        String[] type = associatedRecord.getAttributeAsStringArray("_type");
-                        if (type == null) {
-                            type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
-                        }
+                        String[] type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
                         initialValues.put("_type", type);
                         entityEditDialog.editNewRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, gridFields, null);
                     }
@@ -150,5 +147,21 @@ public class MapStructurePresenter extends AbstractSubPresentable {
 
     public HandlerRegistration getSelectionChangedHandlerRegistration() {
         return selectionChangedHandlerRegistration;
+    }
+
+    public String[] getGridFields() {
+        return gridFields;
+    }
+
+    public void setGridFields(String[] gridFields) {
+        this.gridFields = gridFields;
+    }
+
+    public MapStructureEntityEditDialog getEntityEditDialog() {
+        return entityEditDialog;
+    }
+
+    public void setEntityEditDialog(MapStructureEntityEditDialog entityEditDialog) {
+        this.entityEditDialog = entityEditDialog;
     }
 }
