@@ -83,8 +83,8 @@ public class Metadata {
         } catch (Throwable e) {
             throw new IllegalArgumentException(
                     "Unable to assign metadataOverrides. You are likely using an obsolete spring application context " +
-                    "configuration for this value. Please utilize the xmlns:mo=\"http://www.broadleafcommerce.org/schema/mo\" namespace " +
-                    "and http://www.broadleafcommerce.org/schema/mo http://www.broadleafcommerce.org/schema/mo/mo.xsd schemaLocation " +
+                    "configuration for this value. Please utilize the xmlns:mo=\"http://schema.broadleafcommerce.org/mo\" namespace " +
+                    "and http://schema.broadleafcommerce.org/mo http://schema.broadleafcommerce.org/mo/mo.xsd schemaLocation " +
                     "in the xml schema config for your app context. This will allow you to use the appropriate <mo:override> element to configure your overrides.", e);
         }
     }
