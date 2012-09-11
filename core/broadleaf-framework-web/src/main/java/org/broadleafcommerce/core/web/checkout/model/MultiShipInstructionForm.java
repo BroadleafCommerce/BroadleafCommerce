@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.web.checkout.model;
 
-import org.broadleafcommerce.common.web.form.CsrfProtectedForm;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
 
@@ -29,7 +28,7 @@ import java.io.Serializable;
  * 
  * 
  */
-public class MultiShipInstructionForm extends CsrfProtectedForm implements Serializable {
+public class MultiShipInstructionForm implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

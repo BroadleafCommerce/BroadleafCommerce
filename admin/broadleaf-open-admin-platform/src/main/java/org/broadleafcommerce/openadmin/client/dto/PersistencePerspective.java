@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.client.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -47,9 +48,9 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 	public PersistencePerspective() {
 	}
 	
-	public PersistencePerspective(OperationTypes operationTypes, String[] additionalNonPersistentProperties, ForeignKey[] additionalNonPersistentForeignKeys) {
+	public PersistencePerspective(OperationTypes operationTypes, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignKeys) {
 		setAdditionalNonPersistentProperties(additionalNonPersistentProperties);
-		setAdditionalForeignKeys(additionalNonPersistentForeignKeys);
+		setAdditionalForeignKeys(additionalForeignKeys);
 		this.operationTypes = operationTypes;
 	}
 
@@ -66,8 +67,8 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 		return additionalForeignKeys;
 	}
 
-	public void setAdditionalForeignKeys(ForeignKey[] additionalNonPersistentForeignKeys) {
-		this.additionalForeignKeys = additionalNonPersistentForeignKeys;
+	public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
+		this.additionalForeignKeys = additionalForeignKeys;
 		Arrays.sort(this.additionalForeignKeys, new Comparator<ForeignKey>() {
 			public int compare(ForeignKey o1, ForeignKey o2) {
 				return o1.getManyToField().compareTo(o2.getManyToField());
@@ -191,5 +192,86 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 
     public void setShowArchivedFields(Boolean showArchivedFields) {
         this.showArchivedFields = showArchivedFields;
+    }
+
+    public PersistencePerspective clonePersistencePerspective() {
+        PersistencePerspective persistencePerspective = new PersistencePerspective();
+        persistencePerspective.operationTypes = operationTypes.cloneOperationTypes();
+
+        if (additionalNonPersistentProperties != null) {
+            persistencePerspective.additionalNonPersistentProperties = new String[additionalNonPersistentProperties.length];
+            System.arraycopy(additionalNonPersistentProperties, 0, persistencePerspective.additionalNonPersistentProperties, 0, additionalNonPersistentProperties.length);
+        }
+
+        if (additionalForeignKeys != null) {
+            persistencePerspective.additionalForeignKeys = new ForeignKey[additionalForeignKeys.length];
+            for (int j=0; j<additionalForeignKeys.length;j++){
+                persistencePerspective.additionalForeignKeys[j] = additionalForeignKeys[j].cloneForeignKey();
+            }
+        }
+
+        if (this.persistencePerspectiveItems != null) {
+            Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>(this.persistencePerspectiveItems.size());
+            for (Map.Entry<PersistencePerspectiveItemType, PersistencePerspectiveItem> entry : this.persistencePerspectiveItems.entrySet()) {
+                persistencePerspectiveItems.put(entry.getKey(), entry.getValue().clonePersistencePerspectiveItem());
+            }
+            persistencePerspective.persistencePerspectiveItems = persistencePerspectiveItems;
+        }
+
+        persistencePerspective.populateToOneFields = populateToOneFields;
+        persistencePerspective.configurationKey = configurationKey;
+        persistencePerspective.showArchivedFields = showArchivedFields;
+
+        if (excludeFields != null) {
+            persistencePerspective.excludeFields = new String[excludeFields.length];
+            System.arraycopy(excludeFields, 0, persistencePerspective.excludeFields, 0, excludeFields.length);
+        }
+
+        if (includeFields != null) {
+            persistencePerspective.includeFields = new String[includeFields.length];
+            System.arraycopy(includeFields, 0, persistencePerspective.includeFields, 0, includeFields.length);
+        }
+
+        return persistencePerspective;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PersistencePerspective)) return false;
+
+        PersistencePerspective that = (PersistencePerspective) o;
+
+        if (!Arrays.equals(additionalForeignKeys, that.additionalForeignKeys)) return false;
+        if (!Arrays.equals(additionalNonPersistentProperties, that.additionalNonPersistentProperties))
+            return false;
+        if (configurationKey != null ? !configurationKey.equals(that.configurationKey) : that.configurationKey != null)
+            return false;
+        if (!Arrays.equals(excludeFields, that.excludeFields)) return false;
+        if (!Arrays.equals(includeFields, that.includeFields)) return false;
+        if (operationTypes != null ? !operationTypes.equals(that.operationTypes) : that.operationTypes != null)
+            return false;
+        if (persistencePerspectiveItems != null ? !persistencePerspectiveItems.equals(that.persistencePerspectiveItems) : that.persistencePerspectiveItems != null)
+            return false;
+        if (populateToOneFields != null ? !populateToOneFields.equals(that.populateToOneFields) : that.populateToOneFields != null)
+            return false;
+        if (showArchivedFields != null ? !showArchivedFields.equals(that.showArchivedFields) : that.showArchivedFields != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = additionalNonPersistentProperties != null ? Arrays.hashCode(additionalNonPersistentProperties) : 0;
+        result = 31 * result + (additionalForeignKeys != null ? Arrays.hashCode(additionalForeignKeys) : 0);
+        result = 31 * result + (persistencePerspectiveItems != null ? persistencePerspectiveItems.hashCode() : 0);
+        result = 31 * result + (operationTypes != null ? operationTypes.hashCode() : 0);
+        result = 31 * result + (populateToOneFields != null ? populateToOneFields.hashCode() : 0);
+        result = 31 * result + (excludeFields != null ? Arrays.hashCode(excludeFields) : 0);
+        result = 31 * result + (includeFields != null ? Arrays.hashCode(includeFields) : 0);
+        result = 31 * result + (configurationKey != null ? configurationKey.hashCode() : 0);
+        result = 31 * result + (showArchivedFields != null ? showArchivedFields.hashCode() : 0);
+        return result;
     }
 }

@@ -16,12 +16,11 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
-import java.util.Arrays;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
@@ -34,6 +33,8 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLay
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+
+import java.util.Arrays;
 
 /**
  * 
@@ -54,8 +55,13 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		this.display = display;
         this.availableToTypes = availableToTypes;
 	}
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+
+    @Override
+    public Canvas getDisplay() {
+        return (Canvas) display;
+    }
+
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);

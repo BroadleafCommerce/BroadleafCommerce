@@ -16,15 +16,15 @@
 
 package org.broadleafcommerce.openadmin.client.dto.visitor;
 
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 
 
 public interface PersistencePerspectiveItemVisitor {
 
-	public void visit(JoinStructure joinStructure);
+	public void visit(AdornedTargetList adornedTargetList);
 	
 	public void visit(MapStructure mapStructure);
 	

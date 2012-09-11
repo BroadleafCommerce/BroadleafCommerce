@@ -129,11 +129,23 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
     }
 
 	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException {
-		return mergeCartService.mergeCart(customer, anonymousCart, priceOrder);
+	    try {
+	        return mergeCartService.mergeCart(customer, anonymousCart, priceOrder);
+	    } catch (RemoveFromCartException e) {
+	        // This should not happen as this service should be configured to use the LegacyMergeCartService, which will
+	        // not throw this exception
+	        throw new PricingException(e);
+	    }
 	}
 	
 	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
-		return mergeCartService.reconstructCart(customer, priceOrder);
+	    try {
+	        return mergeCartService.reconstructCart(customer, priceOrder);
+	    } catch (RemoveFromCartException e) {
+	        // This should not happen as this service should be configured to use the LegacyMergeCartService, which will
+	        // not throw this exception
+	        throw new PricingException(e);
+	    }
 	}
 
 	@Override

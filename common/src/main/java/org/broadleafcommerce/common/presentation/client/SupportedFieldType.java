@@ -39,6 +39,7 @@ public enum SupportedFieldType implements IsSerializable {
 	BROADLEAF_ENUMERATION,
     EXPLICIT_ENUMERATION,
 	EMPTY_ENUMERATION,
+    DATA_DRIVEN_ENUMERATION,
     HTML,
     HTML_BASIC,
     UPLOAD,

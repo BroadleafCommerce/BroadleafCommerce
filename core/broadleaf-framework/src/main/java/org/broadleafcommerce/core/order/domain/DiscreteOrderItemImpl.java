@@ -20,6 +20,8 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -48,7 +50,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +61,7 @@ import java.util.Map;
 @Table(name = "BLC_DISCRETE_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemImpl_discreteOrderItem")
+@AdminPresentationOverrides({@AdminPresentationOverride(name="product.defaultSku", value=@AdminPresentation(excluded = true))})
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
     private static final long serialVersionUID = 1L;
@@ -85,10 +87,12 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @ManyToOne(targetEntity = BundleOrderItemImpl.class)
     @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
+    @AdminPresentation(excluded = true)
     protected BundleOrderItem bundleOrderItem;
 
     @ManyToOne(targetEntity = SkuBundleItemImpl.class)
     @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
+    @AdminPresentation(excluded = true)
     protected SkuBundleItem skuBundleItem;
     
     @CollectionOfElements

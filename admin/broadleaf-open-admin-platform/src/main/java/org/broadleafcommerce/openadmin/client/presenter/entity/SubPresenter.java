@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
+import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -76,6 +77,11 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 		this.display = display;
         this.availableToTypes = availableToTypes;
 	}
+
+    @Override
+    public Canvas getDisplay() {
+        return (Canvas) display;
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);

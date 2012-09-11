@@ -23,7 +23,7 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
@@ -53,7 +53,7 @@ public class MediaCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         try {
             Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
-            helper.getCompatibleModule(OperationType.MAPSTRUCTURE).updateMergedProperties(persistencePackage, allMergedProperties);
+            helper.getCompatibleModule(OperationType.MAP).updateMergedProperties(persistencePackage, allMergedProperties);
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
             ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
             
@@ -67,7 +67,7 @@ public class MediaCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        DynamicResultSet results = helper.getCompatibleModule(OperationType.MAPSTRUCTURE).fetch(persistencePackage, cto);
+        DynamicResultSet results = helper.getCompatibleModule(OperationType.MAP).fetch(persistencePackage, cto);
         
         //results.set
         

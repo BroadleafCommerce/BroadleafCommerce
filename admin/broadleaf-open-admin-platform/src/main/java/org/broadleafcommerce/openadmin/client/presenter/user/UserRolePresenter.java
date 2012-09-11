@@ -20,6 +20,7 @@ import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
@@ -58,8 +59,13 @@ public class UserRolePresenter implements SubPresentable {
 		this.display = display;
 		this.searchDialog = searchDialog;
 	}
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+
+    @Override
+    public Canvas getDisplay() {
+        return (Canvas) display;
+    }
+
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);

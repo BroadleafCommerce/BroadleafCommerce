@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.common.web.controller;
 
-import org.broadleafcommerce.common.security.service.ExploitProtectionService;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -35,12 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class BroadleafAbstractController {
 	
     
-	/**
-	 * Used by controllers for CSRF protection
-	 */
-    @Resource(name="blExploitProtectionService")
-    protected ExploitProtectionService exploitProtectionService;
-	
 	/**
 	 * A helper method that returns whether or not the given request was invoked via an AJAX call
 	 * 

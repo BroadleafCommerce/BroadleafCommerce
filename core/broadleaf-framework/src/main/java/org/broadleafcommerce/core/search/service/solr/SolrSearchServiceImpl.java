@@ -87,16 +87,16 @@ public class SolrSearchServiceImpl implements SearchService {
 	
 	protected SolrServer server;
 
-	public SolrSearchServiceImpl(String solrHome) throws IOException, ParserConfigurationException, SAXException {
-		System.setProperty("solr.solr.home", solrHome);
+	public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
+		System.setProperty("solr.solr.home", solrServer);
 		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
 		CoreContainer coreContainer = initializer.initialize();
 		EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, "");
 		this.server = server;
 	}
 	
-	public SolrSearchServiceImpl(SolrServer server) {
-		this.server = server;
+	public SolrSearchServiceImpl(SolrServer solrServer) {
+		this.server = solrServer;
 	}
 	
 	@Override

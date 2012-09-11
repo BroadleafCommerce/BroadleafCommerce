@@ -20,10 +20,10 @@ import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.openadmin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.SimpleDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class AdminPermissionListDataSourceFactory extends SimpleDataSourceFactor
 
     public PersistencePerspective setupPersistencePerspective(PersistencePerspective persistencePerspective) {
         persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ADMIN_ROLE, null));
-        persistencePerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.FOREIGNKEY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY));
+        persistencePerspective.setOperationTypes(new OperationTypes(OperationType.BASIC, OperationType.NONDESTRUCTIVEREMOVE, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC));
         return persistencePerspective;
     }
 }

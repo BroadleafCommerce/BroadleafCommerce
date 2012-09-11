@@ -17,20 +17,20 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.Criteria;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +47,9 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
     public ClassTree getClassTree(Class<?>[] polymorphicClasses);
 	
-	public abstract Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+	public abstract Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType);
 	
-	public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+	public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix);
 	
 	public abstract Serializable persist(Serializable entity);
 	
@@ -80,7 +80,7 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
      */
 	public PersistentClass getPersistentClass(String targetClassName);
 	
-	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
+	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective);
 
     public FieldManager getFieldManager();
 
@@ -88,7 +88,7 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
     public void setEntityConfiguration(EntityConfiguration entityConfiguration);
 
-    public Map<String, Class<?>> getIdMetadata(Class<?> entityClass);
+    public Map<String, Object> getIdMetadata(Class<?> entityClass);
 
     public List<Type> getPropertyTypes(Class<?> entityClass);
 
@@ -98,8 +98,6 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
     public Criteria createCriteria(Class<?> entityClass);
 
-    public Map<String, Map<String, Map<String, FieldMetadata>>> getFieldMetadataOverrides();
-
-    public void setFieldMetadataOverrides(Map<String, Map<String, Map<String, FieldMetadata>>> metadataOverrides);
+    public Field[] getAllFields(Class<?> targetClass);
 
 }

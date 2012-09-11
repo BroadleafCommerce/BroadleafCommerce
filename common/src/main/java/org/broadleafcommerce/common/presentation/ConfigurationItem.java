@@ -32,14 +32,14 @@ import java.lang.annotation.Target;
 public @interface ConfigurationItem {
 	
 	/**
-	 * The name of the validation configuration item
+	 * <p>The name of the validation configuration item</p>
 	 * 
 	 * @return the config item name
 	 */
 	String itemName();
 	
 	/**
-	 * The value for the validation configuration item
+	 * <p>The value for the validation configuration item</p>
 	 * 
 	 * @return the config item value
 	 */

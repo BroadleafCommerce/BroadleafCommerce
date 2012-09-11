@@ -34,7 +34,9 @@ import java.util.Map;
 public class PresenterSequenceSetupManager {
 	
 	private List<PresenterSetupItem> items = new ArrayList<PresenterSetupItem>();
-	private Iterator<PresenterSetupItem> itemsIterator;
+    private List<PresenterSetupItem> supplementalItems = new ArrayList<PresenterSetupItem>();
+	private Iterator<PresenterSetupItem> itemsIterator = null;
+    private Iterator<PresenterSetupItem> supplementalItemsIterator = null;
 	private Canvas canvas;
 	private EntityPresenter presenter;
     private Map<String, DynamicEntityDataSource> dataSourceLibrary = new HashMap<String, DynamicEntityDataSource>();
@@ -53,30 +55,60 @@ public class PresenterSequenceSetupManager {
 	
 	public void addOrReplaceItem(PresenterSetupItem item) {
 		int pos = -1;
-		if (items.contains(item)) {
-			pos = items.indexOf(item);
-			items.remove(pos);
-		}
+        if (itemsIterator == null) {
+            if (items.contains(item)) {
+                pos = items.indexOf(item);
+                items.remove(pos);
+            }
+        } else {
+            if (supplementalItems.contains(item)) {
+                pos = supplementalItems.indexOf(item);
+                supplementalItems.remove(pos);
+            }
+        }
         item.getAdapter().registerDataSourceSetupManager(this);
-		if (pos >= 0) {
-			items.add(pos, item);
-		} else {
-			items.add(item);
-		}
+        if (itemsIterator == null) {
+            if (pos >= 0) {
+                items.add(pos, item);
+            } else {
+                items.add(item);
+            }
+        } else {
+            if (pos >= 0) {
+                supplementalItems.add(pos, item);
+            } else {
+                supplementalItems.add(item);
+            }
+        }
 	}
 	
 	public void addOrReplaceItem(PresenterSetupItem item, int destinationPos) {
 		int pos = -1;
-		if (items.contains(item)) {
-			pos = items.indexOf(item);
-			items.remove(pos);
-		}
+        if (itemsIterator == null) {
+            if (items.contains(item)) {
+                pos = items.indexOf(item);
+                items.remove(pos);
+            }
+        } else {
+            if (supplementalItems.contains(item)) {
+                pos = supplementalItems.indexOf(item);
+                supplementalItems.remove(pos);
+            }
+        }
 		item.getAdapter().registerDataSourceSetupManager(this);
-		if (destinationPos >= 0) {
-			items.add(pos, item);
-		} else {
-			items.add(item);
-		}
+        if (itemsIterator == null) {
+            if (destinationPos >= 0) {
+                items.add(pos, item);
+            } else {
+                items.add(item);
+            }
+        } else {
+            if (destinationPos >= 0) {
+                supplementalItems.add(pos, item);
+            } else {
+                supplementalItems.add(item);
+            }
+        }
 	}
 	
 	public void moveItem(PresenterSetupItem item, int pos) {
@@ -102,10 +134,21 @@ public class PresenterSequenceSetupManager {
         }
 	}
 
+    protected void launchSupplemental() {
+        if (!presenter.getLoaded()) {
+            supplementalItemsIterator = supplementalItems.iterator();
+            next();
+        }
+    }
+
 	protected void next() {
 		if (itemsIterator.hasNext()) {
 			itemsIterator.next().invoke();
-		} else {
+        } else if (supplementalItemsIterator == null) {
+            launchSupplemental();
+		} else if (supplementalItemsIterator.hasNext()) {
+            supplementalItemsIterator.next().invoke();
+        } else {
 			presenter.postSetup(canvas);
 		}
 	}
@@ -116,5 +159,9 @@ public class PresenterSequenceSetupManager {
 
     public DynamicEntityDataSource getDataSource(String dataURL) {
         return dataSourceLibrary.get(dataURL);
+    }
+
+    public EntityPresenter getPresenter() {
+        return presenter;
     }
 }

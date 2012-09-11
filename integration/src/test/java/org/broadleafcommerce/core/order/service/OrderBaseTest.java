@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -23,6 +24,8 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
+
+import java.util.Date;
 
 public class OrderBaseTest extends CommonSetupBaseTest {
 
@@ -43,6 +46,40 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         order = orderService.addItem(order.getId(), 
         		new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 2), 
         		true);
+
+        return order;
+    }
+	
+    public Order setUpCartWithActiveSku() throws AddToCartException {
+        Customer customer = customerService.saveCustomer(createNamedCustomer());
+
+        Order order = orderService.createNewCartForCustomer(customer);
+
+        Product newProduct = addTestProduct("Plastic Crate Active", "Crates");
+        Category newCategory = newProduct.getDefaultCategory();
+        
+        order = orderService.addItem(order.getId(), 
+        		new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 1), 
+        		true);
+
+        return order;
+    }
+    
+    public Order setUpCartWithInactiveSku() throws AddToCartException {
+        Customer customer = customerService.saveCustomer(createNamedCustomer());
+
+        Order order = orderService.createNewCartForCustomer(customer);
+
+        Product newProduct = addTestProduct("Plastic Crate Should Be Inactive", "Crates");
+        Category newCategory = newProduct.getDefaultCategory();
+        
+        order = orderService.addItem(order.getId(), 
+        		new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 1), 
+        		true);
+        
+        // Make the SKU inactive
+        newProduct.getDefaultSku().setActiveEndDate(DateUtils.addDays(new Date(), -1));
+        catalogService.saveSku(newProduct.getDefaultSku());
 
         return order;
     }
