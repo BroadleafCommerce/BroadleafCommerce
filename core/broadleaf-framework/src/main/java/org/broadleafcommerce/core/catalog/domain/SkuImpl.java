@@ -263,7 +263,6 @@ public class SkuImpl implements Sku {
     @BatchSize(size = 50)
     protected List<FulfillmentOption> excludedFulfillmentOptions;
 
-
     @Override
     public Long getId() {
         return id;

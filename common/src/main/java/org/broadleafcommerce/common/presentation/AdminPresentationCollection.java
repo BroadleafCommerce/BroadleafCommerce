@@ -62,9 +62,9 @@ public @interface AdminPresentationCollection {
     boolean excluded() default false;
 
     /**
-     * Optional - only required if you want to make the field immutable
+     * <p>Optional - only required if you want to make the field immutable</p>
      *
-     * Explicityly specify whether or not this field is mutable.
+     * <p>Explicityly specify whether or not this field is mutable.</p>
      *
      * @return whether or not this field is read only
      */
