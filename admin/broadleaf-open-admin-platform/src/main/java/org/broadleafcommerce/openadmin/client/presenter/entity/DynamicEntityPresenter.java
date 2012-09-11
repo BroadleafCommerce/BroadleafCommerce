@@ -241,7 +241,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                         changeSelection(selectedRecord);
                         for (SubPresentable subPresentable : subPresentables) {
                             //this is only suitable when no callback is required for the load - which is most cases
-                            subPresentable.enable();
+                            subPresentable.setStartState();
                             subPresentable.load(selectedRecord, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource());
                         }
                         display.getDynamicFormDisplay().getSaveButton().disable();
@@ -428,11 +428,6 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                     shouldLoad = true;
                     break;
                 }
-            }
-            //only show this grid if it passed a security check
-            if (entry.getValue().getSecurityLevel() != null && !"".equals(entry.getValue().getSecurityLevel())){
-                org.broadleafcommerce.openadmin.client.security.SecurityManager.getInstance().registerField(String.valueOf(entry.getValue().hashCode()), entry.getValue().getSecurityLevel());
-                shouldLoad = org.broadleafcommerce.openadmin.client.security.SecurityManager.getInstance().isUserAuthorizedToEditField(String.valueOf(entry.getValue().hashCode()));
             }
             if (shouldLoad) {
                 final String dataSourceName;

@@ -116,11 +116,13 @@ public abstract class AbstractSubPresentable implements SubPresentable {
                 @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     String locked = associatedRecord.getAttribute("__locked");
-                    if (!(locked != null && locked.equals("true"))) {
-                        setReadOnly(false);
-                        setStartState();
-                    } else {
-                        setReadOnly(true);
+                    if (!readOnly) {
+                        if (!(locked != null && locked.equals("true"))) {
+                            setReadOnly(false);
+                            setStartState();
+                        } else {
+                            setReadOnly(true);
+                        }
                     }
                     if (cb != null) {
                         cb.execute(response, rawData, request);
