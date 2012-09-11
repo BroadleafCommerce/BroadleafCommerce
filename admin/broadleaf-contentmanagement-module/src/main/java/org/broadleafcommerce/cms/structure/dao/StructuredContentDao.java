@@ -71,8 +71,7 @@ public interface StructuredContentDao {
     public void delete(StructuredContent content);
 
     /**
-     * Called by the <code>DisplayContentTag</code> to locate content based
-     * on the current SandBox, StructuredContentType, and Locale.
+     * Pass through function for backwards compatibility to get a list of structured content.
      *
      * @param sandBox to search for the content
      * @param type of content to search for
@@ -84,7 +83,19 @@ public interface StructuredContentDao {
 
     /**
      * Called by the <code>DisplayContentTag</code> to locate content based
-     * on the current SandBox, StructuredContentType, Name, and Locale.
+     * on the current SandBox, StructuredContentType, fullLocale and/or languageOnlyLocale.
+     *
+     * @param sandBox to search for the content
+     * @param type of content to search for
+     * @param fullLocale to restrict the search to
+     * @param languageOnlyLocale locale based only on a language specified
+     * @return a list of all matching content
+     * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
+     */
+    public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale fullLocale, Locale languageOnlyLocale);
+
+    /**
+     * Pass through function for backwards compatibility to get a list of structured content.
      *
      * @param sandBox
      * @param type
@@ -96,7 +107,19 @@ public interface StructuredContentDao {
 
     /**
      * Called by the <code>DisplayContentTag</code> to locate content based
-     * on the current SandBox, StructuredContentType, Name, and Locale.
+     * on the current SandBox, StructuredContentType, Name, fullLocale and/or languageOnlyLocale.
+     *
+     * @param sandBox
+     * @param type
+     * @param name
+     * @param fullLocale
+     * @param languageOnlyLocale
+     * @return
+     */
+    public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale fullLocale, Locale languageOnlyLocale);
+
+    /**
+     * Pass through function for backwards compatibility to get a list of structured content.
      *
      * @param sandBox
      * @param name
@@ -104,6 +127,18 @@ public interface StructuredContentDao {
      * @return
      */
     public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale locale);
+
+    /**
+     * Called by the <code>DisplayContentTag</code> to locate content based
+     * on the current SandBox, StructuredContentType, Name, fullLocale and/or languageOnlyLocale.
+     *
+     * @param sandBox
+     * @param name
+     * @param fullLocale
+     * @param languageOnlyLocale
+     * @return
+     */
+    public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale fullLocale, Locale languageOnlyLocale);
 
 
     /**

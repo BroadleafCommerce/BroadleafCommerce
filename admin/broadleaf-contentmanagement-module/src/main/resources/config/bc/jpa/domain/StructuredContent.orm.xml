@@ -28,7 +28,7 @@
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.sandbox = :sandbox AND
                      structuredContent.structuredContentType = :contentType AND
-                     structuredContent.locale = :locale AND
+                     (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                      structuredContent.contentName = :contentName AND
                      structuredContent.archivedFlag = false AND
                      structuredContent.offlineFlag = false
@@ -40,7 +40,7 @@
 		<query>SELECT structuredContent
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.structuredContentType = :contentType AND
-                     structuredContent.locale = :locale AND
+                     (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                      structuredContent.contentName = :contentName AND
                      structuredContent.archivedFlag = false AND
                      structuredContent.id in
@@ -58,7 +58,7 @@
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.sandbox is null AND
                      structuredContent.structuredContentType = :contentType AND
-                     structuredContent.locale = :locale AND
+                     (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                      structuredContent.contentName = :contentName AND
                      structuredContent.archivedFlag = false AND
                      structuredContent.offlineFlag = false
@@ -71,7 +71,7 @@
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.sandbox = :sandbox AND
                      structuredContent.structuredContentType = :contentType AND
-                     structuredContent.locale = :locale AND
+                     (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                      structuredContent.archivedFlag = false AND
                      structuredContent.offlineFlag = false
                ORDER BY structuredContent.priority
@@ -82,7 +82,7 @@
 		<query>SELECT structuredContent
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.structuredContentType = :contentType AND
-                     structuredContent.locale = :locale AND
+                     (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                      structuredContent.archivedFlag = false AND
                      structuredContent.id in
                      (SELECT sandboxItem.temporaryItemId
@@ -99,7 +99,7 @@
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.sandbox is null AND
                      structuredContent.structuredContentType = :contentType AND
-                     structuredContent.locale = :locale AND
+                     (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                      structuredContent.archivedFlag = false AND
                      structuredContent.offlineFlag = false
                ORDER BY structuredContent.priority
@@ -111,7 +111,7 @@
    		<query>SELECT structuredContent
                   FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                   WHERE structuredContent.sandbox = :sandbox AND
-                        structuredContent.locale = :locale AND
+                        (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                         structuredContent.contentName = :contentName AND
                         structuredContent.archivedFlag = false AND
                         structuredContent.offlineFlag = false
@@ -122,7 +122,7 @@
        <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME_AND_USER_SANDBOX" >
    		<query>SELECT structuredContent
                   FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
-                  WHERE structuredContent.locale = :locale AND
+                  WHERE (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                         structuredContent.contentName = :contentName AND
                         structuredContent.archivedFlag = false AND
                         structuredContent.id in
@@ -139,7 +139,7 @@
    		<query>SELECT structuredContent
                   FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                   WHERE structuredContent.sandbox is null AND
-                        structuredContent.locale = :locale AND
+                        (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                         structuredContent.contentName = :contentName AND
                         structuredContent.archivedFlag = false AND
                         structuredContent.offlineFlag = false
