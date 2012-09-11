@@ -79,6 +79,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,6 +92,9 @@ import java.util.logging.Logger;
  * @author jfischer
  */
 public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
+
+    public static Map<String, CollectionMetadata> collectionMetadatas = new LinkedHashMap<String, CollectionMetadata>();
+    public static Map<String, LookupMetadata> lookupMetadatas = new HashMap<String, LookupMetadata>();
 
     protected DynamicEditDisplay display;
     protected ListGridRecord lastSelectedRecord;
@@ -107,8 +111,6 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected HandlerRegistration showArchivedButtonHandlerRegistration;
     protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
     protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();
-    protected Map<String, CollectionMetadata> collectionMetadatas = new LinkedHashMap<String, CollectionMetadata>();
-    protected Map<String, LookupMetadata> lookupMetadatas = new HashMap<String, LookupMetadata>();
 
     protected Boolean disabled = false;
 
@@ -377,52 +379,60 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         ((PresentationLayerAssociatedDataSource) entityDataSource).setAssociatedGrid(display.getListDisplay().getGrid());
 
         for (final Map.Entry<String, LookupMetadata> entry : lookupMetadatas.entrySet()) {
-            final String dataSourceName = entry.getKey() + "Lookup";
-            if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
-                java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
-                continue;
-            }
-            presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new ForeignKeyLookupDataSourceFactory(entry.getValue().getLookupForeignKey()), new AsyncCallbackAdapter() {
-                @Override
-                public void onSetupSuccess(DataSource lookupDS) {
-                    EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDS, true);
-                    String viewTitle;
-                    try {
-                        viewTitle = BLCMain.getMessageManager().getString(entry.getValue().getFriendlyName());
-                    } catch (MissingResourceException e) {
-                        viewTitle = entry.getValue().getFriendlyName();
-                    }
-                    DynamicEntityDataSource parentDataSource;
-                    if (entry.getValue().getParentDataSourceName() == null || entry.getValue().getParentDataSourceName().length() == 0) {
-                        parentDataSource = (DynamicEntityDataSource) entityDataSource;
-                    } else {
-                        parentDataSource = presenterSequenceSetupManager.getDataSource(entry.getValue().getParentDataSourceName());
-                    }
-                    DynamicFormDisplay target;
-                    if (entry.getValue().getTargetDynamicFormDisplayId() == null || entry.getValue().getTargetDynamicFormDisplayId().length() == 0) {
-                        target = getDisplay().getDynamicFormDisplay();
-                    } else {
-                        Layout temp = FormBuilder.findMemberById((Layout) getDisplay(), entry.getValue().getTargetDynamicFormDisplayId());
-                        if (!(temp instanceof DynamicFormDisplay)) {
-                            throw new RuntimeException("The target destination for a foreign key lookup must be an instance of DynamicFormDisplay. The requested destination (" + entry.getValue().getTargetDynamicFormDisplayId() + ") is an instance of " + temp.getClass().getName());
-                        }
-                        target = (DynamicFormDisplay) temp;
-                    }
-                    parentDataSource.
-                            getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                            entry.getKey(),
-                            searchView,
-                            viewTitle,
-                            target,
-                            entry.getValue().getLookupForeignKey(),
-                            null
-                    );
+            if (entry.getKey().startsWith(getClass().getName())) {
+                final String dataSourceName = entry.getKey() + "Lookup";
+                if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
+                    java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
+                    continue;
                 }
-            }));
+                presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new ForeignKeyLookupDataSourceFactory(entry.getValue().getLookupForeignKey()), new AsyncCallbackAdapter() {
+                    @Override
+                    public void onSetupSuccess(DataSource lookupDS) {
+                        EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDS, true);
+                        String viewTitle;
+                        try {
+                            viewTitle = BLCMain.getMessageManager().getString(entry.getValue().getFriendlyName());
+                        } catch (MissingResourceException e) {
+                            viewTitle = entry.getValue().getFriendlyName();
+                        }
+                        DynamicEntityDataSource parentDataSource;
+                        if (entry.getValue().getParentDataSourceName() == null || entry.getValue().getParentDataSourceName().length() == 0) {
+                            parentDataSource = (DynamicEntityDataSource) entityDataSource;
+                        } else {
+                            parentDataSource = presenterSequenceSetupManager.getDataSource(entry.getValue().getParentDataSourceName());
+                        }
+                        DynamicFormDisplay target;
+                        if (entry.getValue().getTargetDynamicFormDisplayId() == null || entry.getValue().getTargetDynamicFormDisplayId().length() == 0) {
+                            target = getDisplay().getDynamicFormDisplay();
+                        } else {
+                            Layout temp = FormBuilder.findMemberById((Layout) getDisplay(), entry.getValue().getTargetDynamicFormDisplayId());
+                            if (!(temp instanceof DynamicFormDisplay)) {
+                                throw new RuntimeException("The target destination for a foreign key lookup must be an instance of DynamicFormDisplay. The requested destination (" + entry.getValue().getTargetDynamicFormDisplayId() + ") is an instance of " + temp.getClass().getName());
+                            }
+                            target = (DynamicFormDisplay) temp;
+                        }
+                        parentDataSource.
+                                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                                entry.getKey(),
+                                searchView,
+                                viewTitle,
+                                target,
+                                entry.getValue().getLookupForeignKey(),
+                                null
+                        );
+                    }
+                }));
+            }
         }
 
         //sort the collection metadatas based on their order attribute
         List<Map.Entry<String, CollectionMetadata>> list = new LinkedList<Map.Entry<String, CollectionMetadata>>(collectionMetadatas.entrySet());
+        Iterator<Map.Entry<String, CollectionMetadata>> itr = list.iterator();
+        while (itr.hasNext()) {
+            if (!itr.next().getKey().startsWith(getClass().getName())) {
+                itr.remove();
+            }
+        }
         Collections.sort(list, new Comparator<Map.Entry<String, CollectionMetadata>>() {
             @Override
             public int compare(Map.Entry<String, CollectionMetadata> o1, Map.Entry<String, CollectionMetadata> o2) {
@@ -637,13 +647,5 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     public void setGridFields(String[] gridFields) {
         this.gridFields = gridFields;
-    }
-
-    public void addCollectionMetadata(String propertyName, CollectionMetadata collectionMetadata) {
-        collectionMetadatas.put(propertyName, collectionMetadata);
-    }
-
-    public void addLookupMetadata(String propertyName, LookupMetadata lookupMetadata) {
-        lookupMetadatas.put(propertyName, lookupMetadata);
     }
 }

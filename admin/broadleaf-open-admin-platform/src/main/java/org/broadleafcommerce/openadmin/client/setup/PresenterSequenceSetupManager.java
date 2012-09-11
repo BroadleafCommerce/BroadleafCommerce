@@ -32,7 +32,7 @@ import java.util.Map;
  *
  */
 public class PresenterSequenceSetupManager {
-	
+
 	private List<PresenterSetupItem> items = new ArrayList<PresenterSetupItem>();
     private List<PresenterSetupItem> supplementalItems = new ArrayList<PresenterSetupItem>();
 	private Iterator<PresenterSetupItem> itemsIterator = null;

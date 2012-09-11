@@ -53,4 +53,33 @@ public class LookupMetadata {
     public void setFieldType(SupportedFieldType fieldType) {
         this.fieldType = fieldType;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LookupMetadata)) return false;
+
+        LookupMetadata that = (LookupMetadata) o;
+
+        if (fieldType != that.fieldType) return false;
+        if (friendlyName != null ? !friendlyName.equals(that.friendlyName) : that.friendlyName != null) return false;
+        if (lookupForeignKey != null ? !lookupForeignKey.equals(that.lookupForeignKey) : that.lookupForeignKey != null)
+            return false;
+        if (parentDataSourceName != null ? !parentDataSourceName.equals(that.parentDataSourceName) : that.parentDataSourceName != null)
+            return false;
+        if (targetDynamicFormDisplayId != null ? !targetDynamicFormDisplayId.equals(that.targetDynamicFormDisplayId) : that.targetDynamicFormDisplayId != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = parentDataSourceName != null ? parentDataSourceName.hashCode() : 0;
+        result = 31 * result + (targetDynamicFormDisplayId != null ? targetDynamicFormDisplayId.hashCode() : 0);
+        result = 31 * result + (lookupForeignKey != null ? lookupForeignKey.hashCode() : 0);
+        result = 31 * result + (friendlyName != null ? friendlyName.hashCode() : 0);
+        result = 31 * result + (fieldType != null ? fieldType.hashCode() : 0);
+        return result;
+    }
 }

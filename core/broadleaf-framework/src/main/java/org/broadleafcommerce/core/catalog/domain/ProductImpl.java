@@ -26,6 +26,8 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -39,8 +41,10 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -205,6 +209,23 @@ public class ProductImpl implements Product, Status {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
+
+    @CollectionOfElements
+    @JoinTable(name = "BLC_PAYINFO_ADDITIONAL_FIELDS2", joinColumns = @JoinColumn(name = "PAYMENT_ID"))
+    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150, nullable = false) })
+    @Column(name = "FIELD_VALUE")
+    @AdminPresentationMap(
+        friendlyName = "test map",
+        targetUIElementId = "productSkuMediaLayout",
+        dataSourceName = "testMapDS",
+        keyPropertyFriendlyName = "key",
+        keys = {
+            @AdminPresentationMapKey(keyName = "small", friendlyKeyName = "mediaSizeSmall"),
+            @AdminPresentationMapKey(keyName = "medium", friendlyKeyName = "mediaSizeMedium"),
+            @AdminPresentationMapKey(keyName = "large", friendlyKeyName = "mediaSizeLarge")
+        }
+    )
+    protected Map<String, String> additionalFields2 = new HashMap<String, String>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();

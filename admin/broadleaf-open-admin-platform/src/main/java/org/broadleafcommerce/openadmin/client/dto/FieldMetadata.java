@@ -116,4 +116,36 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     public abstract FieldMetadata cloneFieldMetadata();
 
     public abstract void accept(MetadataVisitor visitor);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FieldMetadata)) return false;
+
+        FieldMetadata that = (FieldMetadata) o;
+
+        if (!Arrays.equals(availableToTypes, that.availableToTypes)) return false;
+        if (excluded != null ? !excluded.equals(that.excluded) : that.excluded != null) return false;
+        if (friendlyName != null ? !friendlyName.equals(that.friendlyName) : that.friendlyName != null) return false;
+        if (inheritedFromType != null ? !inheritedFromType.equals(that.inheritedFromType) : that.inheritedFromType != null)
+            return false;
+        if (order != null ? !order.equals(that.order) : that.order != null) return false;
+        if (securityLevel != null ? !securityLevel.equals(that.securityLevel) : that.securityLevel != null)
+            return false;
+        if (targetClass != null ? !targetClass.equals(that.targetClass) : that.targetClass != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = inheritedFromType != null ? inheritedFromType.hashCode() : 0;
+        result = 31 * result + (availableToTypes != null ? Arrays.hashCode(availableToTypes) : 0);
+        result = 31 * result + (excluded != null ? excluded.hashCode() : 0);
+        result = 31 * result + (friendlyName != null ? friendlyName.hashCode() : 0);
+        result = 31 * result + (securityLevel != null ? securityLevel.hashCode() : 0);
+        result = 31 * result + (order != null ? order.hashCode() : 0);
+        result = 31 * result + (targetClass != null ? targetClass.hashCode() : 0);
+        return result;
+    }
 }

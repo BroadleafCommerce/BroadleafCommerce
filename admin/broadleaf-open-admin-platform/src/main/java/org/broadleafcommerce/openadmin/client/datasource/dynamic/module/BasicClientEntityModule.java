@@ -984,7 +984,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 lookupMetadata.setTargetDynamicFormDisplayId(metadata.getTargetDynamicFormDisplayId());
                                 lookupMetadata.setFriendlyName(friendlyName);
                                 lookupMetadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
-                                ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addLookupMetadata(property.getName(), lookupMetadata);
+                                DynamicEntityPresenter.lookupMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + property.getName(), lookupMetadata);
                             }
                             //field.setValidOperators(getBasicNumericOperators());
                             break;}
@@ -1161,17 +1161,17 @@ public class BasicClientEntityModule implements DataSourceModule {
 
                 @Override
                 public void visit(final BasicCollectionMetadata metadata) {
-                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
+                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + property.getName(), metadata);
                 }
 
                 @Override
                 public void visit(AdornedTargetCollectionMetadata metadata) {
-                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
+                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + property.getName(), metadata);
                 }
 
                 @Override
                 public void visit(MapMetadata metadata) {
-                    ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).addCollectionMetadata(property.getName(), metadata);
+                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + property.getName(), metadata);
                 }
             });
 		}

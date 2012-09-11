@@ -695,9 +695,7 @@ public class Metadata {
                 ParameterizedType pType = (ParameterizedType) type;
                 Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
                 Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(clazz);
-                if (!ArrayUtils.isEmpty(entities)) {
-                    simpleValue = false;
-                }
+                simpleValue = ArrayUtils.isEmpty(entities);
             }
         }
         if (simpleValue==null) {
