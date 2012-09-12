@@ -53,6 +53,7 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
@@ -117,7 +118,7 @@ public class FormBuilder {
     }
 
     public static void buildAdvancedCollectionForm(final DataSource dataSource, final DataSource lookupDataSource, CollectionMetadata metadata, String propertyName, final DynamicEntityPresenter presenter) {
-        Layout destination;
+        final Layout destination;
         if (metadata.getTargetElementId() != null && metadata.getTargetElementId().length() > 0) {
             destination = findMemberById((Layout) presenter.getDisplay(), metadata.getTargetElementId());
         } else {
@@ -136,8 +137,6 @@ public class FormBuilder {
             }
             viewTitle = temp;
         }
-        final GridStructureView advancedCollectionView = new GridStructureView(viewTitle, false, true);
-        destination.addMember(advancedCollectionView);
 
         //make the grid readonly if it fails a security check
         if (metadata.getSecurityLevel() != null && !"".equals(metadata.getSecurityLevel())){
@@ -151,6 +150,8 @@ public class FormBuilder {
         metadata.accept(new MetadataVisitorAdapter() {
             @Override
             public void visit(BasicCollectionMetadata metadata) {
+                GridStructureView advancedCollectionView = new GridStructureView(viewTitle, false, true);
+                destination.addMember(advancedCollectionView);
                 SubPresentable subPresentable;
                 if (metadata.getAddMethodType() == AddMethodType.PERSIST) {
                     subPresentable = new CreateBasedListStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
@@ -165,6 +166,9 @@ public class FormBuilder {
 
             @Override
             public void visit(AdornedTargetCollectionMetadata metadata) {
+                String sortField = ((AdornedTargetList) ((DynamicEntityDataSource) dataSource).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getSortField();
+                GridStructureView advancedCollectionView = new GridStructureView(viewTitle, sortField!=null&sortField.length()>0, true);
+                destination.addMember(advancedCollectionView);
                 List<String> prominentNames = new ArrayList<String>();
                 for (DataSourceField field : lookupDataSource.getFields()) {
                     if (field.getAttributeAsBoolean("prominent") && !field.getAttributeAsBoolean("permanentlyHidden")) {
@@ -191,6 +195,8 @@ public class FormBuilder {
 
             @Override
             public void visit(MapMetadata metadata) {
+                GridStructureView advancedCollectionView = new GridStructureView(viewTitle, false, true);
+                destination.addMember(advancedCollectionView);
                 SubPresentable subPresentable;
                 if (metadata.isSimpleValue()) {
                     subPresentable = new SimpleMapStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), null);
