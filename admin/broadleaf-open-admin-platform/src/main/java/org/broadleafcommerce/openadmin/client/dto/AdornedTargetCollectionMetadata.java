@@ -2,6 +2,8 @@ package org.broadleafcommerce.openadmin.client.dto;
 
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 
+import java.util.Arrays;
+
 /**
  * @author Jeff Fischer
  */
@@ -63,5 +65,32 @@ public class AdornedTargetCollectionMetadata extends CollectionMetadata {
     public FieldMetadata cloneFieldMetadata() {
         AdornedTargetCollectionMetadata metadata = new AdornedTargetCollectionMetadata();
         return populate(metadata);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AdornedTargetCollectionMetadata)) return false;
+        if (!super.equals(o)) return false;
+
+        AdornedTargetCollectionMetadata metadata = (AdornedTargetCollectionMetadata) o;
+
+        if (ignoreAdornedProperties != metadata.ignoreAdornedProperties) return false;
+        if (!Arrays.equals(gridVisibleFields, metadata.gridVisibleFields)) return false;
+        if (!Arrays.equals(maintainedAdornedTargetFields, metadata.maintainedAdornedTargetFields)) return false;
+        if (parentObjectClass != null ? !parentObjectClass.equals(metadata.parentObjectClass) : metadata.parentObjectClass != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (ignoreAdornedProperties ? 1 : 0);
+        result = 31 * result + (parentObjectClass != null ? parentObjectClass.hashCode() : 0);
+        result = 31 * result + (maintainedAdornedTargetFields != null ? Arrays.hashCode(maintainedAdornedTargetFields) : 0);
+        result = 31 * result + (gridVisibleFields != null ? Arrays.hashCode(gridVisibleFields) : 0);
+        return result;
     }
 }

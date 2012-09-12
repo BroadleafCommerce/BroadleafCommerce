@@ -38,7 +38,6 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOpti
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionValueDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductSkusDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.SkuBundleItemsDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
 import org.broadleafcommerce.admin.client.dto.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AppServices;
@@ -80,7 +79,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
 	protected EntitySearchDialog productSearchView;
 	protected EntitySearchDialog skuSearchView;
-	protected SubPresentable upSalePresenter;
 	protected SubPresentable parentCategoriesPresenter;
 	protected AssociatedProductOptionPresenterBasic productOptionsPresenter;
 	protected SubPresentable skusPresenter;
@@ -90,7 +88,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-		upSalePresenter.load(selectedRecord, dataSource, null);
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
         productOptionsPresenter.load(selectedRecord, dataSource, null);
         skusPresenter.load(selectedRecord, dataSource, null);
@@ -107,7 +104,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	public void bind() {
 		super.bind();
-		upSalePresenter.bind();
 		parentCategoriesPresenter.bind();
 		productOptionsPresenter.bind();
 		skusPresenter.bind();
@@ -220,13 +216,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             public void onSetupSuccess(DataSource result) {
 				final ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
 				productSearchView = new EntitySearchDialog(productSearchDataSource);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("upSaleProductsDS", new UpSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
-            public void onSetupSuccess(DataSource result) {
-				upSalePresenter = new EditableAdornedTargetListPresenter(getDisplay().getUpSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
-				upSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {

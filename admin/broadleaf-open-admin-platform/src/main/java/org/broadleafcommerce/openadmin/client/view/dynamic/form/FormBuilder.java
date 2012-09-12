@@ -139,6 +139,15 @@ public class FormBuilder {
         final GridStructureView advancedCollectionView = new GridStructureView(viewTitle, false, true);
         destination.addMember(advancedCollectionView);
 
+        //make the grid readonly if it fails a security check
+        if (metadata.getSecurityLevel() != null && !"".equals(metadata.getSecurityLevel())){
+            org.broadleafcommerce.openadmin.client.security.SecurityManager.getInstance().registerField(String.valueOf(metadata.hashCode()), metadata.getSecurityLevel());
+            Boolean shouldLoad = org.broadleafcommerce.openadmin.client.security.SecurityManager.getInstance().isUserAuthorizedToEditField(String.valueOf(metadata.hashCode()));
+            if (!shouldLoad) {
+                metadata.setMutable(false);
+            }
+        }
+
         metadata.accept(new MetadataVisitorAdapter() {
             @Override
             public void visit(BasicCollectionMetadata metadata) {
@@ -150,7 +159,7 @@ public class FormBuilder {
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
-                subPresentable.disable();
+                ((GridStructureView) subPresentable.getDisplay()).getToolBar().disable();
                 presenter.addSubPresentable(subPresentable);
             }
 
@@ -176,7 +185,7 @@ public class FormBuilder {
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, metadata.getGridVisibleFields(), edits);
                 subPresentable.setReadOnly(!metadata.isMutable());
-                subPresentable.disable();
+                ((GridStructureView) subPresentable.getDisplay()).getToolBar().disable();
                 presenter.addSubPresentable(subPresentable);
             }
 
@@ -212,7 +221,7 @@ public class FormBuilder {
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
-                subPresentable.disable();
+                ((GridStructureView) subPresentable.getDisplay()).getToolBar().disable();
                 presenter.addSubPresentable(subPresentable);
             }
         });

@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,6 +25,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -56,10 +57,12 @@ public class CustomerAttributeImpl implements CustomerAttribute {
     
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Name", order=1, group = "ProductAttributeImpl_Description", prominent=true)
     protected String name;
 
     /** The value. */
     @Column(name = "VALUE")
+    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
     protected String value;
   
     /** The customer. */
@@ -67,26 +70,32 @@ public class CustomerAttributeImpl implements CustomerAttribute {
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -96,10 +105,12 @@ public class CustomerAttributeImpl implements CustomerAttribute {
         return value;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
@@ -116,12 +127,15 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CustomerAttributeImpl other = (CustomerAttributeImpl) obj;
 
         if (id != null && other.id != null) {
@@ -129,20 +143,26 @@ public class CustomerAttributeImpl implements CustomerAttribute {
         }
 
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (customer == null) {
-            if (other.customer != null)
+            if (other.customer != null) {
                 return false;
-        } else if (!customer.equals(other.customer))
+            }
+        } else if (!customer.equals(other.customer)) {
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
-        } else if (!value.equals(other.value))
+            }
+        } else if (!value.equals(other.value)) {
             return false;
+        }
         return true;
     }
 

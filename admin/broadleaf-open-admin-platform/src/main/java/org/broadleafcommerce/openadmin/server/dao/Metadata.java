@@ -83,8 +83,8 @@ public class Metadata {
         } catch (Throwable e) {
             throw new IllegalArgumentException(
                     "Unable to assign metadataOverrides. You are likely using an obsolete spring application context " +
-                    "configuration for this value. Please utilize the xmlns:mo=\"http://www.broadleafcommerce.org/schema/mo\" namespace " +
-                    "and http://www.broadleafcommerce.org/schema/mo http://www.broadleafcommerce.org/schema/mo/mo.xsd schemaLocation " +
+                    "configuration for this value. Please utilize the xmlns:mo=\"http://schema.broadleafcommerce.org/mo\" namespace " +
+                    "and http://schema.broadleafcommerce.org/mo http://schema.broadleafcommerce.org/mo/mo.xsd schemaLocation " +
                     "in the xml schema config for your app context. This will allow you to use the appropriate <mo:override> element to configure your overrides.", e);
         }
     }
@@ -158,15 +158,44 @@ public class Metadata {
         }
 
         Map<String, FieldMetadata> mergedProperties = propertyBuilder.execute(classAnnotatedPopulateManyToOneFields);
-
         for (String propertyName : presentationOverrides.keySet()) {
             for (String key : mergedProperties.keySet()) {
                 if (key.startsWith(propertyName)) {
                     buildAdminPresentationOverride(prefix, isParentExcluded, mergedProperties, presentationOverrides, propertyName, key, dynamicEntityDao);
+                }
+            }
+        }
+        for (String propertyName : presentationToOneLookupOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationToOneLookupOverride(mergedProperties, presentationToOneLookupOverrides, propertyName, key);
+                }
+            }
+        }
+        for (String propertyName : presentationDataDrivenEnumerationOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationDataDrivenEnumerationOverride(mergedProperties, presentationDataDrivenEnumerationOverrides, propertyName, key, dynamicEntityDao);
+                }
+            }
+        }
+        for (String propertyName : presentationCollectionOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationCollectionOverrides, propertyName, key);
+                }
+            }
+        }
+        for (String propertyName : presentationAdornedTargetCollectionOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationAdornedTargetCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationAdornedTargetCollectionOverrides, propertyName, key);
+                }
+            }
+        }
+        for (String propertyName : presentationAdornedTargetCollectionOverrides.keySet()) {
+            for (String key : mergedProperties.keySet()) {
+                if (key.startsWith(propertyName)) {
                     buildAdminPresentationMapOverride(prefix, isParentExcluded, mergedProperties, presentationMapOverrides, propertyName, key);
                 }
             }
@@ -695,9 +724,7 @@ public class Metadata {
                 ParameterizedType pType = (ParameterizedType) type;
                 Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
                 Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(clazz);
-                if (!ArrayUtils.isEmpty(entities)) {
-                    simpleValue = false;
-                }
+                simpleValue = ArrayUtils.isEmpty(entities);
             }
         }
         if (simpleValue==null) {

@@ -94,4 +94,38 @@ public class MapMetadata extends CollectionMetadata {
         MapMetadata metadata = new MapMetadata();
         return populate(metadata);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MapMetadata)) return false;
+        if (!super.equals(o)) return false;
+
+        MapMetadata metadata = (MapMetadata) o;
+
+        if (isSimpleValue != metadata.isSimpleValue) return false;
+        if (mapKeyOptionEntityClass != null ? !mapKeyOptionEntityClass.equals(metadata.mapKeyOptionEntityClass) : metadata.mapKeyOptionEntityClass != null)
+            return false;
+        if (mapKeyOptionEntityDisplayField != null ? !mapKeyOptionEntityDisplayField.equals(metadata.mapKeyOptionEntityDisplayField) : metadata.mapKeyOptionEntityDisplayField != null)
+            return false;
+        if (mapKeyOptionEntityValueField != null ? !mapKeyOptionEntityValueField.equals(metadata.mapKeyOptionEntityValueField) : metadata.mapKeyOptionEntityValueField != null)
+            return false;
+        if (mediaField != null ? !mediaField.equals(metadata.mediaField) : metadata.mediaField != null) return false;
+        if (valueClassName != null ? !valueClassName.equals(metadata.valueClassName) : metadata.valueClassName != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (valueClassName != null ? valueClassName.hashCode() : 0);
+        result = 31 * result + (isSimpleValue ? 1 : 0);
+        result = 31 * result + (mediaField != null ? mediaField.hashCode() : 0);
+        result = 31 * result + (mapKeyOptionEntityClass != null ? mapKeyOptionEntityClass.hashCode() : 0);
+        result = 31 * result + (mapKeyOptionEntityDisplayField != null ? mapKeyOptionEntityDisplayField.hashCode() : 0);
+        result = 31 * result + (mapKeyOptionEntityValueField != null ? mapKeyOptionEntityValueField.hashCode() : 0);
+        return result;
+    }
 }

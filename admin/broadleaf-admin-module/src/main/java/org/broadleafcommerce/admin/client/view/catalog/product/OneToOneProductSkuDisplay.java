@@ -29,14 +29,6 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
-
-	//public GridStructureDisplay getCrossSaleDisplay();
-	
-	public GridStructureDisplay getUpSaleDisplay();
-	
-	//public GridStructureDisplay getMediaDisplay();
-	
-	//public GridStructureDisplay getAttributesDisplay();
 	
 	public GridStructureDisplay getAllCategoriesDisplay();
 	

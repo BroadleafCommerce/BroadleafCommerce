@@ -82,4 +82,7 @@ public interface GeneratedMessagesEntityProfile extends ConstantsWithLookup {
     public String PhoneImpl_Phone();
     public String StateImpl_Address();
     public String CustomerImpl_Customer_Deactivated();
+    public String CustomerImpl_Attributes();
+    public String CustomerAttributeImpl_Attribute_Name();
+    public String CustomerAttributeImpl_Attribute_Value();
 }
