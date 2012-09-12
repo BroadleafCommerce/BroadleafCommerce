@@ -43,11 +43,11 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     protected AdminSecurityService adminSecurityService;
 
     // Entry URLs
-    protected static String loginView = "/blcadmin/login";
-    protected static String forgotPasswordView = "/blcadmin/forgotPassword";
-    protected static String forgotUsernameView = "/blcadmin/forgotUsername";
-    protected static String resetPasswordView  = "/blcadmin/resetPassword";
-    protected static String changePasswordView  = "/blcadmin/changePassword";
+    protected static String loginView = "login/login";
+    protected static String forgotPasswordView = "login/forgotPassword";
+    protected static String forgotUsernameView = "login/forgotUsername";
+    protected static String resetPasswordView  = "login/resetPassword";
+    protected static String changePasswordView  = "login/changePassword";
 
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getLoginView();
