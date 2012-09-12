@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.pricelist.domain;
+package org.broadleafcommerce.core.pricing.domain;
 
 import java.io.Serializable;
-
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import java.math.BigDecimal;
 
 /**
  * 
  */
-public interface PriceList extends Serializable {
+public interface PriceAdjustment extends Serializable {
 
-    BroadleafCurrency getCurrencyCode();
+    public Long getId();
 
-    void setCurrencyCode(BroadleafCurrency currencyCode);
+    public void setId(Long id);
 
-    public String getFriendlyName();
+    public BigDecimal getPriceAdjustment();
 
-    public void setFriendlyName(String friendlyName);
+    public void setPriceAdjustment(BigDecimal adjustment);
 
-    public Boolean getDefaultFlag();
-
-    public void setDefaultFlag(Boolean defaultFlag);
-
-    public String getPriceKey();
-
-    public void setPriceKey(String priceKey);
+    
 }

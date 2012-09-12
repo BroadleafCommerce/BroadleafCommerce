@@ -34,11 +34,11 @@ public class NullPriceList implements PriceList {
     public void setDefaultFlag(Boolean defaultFlag) { }
 
     @Override
-    public String getKey() {
+    public String getPriceKey() {
         return null;
     }
 
     @Override
-    public void setKey(String name) { }
+    public void setPriceKey(String name) { }
 
 }

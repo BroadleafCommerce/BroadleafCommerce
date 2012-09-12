@@ -23,10 +23,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -56,16 +59,17 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     @AdminPresentation(friendlyName = "PriceListImpl_Name", order=2, group = "PriceListImpl_Details", prominent=true)
     protected String friendlyName;
 
-    @Column (name = "KEY",nullable=false)
+    @Column (name = "PRICE_KEY",nullable=false)
     @AdminPresentation(friendlyName = "PriceListImpl_Key", order=2, group = "PriceListImpl_Details", prominent=true)
-    protected String key;
+    protected String priceKey;
 
     @Column (name = "USE_DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "PriceListImpl_Is_Default", order=3, group = "PriceListImpl_Details", prominent=true)
     protected Boolean useDefaultIfNotFound;
-
-    @Column (name = "CURRENCY",nullable=false)
-    @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", order=1, group = "PriceListImpl_Details", prominent=true)
+    
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", group = "PriceListImpl_Details", visibility = VisibilityEnum.GRID_HIDDEN)
     protected BroadleafCurrency currency;
 
     @Override
@@ -102,7 +106,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
         if (currency != null ? !currency.equals(priceList.currency) : priceList.currency != null) {
             return false;
         }
-        if (key != null ? !key.equals(priceList.key) : priceList.key != null) {
+        if (priceKey != null ? !priceKey.equals(priceList.priceKey) : priceList.priceKey != null) {
             return false;
         }
 
@@ -112,18 +116,18 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     @Override
     public int hashCode() {
         int result = currency != null ? currency.hashCode() : 0;
-        result = 31 * result + (key != null ? key.hashCode() : 0);
+        result = 31 * result + (priceKey != null ? priceKey.hashCode() : 0);
         return result;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getPriceKey() {
+        return priceKey;
     }
 
     @Override
-    public void setKey(String name) {
-        this.key = name;
+    public void setPriceKey(String priceKey) {
+        this.priceKey = priceKey;
     }
 
     public Boolean getUseDefaultIfNotFound() {

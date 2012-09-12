@@ -38,8 +38,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.pricing.domain.PriceData;
-import org.broadleafcommerce.core.pricing.domain.PriceDataImpl;
+import org.broadleafcommerce.core.pricing.domain.PriceAdjustment;
+import org.broadleafcommerce.core.pricing.domain.PriceAdjustmentImpl;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -86,13 +87,14 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     protected ProductOption productOption;
     
     /** The pricelist/pricedata. */
-    @ManyToMany(targetEntity = PriceDataImpl.class)
-    @JoinTable(name = "BLC_SKU_PRICE_DATA", inverseJoinColumns = @JoinColumn(name = "PRICE_DATA_ID", referencedColumnName = "PRICE_DATA_ID"))
+    @ManyToMany(targetEntity = PriceAdjustmentImpl.class)
+    @JoinTable(name = "BLC_ADJ_PRICE_MAP", joinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID", referencedColumnName = "PRODUCT_OPTION_VALUE_ID"), inverseJoinColumns = @JoinColumn(name = "PRICE_ADJUSTMENT_ID", referencedColumnName = "PRICE_ADJUSTMENT_ID"))
     @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected Map<String, PriceData> priceDataMap = new HashMap<String , PriceData>();
-    
+    @BatchSize(size = 20)
+    protected Map<String, PriceAdjustment> priceAdjustmentMap = new HashMap<String , PriceAdjustment>();
+   
     
     @Override
     public Long getId() {
@@ -162,13 +164,13 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         this.productOption = productOption;
     }
     @Override
-    public Map<String, PriceData> getPriceDataMap() {
-        return priceDataMap;
+    public Map<String, PriceAdjustment> getPriceAdjustmentMap() {
+        return priceAdjustmentMap;
     }
 
     @Override
-    public void setPriceDataMap(Map<String, PriceData> priceDataMap) {
-        this.priceDataMap = priceDataMap;
+    public void setPriceAdjustmentMap(Map<String, PriceAdjustment> priceDataMap) {
+        this.priceAdjustmentMap = priceDataMap;
     }
 
 }

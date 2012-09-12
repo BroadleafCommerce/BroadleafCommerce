@@ -8,7 +8,7 @@
 		<query>SELECT priceList
                FROM org.broadleafcommerce.common.pricelist.domain.PriceListImpl priceList
                WHERE
-                 priceList.key = :key 
+                 priceList.priceKey = :key 
 		</query>
 	</named-query>
 

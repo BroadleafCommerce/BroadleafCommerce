@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.pricing.domain.PriceData;
+import org.broadleafcommerce.core.pricing.domain.PriceAdjustment;
 
 /**
  * 
@@ -110,8 +110,8 @@ public interface ProductOptionValue extends Serializable {
      */
     public void setProductOption(ProductOption productOption);
 
-    Map<String, PriceData> getPriceDataMap();
+    Map<String, PriceAdjustment> getPriceAdjustmentMap();
 
-    void setPriceDataMap(Map<String, PriceData> priceDataMap);
+    void setPriceAdjustmentMap(Map<String, PriceAdjustment> priceAdjustmentMap);
     
 }
