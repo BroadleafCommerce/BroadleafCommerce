@@ -204,9 +204,13 @@ public class SkuImpl implements Sku {
         deleteEntityUponRemove = true,
         mediaField = "url",
         keys = {
-            @AdminPresentationMapKey(keyName = "small", friendlyKeyName = "mediaSizeSmall"),
-            @AdminPresentationMapKey(keyName = "medium", friendlyKeyName = "mediaSizeMedium"),
-            @AdminPresentationMapKey(keyName = "large", friendlyKeyName = "mediaSizeLarge")
+            @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
+            @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate"),
+            @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate"),
+            @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate"),
+            @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate"),
+            @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate"),
+            @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate")
         }
     )
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();
