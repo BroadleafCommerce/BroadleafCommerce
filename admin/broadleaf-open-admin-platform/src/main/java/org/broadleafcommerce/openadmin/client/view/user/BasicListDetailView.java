@@ -52,7 +52,7 @@ public abstract class BasicListDetailView extends HLayout implements Instantiabl
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(getListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(getListTitle(), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
         dynamicFormDisplay = new DynamicFormView(getFormTitle(), entityDataSource);
         

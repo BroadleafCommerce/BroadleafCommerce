@@ -57,7 +57,7 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("customerListTitle"), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("customerListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
         
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("customerDetailsTitle"), entityDataSource);
