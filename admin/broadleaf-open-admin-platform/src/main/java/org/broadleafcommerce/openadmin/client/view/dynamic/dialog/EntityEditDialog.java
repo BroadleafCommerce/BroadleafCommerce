@@ -22,10 +22,7 @@ import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.rpc.RPCResponse;
-import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.ImageStyle;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.types.*;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Img;
@@ -71,6 +68,7 @@ public class EntityEditDialog extends Window {
 		//this.setWidth(600);
 		this.setCanDragResize(true);
 		this.setOverflow(Overflow.VISIBLE);
+        this.setStyleName("blcFormView");
 
         hStack = new HStack();
         
@@ -78,7 +76,14 @@ public class EntityEditDialog extends Window {
         //stack.setWidth("80%");
 		stack.setLayoutRightMargin(20);
 		dynamicForm = new DynamicForm();
+        dynamicForm.setHeight(175);
+        dynamicForm.setWidth100();
         dynamicForm.setPadding(10);
+        dynamicForm.setCellPadding(8);
+        dynamicForm.setTitleOrientation(TitleOrientation.TOP);
+        dynamicForm.setNumCols(1);
+        dynamicForm.setWrapItemTitles(false);
+        //dynamicForm.setPadding(10);
         stack.addMember(dynamicForm);
 
         hStack.addMember(stack);
