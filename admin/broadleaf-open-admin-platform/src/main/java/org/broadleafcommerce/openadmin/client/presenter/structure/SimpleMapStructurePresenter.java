@@ -53,7 +53,10 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 	
 	public SimpleMapStructurePresenter(GridStructureDisplay display, String[] availableToTypes, Map<String, Object> initialValues) {
 		super(display, availableToTypes);
-		this.initialValues.putAll(initialValues);
+        display.getGrid().setCanEdit(true);
+        if (initialValues != null) {
+		    this.initialValues.putAll(initialValues);
+        }
 	}
 
     public SimpleMapStructurePresenter(GridStructureDisplay display, Map<String, Object> initialValues) {
