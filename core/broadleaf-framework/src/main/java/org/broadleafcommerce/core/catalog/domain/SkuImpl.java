@@ -205,12 +205,12 @@ public class SkuImpl implements Sku {
         mediaField = "url",
         keys = {
             @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
-            @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate"),
-            @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate"),
-            @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate"),
-            @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate"),
-            @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate"),
-            @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate")
+            @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate1"),
+            @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate2"),
+            @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate3"),
+            @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
+            @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
+            @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
         }
     )
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();

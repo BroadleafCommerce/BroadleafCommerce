@@ -398,12 +398,12 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
     protected LinkedHashMap<String, String> getMediaMapKeys() {
 		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>(3);
         keys.put("primary", BLCMain.getMessageManager().getString("mediaPrimary"));
-        keys.put("alt1", BLCMain.getMessageManager().getString("mediaAlternate") + " 1");
-        keys.put("alt2", BLCMain.getMessageManager().getString("mediaAlternate") + " 2");
-        keys.put("alt3", BLCMain.getMessageManager().getString("mediaAlternate") + " 3");
-        keys.put("alt4", BLCMain.getMessageManager().getString("mediaAlternate") + " 4");
-        keys.put("alt5", BLCMain.getMessageManager().getString("mediaAlternate") + " 5");
-        keys.put("alt6", BLCMain.getMessageManager().getString("mediaAlternate") + " 6");
+        keys.put("alt1", BLCMain.getMessageManager().getString("mediaAlternate1"));
+        keys.put("alt2", BLCMain.getMessageManager().getString("mediaAlternate2"));
+        keys.put("alt3", BLCMain.getMessageManager().getString("mediaAlternate3"));
+        keys.put("alt4", BLCMain.getMessageManager().getString("mediaAlternate4"));
+        keys.put("alt5", BLCMain.getMessageManager().getString("mediaAlternate5"));
+        keys.put("alt6", BLCMain.getMessageManager().getString("mediaAlternate6"));
 
 		return keys;
 	}
