@@ -63,10 +63,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     @Column (name = "USE_DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "PriceListImpl_Is_Default", order=3, group = "PriceListImpl_Details", prominent=true)
     protected Boolean useDefaultIfNotFound;
+
     @Column (name = "CURRENCY",nullable=false)
     @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", order=1, group = "PriceListImpl_Details", prominent=true)
     protected BroadleafCurrency currency;
-
 
     @Override
     public String getFriendlyName() {

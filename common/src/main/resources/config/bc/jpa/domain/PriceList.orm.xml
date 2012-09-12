@@ -12,5 +12,19 @@
 		</query>
 	</named-query>
 
+    <named-query name="BC_READ_PRICE_LIST_BY_CURRENCY_CODE" >
+        <query>SELECT priceList
+            FROM org.broadleafcommerce.common.pricelist.domain.PriceListImpl priceList
+            WHERE priceList.currency = :currency
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_DEFAULT_PRICE_LIST" >
+        <query>SELECT priceList
+            FROM org.broadleafcommerce.common.pricelist.domain.PriceListImpl priceList
+            WHERE priceList.useDefaultIfNotFound = true
+        </query>
+    </named-query>
+
 
 </entity-mappings>

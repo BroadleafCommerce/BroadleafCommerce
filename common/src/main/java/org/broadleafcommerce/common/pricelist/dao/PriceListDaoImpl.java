@@ -1,5 +1,6 @@
 package org.broadleafcommerce.common.pricelist.dao;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.springframework.stereotype.Repository;
@@ -12,23 +13,60 @@ import java.util.List;
 
 @Repository("blPriceListDao")
 public class PriceListDaoImpl implements PriceListDao{
+
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    /**
+     * Returns a pricelist that matches the passed in key
+     *
+     * @return The pricelist for the passed in key
+     */
     @Override
     public PriceList findPriceListByKey(String key) {
         Query query = em.createNamedQuery("BC_READ_PRICE_LIST");
         query.setParameter("key", key);
-
-        @SuppressWarnings("unchecked")
-        List<PriceList> results = query.getResultList();
-        if (results != null && !results.isEmpty()) {
-            return results.get(0);
-        } else {
-            return null;
+        List<PriceList> priceList = (List<PriceList>) query.getResultList();
+        if (priceList.size() >= 1) {
+            return priceList.get(0);
         }
+        return null;
     }
+
+    /**
+     * Returns a pricelist that matches the passed in currency
+     *
+     * @param currency
+     * @return pricelist
+     */
+    @Override
+    public PriceList findPriceListByCurrency(BroadleafCurrency currency) {
+        Query query = em.createNamedQuery("BC_READ_PRICE_LIST_BY_CURRENCY_CODE");
+        query.setParameter("currency", currency);
+        List<PriceList> priceList = (List<PriceList>) query.getResultList();
+        if (priceList.size() >= 1) {
+            return priceList.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the default pricelist
+     *
+     * @return the default pricelist
+     */
+    @Override
+    public PriceList findDefaultPricelist() {
+        Query query = em.createNamedQuery("BC_READ_DEFAULT_PRICE_LIST");
+        List<PriceList> priceList = (List<PriceList>) query.getResultList();
+        if (priceList.size() >= 1) {
+            return priceList.get(0);
+        }
+        return null;
+    }
+
+
 }
