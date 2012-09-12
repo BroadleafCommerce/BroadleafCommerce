@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafAdminModulesController extends BroadleafAbstractController {
 
-    protected static String modulesView = "/modules/modules";
+    protected static String modulesView = "modules/modules";
 
     public String viewModules(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getModulesView();
