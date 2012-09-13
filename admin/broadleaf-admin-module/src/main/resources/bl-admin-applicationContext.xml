@@ -35,7 +35,7 @@
     </bean>
 
     <mo:override id="blMetadataOverrides">
-        <mo:overrideItem configurationKey="promotionOrderItem" ceilingEntity="org.broadleafcommerce.core.order.domain.OrderItem" type="BASIC">
+        <mo:overrideItem configurationKey="promotionOrderItem">
             <mo:field name="category">
                 <mo:property name="excluded" value="false"/>
             </mo:field>
@@ -52,7 +52,7 @@
                 <mo:property name="excluded" value="true"/>
             </mo:field>
         </mo:overrideItem>
-        <mo:overrideItem configurationKey="promotionCustomer" ceilingEntity="org.broadleafcommerce.profile.core.domain.Customer" type="BASIC">
+        <mo:overrideItem configurationKey="promotionCustomer">
             <mo:field name="firstName">
                 <mo:property name="excluded" value="true"/>
             </mo:field>
@@ -69,7 +69,7 @@
                 <mo:property name="excluded" value="true"/>
             </mo:field>
         </mo:overrideItem>
-        <mo:overrideItem configurationKey="promotionFulfillmentGroup" ceilingEntity="org.broadleafcommerce.core.order.domain.FulfillmentGroup" type="BASIC">
+        <mo:overrideItem configurationKey="promotionFulfillmentGroup">
             <mo:field name="personalMessage">
                 <mo:property name="excluded" value="true"/>
             </mo:field>
@@ -83,7 +83,7 @@
                 <mo:property name="excluded" value="true"/>
             </mo:field>
         </mo:overrideItem>
-        <mo:overrideItem configurationKey="promotionOrder" ceilingEntity="org.broadleafcommerce.core.order.domain.Order" type="BASIC">
+        <mo:overrideItem configurationKey="promotionOrder">
             <mo:field name="customer">
                 <mo:property name="excluded" value="true"/>
             </mo:field>

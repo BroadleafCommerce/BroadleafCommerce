@@ -86,7 +86,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author jfischer
@@ -285,11 +284,11 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected void saveClicked() {
         DSRequest requestProperties = new DSRequest();
 
-        try {
-            requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
-        } catch (Exception e) {
-            Logger.getLogger(this.getClass().toString()).log(Level.WARNING, "ignore, usually thown in gwt-run mode", e);
-        }
+        //try {
+            //requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+        //} catch (Exception e) {
+            //Logger.getLogger(this.getClass().toString()).log(Level.WARNING, "ignore, usually thown in gwt-run mode", e);
+        //}
         display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -380,7 +379,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
         for (final Map.Entry<String, LookupMetadata> entry : lookupMetadatas.entrySet()) {
             if (entry.getKey().startsWith(getClass().getName())) {
-                final String dataSourceName = entry.getKey() + "Lookup";
+                final String key = entry.getKey().substring(entry.getKey().indexOf("_") + 1, entry.getKey().length());
+                final String dataSourceName = key + "Lookup";
                 if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
                     java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
                     continue;
@@ -413,7 +413,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                         }
                         parentDataSource.
                                 getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                                entry.getKey(),
+                                key,
                                 searchView,
                                 viewTitle,
                                 target,
@@ -442,7 +442,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
         Map<String, CollectionMetadata> sortedMetadatas = new LinkedHashMap<String, CollectionMetadata>();
         for (Map.Entry<String, CollectionMetadata> entry : list) {
-            sortedMetadatas.put(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            key = key.substring(key.indexOf("_") + 1, key.length());
+            sortedMetadatas.put(key, entry.getValue());
         }
 
         for (final Map.Entry<String, CollectionMetadata> entry : sortedMetadatas.entrySet()) {

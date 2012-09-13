@@ -1,5 +1,7 @@
 package org.broadleafcommerce.openadmin.server.util;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.MapFactoryBean;
@@ -27,13 +29,10 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
         for (Element overrideItem : overrideItemElements) {
             String configKey = overrideItem.getAttribute("configurationKey");
             String ceilingEntity = overrideItem.getAttribute("ceilingEntity");
-            String type = overrideItem.getAttribute("type");
-            StringBuilder sb = new StringBuilder();
-            sb.append(configKey);
-            sb.append("_");
-            sb.append(ceilingEntity);
-            sb.append("_");
-            sb.append(type);
+
+            if (StringUtils.isEmpty(configKey) && StringUtils.isEmpty(ceilingEntity)) {
+                throw new IllegalArgumentException("Must specify either a configurationKey or a ceilingEntity attribute for the overrideItem element");
+            }
 
             BeanDefinitionBuilder fieldMapBuilder = BeanDefinitionBuilder.rootBeanDefinition(MapFactoryBean.class);
             Map<String, BeanDefinition> fieldMap = new ManagedMap<String, BeanDefinition>();
@@ -41,13 +40,13 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
             for (Element fieldElement : fieldElements) {
                 String fieldName = fieldElement.getAttribute("name");
                 BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(FieldMetadataOverride.class);
+                fieldMap.put(fieldName, metadataBuilder.getBeanDefinition());
                 {
                     List<Element> propElements = DomUtils.getChildElementsByTagName(fieldElement, "property");
                     for (Element propElement : propElements) {
                         String propName = propElement.getAttribute("name");
                         String propValue = propElement.getAttribute("value");
                         metadataBuilder.addPropertyValue(propName, propValue);
-                        fieldMap.put(fieldName, metadataBuilder.getBeanDefinition());
                     }
                 }
 
@@ -65,7 +64,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         String className = validationElement.getAttribute("className");
                         validationConfigMap.put(className, validationMap);
                     }
-                    metadataBuilder.addPropertyValue("validationConfigurations", validationConfigMap);
+                    if (!validationConfigMap.isEmpty()) {
+                        metadataBuilder.addPropertyValue("validationConfigurations", validationConfigMap);
+                    }
                 }
 
                 {
@@ -78,7 +79,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         optionFilterValues[j][2] = optionElement.getAttribute("type");
                         j++;
                     }
-                    metadataBuilder.addPropertyValue("optionFilterValues", optionFilterValues);
+                    if (!ArrayUtils.isEmpty(optionFilterValues)) {
+                        metadataBuilder.addPropertyValue("optionFilterValues", optionFilterValues);
+                    }
                 }
 
                 {
@@ -90,7 +93,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         keyValues[j][1] = keyElement.getAttribute("displayValue");
                         j++;
                     }
-                    metadataBuilder.addPropertyValue("keys", keyValues);
+                    if (!ArrayUtils.isEmpty(keyValues)) {
+                        metadataBuilder.addPropertyValue("keys", keyValues);
+                    }
                 }
 
                 {
@@ -101,7 +106,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         values[j] = childElem.getAttribute("value");
                         j++;
                     }
-                    metadataBuilder.addPropertyValue("customCriteria", values);
+                    if (!ArrayUtils.isEmpty(values)) {
+                        metadataBuilder.addPropertyValue("customCriteria", values);
+                    }
                 }
 
                 {
@@ -112,7 +119,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         values[j] = childElem.getAttribute("value");
                         j++;
                     }
-                    metadataBuilder.addPropertyValue("maintainedAdornedTargetFields", values);
+                    if (!ArrayUtils.isEmpty(values)) {
+                        metadataBuilder.addPropertyValue("maintainedAdornedTargetFields", values);
+                    }
                 }
 
                 {
@@ -123,12 +132,14 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         values[j] = childElem.getAttribute("value");
                         j++;
                     }
-                    metadataBuilder.addPropertyValue("gridVisibleFields", values);
+                    if (!ArrayUtils.isEmpty(values)) {
+                        metadataBuilder.addPropertyValue("gridVisibleFields", values);
+                    }
                 }
             }
             fieldMapBuilder.addPropertyValue("sourceMap", fieldMap);
 
-            overallMap.put(sb.toString(), fieldMapBuilder.getBeanDefinition());
+            overallMap.put(StringUtils.isEmpty(configKey)?ceilingEntity:configKey, fieldMapBuilder.getBeanDefinition());
         }
 
         overallMapBuilder.addPropertyValue("sourceMap", overallMap);

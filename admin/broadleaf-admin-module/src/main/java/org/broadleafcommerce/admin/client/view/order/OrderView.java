@@ -73,7 +73,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("ordersListTitle"), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("ordersListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
         
         exportOrdersButton = new ToolStripButton(BLCMain.getMessageManager().getString("exportOrdersButtonTitle"));

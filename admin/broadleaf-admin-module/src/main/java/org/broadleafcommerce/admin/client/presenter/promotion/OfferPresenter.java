@@ -16,6 +16,28 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
+import org.broadleafcommerce.admin.client.datasource.promotion.CustomerListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.FulfillmentGroupListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemTargetCriteriaListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OrderItemListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OrderListDataSourceFactory;
+import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.AdditionalFilterEventManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.FilterBuilderAdditionalEventHandler;
+import org.broadleafcommerce.openadmin.client.view.dynamic.FilterRestartCallback;
+import org.broadleafcommerce.openadmin.client.view.dynamic.FilterStateRunnable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -40,27 +62,6 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.admin.client.datasource.promotion.CustomerListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.FulfillmentGroupListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemTargetCriteriaListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OfferListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OrderItemListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OrderListDataSourceFactory;
-import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.AdditionalFilterEventManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.FilterBuilderAdditionalEventHandler;
-import org.broadleafcommerce.openadmin.client.view.dynamic.FilterRestartCallback;
-import org.broadleafcommerce.openadmin.client.view.dynamic.FilterStateRunnable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -102,6 +103,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
     protected void rebindFormItems(final Record selectedRecord) {
         //Since the form is built dynamically each time the grid selection changes, we have to re-bind the event
         getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(final ChangedEvent event) {
                 additionalFilterEventManager.resetFilterState(new FilterStateRunnable() {
                     @Override
@@ -113,6 +115,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(ChangedEvent event) {
                 String eventValue = event.getValue().toString();
                 //FIX_PRICE promotions cannot combine with other promotions of the same type
@@ -136,6 +139,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         FormItem endDate = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("endDate");
         if (endDate != null) {
             endDate.addChangedHandler(new ChangedHandler() {
+                @Override
                 @SuppressWarnings("deprecation")
                 public void onChanged(ChangedEvent event) {
                     Date myDate = (Date) event.getValue();
@@ -166,114 +170,133 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
     public void bind() {
         super.bind();
         getDisplay().getStepFGForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getStepItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getStepBogoForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getOrderCombineForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getOrderItemCombineForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getRawCustomerForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getRawOrderForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getRawFGForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getRestrictForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getCustomerObtainForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getWhichCustomerForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getOrderForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getReceiveFromAnotherPromoForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getQualifyForAnotherPromoForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getReceiveFromAnotherPromoTargetForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getQualifyForAnotherPromoTargetForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getFGCombineForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getQualifyingItemSubTotalForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getListDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     BLCMain.MASTERVIEW.clearStatus();
@@ -287,15 +310,16 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getAdvancedButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (((ToolStripButton) event.getSource()).getSelected()) {
                     getPresenterSequenceSetupManager().getDataSource("offerDS").resetPermanentFieldVisibilityBasedOnType(lastSelectedRecord.getAttributeAsStringArray("_type"));
-                    getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields("deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "uses", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule");
+                    getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields("deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule");
                     getDisplay().getAdvancedItemCriteria().setVisible(true);
                     getDisplay().getAdvancedItemCriteriaTarget().setVisible(true);
                     getDisplay().getRestrictionSectionView().setVisible(true);
                 } else {
-                    getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
+                    getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType","maxUsesPerCustomer", "maxUsesPerOrder", "value", "priority", "startDate", "endDate");
                     getDisplay().getAdvancedItemCriteria().setVisible(false);
                     getDisplay().getAdvancedItemCriteriaTarget().setVisible(false);
                     getDisplay().getRestrictionSectionView().setVisible(false);
@@ -316,6 +340,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         });
         selectionChangedHandlerRegistration.removeHandler();
         getDisplay().getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            @Override
             public void onSelectionChanged(SelectionEvent event) {
                 ListGridRecord selectedRecord = event.getSelectedRecord();
                 if (event.getState()) {
@@ -326,7 +351,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                             getDisplay().getListDisplay().getRemoveButton().disable();
                         } else {
                             formPresenter.setStartState();
-                            getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
+                            getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType","maxUsesPerCustomer", "maxUsesPerOrder", "value", "priority", "startDate", "endDate");
                             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getDisplay().getListDisplay().getGrid().getDataSource(), true, true, false, selectedRecord);
                             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
                             getDisplay().getListDisplay().getRemoveButton().enable();
@@ -338,6 +363,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         });
         getSaveButtonHandlerRegistration().removeHandler();
         getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     extractor.applyData(lastSelectedRecord);
@@ -345,6 +371,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getHelpButtonType().addMouseMoveHandler(new MouseMoveHandler() {
+            @Override
             public void onMouseMove(MouseMoveEvent event) {
                 if (currentHelp == null) {
                     currentHelp = createHelpWin(
@@ -357,6 +384,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getHelpButtonType().addMouseOutHandler(new MouseOutHandler() {
+            @Override
             public void onMouseOut(MouseOutEvent event) {
                 if (currentHelp != null) {
                     currentHelp.destroy();
@@ -365,36 +393,42 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getDeliveryTypeRadio().addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(ChangedEvent event) {
                 String deliveryType = event.getValue().toString();
                 initializer.initDeliveryType(deliveryType, lastSelectedRecord);
             }
         });
         getDisplay().getCustomerRuleRadio().addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(ChangedEvent event) {
                 String customerRule = event.getValue().toString();
                 initializer.initCustomerRule(customerRule, lastSelectedRecord);
             }
         });
         getDisplay().getFgRuleRadio().addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(ChangedEvent event) {
                 String fgRule = event.getValue().toString();
                 initializer.initFGRule(fgRule, lastSelectedRecord);
             }
         });
         getDisplay().getItemRuleRadio().addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(ChangedEvent event) {
                 String itemRule = event.getValue().toString();
                 initializer.initItemRule(itemRule);
             }
         });
         getDisplay().getOrderRuleRadio().addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(ChangedEvent event) {
                 String orderRule = event.getValue().toString();
                 initializer.initOrderRule(orderRule, lastSelectedRecord);
             }
         });
         getDisplay().getHelpButtonBogo().addMouseMoveHandler(new MouseMoveHandler() {
+            @Override
             public void onMouseMove(MouseMoveEvent event) {
                 if (currentHelp == null) {
                     currentHelp = createHelpWin(
@@ -407,6 +441,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getHelpButtonBogo().addMouseOutHandler(new MouseOutHandler() {
+            @Override
             public void onMouseOut(MouseOutEvent event) {
                 if (currentHelp != null) {
                     currentHelp.destroy();
@@ -415,6 +450,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getBogoRadio().addChangedHandler(new ChangedHandler() {
+            @Override
             public void onChanged(ChangedEvent event) {
                 String bogoRule = event.getValue().toString();
                 initializer.initBogoRule(bogoRule);
@@ -422,6 +458,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         });
         
         getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
@@ -436,6 +473,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             bindItemBuilderEvents(display, true);
         }
         getDisplay().getCustomerFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
@@ -451,6 +489,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getOrderFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
@@ -466,6 +505,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getFulfillmentGroupFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
@@ -486,6 +526,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 
 
         getDisplay().getTargetAddItemButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     final ItemBuilderDisplay display = getDisplay().addTargetItemBuilder(getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
@@ -504,6 +545,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 
 
         getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     additionalFilterEventManager.resetFilterState(new FilterStateRunnable() {
@@ -525,6 +567,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 
     protected void bindItemBuilderEvents(final ItemBuilderDisplay display, final boolean isTarget) {
         display.getRemoveButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 boolean greaterThanOne;
                 if (isTarget) {
@@ -543,6 +586,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         display.getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
@@ -550,6 +594,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         display.getItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            @Override
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
@@ -557,6 +602,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         display.getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            @Override
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
@@ -573,16 +619,19 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         });
     }
 
+    @Override
     public void setup() {
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerDS", new OfferListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderDS", new OrderListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderItemDS", new OrderItemListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("product.id", "category.id", "sku.id");
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerFGDS", new FulfillmentGroupListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("id");
                 getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields("appliesToOrderRules", "appliesToCustomerRules", "appliesToFulfillmentGroupRules", "id");
@@ -593,6 +642,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerItemCriteriaDS", new OfferItemCriteriaListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerItemTargetCriteriaDS", new OfferItemTargetCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 initializer = new OfferPresenterInitializer(OfferPresenter.this, getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS"), (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
                 extractor = new OfferPresenterExtractor(OfferPresenter.this);

@@ -19,9 +19,6 @@
  */
 package org.broadleafcommerce.admin.client.datasource.catalog.product.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
@@ -34,6 +31,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -43,6 +41,9 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Phillip Verheyden
@@ -65,6 +66,7 @@ public class SkuBasicClientEntityModule extends BasicClientEntityModule {
      * is only available to us when the Skus are actually fetched. The fetch will return the correct ProductOptions in the list
      * of Properties in the Entities that were returned so that we can show/hide the ProductOption fields accordingly
      */
+    @Override
     public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
         if (request.getCriteria() != null && request.getCriteria().getAttribute("blc.fetch.from.cache") != null) {
             super.executeFetch(requestId, request, response, customCriteria, cb);
@@ -73,12 +75,20 @@ public class SkuBasicClientEntityModule extends BasicClientEntityModule {
             BLCMain.NON_MODAL_PROGRESS.startProgress();
             CriteriaTransferObject cto = getCto(request);
             service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, fetchTypeFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+                @Override
                 public void onSuccess(DynamicResultSet result) {
                     super.onSuccess(result);
                     TreeNode[] recordList = buildRecords(result, null);
                     response.setData(recordList);
                     response.setTotalRows(result.getTotalRecords());
                     /*** END COPY FROM BasicClientEntityModule ***/
+                    
+                    //In order to make the form display show up properly for creating a new single Sku, make all the product
+                    //options for the Product visible on the form
+                    for (Property property : result.getClassMetaData().getProperties()) {
+                        DataSourceField field = ((ListGridDataSource)dataSource).getField(property.getName());
+                        field.setAttribute("formHidden", FormHiddenEnum.VISIBLE);
+                    }
                     
                     //Build up a list of the product options that are relevant for this list of Skus
                     List<String> productOptionFields = new ArrayList<String>();

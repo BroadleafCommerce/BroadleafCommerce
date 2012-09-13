@@ -41,6 +41,7 @@ public class ProductSkusDataSourceFactory implements DataSourceFactory {
 
     protected CustomCriteriaListGridDataSource dataSource = null;
     
+    @Override
     public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
         operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
         PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
@@ -53,7 +54,7 @@ public class ProductSkusDataSourceFactory implements DataSourceFactory {
          * Not declared as static because this needs to be recreated every time the page is loaded, since
          * the actual fields for the DataSource can change based on adding/removing Product Options
          */
-        CustomCriteriaListGridDataSource dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, false, false, false, true);
+        CustomCriteriaListGridDataSource dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, true, true, true, true);
         dataSource.setCustomCriteria(new String[]{"productSkuList"});
         dataSource.buildFields(null, false, cb);
     }
