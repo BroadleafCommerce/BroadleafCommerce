@@ -35,38 +35,6 @@
     </bean>
 
     <mo:override id="blMetadataOverrides">
-        <!--
-        <mo:overrideItem ceilingEntity="org.broadleafcommerce.core.catalog.domain.Product">
-            <mo:field name="crossSaleProducts">
-                <mo:gridVisibleField value="defaultSku.description"/>
-                <mo:gridVisibleField value="promotionMessage"/>
-            </mo:field>
-            <mo:field name="defaultSku.skuMedia">
-                <mo:property name="mapKeyOptionEntityClass" value="org.broadleafcommerce.profile.core.domain.StateImpl"/>
-                <mo:property name="mapKeyOptionEntityDisplayField" value="name"/>
-                <mo:property name="mapKeyOptionEntityValueField" value="abbreviation"/>
-                <mo:customCriteria value="metest"/>
-            </mo:field>
-            <mo:field name="defaultCategory">
-                <mo:property name="lookupDisplayProperty" value="description"/>
-            </mo:field>
-            <mo:field name="productAttributes">
-                <mo:property name="readOnly" value="true"/>
-            </mo:field>
-            <mo:field name="tester">
-                <mo:property name="optionListEntity" value="org.broadleafcommerce.profile.core.domain.CountryImpl"/>
-                <mo:property name="optionDisplayFieldName" value="name"/>
-                <mo:property name="optionValueFieldName" value="abbreviation"/>
-                <mo:optionFilterValue name=".ignore" value="" type="STRING"/>
-            </mo:field>
-            <mo:field name="url">
-                <mo:validation className="com.smartgwt.client.widgets.form.validator.RegExpValidator">
-                    <mo:property name="regularExpression" value="jeff"/>
-                    <mo:property name="errorMessage" value="This is a validation test"/>
-                </mo:validation>
-            </mo:field>
-        </mo:overrideItem>
-        -->
         <mo:overrideItem configurationKey="promotionOrderItem">
             <mo:field name="category">
                 <mo:property name="excluded" value="false"/>

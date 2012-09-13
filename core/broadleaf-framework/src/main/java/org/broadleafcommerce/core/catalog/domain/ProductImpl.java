@@ -27,17 +27,28 @@ import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetC
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationAdornedTargetCollectionOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationDataDrivenEnumerationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMapOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationToOneLookupOverride;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -95,24 +106,6 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-//@AdminPresentationOverrides(
-//        value = @AdminPresentationOverride(name = "defaultSku.isMachineSortable", value = @AdminPresentation(friendlyName = "test sortable", order=15, group = "ProductImpl_Product_Description", prominent=false)),
-//        adornedTargetCollections = @AdminPresentationAdornedTargetCollectionOverride(name = "crossSaleProducts", value = @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence", dataSourceName = "crossSaleProductsDS", ignoreAdornedProperties = true)),
-//        maps = @AdminPresentationMapOverride(name = "defaultSku.skuMedia", value = @AdminPresentationMap(
-//            friendlyName = "SkuImpl_Sku_Media",
-//            targetUIElementId = "productSkuMediaLayout",
-//            dataSourceName = "productMediaMapDS",
-//            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
-//            deleteEntityUponRemove = true,
-//            mediaField = "url",
-//            mapKeyOptionEntityClass = StateImpl.class,
-//            mapKeyOptionEntityDisplayField = "name",
-//            mapKeyOptionEntityValueField = "abbreviation"
-//        )),
-//        toOneLookups = @AdminPresentationToOneLookupOverride(name = "defaultCategory", value = @AdminPresentationToOneLookup(lookupDisplayProperty = "description")),
-//        collections = @AdminPresentationCollectionOverride(name = "productAttributes", value = @AdminPresentationCollection(readOnly = true, addType = AddMethodType.PERSIST, friendlyName = "productAttributesTitle", dataSourceName = "productAttributeDS")),
-//        dataDrivenEnums = @AdminPresentationDataDrivenEnumerationOverride(name = "tester", value = @AdminPresentationDataDrivenEnumeration(optionListEntity = CountryImpl.class, optionDisplayFieldName = "name", optionValueFieldName = "abbreviation"))
-//)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
 public class ProductImpl implements Product, Status {
