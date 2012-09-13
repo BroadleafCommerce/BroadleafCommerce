@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.admin.client.view.promotion;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
@@ -35,6 +31,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.SelectionType;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Button;
@@ -53,6 +50,10 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author jfischer
@@ -159,7 +160,14 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         leftVerticalLayout.setWidth("30%");
         leftVerticalLayout.setShowResizeBar(true);
 
-        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("promotionsListTitle"), entityDataSource, false, false);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("promotionsListTitle"), entityDataSource, false);
+        listDisplay.getGrid().setCanEdit(true);
+        listDisplay.getGrid().setEditEvent(ListGridEditEvent.DOUBLECLICK);
+        listDisplay.getGrid().setEditByCell(true);
+        listDisplay.getGrid().setAutoSaveEdits(true);
+        listDisplay.getGrid().setSaveByCell(true);
+        listDisplay.getGrid().setAlternateBodyStyleName("");
+
         //listDisplay.getToolBar().addFill();
         cloneButton = new ToolStripButton();
         cloneButton.setDisabled(true);

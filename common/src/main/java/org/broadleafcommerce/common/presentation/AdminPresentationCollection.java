@@ -19,17 +19,6 @@ import java.lang.annotation.Target;
 public @interface AdminPresentationCollection {
 
     /**
-     * <p>Optional - only required when targeting a metadata override
-     * via application context xml.</p>
-     *
-     * <p>When a configuration key is present, the system will look for configuration
-     * override specified in application context xml for this collection.</p>
-     *
-     * @return the key tied to the override configuration
-     */
-    String configurationKey() default "";
-
-    /**
      * <p>Optional - field name will be used if not specified</p>
      *
      * <p>The friendly name to present to a user for this field in a GUI. If supporting i18N,
@@ -71,12 +60,18 @@ public @interface AdminPresentationCollection {
     boolean readOnly() default false;
 
     /**
+     * <p>Optional - only required if you want to lookup an item
+     * for this association, rather than creating a new instance of the
+     * target item. Note - if the type is changed to LOOKUP, this has
+     * the side effect of causing the only the association to be deleted
+     * during a remove, leaving the target lookup entity intact.</p>
+     *
      * <p>Define whether or not added items for this
      * collection are acquired via search or construction.</p>
      *
      * @return the item is acquired via lookup or construction
      */
-    AddMethodType addType();
+    AddMethodType addType() default AddMethodType.PERSIST;
 
     /**
      * <p>Optional - only required in the absence of a "mappedBy" property

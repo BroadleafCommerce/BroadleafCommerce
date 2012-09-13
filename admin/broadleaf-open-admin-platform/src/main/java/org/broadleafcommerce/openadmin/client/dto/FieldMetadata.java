@@ -40,6 +40,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     //temporary fields
     private String targetClass;
+    private String fieldName;
 
 	public String[] getAvailableToTypes() {
 		return availableToTypes;
@@ -77,6 +78,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         metadata.securityLevel = securityLevel;
         metadata.order = order;
         metadata.targetClass = targetClass;
+        metadata.fieldName = fieldName;
 
         return metadata;
     }
@@ -113,6 +115,14 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         this.targetClass = targetClass;
     }
 
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
     public abstract FieldMetadata cloneFieldMetadata();
 
     public abstract void accept(MetadataVisitor visitor);
@@ -126,6 +136,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
         if (!Arrays.equals(availableToTypes, that.availableToTypes)) return false;
         if (excluded != null ? !excluded.equals(that.excluded) : that.excluded != null) return false;
+        if (fieldName != null ? !fieldName.equals(that.fieldName) : that.fieldName != null) return false;
         if (friendlyName != null ? !friendlyName.equals(that.friendlyName) : that.friendlyName != null) return false;
         if (inheritedFromType != null ? !inheritedFromType.equals(that.inheritedFromType) : that.inheritedFromType != null)
             return false;
@@ -146,6 +157,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         result = 31 * result + (securityLevel != null ? securityLevel.hashCode() : 0);
         result = 31 * result + (order != null ? order.hashCode() : 0);
         result = 31 * result + (targetClass != null ? targetClass.hashCode() : 0);
+        result = 31 * result + (fieldName != null ? fieldName.hashCode() : 0);
         return result;
     }
 }

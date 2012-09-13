@@ -16,21 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -40,6 +25,20 @@ import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * 
@@ -108,7 +107,7 @@ public class StructuredContentPresenterExtractor {
 			extractQualifierData(null, true, dirtyValues);
 
 			DSRequest requestProperties = new DSRequest();
-			requestProperties.setAttribute("dirtyValues", dirtyValues);
+			//requestProperties.setAttribute("dirtyValues", dirtyValues);
 
             for (String key : dirtyValues.keySet()) {
                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));

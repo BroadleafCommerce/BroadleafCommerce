@@ -21,7 +21,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamic
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
@@ -47,14 +46,14 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
 	protected ToolStrip toolBar;
 
     public DynamicEntityListView(DataSource dataSource) {
-		this("", dataSource, true, true);
+		this("", dataSource, true);
 	}
 	
 	public DynamicEntityListView(String title, DataSource dataSource) {
-		this(title, dataSource, true, true);
+		this(title, dataSource, true);
 	}
 	
-	public DynamicEntityListView(String title, DataSource dataSource, Boolean canReorder, Boolean canEdit) {
+	public DynamicEntityListView(String title, DataSource dataSource, Boolean canReorder) {
 		super();
 		toolBar = new ToolStrip();
 		toolBar.setHeight(30);
@@ -89,10 +88,6 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         grid.setAlternateRecordStyles(true);
         grid.setSelectionType(SelectionStyle.SINGLE);
         grid.setCanEdit(false);
-        grid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
-        grid.setEditByCell(true);
-        grid.setAutoSaveEdits(true);
-        grid.setSaveByCell(true);
         grid.setDataSource(dataSource);
         grid.setAutoFetchData(false);
         //grid.setDrawAllMaxCells(10);
@@ -102,9 +97,7 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         grid.setCanGroupBy(false);
         //grid.setDataPageSize(10);
         grid.setEmptyMessage(BLCMain.getMessageManager().getString("emptyMessage"));
-        if (!canEdit) {
-        	grid.setAlternateBodyStyleName("editRowDisabled");
-        }
+        grid.setAlternateBodyStyleName("editRowDisabled");
         grid.setHoverMoveWithMouse(true);
         grid.setCanHover(true);
         grid.setShowHover(true);

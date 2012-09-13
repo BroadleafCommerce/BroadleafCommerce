@@ -8,7 +8,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -83,7 +82,7 @@ public class FieldMetadataOverride {
     private String columnWidth;
     private String broadleafEnumeration;
     private Boolean readOnly;
-    private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
+    private Map<String, Map<String, String>> validationConfigurations;
     private Boolean requiredOverride;
     private String tooltip;
     private String helpText;
@@ -151,18 +150,6 @@ public class FieldMetadataOverride {
 
     public void setUnique(Boolean unique) {
         this.unique = unique;
-    }
-
-    public Boolean isMutable() {
-        return mutable;
-    }
-
-    public Boolean getMutable() {
-        return mutable;
-    }
-
-    public void setMutable(Boolean mutable) {
-        this.mutable = mutable;
     }
 
     public String getForeignKeyProperty() {
@@ -416,7 +403,6 @@ public class FieldMetadataOverride {
     //collection fields
     private String targetElementId;
     private String dataSourceName;
-    private Boolean mutable;
     private String[] customCriteria;
     private OperationType addType;
     private OperationType removeType;
@@ -489,7 +475,6 @@ public class FieldMetadataOverride {
     }
 
     //basic collection fields
-    private String configurationKey;
     private AddMethodType addMethodType;
     private String manyToField;
 
@@ -499,14 +484,6 @@ public class FieldMetadataOverride {
 
     public void setAddMethodType(AddMethodType addMethodType) {
         this.addMethodType = addMethodType;
-    }
-
-    public String getConfigurationKey() {
-        return configurationKey;
-    }
-
-    public void setConfigurationKey(String configurationKey) {
-        this.configurationKey = configurationKey;
     }
 
     public String getManyToField() {

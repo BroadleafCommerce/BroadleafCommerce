@@ -41,7 +41,7 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     protected DataDrivenEnumeration type;
 
     @Column(name = "ENUM_KEY")
-    @Index(name = "KEY_INDEX", columnNames = {"KEY"})
+    @Index(name = "KEY_INDEX", columnNames = {"ENUM_KEY"})
     protected String key;
 
     @Column(name = "DISPLAY")

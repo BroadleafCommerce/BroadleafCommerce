@@ -680,7 +680,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     
     public Entity buildEntity(Record record, DSRequest request) {
 		Entity entity = new Entity();
-		Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
+		//Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
 		List<Property> properties = new ArrayList<Property>();
 		String[] attributes = record.getAttributes();
 		for (String attribute : attributes) {
@@ -695,9 +695,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute(attribute)));
 				}
 				property.setName(dataSource.getField(attribute).getAttribute("rawName"));
-				if (dirtyValues != null && dirtyValues.containsKey(property.getName())) {
-					property.setIsDirty(true);
-				}
+				//if (dirtyValues != null && dirtyValues.containsKey(property.getName())) {
+					//property.setIsDirty(true);
+				//}
 				properties.add(property);
 			} else if (attribute.equals("_type")) {
                 entity.setType(record.getAttributeAsStringArray("_type"));
@@ -984,7 +984,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 lookupMetadata.setTargetDynamicFormDisplayId(metadata.getTargetDynamicFormDisplayId());
                                 lookupMetadata.setFriendlyName(friendlyName);
                                 lookupMetadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
-                                DynamicEntityPresenter.lookupMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + property.getName(), lookupMetadata);
+                                DynamicEntityPresenter.lookupMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), lookupMetadata);
                             }
                             //field.setValidOperators(getBasicNumericOperators());
                             break;}
@@ -1161,17 +1161,17 @@ public class BasicClientEntityModule implements DataSourceModule {
 
                 @Override
                 public void visit(final BasicCollectionMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + property.getName(), metadata);
+                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
                 }
 
                 @Override
                 public void visit(AdornedTargetCollectionMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + property.getName(), metadata);
+                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
                 }
 
                 @Override
                 public void visit(MapMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + property.getName(), metadata);
+                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
                 }
             });
 		}

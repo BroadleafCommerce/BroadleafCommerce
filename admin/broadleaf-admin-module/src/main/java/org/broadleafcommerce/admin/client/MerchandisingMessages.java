@@ -45,6 +45,14 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
 	public String mediaSizeSmall();
 	public String mediaSizeMedium();
 	public String mediaSizeLarge();
+	public String mediaPrimary();
+	public String mediaAlternate1();
+	public String mediaAlternate2();
+	public String mediaAlternate3();
+	public String mediaAlternate4();
+	public String mediaAlternate5();
+	public String mediaAlternate6();
+	public String newAttributeTitle();
 	public String categorySearchPrompt();
 	public String categoryListTitle();
 	public String orphanCategoryListTitle();
@@ -109,6 +117,7 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String noProductExporters();
     public String selectExporterTitle();
     public String exportProductsButtonTitle();
+    public String uniqueSkuError();
     
     public String SkuImpl_Sku_Inventory();
     public String ProductWeight_Shipping();

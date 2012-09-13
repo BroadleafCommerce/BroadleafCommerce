@@ -9,7 +9,6 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 public class BasicCollectionMetadata extends CollectionMetadata {
 
     private AddMethodType addMethodType;
-    private String collectionFieldName;
 
     public AddMethodType getAddMethodType() {
         return addMethodType;
@@ -17,14 +16,6 @@ public class BasicCollectionMetadata extends CollectionMetadata {
 
     public void setAddMethodType(AddMethodType addMethodType) {
         this.addMethodType = addMethodType;
-    }
-
-    public String getCollectionFieldName() {
-        return collectionFieldName;
-    }
-
-    public void setCollectionFieldName(String collectionFieldName) {
-        this.collectionFieldName = collectionFieldName;
     }
 
     @Override
@@ -35,7 +26,6 @@ public class BasicCollectionMetadata extends CollectionMetadata {
     @Override
     protected FieldMetadata populate(FieldMetadata metadata) {
         ((BasicCollectionMetadata) metadata).addMethodType = addMethodType;
-        ((BasicCollectionMetadata) metadata).collectionFieldName = collectionFieldName;
         return super.populate(metadata);
     }
 
@@ -54,8 +44,6 @@ public class BasicCollectionMetadata extends CollectionMetadata {
         BasicCollectionMetadata that = (BasicCollectionMetadata) o;
 
         if (addMethodType != that.addMethodType) return false;
-        if (collectionFieldName != null ? !collectionFieldName.equals(that.collectionFieldName) : that.collectionFieldName != null)
-            return false;
 
         return true;
     }
@@ -64,7 +52,6 @@ public class BasicCollectionMetadata extends CollectionMetadata {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (addMethodType != null ? addMethodType.hashCode() : 0);
-        result = 31 * result + (collectionFieldName != null ? collectionFieldName.hashCode() : 0);
         return result;
     }
 }
