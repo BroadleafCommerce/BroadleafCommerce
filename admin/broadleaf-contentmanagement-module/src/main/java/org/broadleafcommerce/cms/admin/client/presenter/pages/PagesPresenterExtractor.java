@@ -16,12 +16,15 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.rpc.RPCResponse;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.FilterBuilder;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
@@ -32,15 +35,11 @@ import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTransl
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.rpc.RPCResponse;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.FilterBuilder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * @author jfischer
@@ -108,7 +107,7 @@ public class PagesPresenterExtractor {
             extractQualifierData(null, true, dirtyValues);
 
             DSRequest requestProperties = new DSRequest();
-            requestProperties.setAttribute("dirtyValues", dirtyValues);
+            //requestProperties.setAttribute("dirtyValues", dirtyValues);
 
             for (String key : dirtyValues.keySet()) {
                 getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));
