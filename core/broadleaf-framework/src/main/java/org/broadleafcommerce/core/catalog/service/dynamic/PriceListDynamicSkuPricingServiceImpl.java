@@ -84,7 +84,7 @@ public class PriceListDynamicSkuPricingServiceImpl extends
             prices.setPriceAdjustment(BroadleafCurrencyImpl.getMoney(
                     priceData.getPriceAdjustment(), priceList.getCurrencyCode()));
         } else {
-            prices.setPriceAdjustment(productOptionValue.getPriceAdjustment());
+            prices.setPriceAdjustment(null);
         }
 
         return prices;
