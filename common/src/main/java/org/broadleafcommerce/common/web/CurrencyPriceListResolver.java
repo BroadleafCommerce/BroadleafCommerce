@@ -71,13 +71,8 @@ public class CurrencyPriceListResolver implements BroadleafPricelistResolver {
                 LOG.trace("Attempt to find pricelist by param " + key + " resulted in " + priceList);
             }
         }
-        
-        // 3) Check session for pricelist
-        if (priceList == null){
-            priceList = (PriceList) session.getAttribute(PRICELIST_VAR);
-        }
 
-        // 4) Check pricelist based on currency
+        // 3) Check pricelist based on currency
         if (priceList == null){
             BroadleafCurrency currency = (BroadleafCurrency) session.getAttribute(CURRENCY_VAR);
             if (currency != null){
@@ -85,12 +80,11 @@ public class CurrencyPriceListResolver implements BroadleafPricelistResolver {
             }
         }
 
-        // 5) Check default pricelist from DB
+        // 4) Check default pricelist from DB
         if(priceList == null){
             priceList = priceListService.findDefaultPricelist();
         }
 
-        session.setAttribute(PRICELIST_VAR, priceList);
         return priceList;
     }
 }
