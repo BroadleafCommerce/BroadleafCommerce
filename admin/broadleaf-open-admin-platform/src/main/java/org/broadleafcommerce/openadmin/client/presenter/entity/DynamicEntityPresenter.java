@@ -60,7 +60,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author jfischer
@@ -226,13 +225,12 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     protected void saveClicked() {
         DSRequest requestProperties = new DSRequest();
-        
-        try {
-            requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
-        } catch (Exception e) {
-            Logger.getLogger(this.getClass().toString()).log(Level.WARNING,"ignore, usually thown in gwt-run mode",e);  
-        }   
 
+        //try {
+            //requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+        //} catch (Exception e) {
+            //Logger.getLogger(this.getClass().toString()).log(Level.WARNING, "ignore, usually thown in gwt-run mode", e);
+        //}
         display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {

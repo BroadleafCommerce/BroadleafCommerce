@@ -625,7 +625,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     
     public Entity buildEntity(Record record, DSRequest request) {
 		Entity entity = new Entity();
-		Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
+		//Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
 		List<Property> properties = new ArrayList<Property>();
 		String[] attributes = record.getAttributes();
 		for (String attribute : attributes) {
@@ -639,9 +639,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute(attribute)));
 				}
 				property.setName(dataSource.getField(attribute).getAttribute("rawName"));
-				if (dirtyValues != null && dirtyValues.containsKey(property.getName())) {
-					property.setIsDirty(true);
-				}
+				//if (dirtyValues != null && dirtyValues.containsKey(property.getName())) {
+					//property.setIsDirty(true);
+				//}
 				properties.add(property);
 			} else if (attribute.equals("_type")) {
                 entity.setType(record.getAttributeAsStringArray("_type"));

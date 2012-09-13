@@ -106,7 +106,7 @@ public class StructuredContentPresenterExtractor {
 			extractQualifierData(null, true, dirtyValues);
 
 			DSRequest requestProperties = new DSRequest();
-			requestProperties.setAttribute("dirtyValues", dirtyValues);
+			//requestProperties.setAttribute("dirtyValues", dirtyValues);
 
             for (String key : dirtyValues.keySet()) {
                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));

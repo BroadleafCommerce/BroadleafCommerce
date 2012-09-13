@@ -68,7 +68,7 @@ public class DynamicFormPresenter {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					DSRequest requestProperties = new DSRequest();
-					requestProperties.setAttribute("dirtyValues", display.getFormOnlyDisplay().getForm().getChangedValues());
+					//requestProperties.setAttribute("dirtyValues", display.getFormOnlyDisplay().getForm().getChangedValues());
 					if (display.getFormOnlyDisplay().getForm().validate()) {
 						display.getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                             public void execute(DSResponse response, Object rawData, DSRequest request) {

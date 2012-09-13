@@ -160,7 +160,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 //save the regular entity form and the page template form
                 if (event.isLeftButtonDown()) {
                     DSRequest requestProperties = new DSRequest();
-					requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+					//requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
 					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
