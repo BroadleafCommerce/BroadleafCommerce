@@ -36,7 +36,6 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.pricing.domain.PriceAdjustment;
 import org.broadleafcommerce.core.pricing.domain.PriceAdjustmentImpl;
@@ -141,12 +140,17 @@ public class ProductOptionValueImpl implements ProductOptionValue {
             returnPrice = (salePrice == null ? null : new Money(salePrice));
         }
          */
+        Money dynamicAdjustedPrice=null;
         if(SkuPricingConsiderationContext.hasDynamicPricing()) {
-            DynamicSkuPrices prices=SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this,SkuPricingConsiderationContext.getSkuPricingConsiderationContext());                
-            return prices.getPriceAdjustment();
+            dynamicAdjustedPrice=SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustmentForProductOptionValue(this,SkuPricingConsiderationContext.getSkuPricingConsiderationContext());                
+           
+         
+             
         }
-        
-        return priceAdjustment == null ? null : new Money(priceAdjustment);
+        if (dynamicAdjustedPrice == null) {
+            dynamicAdjustedPrice = (priceAdjustment == null ? null : new Money(priceAdjustment));
+        }
+        return dynamicAdjustedPrice;
     }
 
     @Override

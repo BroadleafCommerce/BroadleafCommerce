@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.catalog.service.dynamic;
 import java.util.HashMap;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -44,24 +45,35 @@ public class PriceListDynamicSkuPricingServiceImpl extends
         // the default behavior is to ignore the pricing considerations and
         // return the retail and sale price from the sku
 
-        DynamicSkuPrices prices = new DynamicSkuPrices();
+        DynamicSkuPrices prices = null;
 
         PriceList priceList = brc.getPriceList();
-        if (priceList != null
-                && sku.getPriceDataMap().get(priceList.getPriceKey()) != null) {
-            PriceData priceData = sku.getPriceDataMap().get(
-                    priceList.getPriceKey());
-            prices.setRetailPrice(BroadleafCurrencyImpl.getMoney(
-                    priceData.getRetailPrice(), priceList.getCurrencyCode()));
-            prices.setSalePrice(BroadleafCurrencyImpl.getMoney(
-                    priceData.getSalePrice(), priceList.getCurrencyCode()));
-
-        } else {
-            prices.setRetailPrice(sku.getRetailPrice());
-            prices.setSalePrice(sku.getSalePrice());
-
+  
+        
+        if (priceList != null) {
+            if (sku.getPriceDataMap() == null
+                    || sku.getPriceDataMap().get(
+                            priceList.getPriceKey()) == null) {
+                if (!priceList.getDefaultFlag()) {
+                    /**
+                     *  if there is a pricelist , but the useDefaultIfNotFound is false, then return null.
+                     *  This is a way to ensure that if there is no pricedata for the item , then don't return the default currency value.
+                     */
+                    return null;
+                }
+            } else {
+                PriceData priceData = sku
+                        .getPriceDataMap().get(priceList.getPriceKey());
+                if (priceData != null) {
+                    prices = new DynamicSkuPrices();
+                    prices.setRetailPrice(BroadleafCurrencyImpl.getMoney(
+                            priceData.getRetailPrice(), priceList.getCurrencyCode()));
+                    prices.setSalePrice(BroadleafCurrencyImpl.getMoney(
+                            priceData.getSalePrice(), priceList.getCurrencyCode()));
+                }
+            }
         }
-
+      
         return prices;
     }
 
@@ -79,8 +91,8 @@ public class PriceListDynamicSkuPricingServiceImpl extends
         if (priceList != null
                 && productOptionValue.getPriceAdjustmentMap().get(
                         priceList.getPriceKey()) != null) {
-            PriceAdjustment priceData = productOptionValue.getPriceAdjustmentMap()
-                    .get(priceList.getPriceKey());
+            PriceAdjustment priceData = productOptionValue
+                    .getPriceAdjustmentMap().get(priceList.getPriceKey());
             prices.setPriceAdjustment(BroadleafCurrencyImpl.getMoney(
                     priceData.getPriceAdjustment(), priceList.getCurrencyCode()));
         } else {
@@ -90,4 +102,40 @@ public class PriceListDynamicSkuPricingServiceImpl extends
         return prices;
     }
 
+    @Override
+    public Money getPriceAdjustmentForProductOptionValue(
+            ProductOptionValue productOptionValue,
+            @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) {
+        BroadleafRequestContext brc = BroadleafRequestContext
+                .getBroadleafRequestContext();
+        // the default behavior is to ignore the pricing considerations and
+        // return the price Adjustment from the productOptionValue
+        Money adjustment = null;
+
+        PriceList priceList = brc.getPriceList();
+        if (priceList != null) {
+            if (productOptionValue.getPriceAdjustmentMap() == null
+                    || productOptionValue.getPriceAdjustmentMap().get(
+                            priceList.getPriceKey()) == null) {
+                if (!priceList.getDefaultFlag()) {
+                    /**
+                     *  if there is a pricelist , but the useDefaultIfNotFound is false, then return null.
+                     *  This is a way to ensure that if there is no pricedata for the item , then don't return the default currency value.
+                     */
+                    return null;
+                }
+            } else {
+                PriceAdjustment priceData = productOptionValue
+                        .getPriceAdjustmentMap().get(priceList.getPriceKey());
+                if (priceData != null) {
+                    adjustment = BroadleafCurrencyImpl.getMoney(
+                            priceData.getPriceAdjustment(),
+                            priceList.getCurrencyCode());
+                }
+            }
+        }
+      
+
+        return adjustment;
+    }
 }

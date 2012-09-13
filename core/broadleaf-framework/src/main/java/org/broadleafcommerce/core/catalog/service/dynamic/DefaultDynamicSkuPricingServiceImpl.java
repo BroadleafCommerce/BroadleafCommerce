@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.catalog.service.dynamic;
 
 import java.util.HashMap;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,13 @@ public class DefaultDynamicSkuPricingServiceImpl implements DynamicSkuPricingSer
             prices.setPriceAdjustment(productOptionValue.getPriceAdjustment());
             
             return prices;
+    }
+    @Override
+    public Money getPriceAdjustmentForProductOptionValue(
+            ProductOptionValue productOptionValue,
+            HashMap skuPricingConsiderations) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

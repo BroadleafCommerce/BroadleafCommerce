@@ -344,7 +344,8 @@ public class SkuImpl implements Sku {
     		
     		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
     		handler.reset();
-    		return  dynamicPrices.getSalePrice();
+    		if(dynamicPrices!=null) {returnPrice= dynamicPrices.getSalePrice();}
+    		
     	} 
         
         if (returnPrice == null) {
@@ -382,7 +383,9 @@ public class SkuImpl implements Sku {
     		
     		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
     		handler.reset();
-    		return dynamicPrices.getRetailPrice();
+    		if(dynamicPrices!=null) {
+                returnPrice=  dynamicPrices.getRetailPrice();
+            }
     	}
         if (returnPrice == null) {
             returnPrice = (retailPrice == null ? null : new Money(retailPrice));
