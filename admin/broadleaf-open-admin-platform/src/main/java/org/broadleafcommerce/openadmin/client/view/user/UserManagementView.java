@@ -55,7 +55,7 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("userListTitle"), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("userListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  

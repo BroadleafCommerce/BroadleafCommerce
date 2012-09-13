@@ -390,9 +390,21 @@ public interface Category extends Serializable {
     public void setFeaturedProducts(@Nonnull List<FeaturedProduct> featuredProducts);
 
     /**
+     * Convenience method to retrieve all of this {@link Category}'s {@link Product}s filtered by
+     * active. If you want all of the {@link Product}s (whether inactive or not) consider using
+     * {@link #getAllProducts()}.
+     * 
+     * @return the list of active {@link Product}s for this {@link Category}
+     * @see {@link Product#isActive()}
+     */
+    public List<Product> getActiveProducts();
+    
+    /**
      * Retrieve all the {@code Product} instances associated with this
      * category.
-     *
+     * <br />
+     * <b>Note:</b> this method does not take into account whether or not the {@link Product}s are active or not. If
+     * you need this functionality, use {@link #getActiveProducts()}
      * @return the list of products associated with this category.
      */
     @Nonnull

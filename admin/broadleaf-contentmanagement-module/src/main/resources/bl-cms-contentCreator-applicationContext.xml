@@ -29,7 +29,7 @@
     </bean>
 
    <mo:override id="blMetadataOverrides">
-        <mo:overrideItem configurationKey="targetProduct" ceilingEntity="org.broadleafcommerce.core.catalog.domain.Product" type="BASIC">
+        <mo:overrideItem configurationKey="targetProduct">
             <mo:field name="defaultCategory">
                 <mo:property name="excluded" value="false"/>
             </mo:field>

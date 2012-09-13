@@ -22,6 +22,8 @@ import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
+import java.util.logging.Level;
+
 /**
  * 
  * @author jfischer
@@ -38,6 +40,10 @@ public class SearchFormItem extends StaticTextItem {
         addIconClickHandler(new IconClickHandler() {  
             public void onIconClick(IconClickEvent event) {  
             	final String formItemName = event.getItem().getName();
+                if (formItemName == null) {
+                    java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,"The name associated with this item is null. Have you chosen a display field for a @AdminPresentationToOneLookup that may contain a null value?");
+                    throw new RuntimeException("The name associated with this item is null - cannot continue");
+                }
             	((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName).execute(event.getItem());
             }  
         });

@@ -1,26 +1,29 @@
 package org.broadleafcommerce.common.enumeration.domain;
 
+import java.io.Serializable;
+
 /**
  * @author Jeff Fischer
  */
-public interface DataDrivenEnumerationValue {
-    String getDisplay();
+public interface DataDrivenEnumerationValue extends Serializable {
+    
+    public String getDisplay();
 
-    void setDisplay(String display);
+    public void setDisplay(String display);
 
     public Boolean getHidden();
 
     public void setHidden(Boolean hidden);
 
-    Long getId();
+    public Long getId();
 
-    void setId(Long id);
+    public void setId(Long id);
 
-    String getKey();
+    public String getKey();
 
-    void setKey(String key);
+    public void setKey(String key);
 
-    DataDrivenEnumeration getType();
+    public DataDrivenEnumeration getType();
 
-    void setType(DataDrivenEnumeration type);
+    public void setType(DataDrivenEnumeration type);
 }
