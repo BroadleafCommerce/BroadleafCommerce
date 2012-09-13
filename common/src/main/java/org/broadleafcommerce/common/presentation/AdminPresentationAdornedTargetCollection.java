@@ -23,17 +23,6 @@ import java.lang.annotation.Target;
 public @interface AdminPresentationAdornedTargetCollection {
 
     /**
-     * <p>Optional - only required when targeting a metadata override
-     * via application context xml.</p>
-     *
-     * <p>When a configuration key is present, the system will look for configuration
-     * override specified in application context xml for this collection.</p>
-     *
-     * @return the key tied to the override configuration
-     */
-    String configurationKey() default "";
-
-    /**
      * <p>Optional - field name will be used if not specified</p>
      *
      * <p>The friendly name to present to a user for this field in a GUI. If supporting i18N,
@@ -102,7 +91,7 @@ public @interface AdminPresentationAdornedTargetCollection {
      *
      * @return target entity field of the adorned target
      */
-    String targetObjectProperty();
+    String targetObjectProperty() default "";
 
     /**
      * <p>Optional - only required if the adorned target has fields

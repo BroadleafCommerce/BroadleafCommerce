@@ -380,7 +380,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
         for (final Map.Entry<String, LookupMetadata> entry : lookupMetadatas.entrySet()) {
             if (entry.getKey().startsWith(getClass().getName())) {
-                final String dataSourceName = entry.getKey() + "Lookup";
+                final String key = entry.getKey().substring(entry.getKey().indexOf("_") + 1, entry.getKey().length());
+                final String dataSourceName = key + "Lookup";
                 if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
                     java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
                     continue;
@@ -413,7 +414,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                         }
                         parentDataSource.
                                 getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                                entry.getKey(),
+                                key,
                                 searchView,
                                 viewTitle,
                                 target,
@@ -442,7 +443,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
         Map<String, CollectionMetadata> sortedMetadatas = new LinkedHashMap<String, CollectionMetadata>();
         for (Map.Entry<String, CollectionMetadata> entry : list) {
-            sortedMetadatas.put(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            key = key.substring(key.indexOf("_") + 1, key.length());
+            sortedMetadatas.put(key, entry.getValue());
         }
 
         for (final Map.Entry<String, CollectionMetadata> entry : sortedMetadatas.entrySet()) {

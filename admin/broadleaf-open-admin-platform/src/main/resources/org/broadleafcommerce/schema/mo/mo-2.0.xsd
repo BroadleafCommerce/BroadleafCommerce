@@ -13,7 +13,7 @@
 
     <xsd:group name="basicGroup">
       <xsd:sequence>
-          <xsd:element name="property">
+          <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
                   <xsd:attribute name="name" use="required" type="basic-props"/>
                   <xsd:attribute name="value" use="required"/>
@@ -64,7 +64,7 @@
     <xsd:element name="validation">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="property" minOccurs="1" maxOccurs="unbounded">
+                <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
                   <xsd:complexType>
                       <xsd:attribute name="name" use="required"/>
                       <xsd:attribute name="value" use="required"/>
@@ -80,9 +80,8 @@
             <xsd:sequence>
                 <xsd:element ref="field" minOccurs="1" maxOccurs="unbounded"/>
             </xsd:sequence>
-            <xsd:attribute name="configurationKey" use="required"/>
-            <xsd:attribute name="ceilingEntity" use="required"/>
-            <xsd:attribute name="type" type="override-type" use="required"/>
+            <xsd:attribute name="configurationKey"/>
+            <xsd:attribute name="ceilingEntity"/>
         </xsd:complexType>
     </xsd:element>
 
@@ -94,17 +93,6 @@
             <xsd:attribute name="id" use="required"/>
         </xsd:complexType>
     </xsd:element>
-
-    <xsd:simpleType name="override-type">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="BASIC"/>
-            <xsd:enumeration value="COLLECTION"/>
-            <xsd:enumeration value="ADORNEDTARGETCOLLECTION"/>
-            <xsd:enumeration value="MAP"/>
-            <xsd:enumeration value="TOONELOOKUP"/>
-            <xsd:enumeration value="DATADRIVENENUM"/>
-        </xsd:restriction>
-    </xsd:simpleType>
 
     <xsd:simpleType name="field-type">
         <xsd:restriction base="xsd:string">
@@ -149,7 +137,6 @@
             <xsd:enumeration value="fetchType"/>
             <xsd:enumeration value="inspectType"/>
             <xsd:enumeration value="updateType"/>
-            <xsd:enumeration value="configurationKey"/>
             <xsd:enumeration value="keyClass"/>
             <xsd:enumeration value="keyPropertyFriendlyName"/>
             <xsd:enumeration value="valueClass"/>

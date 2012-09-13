@@ -26,9 +26,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.OptionFilterParam;
+import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -37,15 +38,13 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.profile.core.domain.CountryImpl;
+import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -71,6 +70,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +95,24 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+//@AdminPresentationOverrides(
+//        value = @AdminPresentationOverride(name = "defaultSku.isMachineSortable", value = @AdminPresentation(friendlyName = "test sortable", order=15, group = "ProductImpl_Product_Description", prominent=false)),
+//        adornedTargetCollections = @AdminPresentationAdornedTargetCollectionOverride(name = "crossSaleProducts", value = @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence", dataSourceName = "crossSaleProductsDS", ignoreAdornedProperties = true)),
+//        maps = @AdminPresentationMapOverride(name = "defaultSku.skuMedia", value = @AdminPresentationMap(
+//            friendlyName = "SkuImpl_Sku_Media",
+//            targetUIElementId = "productSkuMediaLayout",
+//            dataSourceName = "productMediaMapDS",
+//            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+//            deleteEntityUponRemove = true,
+//            mediaField = "url",
+//            mapKeyOptionEntityClass = StateImpl.class,
+//            mapKeyOptionEntityDisplayField = "name",
+//            mapKeyOptionEntityValueField = "abbreviation"
+//        )),
+//        toOneLookups = @AdminPresentationToOneLookupOverride(name = "defaultCategory", value = @AdminPresentationToOneLookup(lookupDisplayProperty = "description")),
+//        collections = @AdminPresentationCollectionOverride(name = "productAttributes", value = @AdminPresentationCollection(readOnly = true, addType = AddMethodType.PERSIST, friendlyName = "productAttributesTitle", dataSourceName = "productAttributeDS")),
+//        dataDrivenEnums = @AdminPresentationDataDrivenEnumerationOverride(name = "tester", value = @AdminPresentationDataDrivenEnumeration(optionListEntity = CountryImpl.class, optionDisplayFieldName = "name", optionValueFieldName = "abbreviation"))
+//)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
 public class ProductImpl implements Product, Status {
@@ -572,9 +590,13 @@ public class ProductImpl implements Product, Status {
     			returnProducts.addAll(categoryProducts);
     		}
     	}
-    	if (returnProducts.contains(this)) {
-    		returnProducts.remove(this);
-    	}
+        Iterator<RelatedProduct> itr = returnProducts.iterator();
+        while(itr.hasNext()) {
+            RelatedProduct relatedProduct = itr.next();
+            if (relatedProduct.getProduct().equals(this)) {
+                itr.remove();
+            }
+        }
     	return returnProducts;
     }
     
@@ -587,9 +609,13 @@ public class ProductImpl implements Product, Status {
     			returnProducts.addAll(categoryProducts);
     		}
     	}
-    	if (returnProducts.contains(this)) {
-    		returnProducts.remove(this);
-    	}
+        Iterator<RelatedProduct> itr = returnProducts.iterator();
+        while(itr.hasNext()) {
+            RelatedProduct relatedProduct = itr.next();
+            if (relatedProduct.getProduct().equals(this)) {
+                itr.remove();
+            }
+        }
     	return returnProducts;
     }
 
