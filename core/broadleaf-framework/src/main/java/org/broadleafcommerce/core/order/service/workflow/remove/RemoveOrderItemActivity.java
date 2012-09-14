@@ -61,7 +61,7 @@ public class RemoveOrderItemActivity extends BaseActivity {
         itemFromOrder.setOrder(null);
         orderItemService.delete(itemFromOrder);
         
-        order = orderService.save(order, request.isPriceOrder());
+        order = orderService.save(order, false);
         
         request.setOrder(order);
         return context;

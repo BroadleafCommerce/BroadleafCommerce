@@ -97,6 +97,7 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
 			</list>
 		</property>
@@ -114,6 +115,7 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderMultishipOptionActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
 			</list>
 		</property>
@@ -130,6 +132,7 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderMultishipOptionActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
 			</list>
 		</property>
