@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.common.encryption;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.broadleafcommerce.common.config.RuntimeEnvironmentKeyResolver;
+import org.broadleafcommerce.common.config.SystemPropertyRuntimeEnvironmentKeyResolver;
+
 /**
  * The default encryption module simply passes through the decrypt and encrypt text.
  * A real implementation should adhere to PCI compliance, which requires robust key
@@ -27,7 +32,16 @@ package org.broadleafcommerce.common.encryption;
  * @author jfischer
  *
  */
-public class DefaultEncryptionModule implements EncryptionModule {
+public class PassthroughEncryptionModule implements EncryptionModule {
+    protected static final Logger LOG = LogManager.getLogger(PassthroughEncryptionModule.class);
+    
+    protected RuntimeEnvironmentKeyResolver keyResolver = new SystemPropertyRuntimeEnvironmentKeyResolver();
+    
+    public PassthroughEncryptionModule() {
+        if ("production".equals(keyResolver.resolveRuntimeEnvironmentKey())) {
+            LOG.warn("This passthrough encryption module provides NO ENCRYPTION and should NOT be used in production.");
+        }
+    }
 
     public String decrypt(String cipherText) {
         return cipherText;

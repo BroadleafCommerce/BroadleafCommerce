@@ -20,7 +20,7 @@
 	
 	<bean id="springAppContext" class="org.broadleafcommerce.common.util.SpringAppContext"/>
 	
-	<bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.DefaultEncryptionModule"/>
+	<bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
 	
 
 	
