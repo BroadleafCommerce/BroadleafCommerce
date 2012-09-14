@@ -31,6 +31,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TableGenerator;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.List;
@@ -68,11 +69,12 @@ public class SequenceGeneratorCorruptionDetection {
                 }
                 idField.setAccessible(true);
                 GenericGenerator genericAnnot = idField.getAnnotation(GenericGenerator.class);
+                TableGenerator tableAnnot = idField.getAnnotation(TableGenerator.class);
+                String segmentValue = null;
+                String tableName = null;
+                String segmentColumnName = null;
+                String valueColumnName = null;
                 if (genericAnnot != null && genericAnnot.strategy().equals("org.broadleafcommerce.common.persistence.IdOverrideTableGenerator")) {
-                    String segmentValue = null;
-                    String tableName = null;
-                    String segmentColumnName = null;
-                    String valueColumnName = null;
                     //This is a BLC style ID generator
                     for (Parameter param : genericAnnot.parameters()) {
                         if (param.name().equals("segment_value")) {
@@ -88,42 +90,48 @@ public class SequenceGeneratorCorruptionDetection {
                             valueColumnName = param.value();
                         }
                     }
-                    if (!StringUtils.isEmpty(segmentValue) && !StringUtils.isEmpty(tableName) && !StringUtils.isEmpty(segmentColumnName) && !StringUtils.isEmpty(valueColumnName)) {
-                        StringBuilder sb2 = new StringBuilder();
-                        sb2.append("select ");
-                        sb2.append(valueColumnName);
-                        sb2.append(" from ");
-                        sb2.append(tableName);
-                        sb2.append(" where ");
-                        sb2.append(segmentColumnName);
-                        sb2.append(" = '");
-                        sb2.append(segmentValue);
-                        sb2.append("'");
+                } else if (tableAnnot != null) {
+                    //This is a traditional Hibernate generator
+                    segmentValue = tableAnnot.pkColumnValue();
+                    tableName = tableAnnot.table();
+                    segmentColumnName = tableAnnot.pkColumnName();
+                    valueColumnName = tableAnnot.valueColumnName();
+                }
+                if (!StringUtils.isEmpty(segmentValue) && !StringUtils.isEmpty(tableName) && !StringUtils.isEmpty(segmentColumnName) && !StringUtils.isEmpty(valueColumnName)) {
+                    StringBuilder sb2 = new StringBuilder();
+                    sb2.append("select ");
+                    sb2.append(valueColumnName);
+                    sb2.append(" from ");
+                    sb2.append(tableName);
+                    sb2.append(" where ");
+                    sb2.append(segmentColumnName);
+                    sb2.append(" = '");
+                    sb2.append(segmentValue);
+                    sb2.append("'");
 
-                        List results2 = em.createNativeQuery(sb2.toString()).getResultList();
-                        if (results2 != null && !results2.isEmpty() && results2.get(0) != null) {
-                            Long maxSequenceId = ((BigInteger) results2.get(0)).longValue();
+                    List results2 = em.createNativeQuery(sb2.toString()).getResultList();
+                    if (results2 != null && !results2.isEmpty() && results2.get(0) != null) {
+                        Long maxSequenceId = ((BigInteger) results2.get(0)).longValue();
 
-                            LOG.info("Detecting id sequence state between " + mappedClass.getName() + " and " + segmentValue + " in " + tableName);
+                        LOG.info("Detecting id sequence state between " + mappedClass.getName() + " and " + segmentValue + " in " + tableName);
 
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("select max(");
-                            sb.append(idField.getName());
-                            sb.append(") from ");
-                            sb.append(mappedClass.getName());
-                            sb.append(" entity");
-                            List results = em.createQuery(sb.toString()).getResultList();
-                            if (results != null && !results.isEmpty() && results.get(0) != null) {
-                                Long maxEntityId = (Long) results.get(0);
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("select max(");
+                        sb.append(idField.getName());
+                        sb.append(") from ");
+                        sb.append(mappedClass.getName());
+                        sb.append(" entity");
+                        List results = em.createQuery(sb.toString()).getResultList();
+                        if (results != null && !results.isEmpty() && results.get(0) != null) {
+                            Long maxEntityId = (Long) results.get(0);
 
-                                if (maxEntityId > maxSequenceId) {
-                                    String reason = "A data inconsistency has been detected between the " + tableName + " table and one or more entity tables for which is manages current max primary key values." +
-                                            "The inconsistency was detected between the managed class (" + mappedClass.getName() + ") and the identifier (" + segmentValue + ") in " + tableName + ". Broadleaf " +
-                                            "has stopped startup of the application in order to allow you to resolve the issue and avoid possible data corruption. If you wish to disable this detection, you may" +
-                                            "set the detect.sequence.generator.inconsistencies property to false in your application's common.properties or common-shared.properties.";
+                            if (maxEntityId > maxSequenceId) {
+                                String reason = "A data inconsistency has been detected between the " + tableName + " table and one or more entity tables for which is manages current max primary key values." +
+                                        "The inconsistency was detected between the managed class (" + mappedClass.getName() + ") and the identifier (" + segmentValue + ") in " + tableName + ". Broadleaf " +
+                                        "has stopped startup of the application in order to allow you to resolve the issue and avoid possible data corruption. If you wish to disable this detection, you may" +
+                                        "set the 'detect.sequence.generator.inconsistencies' property to false in your application's common.properties or common-shared.properties.";
 
-                                    throw new RuntimeException(reason);
-                                }
+                                throw new RuntimeException(reason);
                             }
                         }
                     }
