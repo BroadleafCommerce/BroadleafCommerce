@@ -26,9 +26,11 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TableGenerator;
@@ -43,7 +45,7 @@ import java.util.List;
  * @author Jeff Fischer
  */
 @Repository("blSequenceGeneratorCorruptionDetection")
-public class SequenceGeneratorCorruptionDetection {
+public class SequenceGeneratorCorruptionDetection implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Log LOG = LogFactory.getLog(SequenceGeneratorCorruptionDetection.class);
 
@@ -53,8 +55,12 @@ public class SequenceGeneratorCorruptionDetection {
     @Value("${detect.sequence.generator.inconsistencies}")
     protected boolean detectSequenceGeneratorInconsistencies = true;
 
-    @PostConstruct
-    public void performCheck() {
+    @Value("${auto.correct.sequence.generator.inconsistencies}")
+    protected boolean automaticallyCorrectInconsistencies = false;
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         if (detectSequenceGeneratorInconsistencies) {
             SessionFactory sessionFactory = ((HibernateEntityManager) em).getSession().getSessionFactory();
             for (Object item : sessionFactory.getAllClassMetadata().values()) {
@@ -124,14 +130,36 @@ public class SequenceGeneratorCorruptionDetection {
                         List results = em.createQuery(sb.toString()).getResultList();
                         if (results != null && !results.isEmpty() && results.get(0) != null) {
                             Long maxEntityId = (Long) results.get(0);
-
                             if (maxEntityId > maxSequenceId) {
-                                String reason = "A data inconsistency has been detected between the " + tableName + " table and one or more entity tables for which is manages current max primary key values." +
-                                        "The inconsistency was detected between the managed class (" + mappedClass.getName() + ") and the identifier (" + segmentValue + ") in " + tableName + ". Broadleaf " +
-                                        "has stopped startup of the application in order to allow you to resolve the issue and avoid possible data corruption. If you wish to disable this detection, you may" +
-                                        "set the 'detect.sequence.generator.inconsistencies' property to false in your application's common.properties or common-shared.properties.";
+                                if (automaticallyCorrectInconsistencies) {
+                                    StringBuilder sb3 = new StringBuilder();
+                                    sb3.append("update ");
+                                    sb3.append(tableName);
+                                    sb3.append(" set ");
+                                    sb3.append(valueColumnName);
+                                    sb3.append(" = ");
+                                    sb3.append(String.valueOf(maxEntityId + 10));
+                                    sb3.append(" where ");
+                                    sb3.append(segmentColumnName);
+                                    sb3.append(" = '");
+                                    sb3.append(segmentValue);
+                                    sb3.append("'");
 
-                                throw new RuntimeException(reason);
+                                    int response = em.createNativeQuery(sb3.toString()).executeUpdate();
+                                    if (response <= 0) {
+                                        throw new RuntimeException("Unable to update " + tableName + " with the sequence generator id for " + segmentValue);
+                                    }
+                                } else {
+                                    String reason = "A data inconsistency has been detected between the " + tableName + " table and one or more entity tables for which it manages current max primary key values.\n" +
+                                        "The inconsistency was detected between the managed class (" + mappedClass.getName() + ") and the identifier (" + segmentValue + ") in " + tableName + ". Broadleaf\n" +
+                                        "has stopped startup of the application in order to allow you to resolve the issue and avoid possible data corruption. If you wish to disable this detection, you may\n" +
+                                        "set the 'detect.sequence.generator.inconsistencies' property to false in your application's common.properties or common-shared.properties. If you would like for this component\n" +
+                                        "to autocorrect these problems by setting the sequence generator value to a value greater than the max entity id, then set the 'auto.correct.sequence.generator.inconsistencies'\n" +
+                                        "property to true in your application's common.properties or common-shared.properties. Also, if you are upgrading from 1.6 or below, please refer to\n" +
+                                        "http://docs.broadleafcommerce.org/current/1.6-to-2.0-Migration.html for important information regarding migrating your SEQUENCE_GENERATOR table.";
+                                    LOG.error("Broadleaf Commerce failed to start", new RuntimeException(reason));
+                                    System.exit(1);
+                                }
                             }
                         }
                     }
