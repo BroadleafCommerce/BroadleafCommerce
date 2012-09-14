@@ -80,6 +80,12 @@ public class EditableAdornedTargetListPresenter extends AbstractSubPresentable {
     public EditableAdornedTargetListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle, String adornedTargetEditTitle, String... adornedTargetFields) {
 		this(display, searchDialog, null, searchDialogTitle, adornedTargetEditTitle, adornedTargetFields);
 	}
+
+    public EditableAdornedTargetListPresenter(EditableAdornedTargetListPresenter template) {
+        this(template.display, template.searchDialog, template.availableToTypes, template.searchDialogTitle, template.adornedTargetEditTitle, template.adornedTargetFields);
+        this.abstractDynamicDataSource = template.abstractDynamicDataSource;
+        this.readOnly = template.readOnly;
+    }
 	
 	public void bind() {
 		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
@@ -200,5 +206,45 @@ public class EditableAdornedTargetListPresenter extends AbstractSubPresentable {
 
     public HandlerRegistration getSelectionChangedHandlerRegistration() {
         return selectionChangedHandlerRegistration;
+    }
+
+    public String[] getAdornedTargetFields() {
+        return adornedTargetFields;
+    }
+
+    public void setAdornedTargetFields(String[] adornedTargetFields) {
+        this.adornedTargetFields = adornedTargetFields;
+    }
+
+    public String getAdornedTargetEditTitle() {
+        return adornedTargetEditTitle;
+    }
+
+    public void setAdornedTargetEditTitle(String adornedTargetEditTitle) {
+        this.adornedTargetEditTitle = adornedTargetEditTitle;
+    }
+
+    public EntitySearchDialog getSearchDialog() {
+        return searchDialog;
+    }
+
+    public void setSearchDialog(EntitySearchDialog searchDialog) {
+        this.searchDialog = searchDialog;
+    }
+
+    public String getSearchDialogTitle() {
+        return searchDialogTitle;
+    }
+
+    public void setSearchDialogTitle(String searchDialogTitle) {
+        this.searchDialogTitle = searchDialogTitle;
+    }
+
+    public HandlerRegistration getRowDoubleClickedHandlerRegistration() {
+        return rowDoubleClickedHandlerRegistration;
+    }
+
+    public void setRowDoubleClickedHandlerRegistration(HandlerRegistration rowDoubleClickedHandlerRegistration) {
+        this.rowDoubleClickedHandlerRegistration = rowDoubleClickedHandlerRegistration;
     }
 }
