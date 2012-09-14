@@ -184,4 +184,20 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
     public PersistencePerspective getPersistencePerspective() {
         return persistencePerspective;
     }
+
+    public DataSourceModule[] getModules() {
+        return modules;
+    }
+
+    public void setModules(DataSourceModule[] modules) {
+        this.modules = modules;
+    }
+
+    public DynamicEntityServiceAsync getService() {
+        return service;
+    }
+
+    public void setService(DynamicEntityServiceAsync service) {
+        this.service = service;
+    }
 }
