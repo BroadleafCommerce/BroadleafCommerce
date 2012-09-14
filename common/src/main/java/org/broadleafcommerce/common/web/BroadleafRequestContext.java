@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.site.domain.Theme;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Currency;
 
 public class BroadleafRequestContext {
 	
@@ -49,6 +50,7 @@ public class BroadleafRequestContext {
     private Site site;
     private Theme theme;
     public java.util.Locale javaLocale;
+    public Currency javaCurrency;
 
     public HttpServletRequest getRequest() {
         return request;
@@ -95,6 +97,19 @@ public class BroadleafRequestContext {
     		this.javaLocale = convertLocaleToJavaLocale();
     	}
     	return this.javaLocale;
+    }
+
+    /**
+     * Returns the java.util.Currency constructed from the org.broadleafcommerce.common.currency.domain.BroadleafCurrency
+     * @return
+     */
+    public Currency getJavaCurrency() {
+        if (this.javaCurrency == null) {
+            if (getBroadleafCurrency() != null && getBroadleafCurrency().getCurrencyCode() != null) {
+                this.javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
+            }
+        }
+        return this.javaCurrency;
     }
 
     public void setLocale(Locale locale) {

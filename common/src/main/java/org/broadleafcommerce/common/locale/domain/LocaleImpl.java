@@ -59,7 +59,7 @@ public class LocaleImpl implements Locale {
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order=2, group = "LocaleImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order=4, group = "LocaleImpl_Details", prominent=true)
     protected BroadleafCurrency defaultCurrency;
 
     @Override
