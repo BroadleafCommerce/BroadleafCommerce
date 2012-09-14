@@ -94,6 +94,9 @@ public class OrderDaoImpl implements OrderDao {
         Order order = create();
         if (customer.getUsername() == null) {
             customer.setUsername(String.valueOf(customer.getId()));
+            if (customerDao.readCustomerById(customer.getId()) != null) {
+                throw new IllegalArgumentException("Attempting to save a customer with an id (" + customer.getId() + ") that already exists in the database. This can occur when legacy customers have been migrated to Broadleaf customers, but the batchStart setting has not been declared for id generation. In such a case, the defaultBatchStart property of IdGenerationDaoImpl (spring id of blIdGenerationDao) should be set to the appropriate start value.");
+            }
             customer = customerDao.save(customer);
         }
         order.setCustomer(customer);
