@@ -35,7 +35,9 @@ import javax.persistence.Table;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.pricing.domain.PriceAdjustment;
 import org.broadleafcommerce.core.pricing.domain.PriceAdjustmentImpl;
@@ -92,6 +94,16 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 20)
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_PriceData",
+           // targetUIElementId = "productSkuMediaLayout",
+            dataSourceName = "productOptionPriceDataMapDS",
+            keyPropertyFriendlyName = "PriceListImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = PriceListImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "priceKey"
+        )
     protected Map<String, PriceAdjustment> priceAdjustmentMap = new HashMap<String , PriceAdjustment>();
    
     

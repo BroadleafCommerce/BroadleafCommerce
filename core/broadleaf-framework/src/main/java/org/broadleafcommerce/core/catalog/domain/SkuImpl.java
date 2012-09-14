@@ -55,6 +55,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
@@ -277,6 +278,17 @@ public class SkuImpl implements Sku {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 20)
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_PriceData",
+           // targetUIElementId = "productSkuMediaLayout",
+            dataSourceName = "skuPriceDataMapDS",
+            keyPropertyFriendlyName = "PriceListImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = PriceListImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "priceKey"
+      
+        )
     protected Map<String, PriceData> priceDataMap = new HashMap<String , PriceData>();
 
    
