@@ -161,7 +161,7 @@ public class FormBuilder {
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
                 ((GridStructureView) subPresentable.getDisplay()).getToolBar().disable();
-                presenter.addSubPresentable(subPresentable);
+                presenter.setSubPresentable(dataSource.getDataURL(), subPresentable);
             }
 
             @Override
@@ -190,7 +190,7 @@ public class FormBuilder {
                 subPresentable.setDataSource((ListGridDataSource) dataSource, metadata.getGridVisibleFields(), edits);
                 subPresentable.setReadOnly(!metadata.isMutable());
                 ((GridStructureView) subPresentable.getDisplay()).getToolBar().disable();
-                presenter.addSubPresentable(subPresentable);
+                presenter.setSubPresentable(dataSource.getDataURL(), subPresentable);
             }
 
             @Override
@@ -228,7 +228,7 @@ public class FormBuilder {
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
                 ((GridStructureView) subPresentable.getDisplay()).getToolBar().disable();
-                presenter.addSubPresentable(subPresentable);
+                presenter.setSubPresentable(dataSource.getDataURL(), subPresentable);
             }
         });
     }
