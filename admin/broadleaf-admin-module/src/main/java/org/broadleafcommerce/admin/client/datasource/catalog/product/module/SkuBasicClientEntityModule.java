@@ -85,9 +85,11 @@ public class SkuBasicClientEntityModule extends BasicClientEntityModule {
                     
                     //In order to make the form display show up properly for creating a new single Sku, make all the product
                     //options for the Product visible on the form
-                    for (Property property : result.getClassMetaData().getProperties()) {
-                        DataSourceField field = ((ListGridDataSource)dataSource).getField(property.getName());
-                        field.setAttribute("formHidden", FormHiddenEnum.VISIBLE);
+                    if (result.getClassMetaData().getProperties() != null) {
+                        for (Property property : result.getClassMetaData().getProperties()) {
+                            DataSourceField field = ((ListGridDataSource)dataSource).getField(property.getName());
+                            field.setAttribute("formHidden", FormHiddenEnum.VISIBLE);
+                        }
                     }
                     
                     //Build up a list of the product options that are relevant for this list of Skus
