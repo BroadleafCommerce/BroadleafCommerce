@@ -17,8 +17,7 @@
 package org.broadleafcommerce.common.audit;
 
 import org.broadleafcommerce.common.time.SystemTime;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -28,6 +27,8 @@ import java.lang.reflect.Field;
 import java.util.Calendar;
 
 public class AuditableListener {
+
+    public static final String customerRequestAttributeName = "customer";
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
@@ -74,16 +75,29 @@ public class AuditableListener {
     }
     
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
+        Long customerId = 0L;
     	try {
-    		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    		if (authentication != null) {
-    			Object principal = authentication.getPrincipal();
-    		}
+            BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
+            if (requestContext != null) {
+                Object customer = requestContext.getRequest().getAttribute(customerRequestAttributeName);
+                if (customer != null) {
+                    Class<?> customerClass = customer.getClass();
+                    Field userNameField = getSingleField(customerClass, "username");
+                    userNameField.setAccessible(true);
+                    String username = (String) userNameField.get(customer);
+                    if (username != null) {
+                        //the customer has been persisted
+                        Field idField = getSingleField(customerClass, "id");
+                        idField.setAccessible(true);
+                        customerId = (Long) idField.get(customer);
+                    }
+                }
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
     	field.setAccessible(true);
-    	field.set(entity, 0L);
+    	field.set(entity, customerId);
     }
 
     private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
