@@ -519,5 +519,39 @@ public interface Category extends Serializable {
 	 * @return
 	 */
 	public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy);
+	
+	/**
+	 * Gets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
+	 * extending the domain object itself.
+	 * 
+	 * @return
+	 * @see {@link #getMappedCategoryAttributes()}
+	 */
+    public List<CategoryAttribute> getCategoryAttributes();
 
+    /**
+     * Sets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
+     * extending the domain object and creating a new table to store custom properties.
+     * 
+     * @return
+     */
+    public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes);
+
+    /**
+     * Convenience method to get a {@link CategoryAttribute} by name
+     * 
+     * @param name
+     * @return
+     * @see {@link #getCategoryAttributes()}, {@link #getMappedCategoryAttributes()}
+     */
+    public CategoryAttribute getCategoryAttributeByName(String name);
+
+    /**
+     * Convenience method to return the {@link CategoryAttribute}s for the {@link Category} in an easily-consumable
+     * form
+     * 
+     * @return
+     */
+    public Map<String, CategoryAttribute> getMappedCategoryAttributes();
+    
 }

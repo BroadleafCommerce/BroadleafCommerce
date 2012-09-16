@@ -27,6 +27,8 @@ import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -257,6 +259,13 @@ public class CategoryImpl implements Category, Status {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
+    
+    @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS")
+    protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -708,6 +717,35 @@ public class CategoryImpl implements Category, Status {
     	for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
     		this.categoryMedia.put(me.getKey(), me.getValue());
     	}
+    }
+    
+    @Override
+    public List<CategoryAttribute> getCategoryAttributes() {
+        return categoryAttributes;
+    }
+
+    @Override
+    public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes) {
+        this.categoryAttributes = categoryAttributes;
+    }
+    
+    @Override
+    public CategoryAttribute getCategoryAttributeByName(String name) {
+        for (CategoryAttribute attribute : getCategoryAttributes()) {
+            if (attribute.getName().equals(name)) {
+                return attribute;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, CategoryAttribute> getMappedCategoryAttributes() {
+        Map<String, CategoryAttribute> map = new HashMap<String, CategoryAttribute>();
+        for (CategoryAttribute attr : getCategoryAttributes()) {
+            map.put(attr.getName(), attr);
+        }
+        return map;
     }
 
     @Override
