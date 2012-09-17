@@ -54,18 +54,22 @@ public class CategoryTranslationImpl implements java.io.Serializable,
     @Column(name = "NAME", nullable = false)
     @AdminPresentation(friendlyName = "CategoryImpl_Category_name", order = 3, group = "CategoryTranslationImpl_description", prominent = true, groupOrder = 1)
     protected String name;
+
     @Column(name = "DESCRIPTION", nullable = false)
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order = 3, group = "CategoryTranslationImpl_description", prominent = true, groupOrder = 1)
     protected String description;
+
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=6, group = "CategoryTranslationImpl_description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
+
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CategoryTranslationImpl_locale", order = 3, group = "CategoryTranslationImpl_description", prominent = true, groupOrder = 1)
     protected Locale locale;
+
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name = "CATEGORY_TRANSLATION_CATEGORY_INDEX", columnNames = { "TRANSLATION_ID" })

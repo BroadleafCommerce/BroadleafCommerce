@@ -38,9 +38,10 @@ public class ProductOptionTranslationImpl implements java.io.Serializable,
         ProductOptionTranslation, LocaleIf {
 
     private static final long serialVersionUID = 1L;
+
     @Transient
-    private static final Log LOG = LogFactory
-            .getLog(ProductOptionTranslationImpl.class);
+    private static final Log LOG = LogFactory.getLog(ProductOptionTranslationImpl.class);
+
     @Id
     @GeneratedValue(generator = "ProductOptionTranslationID", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ProductOptionTranslationID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ProductOptionTranslationID", allocationSize = 50)
@@ -56,6 +57,7 @@ public class ProductOptionTranslationImpl implements java.io.Serializable,
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "ProductOptionTranslationImpl_locale", order = 3, group = "ProductOptionTranslationImpl_Label", prominent = true, groupOrder = 1)
     protected Locale locale;
+
     @ManyToOne(targetEntity = ProductOptionImpl.class)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     @Index(name = "PRODUCT_OPTION_TRANSLATION_INDEX", columnNames = { "TRANSLATION_ID" })

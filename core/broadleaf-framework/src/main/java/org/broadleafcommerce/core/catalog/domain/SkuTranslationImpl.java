@@ -37,12 +37,13 @@ import org.hibernate.annotations.Type;
 @Table(name = "BLC_SKU_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SKUTranslationImpl_friendyName")
-public class SkuTranslationImpl implements java.io.Serializable,
-        SkuTranslation, LocaleIf {
+public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation, LocaleIf {
 
     private static final long serialVersionUID = 1L;
+
     @Transient
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
+
     @Id
     @GeneratedValue(generator = "SkuTranslationID", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SkuTranslationID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuTranslationID", allocationSize = 50)
@@ -53,22 +54,27 @@ public class SkuTranslationImpl implements java.io.Serializable,
     @Column(name = "DESCRIPTION", nullable = false)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected String description;
+
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Long_Description", order=6, group = "SkuTranslationImpl_description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
+
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "SkuTranslationImpl_locale", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected Locale locale;
+
     @ManyToOne(targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID")
     @Index(name = "SKU_TRANSLATION_INDEX", columnNames = { "TRANSLATION_ID" })
     protected Sku sku;
+
     @Column(name = "NAME", nullable = false)
     @AdminPresentation(friendlyName = "SkuTranslationImpl_name", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected String name;
+
     @Override
     public Long getId() {
         return id;
