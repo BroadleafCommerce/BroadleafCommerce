@@ -58,8 +58,11 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
 			price = new Money(value);
 		}
 
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (price == null) {
+            return "$0.00";
+        }
 
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
             NumberFormat format = NumberFormat.getCurrencyInstance(brc.getJavaLocale());
             if (brc.getJavaCurrency() != null) {
