@@ -77,8 +77,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		fulfillmentGroupItemRequest.setQuantity(orderItem.getQuantity());
 		fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
 		
-		fulfillmentGroup = fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, request.isPriceOrder());
-		order =  fulfillmentGroup.getOrder();
+		fulfillmentGroup = fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false);
+		order = fulfillmentGroup.getOrder();
 		
 		request.setOrder(order);
 		return request;
@@ -140,7 +140,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 			throw new IllegalStateException("Could not find matching fulfillment group item for the given order item");
 		}
 		
-		order = orderService.save(order, request.isPriceOrder());
+		order = orderService.save(order, false);
 		request.setOrder(order);
 		return request;
 	}
@@ -151,7 +151,6 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         OrderItem orderItem = orderItemService.readOrderItemById(request.getItemRequest().getOrderItemId());
         
         fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
-        
         
         return request;
 	}

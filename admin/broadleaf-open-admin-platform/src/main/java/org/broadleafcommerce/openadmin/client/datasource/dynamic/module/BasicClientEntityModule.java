@@ -1201,7 +1201,6 @@ public class BasicClientEntityModule implements DataSourceModule {
 
 	public void setDataSource(AbstractDynamicDataSource dataSource) {
 		this.dataSource = dataSource;
-        this.dataSource.setAttribute("COLLECTION_PROPERTIES", new HashMap(), true);
 	}
 
 	public String getCeilingEntityFullyQualifiedClassname() {

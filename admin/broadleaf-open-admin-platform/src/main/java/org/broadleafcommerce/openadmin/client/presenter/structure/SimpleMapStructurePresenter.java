@@ -63,6 +63,13 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 		this(display, null, initialValues);
 	}
 
+    public SimpleMapStructurePresenter(SimpleMapStructurePresenter template) {
+        this(template.display, template.availableToTypes, template.initialValues);
+        this.abstractDynamicDataSource = template.abstractDynamicDataSource;
+        this.readOnly = template.readOnly;
+        this.gridFields = template.gridFields;
+    }
+
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
@@ -143,5 +150,21 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 
     public HandlerRegistration getSelectionChangedHandlerRegistration() {
         return selectionChangedHandlerRegistration;
+    }
+
+    public String[] getGridFields() {
+        return gridFields;
+    }
+
+    public void setGridFields(String[] gridFields) {
+        this.gridFields = gridFields;
+    }
+
+    public Map<String, Object> getInitialValues() {
+        return initialValues;
+    }
+
+    public void setInitialValues(Map<String, Object> initialValues) {
+        this.initialValues = initialValues;
     }
 }

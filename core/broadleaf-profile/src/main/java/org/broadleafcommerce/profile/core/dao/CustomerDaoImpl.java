@@ -66,8 +66,6 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     public Customer save(Customer customer) {
-        if (customer.getAuditable() != null) {
-        }
         return em.merge(customer);
     }
 

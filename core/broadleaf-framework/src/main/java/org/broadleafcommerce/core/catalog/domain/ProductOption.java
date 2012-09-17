@@ -122,6 +122,21 @@ public interface ProductOption extends Serializable {
      * @param required
      */
     public void setRequired(Boolean required);
+    
+    /**
+     * Gets the display order of this option in relation to the other {@link ProductOption}s
+     * 
+     * @return
+     */
+    public Integer getDisplayOrder();
+
+    /**
+     * Gets the display order of this option in relation to the other {@link ProductOption}s
+     * 
+     * @param displayOrder
+     */
+	public void setDisplayOrder(Integer displayOrder);
+
 
     /**
      * Gets all the Products associated with this ProductOption

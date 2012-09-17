@@ -89,10 +89,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 		setCacheMaxAge(0);
 		this.service = service;
 		this.persistencePerspective = persistencePerspective;
-		for (DataSourceModule module : modules) {
-			module.setDataSource(this);
-		}
-		this.modules = modules;
+		setModules(modules);
 	}
 
 	public LinkedHashMap<String, String> getPolymorphicEntities() {
@@ -183,5 +180,24 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 
     public PersistencePerspective getPersistencePerspective() {
         return persistencePerspective;
+    }
+
+    public DataSourceModule[] getModules() {
+        return modules;
+    }
+
+    public void setModules(DataSourceModule[] modules) {
+        for (DataSourceModule module : modules) {
+            module.setDataSource(this);
+        }
+        this.modules = modules;
+    }
+
+    public DynamicEntityServiceAsync getService() {
+        return service;
+    }
+
+    public void setService(DynamicEntityServiceAsync service) {
+        this.service = service;
     }
 }

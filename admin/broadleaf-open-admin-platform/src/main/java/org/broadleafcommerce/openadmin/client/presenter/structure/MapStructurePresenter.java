@@ -75,6 +75,13 @@ public class MapStructurePresenter extends AbstractSubPresentable {
 		this(display, entityEditDialog, null, entityEditDialogTitle, null);
 	}
 
+    public MapStructurePresenter(MapStructurePresenter template) {
+        this(template.display, template.entityEditDialog, template.availableToTypes, template.entityEditDialogTitle, template.initialValues);
+        this.abstractDynamicDataSource = template.abstractDynamicDataSource;
+        this.readOnly = template.readOnly;
+        this.gridFields = template.gridFields;
+    }
+
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
@@ -163,5 +170,21 @@ public class MapStructurePresenter extends AbstractSubPresentable {
 
     public void setEntityEditDialog(MapStructureEntityEditDialog entityEditDialog) {
         this.entityEditDialog = entityEditDialog;
+    }
+
+    public String getEntityEditDialogTitle() {
+        return entityEditDialogTitle;
+    }
+
+    public void setEntityEditDialogTitle(String entityEditDialogTitle) {
+        this.entityEditDialogTitle = entityEditDialogTitle;
+    }
+
+    public Map<String, Object> getInitialValues() {
+        return initialValues;
+    }
+
+    public void setInitialValues(Map<String, Object> initialValues) {
+        this.initialValues = initialValues;
     }
 }

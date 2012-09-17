@@ -111,11 +111,19 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
 		String typeStr = element.getAttributeValue("type"); 
 		
 		if (productIdStr != null) {
-			relatedProductDTO.setProductId((Long) StandardExpressionProcessor.processExpression(args, productIdStr));
+		    Object productId = StandardExpressionProcessor.processExpression(args, productIdStr);
+		    if (productId instanceof BigDecimal) {
+		        productId = new Long(((BigDecimal) productId).toPlainString());
+		    }
+			relatedProductDTO.setProductId((Long) productId);
 		}
 		
 		if (categoryIdStr != null) {
-			relatedProductDTO.setCategoryId((Long) StandardExpressionProcessor.processExpression(args, categoryIdStr));			
+		    Object categoryId = StandardExpressionProcessor.processExpression(args, categoryIdStr);
+		    if (categoryId instanceof BigDecimal) {
+		        categoryId = new Long(((BigDecimal) categoryId).toPlainString());
+		    }
+			relatedProductDTO.setCategoryId((Long) categoryId);			
 		}
 		
 		if (quantityStr != null) {

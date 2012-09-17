@@ -67,6 +67,12 @@ public class SimpleSearchListPresenter extends AbstractSubPresentable {
     public SimpleSearchListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
 		this(display, searchDialog, null, searchDialogTitle);
 	}
+
+    public SimpleSearchListPresenter(SimpleSearchListPresenter template) {
+        this(template.display, template.searchDialog, template.availableToTypes, template.searchDialogTitle);
+        this.abstractDynamicDataSource = template.abstractDynamicDataSource;
+        this.readOnly = template.readOnly;
+    }
 	
 	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
@@ -154,5 +160,21 @@ public class SimpleSearchListPresenter extends AbstractSubPresentable {
 
     public HandlerRegistration getSelectionChangedHandlerRegistration() {
         return selectionChangedHandlerRegistration;
+    }
+
+    public EntitySearchDialog getSearchDialog() {
+        return searchDialog;
+    }
+
+    public void setSearchDialog(EntitySearchDialog searchDialog) {
+        this.searchDialog = searchDialog;
+    }
+
+    public String getSearchDialogTitle() {
+        return searchDialogTitle;
+    }
+
+    public void setSearchDialogTitle(String searchDialogTitle) {
+        this.searchDialogTitle = searchDialogTitle;
     }
 }

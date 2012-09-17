@@ -50,6 +50,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.util.StopWatch;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
@@ -72,7 +73,7 @@ import java.util.Map.Entry;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class SolrSearchServiceImpl implements SearchService {
+public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
     
@@ -98,8 +99,13 @@ public class SolrSearchServiceImpl implements SearchService {
 	public SolrSearchServiceImpl(SolrServer solrServer) {
 		this.server = solrServer;
 	}
-	
-	@Override
+
+    @Override
+    public void destroy() throws Exception {
+        ((EmbeddedSolrServer) server).shutdown();
+    }
+
+    @Override
     @Transactional("blTransactionManager")
 	public void rebuildIndex() throws ServiceException, IOException {
 		LOG.info("Rebuilding the solr index...");
