@@ -176,16 +176,18 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             
             //Communicate to the front-end to allow form editing for all of the product options available for the current
             //Product to allow inserting Skus one at a time
-            Long productId = Long.parseLong(cto.get("product").getFilterValues()[0]);
-            Product product = catalogService.findProductById(productId);
             ClassMetadata metadata = new ClassMetadata();
-            List<Property> properties = new ArrayList<Property>();
-            for (ProductOption option : product.getProductOptions()) {
-                Property optionProperty = new Property();
-                optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
-                properties.add(optionProperty);
+            if (cto.get("product").getFilterValues().length > 0) {
+                Long productId = Long.parseLong(cto.get("product").getFilterValues()[0]);
+                Product product = catalogService.findProductById(productId);
+                List<Property> properties = new ArrayList<Property>();
+                for (ProductOption option : product.getProductOptions()) {
+                    Property optionProperty = new Property();
+                    optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
+                    properties.add(optionProperty);
+                }
+                metadata.setProperties(properties.toArray(new Property[0]));
             }
-            metadata.setProperties(properties.toArray(new Property[0]));
             
             //Now fill out the relevant properties for the product options for the Skus that were returned
             for (int i = 0; i < records.size(); i++) {

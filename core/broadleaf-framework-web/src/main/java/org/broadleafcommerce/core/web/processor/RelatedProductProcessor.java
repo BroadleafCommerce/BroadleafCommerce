@@ -73,8 +73,8 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
 	protected void modifyModelAttributes(Arguments arguments, Element element) {
 		RelatedProductsService relatedProductsService = ProcessorUtils.getRelatedProductsService(arguments);
 		List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
-		addToModel(getRelatedProductsResultVar(element), relatedProducts);
-		addToModel(getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
+		addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
+		addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
 	}
 	
 	protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {

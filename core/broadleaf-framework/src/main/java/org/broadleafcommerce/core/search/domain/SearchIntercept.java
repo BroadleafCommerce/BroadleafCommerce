@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
+
+/**
+ * @deprecated Replaced in functionality by {@link SearchRedirect}
+ */
+@Deprecated
 public interface SearchIntercept {
 
     public abstract String getTerm();

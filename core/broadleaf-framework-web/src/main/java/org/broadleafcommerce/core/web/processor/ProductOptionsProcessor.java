@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import java.io.StringWriter;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
@@ -37,6 +29,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+
+import java.io.StringWriter;
+import java.io.Writer;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This processor will add the following information to the model, available for consumption by a template:
@@ -65,12 +65,12 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 		Long productId = (Long) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("productId"));
 		Product product = catalogService.findProductById(productId);
 		if (product != null) {
-			addAllProductOptionsToModel(product);
-			addProductOptionPricingToModel(product);
+			addAllProductOptionsToModel(arguments, product);
+			addProductOptionPricingToModel(arguments, product);
 		}
 	}
 	
-	private void addProductOptionPricingToModel(Product product) {
+	private void addProductOptionPricingToModel(Arguments arguments, Product product) {
 		List<Sku> skus = product.getSkus();
 		List<ProductOptionPricingDTO> skuPricing = new ArrayList<ProductOptionPricingDTO>();
 		for (Sku sku : skus) {
@@ -94,10 +94,10 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			dto.setSelectedOptions(values);
 			skuPricing.add(dto);
 		}
-		writeJSONToModel("skuPricing", skuPricing);
+		writeJSONToModel(arguments, "skuPricing", skuPricing);
 	}
 	
-	private void addAllProductOptionsToModel(Product product) {
+	private void addAllProductOptionsToModel(Arguments arguments, Product product) {
 		List<ProductOption> productOptions = product.getProductOptions();
 		List<ProductOptionDTO> dtos = new ArrayList<ProductOptionDTO>();
 		for (ProductOption option : productOptions) {
@@ -111,15 +111,15 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			dto.setValues(values);
 			dtos.add(dto);
 		}
-		writeJSONToModel("allProductOptions", dtos);
+		writeJSONToModel(arguments, "allProductOptions", dtos);
 	}
 	
-	private void writeJSONToModel(String modelKey, Object o) {
+	private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			Writer strWriter = new StringWriter();
 			mapper.writeValue(strWriter, o);
-			addToModel(modelKey, strWriter.toString());
+			addToModel(arguments, modelKey, strWriter.toString());
 		} catch (Exception ex) {
 			LOG.error("There was a problem writing the product option map to JSON", ex);
 		}

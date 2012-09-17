@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.searchRedirect.dao;
+package org.broadleafcommerce.core.search.redirect.dao;
 
 import java.util.Date;
 import java.util.List;
@@ -23,7 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.searchRedirect.domain.SearchRedirect;
+import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -16,17 +16,21 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
-
+/**
+ * @deprecated Replaced in functionality by {@link SearchRedirectImpl}
+ */
 @Deprecated
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SearchInterceptImpl implements SearchIntercept {

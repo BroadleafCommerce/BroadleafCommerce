@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -25,6 +23,8 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+
+import java.util.List;
 
 /**
  * A Thymeleaf processor that will add the desired categories to the model. It does this by
@@ -70,7 +70,7 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
 				}
 			}
 			
-			addToModel(resultVar, subcategories);
+			addToModel(arguments, resultVar, subcategories);
 		}
 	}
 }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.searchRedirect.service;
+package org.broadleafcommerce.core.search.redirect.service;
 
-import org.broadleafcommerce.core.searchRedirect.domain.SearchRedirect;
+import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 
 
 /**

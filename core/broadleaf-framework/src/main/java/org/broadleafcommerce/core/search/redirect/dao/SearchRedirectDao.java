@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.searchRedirect.dao;
+package org.broadleafcommerce.core.search.redirect.dao;
 
-import org.broadleafcommerce.core.searchRedirect.domain.SearchRedirect;
+import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 
 
 /**
