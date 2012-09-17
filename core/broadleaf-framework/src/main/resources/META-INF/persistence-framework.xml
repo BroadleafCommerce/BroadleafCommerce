@@ -23,7 +23,6 @@
 		<mapping-file>config/bc/jpa/domain/FulfillmentOption.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
-		<mapping-file>config/bc/jpa/domain/SearchIntercept.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Content.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ContentDetails.orm.xml</mapping-file>
@@ -93,7 +92,6 @@
 		<class>org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.FieldImpl</class>
-		<class>org.broadleafcommerce.core.search.domain.SearchInterceptImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>
@@ -105,7 +103,7 @@
 		<class>org.broadleafcommerce.core.content.domain.ContentDetailsImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.CriteriaOfferXref</class>
-		<class>org.broadleafcommerce.core.searchRedirect.domain.SearchRedirectImpl</class>
+		<class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

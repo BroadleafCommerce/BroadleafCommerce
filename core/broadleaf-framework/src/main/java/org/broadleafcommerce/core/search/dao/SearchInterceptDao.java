@@ -16,10 +16,15 @@
 
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.core.search.domain.SearchIntercept;
+import org.broadleafcommerce.core.search.redirect.dao.SearchRedirectDao;
+
 import java.util.List;
 
-import org.broadleafcommerce.core.search.domain.SearchIntercept;
-
+/**
+ * @deprecated Replaced in functionality by {@link SearchRedirectDao}
+ */
+@Deprecated
 public interface SearchInterceptDao {
     public SearchIntercept findInterceptByTerm(String term);
     public List<SearchIntercept> findAllIntercepts();

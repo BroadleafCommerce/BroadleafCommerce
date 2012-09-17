@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.searchRedirect.domain;
+package org.broadleafcommerce.core.search.redirect.domain;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -36,6 +36,7 @@ public interface SearchRedirect extends Serializable {
     public Integer getSearchPriority() ;
     
     public void setSearchPriority(Integer searchPriority);
+
     public Date getActiveStartDate() ;
 
     public void setActiveStartDate(Date activeStartDate);
@@ -44,5 +45,5 @@ public interface SearchRedirect extends Serializable {
 
     public void setActiveEndDate(Date activeEndDate);
 
-    boolean isActive();
+    public boolean isActive();
 }

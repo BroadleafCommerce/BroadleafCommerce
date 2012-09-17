@@ -55,6 +55,12 @@
 	<bean id="org.broadleafcommerce.core.rating.domain.RatingDetail" class="org.broadleafcommerce.core.rating.domain.RatingDetailImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.rating.domain.ReviewDetail" class="org.broadleafcommerce.core.rating.domain.ReviewDetailImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.rating.domain.ReviewFeedback" class="org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet" class="org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.search.domain.Field" class="org.broadleafcommerce.core.search.domain.FieldImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.search.domain.SearchFacet" class="org.broadleafcommerce.core.search.domain.SearchFacetImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.search.domain.SearchFacetRange" class="org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.search.domain.SearchSynonym" class="org.broadleafcommerce.core.search.domain.SearchSynonymImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.search.redirect.domain.SearchRedirect" class="org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.util.domain.CodeType" class="org.broadleafcommerce.core.util.domain.CodeTypeImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.content.domain.Content" class="org.broadleafcommerce.core.content.domain.ContentImpl" scope="prototype" />
 	<bean id="org.broadleafcommerce.core.content.domain.ContentDetails" class="org.broadleafcommerce.core.content.domain.ContentDetailsImpl" scope="prototype" />
