@@ -30,4 +30,6 @@ public interface AdminNavigationService {
 
     public boolean isUserAuthorizedToViewModule(AdminUser adminUser, AdminModule module);
 
+    public AdminSection findAdminSectionByURI(String uri);
+
 }

@@ -33,4 +33,6 @@ public interface AdminNavigationDao {
 
     public List<AdminSection> readAllAdminSections();
 
+    public AdminSection readAdminSectionByURI(String uri);
+
 }

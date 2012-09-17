@@ -44,7 +44,11 @@ public interface AdminSection extends Serializable {
 
     public void setPermissions(List<AdminPermission> permissions);
 
-    public void setActive(Boolean active);
+    public void setDisplayController(String displayController);
 
-    public Boolean getActive();
+    public String getDisplayController();
+
+    public List<AdminModule> getModules();
+
+    public void setModules(List<AdminModule> modules);
 }

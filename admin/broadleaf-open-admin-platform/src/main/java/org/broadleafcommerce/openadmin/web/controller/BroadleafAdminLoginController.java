@@ -18,8 +18,16 @@ package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.web.form.ResetPasswordForm;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * AdminLoginController handles login related needs for the BLC admin including:
@@ -39,8 +48,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafAdminLoginController extends BroadleafAbstractController {
 
+    private static final String ANONYMOUS_USER_NAME = "anonymousUser";
+
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
+
+    @Resource(name="blAdminNavigationService")
+    protected AdminNavigationService adminNavigationService;
 
     // Entry URLs
     protected static String loginView = "login/login";
@@ -51,6 +65,24 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
 
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getLoginView();
+    }
+
+    public String loginSuccess(HttpServletRequest request, HttpServletResponse response, Model model) {
+        List<AdminModule> modules = adminNavigationService.buildMenu(getPersistentAdminUser());
+        if (!modules.isEmpty()) {
+            AdminModule first = modules.get(0);
+            if (!first.getSections().isEmpty()) {
+                AdminSection adminSection = first.getSections().get(0);
+
+                String redirectUrl = adminSection.getUrl();
+                if (adminSection.getSectionKey() != null) {
+                    redirectUrl = redirectUrl + "#moduleKey=" + first.getModuleKey() + "&pageKey=" + adminSection.getSectionKey();
+                }
+
+                return "redirect:" + redirectUrl;
+            }
+        }
+        return null;
     }
    
     public String forgotPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -184,5 +216,19 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
 	public static void setChangePasswordView(String changePasswordView) {
 		BroadleafAdminLoginController.changePasswordView = changePasswordView;
 	}
+
+    protected AdminUser getPersistentAdminUser() {
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        if (ctx != null) {
+            Authentication auth = ctx.getAuthentication();
+            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
+                UserDetails temp = (UserDetails) auth.getPrincipal();
+
+                return adminSecurityService.readAdminUserByUserName(temp.getUsername());
+            }
+        }
+
+        return null;
+    }
 	
 }

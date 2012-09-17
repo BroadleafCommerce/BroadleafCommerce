@@ -54,7 +54,7 @@ public class AdminSectionImpl implements AdminSection {
     @AdminPresentation(friendlyName = "AdminSectionImpl_Name", order=1, group = "AdminSectionImpl_Section", prominent=true)
     protected String name;
 
-    @Column(name = "SECTION_KEY", nullable=false)
+    @Column(name = "SECTION_KEY", nullable=true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Section_Key", order=2, group = "AdminSectionImpl_Section", prominent=true)
     protected String sectionKey;
 
@@ -62,14 +62,20 @@ public class AdminSectionImpl implements AdminSection {
     @AdminPresentation(friendlyName = "AdminSectionImpl_Url", order=3, group = "AdminSectionImpl_Section", prominent=true)
     protected String url;
 
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminModuleImpl.class)
+    @JoinTable(name = "BLC_ADMIN_MODULE_SECTION_XREF", joinColumns = @JoinColumn(name = "ADMIN_SECTION_ID", referencedColumnName = "ADMIN_SECTION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_MODULE_ID", referencedColumnName = "ADMIN_MODULE_ID"))
+    @BatchSize(size = 50)
+    protected List<AdminModule> modules = new ArrayList<AdminModule>();
+
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_SECTION_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_SECTION_ID", referencedColumnName = "ADMIN_SECTION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<AdminPermission> permissions = new ArrayList<AdminPermission>();
 
-    @Transient
-    protected Boolean active;
+    @Column(name = "DISPLAY_CONTROLLER", nullable=true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Controller", order=4, group = "AdminSectionImpl_Section")
+    protected String displayController;
 
     @Override
     public Long getId() {
@@ -111,6 +117,16 @@ public class AdminSectionImpl implements AdminSection {
     }
 
     @Override
+    public List<AdminModule> getModules() {
+        return modules;
+    }
+
+    @Override
+    public void setModules(List<AdminModule> modules) {
+        this.modules = modules;
+    }
+
+    @Override
     public List<AdminPermission> getPermissions() {
         return permissions;
     }
@@ -121,12 +137,12 @@ public class AdminSectionImpl implements AdminSection {
     }
 
     @Override
-    public Boolean getActive() {
-        return active;
+    public String getDisplayController() {
+        return displayController;
     }
 
     @Override
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setDisplayController(String displayController) {
+        this.displayController = displayController;
     }
 }

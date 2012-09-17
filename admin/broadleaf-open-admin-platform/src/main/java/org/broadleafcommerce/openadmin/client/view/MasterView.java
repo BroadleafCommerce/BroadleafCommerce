@@ -87,24 +87,19 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 
         this.modules = modules;
 
-        //setWidth100();
-        setHeight100();
+        setHeight("90%");
         setWidth("81.15%");
-        //setHeight("90%");
         setZIndex(1);
 
+
+        //TODO cleanup - the layout is no longer part of the GWT application
         //addMember(buildHeader());
         //addMember(buildPrimaryMenu(moduleKey));
         //addMember(buildSecondaryMenu(pageKey, moduleKey));
 
 
         canvas = new HLayout();
-        //canvas.setWidth100();
-        //canvas.setHeight100();
-
         addMember(canvas);
-
-        //buildFooter();
 
         bind();
     }
@@ -114,28 +109,29 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
     }
 
     public void onValueChange(ValueChangeEvent<String> event) {
-        	String token = event.getValue();
-            if (token != null) {
-                String page = BLCLaunch.getSelectedPage(token);
-                String moduleName = BLCLaunch.getSelectedModule(token);
+        String token = event.getValue();
+        if (token != null) {
+            String page = BLCLaunch.getSelectedPage(token);
+            String moduleName = BLCLaunch.getSelectedModule(token);
 
-                LinkedHashMap<String, String[]> pages = modules.get(moduleName).getPages();
-                if (SecurityManager.getInstance().isUserAuthorizedToViewModule(moduleName) &&
-                        SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(page)[0])) {
+            LinkedHashMap<String, String[]> pages = modules.get(moduleName).getPages();
+            if (SecurityManager.getInstance().isUserAuthorizedToViewModule(moduleName) &&
+                    SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(page)[0])) {
 
-                    if (moduleName != null && ! moduleName.equals(BLCMain.currentModuleKey)) {
-                        BLCMain.setCurrentModuleKey(moduleName);            
-                        selectPrimaryMenu(moduleName);
-                        buildSecondaryMenu(page, moduleName);
-                        AppController.getInstance().clearCurrentView();
-                    } else {
-                        AppController.getInstance().clearCurrentView();
-                        buildSecondaryMenu(page, moduleName);
-                    }
+                if (moduleName != null && ! moduleName.equals(BLCMain.currentModuleKey)) {
+                    BLCMain.setCurrentModuleKey(moduleName);
+                    //selectPrimaryMenu(moduleName);
+                    //buildSecondaryMenu(page, moduleName);
+                    AppController.getInstance().clearCurrentView();
+                } else {
+                    AppController.getInstance().clearCurrentView();
+                    //buildSecondaryMenu(page, moduleName);
                 }
-        	}
+            }
         }
-    
+    }
+
+    @Deprecated
     private void selectPrimaryMenu(String selectedModule) {
         // Set selected primary menu option.
         for (String moduleKey : moduleLabelMap.keySet()) {
@@ -148,6 +144,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         }
     }
 
+    @Deprecated
     private Layout buildHeader() {
         HLayout header = new HLayout();
         header.setWidth100();
@@ -169,6 +166,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return header;
     }
 
+    @Deprecated
     private void addAuthorizedModulesToMenu(Layout menuHolder, String moduleKey) {
         Collection<Module> allowedModules = modules.values();
         for (Iterator<Module> iterator = allowedModules.iterator(); iterator.hasNext(); ) {
@@ -197,6 +195,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
        }
     }
 
+    @Deprecated
     private Layout buildPrimaryMenu(String currentModule) {
 
         HLayout moduleLayout = new HLayout();
@@ -226,6 +225,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return moduleLayout;
     }
 
+    @Deprecated
     private Layout buildSecondaryMenu(String selectedPage, String moduleKey) {
         secondaryMenu.removeMembers(secondaryMenu.getMembers());
 
@@ -267,6 +267,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return secondaryMenu;
     }
 
+    @Deprecated
     private Canvas buildLogo() {
         ImgButton logo = new ImgButton();
         logo.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo_white.png");
@@ -288,6 +289,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return logo;
     }
 
+    @Deprecated
     private Canvas buildMenuSpacer(){
         ImgButton spacer = new ImgButton();
         spacer.setSrc(GWT.getModuleBaseURL() + "admin/images/nav_spacer_36.png");
@@ -300,6 +302,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return spacer;
     }
 
+    @Deprecated
     private Label buildPrimaryMenuOption(final Module module, boolean selected) {
         Label tmp = new Label(module.getModuleTitle());
         tmp.setValign(VerticalAlignment.CENTER);
@@ -339,6 +342,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return tmp;
     }
 
+    @Deprecated
     private Label buildSecondaryMenuOption(final String title, boolean selected) {
         Label tmp = new Label(title);
         tmp.setTitle(title);
@@ -408,6 +412,8 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return moduleSelectionButton;
     }
 
+
+    @Deprecated
     private Canvas buildUserImage() {
         ImgButton logo = new ImgButton();
         logo.setSrc(GWT.getModuleBaseURL() + "admin/images/user.png");
@@ -418,6 +424,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return logo;
     }
 
+    @Deprecated
     private Canvas buildLogoutImage() {
         ImgButton logo = new ImgButton();
         logo.setSrc(GWT.getModuleBaseURL() + "admin/images/logout_arrow.png");
@@ -429,6 +436,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return logo;
     }
 
+    @Deprecated
     private Canvas buildUserInfo() {
         HLayout userFields = new HLayout();
         userFields.setAlign(Alignment.RIGHT);
@@ -554,6 +562,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return userFields;
     }
 
+    @Deprecated
     private void buildFooter() {
         bottomBar = new ToolStrip();
         bottomBar.setBackgroundImage(GWT.getModuleBaseURL() + "admin/images/header_bg.png");
@@ -592,8 +601,40 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
     public Module lookupModule(String key) {
         return modules.get(key);
     }
+
+    public static void editUserInfoDialog() {
+        final DynamicEntityDataSource userDS = new DynamicEntityDataSource(CeilingEntities.ADMIN_USER);
+        userDS.buildFields(null, false, new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource ds) {
+                AdminUser currentUser = SecurityManager.USER;
+                Record userRecord = new Record();
+                userRecord.setAttribute("id", currentUser.getId());
+                userRecord.setAttribute("name", currentUser.getName());
+                userRecord.setAttribute("email", currentUser.getEmail());
+                userRecord.setAttribute("phoneNumber", currentUser.getPhoneNumber());
+                userRecord.setAttribute("login", currentUser.getUserName());
+                userRecord.setAttribute("_type", new String[]{EntityImplementations.ADMIN_USER});
+
+                EntityEditDialog ed = new EntityEditDialog();
+
+                ed.editRecord("Edit User Information", userDS, userRecord, new ItemEditedHandler() {
+                    public void onItemEdited(ItemEdited event) {
+                        SecurityManager.USER.setPhoneNumber(event.getRecord().getAttribute("phoneNumber"));
+                        SecurityManager.USER.setName(event.getRecord().getAttribute("name"));
+                        SecurityManager.USER.setEmail(event.getRecord().getAttribute("email"));
+
+                    }
+                }, null, new String[]{"login", "activeStatusFlag", "password"}, false);
+            }
+        });
+    }
+
+    protected static native void exportEditUserInfo()/*-{
+        $wnd.blShowEditUserInfo = $entry(@org.broadleafcommerce.openadmin.client.view.MasterView::editUserInfoDialog());
+    }-*/;
+
     protected static native void redirect(String url)/*-{ 
-    $wnd.location = url; 
+        $wnd.location = url;
     }-*/; 
 
 }

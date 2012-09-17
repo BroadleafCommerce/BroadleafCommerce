@@ -17,6 +17,8 @@ package org.broadleafcommerce.admin.web.controller;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,12 +28,13 @@ import javax.servlet.http.HttpServletResponse;
  * Date: 9/12/12
  * Time: 11:31 AM
  */
-public class BroadleafAdminModulesController extends BroadleafAbstractController {
+public class BroadleafAdminModulesController extends BroadleafAbstractController implements Controller {
 
     protected static String modulesView = "modules/modules";
 
-    public String viewModules(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return getModulesView();
+    @Override
+    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return new ModelAndView(modulesView);
     }
 
     public static String getModulesView() {

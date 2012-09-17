@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
@@ -54,6 +55,19 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_SECTIONS");
         List<AdminSection> sections = query.getResultList();
         return sections;
+    }
+
+    @Override
+    public AdminSection readAdminSectionByURI(String uri) {
+        Query query = em.createNamedQuery("BC_READ_ADMIN_SECTION_BY_URI");
+        query.setParameter("uri", uri);
+        AdminSection adminSection = null;
+        try {
+             adminSection = (AdminSection) query.getSingleResult();
+        } catch (NoResultException e) {
+           //do nothing
+        }
+        return adminSection;
     }
 
 }

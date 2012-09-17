@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminNavigationDao;
@@ -25,8 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * This service is used to build the left hand navigation for the admin
+ * @author elbertbautista
+ */
 @Service("blAdminNavigationService")
 @Transactional("blTransactionManager")
 public class AdminNavigationServiceImpl implements AdminNavigationService {
@@ -48,6 +54,9 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
             }
         }
 
+        BeanComparator displayComparator = new BeanComparator("displayOrder");
+        Collections.sort(filtered, displayComparator);
+
         return filtered;
     }
 
@@ -63,6 +72,11 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         }
 
         return false;
+    }
+
+    @Override
+    public AdminSection findAdminSectionByURI(String uri) {
+        return adminNavigationDao.readAdminSectionByURI(uri);
     }
 
     @Override

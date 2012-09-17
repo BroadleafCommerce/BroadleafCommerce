@@ -16,52 +16,31 @@
 
 package org.broadleafcommerce.openadmin.web.processor;
 
+
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.servlet.support.RequestContext;
 import org.thymeleaf.Arguments;
-import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.spring3.context.SpringWebContext;
-import org.thymeleaf.spring3.naming.SpringContextVariableNames;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
- * A Thymeleaf processor that will add the appropriate AdminModules to the model. It does this by
- * iterating through the permissions specified in the SecurityContexts AdminUser object and adding the
- * appropriate section to the model attribute specified by resultVar
- *
- * This is useful in constructing the left navigation menu for the admin console.
+ * A Thymeleaf processor that will add the appropriate AdminUser to the model.
  *
  * @author elbertbautista
  */
-public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor {
+public class AdminUserProcessor extends AbstractModelVariableModifierProcessor {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
-
-    private AdminNavigationService adminNavigationService;
     private AdminSecurityService securityService;
 
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public AdminModuleProcessor() {
-        super("admin_module");
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 10001;
+    public AdminUserProcessor() {
+        super("admin_user");
     }
 
     @Override
@@ -71,16 +50,18 @@ public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor
 
         AdminUser user = getPersistentAdminUser();
         if (user != null) {
-            List<AdminModule> modules =  adminNavigationService.buildMenu(user);
-            addToModel(resultVar, modules);
+            addToModel(resultVar, user);
         }
+    }
 
+    @Override
+    public int getPrecedence() {
+        return 10000;
     }
 
     protected void initServices(Arguments arguments) {
-        if (adminNavigationService == null || securityService == null) {
+        if (securityService == null) {
             final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();
-            adminNavigationService = (AdminNavigationService) applicationContext.getBean("blAdminNavigationService");
             securityService = (AdminSecurityService) applicationContext.getBean("blAdminSecurityService");
         }
     }

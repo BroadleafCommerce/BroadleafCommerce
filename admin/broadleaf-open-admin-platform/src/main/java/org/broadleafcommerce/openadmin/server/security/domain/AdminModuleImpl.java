@@ -54,7 +54,7 @@ public class AdminModuleImpl implements AdminModule {
     @AdminPresentation(friendlyName = "AdminModuleImpl_Name", order=1, group = "AdminModuleImpl_Module", prominent=true)
     protected String name;
 
-    @Column(name = "MODULE_KEY", nullable=false)
+    @Column(name = "MODULE_KEY", nullable=true)
     @AdminPresentation(friendlyName = "AdminModuleImpl_Module_Key", order=2, group = "AdminModuleImpl_Module", prominent=true)
     protected String moduleKey;
 
@@ -66,6 +66,10 @@ public class AdminModuleImpl implements AdminModule {
     @JoinTable(name = "BLC_ADMIN_MODULE_SECTION_XREF", joinColumns = @JoinColumn(name = "ADMIN_MODULE_ID", referencedColumnName = "ADMIN_MODULE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_SECTION_ID", referencedColumnName = "ADMIN_SECTION_ID"))
     @BatchSize(size = 50)
     protected List<AdminSection> sections = new ArrayList<AdminSection>();
+
+    @Column(name = "DISPLAY_ORDER", nullable=true)
+    @AdminPresentation(friendlyName = "AdminModuleImpl_Display_Order", order=4, group = "AdminModuleImpl_Module", prominent=true)
+    protected Integer displayOrder;
 
     @Override
     public Long getId() {
@@ -114,5 +118,15 @@ public class AdminModuleImpl implements AdminModule {
     @Override
     public void setSections(List<AdminSection> sections) {
         this.sections = sections;
+    }
+
+    @Override
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    @Override
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }

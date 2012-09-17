@@ -44,4 +44,8 @@ public interface AdminModule extends Serializable {
 
     public void setSections(List<AdminSection> sections);
 
+    public Integer getDisplayOrder();
+
+    public void setDisplayOrder(Integer displayOrder);
+
 }
