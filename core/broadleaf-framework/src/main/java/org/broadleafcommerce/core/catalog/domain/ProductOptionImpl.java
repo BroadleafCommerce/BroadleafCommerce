@@ -16,16 +16,8 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,8 +34,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -93,6 +94,11 @@ public class ProductOptionImpl implements ProductOption {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<Product> products;
+    
+    @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionTranslationImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected List<ProductOptionTranslation> translations = new ArrayList<ProductOptionTranslation>(); 
     
     @Override
     public Long getId() {
@@ -162,6 +168,14 @@ public class ProductOptionImpl implements ProductOption {
     @Override
     public void setAllowedValues(List<ProductOptionValue> allowedValues) {
         this.allowedValues = allowedValues;
+    }
+
+    public List<ProductOptionTranslation> getTranslations() {
+        return translations;
+    }
+
+    public void setTranslations(List<ProductOptionTranslation> translations) {
+        this.translations = translations;
     }
 
 }

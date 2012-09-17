@@ -419,4 +419,8 @@ public interface Sku extends Serializable {
     public Map<String, PriceData> getPriceDataMap();
 
     public void setPriceDataMap(Map<String, PriceData> priceDataMap);
+    
+    public List<SkuTranslation> getTranslations() ;
+
+    public void setTranslations(List<SkuTranslation> translations);
 }

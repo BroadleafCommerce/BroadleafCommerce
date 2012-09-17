@@ -263,6 +263,11 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
     
+    @OneToMany(mappedBy = "sku", targetEntity = SkuTranslationImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected List<SkuTranslation> translations = new ArrayList<SkuTranslation>();
+    
     @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
     @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED", 
                 joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), 
@@ -728,6 +733,16 @@ public class SkuImpl implements Sku {
     @Override
     public void setPriceDataMap(Map<String, PriceData> priceDataMap) {
         this.priceDataMap = priceDataMap;
+    }
+
+    @Override
+    public List<SkuTranslation> getTranslations() {
+        return translations;
+    }
+
+    @Override
+    public void setTranslations(List<SkuTranslation> translations) {
+        this.translations = translations;
     }
 
 	@Override

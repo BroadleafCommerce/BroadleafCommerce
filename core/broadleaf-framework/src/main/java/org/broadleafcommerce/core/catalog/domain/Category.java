@@ -19,17 +19,17 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
-import org.broadleafcommerce.core.search.domain.SearchFacet;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
 
 /**
  * Implementations of this interface are used to hold data about a Category.  A category is a group of products.
@@ -518,6 +518,18 @@ public interface Category extends Serializable {
 	 * @param currentHierarchy
 	 * @return
 	 */
+	
 	public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy);
+	/** 
+	 * 
+	 * @return list of possible translations
+	 */
+	public List<CategoryTranslation> getTranslations();
+	/**
+	 *      
+	 * @param translations
+	 */
+	public void setTranslations(List<CategoryTranslation> translations);
+
 
 }

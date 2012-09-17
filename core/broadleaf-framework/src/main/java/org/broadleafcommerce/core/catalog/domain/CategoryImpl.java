@@ -257,6 +257,11 @@ public class CategoryImpl implements Category, Status {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
+    
+    @OneToMany(mappedBy = "category", targetEntity = CategoryTranslationImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected List<CategoryTranslation> translations = new ArrayList<CategoryTranslation>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -671,7 +676,15 @@ public class CategoryImpl implements Category, Status {
 	public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets) {
 		this.excludedSearchFacets = excludedSearchFacets;
 	}
-    
+  
+    public List<CategoryTranslation> getTranslations() {
+        return translations;
+    }
+
+    public void setTranslations(List<CategoryTranslation> translations) {
+        this.translations = translations;
+    }
+ 
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
     	final List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();

@@ -15,12 +15,12 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * <p>A product option represents a value that is entered to specify more information about
@@ -152,5 +152,7 @@ public interface ProductOption extends Serializable {
      * @param allowedValues
      */
     public void setAllowedValues(List<ProductOptionValue> allowedValues);
+    public List<ProductOptionTranslation> getTranslations();
 
+    public void setTranslations(List<ProductOptionTranslation> translations);
 }
