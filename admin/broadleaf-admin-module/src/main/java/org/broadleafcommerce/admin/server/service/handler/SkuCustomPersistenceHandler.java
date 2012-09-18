@@ -232,7 +232,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             adminInstance = (Sku)dynamicEntityDao.persist(adminInstance);
             
             //associate the product option values
-            associateProductOptionValuesToSku(entity, adminInstance);
+            associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
             
             //After associating the product option values, save off the Sku
             adminInstance = (Sku)dynamicEntityDao.merge(adminInstance);
@@ -267,7 +267,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 return errorEntity;
             }
             
-            associateProductOptionValuesToSku(entity, adminInstance);
+            associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
             
             adminInstance = (Sku)dynamicEntityDao.merge(adminInstance);
             
@@ -282,12 +282,24 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             throw new ServiceException("Unable to perform fetch for entity: " + Sku.class.getName(), e);
         }
     }
-    
-    protected void associateProductOptionValuesToSku(Entity entity, Sku adminInstance) {
+
+    /**
+     * This initially removes all of the product option values that are currently related to the Sku and then re-associates
+     * the {@link PrdouctOptionValue}s
+     * @param entity
+     * @param adminInstance
+     */
+    protected void associateProductOptionValuesToSku(Entity entity, Sku adminInstance, DynamicEntityDao dynamicEntityDao) {
         //Get the list of product option value ids that were selected from the form
         List<Long> productOptionValueIds = new ArrayList<Long>();
         for (Property property : getProductOptionProperties(entity)) {
             productOptionValueIds.add(Long.parseLong(property.getValue()));
+        }
+        
+        //remove the current list of product option values from the Sku
+        if (adminInstance.getProductOptionValues().size() > 0) {
+            adminInstance.getProductOptionValues().clear();
+            dynamicEntityDao.merge(adminInstance);
         }
         
         //Associate the product option values from the form with the Sku
@@ -300,7 +312,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
         }
     }
-    
+        
     protected List<Property> getProductOptionProperties(Entity entity) {
         List<Property> productOptionProperties = new ArrayList<Property>();
         for (Property property : entity.getProperties()) {
