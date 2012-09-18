@@ -622,7 +622,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     
     private List<PageDTO> getPageListFromCache(String key) {
         Element cacheElement = getPageCache().get(key);
-        if (cacheElement != null) {
+        if (cacheElement != null && cacheElement.getValue() != null) {
             return (List<PageDTO>) getPageCache().get(key).getValue();
         }
         return null;
