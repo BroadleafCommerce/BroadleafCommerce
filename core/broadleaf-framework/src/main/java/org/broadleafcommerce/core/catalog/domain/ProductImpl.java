@@ -20,6 +20,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.Hydrated;
+import org.broadleafcommerce.common.cache.HydratedSetup;
+import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -170,7 +173,8 @@ public class ProductImpl implements Product, Status {
     
     /** The skus. */
     @Transient
-    protected List<Sku> skus = new ArrayList<Sku>();
+    @Hydrated(factoryMethod = "createSkuList")
+    protected List<Sku> skus = null;
     
     @Transient
     protected String promoMessage;
@@ -363,24 +367,34 @@ public class ProductImpl implements Product, Status {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
         for (Sku additionalSku : additionalSkus) {
-            if (additionalSku.getId() != getDefaultSku().getId()) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 allSkus.add(additionalSku);
             }
         }
         return allSkus;
     }
 
-    @Override
-	public List<Sku> getSkus() {
-        if (skus.size() == 0) {
-            List<Sku> additionalSkus = getAdditionalSkus();
-            for (Sku sku : additionalSkus) {
-                if (sku.isActive()) {
-                    skus.add(sku);
-                }
+    public List<Sku> createSkuList() {
+        List<Sku> skuList = new ArrayList<Sku>(50);
+        for (Sku sku : getAdditionalSkus()) {
+            if (sku.isActive()) {
+                skuList.add(sku);
             }
         }
+        return skuList;
+    }
+
+    @Override
+	public List<Sku> getSkus() {
+        if (skus == null) {
+            HydratedSetup.populateFromCache(this);
+        }
         return skus;
+    }
+
+    //required for hydrated cache maintenance
+    public void setSkus(List<Sku> skus) {
+        this.skus = skus;
     }
 
     @Override
@@ -417,7 +431,7 @@ public class ProductImpl implements Product, Status {
         Map<String, Media> result = new HashMap<String, Media>();
         result.putAll(getMedia());
         for (Sku additionalSku : getAdditionalSkus()) {
-            if (additionalSku.getId() != getDefaultSku().getId()) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 result.putAll(additionalSku.getSkuMedia());
             }
         }
