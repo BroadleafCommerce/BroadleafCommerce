@@ -23,14 +23,18 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
@@ -258,10 +262,30 @@ public class CategoryImpl implements Category, Status {
     @BatchSize(size = 50)
     protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
     
-    @OneToMany(mappedBy = "category", targetEntity = CategoryTranslationImpl.class, cascade = {CascadeType.ALL})
+//    @OneToMany(mappedBy = "category", targetEntity = CategoryTranslationImpl.class, cascade = {CascadeType.ALL})
+//    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+//    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+//    protected List<CategoryTranslation> translations = new ArrayList<CategoryTranslation>();
+
+    @ManyToMany(targetEntity = CategoryTranslationImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_TRANSLATION_XREF",
+            joinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TRANSLATION_ID", referencedColumnName = "TRANSLATION_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @MapKey(columns = { @Column(name = "MAP_KEY", nullable = false) })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected List<CategoryTranslation> translations = new ArrayList<CategoryTranslation>();
+    @BatchSize(size = 10)
+    @AdminPresentationMap(
+            friendlyName = "CategoryImpl_Translations",
+            dataSourceName = "categoryTranslationDS",
+            keyPropertyFriendlyName = "TranslationsImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = SkuTranslationImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "translationsKey"
+
+    )
+    protected Map<String, CategoryTranslation> translations = new HashMap<String,CategoryTranslation>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -294,6 +318,29 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getName() {
+        if (translations != null) {
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            Locale locale = brc.getLocale();
+
+            // Search for translation based on locale
+            String localeCode = locale.getLocaleCode();
+            if (localeCode != null) {
+                CategoryTranslation translation = translations.get(localeCode);
+                if (translation != null && translation.getName() != null) {
+                    return translation.getName();
+                }
+            }
+
+            // try just the language
+            String languageCode = LocaleUtil.findLanguageCode(locale);
+            if (languageCode != null && ! localeCode.equals(languageCode)) {
+                CategoryTranslation translation = translations.get(languageCode);
+                if (translation != null && translation.getName() != null) {
+                    return translation.getName();
+                }
+            }
+        }
+
         return name;
     }
 
@@ -343,6 +390,28 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getDescription() {
+        if (translations != null) {
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            Locale locale = brc.getLocale();
+
+            // Search for translation based on locale
+            String localeCode = locale.getLocaleCode();
+            if (localeCode != null) {
+                CategoryTranslation translation = translations.get(localeCode);
+                if (translation != null && translation.getDescription() != null) {
+                    return translation.getDescription();
+                }
+            }
+
+            // try just the language
+            String languageCode = LocaleUtil.findLanguageCode(locale);
+            if (languageCode != null && ! localeCode.equals(languageCode)) {
+                CategoryTranslation translation = translations.get(languageCode);
+                if (translation != null && translation.getDescription() != null) {
+                    return translation.getDescription();
+                }
+            }
+        }
         return description;
     }
 
@@ -677,11 +746,11 @@ public class CategoryImpl implements Category, Status {
 		this.excludedSearchFacets = excludedSearchFacets;
 	}
   
-    public List<CategoryTranslation> getTranslations() {
+    public Map<String, CategoryTranslation> getTranslations() {
         return translations;
     }
 
-    public void setTranslations(List<CategoryTranslation> translations) {
+    public void setTranslations(Map<String, CategoryTranslation> translations) {
         this.translations = translations;
     }
  

@@ -524,12 +524,12 @@ public interface Category extends Serializable {
 	 * 
 	 * @return list of possible translations
 	 */
-	public List<CategoryTranslation> getTranslations();
+	public Map<String, CategoryTranslation> getTranslations();
 	/**
 	 *      
 	 * @param translations
 	 */
-	public void setTranslations(List<CategoryTranslation> translations);
+	public void setTranslations(Map<String, CategoryTranslation> translations);
 
 
 }
