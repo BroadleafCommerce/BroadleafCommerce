@@ -262,11 +262,6 @@ public class CategoryImpl implements Category, Status {
     @BatchSize(size = 50)
     protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
     
-//    @OneToMany(mappedBy = "category", targetEntity = CategoryTranslationImpl.class, cascade = {CascadeType.ALL})
-//    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-//    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-//    protected List<CategoryTranslation> translations = new ArrayList<CategoryTranslation>();
-
     @ManyToMany(targetEntity = CategoryTranslationImpl.class)
     @JoinTable(name = "BLC_CATEGORY_TRANSLATION_XREF",
             joinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID"),
