@@ -416,11 +416,32 @@ public interface Sku extends Serializable {
      * @param excludedFulfillmentOptions
      */
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
+
+    /**
+     * Gets the {@link PriceData} that this {@link Sku} is attached to.
+     *
+     * @return
+     */
     public Map<String, PriceData> getPriceDataMap();
 
+    /**
+     * Sets the {@link PriceData} that this {@link Sku} should be attached to.
+     *
+     * @return
+     */
     public void setPriceDataMap(Map<String, PriceData> priceDataMap);
-    
-    public List<SkuTranslation> getTranslations() ;
 
-    public void setTranslations(List<SkuTranslation> translations);
+    /**
+     * Gets the {@link SkuTranslation}s that this {@link Sku} is attached to.
+     *
+     * @return
+     */
+    public Map<String, SkuTranslation> getTranslations() ;
+
+    /**
+     * Sets the {@link SkuTranslation}s that this {@link Sku} should be attached to.
+     *
+     * @return
+     */
+    public void setTranslations(Map<String, SkuTranslation> translations);
 }

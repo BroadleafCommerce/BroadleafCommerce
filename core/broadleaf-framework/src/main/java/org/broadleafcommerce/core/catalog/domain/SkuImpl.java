@@ -16,39 +16,10 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -57,6 +28,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
@@ -66,15 +38,18 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.pricing.domain.PriceData;
 import org.broadleafcommerce.core.pricing.domain.PriceDataImpl;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -262,11 +237,26 @@ public class SkuImpl implements Sku {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
-    
-    @OneToMany(mappedBy = "sku", targetEntity = SkuTranslationImpl.class, cascade = {CascadeType.ALL})
+
+    @ManyToMany(targetEntity = SkuTranslationImpl.class)
+    @JoinTable(name = "BLC_SKU_TRANSLATION_XREF",
+            joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TRANSLATION_ID", referencedColumnName = "TRANSLATION_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @MapKey(columns = { @Column(name = "MAP_KEY", nullable = false) })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected List<SkuTranslation> translations = new ArrayList<SkuTranslation>();
+    @BatchSize(size = 10)
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_Translations",
+            dataSourceName = "skuTranslationDS",
+            keyPropertyFriendlyName = "TranslationsImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = SkuTranslationImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "translationsKey"
+
+    )
+    protected Map<String, SkuTranslation> translations = new HashMap<String,SkuTranslation>();
     
     @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
     @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED", 
@@ -433,6 +423,29 @@ public class SkuImpl implements Sku {
     public String getName() {
         if (name == null && hasDefaultSku()) {
             return lookupDefaultSku().getName();
+        } else {
+            if (translations != null) {
+                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+                Locale locale = brc.getLocale();
+
+                // Search for translation based on locale
+                String localeCode = locale.getLocaleCode();
+                if (localeCode != null) {
+                    SkuTranslation translation = translations.get(localeCode);
+                    if (translation != null && translation.getName() != null) {
+                        return translation.getName();
+                    }
+                }
+
+                // try just the language
+                String languageCode = LocaleUtil.findLanguageCode(locale);
+                if (languageCode != null && ! localeCode.equals(languageCode)) {
+                    SkuTranslation translation = translations.get(languageCode);
+                    if (translation != null && translation.getName() != null) {
+                        return translation.getName();
+                    }
+                }
+            }
         }
         return name;
     }
@@ -446,6 +459,29 @@ public class SkuImpl implements Sku {
     public String getDescription() {
         if (description == null && hasDefaultSku()) {
             return lookupDefaultSku().getDescription();
+        } else {
+            if (translations != null) {
+                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+                Locale locale = brc.getLocale();
+
+                // Search for translation based on locale
+                String localeCode = locale.getLocaleCode();
+                if (localeCode != null) {
+                    SkuTranslation translation = translations.get(localeCode);
+                    if (translation != null && translation.getDescription() != null) {
+                        return translation.getDescription();
+                    }
+                }
+
+                // try just the language
+                String languageCode = LocaleUtil.findLanguageCode(locale);
+                if (languageCode != null && ! localeCode.equals(languageCode)) {
+                    SkuTranslation translation = translations.get(languageCode);
+                    if (translation != null && translation.getDescription() != null) {
+                        return translation.getDescription();
+                    }
+                }
+            }
         }
         return description;
     }
@@ -459,6 +495,29 @@ public class SkuImpl implements Sku {
     public String getLongDescription() {
         if (longDescription == null && hasDefaultSku()) {
             return lookupDefaultSku().getLongDescription();
+        } else {
+            if (translations != null) {
+                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+                Locale locale = brc.getLocale();
+
+                // Search for translation based on locale
+                String localeCode = locale.getLocaleCode();
+                if (localeCode != null) {
+                    SkuTranslation translation = translations.get(localeCode);
+                    if (translation != null && translation.getLongDescription() != null) {
+                        return translation.getLongDescription();
+                    }
+                }
+
+                // try just the language
+                String languageCode = LocaleUtil.findLanguageCode(locale);
+                if (languageCode != null && ! localeCode.equals(languageCode)) {
+                    SkuTranslation translation = translations.get(languageCode);
+                    if (translation != null && translation.getLongDescription() != null) {
+                        return translation.getLongDescription();
+                    }
+                }
+            }
         }
         return longDescription;
     }
@@ -736,12 +795,12 @@ public class SkuImpl implements Sku {
     }
 
     @Override
-    public List<SkuTranslation> getTranslations() {
+    public Map<String, SkuTranslation> getTranslations() {
         return translations;
     }
 
     @Override
-    public void setTranslations(List<SkuTranslation> translations) {
+    public void setTranslations(Map<String, SkuTranslation> translations) {
         this.translations = translations;
     }
 
