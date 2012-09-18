@@ -627,6 +627,25 @@ public class SkuImpl implements Sku {
 	public List<SkuAttribute> getSkuAttributes() {
 		return skuAttributes;
 	}
+    
+    @Override
+    public SkuAttribute getSkuAttributeByName(String name) {
+    	for (SkuAttribute attribute : getSkuAttributes()) {
+    		if (attribute.getName().equals(name)) {
+    			return attribute;
+    		}
+    	}
+    	return null;
+    }
+    
+    @Override
+    public Map<String, SkuAttribute> getMappedSkuAttributes() {
+    	Map<String, SkuAttribute> map = new HashMap<String, SkuAttribute>();
+    	for (SkuAttribute attr : getSkuAttributes()) {
+    		map.put(attr.getName(), attr);
+    	}
+    	return map;
+    }
 
     @Override
     public List<ProductOptionValue> getProductOptionValues() {
