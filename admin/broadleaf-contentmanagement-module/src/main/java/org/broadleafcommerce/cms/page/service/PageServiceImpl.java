@@ -620,10 +620,11 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         getPageCache().put(new Element(key, pageList));
     }
     
+    @SuppressWarnings("unchecked")
     private List<PageDTO> getPageListFromCache(String key) {
         Element cacheElement = getPageCache().get(key);
         if (cacheElement != null && cacheElement.getValue() != null) {
-            return (List<PageDTO>) getPageCache().get(key).getValue();
+            return (List<PageDTO>) cacheElement.getValue();
         }
         return null;
     }
