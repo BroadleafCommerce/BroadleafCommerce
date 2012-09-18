@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Only the product is required to add an item to an order.
@@ -43,7 +44,7 @@ public abstract class AbstractOrderItemRequest {
     private int quantity;
     private PersonalMessage personalMessage;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
-
+    private Order order;
     public Sku getSku() {
         return sku;
     }
@@ -95,15 +96,27 @@ public abstract class AbstractOrderItemRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AbstractOrderItemRequest)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractOrderItemRequest)) {
+            return false;
+        }
 
         AbstractOrderItemRequest that = (AbstractOrderItemRequest) o;
 
-        if (!category.equals(that.category)) return false;
-        if (!product.equals(that.product)) return false;
-        if (quantity != that.quantity) return false;
-        if (!sku.equals(that.sku)) return false;
+        if (!category.equals(that.category)) {
+            return false;
+        }
+        if (!product.equals(that.product)) {
+            return false;
+        }
+        if (quantity != that.quantity) {
+            return false;
+        }
+        if (!sku.equals(that.sku)) {
+            return false;
+        }
 
         return true;
     }
@@ -123,5 +136,13 @@ public abstract class AbstractOrderItemRequest {
 
     public void setPersonalMessage(PersonalMessage personalMessage) {
         this.personalMessage = personalMessage;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

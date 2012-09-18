@@ -16,16 +16,8 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,8 +29,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
@@ -79,38 +79,47 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
     private BigDecimal discountedPrice;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public OrderItem getOrderItem() {
         return orderItem;
     }
 
+    @Override
     public void setOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
     }
 
+    @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
     }
 
+    @Override
     public int getPriority() {
         return offer.getPriority();
     }
 
+    @Override
     public Offer getOffer() {
         return offer;
     }
     
+    @Override
     public Money getDiscountedPrice() {
-        return discountedPrice == null ? null : new Money(discountedPrice);
+        return discountedPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(discountedPrice,getOrderItem().getOrder().getCurrency());
     }
     
+    @Override
     public void setDiscountedPrice(Money discountedPrice) {
 		this.discountedPrice = discountedPrice.getAmount();
 	}
@@ -157,12 +166,15 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CandidateItemOfferImpl other = (CandidateItemOfferImpl) obj;
 
         if (id != null && other.id != null) {
@@ -170,20 +182,26 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         }
 
         if (discountedPrice == null) {
-            if (other.discountedPrice != null)
+            if (other.discountedPrice != null) {
                 return false;
-        } else if (!discountedPrice.equals(other.discountedPrice))
+            }
+        } else if (!discountedPrice.equals(other.discountedPrice)) {
             return false;
+        }
         if (offer == null) {
-            if (other.offer != null)
+            if (other.offer != null) {
                 return false;
-        } else if (!offer.equals(other.offer))
+            }
+        } else if (!offer.equals(other.offer)) {
             return false;
+        }
         if (orderItem == null) {
-            if (other.orderItem != null)
+            if (other.orderItem != null) {
                 return false;
-        } else if (!orderItem.equals(other.orderItem))
+            }
+        } else if (!orderItem.equals(other.orderItem)) {
             return false;
+        }
         return true;
     }
 

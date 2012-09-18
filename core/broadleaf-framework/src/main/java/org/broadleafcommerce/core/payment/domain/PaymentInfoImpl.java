@@ -16,12 +16,27 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -102,101 +117,127 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Transient
     protected Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
 
+    @Override
     public Money getAmount() {
-        return amount == null ? null : new Money(amount);
+        return amount == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amount,getOrder().getCurrency());
     }
 
+    @Override
     public void setAmount(Money amount) {
         this.amount = Money.toAmount(amount);
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Order getOrder() {
         return order;
     }
 
+    @Override
     public void setOrder(Order order) {
         this.order = order;
     }
 
+    @Override
     public Address getAddress() {
         return address;
     }
 
+    @Override
     public void setAddress(Address address) {
         this.address = address;
     }
 
+    @Override
     public Phone getPhone() {
         return phone;
     }
 
+    @Override
     public void setPhone(Phone phone) {
         this.phone = phone;
     }
 
+    @Override
     public String getReferenceNumber() {
         return referenceNumber;
     }
 
+    @Override
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
 
+    @Override
     public PaymentInfoType getType() {
         return PaymentInfoType.getInstance(type);
     }
 
+    @Override
     public void setType(PaymentInfoType type) {
         this.type = type.getType();
     }
 
+    @Override
     public List<AmountItem> getAmountItems() {
 		return amountItems;
 	}
 
-	public void setAmountItems(List<AmountItem> amountItems) {
+	@Override
+    public void setAmountItems(List<AmountItem> amountItems) {
 		this.amountItems = amountItems;
 	}
 
-	public String getCustomerIpAddress() {
+	@Override
+    public String getCustomerIpAddress() {
 		return customerIpAddress;
 	}
 
-	public void setCustomerIpAddress(String customerIpAddress) {
+	@Override
+    public void setCustomerIpAddress(String customerIpAddress) {
 		this.customerIpAddress = customerIpAddress;
 	}
 
-	public Map<String, String> getAdditionalFields() {
+	@Override
+    public Map<String, String> getAdditionalFields() {
 		return additionalFields;
 	}
 
-	public void setAdditionalFields(Map<String, String> additionalFields) {
+	@Override
+    public void setAdditionalFields(Map<String, String> additionalFields) {
 		this.additionalFields = additionalFields;
 	}
 
+    @Override
     public Map<String, String[]> getRequestParameterMap() {
         return requestParameterMap;
     }
 
+    @Override
     public void setRequestParameterMap(Map<String, String[]> requestParameterMap) {
         this.requestParameterMap = requestParameterMap;
     }
 
+    @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PaymentInfoImpl other = (PaymentInfoImpl) obj;
 
         if (id != null && other.id != null) {
@@ -204,18 +245,23 @@ public class PaymentInfoImpl implements PaymentInfo {
         }
 
         if (referenceNumber == null) {
-            if (other.referenceNumber != null)
+            if (other.referenceNumber != null) {
                 return false;
-        } else if (!referenceNumber.equals(other.referenceNumber))
+            }
+        } else if (!referenceNumber.equals(other.referenceNumber)) {
             return false;
+        }
         if (type == null) {
-            if (other.type != null)
+            if (other.type != null) {
                 return false;
-        } else if (!type.equals(other.type))
+            }
+        } else if (!type.equals(other.type)) {
             return false;
+        }
         return true;
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -224,6 +270,7 @@ public class PaymentInfoImpl implements PaymentInfo {
         return result;
     }
 
+    @Override
     public Referenced createEmptyReferenced() {
         if (getReferenceNumber() == null) {
             throw new RuntimeException("referenceNumber must be already set");

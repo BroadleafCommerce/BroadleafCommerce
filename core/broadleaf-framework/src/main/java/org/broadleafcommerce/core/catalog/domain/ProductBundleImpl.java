@@ -15,6 +15,19 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -26,18 +39,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -102,74 +103,112 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         return null;
     }
     
+    @Override
     public Money getBundleItemsRetailPrice() {
-        Money price = new Money(BigDecimal.ZERO);
+        Money price = new Money(BankersRounding.zeroAmount());
         for (SkuBundleItem item : getSkuBundleItems()) {
-            price = price.add(item.getRetailPrice());
+            if(price.isZero()) {
+                //make sure that the currency is updated;
+                price= item.getRetailPrice();
+            } else {
+                price = price.add(item.getRetailPrice());
+            }
         }
         return price;
     }
     
+    @Override
     public Money getBundleItemsSalePrice() {
-        Money price = new Money(BigDecimal.ZERO);
+        Money price = new Money(BankersRounding.zeroAmount());
         for (SkuBundleItem item : getSkuBundleItems()){
-            price = price.add(item.getSalePrice());
+            if(price.isZero()) {
+              //make sure that the currency is updated;
+                price= item.getSalePrice();
+            } else {
+                price = price.add(item.getSalePrice());
+            }
         }
         return price;
     }
 
+    @Override
     public Boolean getAutoBundle() {
         return autoBundle;
     }
 
+    @Override
     public void setAutoBundle(Boolean autoBundle) {
         this.autoBundle = autoBundle;
     }
 
+    @Override
     public Boolean getItemsPromotable() {
         return itemsPromotable;
     }
 
+    @Override
     public void setItemsPromotable(Boolean itemsPromotable) {
         this.itemsPromotable = itemsPromotable;
     }
 
+    @Override
     public Boolean getBundlePromotable() {
         return bundlePromotable;
     }
 
+    @Override
     public void setBundlePromotable(Boolean bundlePromotable) {
         this.bundlePromotable = bundlePromotable;
     }
 
+    @Override
     public List<SkuBundleItem> getSkuBundleItems() {
         return skuBundleItems;
     }
 
+    @Override
     public void setSkuBundleItems(List<SkuBundleItem> skuBundleItems) {
         this.skuBundleItems = skuBundleItems;
     }
 
+    @Override
     public Integer getPriority() {
         return priority;
     }
 
+    @Override
     public void setPriority(Integer priority) {
         this.priority = priority;
     }
 
+    @Override
     public BigDecimal getPotentialSavings() {
         if (skuBundleItems != null) {
-            Money totalNormalPrice = new Money();
-            Money totalBundlePrice = new Money();
+            Money totalNormalPrice = new Money(BankersRounding.zeroAmount());
+            Money totalBundlePrice = new Money(BankersRounding.zeroAmount());
 
             for (SkuBundleItem skuBundleItem : skuBundleItems) {
-                totalNormalPrice = totalNormalPrice.add(skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                if(totalNormalPrice.isZero()) {
+                    //make sure that the currency is updated;
+                    totalNormalPrice= skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity());
+                  } else {
+                    totalNormalPrice = totalNormalPrice.add(skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                  }
                 if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
                     if (skuBundleItem.getSalePrice() != null) {
-                        totalBundlePrice = totalBundlePrice.add(skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity()));
+                        if(totalBundlePrice.isZero()) {
+                            //make sure that the currency is updated;
+                            totalBundlePrice = skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity());
+                          } else {
+                             totalBundlePrice = totalBundlePrice.add(skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity()));
+                          }
                     } else {
-                        totalBundlePrice = totalBundlePrice.add(skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                        if(totalBundlePrice.isZero()) {
+                            //make sure that the currency is updated;
+                            totalBundlePrice = skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity());
+                          } else {
+                            totalBundlePrice = totalBundlePrice.add(skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                          }
                     }
                 }
             }

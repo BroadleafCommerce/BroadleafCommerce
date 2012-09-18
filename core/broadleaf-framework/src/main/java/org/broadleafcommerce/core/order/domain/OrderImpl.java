@@ -47,6 +47,7 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -78,33 +79,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyManyToMany;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -221,9 +195,11 @@ public class OrderImpl implements Order {
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="value")
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
-    @Column (name = "CURRENCY",nullable=true)
-    @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", order=1, group = "PriceListImpl_Details", prominent=true)
-    private BroadleafCurrency currency;
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", order=1, group = "PriceListImpl_Details")
+    protected BroadleafCurrency currency;
+  
 
 
     @Override
@@ -248,7 +224,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getSubTotal() {
-        return subTotal == null ? null : new Money(subTotal);
+        return subTotal == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(subTotal,getCurrency());
     }
 
     @Override
@@ -258,7 +234,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
-        Money calculatedSubTotal = new Money();
+        Money calculatedSubTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getCurrency());
         for (OrderItem orderItem : orderItems) {
         	Money price;
         	if (includeNonTaxableItems) {
@@ -283,7 +259,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getTotal() {
-        return total == null ? null : new Money(total);
+        return total == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(total,getCurrency());
     }
 
     @Override
@@ -297,7 +273,7 @@ public class OrderImpl implements Order {
         if (myTotal == null) {
             return null;
         }
-        Money totalPayments = new Money(BigDecimal.ZERO);
+        Money totalPayments = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,getCurrency());
         for (PaymentInfo pi : getPaymentInfos()) {
             if (pi.getAmount() != null) {
                 totalPayments = totalPayments.add(pi.getAmount());
@@ -383,7 +359,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getTotalTax() {
-        return totalTax == null ? null : new Money(totalTax);
+        return totalTax == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalTax,getCurrency());
     }
 
     @Override
@@ -393,7 +369,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getTotalShipping() {
-        return totalShipping == null ? null : new Money(totalShipping);
+        return totalShipping == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalShipping,getCurrency());
     }
 
     @Override
@@ -500,7 +476,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getItemAdjustmentsValue() {
-        Money itemAdjustmentsValue = new Money(0);
+        Money itemAdjustmentsValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getCurrency());
         for (OrderItem orderItem : orderItems) {
             itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getAdjustmentValue().multiply(orderItem.getQuantity()));
         }
@@ -509,7 +485,7 @@ public class OrderImpl implements Order {
     
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
-    	Money adjustmentValue = new Money(0);
+    	Money adjustmentValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getCurrency());
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
         	adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFulfillmentGroupAdjustmentsValue());
         }
@@ -518,7 +494,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getOrderAdjustmentsValue() {
-        Money orderAdjustmentsValue = new Money(0);
+        Money orderAdjustmentsValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getCurrency());
         for (OrderAdjustment orderAdjustment : orderAdjustments) {
             orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
         }

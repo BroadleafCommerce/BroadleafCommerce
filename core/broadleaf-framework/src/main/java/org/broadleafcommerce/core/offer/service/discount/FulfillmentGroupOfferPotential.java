@@ -16,8 +16,9 @@
 
 package org.broadleafcommerce.core.offer.service.discount;
 
-import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.Offer;
 
 /**
  * 
@@ -27,7 +28,7 @@ import org.broadleafcommerce.common.money.Money;
 public class FulfillmentGroupOfferPotential {
 	
 	protected Offer offer;
-	protected Money totalSavings = new Money(0D);
+	protected Money totalSavings = new Money(BankersRounding.zeroAmount());
 	protected int priority;
 	
 	public Offer getOffer() {
@@ -64,18 +65,23 @@ public class FulfillmentGroupOfferPotential {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+            return true;
+        }
+		if (obj == null) {
+            return false;
+        }
+		if (getClass() != obj.getClass()) {
+            return false;
+        }
 		FulfillmentGroupOfferPotential other = (FulfillmentGroupOfferPotential) obj;
 		if (offer == null) {
-			if (other.offer != null)
-				return false;
-		} else if (!offer.equals(other.offer))
-			return false;
+			if (other.offer != null) {
+                return false;
+            }
+		} else if (!offer.equals(other.offer)) {
+            return false;
+        }
 		return true;
 	}
 

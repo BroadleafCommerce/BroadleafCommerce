@@ -19,15 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,10 +33,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.math.BigDecimal;
-import java.util.List;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 /**
  * @author Phillip Verheyden
@@ -97,6 +100,14 @@ public class SkuFeeImpl implements SkuFee {
             inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected List<Sku> skus;
+    
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order=1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent=true)
+    protected BroadleafCurrency currency;
+
+
+
 
     @Override
     public Long getId() {
@@ -130,7 +141,7 @@ public class SkuFeeImpl implements SkuFee {
 
     @Override
     public Money getAmount() {
-        return new Money(amount);
+        return org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amount,getCurrency());
     }
 
     @Override
@@ -177,5 +188,12 @@ public class SkuFeeImpl implements SkuFee {
     public void setSkus(List<Sku> skus) {
         this.skus = skus;
     }
-
+    @Override
+    public BroadleafCurrency getCurrency() {
+        return currency;
+    }
+    @Override
+    public void setCurrency(BroadleafCurrency currency) {
+        this.currency = currency;
+    }
 }

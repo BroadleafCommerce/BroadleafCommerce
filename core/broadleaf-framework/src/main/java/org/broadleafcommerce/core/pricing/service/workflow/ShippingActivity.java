@@ -50,7 +50,7 @@ public class ShippingActivity extends BaseActivity {
          * 3. add FG back to order
          */
 
-        Money totalShipping = new Money(0D);
+        Money totalShipping = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,order.getCurrency());
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             fulfillmentGroup = shippingService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
             totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());

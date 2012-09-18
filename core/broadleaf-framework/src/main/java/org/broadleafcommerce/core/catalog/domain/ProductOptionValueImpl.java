@@ -38,6 +38,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.pricing.domain.PriceAdjustment;
 import org.broadleafcommerce.core.pricing.domain.PriceAdjustmentImpl;
@@ -139,30 +140,22 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     
     @Override
     public Money getPriceAdjustment() {
-        /*
-         * if (
-                 
-                        SkuPricingConsiderationContext.getSkuPricingService() != null
-        ) {
- 
- // TODO:  handle productOptionValue
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getOptionValuePrice(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());                
-                returnPrice = dynamicPrices.getSalePrice();
-        } else {
-            returnPrice = (salePrice == null ? null : new Money(salePrice));
-        }
-         */
-        Money dynamicAdjustedPrice=null;
-        if(SkuPricingConsiderationContext.hasDynamicPricing()) {
-            dynamicAdjustedPrice=SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustmentForProductOptionValue(this,SkuPricingConsiderationContext.getSkuPricingConsiderationContext());                
-           
+
+      Money returnPrice = null;
+        
+       
+        if (SkuPricingConsiderationContext.hasDynamicPricing()) {
          
-             
+                DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this,priceAdjustment == null ? null : new Money(priceAdjustment), SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                returnPrice = dynamicPrices.getPriceAdjustment(); 
+          
+        } else {
+            if (priceAdjustment != null) {
+                returnPrice = new Money(priceAdjustment,Money.defaultCurrency());
+            }
         }
-        if (dynamicAdjustedPrice == null) {
-            dynamicAdjustedPrice = (priceAdjustment == null ? null : new Money(priceAdjustment));
-        }
-        return dynamicAdjustedPrice;
+        
+        return returnPrice;
     }
 
     @Override

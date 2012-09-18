@@ -16,30 +16,12 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -54,15 +36,37 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -219,6 +223,12 @@ public class OfferImpl implements Offer, Status {
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)
     protected BigDecimal qualifyingItemSubTotal;
+
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_currency", order = 2, group = "PaymentLogImpl_Payment_Log", readOnly = true)
+    private BroadleafCurrency currency;
+    
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -512,10 +522,12 @@ public class OfferImpl implements Offer, Status {
 		this.qualifyingItemCriteria = qualifyingItemCriteria;
 	}
 
+    @Override
     public Set<OfferItemCriteria> getTargetItemCriteria() {
         return targetItemCriteria;
     }
 
+    @Override
     public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria) {
         this.targetItemCriteria = targetItemCriteria;
     }
@@ -574,12 +586,22 @@ public class OfferImpl implements Offer, Status {
         return DateUtil.isActive(startDate, endDate, true) && 'Y'!=getArchived();
     }
     
+    @Override
     public Money getQualifyingItemSubTotal() {
-        return qualifyingItemSubTotal == null ? null : new Money(qualifyingItemSubTotal);
+        return qualifyingItemSubTotal == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(qualifyingItemSubTotal,getCurrency());
     }
 
+    @Override
     public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
         this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
+    }
+    @Override
+    public BroadleafCurrency getCurrency() {
+        return currency;
+    }
+    @Override
+    public void setCurrency(BroadleafCurrency currency) {
+        this.currency = currency;
     }
 
     @Override
@@ -595,12 +617,15 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         OfferImpl other = (OfferImpl) obj;
 
         if (id != null && other.id != null) {
@@ -608,25 +633,33 @@ public class OfferImpl implements Offer, Status {
         }
         
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (startDate == null) {
-            if (other.startDate != null)
+            if (other.startDate != null) {
                 return false;
-        } else if (!startDate.equals(other.startDate))
+            }
+        } else if (!startDate.equals(other.startDate)) {
             return false;
+        }
         if (type == null) {
-            if (other.type != null)
+            if (other.type != null) {
                 return false;
-        } else if (!type.equals(other.type))
+            }
+        } else if (!type.equals(other.type)) {
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
-        } else if (!value.equals(other.value))
+            }
+        } else if (!value.equals(other.value)) {
             return false;
+        }
         return true;
     }
 

@@ -83,6 +83,9 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency {
     }
 
     public static Money getMoney(BigDecimal d, BroadleafCurrency currency) {
+        if(d==null) {
+            return null;
+        }
         if (currency != null) {
             return new Money(d, currency.getCurrencyCode());
         } else {

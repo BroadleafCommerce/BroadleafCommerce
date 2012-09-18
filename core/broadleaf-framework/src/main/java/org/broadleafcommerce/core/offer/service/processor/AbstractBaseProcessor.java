@@ -16,25 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import org.apache.commons.collections.map.LRUMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.core.offer.domain.OfferRule;
-import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
-import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.tool.hbm2x.StringUtils;
-import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +25,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferRule;
+import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.hibernate.tool.hbm2x.StringUtils;
+import org.mvel2.MVEL;
+import org.mvel2.ParserContext;
 
 /**
  * 
@@ -111,10 +111,10 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 				return false;
 			} else {			
 				// Checking if targets meet subtotal for item offer with no item criteria.
-				Money accumulatedTotal = new Money(0);
+				Money accumulatedTotal = null;
 				for (PromotableOrderItem orderItem : candidateItem.getCandidateTargets()) {						
 					Money itemPrice = orderItem.getCurrentPrice().multiply(orderItem.getQuantity());
-					accumulatedTotal = accumulatedTotal.add(itemPrice);
+					accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
 					if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
 						if (LOG.isTraceEnabled()) {
 							LOG.trace("Offer " + offer.getName() + " meets qualifying item subtotal.");
@@ -129,7 +129,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 			}
 		} else {
 			if (candidateItem.getCandidateQualifiersMap() != null) {
-				Money accumulatedTotal = new Money(0);
+				Money accumulatedTotal = null;
 				Set<PromotableOrderItem> usedItems = new HashSet<PromotableOrderItem>();
 				for (OfferItemCriteria criteria : candidateItem.getCandidateQualifiersMap().keySet()) {
 					List<PromotableOrderItem> promotableItems = candidateItem.getCandidateQualifiersMap().get(criteria);
@@ -138,7 +138,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 							if (!usedItems.contains(item)) {
 								usedItems.add(item);
 								Money itemPrice = item.getCurrentPrice().multiply(item.getQuantity());
-								accumulatedTotal = accumulatedTotal.add(itemPrice);
+								accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
 								if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
 									if (LOG.isTraceEnabled()) {
 										LOG.trace("Offer " + offer.getName() + " meets the item subtotal requirement.");
@@ -258,12 +258,14 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 		}
 	}
 	
-	public void clearOffersandAdjustments(PromotableOrder order) {
+	@Override
+    public void clearOffersandAdjustments(PromotableOrder order) {
         order.removeAllCandidateOffers();
         order.removeAllAdjustments();
     }
 	
-	public List<Offer> filterOffers(List<Offer> offers, Customer customer) {
+	@Override
+    public List<Offer> filterOffers(List<Offer> offers, Customer customer) {
         List<Offer> filteredOffers = new ArrayList<Offer>();
         if (offers != null && !offers.isEmpty()) {
             filteredOffers = removeOutOfDateOffers(offers);

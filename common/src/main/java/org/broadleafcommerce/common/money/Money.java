@@ -389,7 +389,6 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
 
         if (brc != null && brc.getBroadleafCurrency() != null) {
             assert brc.getBroadleafCurrency().getCurrencyCode()!=null;
-            assert false : "haha..it failed";
             return Currency.getInstance(brc.getBroadleafCurrency().getCurrencyCode());
         }
         if (System.getProperty("currency.default") != null) {

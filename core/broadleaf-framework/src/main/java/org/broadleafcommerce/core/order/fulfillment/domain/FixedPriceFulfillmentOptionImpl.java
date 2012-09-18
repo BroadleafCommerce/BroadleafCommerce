@@ -16,19 +16,24 @@
 
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 
@@ -45,15 +50,32 @@ public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl imple
 
     @Column(name = "PRICE", precision=19, scale=5, nullable=false)
     protected BigDecimal price;
+    
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "FixedPriceFulfillmentOptionImpl_Currency_Code", order=1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent=true)
+    protected BroadleafCurrency currency;
+
+
 
     @Override
     public Money getPrice() {
-        return price == null ? null : new Money(price);
+        return price == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(price,getCurrency());
     }
 
     @Override
     public void setPrice(Money price) {
         this.price = Money.toAmount(price);
+    }
+
+    @Override
+    public BroadleafCurrency getCurrency() {
+        return currency;
+    }
+
+    @Override
+    public void setCurrency(BroadleafCurrency currency) {
+        this.currency = currency;
     }
 
 }

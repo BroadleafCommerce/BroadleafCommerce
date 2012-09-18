@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -41,33 +47,31 @@ import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemReque
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 @Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
 
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
     
-    @Resource(name="blDynamicSkuPricingService")
+    @Resource(name="blPriceListDynamicSkuPricingService" )
     protected DynamicSkuPricingService dynamicSkuPricingService;
 
+    @Override
     public OrderItem readOrderItemById(final Long orderItemId) {
         return orderItemDao.readOrderItemById(orderItemId);
     }
 
+    @Override
     public OrderItem saveOrderItem(final OrderItem orderItem) {
         return orderItemDao.saveOrderItem(orderItem);
     }
     
+    @Override
     public void delete(final OrderItem item) {
         orderItemDao.delete(item);
     }
     
+    @Override
     public PersonalMessage createPersonalMessage() {
         return orderItemDao.createPersonalMessage();
     }
@@ -77,7 +81,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
-        
+        item.setOrder(itemRequest.getOrder());
         if (itemRequest.getItemAttributes() != null && itemRequest.getItemAttributes().size() > 0) {
             Map<String,OrderItemAttribute> orderItemAttributes = new HashMap<String,OrderItemAttribute>();
             item.setOrderItemAttributes(orderItemAttributes);
@@ -93,6 +97,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
     }
 
+    @Override
     public DiscreteOrderItem createDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest) {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         populateDiscreteOrderItem(item, itemRequest);
@@ -124,6 +129,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
     
+    @Override
     public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.EXTERNALLY_PRICED);
         populateDiscreteOrderItem(item, itemRequest);
@@ -145,6 +151,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
+    @Override
     public GiftWrapOrderItem createGiftWrapOrderItem(final GiftWrapOrderItemRequest itemRequest) {
         final GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
         item.setSku(itemRequest.getSku());
@@ -164,6 +171,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
+    @Override
     public BundleOrderItem createBundleOrderItem(final BundleOrderItemRequest itemRequest) {
         final BundleOrderItem item = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         item.setQuantity(itemRequest.getQuantity());
@@ -195,7 +203,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         bundleOrderItem.setSku(itemRequest.getSku());
         bundleOrderItem.setName(itemRequest.getName());
         bundleOrderItem.setProductBundle(productBundle);
-
+        bundleOrderItem.setOrder(itemRequest.getOrder());
         for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
             Product bundleProduct = skuBundleItem.getBundle();
             Sku bundleSku = skuBundleItem.getSku();
@@ -215,7 +223,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 	        bundleItemRequest.setQuantity(skuBundleItem.getQuantity());
 	        bundleItemRequest.setSku(bundleSku);
 	        bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
-            
+	        bundleItemRequest.setOrder(itemRequest.getOrder());
             DiscreteOrderItem bundleDiscreteItem = createDiscreteOrderItem(bundleItemRequest);
             bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
             bundleDiscreteItem.setBundleOrderItem(bundleOrderItem);

@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 
 /**
@@ -83,4 +84,8 @@ public interface TaxDetail extends Serializable {
      * @param name the tax rate
      */
     void setRate(BigDecimal rate);
+    
+    public BroadleafCurrency getCurrency();
+
+    public void setCurrency(BroadleafCurrency currency);
 }

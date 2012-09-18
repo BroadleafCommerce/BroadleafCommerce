@@ -16,6 +16,23 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -108,10 +125,12 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
+    @Override
     public Sku getSku() {
         return sku;
     }
 
+    @Override
     public void setSku(Sku sku) {
         this.sku = sku;
         if (sku.getRetailPrice() != null) {
@@ -124,26 +143,31 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         setName(sku.getName());
     }
 
+    @Override
     public Money getTaxablePrice() {
-        Money taxablePrice = new Money(0D);
+        Money taxablePrice = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,getOrder().getCurrency());
         if (sku.isTaxable() == null || sku.isTaxable()) {
             taxablePrice = getPrice();
         }
         return taxablePrice;
     }
 
+    @Override
     public Product getProduct() {
         return product;
     }
 
+    @Override
     public void setProduct(Product product) {
         this.product = product;
     }
 
+    @Override
     public BundleOrderItem getBundleOrderItem() {
         return bundleOrderItem;
     }
 
+    @Override
     public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
         this.bundleOrderItem = bundleOrderItem;
     }
@@ -221,35 +245,43 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         return updated;
     }
 
+    @Override
     public Map<String, String> getAdditionalAttributes() {
 		return additionalAttributes;
 	}
 
-	public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
+	@Override
+    public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
 		this.additionalAttributes = additionalAttributes;
 	}
 
-	public Money getBaseRetailPrice() {
-		return baseRetailPrice != null?new Money(baseRetailPrice):null;
+	@Override
+    public Money getBaseRetailPrice() {
+		return baseRetailPrice != null?org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(baseRetailPrice,getOrder().getCurrency()):null;
 	}
 
-	public void setBaseRetailPrice(Money baseRetailPrice) {
+	@Override
+    public void setBaseRetailPrice(Money baseRetailPrice) {
 		this.baseRetailPrice = baseRetailPrice.getAmount();
 	}
 
-	public Money getBaseSalePrice() {
-		return baseSalePrice!=null?new Money(baseRetailPrice):null;
+	@Override
+    public Money getBaseSalePrice() {
+		return baseSalePrice!=null?org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(baseRetailPrice,getOrder().getCurrency()):null;
 	}
 
-	public void setBaseSalePrice(Money baseSalePrice) {
+	@Override
+    public void setBaseSalePrice(Money baseSalePrice) {
 		this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
 	}
 
-	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
+	@Override
+    public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
 		return discreteOrderItemFeePrices;
 	}
 
-	public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
+	@Override
+    public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
 		this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
 	}
 	
@@ -263,7 +295,9 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
                 orderItem.getDiscreteOrderItemFeePrices().add(cloneFeePrice);
             }
         }
-		if (getAdditionalAttributes() != null) orderItem.getAdditionalAttributes().putAll(getAdditionalAttributes());
+		if (getAdditionalAttributes() != null) {
+            orderItem.getAdditionalAttributes().putAll(getAdditionalAttributes());
+        }
 		orderItem.setBaseRetailPrice(getBaseRetailPrice());
 		orderItem.setBaseSalePrice(getBaseSalePrice());
 		orderItem.setBundleOrderItem(getBundleOrderItem());
@@ -275,12 +309,15 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
 	@Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DiscreteOrderItemImpl other = (DiscreteOrderItemImpl) obj;
         
         if (!super.equals(obj)) {
@@ -292,15 +329,19 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         }
 
         if (bundleOrderItem == null) {
-            if (other.bundleOrderItem != null)
+            if (other.bundleOrderItem != null) {
                 return false;
-        } else if (!bundleOrderItem.equals(other.bundleOrderItem))
+            }
+        } else if (!bundleOrderItem.equals(other.bundleOrderItem)) {
             return false;
+        }
         if (sku == null) {
-            if (other.sku != null)
+            if (other.sku != null) {
                 return false;
-        } else if (!sku.equals(other.sku))
+            }
+        } else if (!sku.equals(other.sku)) {
             return false;
+        }
         return true;
     }
 

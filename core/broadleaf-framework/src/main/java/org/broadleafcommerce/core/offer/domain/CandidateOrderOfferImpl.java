@@ -16,14 +16,7 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +28,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER")
@@ -75,39 +75,48 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
     protected BigDecimal discountedPrice;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public int getPriority() {
         return offer.getPriority();
     }
 
+    @Override
     public Offer getOffer() {
         return offer;
     }
 
+    @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
         discountedPrice = null;  // price needs to be recalculated
     }
 
+    @Override
     public Money getDiscountedPrice() {
-        return discountedPrice == null ? null : new Money(discountedPrice);
+        return discountedPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(discountedPrice,getOrder().getCurrency());
     }
     
+    @Override
     public void setDiscountedPrice(Money discountedPrice) {
     	this.discountedPrice = discountedPrice.getAmount();
     }
 
+    @Override
     public Order getOrder() {
         return order;
     }
 
+    @Override
     public void setOrder(Order order) {
         this.order = order;
         discountedPrice = null;  // price needs to be recalculated
@@ -125,12 +134,15 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CandidateOrderOfferImpl other = (CandidateOrderOfferImpl) obj;
 
         if (id != null && other.id != null) {
@@ -138,20 +150,26 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
         }
 
         if (discountedPrice == null) {
-            if (other.discountedPrice != null)
+            if (other.discountedPrice != null) {
                 return false;
-        } else if (!discountedPrice.equals(other.discountedPrice))
+            }
+        } else if (!discountedPrice.equals(other.discountedPrice)) {
             return false;
+        }
         if (offer == null) {
-            if (other.offer != null)
+            if (other.offer != null) {
                 return false;
-        } else if (!offer.equals(other.offer))
+            }
+        } else if (!offer.equals(other.offer)) {
             return false;
+        }
         if (order == null) {
-            if (other.order != null)
+            if (other.order != null) {
                 return false;
-        } else if (!order.equals(other.order))
+            }
+        } else if (!order.equals(other.order)) {
             return false;
+        }
         return true;
     }
 

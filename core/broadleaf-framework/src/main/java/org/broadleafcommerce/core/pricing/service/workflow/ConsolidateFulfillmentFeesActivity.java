@@ -16,6 +16,14 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
@@ -31,14 +39,6 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
-
-import javax.annotation.Resource;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 

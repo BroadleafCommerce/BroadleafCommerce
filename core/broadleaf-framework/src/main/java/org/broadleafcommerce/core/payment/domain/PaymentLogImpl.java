@@ -33,10 +33,12 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.Index;
@@ -101,90 +103,118 @@ public class PaymentLogImpl implements PaymentLog {
     @AdminPresentation(friendlyName = "PaymentLogImpl_Amount", order = 2, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected BigDecimal amountPaid;
 
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "PaymentLogImpl_currency", order = 2, group = "PaymentLogImpl_Payment_Log", readOnly = true)
+    protected BroadleafCurrency currency;
+    
+    
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getUserName() {
         return userName;
     }
 
+    @Override
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
+    @Override
     public Date getTransactionTimestamp() {
         return transactionTimestamp;
     }
 
+    @Override
     public void setTransactionTimestamp(Date transactionTimestamp) {
         this.transactionTimestamp = transactionTimestamp;
     }
 
+    @Override
     public Long getPaymentInfoId() {
         return paymentInfoId;
     }
 
+    @Override
     public void setPaymentInfoId(Long paymentInfoId) {
         this.paymentInfoId = paymentInfoId;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
+    @Override
     public String getPaymentInfoReferenceNumber() {
         return paymentInfoReferenceNumber;
     }
 
+    @Override
     public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber) {
         this.paymentInfoReferenceNumber = paymentInfoReferenceNumber;
     }
 
+    @Override
     public TransactionType getTransactionType() {
         return TransactionType.getInstance(transactionType);
     }
 
+    @Override
     public void setTransactionType(TransactionType transactionType) {
         this.transactionType = transactionType.getType();
     }
 
+    @Override
     public PaymentLogEventType getLogType() {
         return PaymentLogEventType.getInstance(logType);
     }
 
+    @Override
     public void setLogType(PaymentLogEventType logType) {
         this.logType = logType.getType();
     }
 
+    @Override
     public Boolean getTransactionSuccess() {
         return transactionSuccess;
     }
 
+    @Override
     public void setTransactionSuccess(Boolean transactionSuccess) {
         this.transactionSuccess = transactionSuccess;
     }
 
+    @Override
     public String getExceptionMessage() {
         return exceptionMessage;
     }
 
+    @Override
     public void setExceptionMessage(String exceptionMessage) {
         this.exceptionMessage = exceptionMessage;
     }
 
+    @Override
     public Money getAmountPaid() {
-        return new Money(amountPaid);
+        return org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amountPaid,currency);
     }
 
+    @Override
     public void setAmountPaid(Money amountPaid) {
         this.amountPaid = Money.toAmount(amountPaid);
     }
@@ -203,12 +233,15 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PaymentLogImpl other = (PaymentLogImpl) obj;
 
         if (id != null && other.id != null) {
@@ -216,30 +249,40 @@ public class PaymentLogImpl implements PaymentLog {
         }
 
         if (customer == null) {
-            if (other.customer != null)
+            if (other.customer != null) {
                 return false;
-        } else if (!customer.equals(other.customer))
+            }
+        } else if (!customer.equals(other.customer)) {
             return false;
+        }
         if (paymentInfoId == null) {
-            if (other.paymentInfoId != null)
+            if (other.paymentInfoId != null) {
                 return false;
-        } else if (!paymentInfoId.equals(other.paymentInfoId))
+            }
+        } else if (!paymentInfoId.equals(other.paymentInfoId)) {
             return false;
+        }
         if (paymentInfoReferenceNumber == null) {
-            if (other.paymentInfoReferenceNumber != null)
+            if (other.paymentInfoReferenceNumber != null) {
                 return false;
-        } else if (!paymentInfoReferenceNumber.equals(other.paymentInfoReferenceNumber))
+            }
+        } else if (!paymentInfoReferenceNumber.equals(other.paymentInfoReferenceNumber)) {
             return false;
+        }
         if (transactionTimestamp == null) {
-            if (other.transactionTimestamp != null)
+            if (other.transactionTimestamp != null) {
                 return false;
-        } else if (!transactionTimestamp.equals(other.transactionTimestamp))
+            }
+        } else if (!transactionTimestamp.equals(other.transactionTimestamp)) {
             return false;
+        }
         if (userName == null) {
-            if (other.userName != null)
+            if (other.userName != null) {
                 return false;
-        } else if (!userName.equals(other.userName))
+            }
+        } else if (!userName.equals(other.userName)) {
             return false;
+        }
         return true;
     }
 }

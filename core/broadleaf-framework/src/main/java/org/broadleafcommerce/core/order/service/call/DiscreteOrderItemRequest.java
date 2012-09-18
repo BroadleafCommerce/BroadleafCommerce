@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 
 public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
 
@@ -37,9 +37,11 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
         setProduct(request.getProduct());
         setQuantity(request.getQuantity());
         setSku(request.getSku());
+        setOrder(request.getOrder());
     }
 
 
+    @Override
     public DiscreteOrderItemRequest clone() {
     	DiscreteOrderItemRequest returnRequest = new DiscreteOrderItemRequest();
         copyProperties(returnRequest);

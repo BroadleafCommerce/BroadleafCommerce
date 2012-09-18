@@ -16,6 +16,18 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -29,18 +41,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "BLC_FG_ADJUSTMENT")
@@ -113,28 +113,34 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Value", order=2, group = "FulfillmentGroupAdjustmentImpl_Description")
     protected BigDecimal value = Money.ZERO.getAmount();
 
+    @Override
     public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){
         this.fulfillmentGroup = fulfillmentGroup;
         this.offer = offer;
         this.reason = reason;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public FulfillmentGroup getFulfillmentGroup() {
         return fulfillmentGroup;
     }
 
+    @Override
     public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         this.fulfillmentGroup = fulfillmentGroup;
     }
 
+    @Override
     public Offer getOffer() {
         return offer;
     }
@@ -143,18 +149,22 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
         this.offer = offer;
     }
 
+    @Override
     public String getReason() {
         return reason;
     }
 
+    @Override
     public void setReason(String reason) {
         this.reason = reason;
     }
 
+    @Override
     public Money getValue() {
-        return value == null ? null : new Money(value);
+        return value == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(value,getFulfillmentGroup().getOrder().getCurrency());
     }
     
+    @Override
     public void setValue(Money value) {
     	this.value = value.getAmount();
     }
@@ -172,12 +182,15 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         FulfillmentGroupAdjustmentImpl other = (FulfillmentGroupAdjustmentImpl) obj;
 
         if (id != null && other.id != null) {
@@ -185,25 +198,33 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
         }
 
         if (fulfillmentGroup == null) {
-            if (other.fulfillmentGroup != null)
+            if (other.fulfillmentGroup != null) {
                 return false;
-        } else if (!fulfillmentGroup.equals(other.fulfillmentGroup))
+            }
+        } else if (!fulfillmentGroup.equals(other.fulfillmentGroup)) {
             return false;
+        }
         if (offer == null) {
-            if (other.offer != null)
+            if (other.offer != null) {
                 return false;
-        } else if (!offer.equals(other.offer))
+            }
+        } else if (!offer.equals(other.offer)) {
             return false;
+        }
         if (reason == null) {
-            if (other.reason != null)
+            if (other.reason != null) {
                 return false;
-        } else if (!reason.equals(other.reason))
+            }
+        } else if (!reason.equals(other.reason)) {
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
-        } else if (!value.equals(other.value))
+            }
+        } else if (!value.equals(other.value)) {
             return false;
+        }
         return true;
     }
 

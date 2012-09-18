@@ -335,35 +335,45 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getSalePrice() {
-        Money returnPrice=null;
         
-        if (salePrice == null && hasDefaultSku()) {
-            returnPrice = lookupDefaultSku().getSalePrice();
-        } else if (dynamicPrices != null) {
-    	    return dynamicPrices.getSalePrice();
-    	} else if (
-    		SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
-    		SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
-    		SkuPricingConsiderationContext.getSkuPricingService() != null
-    	) {
-    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
-    		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-    		
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-    		handler.reset();
-    		if(dynamicPrices!=null) {returnPrice= dynamicPrices.getSalePrice();}
-    		
-    	} 
+        Money returnPrice = null;
         
-        if (returnPrice == null) {
-    	    returnPrice = (salePrice == null ? null : new Money(salePrice));
-        }
-        
-        if (getProductOptionValueAdjustments() == null) {
-            return returnPrice;
+        // TODO:  See if there is a dynamic price for this SKU
+        if (SkuPricingConsiderationContext.hasDynamicPricing()) {
+            if (dynamicPrices != null) {
+                returnPrice = dynamicPrices.getSalePrice();
+            } else {
+                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+                
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                returnPrice = dynamicPrices.getSalePrice();
+            }
         } else {
-            return returnPrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(returnPrice);             
+            if (salePrice != null) {
+                returnPrice = new Money(salePrice,Money.defaultCurrency());
+            }
         }
+        
+        // Get the price from the default SKU
+        if (returnPrice == null && hasDefaultSku()) {
+            returnPrice = lookupDefaultSku().getSalePrice();
+        }
+        
+        Money optionValueAdjustments = null;
+        if (dynamicPrices != null) {
+            optionValueAdjustments = dynamicPrices.getPriceAdjustment();               
+        } else {
+            optionValueAdjustments = getProductOptionValueAdjustments();
+        }
+        
+        if (optionValueAdjustments == null) {
+            //return returnPrice;
+        } else {
+            returnPrice = salePrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
+        }
+  
+        return returnPrice;
     	
     }
 
@@ -375,33 +385,44 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getRetailPrice() {
-       Money returnPrice=null;
-        if (retailPrice == null && hasDefaultSku()) {
-            returnPrice = lookupDefaultSku().getRetailPrice();
-        } else if (dynamicPrices != null) {
-    		return dynamicPrices.getRetailPrice();
-    	} else if (
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
-    			SkuPricingConsiderationContext.getSkuPricingService() != null
-    	) {
-    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
-    		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-    		
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-    		handler.reset();
-    		if(dynamicPrices!=null) {
-                returnPrice=  dynamicPrices.getRetailPrice();
+        Money returnPrice = null;
+        
+       
+        if (SkuPricingConsiderationContext.hasDynamicPricing()) {
+            if (dynamicPrices != null) {
+                returnPrice = dynamicPrices.getRetailPrice();
+            } else {
+                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+                
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                returnPrice = dynamicPrices.getRetailPrice();
             }
-    	}
-        if (returnPrice == null) {
-            returnPrice = (retailPrice == null ? null : new Money(retailPrice));
-        }
-    	if (getProductOptionValueAdjustments() == null) {
-            return returnPrice;
         } else {
-            return retailPrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(returnPrice);
+            if (retailPrice != null) {
+                returnPrice = new Money(retailPrice,Money.defaultCurrency());
+            }
         }
+        
+        // Get the price from the default SKU
+        if (returnPrice == null && hasDefaultSku()) {
+            returnPrice = lookupDefaultSku().getRetailPrice();
+        }
+        
+        Money optionValueAdjustments = null;
+        if (dynamicPrices != null) {
+            optionValueAdjustments = dynamicPrices.getPriceAdjustment();               
+        } else {
+            optionValueAdjustments = getProductOptionValueAdjustments();
+        }
+        
+    	if (optionValueAdjustments == null) {
+            //return returnPrice;
+        } else {
+            returnPrice= retailPrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
+        }
+    	
+        return returnPrice;
     }
 
     @Override
@@ -838,5 +859,5 @@ public class SkuImpl implements Sku {
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         return result;
     }
-    
+
 }

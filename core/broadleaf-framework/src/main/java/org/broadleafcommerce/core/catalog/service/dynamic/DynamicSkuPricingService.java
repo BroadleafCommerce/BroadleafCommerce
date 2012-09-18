@@ -19,25 +19,33 @@ package org.broadleafcommerce.core.catalog.service.dynamic;
 import java.util.HashMap;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 
 /**
  * 
  * @author jfischer
- *
+ * 
  */
-public interface DynamicSkuPricingService  {
+public interface DynamicSkuPricingService {
 
-	public DynamicSkuPrices getSkuPrices(Sku sku, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
-	@Deprecated
-	/**
-	 * Separating out the adjustment amount out of DynamicSkuPrices Object 
-	 * @param sku
-	 * @param skuPricingConsiderations
-	 * @return
-	 */
-	public DynamicSkuPrices getPriceAdjustment(ProductOptionValue sku, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
-	public Money getPriceAdjustmentForProductOptionValue(ProductOptionValue productOptionValue, HashMap skuPricingConsiderations);
-	
+    public DynamicSkuPrices getSkuPrices(Sku sku,
+            @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
+
+    /**
+     *  getSkuBundleItemPrice method computes the sale price of a skuBundleItem
+     * @param sku
+     * @param skuPricingConsiderations
+     * @return
+     */
+    public DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem sku,
+            @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
+
+    public DynamicSkuPrices getPriceAdjustment(
+            ProductOptionValueImpl productOptionValueImpl, Money priceAdjustment,
+            HashMap skuPricingConsiderationContext);
+
+   
+
 }

@@ -38,7 +38,7 @@ public class FulfillmentGroupMerchandiseTotalActivity extends BaseActivity {
         Order order = ((PricingContext) context).getSeedData();
 
         for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            Money merchandiseTotal = new Money(0D);
+            Money merchandiseTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,fulfillmentGroup.getOrder().getCurrency());
             for(FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 OrderItem item = fulfillmentGroupItem.getOrderItem();
                 merchandiseTotal = merchandiseTotal.add(item.getPrice().multiply(item.getQuantity()));
