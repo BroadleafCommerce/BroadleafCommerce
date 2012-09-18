@@ -230,21 +230,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             //persist the newly-created Sku
             adminInstance = (Sku)dynamicEntityDao.persist(adminInstance);
             
-            //Get the list of product option value ids that were selected from the form
-            List<Long> productOptionValueIds = new ArrayList<Long>();
-            for (Property property : getProductOptionProperties(entity)) {
-                productOptionValueIds.add(Long.parseLong(property.getValue()));
-            }
-            
-            //Associate the product option values from the form with the Sku
-            List<ProductOption> productOptions = adminInstance.getProduct().getProductOptions();
-            for (ProductOption option : productOptions) {
-                for (ProductOptionValue value : option.getAllowedValues()) {
-                    if (productOptionValueIds.contains(value.getId())) {
-                        adminInstance.getProductOptionValues().add(value);
-                    }
-                }
-            }
+            //associate the product option values
+            associateProductOptionValuesToSku(entity, adminInstance);
             
             //After associating the product option values, save off the Sku
             adminInstance = (Sku)dynamicEntityDao.merge(adminInstance);
@@ -279,6 +266,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 return errorEntity;
             }
             
+            associateProductOptionValuesToSku(entity, adminInstance);
+            
             adminInstance = (Sku)dynamicEntityDao.merge(adminInstance);
             
             //Fill out the DTO and add in the product option value properties to it
@@ -290,6 +279,24 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: " + Sku.class.getName(), e);
+        }
+    }
+    
+    protected void associateProductOptionValuesToSku(Entity entity, Sku adminInstance) {
+        //Get the list of product option value ids that were selected from the form
+        List<Long> productOptionValueIds = new ArrayList<Long>();
+        for (Property property : getProductOptionProperties(entity)) {
+            productOptionValueIds.add(Long.parseLong(property.getValue()));
+        }
+        
+        //Associate the product option values from the form with the Sku
+        List<ProductOption> productOptions = adminInstance.getProduct().getProductOptions();
+        for (ProductOption option : productOptions) {
+            for (ProductOptionValue value : option.getAllowedValues()) {
+                if (productOptionValueIds.contains(value.getId())) {
+                    adminInstance.getProductOptionValues().add(value);
+                }
+            }
         }
     }
     
