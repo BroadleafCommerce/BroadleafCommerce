@@ -41,10 +41,10 @@
 	    </tx:attributes>
 	</tx:advice>
 
-	<aop:config>
+	<!--<aop:config>
 	    <aop:pointcut id="blCatalogServiceOperation" expression="execution(* org.broadleafcommerce.core.catalog.service.CatalogService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogServiceOperation"/>
-	</aop:config>
+	</aop:config>-->
 	
 	<aop:config>
 		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.OrderService.*(..))"/>

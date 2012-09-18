@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -97,6 +98,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Product saveProduct(Product product) {
         return productDao.save(product);
     }
@@ -123,11 +125,13 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Category saveCategory(Category category) {
         return categoryDao.save(category);
     }
     
     @Override
+    @Transactional("blTransactionManager")
     public void removeCategory(Category category){
     	categoryDao.delete(category);
     }
@@ -183,11 +187,13 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Sku saveSku(Sku sku) {
         return skuDao.save(sku);
     }
     
     @Override
+    @Transactional("blTransactionManager")
     public SkuFee saveSkuFee(SkuFee fee) {
         return skuDao.saveSkuFee(fee);
     }
