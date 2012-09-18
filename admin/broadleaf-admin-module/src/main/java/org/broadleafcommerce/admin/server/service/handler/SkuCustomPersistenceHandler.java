@@ -20,6 +20,7 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -134,7 +135,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 metadata.setProminent(true);
                 metadata.setBroadleafEnumeration("");
                 metadata.setReadOnly(false);
-                metadata.setRequiredOverride(true);
+                metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
                 
                 //add this to the built Sku properties
                 properties.put("productOption" + option.getId(), metadata);
