@@ -39,6 +39,7 @@ import org.broadleafcommerce.cms.page.message.ArchivedPagePublisher;
 import org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
@@ -456,14 +457,8 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     }
 
     private Locale findLanguageOnlyLocale(Locale locale) {
-        if (locale != null && locale.getLocaleCode() != null && locale.getLocaleCode().indexOf("_") > 0) {
-            int endIndex = locale.getLocaleCode().indexOf("_");
-            char[] localeCodeChars = locale.getLocaleCode().toCharArray();
-            StringBuffer sb = new StringBuffer();
-            for(int i=0; i < endIndex; i++){
-                sb.append(localeCodeChars[i]);
-            }
-            Locale languageOnlyLocale = localeService.findLocaleByCode(sb.toString());
+        if (locale != null ) {
+            Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
             if (languageOnlyLocale != null) {
                 return languageOnlyLocale;
             }
