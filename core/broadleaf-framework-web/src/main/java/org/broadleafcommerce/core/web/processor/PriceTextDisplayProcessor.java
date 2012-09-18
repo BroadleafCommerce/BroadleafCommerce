@@ -59,15 +59,13 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
 		}
 
         if (price == null) {
-            return "$0.00";
+            return "Not Available";
         }
 
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
             NumberFormat format = NumberFormat.getCurrencyInstance(brc.getJavaLocale());
-            if (brc.getJavaCurrency() != null) {
-                format.setCurrency(brc.getJavaCurrency());
-            }
+            format.setCurrency(price.getCurrency());
             return format.format(price.getAmount());
         } else {
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.

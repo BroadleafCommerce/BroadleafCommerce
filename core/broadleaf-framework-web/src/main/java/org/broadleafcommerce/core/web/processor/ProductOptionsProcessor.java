@@ -1,15 +1,8 @@
 package org.broadleafcommerce.core.web.processor;
 
-import java.io.StringWriter;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -21,6 +14,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This processor will add the following information to the model, available for consumption by a template:
@@ -71,9 +71,9 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			
 			ProductOptionPricingDTO dto = new ProductOptionPricingDTO();
 			if (sku.isOnSale()) {
-				dto.setPrice(sku.getSalePrice().getAmount());
+				dto.setPrice(sku.getSalePrice());
 			} else {
-				dto.setPrice(sku.getRetailPrice().getAmount());
+				dto.setPrice(sku.getRetailPrice());
 			}
 			dto.setSelectedOptions(values);
 			skuPricing.add(dto);
@@ -147,7 +147,7 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 	
 	private class ProductOptionPricingDTO {
 		private Long[] skuOptions;
-		private BigDecimal price;
+		private Money price;
 		@SuppressWarnings("unused")
 		public Long[] getSelectedOptions() {
 			return skuOptions;
@@ -156,10 +156,10 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			this.skuOptions = skuOptions;
 		}
 		@SuppressWarnings("unused")
-		public BigDecimal getPrice() {
+		public Money getPrice() {
 			return price;
 		}
-		public void setPrice(BigDecimal price) {
+		public void setPrice(Money price) {
 			this.price = price;
 		}
 	}
