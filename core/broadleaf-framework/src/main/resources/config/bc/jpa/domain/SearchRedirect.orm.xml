@@ -6,7 +6,7 @@
 
     <named-query name="BC_READ_SEARCH_URL" >
  		<query>SELECT page
-               FROM org.broadleafcommerce.core.searchRedirect.domain.SearchRedirectImpl page
+               FROM org.broadleafcommerce.core.search.redirect.domain.SearchRedirect page
                WHERE
                  upper(page.searchTerm) = upper(:searchTerm)  and (page.activeStartDate is null or page.activeStartDate &lt;= :now) and (page.activeEndDate is null or :now &lt;= page.activeEndDate   )
                order by page.searchPriority

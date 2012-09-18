@@ -57,7 +57,7 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
     	String itemId = String.valueOf(StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("itemId")));
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         if (ratingSummary != null) {
-            addToModel(getRatingsVar(element), ratingSummary);
+            addToModel(arguments, getRatingsVar(element), ratingSummary);
         }
         
         Customer customer = CustomerState.getCustomer();
@@ -66,7 +66,7 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
         	reviewDetail = ratingService.readReviewByCustomerAndItem(customer, itemId);
         }
         if (reviewDetail != null) {
-        	addToModel("currentCustomerReview", reviewDetail);
+        	addToModel(arguments, "currentCustomerReview", reviewDetail);
         }
         
     }

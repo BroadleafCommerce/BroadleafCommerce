@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.searchRedirect.service;
+package org.broadleafcommerce.core.search.redirect.service;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.core.searchRedirect.dao.SearchRedirectDao;
-import org.broadleafcommerce.core.searchRedirect.domain.SearchRedirect;
+import org.broadleafcommerce.core.search.redirect.dao.SearchRedirectDao;
+import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.springframework.stereotype.Service;
 
 /**

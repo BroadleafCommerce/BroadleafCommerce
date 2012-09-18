@@ -16,10 +16,12 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 
@@ -61,7 +63,14 @@ public class SkusPresenter extends SubPresenter {
                     initialValues.put(foreignKey.getManyToField(), abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord));
                     String[] type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
                     initialValues.put("_type", type);
-                    BLCMain.ENTITY_ADD.editNewRecord(newEntityDialogTitle, ds, initialValues, null, null, null);
+                    ItemEditedHandler editHandler = new ItemEditedHandler() {
+                        @Override
+                        public void onItemEdited(ItemEdited event) {
+                            //Editing a single sku could change the grid columns if the product option values changed
+                            ((SubItemDisplay)getDisplay()).getGrid().invalidateCache();
+                        }
+                    };
+                    BLCMain.ENTITY_ADD.editNewRecord(newEntityDialogTitle, ds, initialValues, editHandler, null, null);
                 }
             }
         });

@@ -586,7 +586,7 @@ public class ProductImpl implements Product, Status {
         Iterator<RelatedProduct> itr = returnProducts.iterator();
         while(itr.hasNext()) {
             RelatedProduct relatedProduct = itr.next();
-            if (relatedProduct.getProduct().equals(this)) {
+            if (relatedProduct.getRelatedProduct().equals(this)) {
                 itr.remove();
             }
         }
@@ -605,7 +605,7 @@ public class ProductImpl implements Product, Status {
         Iterator<RelatedProduct> itr = returnProducts.iterator();
         while(itr.hasNext()) {
             RelatedProduct relatedProduct = itr.next();
-            if (relatedProduct.getProduct().equals(this)) {
+            if (relatedProduct.getRelatedProduct().equals(this)) {
                 itr.remove();
             }
         }

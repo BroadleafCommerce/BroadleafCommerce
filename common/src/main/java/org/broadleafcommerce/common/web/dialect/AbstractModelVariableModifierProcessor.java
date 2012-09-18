@@ -33,8 +33,6 @@ import java.util.Map;
  */
 public abstract class AbstractModelVariableModifierProcessor extends AbstractElementProcessor {
 	
-	private Arguments arguments;
-	
 	public AbstractModelVariableModifierProcessor(String elementName) {
 		super(elementName);
 	}
@@ -45,7 +43,6 @@ public abstract class AbstractModelVariableModifierProcessor extends AbstractEle
 	 */
 	@Override
     protected ProcessorResult processElement(final Arguments arguments, final Element element) {
-		this.arguments = arguments;
 		modifyModelAttributes(arguments, element);
 		
 		// Remove the tag from the DOM
@@ -61,7 +58,7 @@ public abstract class AbstractModelVariableModifierProcessor extends AbstractEle
 	 * @param value the value represented by the key
 	 */
 	@SuppressWarnings("unchecked")
-	protected void addToModel(String key, Object value) {
+	protected void addToModel(Arguments arguments, String key, Object value) {
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put(key, value);
 	}
 	

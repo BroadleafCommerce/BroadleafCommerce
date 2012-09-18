@@ -16,18 +16,11 @@
 
 package org.broadleafcommerce.cms.web.processor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.google.common.primitives.Ints;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
-import org.broadleafcommerce.cms.web.BroadleafProcessURLFilter;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -41,7 +34,11 @@ import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.spring3.context.SpringWebContext;
 
-import com.google.common.primitives.Ints;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Processor used to display structured content that is maintained with the Broadleaf CMS.
@@ -151,13 +148,14 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 	    	for(StructuredContentDTO item : contentItems) {
                 contentItemFields.add(item.getValues());
             }
-	    	addToModel(contentItemVar, contentItemFields.get(0));
-	    	addToModel(contentListVar, contentItemFields);
-	    	addToModel(numResultsVar, contentItems.size());
+	    	addToModel(arguments, contentItemVar, contentItemFields.get(0));
+	    	addToModel(arguments, contentListVar, contentItemFields);
+	    	addToModel(arguments, numResultsVar, contentItems.size());
 	    } else {
-	    	addToModel(contentItemVar, null);
-	    	addToModel(contentListVar, null);
-	    	addToModel(numResultsVar, 0);
+            System.out.println("**************************The contentItems is null*************************");
+	    	addToModel(arguments, contentItemVar, null);
+	    	addToModel(arguments, contentListVar, null);
+	    	addToModel(arguments, numResultsVar, 0);
 	    }    	
 	}
 	

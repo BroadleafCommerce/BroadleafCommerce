@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
@@ -45,9 +42,20 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.tool.hbm2x.StringUtils;
 
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+
 import javax.annotation.Resource;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +74,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 	@Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 	
-	public Boolean canHandleInspect(PersistencePackage persistencePackage) {
+	@Override
+    public Boolean canHandleInspect(PersistencePackage persistencePackage) {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
         boolean canHandle = false;
         if (customCriteria != null) {
@@ -80,23 +89,28 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		return canHandle;
 	}
 
-	public Boolean canHandleFetch(PersistencePackage persistencePackage) {
+	@Override
+    public Boolean canHandleFetch(PersistencePackage persistencePackage) {
 		return canHandleInspect(persistencePackage);
 	}
 
-	public Boolean canHandleAdd(PersistencePackage persistencePackage) {
+	@Override
+    public Boolean canHandleAdd(PersistencePackage persistencePackage) {
 		return canHandleInspect(persistencePackage);
 	}
 
-	public Boolean canHandleRemove(PersistencePackage persistencePackage) {
+	@Override
+    public Boolean canHandleRemove(PersistencePackage persistencePackage) {
 		return canHandleInspect(persistencePackage);
 	}
 
-	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+	@Override
+    public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
 		return canHandleInspect(persistencePackage);
 	}
 
-	public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+	@Override
+    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
 		try {
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 			Map<String, FieldMetadata> mergedProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePackage.getPersistencePerspective());
@@ -128,13 +142,27 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		}
 	}
 
-	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	@Override
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
 			BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, Offer.class.getName(), offerProperties);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, Offer.class.getName());
+	        
+			//If necessary, filter out the archived Offers
+            if (!persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
+                SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
+                    @Override
+                    public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                        return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
+                    }
+                };
+                FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
+                ((NestedPropertyCriteria) queryCriteria).add(filterCriterion);
+            }
+			
 			List<Serializable> records = dynamicEntityDao.query(queryCriteria, Offer.class);
 			Entity[] entities = helper.getRecords(offerProperties, records, null, null);
 			
@@ -216,7 +244,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         }
     }
 
-	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	@Override
+    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		Entity entity = persistencePackage.getEntity();
         removeHTMLEncoding(entity);
 		try {
@@ -265,7 +294,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		}
 	}
 
-	public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	@Override
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -287,7 +317,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		}
 	}
 
-	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	@Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		Entity entity = persistencePackage.getEntity();
         removeHTMLEncoding(entity);
 		try {

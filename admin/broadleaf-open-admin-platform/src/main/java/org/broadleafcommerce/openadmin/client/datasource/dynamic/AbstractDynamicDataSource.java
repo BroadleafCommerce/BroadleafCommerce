@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.CriteriaPolicy;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.GwtRpcDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
@@ -28,7 +29,9 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallbackH
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 
@@ -191,6 +194,20 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
             module.setDataSource(this);
         }
         this.modules = modules;
+    }
+
+    public void replaceModuleByType(OperationType type, DataSourceModule module) {
+        List<DataSourceModule> moduleList = new ArrayList<DataSourceModule>(modules.length);
+        boolean moduleAdded = false;
+        for (DataSourceModule existingModule : modules) {
+            if (existingModule.isCompatible(type) && !moduleAdded) {
+                moduleList.add(module);
+                module.setDataSource(this);
+            } else {
+                moduleList.add(existingModule);
+            }
+        }
+        modules = moduleList.toArray(modules);
     }
 
     public DynamicEntityServiceAsync getService() {
