@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -54,7 +55,7 @@ public class AdminModuleImpl implements AdminModule {
     @AdminPresentation(friendlyName = "AdminModuleImpl_Name", order=1, group = "AdminModuleImpl_Module", prominent=true)
     protected String name;
 
-    @Column(name = "MODULE_KEY", nullable=true)
+    @Column(name = "MODULE_KEY", nullable=false)
     @AdminPresentation(friendlyName = "AdminModuleImpl_Module_Key", order=2, group = "AdminModuleImpl_Module", prominent=true)
     protected String moduleKey;
 
@@ -62,9 +63,7 @@ public class AdminModuleImpl implements AdminModule {
     @AdminPresentation(friendlyName = "AdminModuleImpl_Icon", order=3, group = "AdminModuleImpl_Module", prominent=true)
     protected String icon;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminSectionImpl.class)
-    @JoinTable(name = "BLC_ADMIN_MODULE_SECTION_XREF", joinColumns = @JoinColumn(name = "ADMIN_MODULE_ID", referencedColumnName = "ADMIN_MODULE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_SECTION_ID", referencedColumnName = "ADMIN_SECTION_ID"))
-    @BatchSize(size = 50)
+    @OneToMany(mappedBy = "module", targetEntity = AdminSectionImpl.class)
     protected List<AdminSection> sections = new ArrayList<AdminSection>();
 
     @Column(name = "DISPLAY_ORDER", nullable=true)

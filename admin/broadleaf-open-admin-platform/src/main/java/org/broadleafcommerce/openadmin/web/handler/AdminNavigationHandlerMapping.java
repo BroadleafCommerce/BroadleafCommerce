@@ -43,23 +43,23 @@ public class AdminNavigationHandlerMapping extends BLCAbstractHandlerMapping {
     @Resource(name = "blAdminNavigationService")
     private AdminNavigationService adminNavigationService;
 
-    public static final String CURRENT_ADMIN_MODULES_ATTRIBUTE_NAME = "currentAdminModules";
+    public static final String CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME = "currentAdminModule";
     public static final String CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME = "currentAdminSection";
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         //TODO: BLCRequestContext should be refactored to be used in the admin as well
         AdminSection adminSection = adminNavigationService.findAdminSectionByURI(getRequestURIWithoutContext(request));
-        if (adminSection != null) {
+        if (adminSection != null && adminSection.getUseDefaultHandler()) {
             request.setAttribute(CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, adminSection);
-            request.setAttribute(CURRENT_ADMIN_MODULES_ATTRIBUTE_NAME, adminSection.getModules());
+            request.setAttribute(CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, adminSection.getModule());
             if (adminSection.getDisplayController() != null) {
                 return adminSection.getDisplayController();
             }
 
             return controllerName;
         } else {
-            return  null;
+            return null;
         }
 
     }

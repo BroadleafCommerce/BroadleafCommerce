@@ -48,7 +48,11 @@ public interface AdminSection extends Serializable {
 
     public String getDisplayController();
 
-    public List<AdminModule> getModules();
+    public AdminModule getModule();
 
-    public void setModules(List<AdminModule> modules);
+    public void setModule(AdminModule module);
+
+    public Boolean getUseDefaultHandler();
+
+    public void setUseDefaultHandler(Boolean useDefaultHandler);
 }

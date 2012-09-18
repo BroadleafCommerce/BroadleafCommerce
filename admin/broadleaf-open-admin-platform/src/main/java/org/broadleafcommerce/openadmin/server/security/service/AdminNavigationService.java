@@ -32,4 +32,6 @@ public interface AdminNavigationService {
 
     public AdminSection findAdminSectionByURI(String uri);
 
+    public AdminSection findAdminSectionBySectionKey(String sectionKey);
+
 }

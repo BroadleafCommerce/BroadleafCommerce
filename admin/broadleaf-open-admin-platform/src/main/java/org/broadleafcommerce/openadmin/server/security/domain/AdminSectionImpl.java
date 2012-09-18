@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.common.email.domain.EmailTrackingImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -54,7 +55,7 @@ public class AdminSectionImpl implements AdminSection {
     @AdminPresentation(friendlyName = "AdminSectionImpl_Name", order=1, group = "AdminSectionImpl_Section", prominent=true)
     protected String name;
 
-    @Column(name = "SECTION_KEY", nullable=true)
+    @Column(name = "SECTION_KEY", nullable=false)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Section_Key", order=2, group = "AdminSectionImpl_Section", prominent=true)
     protected String sectionKey;
 
@@ -62,10 +63,10 @@ public class AdminSectionImpl implements AdminSection {
     @AdminPresentation(friendlyName = "AdminSectionImpl_Url", order=3, group = "AdminSectionImpl_Section", prominent=true)
     protected String url;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminModuleImpl.class)
-    @JoinTable(name = "BLC_ADMIN_MODULE_SECTION_XREF", joinColumns = @JoinColumn(name = "ADMIN_SECTION_ID", referencedColumnName = "ADMIN_SECTION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_MODULE_ID", referencedColumnName = "ADMIN_MODULE_ID"))
-    @BatchSize(size = 50)
-    protected List<AdminModule> modules = new ArrayList<AdminModule>();
+    @ManyToOne(optional=false, targetEntity = AdminModuleImpl.class)
+    @JoinColumn(name = "ADMIN_MODULE_ID")
+    @Index(name="ADMINSECTION_MODULE_INDEX", columnNames={"ADMIN_MODULE_ID"})
+    protected AdminModule module;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_SECTION_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_SECTION_ID", referencedColumnName = "ADMIN_SECTION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
@@ -76,6 +77,10 @@ public class AdminSectionImpl implements AdminSection {
     @Column(name = "DISPLAY_CONTROLLER", nullable=true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Controller", order=4, group = "AdminSectionImpl_Section")
     protected String displayController;
+
+    @Column(name = "USE_DEFAULT_HANDLER", nullable=false)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order=5, group = "AdminSectionImpl_Section")
+    protected Boolean useDefaultHandler = Boolean.TRUE;
 
     @Override
     public Long getId() {
@@ -117,13 +122,13 @@ public class AdminSectionImpl implements AdminSection {
     }
 
     @Override
-    public List<AdminModule> getModules() {
-        return modules;
+    public AdminModule getModule() {
+        return module;
     }
 
     @Override
-    public void setModules(List<AdminModule> modules) {
-        this.modules = modules;
+    public void setModule(AdminModule module) {
+        this.module = module;
     }
 
     @Override
@@ -144,5 +149,15 @@ public class AdminSectionImpl implements AdminSection {
     @Override
     public void setDisplayController(String displayController) {
         this.displayController = displayController;
+    }
+
+    @Override
+    public Boolean getUseDefaultHandler() {
+        return useDefaultHandler;
+    }
+
+    @Override
+    public void setUseDefaultHandler(Boolean useDefaultHandler) {
+        this.useDefaultHandler = useDefaultHandler;
     }
 }

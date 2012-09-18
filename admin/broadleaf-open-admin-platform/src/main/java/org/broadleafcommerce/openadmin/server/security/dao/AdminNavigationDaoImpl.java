@@ -70,4 +70,17 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         return adminSection;
     }
 
+    @Override
+    public AdminSection readAdminSectionBySectionKey(String sectionKey) {
+        Query query = em.createNamedQuery("BC_READ_ADMIN_SECTION_BY_SECTION_KEY");
+        query.setParameter("sectionKey", sectionKey);
+        AdminSection adminSection = null;
+        try {
+            adminSection = (AdminSection) query.getSingleResult();
+        } catch (NoResultException e) {
+            //do nothing
+        }
+        return adminSection;
+    }
+
 }

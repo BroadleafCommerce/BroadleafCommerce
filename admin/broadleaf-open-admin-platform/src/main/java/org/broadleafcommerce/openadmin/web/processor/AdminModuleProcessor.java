@@ -72,7 +72,7 @@ public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor
         AdminUser user = getPersistentAdminUser();
         if (user != null) {
             List<AdminModule> modules =  adminNavigationService.buildMenu(user);
-            addToModel(resultVar, modules);
+            addToModel(arguments, resultVar, modules);
         }
 
     }

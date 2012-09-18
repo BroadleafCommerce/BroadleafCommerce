@@ -50,7 +50,7 @@ public class AdminUserProcessor extends AbstractModelVariableModifierProcessor {
 
         AdminUser user = getPersistentAdminUser();
         if (user != null) {
-            addToModel(resultVar, user);
+            addToModel(arguments, resultVar, user);
         }
     }
 

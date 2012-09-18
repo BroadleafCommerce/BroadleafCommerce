@@ -80,6 +80,11 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     }
 
     @Override
+    public AdminSection findAdminSectionBySectionKey(String sectionKey) {
+        return adminNavigationDao.readAdminSectionBySectionKey(sectionKey);
+    }
+
+    @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
         List<AdminPermission> authorizedPermissions = section.getPermissions();
         if (adminUser.getAllRoles() != null && !adminUser.getAllRoles().isEmpty()) {
