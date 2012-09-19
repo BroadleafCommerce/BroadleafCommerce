@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
+import org.thymeleaf.spring3.view.AbstractThymeleafView;
 import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
@@ -119,8 +120,6 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     	String viewName = originalViewName;
     	
     	if (!isAjaxRequest()) {
-    		addStaticVariable("templateName", originalViewName);
-    		
     		String longestPrefix = "";
     		
     		for (Entry<String, String> entry : layoutMap.entrySet()) {
@@ -143,7 +142,13 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     		}
     	}
     	
-		return super.loadView(viewName, locale);
+    	AbstractThymeleafView view = (AbstractThymeleafView) super.loadView(viewName, locale);
+    	
+    	if (!isAjaxRequest()) {
+    	    view.addStaticVariable("templateName", originalViewName);
+    	}
+    	
+    	return view;
     }
     
     protected boolean isIFrameRequest() {

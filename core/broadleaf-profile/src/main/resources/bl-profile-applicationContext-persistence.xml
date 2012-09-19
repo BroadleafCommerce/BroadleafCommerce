@@ -183,16 +183,6 @@
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blCountryServiceOperation" expression="execution(* org.broadleafcommerce.profile.core.service.CountryService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCountryServiceOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blStateServiceOperation" expression="execution(* org.broadleafcommerce.profile.core.service.StateService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blStateServiceOperation"/>
-	</aop:config>
-	
-	<aop:config>
 		<aop:pointcut id="blChallengeQuestionServiceOperation" expression="execution(* org.broadleafcommerce.profile.core.service.ChallengeQuestionService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blChallengeQuestionServiceOperation"/>
 	</aop:config>

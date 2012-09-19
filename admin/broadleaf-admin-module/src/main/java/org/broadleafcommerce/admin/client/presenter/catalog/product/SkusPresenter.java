@@ -67,7 +67,11 @@ public class SkusPresenter extends SubPresenter {
                         @Override
                         public void onItemEdited(ItemEdited event) {
                             //Editing a single sku could change the grid columns if the product option values changed
-                            ((SubItemDisplay)getDisplay()).getGrid().invalidateCache();
+                            for (String attribute : event.getRecord().getAttributes()) {
+                                if (attribute.startsWith("productOption")) {
+                                    display.getGrid().showField(attribute);
+                                }
+                            }
                         }
                     };
                     BLCMain.ENTITY_ADD.editNewRecord(newEntityDialogTitle, ds, initialValues, editHandler, null, null);

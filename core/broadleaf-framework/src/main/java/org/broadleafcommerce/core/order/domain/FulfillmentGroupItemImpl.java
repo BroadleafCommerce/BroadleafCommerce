@@ -60,7 +60,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Id
     @GeneratedValue(generator = "FulfillmentGroupItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FulfillmentGroupItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupItemImpl", allocationSize = 50)
+    @TableGenerator(name = "FulfillmentGroupItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupItemImpl", allocationSize = 150)
     @Column(name = "FULFILLMENT_GROUP_ITEM_ID")
     protected Long id;
 

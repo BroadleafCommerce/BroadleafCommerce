@@ -20,6 +20,7 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -134,7 +135,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 metadata.setProminent(true);
                 metadata.setBroadleafEnumeration("");
                 metadata.setReadOnly(false);
-                metadata.setRequiredOverride(true);
+                metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
                 
                 //add this to the built Sku properties
                 properties.put("productOption" + option.getId(), metadata);
@@ -230,21 +231,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             //persist the newly-created Sku
             adminInstance = (Sku)dynamicEntityDao.persist(adminInstance);
             
-            //Get the list of product option value ids that were selected from the form
-            List<Long> productOptionValueIds = new ArrayList<Long>();
-            for (Property property : getProductOptionProperties(entity)) {
-                productOptionValueIds.add(Long.parseLong(property.getValue()));
-            }
-            
-            //Associate the product option values from the form with the Sku
-            List<ProductOption> productOptions = adminInstance.getProduct().getProductOptions();
-            for (ProductOption option : productOptions) {
-                for (ProductOptionValue value : option.getAllowedValues()) {
-                    if (productOptionValueIds.contains(value.getId())) {
-                        adminInstance.getProductOptionValues().add(value);
-                    }
-                }
-            }
+            //associate the product option values
+            associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
             
             //After associating the product option values, save off the Sku
             adminInstance = (Sku)dynamicEntityDao.merge(adminInstance);
@@ -279,6 +267,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 return errorEntity;
             }
             
+            associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
+            
             adminInstance = (Sku)dynamicEntityDao.merge(adminInstance);
             
             //Fill out the DTO and add in the product option value properties to it
@@ -292,7 +282,37 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             throw new ServiceException("Unable to perform fetch for entity: " + Sku.class.getName(), e);
         }
     }
-    
+
+    /**
+     * This initially removes all of the product option values that are currently related to the Sku and then re-associates
+     * the {@link PrdouctOptionValue}s
+     * @param entity
+     * @param adminInstance
+     */
+    protected void associateProductOptionValuesToSku(Entity entity, Sku adminInstance, DynamicEntityDao dynamicEntityDao) {
+        //Get the list of product option value ids that were selected from the form
+        List<Long> productOptionValueIds = new ArrayList<Long>();
+        for (Property property : getProductOptionProperties(entity)) {
+            productOptionValueIds.add(Long.parseLong(property.getValue()));
+        }
+        
+        //remove the current list of product option values from the Sku
+        if (adminInstance.getProductOptionValues().size() > 0) {
+            adminInstance.getProductOptionValues().clear();
+            dynamicEntityDao.merge(adminInstance);
+        }
+        
+        //Associate the product option values from the form with the Sku
+        List<ProductOption> productOptions = adminInstance.getProduct().getProductOptions();
+        for (ProductOption option : productOptions) {
+            for (ProductOptionValue value : option.getAllowedValues()) {
+                if (productOptionValueIds.contains(value.getId())) {
+                    adminInstance.getProductOptionValues().add(value);
+                }
+            }
+        }
+    }
+        
     protected List<Property> getProductOptionProperties(Entity entity) {
         List<Property> productOptionProperties = new ArrayList<Property>();
         for (Property property : entity.getProperties()) {

@@ -44,7 +44,7 @@ public class OrderDaoImpl implements OrderDao {
     protected CustomerDao customerDao;
 
     public Order readOrderById(final Long orderId) {
-        return (Order) em.find(OrderImpl.class, orderId);
+        return em.find(OrderImpl.class, orderId);
     }
 
     public Order save(final Order order) {
