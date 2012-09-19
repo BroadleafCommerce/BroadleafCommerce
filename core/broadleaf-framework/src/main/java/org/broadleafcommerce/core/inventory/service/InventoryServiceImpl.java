@@ -43,16 +43,16 @@ public class InventoryServiceImpl implements InventoryService {
     protected EntityConfiguration entityConfiguration;
 
     @Override
-    public boolean isQuantityAvailable(Sku sku, Integer quantity) throws InventoryUnavailableException {
+    public boolean isQuantityAvailable(Sku sku, Integer quantity) {
         return isQuantityAvailable(sku, quantity, null);
     }
 
     @Override
-    public boolean isQuantityAvailable(Sku sku, Integer quantity, FulfillmentLocation fulfillmentLocation) throws InventoryUnavailableException {
+    public boolean isQuantityAvailable(Sku sku, Integer quantity, FulfillmentLocation fulfillmentLocation) {
 
-        //if the sku does not exist or is not active, there is no quantity available and throw an exception
-        if (sku == null || !sku.isActive()) {
-            throw new InventoryUnavailableException("The requested SKU is no longer active");
+        //if the sku does not exist or is not active, there is no quantity available
+        if (!sku.isActive()) {
+            return false;
         }
 
         if (sku.getInventoryType() == null 

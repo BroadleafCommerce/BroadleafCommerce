@@ -16,12 +16,9 @@
 
 package org.broadleafcommerce.core.order.service.workflow;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
@@ -30,12 +27,9 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 public class CheckAvailabilityActivity extends BaseActivity {
 
-    private static Log LOG = LogFactory.getLog(CheckAvailabilityActivity.class);
-    
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
