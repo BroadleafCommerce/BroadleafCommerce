@@ -53,11 +53,15 @@ public class InventoryServiceImpl implements InventoryService {
             throw new InventoryUnavailableException("The requested SKU is no longer active");
         }
 
-        if (sku.getInventoryType() == null && sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null) {
+        if (sku.getInventoryType() == null 
+        		&& (sku.getDefaultProduct().getDefaultCategory() == null
+        		|| sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null)) {
             return true;
-        } else if (InventoryType.NONE.equals(sku.getInventoryType()) || InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory())) {
+        } else if (InventoryType.NONE.equals(sku.getInventoryType()) 
+        		|| (sku.getDefaultProduct().getDefaultCategory() != null 
+        		&& InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory().getInventoryType()))){
             return true;
-        }
+        } 
 
         //quantity must be greater than 0
         if (quantity == null || quantity < 0) {

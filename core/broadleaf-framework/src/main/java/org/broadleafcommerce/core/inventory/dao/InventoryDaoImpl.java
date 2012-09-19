@@ -37,7 +37,7 @@ public class InventoryDaoImpl implements InventoryDao {
             inventory = em.merge(inventory);
             
             //This should cause an OptimisticLockException immediately if someone has 
-            //already modified this object.
+            //already modified this object, rather than waiting for the transaction to complete.
             em.flush();
             return inventory;
         } catch (OptimisticLockException ex) {
