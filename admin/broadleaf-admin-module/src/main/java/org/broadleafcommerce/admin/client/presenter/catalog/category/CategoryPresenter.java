@@ -16,9 +16,42 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.admin.client.datasource.catalog.StaticAssetsTileGridDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryTreeDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.FeaturedProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.OrphanedCategoryListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -39,41 +72,10 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import com.smartgwt.client.widgets.tree.events.DataArrivedEvent;
 import com.smartgwt.client.widgets.tree.events.DataArrivedHandler;
-import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
-import org.broadleafcommerce.admin.client.datasource.catalog.StaticAssetsTileGridDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryTreeDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.FeaturedProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.OrphanedCategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -105,7 +107,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
         initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         compileDefaultValuesFromCurrentFilter(initialValues);
 		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), initialValues, new ItemEditedHandler() {
-			public void onItemEdited(ItemEdited event) {
+			@Override
+            public void onItemEdited(ItemEdited event) {
 				reloadParentTreeNodeRecords(false);
 				getDisplay().getAllCategoriesDisplay().getGrid().clearCriteria();
 				allChildCategoriesPresenter.load(display.getListDisplay().getGrid().getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS"), null);
@@ -139,7 +142,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			display.getListDisplay().getRemoveButton().disable();
 		}
 		allChildCategoriesPresenter.load(selectedRecord, dataSource, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
+			@Override
+            public void execute(DSResponse response, Object rawData, DSRequest request) {
                 if (response.getStatus()== RPCResponse.STATUS_FAILURE) {
 					getDisplay().getInsertOrphanButton().disable();
                 } else {
@@ -167,7 +171,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		allChildCategoriesPresenter.bind();
 		childProductsPresenter.bind();
 		((TreeGrid) display.getListDisplay().getGrid()).addDataArrivedHandler(new DataArrivedHandler() {
-			public void onDataArrived(DataArrivedEvent event) {
+			@Override
+            public void onDataArrived(DataArrivedEvent event) {
 				Record[] records = event.getParentNode().getAttributeAsRecordArray("children");
 				for (Record record : records) {
 					String hasChildren = record.getAttribute(CategoryTreeDataSourceFactory.hasChildrenProperty);
@@ -178,10 +183,12 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			}
         });
 		getDisplay().getRemoveOrphanedButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
+			@Override
+            public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					SC.confirm(BLCMain.getMessageManager().getString("confirmDelete"), new BooleanCallback() {
-						public void execute(Boolean value) {
+						@Override
+                        public void execute(Boolean value) {
 							if (value) {
 								getDisplay().getOrphanedCategoryGrid().removeSelectedData();
 								getDisplay().getRemoveOrphanedButton().disable();
@@ -193,10 +200,12 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			}
 		});
 		getDisplay().getInsertOrphanButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
+			@Override
+            public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					getDisplay().getAllCategoriesDisplay().getGrid().addData(getDisplay().getOrphanedCategoryGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
+						@Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
 							reloadParentTreeNodeRecords(true);
 							getDisplay().getOrphanedCategoryGrid().invalidateCache();
 							getDisplay().getRemoveOrphanedButton().disable();
@@ -207,7 +216,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			}
 		});
 		getDisplay().getOrphanedCategoryGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
+			@Override
+            public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
 					getDisplay().getRemoveOrphanedButton().enable();
 					if (display.getListDisplay().getGrid().getSelectedRecord() != null && !getDisplay().getAllCategoriesDisplay().getGrid().isDisabled()) {
@@ -221,15 +231,18 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		});
 	}
 
-	public void setup() {
+	@Override
+    public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categoryTreeDS", new CategoryTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
+			@Override
+            public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((TreeGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearchDS", new CategorySearchDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.JOINSTRUCTURE, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				ListGridDataSource categorySearchDataSource = (ListGridDataSource) result;
 				categorySearchDataSource.resetPermanentFieldVisibility(
 					"name",
@@ -242,13 +255,15 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildCategoriesDS", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				allChildCategoriesPresenter = new AllChildCategoriesPresenter(CategoryPresenter.this, getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("categorySearchTitle"));
 				allChildCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orphanedCategoriesDS", new OrphanedCategoryListDataSourceFactory(), null, new Object[]{rootId}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				getDisplay().getOrphanedCategoryGrid().setDataSource(result);
 				((ListGridDataSource) result).setAssociatedGrid(getDisplay().getOrphanedCategoryGrid());
 				((ListGridDataSource) result).setupGridFields(new String[]{"name", "urlKey"});
@@ -260,7 +275,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productSearchDS", new ProductListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
 				productSearchDataSource.resetPermanentFieldVisibility(
 					"name",
@@ -275,19 +291,22 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("featuredProductsDS", new FeaturedProductListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				featuredPresenter = new EditableJoinStructurePresenter(getDisplay().getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				featuredPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildProductsDS", new AllProductsDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				childProductsPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("productSearchPrompt"));
 				childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "model", "manufacturer"}, new Boolean[]{false, false, false});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("mediaMapDS", new MediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				Map<String, Object> initialValues = new HashMap<String, Object>(2);
 				initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
 				initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
@@ -298,12 +317,22 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
-            	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-            	final AssetSearchDialog assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS);
+                TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
+                final AssetSearchDialog dialog=new AssetSearchDialog(staticAssetTreeDS);
+                HashMap<String, Object> initialValues = new HashMap<String, Object>(10);
+                initialValues.put("operation", "add");
+                initialValues.put("customCriteria", "assetListUi");
+                initialValues.put("ceilingEntityFullyQualifiedClassname",
+                        CeilingEntities.STATICASSETS);
+                // initialValues.put("_type", new String[]{((DynamicEntityDataSource)
+                // display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+                initialValues.put("_type", CeilingEntities.STATICASSETS);
+                initialValues.put("csrfToken", BLCMain.csrfToken);
+                dialog.setInitialValues(initialValues);
                 getPresenterSequenceSetupManager().getDataSource("mediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
                     @Override
                     public void execute(final FormItem formItem) {
-                        assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
+                        dialog.search("Asset Search", new TileGridItemSelectedHandler() {
                             @Override
                             public void onSearchItemSelected(TileGridItemSelected event) {
                                 String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
