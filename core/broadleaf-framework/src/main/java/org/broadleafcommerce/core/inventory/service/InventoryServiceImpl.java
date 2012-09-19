@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.inventory.domain.InventoryType;
 import org.broadleafcommerce.core.inventory.exception.ConcurrentInventoryModificationException;
 import org.broadleafcommerce.core.order.service.exception.InventoryUnavailableException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Service("blInventoryService")
+@Transactional(rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
 public class InventoryServiceImpl implements InventoryService {
 
     @Resource(name="blInventoryDao")

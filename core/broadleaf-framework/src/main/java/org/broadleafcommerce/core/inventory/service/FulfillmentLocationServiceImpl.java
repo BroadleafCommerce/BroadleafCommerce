@@ -18,11 +18,13 @@ package org.broadleafcommerce.core.inventory.service;
 import org.broadleafcommerce.core.inventory.dao.FulfillmentLocationDao;
 import org.broadleafcommerce.core.inventory.domain.FulfillmentLocation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @Service("blFulfillmentLocationService")
+@Transactional
 public class FulfillmentLocationServiceImpl implements FulfillmentLocationService {
 
     @Resource(name = "blFulfillmentLocationDao")
