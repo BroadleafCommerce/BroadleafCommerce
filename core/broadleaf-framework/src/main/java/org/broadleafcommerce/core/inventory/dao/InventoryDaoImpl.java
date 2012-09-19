@@ -35,6 +35,9 @@ public class InventoryDaoImpl implements InventoryDao {
     public Inventory save(Inventory inventory) throws ConcurrentInventoryModificationException {
         try {
             inventory = em.merge(inventory);
+            
+            //This should cause an OptimisticLockException immediately if someone has 
+            //already modified this object.
             em.flush();
             return inventory;
         } catch (OptimisticLockException ex) {
@@ -46,7 +49,7 @@ public class InventoryDaoImpl implements InventoryDao {
     @Override
     public Inventory readInventory(Sku sku, FulfillmentLocation fulfillmentLocation) {
         Query query = em.createNamedQuery("BC_READ_SKU_INVENTORY_FOR_LOCATION");
-        query.setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        query.setLockMode(LockModeType.OPTIMISTIC);
         query.setParameter("skuId", sku.getId());
         query.setParameter("fulfillmentLocationId", fulfillmentLocation.getId());
 
@@ -64,7 +67,7 @@ public class InventoryDaoImpl implements InventoryDao {
     public Inventory readInventoryForDefaultFulfillmentLocation(Sku sku) {
         Query query = em.createNamedQuery("BC_READ_SKU_INVENTORY_FOR_DEFAULT_LOCATION");
         query.setParameter("skuId", sku.getId());
-        query.setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        query.setLockMode(LockModeType.OPTIMISTIC);
         query.setMaxResults(1);
         List<Inventory> inventories = query.getResultList();
         if (CollectionUtils.isNotEmpty(inventories)) {
@@ -80,7 +83,7 @@ public class InventoryDaoImpl implements InventoryDao {
 
     @Override
     public Inventory readById(Long id) {
-        return em.find(Inventory.class, id, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        return em.find(Inventory.class, id, LockModeType.OPTIMISTIC);
     }
 
 
