@@ -56,7 +56,7 @@ public interface InventoryService {
     public boolean isQuantityAvailable(Sku sku, Integer quantity, FulfillmentLocation fulfillmentLocation);
 
     /**
-     * Subtracts the quantity from available inventory for each sku in the map. Quantity must be a positive integer.
+     * Subtracts the quantity from available inventory in the default fulfillment location for each sku in the map. Specified quantity must be a positive integer.
      * @param skuInventory a map which contains the quantity of inventory to subtract from available inventory for each sku
      */
     public void decrementInventory(Map<Sku, Integer> skuInventory) throws ConcurrentInventoryModificationException, InventoryUnavailableException;
@@ -70,7 +70,7 @@ public interface InventoryService {
     public void decrementInventory(Map<Sku, Integer> skuInventory, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException, InventoryUnavailableException;
 
     /**
-     * Add available inventory to sku
+     * Add available inventory to sku. If fulfillment location is null, this method throws an {@link IllegalArgumentException}.
      * @param skuInventory
      * @param fulfillmentLocation
      * @throws ConcurrentInventoryModificationException

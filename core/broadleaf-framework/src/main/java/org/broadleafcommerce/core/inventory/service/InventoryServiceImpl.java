@@ -100,10 +100,14 @@ public class InventoryServiceImpl implements InventoryService {
             /*
              * If the inventory type of the sku or category is null or InventoryType.NONE, do not adjust inventory
              */
-            if (sku.getInventoryType() == null && sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null) {
-               continue;
-            } else if (InventoryType.NONE.equals(sku.getInventoryType()) || InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory())) {
-               continue;
+            if (sku.getInventoryType() == null 
+            		&& (sku.getDefaultProduct().getDefaultCategory() == null
+            		|| sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null)) {
+                continue;
+            } else if (InventoryType.NONE.equals(sku.getInventoryType()) 
+            		|| (sku.getDefaultProduct().getDefaultCategory() != null 
+            		&& InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory().getInventoryType()))){
+                continue;
             }
 
             //quantity must not be null
@@ -151,7 +155,11 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void incrementInventory(Map<Sku, Integer> skuInventory, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException {
-        //TODO
+        
+    	if (fulfillmentLocation == null) {
+    		throw new IllegalArgumentException("The fulfillment location must be specified in order to increment inventory.");
+    	}
+    	
         Set<Sku> skus = skuInventory.keySet();
         for (Sku sku : skus) {
             Integer quantity = skuInventory.get(sku);
@@ -159,9 +167,13 @@ public class InventoryServiceImpl implements InventoryService {
             /*
              * If the inventory type of the sku or category is null or InventoryType.NONE, do not adjust inventory
              */
-            if (sku.getInventoryType() == null && sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null) {
+            if (sku.getInventoryType() == null 
+            		&& (sku.getDefaultProduct().getDefaultCategory() == null
+            		|| sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null)) {
                 continue;
-            } else if (InventoryType.NONE.equals(sku.getInventoryType()) || InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory())) {
+            } else if (InventoryType.NONE.equals(sku.getInventoryType()) 
+            		|| (sku.getDefaultProduct().getDefaultCategory() != null 
+            		&& InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory().getInventoryType()))){
                 continue;
             }
 
