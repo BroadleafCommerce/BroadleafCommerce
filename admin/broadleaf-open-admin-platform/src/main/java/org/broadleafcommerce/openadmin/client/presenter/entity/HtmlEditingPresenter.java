@@ -39,7 +39,7 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
 
     private AssetSearchDialog assetSearchDialogView;
     private static HtmlEditingPresenter instance = new HtmlEditingPresenter();
-    private DataSource staticAssetsDataSouce=null;
+    private TileGridDataSource staticAssetsDataSouce=null;
     public String getTemplatePath() {
         return null;
     }
@@ -59,6 +59,7 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
         initialValues.put("_type", CeilingEntities.STATICASSETS);
         initialValues.put("csrfToken", BLCMain.csrfToken);
        // compileDefaultValuesFromCurrentFilter(initialValues);
+        setAssetSearchDialogView(new AssetSearchDialog(staticAssetsDataSouce));
         getAssetSearchDialogView().setInitialValues(initialValues);
         getAssetSearchDialogView().search("Asset Search",
                 new TileGridItemSelectedHandler() {
@@ -109,10 +110,9 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
                 
                 @Override
                 public void onSetupSuccess(DataSource dataSource) {
-                    TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-                    setAssetSearchDialogView(new AssetSearchDialog(
-                            staticAssetTreeDS));
-                    staticAssetsDataSouce=dataSource;
+                    staticAssetsDataSouce = (TileGridDataSource) dataSource;
+                  
+
                 }
             });
       }
