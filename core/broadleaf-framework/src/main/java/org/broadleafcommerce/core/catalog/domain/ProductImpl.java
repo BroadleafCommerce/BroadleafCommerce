@@ -145,6 +145,7 @@ public class ProductImpl implements Product, Status {
     protected Boolean isFeaturedProduct = false;
     
     @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL}, mappedBy = "defaultProduct")
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     protected Sku defaultSku;
     
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
@@ -328,6 +329,7 @@ public class ProductImpl implements Product, Status {
 
 	@Override
 	public void setDefaultSku(Sku defaultSku) {
+        defaultSku.setDefaultProduct(this);
 		this.defaultSku = defaultSku;
 	}
 

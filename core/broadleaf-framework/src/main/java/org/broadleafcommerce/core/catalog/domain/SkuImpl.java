@@ -218,7 +218,8 @@ public class SkuImpl implements Sku {
     /**
      * This will be non-null if and only if this Sku is the default Sku for a Product
      */
-    @OneToOne(optional = true, targetEntity=ProductImpl.class)
+    @OneToOne(optional = true, targetEntity=ProductImpl.class, cascade={CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     @JoinColumn(name = "DEFAULT_PRODUCT_ID")
     protected Product defaultProduct;
 
