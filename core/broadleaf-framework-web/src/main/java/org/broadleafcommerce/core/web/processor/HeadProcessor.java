@@ -19,7 +19,9 @@ package org.broadleafcommerce.core.web.processor;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.processor.element.AbstractFragmentElementProcessor;
+import org.thymeleaf.fragment.FragmentAndTarget;
+import org.thymeleaf.fragment.WholeFragmentSpec;
+import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
@@ -36,7 +38,7 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
-public class HeadProcessor extends AbstractFragmentElementProcessor {
+public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 
     public static final String FRAGMENT_ATTR_NAME = StandardFragmentAttrProcessor.ATTR_NAME;
     protected String HEAD_PARTIAL_PATH = "layout/partials/head";
@@ -54,8 +56,13 @@ public class HeadProcessor extends AbstractFragmentElementProcessor {
     }
 
 	@Override
+	protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {
+		return true;
+	}
+
+    @Override
 	@SuppressWarnings("unchecked")
-	protected AbstractFragmentSpec getFragmentSpec(Arguments arguments, Element element) {
+    protected FragmentAndTarget getFragmentAndTarget(Arguments arguments, Element element, boolean substituteInclusionNode) {
 		// The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
 		// to its text value if the expression wasn't able to be processed. This will allow things like
 		// pageTitle="Hello this is a string"
@@ -70,12 +77,7 @@ public class HeadProcessor extends AbstractFragmentElementProcessor {
 		}
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
-        return new CompleteTemplateFragmentSpec(HEAD_PARTIAL_PATH);
-	}
-
-	@Override
-	protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {
-		return true;
-	}
+		return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+    }
 
 }

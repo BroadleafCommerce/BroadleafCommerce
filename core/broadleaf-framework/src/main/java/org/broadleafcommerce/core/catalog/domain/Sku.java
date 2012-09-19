@@ -415,5 +415,17 @@ public interface Sku extends Serializable {
      * @param excludedFulfillmentOptions
      */
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
+
+    /**
+     * Convenience method to return a given sku attribute by its name
+     * @param name
+     * @return the SkuAttribute
+     */
+    public SkuAttribute getSkuAttributeByName(String name);
+
+	/**
+	 * @return a Map of all the sku attributes on this sku keyed by the attribute name
+	 */
+    public Map<String, SkuAttribute> getMappedSkuAttributes();
     
 }

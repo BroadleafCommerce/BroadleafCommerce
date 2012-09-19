@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import net.entropysoft.transmorph.cache.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
@@ -34,6 +35,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +52,8 @@ import java.util.Map;
 public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
 
 	private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
-	
+    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
+
 	public ProductOptionsProcessor() {
 		super("product_options");
 	}
@@ -116,10 +120,13 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 	
 	private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			Writer strWriter = new StringWriter();
-			mapper.writeValue(strWriter, o);
-			addToModel(arguments, modelKey, strWriter.toString());
+            if (!JSON_CACHE.containsKey(o)) {
+                ObjectMapper mapper = new ObjectMapper();
+                Writer strWriter = new StringWriter();
+                mapper.writeValue(strWriter, o);
+                JSON_CACHE.put(o, strWriter.toString());
+            }
+            addToModel(arguments, modelKey, JSON_CACHE.get(o));
 		} catch (Exception ex) {
 			LOG.error("There was a problem writing the product option map to JSON", ex);
 		}
@@ -159,7 +166,32 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 		public void setSelectedValue(String selectedValue) {
 			this.selectedValue = selectedValue;
 		}
-	}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ProductOptionDTO)) return false;
+
+            ProductOptionDTO that = (ProductOptionDTO) o;
+
+            if (id != null ? !id.equals(that.id) : that.id != null) return false;
+            if (selectedValue != null ? !selectedValue.equals(that.selectedValue) : that.selectedValue != null)
+                return false;
+            if (type != null ? !type.equals(that.type) : that.type != null) return false;
+            if (values != null ? !values.equals(that.values) : that.values != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id != null ? id.hashCode() : 0;
+            result = 31 * result + (type != null ? type.hashCode() : 0);
+            result = 31 * result + (values != null ? values.hashCode() : 0);
+            result = 31 * result + (selectedValue != null ? selectedValue.hashCode() : 0);
+            return result;
+        }
+    }
 	
 	private class ProductOptionPricingDTO {
 		private Long[] skuOptions;
@@ -178,6 +210,26 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 		public void setPrice(BigDecimal price) {
 			this.price = price;
 		}
-	}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ProductOptionPricingDTO)) return false;
+
+            ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;
+
+            if (price != null ? !price.equals(that.price) : that.price != null) return false;
+            if (!Arrays.equals(skuOptions, that.skuOptions)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = skuOptions != null ? Arrays.hashCode(skuOptions) : 0;
+            result = 31 * result + (price != null ? price.hashCode() : 0);
+            return result;
+        }
+    }
 
 }

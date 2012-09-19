@@ -218,8 +218,9 @@ public class SkuImpl implements Sku {
     /**
      * This will be non-null if and only if this Sku is the default Sku for a Product
      */
-    @OneToOne(optional=true, targetEntity=ProductImpl.class, mappedBy="defaultSku")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToOne(optional = true, targetEntity=ProductImpl.class, cascade={CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+    @JoinColumn(name = "DEFAULT_PRODUCT_ID")
     protected Product defaultProduct;
 
     /**
@@ -627,6 +628,25 @@ public class SkuImpl implements Sku {
 	public List<SkuAttribute> getSkuAttributes() {
 		return skuAttributes;
 	}
+    
+    @Override
+    public SkuAttribute getSkuAttributeByName(String name) {
+    	for (SkuAttribute attribute : getSkuAttributes()) {
+    		if (attribute.getName().equals(name)) {
+    			return attribute;
+    		}
+    	}
+    	return null;
+    }
+    
+    @Override
+    public Map<String, SkuAttribute> getMappedSkuAttributes() {
+    	Map<String, SkuAttribute> map = new HashMap<String, SkuAttribute>();
+    	for (SkuAttribute attr : getSkuAttributes()) {
+    		map.put(attr.getName(), attr);
+    	}
+    	return map;
+    }
 
     @Override
     public List<ProductOptionValue> getProductOptionValues() {

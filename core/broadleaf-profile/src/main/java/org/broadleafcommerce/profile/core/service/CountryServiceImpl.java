@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.profile.core.dao.CountryDao;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("blCountryService")
 public class CountryServiceImpl implements CountryService {
@@ -37,7 +38,8 @@ public class CountryServiceImpl implements CountryService {
     public Country findCountryByAbbreviation(String abbreviation) {
         return countryDao.findCountryByAbbreviation(abbreviation);
     }
-    
+
+    @Transactional("blTransactionManager")
     public Country save(Country country) {
     	return countryDao.save(country);
     }

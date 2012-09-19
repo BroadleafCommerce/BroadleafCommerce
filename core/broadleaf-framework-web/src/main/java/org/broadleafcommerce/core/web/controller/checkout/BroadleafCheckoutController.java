@@ -400,18 +400,20 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     protected void copyShippingAddressToBillingAddress(Order order, BillingInfoForm billingInfoForm) {
         if (order.getFulfillmentGroups().get(0) != null) {
             Address shipping = order.getFulfillmentGroups().get(0).getAddress();
-            Address billing = new AddressImpl();
-            billing.setFirstName(shipping.getFirstName());
-            billing.setLastName(shipping.getLastName());
-            billing.setAddressLine1(shipping.getAddressLine1());
-            billing.setAddressLine2(shipping.getAddressLine2());
-            billing.setCity(shipping.getCity());
-            billing.setState(shipping.getState());
-            billing.setPostalCode(shipping.getPostalCode());
-            billing.setCountry(shipping.getCountry());
-            billing.setPrimaryPhone(shipping.getPrimaryPhone());
-            billing.setEmailAddress(shipping.getEmailAddress());
-            billingInfoForm.setAddress(billing);
+            if (shipping != null) {
+                Address billing = new AddressImpl();
+                billing.setFirstName(shipping.getFirstName());
+                billing.setLastName(shipping.getLastName());
+                billing.setAddressLine1(shipping.getAddressLine1());
+                billing.setAddressLine2(shipping.getAddressLine2());
+                billing.setCity(shipping.getCity());
+                billing.setState(shipping.getState());
+                billing.setPostalCode(shipping.getPostalCode());
+                billing.setCountry(shipping.getCountry());
+                billing.setPrimaryPhone(shipping.getPrimaryPhone());
+                billing.setEmailAddress(shipping.getEmailAddress());
+                billingInfoForm.setAddress(billing);
+            }
         }
     }
 
@@ -479,7 +481,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
         Order cart = CartState.getCart();
         		
-        if (hasValidShippingAddresses(cart)) {
+        if (cart.getFulfillmentGroups().size() > 0 && hasValidShippingAddresses(cart)) {
             Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
             options.addAll(fulfillmentOptions);
             FulfillmentEstimationResponse estimateResponse = null;

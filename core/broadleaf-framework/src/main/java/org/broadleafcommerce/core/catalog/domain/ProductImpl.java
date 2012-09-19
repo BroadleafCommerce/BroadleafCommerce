@@ -144,9 +144,8 @@ public class ProductImpl implements Product, Status {
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=11, group = "ProductImpl_Product_Description", prominent=false)
     protected Boolean isFeaturedProduct = false;
     
-    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL})
-    @JoinColumn(name = "DEFAULT_SKU_ID")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL}, mappedBy = "defaultProduct")
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     protected Sku defaultSku;
     
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
@@ -330,6 +329,7 @@ public class ProductImpl implements Product, Status {
 
 	@Override
 	public void setDefaultSku(Sku defaultSku) {
+        defaultSku.setDefaultProduct(this);
 		this.defaultSku = defaultSku;
 	}
 
