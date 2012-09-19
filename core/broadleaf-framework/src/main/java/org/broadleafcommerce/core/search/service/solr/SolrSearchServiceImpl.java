@@ -67,6 +67,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * An implementation of SearchService that uses solr
@@ -120,12 +122,31 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 			
 			// Add fields that are present on all products
 			document.addField("id", product.getId());
+			
+			// The explicit categories are the one defined by the product itself
 			for (Category category : product.getAllParentCategories()) {
-				document.addField("category", category.getId());
+				document.addField("explicitCategory", category.getId());
 				
 				String categorySortField = getCategorySortField(category);
 				int listIndex = category.getAllProducts().indexOf(product);
 				document.addField(categorySortField, listIndex);
+			}
+			
+			// This is the entire tree of every category defined on the product
+			Set<Category> fullCategoryHierarchy = new TreeSet<Category>(new Comparator<Category>() {
+                @Override
+                public int compare(Category o1, Category o2) {
+                    if (o1.equals(o2)) {
+                        return 0;
+                    }
+                    return 1;
+                }
+            });
+			for (Category category : product.getAllParentCategories()) {
+			    fullCategoryHierarchy.addAll(category.buildFullCategoryHierarchy(null));
+			}
+			for (Category category : fullCategoryHierarchy) {
+				document.addField("category", category.getId());
 			}
 			
 			// Add data-driven user specified searchable fields
@@ -165,6 +186,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 			documents.add(document);
 		}
 		
+		if (LOG.isTraceEnabled()) {
+		    for (SolrInputDocument document : documents) {
+		        LOG.trace(document);
+		    }
+		}
+		
 	    try {
 	    	server.deleteByQuery("*:*");
 	    	server.commit();
@@ -176,6 +203,14 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	    }
 	    
 	    LOG.info("Finished rebuilding the solr index in " + s.toLapString());
+	}
+    
+	@Override
+	public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria) 
+			throws ServiceException {
+		List<SearchFacetDTO> facets = getCategoryFacets(category);
+		String query = "explicitCategory:" + category.getId();
+		return findProducts(query, facets, searchCriteria, getCategorySortField(category) + " asc");
 	}
 	
 	@Override

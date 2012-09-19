@@ -521,6 +521,15 @@ public interface Category extends Serializable {
 	public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy);
 	
 	/**
+	 * Build the full category hierarchy by walking up the default category tree and the all parent
+	 * category tree.
+	 * 
+	 * @param currentHierarchy
+	 * @return the full hierarchy
+	 */
+    public List<Category> buildFullCategoryHierarchy(List<Category> currentHierarchy);
+	
+	/**
 	 * Gets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
 	 * extending the domain object itself.
 	 * 
@@ -553,5 +562,6 @@ public interface Category extends Serializable {
      * @return
      */
     public Map<String, CategoryAttribute> getMappedCategoryAttributes();
+
     
 }
