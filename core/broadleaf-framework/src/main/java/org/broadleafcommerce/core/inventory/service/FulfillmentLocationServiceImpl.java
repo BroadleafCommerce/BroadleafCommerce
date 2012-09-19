@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service("blFulfillmentLocationService")
-@Transactional
+@Transactional(value="blTransactionManager")
 public class FulfillmentLocationServiceImpl implements FulfillmentLocationService {
 
     @Resource(name = "blFulfillmentLocationDao")

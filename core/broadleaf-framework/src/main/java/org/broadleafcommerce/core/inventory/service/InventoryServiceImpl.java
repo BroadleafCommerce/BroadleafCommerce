@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Service("blInventoryService")
-@Transactional(rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
+@Transactional(value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
 public class InventoryServiceImpl implements InventoryService {
 
     @Resource(name="blInventoryDao")
