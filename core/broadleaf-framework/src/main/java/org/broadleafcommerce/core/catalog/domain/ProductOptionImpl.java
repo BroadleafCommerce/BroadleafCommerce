@@ -109,7 +109,7 @@ public class ProductOptionImpl implements ProductOption {
             dataSourceName = "productOptionTranslationDS",
             keyPropertyFriendlyName = "TranslationsImpl_Key",
             deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = SkuTranslationImpl.class,
+            mapKeyOptionEntityClass = ProductOptionTranslationImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
             mapKeyOptionEntityValueField = "translationsKey"
 

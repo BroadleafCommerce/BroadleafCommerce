@@ -275,7 +275,7 @@ public class CategoryImpl implements Category, Status {
             dataSourceName = "categoryTranslationDS",
             keyPropertyFriendlyName = "TranslationsImpl_Key",
             deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = SkuTranslationImpl.class,
+            mapKeyOptionEntityClass = CategoryTranslationImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
             mapKeyOptionEntityValueField = "translationsKey"
 
