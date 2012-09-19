@@ -51,6 +51,7 @@ import java.util.Date;
  * @see {@link Sku}
  * @author bpolster
  */
+@Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_AVAILABILITY")

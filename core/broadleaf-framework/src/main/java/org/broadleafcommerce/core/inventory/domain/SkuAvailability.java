@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
  * @see {@link SkuAvailabilityImpl}
  * @author bpolster
  */
+@Deprecated
 public interface SkuAvailability extends Serializable {
 
     /**

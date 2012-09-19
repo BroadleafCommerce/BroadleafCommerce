@@ -28,7 +28,7 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.inventory.domain.InventoryType;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;

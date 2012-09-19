@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
  * 
  * @author jfischer
  */
+@Deprecated
 public class AvailabilityStatusType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;

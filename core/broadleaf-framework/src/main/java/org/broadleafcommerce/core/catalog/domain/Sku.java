@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.inventory.domain.InventoryType;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -431,7 +431,7 @@ public interface Sku extends Serializable {
 
     /**
      * Returns the type of inventory for this sku
-     * @return the {@link org.broadleafcommerce.core.inventory.domain.InventoryType} for this sku
+     * @return the {@link org.broadleafcommerce.core.inventory.service.type.InventoryType} for this sku
      */
     public InventoryType getInventoryType();
 

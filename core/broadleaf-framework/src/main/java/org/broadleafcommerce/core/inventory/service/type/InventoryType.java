@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.core.inventory.domain;
+package org.broadleafcommerce.core.inventory.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
@@ -21,6 +21,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enumeration to specify whether inventory should be checked or not.
+ * 
+ * @author Kelly Tisdell
+ *
+ */
 public class InventoryType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;

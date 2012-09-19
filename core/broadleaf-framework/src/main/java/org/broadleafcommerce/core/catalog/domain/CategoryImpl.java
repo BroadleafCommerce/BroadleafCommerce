@@ -33,7 +33,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
-import org.broadleafcommerce.core.inventory.domain.InventoryType;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
