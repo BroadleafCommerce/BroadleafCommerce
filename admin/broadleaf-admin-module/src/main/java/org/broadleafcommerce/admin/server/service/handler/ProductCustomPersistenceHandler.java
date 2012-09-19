@@ -21,6 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
@@ -29,12 +31,17 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
+import javax.annotation.Resource;
+
 import java.util.Map;
 
 /**
  * @author Jeff Fischer
  */
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
@@ -64,8 +71,20 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
 
 			adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
+            
+			//Since none of the Sku fields are required, it's possible that the user did not fill out
+			//any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
+			if (adminInstance.getDefaultSku() == null) {
+			    Sku newSku = catalogService.createSku();
+			    adminInstance.setDefaultSku(newSku);
+			    adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
+			}
 
-			return helper.getRecord(adminProperties, adminInstance, null, null);
+			//also set the default product for the Sku
+			adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
+            dynamicEntityDao.merge(adminInstance.getDefaultSku());
+			
+            return helper.getRecord(adminProperties, adminInstance, null, null);
 		} catch (Exception e) {
             LOG.error("Unable to add entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
@@ -87,7 +106,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
 
             adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
-
+            
 			return helper.getRecord(adminProperties, adminInstance, null, null);
 		} catch (Exception e) {
             LOG.error("Unable to update entity for " + entity.getType()[0], e);
