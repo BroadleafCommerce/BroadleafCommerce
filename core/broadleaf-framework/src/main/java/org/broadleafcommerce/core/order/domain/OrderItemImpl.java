@@ -92,7 +92,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Id
     @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 50)
+    @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 150)
     @Column(name = "ORDER_ITEM_ID")
     @AdminPresentation(friendlyName = "OrderItemImpl_Order_Item_ID", group = "OrderItemImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;

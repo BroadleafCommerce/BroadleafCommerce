@@ -53,7 +53,7 @@ public class TaxDetailImpl implements TaxDetail {
             @Parameter(name="segment_column_name", value="ID_NAME"),
             @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="TaxDetailImpl"),
-            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="increment_size", value="150"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.TaxDetailImpl")
         }
     )

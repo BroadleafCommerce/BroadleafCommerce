@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.profile.core.dao.StateDao;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("blStateService")
 public class StateServiceImpl implements StateService {
@@ -41,7 +42,8 @@ public class StateServiceImpl implements StateService {
     public State findStateByAbbreviation(String abbreviation) {
         return stateDao.findStateByAbbreviation(abbreviation);
     }
-    
+
+    @Transactional("blTransactionManager")
     public State save(State state) {
     	return stateDao.save(state);
     }

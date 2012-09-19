@@ -20,6 +20,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.Hydrated;
+import org.broadleafcommerce.common.cache.HydratedSetup;
+import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -43,11 +46,15 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.springframework.orm.jpa.EntityManagerHolder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -155,7 +162,8 @@ public class ProductImpl implements Product, Status {
     
     /** The skus. */
     @Transient
-    protected List<Sku> skus = new ArrayList<Sku>();
+    @Hydrated(factoryMethod = "createSkuIdList")
+    protected List<Long> skuIds = null;
     
     @Transient
     protected String promoMessage;
@@ -347,8 +355,8 @@ public class ProductImpl implements Product, Status {
     public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
-        for (Sku additionalSku : additionalSkus) {
-            if (additionalSku.getId() != getDefaultSku().getId()) {
+        for (Sku additionalSku : getAdditionalSkus()) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 allSkus.add(additionalSku);
             }
         }
@@ -357,20 +365,51 @@ public class ProductImpl implements Product, Status {
 
     @Override
 	public List<Sku> getSkus() {
-        if (skus.size() == 0) {
-            List<Sku> additionalSkus = getAdditionalSkus();
-            for (Sku sku : additionalSkus) {
-                if (sku.isActive()) {
-                    skus.add(sku);
-                }
+        if (skuIds == null) {
+            HydratedSetup.populateFromCache(this);
+        }
+        EntityManager em = HydratedSetup.retrieveBoundEntityManager();
+        List<Sku> response = new ArrayList<Sku>(skuIds.size());
+        for (Long skuId : skuIds) {
+            Sku sku = em.find(SkuImpl.class, skuId);
+            if (sku.isActive()) {
+                response.add(sku);
             }
         }
-        return skus;
+        return response;
+    }
+
+    //required for hydrated cache maintenance
+    public List<Long> createSkuIdList() {
+        List<Long> skuList = new ArrayList<Long>(50);
+        for (Sku sku : additionalSkus) {
+            skuList.add(sku.getId());
+        }
+        return skuList;
+    }
+
+    //required for hydrated cache maintenance
+    public void setSkuIds(List<Long> skuIds) {
+        this.skuIds = skuIds;
+    }
+
+    //required for hydrated cache maintenance
+    public List<Long> getSkuIds() {
+        return skuIds;
     }
 
     @Override
     public List<Sku> getAdditionalSkus() {
-        return additionalSkus;
+        if (skuIds == null) {
+            HydratedSetup.populateFromCache(this);
+        }
+        EntityManager em = HydratedSetup.retrieveBoundEntityManager();
+        List<Sku> response = new ArrayList<Sku>(skuIds.size());
+        for (Long skuId : skuIds) {
+            Sku sku = em.find(SkuImpl.class, skuId);
+            response.add(sku);
+        }
+        return response;
     }
 
     @Override
@@ -379,7 +418,6 @@ public class ProductImpl implements Product, Status {
         for(Sku sku : skus){
         	this.additionalSkus.add(sku);
         }
-        //this.skus.clear();
     }
 
     @Override
@@ -402,7 +440,7 @@ public class ProductImpl implements Product, Status {
         Map<String, Media> result = new HashMap<String, Media>();
         result.putAll(getMedia());
         for (Sku additionalSku : getAdditionalSkus()) {
-            if (additionalSku.getId() != getDefaultSku().getId()) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 result.putAll(additionalSku.getSkuMedia());
             }
         }
@@ -680,7 +718,7 @@ public class ProductImpl implements Product, Status {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((skus == null) ? 0 : skus.hashCode());
+        result = prime * result + ((skuIds == null) ? 0 : skuIds.hashCode());
         return result;
     }
 
@@ -697,11 +735,10 @@ public class ProductImpl implements Product, Status {
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-
-        if (skus == null) {
-            if (other.skus != null)
+        if (skuIds == null) {
+            if (other.skuIds != null)
                 return false;
-        } else if (!skus.equals(other.skus))
+        } else if (!skuIds.equals(other.skuIds))
             return false;
         return true;
     }
