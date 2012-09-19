@@ -16,7 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import java.util.Map;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -39,12 +43,8 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
-import com.smartgwt.client.widgets.tree.TreeNode;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
+
+import java.util.Map;
 
 /**
  * 
@@ -53,9 +53,9 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
  */
 public class EntityEditDialog extends Window {
 	
-	private DynamicForm dynamicForm;
+	private final DynamicForm dynamicForm;
 	private ItemEditedHandler handler;
-    private VStack pictureStack;
+    private final VStack pictureStack;
     protected boolean showMedia = false;
     protected String mediaField;
     protected HStack hStack;
@@ -98,14 +98,16 @@ public class EntityEditDialog extends Window {
 
         saveButton = new IButton("Save");
         saveButton.addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             	if (dynamicForm.validate()) {
                     saveButton.disable();
                     cancelButton.disable();
             		dynamicForm.saveData(new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
+						@Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()== RPCResponse.STATUS_SUCCESS) {
-                                TreeNode record = (TreeNode) response.getData()[0];
+                                Record record = response.getData()[0];
                                 if (handler != null) {
                                     handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
                                 }
@@ -124,6 +126,7 @@ public class EntityEditDialog extends Window {
 
         cancelButton = new IButton("Cancel");
         cancelButton.addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
             	hide();
                 isHidden = true;
