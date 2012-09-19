@@ -23,10 +23,13 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.core.inventory.dao.AvailabilityDao;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
-import org.springframework.stereotype.Service;
 
+/**
+ * 
+ * @deprecated This is no longer required. See {@link InventoryService}
+ *
+ */
 @Deprecated
-@Service("blAvailabilityService")
 public class AvailabilityServiceImpl implements AvailabilityService {
 
     @Resource(name="blAvailabilityDao")

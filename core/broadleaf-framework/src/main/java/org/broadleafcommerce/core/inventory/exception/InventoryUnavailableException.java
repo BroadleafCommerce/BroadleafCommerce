@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service.exception;
+package org.broadleafcommerce.core.inventory.exception;
 
 import java.util.Map;
 

@@ -22,8 +22,8 @@ import org.broadleafcommerce.core.inventory.dao.InventoryDao;
 import org.broadleafcommerce.core.inventory.domain.FulfillmentLocation;
 import org.broadleafcommerce.core.inventory.domain.Inventory;
 import org.broadleafcommerce.core.inventory.exception.ConcurrentInventoryModificationException;
+import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.service.exception.InventoryUnavailableException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

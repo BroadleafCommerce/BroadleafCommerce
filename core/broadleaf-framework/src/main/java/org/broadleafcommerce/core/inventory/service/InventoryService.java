@@ -4,7 +4,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.domain.FulfillmentLocation;
 import org.broadleafcommerce.core.inventory.domain.Inventory;
 import org.broadleafcommerce.core.inventory.exception.ConcurrentInventoryModificationException;
-import org.broadleafcommerce.core.order.service.exception.InventoryUnavailableException;
+import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 
 import java.util.Map;
 

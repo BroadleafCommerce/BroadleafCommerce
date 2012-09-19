@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.inventory.domain;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
@@ -50,6 +51,8 @@ import java.util.Date;
  *
  * @see {@link Sku}
  * @author bpolster
+ * 
+ * @deprecated This is no longer required. See {@link InventoryService}
  */
 @Deprecated
 @Entity
