@@ -16,13 +16,9 @@
 
 package org.broadleafcommerce.core.order.service.exception;
 
-import java.util.Map;
-
 public class InventoryUnavailableException extends Exception {
 
     private static final long serialVersionUID = 1L;
-
-    protected Map<Long, Integer> skuInventoryAvailable;
 
     public InventoryUnavailableException() {
         super();
@@ -38,14 +34,6 @@ public class InventoryUnavailableException extends Exception {
 
     public InventoryUnavailableException(Throwable cause) {
         super(cause);
-    }
-
-    public Map<Long, Integer> getSkuInventoryAvailable() {
-        return skuInventoryAvailable;
-    }
-
-    public void setSkuInventoryAvailable(Map<Long, Integer> skuInventoryAvailable) {
-        this.skuInventoryAvailable = skuInventoryAvailable;
     }
 
 }
