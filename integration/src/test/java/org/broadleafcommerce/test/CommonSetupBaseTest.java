@@ -231,8 +231,8 @@ public abstract class CommonSetupBaseTest extends BaseTest {
     	
     	// Reverse-associate the ProductBundle to the sku (Must be done this way because it's a 
     	// bidirectional OneToOne relationship
-    	bundleSku.setDefaultProduct(bundle);
-    	catalogService.saveSku(bundleSku);
+    	//bundleSku.setDefaultProduct(bundle);
+    	//catalogService.saveSku(bundleSku);
     	
     	// Wrap the product/sku that is part of the bundle in a SkuBundleItem
     	SkuBundleItem skuBundleItem = new SkuBundleItemImpl();
