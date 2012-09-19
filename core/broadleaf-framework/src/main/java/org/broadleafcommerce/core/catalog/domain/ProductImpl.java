@@ -20,9 +20,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.cache.Hydrated;
-import org.broadleafcommerce.common.cache.HydratedSetup;
-import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -46,15 +43,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-import org.springframework.orm.jpa.EntityManagerHolder;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -151,9 +144,7 @@ public class ProductImpl implements Product, Status {
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=11, group = "ProductImpl_Product_Description", prominent=false)
     protected Boolean isFeaturedProduct = false;
     
-    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL})
-    @JoinColumn(name = "DEFAULT_SKU_ID")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL}, mappedBy = "defaultProduct")
     protected Sku defaultSku;
     
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
@@ -162,8 +153,7 @@ public class ProductImpl implements Product, Status {
     
     /** The skus. */
     @Transient
-    @Hydrated(factoryMethod = "createSkuIdList")
-    protected List<Long> skuIds = null;
+    protected List<Sku> skus = new ArrayList<Sku>();
     
     @Transient
     protected String promoMessage;
@@ -355,8 +345,8 @@ public class ProductImpl implements Product, Status {
     public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
-        for (Sku additionalSku : getAdditionalSkus()) {
-            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
+        for (Sku additionalSku : additionalSkus) {
+            if (additionalSku.getId() != getDefaultSku().getId()) {
                 allSkus.add(additionalSku);
             }
         }
@@ -365,51 +355,20 @@ public class ProductImpl implements Product, Status {
 
     @Override
 	public List<Sku> getSkus() {
-        if (skuIds == null) {
-            HydratedSetup.populateFromCache(this);
-        }
-        EntityManager em = HydratedSetup.retrieveBoundEntityManager();
-        List<Sku> response = new ArrayList<Sku>(skuIds.size());
-        for (Long skuId : skuIds) {
-            Sku sku = em.find(SkuImpl.class, skuId);
-            if (sku.isActive()) {
-                response.add(sku);
+        if (skus.size() == 0) {
+            List<Sku> additionalSkus = getAdditionalSkus();
+            for (Sku sku : additionalSkus) {
+                if (sku.isActive()) {
+                    skus.add(sku);
+                }
             }
         }
-        return response;
-    }
-
-    //required for hydrated cache maintenance
-    public List<Long> createSkuIdList() {
-        List<Long> skuList = new ArrayList<Long>(50);
-        for (Sku sku : additionalSkus) {
-            skuList.add(sku.getId());
-        }
-        return skuList;
-    }
-
-    //required for hydrated cache maintenance
-    public void setSkuIds(List<Long> skuIds) {
-        this.skuIds = skuIds;
-    }
-
-    //required for hydrated cache maintenance
-    public List<Long> getSkuIds() {
-        return skuIds;
+        return skus;
     }
 
     @Override
     public List<Sku> getAdditionalSkus() {
-        if (skuIds == null) {
-            HydratedSetup.populateFromCache(this);
-        }
-        EntityManager em = HydratedSetup.retrieveBoundEntityManager();
-        List<Sku> response = new ArrayList<Sku>(skuIds.size());
-        for (Long skuId : skuIds) {
-            Sku sku = em.find(SkuImpl.class, skuId);
-            response.add(sku);
-        }
-        return response;
+        return additionalSkus;
     }
 
     @Override
@@ -418,6 +377,7 @@ public class ProductImpl implements Product, Status {
         for(Sku sku : skus){
         	this.additionalSkus.add(sku);
         }
+        //this.skus.clear();
     }
 
     @Override
@@ -440,7 +400,7 @@ public class ProductImpl implements Product, Status {
         Map<String, Media> result = new HashMap<String, Media>();
         result.putAll(getMedia());
         for (Sku additionalSku : getAdditionalSkus()) {
-            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
+            if (additionalSku.getId() != getDefaultSku().getId()) {
                 result.putAll(additionalSku.getSkuMedia());
             }
         }
@@ -718,7 +678,7 @@ public class ProductImpl implements Product, Status {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((skuIds == null) ? 0 : skuIds.hashCode());
+        result = prime * result + ((skus == null) ? 0 : skus.hashCode());
         return result;
     }
 
@@ -735,10 +695,11 @@ public class ProductImpl implements Product, Status {
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-        if (skuIds == null) {
-            if (other.skuIds != null)
+
+        if (skus == null) {
+            if (other.skus != null)
                 return false;
-        } else if (!skuIds.equals(other.skuIds))
+        } else if (!skus.equals(other.skus))
             return false;
         return true;
     }

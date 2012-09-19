@@ -218,8 +218,8 @@ public class SkuImpl implements Sku {
     /**
      * This will be non-null if and only if this Sku is the default Sku for a Product
      */
-    @OneToOne(optional=true, targetEntity=ProductImpl.class, mappedBy="defaultSku")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToOne(optional = true, targetEntity=ProductImpl.class)
+    @JoinColumn(name = "DEFAULT_PRODUCT_ID")
     protected Product defaultProduct;
 
     /**
