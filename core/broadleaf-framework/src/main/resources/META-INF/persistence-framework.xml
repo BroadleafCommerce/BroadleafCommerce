@@ -111,6 +111,7 @@
 		<class>org.broadleafcommerce.core.catalog.domain.CategoryTranslationImpl</class>
 		<class>org.broadleafcommerce.core.catalog.domain.SkuTranslationImpl</class>
 		<class>org.broadleafcommerce.core.catalog.domain.ProductOptionTranslationImpl</class>
+		<class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueTranslationImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>
