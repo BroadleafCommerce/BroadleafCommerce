@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 
+@Deprecated
 public interface AvailabilityService {
 
 	/**

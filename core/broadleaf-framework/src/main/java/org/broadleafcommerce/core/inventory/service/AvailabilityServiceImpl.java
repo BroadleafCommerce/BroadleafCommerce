@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.inventory.dao.AvailabilityDao;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 import org.springframework.stereotype.Service;
 
+@Deprecated
 @Service("blAvailabilityService")
 public class AvailabilityServiceImpl implements AvailabilityService {
 
