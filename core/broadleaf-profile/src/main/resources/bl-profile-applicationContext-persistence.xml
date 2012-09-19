@@ -92,7 +92,9 @@
 
 	<tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
 	    <tx:attributes>
-	      <tx:method name="*" propagation="REQUIRED"/>
+	      <tx:method name="*" propagation="REQUIRED"
+                rollback-for="org.broadleafcommerce.core.inventory.exception.ConcurrentInventoryModificationException,
+	            org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException"/>
 	      <tx:method name="findNextId" propagation="REQUIRES_NEW"/>
 	    </tx:attributes>
 	</tx:advice>

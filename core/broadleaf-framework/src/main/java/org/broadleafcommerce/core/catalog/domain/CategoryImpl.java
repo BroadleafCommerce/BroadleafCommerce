@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.core.inventory.domain.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
@@ -266,6 +267,9 @@ public class CategoryImpl implements Category, Status {
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS")
     protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
+
+    @Column(name = "INVENTORY_TYPE")
+    protected String inventoryType;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -509,6 +513,31 @@ public class CategoryImpl implements Category, Status {
     }
     
     @Override
+    public List<Category> buildFullCategoryHierarchy(List<Category> currentHierarchy) {
+        if (currentHierarchy == null) { 
+            currentHierarchy = new ArrayList<Category>();
+            currentHierarchy.add(this);
+        }
+        
+        List<Category> myParentCategories = new ArrayList<Category>();
+        if (defaultParentCategory != null) {
+            myParentCategories.add(defaultParentCategory);
+        }
+        if (allParentCategories != null && allParentCategories.size() > 0) {
+            myParentCategories.addAll(allParentCategories);
+        }
+        
+        for (Category category : myParentCategories) {
+            if (!currentHierarchy.contains(category)) {
+                currentHierarchy.add(category);
+                category.buildFullCategoryHierarchy(currentHierarchy);
+            }
+        }
+        
+        return currentHierarchy;
+    }
+    
+    @Override
     public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy) {
     	if (currentHierarchy == null) {
     		currentHierarchy = new ArrayList<Category>();
@@ -680,6 +709,16 @@ public class CategoryImpl implements Category, Status {
 	public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets) {
 		this.excludedSearchFacets = excludedSearchFacets;
 	}
+
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.getInstance(this.inventoryType);
+    }
+
+    @Override
+    public void setInventoryType(InventoryType inventoryType) {
+        this.inventoryType = inventoryType.getType();
+    }
     
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {

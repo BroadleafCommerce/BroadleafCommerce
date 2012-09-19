@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.core.inventory.domain.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -503,8 +504,8 @@ public interface Category extends Serializable {
 	/**
 	 * Returns a list of CategorySearchFacets that takes into consideration the search facets for this Category,
 	 * the search facets for all parent categories, and the search facets that should be excluded from this 
-	 * Category. This method will order the resulting list based on the {@link CategorySearchFacet#getPosition()}
-	 * method for each category level. That is, the facets on this Category will be ordered by their position
+	 * Category. This method will order the resulting list based on the
+     * method for each category level. That is, the facets on this Category will be ordered by their position
 	 * relative to each other with the ordered parent facets after that, etc.
 	 * 
 	 * @return the current active search facets for this category and all parent categories
@@ -519,6 +520,15 @@ public interface Category extends Serializable {
 	 * @return
 	 */
 	public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy);
+	
+	/**
+	 * Build the full category hierarchy by walking up the default category tree and the all parent
+	 * category tree.
+	 * 
+	 * @param currentHierarchy
+	 * @return the full hierarchy
+	 */
+    public List<Category> buildFullCategoryHierarchy(List<Category> currentHierarchy);
 	
 	/**
 	 * Gets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
@@ -553,5 +563,17 @@ public interface Category extends Serializable {
      * @return
      */
     public Map<String, CategoryAttribute> getMappedCategoryAttributes();
-    
+
+    /**
+     * Returns the type of inventory for this category
+     * @return the {@link InventoryType} for this category
+     */
+    public InventoryType getInventoryType();
+
+    /**
+     * Sets the type of inventory for this category
+     * @param inventoryType the {@link InventoryType} for this category
+     */
+    public void setInventoryType(InventoryType inventoryType);
+
 }

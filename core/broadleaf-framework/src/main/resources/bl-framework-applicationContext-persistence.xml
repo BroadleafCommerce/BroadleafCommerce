@@ -176,4 +176,14 @@
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blContentServiceOperation"/>
 	</aop:config>
 
+    <aop:config>
+        <aop:pointcut id="blInventoryOperation" expression="execution(* org.broadleafcommerce.core.inventory.service.InventoryService.*(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blInventoryOperation"/>
+    </aop:config>
+
+    <aop:config>
+        <aop:pointcut id="blFulfillmentLocationOperation" expression="execution(* org.broadleafcommerce.core.inventory.service.FulfillmentLocationService.*(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blFulfillmentLocationOperation"/>
+    </aop:config>
+
 </beans>
