@@ -25,6 +25,13 @@ import java.util.List;
 public interface InventoryDao {
 
     public Inventory readById(Long id);
+    
+    /**
+     * Same as read, but refreshes and handles locking for concurrent updates
+     * @param id
+     * @return
+     */
+    public Inventory readForUpdateById(Long id) throws ConcurrentInventoryModificationException;
 
     /**
      * Retrieves the {@link Inventory} for the given {@link Sku} and {@link FulfillmentLocation}
@@ -33,6 +40,15 @@ public interface InventoryDao {
      * @return {@link Inventory}
      */
     public Inventory readInventory(Sku sku, FulfillmentLocation fulfillmentLocation);
+    
+    /**
+     * Same as readInventory but refreshes and locks the object.
+     * @param sku
+     * @param fulfillmentLocation
+     * @return
+     * @throws ConcurrentInventoryModificationException
+     */
+    public Inventory readInventoryForUpdate(Sku sku, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException;
 
     /**
      * Retrieves the {@link Inventory} for the given {@link Sku}
@@ -41,6 +57,14 @@ public interface InventoryDao {
      * @return {@link List}
      */
     public Inventory readInventoryForDefaultFulfillmentLocation(Sku sku);
+    
+    /**
+     * Same as readInventoryForDefaultFulfillmentLocation but refreshes and locks the object.
+     * @param sku
+     * @return
+     * @throws ConcurrentInventoryModificationException
+     */
+    public Inventory readInventoryForUpdateForDefaultFulfillmentLocation(Sku sku) throws ConcurrentInventoryModificationException;
 
     /**
      * Persists the {@link Inventory}
@@ -54,6 +78,5 @@ public interface InventoryDao {
       * @param inventory
      */
     public void delete(Inventory inventory);
-
 
 }

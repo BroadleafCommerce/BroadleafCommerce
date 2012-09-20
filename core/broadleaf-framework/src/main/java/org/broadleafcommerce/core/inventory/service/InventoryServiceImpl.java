@@ -126,9 +126,9 @@ public class InventoryServiceImpl implements InventoryService {
             //check available inventory
             Inventory inventory = null;
             if (fulfillmentLocation != null) {
-                inventory = inventoryDao.readInventory(sku, fulfillmentLocation);
+                inventory = inventoryDao.readInventoryForUpdate(sku, fulfillmentLocation);
             } else {
-                inventory = inventoryDao.readInventoryForDefaultFulfillmentLocation(sku);
+                inventory = inventoryDao.readInventoryForUpdateForDefaultFulfillmentLocation(sku);
             }
 
             if (inventory != null) {
@@ -191,7 +191,7 @@ public class InventoryServiceImpl implements InventoryService {
                 continue;
             }
 
-            Inventory inventory = readInventory(sku, fulfillmentLocation);
+            Inventory inventory = inventoryDao.readInventoryForUpdate(sku, fulfillmentLocation);
 
             if (inventory != null) {
                 inventory.setQuantityAvailable(inventory.getQuantityAvailable() + quantity);

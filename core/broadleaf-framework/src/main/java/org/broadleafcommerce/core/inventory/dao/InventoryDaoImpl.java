@@ -55,11 +55,24 @@ public class InventoryDaoImpl implements InventoryDao {
 
         List<Inventory> inventories = query.getResultList();
         if (CollectionUtils.isNotEmpty(inventories)) {
-            return inventories.get(0);
+        	return inventories.get(0);
         }
 
         return null;
-
+    }
+    
+    @Override
+    public Inventory readInventoryForUpdate(Sku sku, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException {
+        Inventory inventory = readInventory(sku, fulfillmentLocation);
+        if (inventory != null) {
+        	try {
+	        	em.refresh(inventory, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+	        	em.flush();
+        	} catch (OptimisticLockException ex) {
+                throw new ConcurrentInventoryModificationException("Error locking inventory object with id: " + inventory.getId());
+            }
+        } 
+        return inventory;
     }
 
     @SuppressWarnings("unchecked")
@@ -75,6 +88,20 @@ public class InventoryDaoImpl implements InventoryDao {
         }
         return null;
     }
+    
+    @Override
+    public Inventory readInventoryForUpdateForDefaultFulfillmentLocation(Sku sku) throws ConcurrentInventoryModificationException {
+        Inventory inventory = readInventoryForDefaultFulfillmentLocation(sku);
+        if (inventory != null) {
+        	try {
+	        	em.refresh(inventory, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+	        	em.flush();
+        	} catch (OptimisticLockException ex) {
+                throw new ConcurrentInventoryModificationException("Error locking inventory object with id: " + inventory.getId());
+            }
+        }
+        return inventory;
+    }
 
     @Override
     public void delete(Inventory inventory) {
@@ -85,6 +112,19 @@ public class InventoryDaoImpl implements InventoryDao {
     public Inventory readById(Long id) {
         return em.find(Inventory.class, id, LockModeType.OPTIMISTIC);
     }
-
-
+    
+    @Override
+    public Inventory readForUpdateById(Long id) throws ConcurrentInventoryModificationException {
+        Inventory inventory = readById(id);
+        if (inventory != null) {
+        	try {
+	        	em.refresh(inventory, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+	        	em.flush();
+        	} catch (OptimisticLockException ex) {
+                throw new ConcurrentInventoryModificationException("Error locking inventory object with id: " + inventory.getId());
+            }
+        }
+        return inventory;
+    }
+    
 }
