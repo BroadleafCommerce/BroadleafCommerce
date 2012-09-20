@@ -32,9 +32,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -73,9 +71,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "PriceListImpl_Currency", order=3,group = "PriceListImpl_Details",  requiredOverride = RequiredOverride.REQUIRED)
-    @AdminPresentationToOneLookup(lookupDisplayProperty="friendlyName")
-    protected BroadleafCurrency currency;
+    @AdminPresentation(friendlyName = "PriceListImpl_Currency", order=2,group = "PriceListImpl_Details", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+   // @AdminPresentation(friendlyName = "PriceListImpl_Currency", order=3,group = "PriceListImpl_Details",  requiredOverride = RequiredOverride.REQUIRED)
+   // @AdminPresentationToOneLookup(lookupDisplayProperty="friendlyName")
+    protected BroadleafCurrency currencyCode;
     
     
     @Override
@@ -109,7 +108,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
         PriceListImpl priceList = (PriceListImpl) o;
 
-        if (currency != null ? !currency.equals(priceList.currency) : priceList.currency != null) {
+        if (currencyCode != null ? !currencyCode.equals(priceList.currencyCode) : priceList.currencyCode != null) {
             return false;
         }
         if (priceKey != null ? !priceKey.equals(priceList.priceKey) : priceList.priceKey != null) {
@@ -121,7 +120,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
     @Override
     public int hashCode() {
-        int result = currency != null ? currency.hashCode() : 0;
+        int result = currencyCode != null ? currencyCode.hashCode() : 0;
         result = 31 * result + (priceKey != null ? priceKey.hashCode() : 0);
         return result;
     }
@@ -153,11 +152,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
     @Override
     public BroadleafCurrency getCurrencyCode() {
-        return currency;
+        return currencyCode;
     }
 
     @Override
     public void setCurrencyCode(BroadleafCurrency currencyCode) {
-        this.currency = currencyCode;
+        this.currencyCode = currencyCode;
     }
 }

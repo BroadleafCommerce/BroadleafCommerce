@@ -104,13 +104,13 @@ public class MerchandisingModule extends AbstractModule {
 			offerPermissions
 		);
 	        List<String> priceListPermissions = new ArrayList<String>();
-                priceListPermissions.add("PERMISSION_CREATE_URLHANDLER");
-                priceListPermissions.add("PERMISSION_UPDATE_URLHANDLER");
-                priceListPermissions.add("PERMISSION_DELETE_URLHANDLER");
-                priceListPermissions.add("PERMISSION_READ_URLHANDLER");
+                priceListPermissions.add("PERMISSION_CREATE_PRICELIST");
+                priceListPermissions.add("PERMISSION_UPDATE_PRICELIST");
+                priceListPermissions.add("PERMISSION_DELETE_PRICELIST");
+                priceListPermissions.add("PERMISSION_READ_PRICELIST");
                 setSection(
             BLCMain.getMessageManager().getString("priceListMainTitle"),
-                        "priceList",
+                        "priceListView",
                         "org.broadleafcommerce.admin.client.view.pricelist.PriceListView",
                         "priceListPresenter",
                         "org.broadleafcommerce.admin.client.presenter.pricelist.PriceListPresenter",

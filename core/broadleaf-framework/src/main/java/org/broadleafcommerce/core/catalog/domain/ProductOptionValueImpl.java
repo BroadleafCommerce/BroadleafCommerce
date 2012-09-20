@@ -100,8 +100,6 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @BatchSize(size = 20)
     @AdminPresentationMap(
             friendlyName = "SkuImpl_PriceData",
-           // targetUIElementId = "productSkuMediaLayout",
-            dataSourceName = "productOptionPriceDataMapDS",
             keyPropertyFriendlyName = "PriceListImpl_Key",
             deleteEntityUponRemove = true,
             mapKeyOptionEntityClass = PriceListImpl.class,

@@ -15,7 +15,7 @@
     <named-query name="BC_READ_PRICE_LIST_BY_CURRENCY_CODE" >
         <query>SELECT priceList
             FROM org.broadleafcommerce.common.pricelist.domain.PriceListImpl priceList
-            WHERE priceList.currency = :currency
+            WHERE priceList.currencyCode = :currency
         </query>
     </named-query>
 

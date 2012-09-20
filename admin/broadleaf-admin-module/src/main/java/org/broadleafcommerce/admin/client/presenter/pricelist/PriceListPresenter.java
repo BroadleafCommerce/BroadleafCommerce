@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.admin.client.presenter.pricelist;
 
+import org.broadleafcommerce.admin.client.datasource.pricelist.CurrencyListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.pricelist.PriceListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -23,6 +24,7 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPres
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
 import com.smartgwt.client.data.DataSource;
 
@@ -34,7 +36,7 @@ import com.smartgwt.client.data.DataSource;
 public class PriceListPresenter extends DynamicEntityPresenter implements Instantiable {
 
     public PriceListPresenter() {
-        setGridFields(new String[]{"id","friendlyName","priceKey","currency"});
+      
     }
 
     @Override
@@ -50,7 +52,23 @@ public class PriceListPresenter extends DynamicEntityPresenter implements Instan
             public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"id","friendlyName","priceKey","currency"}, new Boolean[]{true, true,true,true});
+		             
+			
 			}
 		}));
+              getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("currencyDS", new CurrencyListDataSourceFactory(), new AsyncCallbackAdapter() {
+                      @Override
+                    public void onSetupSuccess(DataSource result) {
+                              ((ListGridDataSource) result).resetPermanentFieldVisibility("friendlyName");
+              final EntitySearchDialog localeSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
+              getPresenterSequenceSetupManager().getDataSource("priceListDS").
+              getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                  "currencyCode",
+                  localeSearchView,
+                  BLCMain.getMessageManager().getString("localeSearchPrompt"),
+                  display.getDynamicFormDisplay()
+              );
+                      }
+              }));
 	}
 }
