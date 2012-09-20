@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -26,6 +27,8 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
@@ -83,6 +86,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected SubPresentable skusPresenter;
 	protected SubPresentable bundleItemsPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -111,30 +115,33 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                SC.confirm(BLCMain.getMessageManager().getString("generateSkusConfirm"), new BooleanCallback() {
-                    @Override
-                    public void execute(Boolean value) {
-                        if (value) {
-                            Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
-                            AppServices.CATALOG.generateSkusFromProduct(productId, new AsyncCallback<Integer>() {
-                                @Override
-                                public void onSuccess(Integer result) {
-                                    //we just finished creating a bunch of Skus, reload the grid
-                                    getDisplay().getSkusDisplay().getGrid().invalidateCache();
-                                    SC.say(result + " " + BLCMain.getMessageManager().getString("skuGenerationSuccess"));
-                                }
-                                
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    SC.say(BLCMain.getMessageManager().getString("skuGenerationFail"));
-                                }
-                            });
-                        } else {
-                            SC.say(BLCMain.getMessageManager().getString("noSkusGenerated"));
+                if (getDisplay().getProductOptionsDisplay().getGrid().getTotalRows() <= 0) {
+                    SC.say(BLCMain.getMessageManager().getString("skuGenerationInvalid"));
+                } else {
+                    SC.confirm(BLCMain.getMessageManager().getString("generateSkusConfirm"), new BooleanCallback() {
+                        @Override
+                        public void execute(Boolean value) {
+                            if (value) {
+                                Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
+                                AppServices.CATALOG.generateSkusFromProduct(productId, new AsyncCallback<Integer>() {
+                                    @Override
+                                    public void onSuccess(Integer result) {
+                                        //we just finished creating a bunch of Skus, reload the grid
+                                        getDisplay().getSkusDisplay().getGrid().invalidateCache();
+                                        SC.say(result + " " + BLCMain.getMessageManager().getString("skuGenerationSuccess"));
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable caught) {
+                                        SC.say(BLCMain.getMessageManager().getString("skuGenerationFail"));
+                                    }
+                                });
+                            } else {
+                                SC.say(BLCMain.getMessageManager().getString("noSkusGenerated"));
+                            }
                         }
-                    }
-                });
-                
+                    });
+                }
             }
         });
 		
@@ -184,6 +191,12 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		        });
 		    }
 		});
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                ((OneToOneProductSkuDisplay) display).getCloneProductButton().disable();
+            }
+        });
 
 	}
 	
@@ -265,7 +278,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             @Override
             public void onSetupSuccess(DataSource result) {
                 bundleItemsPresenter = new EditableAdornedTargetListPresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "salePrice"});
-                bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"sku.name", "quantity"}, new Boolean[]{false, true});
+                bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "quantity"}, new Boolean[]{false, true});
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
