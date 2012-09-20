@@ -481,7 +481,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
         Order cart = CartState.getCart();
         		
-        if (cart.getFulfillmentGroups().size() > 0 && hasValidShippingAddresses(cart)) {
+        if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0 && hasValidShippingAddresses(cart)) {
             Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
             options.addAll(fulfillmentOptions);
             FulfillmentEstimationResponse estimateResponse = null;
