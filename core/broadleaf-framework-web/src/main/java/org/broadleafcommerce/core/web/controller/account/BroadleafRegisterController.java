@@ -95,6 +95,9 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 	        mergeCartProcessor.execute(request, response, auth);	        
 	        
 	        String redirectUrl = registerCustomerForm.getRedirectUrl();
+	        if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {
+	            redirectUrl = null;
+	        }
 	        return StringUtils.isBlank(redirectUrl) ? getRegisterSuccessView() : "redirect:" + redirectUrl;
 	    } else {
 	    	return getRegisterView();
