@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -114,7 +115,10 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
     @Override
     public Boolean cloneProduct(Long productId) {
         Product cloneProduct = catalogService.findProductById(productId);
-        
+        //initialize the many-to-many to save off
+        cloneProduct.getProductOptions().size();
+        cloneProduct.getAllParentCategories().size();
+
         //Detach and save a cloned Sku
         Sku cloneSku = cloneProduct.getDefaultSku();
         cloneSku.getSkuMedia().size();
@@ -122,10 +126,6 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
         cloneSku.setId(null);
         
         cloneProduct.setDefaultSku(cloneSku);
-        
-        //initialize the many-to-many to save off
-        cloneProduct.getProductOptions().size();
-        cloneProduct.getAllParentCategories().size();
 
         em.detach(cloneProduct);
         cloneProduct.setId(null);
