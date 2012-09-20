@@ -17,11 +17,6 @@
 package org.broadleafcommerce.common.web;
 
 
-import java.util.Currency;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
@@ -29,6 +24,10 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Currency;
 
 public class BroadleafRequestContext {
 	
@@ -42,9 +41,13 @@ public class BroadleafRequestContext {
 		BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
 	}
 
-    public static boolean hasBroadleafRequestContext(){
-        if (getBroadleafRequestContext() == null || getBroadleafRequestContext().getLocale()==null) { return false; }
-        return true;
+    public static boolean hasLocale(){
+        if (getBroadleafRequestContext() != null) {
+            if(getBroadleafRequestContext().getLocale() != null){
+                return true;
+            }
+        }
+        return false;
     }
 	
 	private HttpServletRequest request;

@@ -148,9 +148,8 @@ public class ProductOptionImpl implements ProductOption {
     
     @Override
     public String getLabel() {
-        if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            Locale locale = brc.getLocale();
+        if (translations != null && BroadleafRequestContext.hasLocale()) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
 
             // Search for translation based on locale
             String localeCode = locale.getLocaleCode();

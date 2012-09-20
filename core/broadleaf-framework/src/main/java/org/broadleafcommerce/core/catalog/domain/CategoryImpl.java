@@ -313,9 +313,8 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getName() {
-        if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            Locale locale = brc.getLocale();
+        if (translations != null && BroadleafRequestContext.hasLocale()) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
 
             // Search for translation based on locale
             String localeCode = locale.getLocaleCode();
@@ -385,9 +384,8 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getDescription() {
-        if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            Locale locale = brc.getLocale();
+        if (translations != null && BroadleafRequestContext.hasLocale()) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
 
             // Search for translation based on locale
             String localeCode = locale.getLocaleCode();

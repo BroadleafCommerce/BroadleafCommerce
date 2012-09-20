@@ -445,9 +445,8 @@ public class SkuImpl implements Sku {
         if (name == null && hasDefaultSku()) {
             return lookupDefaultSku().getName();
         } else {
-            if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
-                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-                Locale locale = brc.getLocale();
+            if (translations != null && BroadleafRequestContext.hasLocale()) {
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
 
                 // Search for translation based on locale
                 String localeCode = locale.getLocaleCode();
@@ -481,9 +480,8 @@ public class SkuImpl implements Sku {
         if (description == null && hasDefaultSku()) {
             return lookupDefaultSku().getDescription();
         } else {
-            if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
-                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-                Locale locale = brc.getLocale();
+            if (translations != null && BroadleafRequestContext.hasLocale()) {
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
 
                 // Search for translation based on locale
                 String localeCode = locale.getLocaleCode();
@@ -517,9 +515,8 @@ public class SkuImpl implements Sku {
         if (longDescription == null && hasDefaultSku()) {
             return lookupDefaultSku().getLongDescription();
         } else {
-            if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
-                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-                Locale locale = brc.getLocale();
+            if (translations != null && BroadleafRequestContext.hasLocale()) {
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
 
                 // Search for translation based on locale
                 String localeCode = locale.getLocaleCode();
