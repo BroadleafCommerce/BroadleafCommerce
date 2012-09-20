@@ -143,7 +143,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
 
     @Override
     public String getAttributeValue() {
-        if (translations != null) {
+        if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext())  {
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             Locale locale = brc.getLocale();
 

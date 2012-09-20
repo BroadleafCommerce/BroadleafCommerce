@@ -40,6 +40,11 @@ public class BroadleafRequestContext {
 	public static void setBroadleafRequestContext(BroadleafRequestContext broadleafRequestContext) {
 		BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
 	}
+
+    public static boolean hasBroadleafRequestContext(){
+        if (BROADLEAF_REQUEST_CONTEXT == null) { return false; }
+        return true;
+    }
 	
 	private HttpServletRequest request;
     private HttpServletResponse response;

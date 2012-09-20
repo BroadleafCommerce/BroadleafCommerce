@@ -445,7 +445,7 @@ public class SkuImpl implements Sku {
         if (name == null && hasDefaultSku()) {
             return lookupDefaultSku().getName();
         } else {
-            if (translations != null) {
+            if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
                 BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
                 Locale locale = brc.getLocale();
 
@@ -481,7 +481,7 @@ public class SkuImpl implements Sku {
         if (description == null && hasDefaultSku()) {
             return lookupDefaultSku().getDescription();
         } else {
-            if (translations != null) {
+            if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
                 BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
                 Locale locale = brc.getLocale();
 
@@ -517,7 +517,7 @@ public class SkuImpl implements Sku {
         if (longDescription == null && hasDefaultSku()) {
             return lookupDefaultSku().getLongDescription();
         } else {
-            if (translations != null) {
+            if (translations != null && BroadleafRequestContext.hasBroadleafRequestContext()) {
                 BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
                 Locale locale = brc.getLocale();
 
