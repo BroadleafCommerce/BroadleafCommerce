@@ -77,7 +77,7 @@ public class MergeCartServiceImpl implements MergeCartService {
         mergeCartResponse.setRemovedItems(reconstructCartResponse.getRemovedItems());
         Order customerCart = reconstructCartResponse.getOrder();
         
-        if (anonymousCart.equals(customerCart)) {
+        if (anonymousCart != null && customerCart != null && anonymousCart.equals(customerCart)) {
             // The carts are the same, use either ensuring it's owned by the current customer
             setNewCartOwnership(anonymousCart, customer);
             mergeCartResponse.setOrder(anonymousCart);
