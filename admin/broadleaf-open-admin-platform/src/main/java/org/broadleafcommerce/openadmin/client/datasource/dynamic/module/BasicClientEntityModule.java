@@ -1161,17 +1161,26 @@ public class BasicClientEntityModule implements DataSourceModule {
 
                 @Override
                 public void visit(final BasicCollectionMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    //protect against non dynamic entity presenter usage
+                    if (presenterSequenceSetupManager != null) {
+                        DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    }
                 }
 
                 @Override
                 public void visit(AdornedTargetCollectionMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    //protect against non dynamic entity presenter usage
+                    if (presenterSequenceSetupManager != null) {
+                        DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    }
                 }
 
                 @Override
                 public void visit(MapMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    //protect against non dynamic entity presenter usage
+                    if (presenterSequenceSetupManager != null) {
+                        DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    }
                 }
             });
 		}
