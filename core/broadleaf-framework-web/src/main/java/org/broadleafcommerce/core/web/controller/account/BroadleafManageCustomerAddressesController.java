@@ -18,7 +18,10 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
+import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
@@ -55,6 +58,7 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     protected String addressUpdatedMessage = "Address successfully updated";
     protected String addressAddedMessage = "Address successfully added";
     protected String addressRemovedMessage = "Address successfully removed";
+    protected String addressRemovedErrorMessage = "Address could not be removed as it is in use";
 	
     protected static String customerAddressesView = "account/manageCustomerAddresses";
     protected static String customerAddressesRedirect = "redirect:/account/addresses";
@@ -159,6 +163,15 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     }
     
     public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
+    	CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
+        Order cart = CartState.getCart();
+        
+        for (FulfillmentGroup fg : cart.getFulfillmentGroups()) {
+            if (fg.getAddress().getId().equals(customerAddress.getAddress().getId())) {
+                redirectAttributes.addFlashAttribute("errorMessage", getAddressRemovedErrorMessage());
+                return getCustomerAddressesRedirect();
+            }
+        }
     	customerAddressService.deleteCustomerAddressById(customerAddressId);
     	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
     	return getCustomerAddressesRedirect();
@@ -190,6 +203,10 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
 
 	public String getAddressRemovedMessage() {
 		return addressRemovedMessage;
+	}
+	
+	public String getAddressRemovedErrorMessage() {
+		return addressRemovedErrorMessage;
 	}
 	
 }
