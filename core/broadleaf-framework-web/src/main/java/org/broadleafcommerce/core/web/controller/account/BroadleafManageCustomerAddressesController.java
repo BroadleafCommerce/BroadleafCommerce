@@ -18,10 +18,7 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
-import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
@@ -31,6 +28,7 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -163,17 +161,14 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     }
     
     public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
-    	CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
-        Order cart = CartState.getCart();
-        
-        for (FulfillmentGroup fg : cart.getFulfillmentGroups()) {
-            if (fg.getAddress().getId().equals(customerAddress.getAddress().getId())) {
-                redirectAttributes.addFlashAttribute("errorMessage", getAddressRemovedErrorMessage());
-                return getCustomerAddressesRedirect();
-            }
+        try {
+        	customerAddressService.deleteCustomerAddressById(customerAddressId);
+        	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
+        } catch (DataIntegrityViolationException e) {
+            // This likely occurred because there is an order or cart in the system that is currently utilizing this
+            // address. Therefore, we're not able to remove it as it breaks a foreign key constraint
+            redirectAttributes.addFlashAttribute("errorMessage", getAddressRemovedErrorMessage());
         }
-    	customerAddressService.deleteCustomerAddressById(customerAddressId);
-    	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
     	return getCustomerAddressesRedirect();
     }
 
