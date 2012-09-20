@@ -41,4 +41,16 @@ public class NullPriceList implements PriceList {
     @Override
     public void setPriceKey(String name) { }
 
+    @Override
+    public void setId(Long id) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Long getId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

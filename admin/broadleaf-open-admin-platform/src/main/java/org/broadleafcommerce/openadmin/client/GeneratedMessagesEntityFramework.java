@@ -272,4 +272,12 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
    
     public String BundleOrderItemImpl_Base_Retail_Price();
     public String BundleOrderItemImpl_Base_Sale_Price();
+    public String PriceListImpl_Currenc();
+    public String PriceListImpl_Is_Default();
+    public String PriceListImpl_Key();
+    public String PriceListImpl_Friendly_Name();
+    public String PriceListImpl_ID();
+    public String PriceListImpl_Primary_Key();
+    public String PriceListImpl_Details();
+    public String PriceListImpl_friendyName();
 }

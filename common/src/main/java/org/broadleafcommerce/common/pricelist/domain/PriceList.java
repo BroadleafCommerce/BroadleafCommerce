@@ -40,4 +40,8 @@ public interface PriceList extends Serializable {
     public String getPriceKey();
 
     public void setPriceKey(String priceKey);
+
+    void setId(Long id);
+
+    Long getId();
 }

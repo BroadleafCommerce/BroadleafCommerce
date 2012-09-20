@@ -32,7 +32,9 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -55,8 +57,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     @AdminPresentation(friendlyName = "PriceListImpl_ID", group = "PriceListImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
+
+
     @Column (name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "PriceListImpl_Name", order=2, group = "PriceListImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "PriceListImpl_Friendly_Name", order=2, group = "PriceListImpl_Details", prominent=true)
     protected String friendlyName;
 
     @Column (name = "PRICE_KEY",nullable=false)
@@ -64,14 +68,16 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     protected String priceKey;
 
     @Column (name = "USE_DEFAULT_FLAG")
-    @AdminPresentation(friendlyName = "PriceListImpl_Is_Default", order=3, group = "PriceListImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "PriceListImpl_Is_Default", order=4, group = "PriceListImpl_Details", prominent=false)
     protected Boolean useDefaultIfNotFound;
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", group = "PriceListImpl_Details", visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "PriceListImpl_Currency", order=3,group = "PriceListImpl_Details",  requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentationToOneLookup(lookupDisplayProperty="friendlyName")
     protected BroadleafCurrency currency;
-
+    
+    
     @Override
     public String getFriendlyName() {
         return friendlyName;
@@ -119,7 +125,14 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
         result = 31 * result + (priceKey != null ? priceKey.hashCode() : 0);
         return result;
     }
-
+    @Override
+    public Long getId() {
+        return id;
+    }
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
     @Override
     public String getPriceKey() {
         return priceKey;
