@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -165,32 +166,45 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 				}
 			}
 		}
-		Property[] properties = new Property[propertiesList.size()];
-		properties = propertiesList.toArray(properties);
-		Arrays.sort(properties, new Comparator<Property>() {
-			public int compare(Property o1, Property o2) {
-				/*
-				 * First, compare properties based on order fields
-				 */
-				if (o1.getMetadata().getOrder() != null && o2.getMetadata().getOrder() != null) {
-					return o1.getMetadata().getOrder().compareTo(o2.getMetadata().getOrder());
-				} else if (o1.getMetadata().getOrder() != null && o2.getMetadata().getOrder() == null) {
-					/*
-					 * Always favor fields that have an order identified
-					 */
-					return -1;
-				} else if (o1.getMetadata().getOrder() == null && o2.getMetadata().getOrder() != null) {
-					/*
-					 * Always favor fields that have an order identified
-					 */
-					return 1;
-				} else if (o1.getMetadata().getFriendlyName() != null && o2.getMetadata().getFriendlyName() != null) {
-					return o1.getMetadata().getFriendlyName().compareTo(o2.getMetadata().getFriendlyName());
-				} else {
-					return o1.getName().compareTo(o2.getName());
-				}
-			}
-		});
+        Property[] properties = new Property[propertiesList.size()];
+        properties = propertiesList.toArray(properties);
+        Arrays.sort(properties, new Comparator<Property>() {
+            public int compare(Property o1, Property o2) {
+                Integer order1;
+                Integer order2;
+                String friendlyName1;
+                String friendlyName2;
+                String name1;
+                String name2;
+                if (o1.getMetadata() instanceof BasicFieldMetadata) {
+                    BasicFieldMetadata b1 = (BasicFieldMetadata) o1.getMetadata();
+                    order1 = b1.getGroupOrder()==null?99999:b1.getGroupOrder();
+                } else {
+                    order1 = 99999;
+                }
+                if (o2.getMetadata() instanceof BasicFieldMetadata) {
+                    BasicFieldMetadata b2 = (BasicFieldMetadata) o2.getMetadata();
+                    order2 = b2.getGroupOrder()==null?99999:b2.getGroupOrder();
+                } else {
+                    order2 = 99999;
+                }
+                order1 += o1.getMetadata().getOrder() == null?99999:o1.getMetadata().getOrder();
+                order2 += o2.getMetadata().getOrder() == null?99999:o2.getMetadata().getOrder();
+                friendlyName1 = o1.getMetadata().getFriendlyName() == null?"zzzzz":o1.getMetadata().getFriendlyName();
+                friendlyName2 = o2.getMetadata().getFriendlyName() == null?"zzzzz":o2.getMetadata().getFriendlyName();
+                name1 = o1.getName() == null?"zzzzz":o1.getName();
+                name2 = o2.getName() == null?"zzzzz":o2.getName();
+
+                int c = order1.compareTo(order2);
+                if (c == 0) {
+                    c = friendlyName1.compareTo(friendlyName2);
+                    if (c == 0) {
+                        c = name1.compareTo(name2);
+                    }
+                }
+                return c;
+            }
+        });
 		classMetadata.setProperties(properties);
         classMetadata.setCurrencyCode(Money.defaultCurrency().getCurrencyCode());
 
