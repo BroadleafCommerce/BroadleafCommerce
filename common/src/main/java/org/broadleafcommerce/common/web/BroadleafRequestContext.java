@@ -43,7 +43,7 @@ public class BroadleafRequestContext {
 	}
 
     public static boolean hasBroadleafRequestContext(){
-        if (BROADLEAF_REQUEST_CONTEXT == null || getBroadleafRequestContext().getLocale()==null) { return false; }
+        if (getBroadleafRequestContext() == null || getBroadleafRequestContext().getLocale()==null) { return false; }
         return true;
     }
 	
