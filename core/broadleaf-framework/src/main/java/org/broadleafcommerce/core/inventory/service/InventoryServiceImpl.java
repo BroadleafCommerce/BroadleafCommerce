@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.inventory.exception.ConcurrentInventoryModific
 import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -33,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 @Service("blInventoryService")
-@Transactional(value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
 public class InventoryServiceImpl implements InventoryService {
 
     @Resource(name="blInventoryDao")
@@ -43,15 +43,17 @@ public class InventoryServiceImpl implements InventoryService {
     protected EntityConfiguration entityConfiguration;
 
     @Override
+    @Transactional(value="blTransactionManager")
     public boolean isQuantityAvailable(Sku sku, Integer quantity) {
         return isQuantityAvailable(sku, quantity, null);
     }
 
     @Override
+    @Transactional(value="blTransactionManager")
     public boolean isQuantityAvailable(Sku sku, Integer quantity, FulfillmentLocation fulfillmentLocation) {
 
-        //if the sku does not exist or is not active, there is no quantity available
-        if (!sku.isActive()) {
+        //if the sku is not active, there is no quantity available
+        if (! sku.isActive()) {
             return false;
         }
 
@@ -83,11 +85,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional(propagation=Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
     public void decrementInventory(Map<Sku, Integer> skuInventory) throws ConcurrentInventoryModificationException, InventoryUnavailableException {
         decrementInventory(skuInventory, null);
     }
 
     @Override
+    @Transactional(propagation=Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
     public void decrementInventory(Map<Sku, Integer> skuInventory, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException, InventoryUnavailableException {
 
         Set<Sku> skus = skuInventory.keySet();
@@ -154,6 +158,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional(propagation=Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
     public void incrementInventory(Map<Sku, Integer> skuInventory, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException {
         
     	if (fulfillmentLocation == null) {
@@ -207,11 +212,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional(value="blTransactionManager")
     public Inventory readInventory(Sku sku, FulfillmentLocation fulfillmentLocation) {
         return inventoryDao.readInventory(sku, fulfillmentLocation);
     }
 
     @Override
+    @Transactional(value="blTransactionManager")
     public Inventory readInventory(Sku sku) {
         return inventoryDao.readInventoryForDefaultFulfillmentLocation(sku);
     }
