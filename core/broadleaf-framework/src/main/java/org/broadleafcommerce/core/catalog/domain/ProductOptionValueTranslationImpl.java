@@ -34,7 +34,6 @@ import javax.persistence.*;
  * Author: jerryocanas
  * Date: 9/19/12
  */
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION_VALUE_TRANSLATION")
@@ -66,7 +65,7 @@ public class ProductOptionValueTranslationImpl implements java.io.Serializable, 
     @ManyToOne(targetEntity = ProductOptionValueImpl.class)
     @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID")
     @Index(name = "PRODUCT_OPTION_VALUE_TRANSLATION_INDEX", columnNames = { "TRANSLATION_ID" })
-    protected ProductOptionValue productOptionValue;
+    protected ProductOptionValue productOptionValueId;
 
     @Override
     public Long getId() {
@@ -98,13 +97,13 @@ public class ProductOptionValueTranslationImpl implements java.io.Serializable, 
         this.locale = locale;
     }
     @Override
-    public ProductOptionValue getProductOptionValue() {
-        return productOptionValue;
+    public ProductOptionValue getProductOptionValueId() {
+        return productOptionValueId;
     }
 
     @Override
-    public void setProductOptionValue(ProductOptionValue productOptionValue) {
-        this.productOptionValue = productOptionValue;
+    public void setProductOptionValueId(ProductOptionValue productOptionValueId) {
+        this.productOptionValueId = productOptionValueId;
     }
- 
+
 }

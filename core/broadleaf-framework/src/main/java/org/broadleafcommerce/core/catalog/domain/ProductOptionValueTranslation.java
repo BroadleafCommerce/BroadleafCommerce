@@ -16,35 +16,52 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-
-import org.broadleafcommerce.common.locale.domain.Locale;
-
+/**
+ * Author: jerryocanas
+ * Date: 9/19/12
+ */
 public interface ProductOptionValueTranslation extends LocaleIf {
 
+    /**
+     * Returns the id
+     *
+     * @return
+     */
     public Long getId();
 
+    /**
+     * Sets the id
+     *
+     * @param id
+     */
     public void setId(Long id);
 
+    /**
+     * Returns the attribute value
+     *
+     * @return
+     */
     public String getAttributeValue();
 
+    /**
+     * Set the attribue value
+     *
+     * @param attributeValue
+     */
     public void setAttributeValue(String attributeValue);
-
-    public Locale getLocale();
-
-    public void setLocale(Locale locale);
 
     /**
      * Returns the associated ProductOptionValue
-     * 
+     *
      * @return
      */
-    public ProductOptionValue getProductOptionValue();
+    public ProductOptionValue getProductOptionValueId();
 
     /**
      * Sets the associated product option.
-     * 
-     * @param productOptionValue
+     *
+     * @param productOptionValueId
      */
-    public void setProductOptionValue(ProductOptionValue productOptionValue);
+    public void setProductOptionValueId(ProductOptionValue productOptionValueId);
 
 }
