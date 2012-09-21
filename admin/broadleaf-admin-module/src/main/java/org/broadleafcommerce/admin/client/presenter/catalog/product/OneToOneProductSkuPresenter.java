@@ -280,8 +280,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleSkusDS", new SkuBundleItemsDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                bundleItemsPresenter = new EditableAdornedTargetListPresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "salePrice"});
-                bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "quantity"}, new Boolean[]{false, true});
+                bundleItemsPresenter = new EditableAdornedTargetListPresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "itemSalePrice"});
+                bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "quantity", "itemSalePrice"}, new Boolean[]{false, false, false});
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {

@@ -37,6 +37,7 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
         setProduct(request.getProduct());
         setQuantity(request.getQuantity());
         setSku(request.getSku());
+        setSalePriceOverride(request.getSalePriceOverride());
     }
 
 

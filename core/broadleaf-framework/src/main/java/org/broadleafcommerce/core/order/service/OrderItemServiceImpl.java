@@ -97,7 +97,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         populateDiscreteOrderItem(item, itemRequest);
         
-        item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
+        item.setBaseSalePrice(itemRequest.getSalePriceOverride()==null?itemRequest.getSku().getSalePrice():itemRequest.getSalePriceOverride());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
         for (DiscreteOrderItemFeePrice feePrice : item.getDiscreteOrderItemFeePrices()) {
@@ -215,6 +215,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 	        bundleItemRequest.setQuantity(skuBundleItem.getQuantity());
 	        bundleItemRequest.setSku(bundleSku);
 	        bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
+            bundleItemRequest.setSalePriceOverride(skuBundleItem.getSalePrice());
             
             DiscreteOrderItem bundleDiscreteItem = createDiscreteOrderItem(bundleItemRequest);
             bundleDiscreteItem.setSkuBundleItem(skuBundleItem);

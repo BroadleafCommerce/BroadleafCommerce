@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -41,6 +42,7 @@ public abstract class AbstractOrderItemRequest {
     private Category category;
     private Product product;
     private int quantity;
+    private Money salePriceOverride;
     private PersonalMessage personalMessage;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
 
@@ -84,6 +86,14 @@ public abstract class AbstractOrderItemRequest {
         this.itemAttributes = itemAttributes;
     }
 
+    public Money getSalePriceOverride() {
+        return salePriceOverride;
+    }
+
+    public void setSalePriceOverride(Money salePriceOverride) {
+        this.salePriceOverride = salePriceOverride;
+    }
+
     protected void copyProperties(AbstractOrderItemRequest newRequest) {
         newRequest.setCategory(category);
         newRequest.setItemAttributes(itemAttributes);
@@ -91,6 +101,7 @@ public abstract class AbstractOrderItemRequest {
         newRequest.setProduct(product);
         newRequest.setQuantity(quantity);
         newRequest.setSku(sku);
+        newRequest.setSalePriceOverride(salePriceOverride);
     }
 
     @Override
@@ -100,20 +111,23 @@ public abstract class AbstractOrderItemRequest {
 
         AbstractOrderItemRequest that = (AbstractOrderItemRequest) o;
 
-        if (!category.equals(that.category)) return false;
-        if (!product.equals(that.product)) return false;
         if (quantity != that.quantity) return false;
-        if (!sku.equals(that.sku)) return false;
+        if (category != null ? !category.equals(that.category) : that.category != null) return false;
+        if (product != null ? !product.equals(that.product) : that.product != null) return false;
+        if (salePriceOverride != null ? !salePriceOverride.equals(that.salePriceOverride) : that.salePriceOverride != null)
+            return false;
+        if (sku != null ? !sku.equals(that.sku) : that.sku != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = product != null ? product.hashCode() : 0;
+        int result = sku != null ? sku.hashCode() : 0;
         result = 31 * result + (category != null ? category.hashCode() : 0);
-        result = 31 * result + (sku != null ? sku.hashCode() : 0);
+        result = 31 * result + (product != null ? product.hashCode() : 0);
         result = 31 * result + quantity;
+        result = 31 * result + (salePriceOverride != null ? salePriceOverride.hashCode() : 0);
         return result;
     }
 
