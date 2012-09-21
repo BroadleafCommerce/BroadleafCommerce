@@ -166,7 +166,7 @@
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blInventoryCompensatingCheckoutErrorHandler"/>
 	</bean>
 
     <aop:config>

@@ -76,6 +76,15 @@ public interface InventoryService {
      * @throws ConcurrentInventoryModificationException
      */
     public void incrementInventory(Map<Sku, Integer> skuInventory, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException;
+    
+    /**
+     * Attempts to add inventory to an inventory record associated with a default fulfillment location.
+     * 
+     * @param skuInventory
+     * @throws ConcurrentInventoryModificationException
+     * @throws IllegalStateException if no default fulfillment location could be found for the Sku.
+     */
+    public void incrementInventory(Map<Sku, Integer> skuInventory) throws ConcurrentInventoryModificationException;
 
     /**
      * Retrieves the {@link Inventory} for the given {@link Sku} and {@link FulfillmentLocation}

@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.core.inventory.service.workflow;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
@@ -34,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 public class DecrementInventoryActivity extends BaseActivity {
-
-    private static final Log LOG = LogFactory.getLog(DecrementInventoryActivity.class);
 
     @Resource(name = "blInventoryService")
     private InventoryService inventoryService;
@@ -63,12 +59,22 @@ public class DecrementInventoryActivity extends BaseActivity {
         }
 
         // There is a retry policy set in case of concurrent update exceptions where several
-        // requests would try to update the inventory at the same time.
+        // requests would try to update the inventory at the same time. The call to decrement inventory, 
+        // by default creates a new transaction because repeatable reads would occur if it were called 
+        // inside of the same transaction. Essentially, we want to try to transactionally decrement the 
+        // inventory, but if it fails due to locking, then we need to leave the transaction and re-read 
+        // the data to ensure repeatable reads don't prevent us from getting the freshest data. The 
+        // retry count is in place to handle higher concurrency situations where there may be more than one 
+        // failure.
         int retryCount = 0;
 
         while (retryCount < maxRetries) {
             try {
                 inventoryService.decrementInventory(skuInventoryMap);
+                
+                //Stash this in the context for later, in case something fails, so that we can 
+                //create a compensating transaction for this inventory
+                seed.getUserDefinedFields().put("BLC_INVENTORY_DECREMENTED", skuInventoryMap);
                 break;
             } catch (ConcurrentInventoryModificationException ex) {
                 retryCount++;

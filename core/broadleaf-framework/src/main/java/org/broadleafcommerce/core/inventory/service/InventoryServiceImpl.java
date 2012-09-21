@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -206,6 +207,49 @@ public class InventoryServiceImpl implements InventoryService {
                 inventory.setSku(sku);
                 inventory.setFulfillmentLocation(fulfillmentLocation);
                 inventoryDao.save(inventory);
+            }
+
+        }
+    }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
+    public void incrementInventory(Map<Sku, Integer> skuInventory) throws ConcurrentInventoryModificationException {
+        
+        Set<Sku> skus = skuInventory.keySet();
+        for (Sku sku : skus) {
+            Integer quantity = skuInventory.get(sku);
+
+            /*
+             * If the inventory type of the sku or category is null or InventoryType.NONE, do not adjust inventory
+             */
+            if (sku.getInventoryType() == null 
+            		&& (sku.getDefaultProduct().getDefaultCategory() == null
+            		|| sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null)) {
+                continue;
+            } else if (InventoryType.NONE.equals(sku.getInventoryType()) 
+            		|| (sku.getDefaultProduct().getDefaultCategory() != null 
+            		&& InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory().getInventoryType()))){
+                continue;
+            }
+
+            //quantity must not be null
+            if (quantity == null || quantity < 0) {
+                throw new IllegalArgumentException("Quantity must not be a positive integer");
+            }
+
+            if (quantity == 0) {
+                continue;
+            }
+
+            Inventory inventory = inventoryDao.readInventoryForUpdateForDefaultFulfillmentLocation(sku);
+
+            if (inventory != null) {
+                inventory.setQuantityAvailable(inventory.getQuantityAvailable() + quantity);
+                inventoryDao.save(inventory);
+            } else {
+                throw new IllegalStateException("There was a call to InventoryServiceImpl.incrementInventory for a default fulfillment location, but no default " +
+                		"inventory for the sku: " + sku.getId() + " could be found!");
             }
 
         }
