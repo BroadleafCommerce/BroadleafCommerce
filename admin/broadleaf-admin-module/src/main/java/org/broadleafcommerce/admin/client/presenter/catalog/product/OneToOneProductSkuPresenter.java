@@ -195,6 +195,9 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             @Override
             public void onFilterData(FetchDataEvent event) {
                 ((OneToOneProductSkuDisplay) display).getCloneProductButton().disable();
+                parentCategoriesPresenter.disable();
+                productOptionsPresenter.disable();
+                bundleItemsPresenter.disable();
             }
         });
 
