@@ -16,14 +16,22 @@
 
 package org.broadleafcommerce.core.order.service.workflow.update;
 
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-public class ValidateUpdateRequestActivity extends BaseActivity {
+import javax.annotation.Resource;
 
+public class ValidateUpdateRequestActivity extends BaseActivity {
+    
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
+    
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
@@ -41,6 +49,15 @@ public class ValidateUpdateRequestActivity extends BaseActivity {
     	// Throw an exception if the user did not specify an order to add the item to
         if (request.getOrder() == null) {
     		throw new IllegalArgumentException("Order is required when updating item quantities");
+        }
+        
+        // Throw an exception if the user is trying to update an order item that is part of a bundle
+        OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequestDTO.getOrderItemId());
+        if (orderItem != null && orderItem instanceof DiscreteOrderItem) {
+            DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
+            if (doi.getBundleOrderItem() != null) {
+                throw new IllegalArgumentException("Cannot update an item that is part of a bundle");
+            }
         }
         
         return context;
