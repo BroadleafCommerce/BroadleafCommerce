@@ -53,8 +53,8 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
-    @AdminPresentation(friendlyName = "productBundleAutoBundle", tooltip="productBundleAutoBundleTooltip", group="productBundleGroup")
-    protected Boolean autoBundle;
+    @AdminPresentation(excluded = true)
+    protected Boolean autoBundle = false;
 
     @Column(name = "ITEMS_PROMOTABLE")
     @AdminPresentation(friendlyName = "productBundlePromotableItems", group="productBundleGroup")
@@ -119,7 +119,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     }
 
     public Boolean getAutoBundle() {
-        return autoBundle;
+        return autoBundle == null ? false : autoBundle;
     }
 
     public void setAutoBundle(Boolean autoBundle) {
