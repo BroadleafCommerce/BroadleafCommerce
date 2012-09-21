@@ -16,16 +16,30 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Set;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
+import org.broadleafcommerce.openadmin.client.service.AppServices;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -56,33 +70,21 @@ import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
-import org.broadleafcommerce.openadmin.client.service.AppServices;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Set;
 
 /**
  * 
@@ -120,6 +122,7 @@ public class BasicClientEntityModule implements DataSourceModule {
      * We are doing this because we can apply seamless
      * CTO-to-criteria conversions back on the server.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public CriteriaTransferObject getCto(DSRequest request) {
         CriteriaTransferObject cto = new CriteriaTransferObject();
@@ -221,11 +224,13 @@ public class BasicClientEntityModule implements DataSourceModule {
 		this.currentForeignKey = currentForeignKey;
 	}
 	
-	public String getLinkedValue() {
+	@Override
+    public String getLinkedValue() {
 		return linkedValue;
 	}
 
-	public void setLinkedValue(String linkedValue) {
+	@Override
+    public void setLinkedValue(String linkedValue) {
 		this.linkedValue = linkedValue;
 	}
     
@@ -324,10 +329,12 @@ public class BasicClientEntityModule implements DataSourceModule {
         return originalDateString == null?null : originalDateString + " " + timezone;
     }
     
+    @Override
     public boolean isCompatible(OperationType operationType) {
     	return OperationType.ENTITY.equals(operationType) || OperationType.FOREIGNKEY.equals(operationType);
     }
     
+    @Override
     public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
         if (request.getCriteria() != null && request.getCriteria().getAttribute("blc.fetch.from.cache") != null) {
@@ -348,6 +355,7 @@ public class BasicClientEntityModule implements DataSourceModule {
         } else {
             CriteriaTransferObject cto = getCto(request);
             service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, fetchTypeFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+                @Override
                 public void onSuccess(DynamicResultSet result) {
                     super.onSuccess(result);
                     TreeNode[] recordList = buildRecords(result, null);
@@ -386,13 +394,15 @@ public class BasicClientEntityModule implements DataSourceModule {
         }
 	}
     
+    @Override
     public void executeAdd(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
         service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
-			public void onSuccess(Entity result) {
+			@Override
+            public void onSuccess(Entity result) {
 				super.onSuccess(result);
                 if (processResult(result, requestId, response, dataSource)) {
                     TreeNode record = (TreeNode) buildRecord(result, false);
@@ -431,6 +441,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		});
 	}
     
+    @Override
     public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
@@ -444,7 +455,8 @@ public class BasicClientEntityModule implements DataSourceModule {
             }
         }
         service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
-			public void onSuccess(Entity result) {
+			@Override
+            public void onSuccess(Entity result) {
 				super.onSuccess(null);
                 if (processResult(result, requestId, response, dataSource)) {
                     TreeNode record = (TreeNode) buildRecord(result, false);
@@ -484,6 +496,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		});
 	}
     
+    @Override
     public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
@@ -497,7 +510,8 @@ public class BasicClientEntityModule implements DataSourceModule {
             }
         }
         service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
-			public void onSuccess(Void item) {
+			@Override
+            public void onSuccess(Void item) {
 				super.onSuccess(null);
 				if (cb != null) {
 					cb.onSuccess(dataSource);
@@ -532,12 +546,14 @@ public class BasicClientEntityModule implements DataSourceModule {
 		});
     }
     
+    @Override
     public Record buildRecord(Entity entity, Boolean updateId) {
 		TreeNode record = new TreeNode();
 		return updateRecord(entity, record, updateId);
 	}
 
-	public Record updateRecord(Entity entity, Record record, Boolean updateId) {
+	@Override
+    public Record updateRecord(Entity entity, Record record, Boolean updateId) {
 		String id = entity.findProperty(dataSource.getPrimaryKeyFieldName()).getValue();
 		if (updateId) {
 			id = id + "_^_" + loadLevelCount;
@@ -606,6 +622,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		return record;
 	}
     
+    @Override
     public TreeNode[] buildRecords(DynamicResultSet result, String[] filterOutIds) {
 		List<TreeNode> recordList = new ArrayList<TreeNode>();
 		int decrement = 0;
@@ -623,6 +640,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		return response;
 	}
     
+    @Override
     public Entity buildEntity(Record record, DSRequest request) {
 		Entity entity = new Entity();
 		//Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
@@ -660,6 +678,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		return entity;
 	}
     
+    @Override
     public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
 		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
 			
@@ -679,7 +698,8 @@ public class BasicClientEntityModule implements DataSourceModule {
                 }
 			}
 
-			public void onSuccess(DynamicResultSet result) {
+			@Override
+            public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				ClassMetadata metadata = result.getClassMetaData();
 				filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE}, overrideFieldSort);
@@ -748,7 +768,8 @@ public class BasicClientEntityModule implements DataSourceModule {
 		Property[] properties = metadata.getProperties();
 		if (overrideFieldSort) {
 			Arrays.sort(properties, new Comparator<Property>() {
-				public int compare(Property o1, Property o2) {
+				@Override
+                public int compare(Property o1, Property o2) {
 					if (o1.getMetadata().getPresentationAttributes().getFriendlyName() == null && o2.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
 						return 0;
 					} else if (o1.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
@@ -851,6 +872,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 					field = new DataSourceDateTimeField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
 					field.setRequired(required);
+					field.setEditorType(new MiniDateRangeItem());
 					//field.setValidOperators(getBasicDateOperators());
 					break;
 				case INTEGER:
@@ -1017,11 +1039,13 @@ public class BasicClientEntityModule implements DataSourceModule {
 		}
 	}
 
-	public void setDataSource(AbstractDynamicDataSource dataSource) {
+	@Override
+    public void setDataSource(AbstractDynamicDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
-	public String getCeilingEntityFullyQualifiedClassname() {
+	@Override
+    public String getCeilingEntityFullyQualifiedClassname() {
 		return ceilingEntityFullyQualifiedClassname;
 	}
 	
