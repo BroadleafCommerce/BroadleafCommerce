@@ -70,6 +70,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -483,8 +484,8 @@ public class OrderImpl implements Order {
 	@Override
 	public int getItemCount() {
 		int count = 0;
-		for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
-			count += doi.getQuantity();
+		for (OrderItem oi : getOrderItems()) {
+			count += oi.getQuantity();
 		}
 		return count;
 	}
