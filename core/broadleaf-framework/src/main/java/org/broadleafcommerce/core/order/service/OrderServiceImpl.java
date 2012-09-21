@@ -53,6 +53,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -364,7 +365,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     @Override
-    @Transactional("blTransactionManager")
+    @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
     	try {
     		CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
@@ -376,7 +377,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 	@Override
-    @Transactional("blTransactionManager")
+    @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
 	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
 		if (orderItemRequestDTO.getQuantity() == 0) {
 			return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
@@ -392,7 +393,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-    @Transactional("blTransactionManager")
+    @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
 	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
     	try {
     		OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
