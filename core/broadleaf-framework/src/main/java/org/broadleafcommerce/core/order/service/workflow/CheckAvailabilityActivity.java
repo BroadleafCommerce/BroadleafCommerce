@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
@@ -48,6 +49,9 @@ public class CheckAvailabilityActivity extends BaseActivity {
         	OrderItem orderItem = orderItemService.readOrderItemById(request.getItemRequest().getOrderItemId());
         	if (orderItem instanceof DiscreteOrderItem) {
         		sku = ((DiscreteOrderItem) orderItem).getSku();
+        		request.getItemRequest().setSkuId(sku.getId());
+        	} else if (orderItem instanceof BundleOrderItem) {
+        	    sku = ((BundleOrderItem) orderItem).getSku();
         		request.getItemRequest().setSkuId(sku.getId());
         	}
         }

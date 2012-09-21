@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.strategy;
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -31,7 +32,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,6 +64,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		Order order = request.getOrder();
 		OrderItem orderItem = request.getAddedOrderItem();
 		
+		
 		FulfillmentGroup fulfillmentGroup = null;
 		if (order.getFulfillmentGroups().size() == 0) {
 			fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
@@ -71,17 +75,28 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 			fulfillmentGroup = order.getFulfillmentGroups().get(0);
 		}
 		
+		if (orderItem instanceof BundleOrderItem) {
+		    List<OrderItem> itemsToAdd = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
+		    for (OrderItem oi : itemsToAdd) {
+		        fulfillmentGroup = addItemToFulfillmentGroup(order, oi, fulfillmentGroup);
+		    }
+		} else {
+		    fulfillmentGroup = addItemToFulfillmentGroup(order, orderItem, fulfillmentGroup);
+		}
+		
+		order = fulfillmentGroup.getOrder();
+		
+		request.setOrder(order);
+		return request;
+	}
+	
+	protected FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
 		FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
 		fulfillmentGroupItemRequest.setOrder(order);
 		fulfillmentGroupItemRequest.setOrderItem(orderItem);
 		fulfillmentGroupItemRequest.setQuantity(orderItem.getQuantity());
 		fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
-		
-		fulfillmentGroup = fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false);
-		order = fulfillmentGroup.getOrder();
-		
-		request.setOrder(order);
-		return request;
+		return fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false);
 	}
 	
 	@Override
@@ -89,12 +104,30 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		Order order = request.getOrder();
 		OrderItem orderItem = request.getAddedOrderItem();
 		Integer orderItemQuantityDelta = request.getOrderItemQuantityDelta();
-		boolean done = false;
 		
 		if (orderItemQuantityDelta == 0) {
 			// If the quantity didn't change, nothing needs to happen
 			return request;
-		} else if (orderItemQuantityDelta > 0) {
+		} else {
+    		if (orderItem instanceof BundleOrderItem) {
+    		    List<OrderItem> itemsToUpdate = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
+    		    for (OrderItem oi : itemsToUpdate) {
+    		        int qtyMultiplier = oi.getQuantity() / orderItem.getQuantity();
+    		        order = updateItemQuantity(order, oi, (qtyMultiplier * orderItemQuantityDelta));
+    		    }
+    		} else {
+    		    order = updateItemQuantity(order, orderItem, orderItemQuantityDelta);
+    		}
+		}
+		
+		request.setOrder(order);
+		return request;
+	}
+		
+	protected Order updateItemQuantity(Order order, OrderItem orderItem, Integer orderItemQuantityDelta) throws PricingException {
+	    boolean done = false;
+	    
+		if (orderItemQuantityDelta > 0) {
 			// If the quantity is now greater, we can simply add quantity to the first
 			// fulfillment group we find that has that order item in it. 
 			for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
@@ -141,8 +174,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		}
 		
 		order = orderService.save(order, false);
-		request.setOrder(order);
-		return request;
+		return order;
 	}
 
 	@Override
@@ -150,7 +182,14 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		Order order = request.getOrder();
         OrderItem orderItem = orderItemService.readOrderItemById(request.getItemRequest().getOrderItemId());
         
-        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
+		if (orderItem instanceof BundleOrderItem) {
+		    List<OrderItem> itemsToRemove = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
+		    for (OrderItem oi : itemsToRemove) {
+		        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, oi);
+		    }
+		} else {
+		    fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
+		}
         
         return request;
 	}
@@ -171,7 +210,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         }
         
         Map<Long, Integer> oiQuantityMap = new HashMap<Long, Integer>();
-        for (OrderItem oi : order.getOrderItems()) {
+        for (OrderItem oi : order.getDiscreteOrderItems()) {
         	Integer oiQuantity = oiQuantityMap.get(oi.getId());
         	if (oiQuantity == null) {
         		oiQuantity = 0;
