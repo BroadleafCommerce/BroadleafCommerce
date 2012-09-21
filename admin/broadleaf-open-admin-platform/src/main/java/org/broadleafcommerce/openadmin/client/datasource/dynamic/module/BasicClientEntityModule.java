@@ -47,6 +47,7 @@ import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
@@ -923,6 +924,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                             field = new DataSourceDateTimeField(propertyName, friendlyName);
                             field.setCanEdit(mutable);
                             field.setRequired(required);
+                            field.setEditorType(new MiniDateRangeItem());
                             //field.setValidOperators(getBasicDateOperators());
                             break;
                         case INTEGER:
