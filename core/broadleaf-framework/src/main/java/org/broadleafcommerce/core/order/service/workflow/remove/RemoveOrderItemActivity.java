@@ -33,7 +33,7 @@ import javax.annotation.Resource;
 /**
  * This class is responsible for removing OrderItems when requested by the OrderService.
  * Note that this class does not touch the FulfillmentGroupItems and expects that they 
- * have already been remoevd by the time this activity executes. 
+ * have already been removed by the time this activity executes. 
  * 
  * @author Andre Azzolini (apazzolini)
  */
