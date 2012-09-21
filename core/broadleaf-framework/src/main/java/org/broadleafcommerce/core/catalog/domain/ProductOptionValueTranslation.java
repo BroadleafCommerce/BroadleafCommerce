@@ -55,13 +55,13 @@ public interface ProductOptionValueTranslation extends LocaleIf {
      *
      * @return
      */
-    public ProductOptionValue getProductOptionValueId();
+    public ProductOptionValue getProductOptionValue();
 
     /**
      * Sets the associated product option.
      *
-     * @param productOptionValueId
+     * @param productOptionValue
      */
-    public void setProductOptionValueId(ProductOptionValue productOptionValueId);
+    public void setProductOptionValue(ProductOptionValue productOptionValue);
 
 }
