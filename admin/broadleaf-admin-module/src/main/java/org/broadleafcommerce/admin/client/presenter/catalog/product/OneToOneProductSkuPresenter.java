@@ -274,6 +274,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 ListGridDataSource skuSearchDataSource = (ListGridDataSource)result;
                 skuSearchDataSource.resetPermanentFieldVisibility("name", "retailPrice", "salePrice");
                 skuSearchView = new EntitySearchDialog(skuSearchDataSource, true);
+                skuSearchView.setWidth(800);
             }
         }));
 

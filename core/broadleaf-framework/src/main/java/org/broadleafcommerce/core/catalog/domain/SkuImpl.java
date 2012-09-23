@@ -131,7 +131,7 @@ public class SkuImpl implements Sku {
     /** The name. */
     @Column(name = "NAME")
     @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="200", groupOrder=1)
     protected String name;
 
     /** The description. */
