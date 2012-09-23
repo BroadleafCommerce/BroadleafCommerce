@@ -295,6 +295,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     for (int j = 1; j <= bundleOrderItem.getQuantity(); j++) {
                         count++;
                         BundleOrderItem temp = (BundleOrderItem) bundleOrderItem.clone();
+                        for (int x=0;x<temp.getDiscreteOrderItems().size();x++) {
+                            temp.getDiscreteOrderItems().get(x).setId(bundleOrderItem.getDiscreteOrderItems().get(x).getId());
+                        }
                         temp.setQuantity(1);
                         temp.setId(count);
                         searchHit.add(temp);
@@ -302,6 +305,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 } else {
                     count++;
                     BundleOrderItem temp = (BundleOrderItem) bundleOrderItem.clone();
+                    for (int x=0;x<temp.getDiscreteOrderItems().size();x++) {
+                        temp.getDiscreteOrderItems().get(x).setId(bundleOrderItem.getDiscreteOrderItems().get(x).getId());
+                    }
                     temp.setId(count);
                     searchHit.add(temp);
                 }
@@ -688,30 +694,28 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             }
         }
 
+        List<FulfillmentGroupItemRequest> fgiRequests = new ArrayList<FulfillmentGroupItemRequest>();
         for (OrderItemSplitContainer key : order.getSplitItems()) {
             List<PromotableOrderItem> mySplits = key.getSplitItems();
             if (!CollectionUtils.isEmpty(mySplits)) {
-                PromotableFulfillmentGroup targetGroup = getTargetFulfillmentGroup(order, key.getKey());
+                Map<PromotableFulfillmentGroup, Integer> groups = getTargetFulfillmentGroups(order, key.getKey());
                 for (PromotableOrderItem myItem : mySplits) {
                     myItem.assignFinalPrice();
                     DiscreteOrderItem delegateItem = myItem.getDelegate();
                     Long delegateItemBundleItemId = getBundleId(delegateItem);
                     if (delegateItemBundleItemId == null) {
                     	delegateItem = (DiscreteOrderItem) addOrderItemToOrder(order.getDelegate(), delegateItem, false);
-                        if (targetGroup != null) {
-                        	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
-                        	fgItemRequest.setFulfillmentGroup(targetGroup.getDelegate());
-                        	fgItemRequest.setOrderItem(delegateItem);
-                        	fgItemRequest.setOrder(order.getDelegate());
-                        	fgItemRequest.setQuantity(delegateItem.getQuantity());
-                        	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
+                        if (!groups.isEmpty()) {
+                            buildFullfillmentGroupItemRequestForItem(order, groups, fgiRequests, delegateItem);
                         }
-                    } else {
-                        delegateItem = addOrderItemToBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), delegateItem, false);
                     }
                     myItem.setDelegate(delegateItem);
                 }
             }
+        }
+
+        for (FulfillmentGroupItemRequest fgItemRequest : fgiRequests) {
+            fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
         }
 
         //compile a list of any gift wrap items that we're keeping
@@ -742,8 +746,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 				} catch (RemoveFromCartException e) {
 					throw new PricingException("Could not remove item", e);
 				}
-            } else {
-                delegateItem.getBundleOrderItem().getDiscreteOrderItems().remove(itemToRemove.getDelegate());
             }
         }
     }
@@ -753,22 +755,18 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         newOrderItem.setOrder(order);
         newOrderItem = orderItemService.saveOrderItem(newOrderItem);
         orderItems.add(newOrderItem);
-        order = orderService.save(order, priceOrder);
-        return newOrderItem;
-    }
-    
-    protected DiscreteOrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
-        List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
-        newOrderItem.setBundleOrderItem(bundle);
-        newOrderItem = (DiscreteOrderItem) orderItemService.saveOrderItem(newOrderItem);
-        orderItems.add(newOrderItem);
-        order = orderService.save(order, priceOrder);
+        orderService.save(order, priceOrder);
         return newOrderItem;
     }
 
     protected Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
         DiscreteOrderItem itemFromBundle = bundle.getDiscreteOrderItems().remove(bundle.getDiscreteOrderItems().indexOf(item));
-        orderItemService.delete(itemFromBundle);
+        try {
+            orderService.removeItem(order.getId(), itemFromBundle.getId(), false);
+        } catch (RemoveFromCartException e) {
+            throw new PricingException("Could not remove item", e);
+        }
+        //orderItemService.delete(itemFromBundle);
         itemFromBundle.setBundleOrderItem(null);
         order = orderService.save(order, priceOrder);
         return order;
@@ -806,7 +804,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     protected void mergeSplitBundleOrderItems(PromotableOrder order) throws PricingException {
         List<BundleOrderItemSplitContainer> bundleContainers = order.getBundleSplitItems();
         for (BundleOrderItemSplitContainer bundleContainer : bundleContainers) {
-            PromotableFulfillmentGroup targetGroup = getTargetFulfillmentGroup(order, bundleContainer.getKey());
             List<BundleOrderItem> bundleOrderItems = bundleContainer.getSplitItems();
             Map<String, BundleOrderItem> gatheredBundleItems = new HashMap<String, BundleOrderItem>();
             for (BundleOrderItem bundleOrderItem : bundleOrderItems) {
@@ -819,43 +816,91 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     temp.setQuantity(temp.getQuantity() + 1);
                 }
             }
-            
+
+            List<FulfillmentGroupItemRequest> bundleFGItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
+            for (BundleOrderItem val : gatheredBundleItems.values()) {
+                val.setId(null);
+                Map<Long, Map<PromotableFulfillmentGroup, Integer>> targetGroups = new HashMap<Long, Map<PromotableFulfillmentGroup, Integer>>();
+                Long index = 0L;
+                for (DiscreteOrderItem discreteOrderItem : val.getDiscreteOrderItems()) {
+                    OrderItem key = order.searchSplitItemsForKey(discreteOrderItem);
+                    Map<PromotableFulfillmentGroup, Integer> groups = getTargetFulfillmentGroups(order, key);
+                    discreteOrderItem.setId(null);
+                    discreteOrderItem.setBundleOrderItem(val);
+                    if (!groups.isEmpty()) {
+                        targetGroups.put(index, groups);
+                    }
+                    index++;
+                }
+                val = (BundleOrderItem) addOrderItemToOrder(order.getDelegate(), val, false);
+                index = 0L;
+                List<FulfillmentGroupItemRequest> orderItemFGRequests = new ArrayList<FulfillmentGroupItemRequest>();
+                for (DiscreteOrderItem discreteOrderItem : val.getDiscreteOrderItems()) {
+                    if (targetGroups.containsKey(index)) {
+                        buildFullfillmentGroupItemRequestForItem(order, targetGroups.get(index), orderItemFGRequests, discreteOrderItem);
+                    }
+                    index++;
+                }
+                for (FulfillmentGroupItemRequest request : orderItemFGRequests) {
+                    fulfillmentGroupService.addItemToFulfillmentGroup(request, false);
+                }
+
+                Map<PromotableFulfillmentGroup, Integer> groups = getTargetFulfillmentGroups(order, bundleContainer.getKey());
+                if (!groups.isEmpty()) {
+                    buildFullfillmentGroupItemRequestForItem(order, groups, bundleFGItemRequests, val);
+                }
+            }
+
+            for (FulfillmentGroupItemRequest request : bundleFGItemRequests) {
+                fulfillmentGroupService.addItemToFulfillmentGroup(request, false);
+            }
+
         	try {
 				orderService.removeItem(order.getDelegate().getId(), bundleContainer.getKey().getId(), false);
 			} catch (RemoveFromCartException e) {
 				throw new PricingException("Could not remove item", e);
 			}
-        	
-            for (BundleOrderItem vals : gatheredBundleItems.values()) {
-                vals.setId(null);
-                
-            	BundleOrderItem temp = (BundleOrderItem) addOrderItemToOrder(order.getDelegate(), vals, false);
+        }
+    }
 
-                if (targetGroup != null) {
-                	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
-                	fgItemRequest.setFulfillmentGroup(targetGroup.getDelegate());
-                	fgItemRequest.setOrderItem(temp);
-                	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
-                }
+    protected void buildFullfillmentGroupItemRequestForItem(PromotableOrder order, Map<PromotableFulfillmentGroup, Integer> groups2, List<FulfillmentGroupItemRequest> requests, OrderItem discreteOrderItem) {
+        Integer quantityAvailableInThisItem = discreteOrderItem.getQuantity();
+        for (Map.Entry<PromotableFulfillmentGroup, Integer> entry : groups2.entrySet()) {
+            int amount;
+            Integer quantityInThisFG = entry.getValue();
+            if (quantityAvailableInThisItem >= quantityInThisFG) {
+                entry.setValue(0);
+                quantityAvailableInThisItem -= quantityInThisFG;
+                amount = quantityInThisFG;
+            } else {
+                entry.setValue(quantityInThisFG - quantityAvailableInThisItem);
+                amount = quantityAvailableInThisItem;
+                quantityAvailableInThisItem = 0;
+            }
+            FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
+            fgItemRequest.setFulfillmentGroup(entry.getKey().getDelegate());
+            fgItemRequest.setOrderItem(discreteOrderItem);
+            fgItemRequest.setOrder(order.getDelegate());
+            fgItemRequest.setQuantity(amount);
+            requests.add(fgItemRequest);
+            if (quantityAvailableInThisItem == 0) {
+                break;
             }
         }
     }
-    
-    protected PromotableFulfillmentGroup getTargetFulfillmentGroup(PromotableOrder order, OrderItem key) {
-        //find fulfillment group for original order item
-        PromotableFulfillmentGroup targetGroup = null;
-        checkGroups:
-        {
-            for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
-                for (FulfillmentGroupItem fgItem : fg.getDelegate().getFulfillmentGroupItems()) {
-                    if (fgItem.getOrderItem().equals(key)) {
-                        targetGroup = fg;
-                        break checkGroups;
-                    }
+
+    protected Map<PromotableFulfillmentGroup, Integer> getTargetFulfillmentGroups(PromotableOrder order, OrderItem key) {
+        Map<PromotableFulfillmentGroup, Integer> groupIntegerMap = new HashMap<PromotableFulfillmentGroup, Integer>();
+        //find fulfillment group for original order item;
+        for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupItem fgItem : fg.getDelegate().getFulfillmentGroupItems()) {
+                if (fgItem.getOrderItem().equals(key)) {
+                    groupIntegerMap.put(fg, fgItem.getQuantity());
+                    break;
                 }
             }
         }
-        return targetGroup;
+        return groupIntegerMap;
     }
 
     public void compileOrderTotal(PromotableOrder order) {

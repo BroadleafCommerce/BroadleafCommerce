@@ -183,7 +183,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
     }
 
-    private boolean shouldSumItems() {
+    public boolean shouldSumItems() {
         if (productBundle != null) {
             return ProductBundlePricingModelType.ITEM_SUM.equals(productBundle.getPricingModel());
         }

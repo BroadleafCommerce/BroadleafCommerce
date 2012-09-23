@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.common.money.Money;
@@ -139,5 +140,7 @@ public interface PromotableOrder {
     public void setBundleSplitItems(List<BundleOrderItemSplitContainer> bundleSplitItems);
 
     public List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key);
+
+    public OrderItem searchSplitItemsForKey(OrderItem orderItem);
 
 }

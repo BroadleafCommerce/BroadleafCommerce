@@ -65,7 +65,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected Boolean bundlePromotable = false;
 
     @Column(name = "BUNDLE_PRIORITY")
-    @AdminPresentation(friendlyName = "productBundlePriority", group="productBundleGroup")
+    @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group="productBundleGroup")
     protected int priority=99;
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
