@@ -135,6 +135,10 @@ public class OfferPresenterInitializer {
 		} else if (sectionType.equals("FULFILLMENT_GROUP")) {
 			initFGCriteria(selectedRecord);
 		}
+
+        getDisplay().getAdvancedItemCriteria().setVisible(false);
+        getDisplay().getAdvancedItemCriteriaTarget().setVisible(false);
+        getDisplay().getRestrictionSectionView().setVisible(false);
 	}
 
 	public void initBasicItems(final Record selectedRecord) {
