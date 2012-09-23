@@ -53,19 +53,19 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
-    @AdminPresentation(friendlyName = "productBundleAutoBundle", tooltip="productBundleAutoBundleTooltip", group="productBundleGroup")
-    protected Boolean autoBundle;
+    @AdminPresentation(excluded = true)
+    protected Boolean autoBundle = false;
 
     @Column(name = "ITEMS_PROMOTABLE")
-    @AdminPresentation(friendlyName = "productBundlePromotableItems", group="productBundleGroup")
-    protected Boolean itemsPromotable;
+    @AdminPresentation(excluded = true)
+    protected Boolean itemsPromotable = false;
 
     @Column(name = "BUNDLE_PROMOTABLE")
-    @AdminPresentation(friendlyName = "productBundlePromotable", group="productBundleGroup")
-    protected Boolean bundlePromotable;
+    @AdminPresentation(excluded = true)
+    protected Boolean bundlePromotable = false;
 
     @Column(name = "BUNDLE_PRIORITY")
-    @AdminPresentation(friendlyName = "productBundlePriority", group="productBundleGroup")
+    @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group="productBundleGroup")
     protected int priority=99;
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
@@ -119,7 +119,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     }
 
     public Boolean getAutoBundle() {
-        return autoBundle;
+        return autoBundle == null ? false : autoBundle;
     }
 
     public void setAutoBundle(Boolean autoBundle) {
@@ -127,7 +127,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     }
 
     public Boolean getItemsPromotable() {
-        return itemsPromotable;
+        return itemsPromotable == null ? false : itemsPromotable;
     }
 
     public void setItemsPromotable(Boolean itemsPromotable) {
@@ -135,7 +135,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     }
 
     public Boolean getBundlePromotable() {
-        return bundlePromotable;
+        return bundlePromotable == null ? false : bundlePromotable;
     }
 
     public void setBundlePromotable(Boolean bundlePromotable) {

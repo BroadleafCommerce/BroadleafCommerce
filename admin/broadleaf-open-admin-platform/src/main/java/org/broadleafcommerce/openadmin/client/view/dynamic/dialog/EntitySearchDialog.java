@@ -47,7 +47,7 @@ public class EntitySearchDialog extends Window {
 	protected SearchItemSelectedHandler handler;
 
     public EntitySearchDialog(ListGridDataSource dataSource) {
-        this(dataSource, false);
+        this(dataSource, true);
     }
 	
 	public EntitySearchDialog(ListGridDataSource dataSource, boolean autoFetch) {

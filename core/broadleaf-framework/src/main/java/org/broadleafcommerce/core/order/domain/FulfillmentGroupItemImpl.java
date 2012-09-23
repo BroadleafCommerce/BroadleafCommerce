@@ -69,6 +69,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @Index(name="FGITEM_FG_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     protected FulfillmentGroup fulfillmentGroup;
 
+    //this needs to stay OrderItem in order to provide backwards compatibility for those implementations that place a BundleOrderItem
     @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;

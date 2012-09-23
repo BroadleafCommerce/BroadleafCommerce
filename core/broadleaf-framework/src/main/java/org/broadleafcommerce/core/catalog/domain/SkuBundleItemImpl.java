@@ -126,7 +126,6 @@ public class SkuBundleItemImpl implements SkuBundleItem {
         }
     }
 
-
     public Money getSalePrice() {
         if (itemSalePrice == null) {
             return sku.getSalePrice();

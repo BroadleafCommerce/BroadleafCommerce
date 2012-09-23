@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.HashMap;
-
+import com.google.gwt.user.client.Command;
+import com.smartgwt.client.data.DataSource;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
@@ -29,8 +29,7 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 
-import com.google.gwt.user.client.Command;
-import com.smartgwt.client.data.DataSource;
+import java.util.HashMap;
 
 /**
  * 

@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service.workflow.update;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -43,9 +44,9 @@ public class UpdateOrderItemActivity extends BaseActivity {
         Order order = request.getOrder();
         
     	OrderItem orderItem = null;
-		for (DiscreteOrderItem doi : order.getDiscreteOrderItems()) {
-			if (doi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
-				orderItem = doi;
+		for (OrderItem oi : order.getOrderItems()) {
+			if (oi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
+				orderItem = oi;
 			}
 		}
 		
@@ -57,7 +58,16 @@ public class UpdateOrderItemActivity extends BaseActivity {
         
         request.setOrderItemQuantityDelta(orderItemRequestDTO.getQuantity() - itemFromOrder.getQuantity());
         
+        Integer oldQuantity = itemFromOrder.getQuantity();
         itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
+        
+        if (itemFromOrder instanceof BundleOrderItem) {
+            for (DiscreteOrderItem doi : ((BundleOrderItem) itemFromOrder).getDiscreteOrderItems()) {
+                Integer qtyMultiplier = doi.getQuantity() / oldQuantity;
+                doi.setQuantity(qtyMultiplier * orderItemRequestDTO.getQuantity());
+            }
+        }
+        
         order = orderService.save(order, false);
         
         request.setAddedOrderItem(itemFromOrder);

@@ -504,8 +504,8 @@ public interface Category extends Serializable {
 	/**
 	 * Returns a list of CategorySearchFacets that takes into consideration the search facets for this Category,
 	 * the search facets for all parent categories, and the search facets that should be excluded from this 
-	 * Category. This method will order the resulting list based on the
-     * method for each category level. That is, the facets on this Category will be ordered by their position
+	 * Category. This method will order the resulting list based on the {@link CategorySearchFacet#getPosition()}
+	 * method for each category level. That is, the facets on this Category will be ordered by their position
 	 * relative to each other with the ordered parent facets after that, etc.
 	 * 
 	 * @return the current active search facets for this category and all parent categories

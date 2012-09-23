@@ -245,6 +245,17 @@ public class PromotableOrderImpl implements PromotableOrder {
 		return null;
 	}
 
+    public OrderItem searchSplitItemsForKey(OrderItem orderItem) {
+        for (OrderItemSplitContainer container : splitItems) {
+            for (PromotableOrderItem splitItem : container.getSplitItems()) {
+                if (splitItem.getDelegate().equals(orderItem)) {
+                    return container.getKey();
+                }
+            }
+        }
+        return null;
+    }
+
     public List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key) {
         for (BundleOrderItemSplitContainer container : bundleSplitItems) {
             if (container.getKey().equals(key)) {
@@ -430,7 +441,10 @@ public class PromotableOrderImpl implements PromotableOrder {
                 }
             }
             for (BundleOrderItemSplitContainer container : bundleSplitItems) {
-                basicOrderItems.addAll(container.getSplitItems());
+                //filter out explicitly priced bundles so that their items are not included in promotion calculations
+                if (container.getKey().shouldSumItems()) {
+                    basicOrderItems.addAll(container.getSplitItems());
+                }
             }
 			try {
 				for (OrderItem temp : basicOrderItems) {

@@ -79,5 +79,5 @@ public interface BundleOrderItem extends OrderItem, SkuAccessor {
      */
     Product getProduct();
 
-    
+    public boolean shouldSumItems();
 }

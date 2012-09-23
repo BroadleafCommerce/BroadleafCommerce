@@ -221,7 +221,7 @@ public class AutoBundleActivity extends BaseActivity {
             // remove-all-items from order
             // this call also deletes any fulfillment group items that are associated with that order item
             for (DiscreteOrderItem item : itemMatches) {
-	            order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), false);
+	            order = orderService.removeItem(order.getId(), item.getId(), false);
             }
 
             DiscreteOrderItem baseItem = null;
@@ -292,7 +292,6 @@ public class AutoBundleActivity extends BaseActivity {
                         FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
                         newFulfillmentGroupItem.setOrderItem(discreteOrderItem);
                         newFulfillmentGroupItem.setQuantity(discreteOrderItem.getQuantity());
-                        newFulfillmentGroupItem = fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
 
                         //In case this activity is run inside a transaction, we need to set the relationships on the order directly
                         //these associations may have not been committed yet. This order is used in other activities and will not be reloaded if in a transaction.

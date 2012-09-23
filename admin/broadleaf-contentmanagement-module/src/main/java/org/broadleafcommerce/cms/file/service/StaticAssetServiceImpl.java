@@ -78,6 +78,8 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox) {
     	try {
 			fullUrl = URLDecoder.decode(fullUrl, "UTF-8");
+			//strip out the jsessionid if it's there
+			fullUrl = fullUrl.replaceAll(";jsessionid=.*?(?=\\?|$)", "");
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
 		}
@@ -282,22 +284,27 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     }
 
 
+    @Override
     public String getStaticAssetUrlPrefix() {
         return staticAssetUrlPrefix;
     }
 
+    @Override
     public void setStaticAssetUrlPrefix(String staticAssetUrlPrefix) {
         this.staticAssetUrlPrefix = staticAssetUrlPrefix;
     }
 
+    @Override
     public String getStaticAssetEnvironmentUrlPrefix() {
         return fixEnvironmentUrlPrefix(staticAssetEnvironmentUrlPrefix);
     }
 
+    @Override
     public void setStaticAssetEnvironmentUrlPrefix(String staticAssetEnvironmentUrlPrefix) {
         this.staticAssetEnvironmentUrlPrefix = staticAssetEnvironmentUrlPrefix;
     }
 
+    @Override
     public String getStaticAssetEnvironmentSecureUrlPrefix() {
         if (StringUtils.isEmpty(staticAssetEnvironmentSecureUrlPrefix)) {
             if (!StringUtils.isEmpty(staticAssetEnvironmentUrlPrefix) && staticAssetEnvironmentUrlPrefix.indexOf("http:") >= 0) {
@@ -311,10 +318,12 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         this.staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentSecureUrlPrefix;
     }
 
+    @Override
     public boolean getAutomaticallyApproveAndPromoteStaticAssets() {
         return automaticallyApproveAndPromoteStaticAssets;
     }
 
+    @Override
     public void setAutomaticallyApproveAndPromoteStaticAssets(boolean automaticallyApproveAndPromoteStaticAssets) {
         this.automaticallyApproveAndPromoteStaticAssets = automaticallyApproveAndPromoteStaticAssets;
     }
