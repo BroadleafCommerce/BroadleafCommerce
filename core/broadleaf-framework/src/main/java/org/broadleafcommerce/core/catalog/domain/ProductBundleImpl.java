@@ -113,7 +113,11 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     public Money getBundleItemsSalePrice() {
         Money price = new Money(BigDecimal.ZERO);
         for (SkuBundleItem item : getSkuBundleItems()){
-            price = price.add(item.getSalePrice());
+            if (item.getSalePrice() != null) { 
+                price = price.add(item.getSalePrice());
+            } else {
+                price = price.add(item.getRetailPrice());
+            }
         }
         return price;
     }
