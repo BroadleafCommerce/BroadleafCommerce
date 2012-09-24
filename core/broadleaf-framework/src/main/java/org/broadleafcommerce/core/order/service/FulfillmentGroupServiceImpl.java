@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -58,6 +59,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     protected OrderMultishipOptionService orderMultishipOptionService;
 
     @Override
+    @Transactional("blTransactionManager")
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
         return fulfillmentGroupDao.save(fulfillmentGroup);
     }
@@ -73,11 +75,13 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void delete(FulfillmentGroup fulfillmentGroup) {
         fulfillmentGroupDao.delete(fulfillmentGroup);
     }
 
 	@Override
+    @Transactional("blTransactionManager")
 	public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException {
         FulfillmentGroup fg = fulfillmentGroupDao.create();
         fg.setAddress(fulfillmentGroupRequest.getAddress());
@@ -100,6 +104,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 	}
 
 	@Override
+    @Transactional("blTransactionManager")
 	public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder) throws PricingException {
 		Order order = fulfillmentGroupItemRequest.getOrder();
 		OrderItem item = fulfillmentGroupItemRequest.getOrderItem();
@@ -147,6 +152,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 	}
 	
 	@Override
+    @Transactional("blTransactionManager")
     public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem) {
         List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
@@ -171,6 +177,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     }
 	
 	@Override
+    @Transactional("blTransactionManager")
 	public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException {
 		if (order.getFulfillmentGroups() == null || order.getFulfillmentGroups().size() < 2) {
 			return order;
@@ -219,6 +226,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 	}
 	
 	@Override
+    @Transactional("blTransactionManager")
 	public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException {
 		List<OrderMultishipOption> multishipOptions =  orderMultishipOptionService.findOrderMultishipOptions(order.getId());
 		
@@ -353,6 +361,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     }
 
 	@Override
+    @Transactional("blTransactionManager")
 	public Order removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException {
         if (order.getFulfillmentGroups() != null) {
             for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {

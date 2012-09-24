@@ -77,11 +77,6 @@
 	</aop:config>
 
 	<aop:config>
-		<aop:pointcut id="blFulfillmentGroupServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.FulfillmentGroupService.save(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blFulfillmentGroupServiceOperation"/>
-	</aop:config>
-
-	<aop:config>
 		<aop:pointcut id="blSecurePaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.SecurePaymentInfoService.save(..))"/>
 	    <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation"/>
 	</aop:config>
