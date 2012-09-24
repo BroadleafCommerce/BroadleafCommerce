@@ -69,6 +69,11 @@ public class DatabaseSearchServiceImpl implements SearchService {
         throw new UnsupportedOperationException("See findProductsByCategory or use the SolrSearchService implementation");
     }
     
+    @Override
+    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, ProductSearchCriteria searchCriteria) throws ServiceException {
+        throw new UnsupportedOperationException("This operation is only supported by the SolrSearchService by default");
+    }
+    
 	@Override
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
 		ProductSearchResult result = new ProductSearchResult();

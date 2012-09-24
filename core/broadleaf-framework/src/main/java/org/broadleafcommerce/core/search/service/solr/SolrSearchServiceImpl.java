@@ -230,6 +230,17 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	}
 	
 	@Override
+	public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, 
+	        ProductSearchCriteria searchCriteria) throws ServiceException {
+		List<SearchFacetDTO> facets = getSearchFacets();
+		StringBuilder sb = new StringBuilder();
+		sb.append("category:").append(category.getId())
+		    .append(" AND ")
+		    .append("searchable:*").append(query).append("*"); // Surrounding with * allows partial word matches
+		return findProducts(sb.toString(), facets, searchCriteria, null);
+	}
+	
+	@Override
 	public List<SearchFacetDTO> getSearchFacets() {
 		return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets());
 	}
