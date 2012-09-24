@@ -73,6 +73,13 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
+    
+    @Override
+    public boolean isOnSale() {
+    	Money retailPrice = getRetailPrice();
+    	Money salePrice = getSalePrice();
+    	return (salePrice != null && !salePrice.isZero() && salePrice.lessThan(retailPrice));
+    }
 
     @Override
     public ProductBundlePricingModelType getPricingModel() {
