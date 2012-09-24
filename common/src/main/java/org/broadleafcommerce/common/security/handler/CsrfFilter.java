@@ -31,6 +31,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -59,11 +60,13 @@ public class CsrfFilter extends GenericFilterBean {
 		HttpServletResponse response = (HttpServletResponse) baseResponse;
 
         boolean excludedRequestFound = false;
-        for (String pattern : excludedRequestPatterns) {
-            RequestMatcher matcher = new AntPathRequestMatcher(pattern);
-            if (matcher.matches(request)){
-                excludedRequestFound = true;
-                break;
+        if (excludedRequestPatterns != null && excludedRequestPatterns.size() > 0) {
+            for (String pattern : excludedRequestPatterns) {
+                RequestMatcher matcher = new AntPathRequestMatcher(pattern);
+                if (matcher.matches(request)){
+                    excludedRequestFound = true;
+                    break;
+                }
             }
         }
 
