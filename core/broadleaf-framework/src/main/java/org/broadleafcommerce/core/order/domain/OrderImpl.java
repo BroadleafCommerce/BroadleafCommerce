@@ -382,10 +382,18 @@ public class OrderImpl implements Order {
     
     @Override
     public boolean containsSku(Sku sku) {
-    	for (DiscreteOrderItem discreteOrderItem : getDiscreteOrderItems()) {
-    		if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
-    			return true;
-    		}
+    	for (OrderItem orderItem : getOrderItems()) {
+    	    if (orderItem instanceof DiscreteOrderItem) {
+    	        DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+        		if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
+        			return true;
+        		}
+    	    } else if (orderItem instanceof BundleOrderItem) {
+    	        BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+    	        if (bundleOrderItem.getSku() != null && bundleOrderItem.getSku().equals(sku)) {
+    	            return true;
+    	        }
+    	    }
     	}
     	
     	return false;
