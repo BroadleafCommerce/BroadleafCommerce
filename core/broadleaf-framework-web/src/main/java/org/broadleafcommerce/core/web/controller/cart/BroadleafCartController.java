@@ -198,7 +198,7 @@ public class BroadleafCartController extends AbstractCartController {
 		
 		OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
 		
-		if(offerCode!=null) {
+		if (offerCode!=null) {
 			try {
 				orderService.addOfferCode(cart, offerCode, false);
 				promoAdded = true;
@@ -219,7 +219,8 @@ public class BroadleafCartController extends AbstractCartController {
 			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
 			return getCartView();
 		} else {
-			return getCartPageRedirect();
+		    model.addAttribute("exception", exception);
+			return getCartView();
 		}
 		
 	}
