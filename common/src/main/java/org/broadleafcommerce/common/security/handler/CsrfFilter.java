@@ -32,6 +32,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,7 +52,7 @@ public class CsrfFilter extends GenericFilterBean {
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
-    protected List<String> excludedRequestPatterns;
+    protected List<String> excludedRequestPatterns = new ArrayList<String>();
 
 	@Override
 	public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
