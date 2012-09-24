@@ -94,43 +94,6 @@ public class CategoryImpl implements Category, Status {
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
 
-    private static String buildLink(Category category, boolean ignoreTopLevel) {
-        Category myCategory = category;
-        StringBuilder linkBuffer = new StringBuilder(50);
-        while (myCategory != null) {
-            if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
-                if (linkBuffer.length() == 0) {
-                    linkBuffer.append(myCategory.getUrlKey());
-                } else if(myCategory.getUrlKey() != null && !"/".equals(myCategory.getUrlKey())){
-                    linkBuffer.insert(0, myCategory.getUrlKey() + '/');
-                }
-            }
-            myCategory = myCategory.getDefaultParentCategory();
-        }
-
-        return linkBuffer.toString();
-    }
-
-    private static void fillInURLMapForCategory(Map<String, List<Long>> categoryUrlMap, Category category, String startingPath, List<Long> startingCategoryList) throws CacheFactoryException {
-        String urlKey = category.getUrlKey();
-        if (urlKey == null) {
-        	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
-        }
-
-        String currentPath = "";
-        if (! "/".equals(category.getUrlKey())) {
-            currentPath = startingPath + "/" + category.getUrlKey();
-        }
-
-        List<Long> newCategoryList = new ArrayList<Long>(startingCategoryList);
-        newCategoryList.add(category.getId());
-
-        categoryUrlMap.put(currentPath, newCategoryList);
-        for (Category currentCategory : category.getChildCategories()) {
-            fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
-        }
-    }
-
     @Id
     @GeneratedValue(generator= "CategoryId")
     @GenericGenerator(
@@ -838,5 +801,43 @@ public class CategoryImpl implements Category, Status {
 			return o1.getSequence().compareTo(o2.getSequence());
 		}
 	};
+	
+    private static String buildLink(Category category, boolean ignoreTopLevel) {
+        Category myCategory = category;
+        StringBuilder linkBuffer = new StringBuilder(50);
+        while (myCategory != null) {
+            if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
+                if (linkBuffer.length() == 0) {
+                    linkBuffer.append(myCategory.getUrlKey());
+                } else if(myCategory.getUrlKey() != null && !"/".equals(myCategory.getUrlKey())){
+                    linkBuffer.insert(0, myCategory.getUrlKey() + '/');
+                }
+            }
+            myCategory = myCategory.getDefaultParentCategory();
+        }
+
+        return linkBuffer.toString();
+    }
+
+    private static void fillInURLMapForCategory(Map<String, List<Long>> categoryUrlMap, Category category, String startingPath, List<Long> startingCategoryList) throws CacheFactoryException {
+        String urlKey = category.getUrlKey();
+        if (urlKey == null) {
+        	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
+        }
+
+        String currentPath = "";
+        if (! "/".equals(category.getUrlKey())) {
+            currentPath = startingPath + "/" + category.getUrlKey();
+        }
+
+        List<Long> newCategoryList = new ArrayList<Long>(startingCategoryList);
+        newCategoryList.add(category.getId());
+
+        categoryUrlMap.put(currentPath, newCategoryList);
+        for (Category currentCategory : category.getChildCategories()) {
+            fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
+        }
+    }
+
 
 }
