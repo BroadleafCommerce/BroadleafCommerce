@@ -18,12 +18,10 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Index;
 
@@ -66,7 +64,7 @@ public class CustomerAddressImpl implements CustomerAddress {
     protected Long id;
 
     @Column(name = "ADDRESS_NAME")
-    @AdminPresentation(friendlyName = "CustomerAddressImpl_Address_Name", order=1, group = "CustomerAddressImpl_Identification", groupOrder = 1, requiredOverride = RequiredOverride.REQUIRED, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.core.service.type.CustomerAddressType")
+    @AdminPresentation(friendlyName = "CustomerAddressImpl_Address_Name", order=1, group = "CustomerAddressImpl_Identification", groupOrder = 1)
     protected String addressName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
@@ -78,7 +76,6 @@ public class CustomerAddressImpl implements CustomerAddress {
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
-    
     
     @Column(name = "DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "CustomerAddressImpl_Default_Flag", order=2, group="CustomerAddressImpl_Identification")
