@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
+
 /**
  * Author: jerryocanas
  * Date: 9/19/12
@@ -63,5 +65,21 @@ public interface ProductOptionValueTranslation extends LocaleIf {
      * @param productOptionValue
      */
     public void setProductOptionValue(ProductOptionValue productOptionValue);
+
+    /**
+     * Returns the locale
+     *
+     * @return
+     */
+    public Locale getLocale();
+
+    /**
+     * Sets the locale
+     *
+     * @param locale
+     */
+    public void setLocale(Locale locale);
+
+
 
 }
