@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
@@ -60,6 +61,8 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected List<PromotableOrderItem> discountableDiscreteOrderItems;
     protected boolean currentSortParam = false;
     protected PromotableItemFactory itemFactory;
+    protected List<OrderMultishipOption> multiShipOptions = new ArrayList<OrderMultishipOption>();
+    protected boolean hasMultiShipOptions = false;
     
     public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory) {
     	this.delegate = order;
@@ -499,5 +502,21 @@ public class PromotableOrderImpl implements PromotableOrder {
 
     public void setBundleSplitItems(List<BundleOrderItemSplitContainer> bundleSplitItems) {
         this.bundleSplitItems = bundleSplitItems;
+    }
+
+    public List<OrderMultishipOption> getMultiShipOptions() {
+        return multiShipOptions;
+    }
+
+    public void setMultiShipOptions(List<OrderMultishipOption> multiShipOptions) {
+        this.multiShipOptions = multiShipOptions;
+    }
+
+    public boolean isHasMultiShipOptions() {
+        return hasMultiShipOptions;
+    }
+
+    public void setHasMultiShipOptions(boolean hasMultiShipOptions) {
+        this.hasMultiShipOptions = hasMultiShipOptions;
     }
 }

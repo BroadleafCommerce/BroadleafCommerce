@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service.workflow.update;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -31,6 +32,8 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UpdateOrderItemActivity extends BaseActivity {
     private static Log LOG = LogFactory.getLog(UpdateOrderItemActivity.class);
@@ -62,9 +65,21 @@ public class UpdateOrderItemActivity extends BaseActivity {
         itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
         
         if (itemFromOrder instanceof BundleOrderItem) {
+            Map<Sku, Integer> libraryQty = new HashMap<Sku, Integer>();
             for (DiscreteOrderItem doi : ((BundleOrderItem) itemFromOrder).getDiscreteOrderItems()) {
-                Integer qtyMultiplier = doi.getQuantity() / oldQuantity;
-                doi.setQuantity(qtyMultiplier * orderItemRequestDTO.getQuantity());
+                if (!libraryQty.containsKey(doi.getSku())) {
+                    libraryQty.put(doi.getSku(), 0);
+                }
+                libraryQty.put(doi.getSku(), libraryQty.get(doi.getSku()) + doi.getQuantity());
+            }
+            for (Map.Entry<Sku, Integer> entry : libraryQty.entrySet()) {
+                entry.setValue((entry.getValue() / oldQuantity) * orderItemRequestDTO.getQuantity());
+            }
+            for (DiscreteOrderItem doi : ((BundleOrderItem) itemFromOrder).getDiscreteOrderItems()) {
+                //put all of the new qty in the first instance of the sku (this is a split sku in a bundle)
+                Integer newQty = libraryQty.get(doi.getSku());
+                doi.setQuantity(newQty);
+                libraryQty.put(doi.getSku(), 0);
             }
         }
         

@@ -252,7 +252,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     		OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException, ServiceException {
     	Order cart = CartState.getCart();
     	orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
-    	cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, true);
+    	cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, false);
     	return getMultishipSuccessView();
     }
 

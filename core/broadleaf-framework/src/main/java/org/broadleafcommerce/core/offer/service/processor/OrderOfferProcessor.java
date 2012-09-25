@@ -77,6 +77,8 @@ public interface OrderOfferProcessor extends BaseProcessor {
     public OrderService getOrderService();
 
 	public void setOrderService(OrderService orderService);
+
+    public void prepareCart(PromotableOrder promotableOrder);
 	
 	public void gatherCart(PromotableOrder order);
 	

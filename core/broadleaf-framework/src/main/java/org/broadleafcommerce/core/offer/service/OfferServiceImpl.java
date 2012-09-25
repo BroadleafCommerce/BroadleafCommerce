@@ -228,6 +228,7 @@ public class OfferServiceImpl implements OfferService {
         if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
             orderOfferProcessor.compileOrderTotal(promotableOrder);
         } else {
+            itemOfferProcessor.prepareCart(promotableOrder);
         	itemOfferProcessor.gatherCart(promotableOrder);
             orderOfferProcessor.initializeBundleSplitItems(promotableOrder);
             List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();

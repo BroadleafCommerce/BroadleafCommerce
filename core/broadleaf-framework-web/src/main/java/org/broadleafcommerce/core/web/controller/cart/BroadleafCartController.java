@@ -113,8 +113,8 @@ public class BroadleafCartController extends AbstractCartController {
 			AddToCartItem itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
 		Order cart = CartState.getCart();
 		
-		cart = orderService.updateItemQuantity(cart.getId(), itemRequest, false);
-		cart = orderService.save(cart, true);
+		cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
+		cart = orderService.save(cart, false);
 		CartState.setCart(cart);
 		
 		if (isAjaxRequest(request)) {

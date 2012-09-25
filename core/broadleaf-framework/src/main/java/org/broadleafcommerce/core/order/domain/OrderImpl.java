@@ -227,7 +227,11 @@ public class OrderImpl implements Order {
         	} else {
         		price = orderItem.getTaxablePrice();
         	}
-            calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
+            if (orderItem instanceof BundleOrderItem) {
+                calculatedSubTotal = calculatedSubTotal.add(price);
+            } else {
+                calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
+            }
         }
         return calculatedSubTotal;
     }
