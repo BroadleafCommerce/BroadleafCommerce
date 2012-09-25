@@ -759,7 +759,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             }
         }
 
-        List<FulfillmentGroupItemRequest> fgiRequests = new ArrayList<FulfillmentGroupItemRequest>();
         for (OrderItemSplitContainer key : order.getSplitItems()) {
             List<PromotableOrderItem> mySplits = key.getSplitItems();
             if (!CollectionUtils.isEmpty(mySplits)) {
@@ -773,7 +772,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                             Iterator<OrderMultishipOption> itr = order.getMultiShipOptions().iterator();
                             while(itr.hasNext()) {
                                 OrderMultishipOption option = itr.next();
-                                if (buildIdentifier(option.getOrderItem(), null).equals(buildIdentifier(key.getKey(), null))) {
+                                if ((option.getOrderItem() instanceof DiscreteOrderItem) && ((DiscreteOrderItem) option.getOrderItem()).getSku().equals(delegateItem.getSku())) {
                                     option.setOrderItem(delegateItem);
                                     orderMultishipOptionService.save(option);
                                     itr.remove();
@@ -781,14 +780,15 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                                 }
                             }
                         }
+                        FulfillmentGroupItem fgItem = fulfillmentGroupItemDao.create();
+                        fgItem.setQuantity(delegateItem.getQuantity());
+                        fgItem.setOrderItem(delegateItem);
+                        fgItem.setFulfillmentGroup(order.getDelegate().getFulfillmentGroups().get(0));
+                        order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().add(fgItem);
                     }
                     myItem.setDelegate(delegateItem);
                 }
             }
-        }
-
-        for (FulfillmentGroupItemRequest fgItemRequest : fgiRequests) {
-            fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
         }
 
         //compile a list of any gift wrap items that we're keeping
