@@ -16,15 +16,6 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.hibernate.annotations.Index;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +30,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -77,54 +77,46 @@ public class CustomerAddressImpl implements CustomerAddress {
     @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
     
-    @Column(name = "DEFAULT_FLAG")
-    @AdminPresentation(friendlyName = "CustomerAddressImpl_Default_Flag", order=2, group="CustomerAddressImpl_Identification")
-    protected Boolean defaultAddressFlag; 
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getAddressName() {
         return addressName;
     }
 
+    @Override
     public void setAddressName(String addressName) {
         this.addressName = addressName;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
+    @Override
     public Address getAddress() {
         return address;
     }
 
+    @Override
     public void setAddress(Address address) {
         this.address = address;
     }
-
-    @Override
-    public Boolean getDefaultAddressFlag() {
-    	if (defaultAddressFlag == null) {
-    		return Boolean.FALSE;
-    	}
-		return defaultAddressFlag;
-	}
-
-    @Override
-	public void setDefaultAddressFlag(Boolean defaultAddressFlag) {
-		this.defaultAddressFlag = defaultAddressFlag;
-	}
 
 	@Override
     public String toString() {
@@ -139,19 +131,21 @@ public class CustomerAddressImpl implements CustomerAddress {
         int result = 1;
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((addressName == null) ? 0 : addressName.hashCode());
-        result = prime * result + ((defaultAddressFlag == null) ? 0 : defaultAddressFlag.hashCode());
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CustomerAddressImpl other = (CustomerAddressImpl) obj;
 
         if (id != null && other.id != null) {
@@ -159,28 +153,28 @@ public class CustomerAddressImpl implements CustomerAddress {
         }
 
         if (address == null) {
-            if (other.address != null)
+            if (other.address != null) {
                 return false;
-        } else if (!address.equals(other.address))
+            }
+        } else if (!address.equals(other.address)) {
             return false;
+        }
         
         if (addressName == null) {
-            if (other.addressName != null)
+            if (other.addressName != null) {
                 return false;
-        } else if (!addressName.equals(other.addressName))
+            }
+        } else if (!addressName.equals(other.addressName)) {
             return false;
-        
-        if (defaultAddressFlag == null) {
-            if (other.defaultAddressFlag != null)
-                return false;
-        } else if (!defaultAddressFlag.equals(other.defaultAddressFlag))
-            return false;        
+        }
         
         if (customer == null) {
-            if (other.customer != null)
+            if (other.customer != null) {
                 return false;
-        } else if (!customer.equals(other.customer))
+            }
+        } else if (!customer.equals(other.customer)) {
             return false;
+        }
         return true;
     }
 
