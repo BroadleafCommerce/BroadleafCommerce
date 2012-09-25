@@ -77,7 +77,7 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         showArchivedButton.setTitle(archivedButtonTitle);
         showArchivedButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/find.png");
         showArchivedButton.setVisibility(Visibility.HIDDEN);
-        toolBar.addButton(showArchivedButton);
+       // toolBar.addButton(showArchivedButton);
 
         toolBar.addSpacer(6);
 
