@@ -36,6 +36,7 @@ import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -269,7 +270,12 @@ public class CategoryImpl implements Category, Status {
     protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
 
     @Column(name = "INVENTORY_TYPE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", group = "CategoryImpl_Sku_Inventory", order=10, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
+    
+    @Column(name = "FULFILLMENT_TYPE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", group = "CategoryImpl_Sku_Inventory", order=11, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    protected String fulfillmentType;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -718,6 +724,16 @@ public class CategoryImpl implements Category, Status {
     @Override
     public void setInventoryType(InventoryType inventoryType) {
         this.inventoryType = inventoryType.getType();
+    }
+    
+    @Override
+    public FulfillmentType getFulfillmentType() {
+    	return FulfillmentType.getInstance(this.fulfillmentType);
+    }
+    
+    @Override
+    public void setFulfillmentType(FulfillmentType fulfillmentType) {
+    	this.fulfillmentType = fulfillmentType.getType();
     }
     
     @Override

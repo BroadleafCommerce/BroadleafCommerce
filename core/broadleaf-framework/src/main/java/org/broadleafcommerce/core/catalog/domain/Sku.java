@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -440,5 +441,17 @@ public interface Sku extends Serializable {
      * @param inventoryType the {@link InventoryType} for this sku
      */
     public void setInventoryType(InventoryType inventoryType);
+    
+    /**
+     * Returns the fulfillment type for this sku. May be null.
+     * @return
+     */
+    public FulfillmentType getFulfillmentType();
+    
+    /**
+     * Sets the fulfillment type for this sku. May return null.
+     * @param fulfillmentType
+     */
+    public void setFulfillmentType(FulfillmentType fulfillmentType);
 
 }

@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 
@@ -575,5 +576,17 @@ public interface Category extends Serializable {
      * @param inventoryType the {@link InventoryType} for this category
      */
     public void setInventoryType(InventoryType inventoryType);
+    
+    /**
+     * Returns the default fulfillment type for skus in this category. May be null.
+     * @return
+     */
+    public FulfillmentType getFulfillmentType();
+    
+    /**
+     * Sets the default fulfillment type for skus in this category. May return null.
+     * @param fulfillmentType
+     */
+    public void setFulfillmentType(FulfillmentType fulfillmentType);
 
 }
