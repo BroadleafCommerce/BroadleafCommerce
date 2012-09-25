@@ -69,6 +69,7 @@
 		<class>org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl</class>
 		<class>org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl</class>
 		<class>org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl</class>
+		<class>org.broadleafcommerce.core.order.domain.FulfillmentOptionTranslationImpl</class>
 		<class>org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl</class>
 		<class>org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl</class>
 		<class>org.broadleafcommerce.core.order.fulfillment.domain.BandedWeightFulfillmentOptionImpl</class>
