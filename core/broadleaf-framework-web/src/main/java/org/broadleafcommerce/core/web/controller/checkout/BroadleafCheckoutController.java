@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -20,18 +21,9 @@ import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
-import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
-import org.broadleafcommerce.core.web.checkout.model.MultiShipInstructionForm;
-import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
-import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
-import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
+import org.broadleafcommerce.core.web.checkout.model.*;
 import org.broadleafcommerce.core.web.order.CartState;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.Country;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerAddress;
-import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.profile.core.domain.*;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.joda.time.DateTime;
 import org.springframework.ui.Model;
@@ -41,19 +33,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.beans.PropertyEditorSupport;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * In charge of performing the various checkout operations
@@ -480,13 +465,21 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     /**
      * A helper method used to construct a list of Credit Card Expiration Months
      * Useful for expiration dropdown menus.
+     * Will use locale to determine language if a locale is available.
      *
      * @return List containing expiration months of the form "01 - January"
      */
     protected List<String> populateExpirationMonths() {
+        DateFormatSymbols dateFormatter;
+        if(BroadleafRequestContext.hasLocale()){
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale();
+            dateFormatter = new DateFormatSymbols(locale);
+        } else {
+            dateFormatter = new DateFormatSymbols();
+        }
         List<String> expirationMonths = new ArrayList<String>();
         NumberFormat formatter = new DecimalFormat("00");
-        String[] months = new DateFormatSymbols().getMonths();
+        String[] months = dateFormatter.getMonths();
         for (int i=1; i<months.length; i++) {
             expirationMonths.add(formatter.format(i) + " - " + months[i-1]);
         }
