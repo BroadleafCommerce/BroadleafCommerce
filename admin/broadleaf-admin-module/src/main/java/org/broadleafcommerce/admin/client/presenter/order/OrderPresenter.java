@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.order.BundledOrderItemListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.CountryListDataSourceFactory;
@@ -66,6 +62,10 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -120,13 +120,11 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 						lastSelectedRecord = selectedRecord;
 						if (selectedRecord.getAttributeAsStringArray("_type") == null){
 							formPresenter.disable();
-							display.getListDisplay().getRemoveButton().disable();
 						} else {
 							formPresenter.setStartState();
 							getPresenterSequenceSetupManager().getDataSource("orderDS").resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
 							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, false, selectedRecord);
 							display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
-							display.getListDisplay().getRemoveButton().enable();
 						}
 						changeSelection(selectedRecord);
 					}

@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -29,6 +28,7 @@ import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
@@ -51,6 +51,7 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
 	
 	protected Boolean disabled = false;
+	protected Boolean readOnly = false;
 
     protected Boolean showDisabledState = false;
     protected Boolean canEdit = false;
@@ -121,9 +122,17 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 	}
 	
 	public void setReadOnly(Boolean readOnly) {
+	    this.readOnly = readOnly;
+	    updatePresenterReadOnlyStatus();
+	}
+	
+	protected void updatePresenterReadOnlyStatus() {
 		if (readOnly) {
 			disable();
 			display.getGrid().enable();
+			display.getAddButton().disable();
+			display.getRemoveButton().disable();
+			display.getRefreshButton().disable();
 		} else {
 			enable();
 		}
@@ -166,7 +175,7 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
             ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     String locked = associatedRecord.getAttribute("__locked");
-                    if (!(locked != null && locked.equals("true"))) {
+                    if (!(locked != null && locked.equals("true")) && !readOnly) {
                         setReadOnly(false);
                         setStartState();
                     } else {
@@ -196,6 +205,8 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 				} else {
 					display.getRemoveButton().disable();
 				}
+				
+				updatePresenterReadOnlyStatus();
 			}
 		});
 		removeButtonHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
