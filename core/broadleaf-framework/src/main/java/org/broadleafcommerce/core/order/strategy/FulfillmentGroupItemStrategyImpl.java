@@ -95,6 +95,12 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 					//Use the fulfillment group with a null type
 					fulfillmentGroup = nullFulfillmentTypeGroup;
 				} else {
+					if (FulfillmentType.PHYSICAL_PICKUP_OR_SHIP.equals(type)) {
+						//This is really a special case. "PICKUP_OR_SHIP" is convenient to allow a sku to be picked up or shipped.
+						//However, it is ambiguous when actually trying to create a fulfillment group. So we default to "PHYSICAL_SHIP".
+						type = FulfillmentType.PHYSICAL_SHIP;
+					}
+					
 					//Use the fulfillment group with the specified type
 					fulfillmentGroup = fulfillmentGroups.get(type);
 				}
@@ -120,6 +126,12 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 				//Use the fulfillment group with a null type
 				fulfillmentGroup = nullFulfillmentTypeGroup;
 			} else {
+				if (FulfillmentType.PHYSICAL_PICKUP_OR_SHIP.equals(type)) {
+					//This is really a special case. "PICKUP_OR_SHIP" is convenient to allow a sku to be picked up or shipped.
+					//However, it is ambiguous when actually trying to create a fulfillment group. So we default to "PHYSICAL_SHIP".
+					type = FulfillmentType.PHYSICAL_SHIP;
+				}
+				
 				//Use the fulfillment group with the specified type
 				fulfillmentGroup = fulfillmentGroups.get(type);
 			}
@@ -314,5 +326,4 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		this.removeEmptyFulfillmentGroups = removeEmptyFulfillmentGroups;
 	}
 
-	
 }
