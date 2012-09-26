@@ -83,8 +83,6 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         fg.setAddress(fulfillmentGroupRequest.getAddress());
         fg.setOrder(fulfillmentGroupRequest.getOrder());
         fg.setPhone(fulfillmentGroupRequest.getPhone());
-        fg.setMethod(fulfillmentGroupRequest.getMethod());
-        fg.setService(fulfillmentGroupRequest.getService());
         fg.setFulfillmentOption(fulfillmentGroupRequest.getOption());
 
         for (int i = 0; i < fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size(); i++) {

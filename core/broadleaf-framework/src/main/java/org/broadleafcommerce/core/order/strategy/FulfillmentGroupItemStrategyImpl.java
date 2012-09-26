@@ -16,8 +16,10 @@
 
 package org.broadleafcommerce.core.order.strategy;
 
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -26,6 +28,7 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.stereotype.Service;
@@ -63,34 +66,93 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 	public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
 		Order order = request.getOrder();
 		OrderItem orderItem = request.getAddedOrderItem();
+		Map<FulfillmentType, FulfillmentGroup> fulfillmentGroups = new HashMap<FulfillmentType, FulfillmentGroup>();
+		FulfillmentGroup nullFulfillmentTypeGroup = null;
 		
-		
-		FulfillmentGroup fulfillmentGroup = null;
-		if (order.getFulfillmentGroups().size() == 0) {
-			fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
-			fulfillmentGroup.setOrder(order);
-			fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
-			order.getFulfillmentGroups().add(fulfillmentGroup);
-		} else {
-			fulfillmentGroup = order.getFulfillmentGroups().get(0);
+		//First, let's organize fulfillment groups according to their fulfillment type
+		//We'll use the first of each type that we find. Implementors can choose to move groups / items around later.
+		if (order.getFulfillmentGroups() != null) {
+			for (FulfillmentGroup group : order.getFulfillmentGroups()) {
+				if (group.getType() == null) {
+					if (nullFulfillmentTypeGroup == null) {
+						nullFulfillmentTypeGroup = group;
+					}
+				} else {
+					if (fulfillmentGroups.get(group.getType()) == null) {
+						fulfillmentGroups.put(group.getType(), group);
+					}
+				}
+			}
 		}
 		
 		if (orderItem instanceof BundleOrderItem) {
-		    List<OrderItem> itemsToAdd = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
-		    for (OrderItem oi : itemsToAdd) {
-		        fulfillmentGroup = addItemToFulfillmentGroup(order, oi, fulfillmentGroup);
+			//We only care about the discrete order items
+			List<DiscreteOrderItem> itemsToAdd = new ArrayList<DiscreteOrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
+		    for (DiscreteOrderItem doi : itemsToAdd) {
+		    	FulfillmentGroup fulfillmentGroup = null;
+				FulfillmentType type = resolveFulfillmentType(doi.getSku());
+				if (type == null) {
+					//Use the fulfillment group with a null type
+					fulfillmentGroup = nullFulfillmentTypeGroup;
+				} else {
+					//Use the fulfillment group with the specified type
+					fulfillmentGroup = fulfillmentGroups.get(type);
+				}
+				
+				//If the null type or specified type, above were null, then we need to create a new fulfillment group
+				if (fulfillmentGroup == null) {
+					fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
+					//Set the type
+					fulfillmentGroup.setType(type);
+					fulfillmentGroup.setOrder(order);
+					fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
+					order.getFulfillmentGroups().add(fulfillmentGroup);
+				}
+		    	
+		        fulfillmentGroup = addItemToFulfillmentGroup(order, doi, fulfillmentGroup);
+		        order = fulfillmentGroup.getOrder();
 		    }
 		} else {
-		    fulfillmentGroup = addItemToFulfillmentGroup(order, orderItem, fulfillmentGroup);
+			DiscreteOrderItem doi = (DiscreteOrderItem)orderItem;
+			FulfillmentGroup fulfillmentGroup = null;
+			FulfillmentType type = resolveFulfillmentType(doi.getSku());
+			if (type == null) {
+				//Use the fulfillment group with a null type
+				fulfillmentGroup = nullFulfillmentTypeGroup;
+			} else {
+				//Use the fulfillment group with the specified type
+				fulfillmentGroup = fulfillmentGroups.get(type);
+			}
+			
+			//If the null type or specified type, above were null, then we need to create a new fulfillment group
+			if (fulfillmentGroup == null) {
+				fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
+				//Set the type
+				fulfillmentGroup.setType(type);
+				fulfillmentGroup.setOrder(order);
+				fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
+				order.getFulfillmentGroups().add(fulfillmentGroup);
+			}
+			
+			fulfillmentGroup = addItemToFulfillmentGroup(order, (DiscreteOrderItem)orderItem, fulfillmentGroup);
+			order = fulfillmentGroup.getOrder();
 		}
-		
-		order = fulfillmentGroup.getOrder();
 		
 		request.setOrder(order);
 		return request;
 	}
 	
-	protected FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
+	protected FulfillmentType resolveFulfillmentType(Sku sku) {
+		if (sku.getFulfillmentType() != null) {
+			return sku.getFulfillmentType();
+		}
+		if (sku.getDefaultProduct() != null && sku.getDefaultProduct().getDefaultCategory() != null) {
+			return sku.getDefaultProduct().getDefaultCategory().getFulfillmentType();
+		}
+		return null;
+	}
+	
+	protected FulfillmentGroup addItemToFulfillmentGroup(Order order, DiscreteOrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
 		FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
 		fulfillmentGroupItemRequest.setOrder(order);
 		fulfillmentGroupItemRequest.setOrderItem(orderItem);
