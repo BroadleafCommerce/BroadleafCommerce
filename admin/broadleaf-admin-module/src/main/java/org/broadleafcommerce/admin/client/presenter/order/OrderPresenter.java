@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.order.BundledOrderItemListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.CountryListDataSourceFactory;
@@ -62,10 +66,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -141,8 +141,8 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 					additionalPaymentAttributesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("paymentInfoDS"), null);
                     
                     String id = getPresenterSequenceSetupManager().getDataSource("paymentInfoDS").getPrimaryKeyValue(selectedRecord);
-                    getDisplay().getPaymentResponseDisplay().getGrid().fetchData(new Criteria("paymentInfoId", id));
-                    getDisplay().getPaymentLogDisplay().getGrid().fetchData(new Criteria("paymentInfoId", id));
+                    getDisplay().getPaymentResponseDisplay().getGrid().fetchData(new Criteria("paymentInfoReferenceNumber", selectedRecord.getAttributeAsString("referenceNumber")));
+                    getDisplay().getPaymentLogDisplay().getGrid().fetchData(new Criteria("paymentInfoReferenceNumber", selectedRecord.getAttributeAsString("referenceNumber")));
 				}
 			}
 		});
