@@ -109,35 +109,42 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		throw new IllegalArgumentException("Must supply the entity class to query and count method calls! Default entity not supported!");
 	}
 	
-	public Serializable persist(Serializable entity) {
+	@Override
+    public Serializable persist(Serializable entity) {
 		standardEntityManager.persist(entity);
 		standardEntityManager.flush();
 		return entity;
 	}
 	
-	public Serializable merge(Serializable entity) {
+	@Override
+    public Serializable merge(Serializable entity) {
 		Serializable response = standardEntityManager.merge(entity);
 		standardEntityManager.flush();
 		return response;
 	}
 	
-	public void flush() {
+	@Override
+    public void flush() {
 		standardEntityManager.flush();
 	}
 	
-	public void detach(Serializable entity) {
+	@Override
+    public void detach(Serializable entity) {
 		standardEntityManager.detach(entity);
 	}
 	
-	public void refresh(Serializable entity) {
+	@Override
+    public void refresh(Serializable entity) {
 		standardEntityManager.refresh(entity);
 	}
  	
-	public Serializable retrieve(Class<?> entityClass, Object primaryKey) {
+	@Override
+    public Serializable retrieve(Class<?> entityClass, Object primaryKey) {
 		return (Serializable) standardEntityManager.find(entityClass, primaryKey);
 	}
 	
-	public void remove(Serializable entity) {
+	@Override
+    public void remove(Serializable entity) {
         boolean isArchivable = Status.class.isAssignableFrom(entity.getClass());
         if (isArchivable) {
             ((Status) entity).setArchived('Y');
@@ -148,10 +155,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
 	}
 	
-	public void clear() {
+	@Override
+    public void clear() {
 		standardEntityManager.clear();
 	}
 
+    @Override
     public PersistentClass getPersistentClass(String targetClassName) {
 		return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
 	}
@@ -159,7 +168,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
 	 */
-	public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
+	@Override
+    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
         Class<?>[] cache;
         synchronized(LOCK_OBJECT) {
             cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
@@ -253,6 +263,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
     }
 
+    @Override
     public ClassTree getClassTree(Class<?>[] polymorphicClasses) {
         String ceilingClass = null;
         for (Class<?> clazz : polymorphicClasses) {
@@ -295,12 +306,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         return classTree;
     }
 
+    @Override
     public ClassTree getClassTreeFromCeiling(Class<?> ceilingClass) {
         Class<?>[] sortedEntities = getAllPolymorphicEntitiesFromCeiling(ceilingClass);
         return getClassTree(sortedEntities);
     }
 	
-	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) {
+	@Override
+    public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) {
         Class<?>[] entityClasses;
         try {
             entityClasses = getAllPolymorphicEntitiesFromCeiling(Class.forName(entityName));
@@ -355,6 +368,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
 	}
 
+    @Override
     public Map<String, FieldMetadata> getMergedProperties(
 		String ceilingEntityFullyQualifiedClassname,
 		Class<?>[] entities,
@@ -638,6 +652,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
     }
 
+    @Override
     public Field[] getAllFields(Class<?> targetClass) {
 		Field[] allFields = new Field[]{};
 		boolean eof = false;
@@ -655,6 +670,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		return allFields;
 	}
 
+    @Override
     public Map<String, FieldMetadata> getPropertiesForPrimitiveClass(
 		String propertyName,
 		String friendlyPropertyName,
@@ -712,6 +728,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         return ((HibernateEntityManager) standardEntityManager).getSession().getSessionFactory();
     }
 
+    @Override
     public Map<String, Object> getIdMetadata(Class<?> entityClass) {
         Map<String, Object> response = new HashMap<String, Object>();
         SessionFactory sessionFactory = getSessionFactory();
@@ -724,6 +741,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         return response;
     }
 
+    @Override
     public List<String> getPropertyNames(Class<?> entityClass) {
         ClassMetadata metadata = getSessionFactory().getClassMetadata(entityClass);
         List<String> propertyNames = new ArrayList<String>();
@@ -731,6 +749,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         return propertyNames;
     }
 
+    @Override
     public List<Type> getPropertyTypes(Class<?> entityClass) {
         ClassMetadata metadata = getSessionFactory().getClassMetadata(entityClass);
         List<Type> propertyTypes = new ArrayList<Type>();
@@ -1218,7 +1237,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		int additionalForeignKeyIndexPosition = -1;
 		if (additionalForeignFields != null) {
 			additionalForeignKeyIndexPosition = Arrays.binarySearch(additionalForeignFields, new ForeignKey(prefix + propertyName, null, null), new Comparator<ForeignKey>() {
-				public int compare(ForeignKey o1, ForeignKey o2) {
+				@Override
+                public int compare(ForeignKey o1, ForeignKey o2) {
 					return o1.getManyToField().compareTo(o2.getManyToField());
 				}
 			});
@@ -1351,7 +1371,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		return standardEntityManager;
 	}
 
-	public void setStandardEntityManager(EntityManager entityManager) {
+	@Override
+    public void setStandardEntityManager(EntityManager entityManager) {
 		this.standardEntityManager = entityManager;
 	}
 
@@ -1363,14 +1384,17 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		this.ejb3ConfigurationDao = ejb3ConfigurationDao;
 	}
 
+    @Override
     public FieldManager getFieldManager() {
         return new FieldManager(entityConfiguration, this);
     }
 
+    @Override
     public EntityConfiguration getEntityConfiguration() {
         return entityConfiguration;
     }
 
+    @Override
     public void setEntityConfiguration(EntityConfiguration entityConfiguration) {
         this.entityConfiguration = entityConfiguration;
     }
