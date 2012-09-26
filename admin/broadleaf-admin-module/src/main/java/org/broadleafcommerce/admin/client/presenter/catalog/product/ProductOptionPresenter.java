@@ -32,8 +32,11 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
 
 /**
  * @author Phillip Verheyden
@@ -42,6 +45,9 @@ import com.smartgwt.client.data.Record;
 public class ProductOptionPresenter extends DynamicEntityPresenter implements Instantiable {
     
     protected SubPresentable productOptionValuesPresenter;
+    
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
+
     
     @Override
     protected void changeSelection(final Record selectedRecord) {
@@ -52,7 +58,15 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
     @Override
     public void bind() {
         super.bind();
-        productOptionValuesPresenter.bind();
+        productOptionValuesPresenter.bind();  
+        
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                productOptionValuesPresenter.disable();
+            }
+        });
+
     }
     
     public void setup() {
