@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -41,8 +42,10 @@ import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.easymock.IAnswer;
@@ -52,8 +55,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 /**
  * 
  * @author jfischer
@@ -62,27 +63,27 @@ import junit.framework.TestCase;
 public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
 	private OfferDao offerDaoMock;
-	private CustomerOfferDao customerOfferDaoMock;
-	private OfferCodeDao offerCodeDaoMock;
-	private OfferServiceImpl offerService;
+    private OfferServiceImpl offerService;
 	private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
 	private OrderService orderServiceMock;
 	private OrderItemService orderItemServiceMock;
 	private FulfillmentGroupItemDao fgItemDaoMock;
 	private FulfillmentGroupService fgServiceMock;
+    private OrderMultishipOptionService multishipOptionServiceMock;
 	
 	private FulfillmentGroupOfferProcessorImpl fgProcessor;
 	
 	@Override
 	protected void setUp() throws Exception {
 		offerService = new OfferServiceImpl();
-		customerOfferDaoMock = EasyMock.createMock(CustomerOfferDao.class);
-		offerCodeDaoMock = EasyMock.createMock(OfferCodeDao.class);
+        CustomerOfferDao customerOfferDaoMock = EasyMock.createMock(CustomerOfferDao.class);
+        OfferCodeDao offerCodeDaoMock = EasyMock.createMock(OfferCodeDao.class);
 		orderServiceMock = EasyMock.createMock(OrderService.class);
 		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
 		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
 		offerDaoMock = EasyMock.createMock(OfferDao.class);
 		fgServiceMock = EasyMock.createMock(FulfillmentGroupService.class);
+        multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
 		
 		
 		fgProcessor = new FulfillmentGroupOfferProcessorImpl();
@@ -92,6 +93,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		fgProcessor.setOrderItemService(orderItemServiceMock);
 		fgProcessor.setFulfillmentGroupService(fgServiceMock);
 		fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        fgProcessor.setOrderMultishipOptionService(multishipOptionServiceMock);
 		
 		OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
 		orderProcessor.setOfferDao(offerDaoMock);
@@ -100,6 +102,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		orderProcessor.setOrderItemService(orderItemServiceMock);
 		orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		orderProcessor.setFulfillmentGroupService(fgServiceMock);
+        orderProcessor.setOrderMultishipOptionService(multishipOptionServiceMock);
 		
 		ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
 		itemProcessor.setOfferDao(offerDaoMock);
@@ -108,6 +111,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		itemProcessor.setOrderItemService(orderItemServiceMock);
 		itemProcessor.setFulfillmentGroupService(fgServiceMock);
 		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        itemProcessor.setOrderMultishipOptionService(multishipOptionServiceMock);
 		
 		offerService.setCustomerOfferDao(customerOfferDaoMock);
 		offerService.setOfferCodeDao(offerCodeDaoMock);
@@ -124,6 +128,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		EasyMock.replay(orderItemServiceMock);
 		EasyMock.replay(fgItemDaoMock);
 		EasyMock.replay(fgServiceMock);
+        EasyMock.replay(multishipOptionServiceMock);
 	}
 	
 	public void verify() {
@@ -132,6 +137,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		EasyMock.verify(orderItemServiceMock);
 		EasyMock.verify(fgItemDaoMock);
 		EasyMock.verify(fgServiceMock);
+        EasyMock.verify(multishipOptionServiceMock);
 	}
 	
 	public void testApplyAllFulfillmentGroupOffersWithOrderItemOffers() throws Exception {
@@ -153,6 +159,18 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
 		EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
 		EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
+
+        EasyMock.expect(multishipOptionServiceMock.findOrderMultishipOptions(EasyMock.isA(Long.class))).andAnswer(new IAnswer<List<OrderMultishipOption>>() {
+            @Override
+            public List<OrderMultishipOption> answer() throws Throwable {
+                return new ArrayList<OrderMultishipOption>();
+            }
+        }).anyTimes();
+
+        multishipOptionServiceMock.deleteAllOrderMultishipOptions(EasyMock.isA(Order.class));
+        EasyMock.expectLastCall().anyTimes();
+        EasyMock.expect(fgServiceMock.collapseToOneFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
+        EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
 		
 		replay();
 		

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
@@ -45,8 +46,10 @@ import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -56,8 +59,6 @@ import org.easymock.classextension.EasyMock;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -76,6 +77,7 @@ public class OfferServiceTest extends TestCase {
 	private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
 	
 	private FulfillmentGroupService fgServiceMock;
+    private OrderMultishipOptionService multishipOptionServiceMock;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -90,6 +92,7 @@ public class OfferServiceTest extends TestCase {
 		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
 		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
 		fgServiceMock = EasyMock.createMock(FulfillmentGroupService.class);
+        multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
 		
 		OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
 		orderProcessor.setOfferDao(offerDaoMock);
@@ -98,6 +101,7 @@ public class OfferServiceTest extends TestCase {
 		orderProcessor.setOrderItemService(orderItemServiceMock);
 		orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		orderProcessor.setFulfillmentGroupService(fgServiceMock);
+        orderProcessor.setOrderMultishipOptionService(multishipOptionServiceMock);
 		offerService.setOrderOfferProcessor(orderProcessor);
 		
 		ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
@@ -107,6 +111,7 @@ public class OfferServiceTest extends TestCase {
 		itemProcessor.setOrderItemService(orderItemServiceMock);
 		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		itemProcessor.setFulfillmentGroupService(fgServiceMock);
+        itemProcessor.setOrderMultishipOptionService(multishipOptionServiceMock);
 		offerService.setItemOfferProcessor(itemProcessor);
 		
 		FulfillmentGroupOfferProcessor fgProcessor = new FulfillmentGroupOfferProcessorImpl();
@@ -116,6 +121,7 @@ public class OfferServiceTest extends TestCase {
 		fgProcessor.setOrderItemService(orderItemServiceMock);
 		fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		fgProcessor.setFulfillmentGroupService(fgServiceMock);
+        fgProcessor.setOrderMultishipOptionService(multishipOptionServiceMock);
 		offerService.setFulfillmentGroupOfferProcessor(fgProcessor);
 		offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
 	}
@@ -129,6 +135,7 @@ public class OfferServiceTest extends TestCase {
 		EasyMock.replay(fgItemDaoMock);
 		
 		EasyMock.replay(fgServiceMock);
+        EasyMock.replay(multishipOptionServiceMock);
 	}
 	
 	public void verify() {
@@ -140,6 +147,7 @@ public class OfferServiceTest extends TestCase {
 		EasyMock.verify(fgItemDaoMock);
 		
 		EasyMock.verify(fgServiceMock);
+        EasyMock.verify(multishipOptionServiceMock);
 	}
 	
 	public void testApplyOffersToOrder_Order() throws Exception {
@@ -160,8 +168,20 @@ public class OfferServiceTest extends TestCase {
         EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
 		EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
 		EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
-		
-		replay();
+
+        EasyMock.expect(multishipOptionServiceMock.findOrderMultishipOptions(EasyMock.isA(Long.class))).andAnswer(new IAnswer<List<OrderMultishipOption>>() {
+            @Override
+            public List<OrderMultishipOption> answer() throws Throwable {
+                return new ArrayList<OrderMultishipOption>();
+            }
+        }).anyTimes();
+
+        multishipOptionServiceMock.deleteAllOrderMultishipOptions(EasyMock.isA(Order.class));
+        EasyMock.expectLastCall().anyTimes();
+        EasyMock.expect(fgServiceMock.collapseToOneFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
+        EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
+
+        replay();
 		
 		Order order = dataProvider.createBasicOrder().getDelegate();
 		List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
@@ -305,7 +325,19 @@ public class OfferServiceTest extends TestCase {
 		
 		EasyMock.expect(fgServiceMock.addItemToFulfillmentGroup(EasyMock.isA(FulfillmentGroupItemRequest.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
 		EasyMock.expect(orderServiceMock.removeItem(EasyMock.isA(Long.class), EasyMock.isA(Long.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
-		
+
+        EasyMock.expect(multishipOptionServiceMock.findOrderMultishipOptions(EasyMock.isA(Long.class))).andAnswer(new IAnswer<List<OrderMultishipOption>>() {
+            @Override
+            public List<OrderMultishipOption> answer() throws Throwable {
+                return new ArrayList<OrderMultishipOption>();
+            }
+        }).anyTimes();
+
+        multishipOptionServiceMock.deleteAllOrderMultishipOptions(EasyMock.isA(Order.class));
+        EasyMock.expectLastCall().anyTimes();
+        EasyMock.expect(fgServiceMock.collapseToOneFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
+        EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
+
 		replay();
 		
 		Order order = dataProvider.createBasicOrder().getDelegate();
@@ -367,7 +399,8 @@ public class OfferServiceTest extends TestCase {
 
 	public class CandidateItemOfferAnswer implements IAnswer<CandidateItemOffer> {
 
-		public CandidateItemOffer answer() throws Throwable {
+		@Override
+        public CandidateItemOffer answer() throws Throwable {
 			return new CandidateItemOfferImpl();
 		}
 		
@@ -375,7 +408,8 @@ public class OfferServiceTest extends TestCase {
 	
 	public class OrderItemAdjustmentAnswer implements IAnswer<OrderItemAdjustment> {
 
-		public OrderItemAdjustment answer() throws Throwable {
+		@Override
+        public OrderItemAdjustment answer() throws Throwable {
 			return new OrderItemAdjustmentImpl();
 		}
 		
@@ -383,7 +417,8 @@ public class OfferServiceTest extends TestCase {
 	
 	public class CandidateOrderOfferAnswer implements IAnswer<CandidateOrderOffer> {
 
-		public CandidateOrderOffer answer() throws Throwable {
+		@Override
+        public CandidateOrderOffer answer() throws Throwable {
 			return new CandidateOrderOfferImpl();
 		}
 		
@@ -391,7 +426,8 @@ public class OfferServiceTest extends TestCase {
 	
 	public class OrderAdjustmentAnswer implements IAnswer<OrderAdjustment> {
 
-		public OrderAdjustment answer() throws Throwable {
+		@Override
+        public OrderAdjustment answer() throws Throwable {
 			return new OrderAdjustmentImpl();
 		}
 		

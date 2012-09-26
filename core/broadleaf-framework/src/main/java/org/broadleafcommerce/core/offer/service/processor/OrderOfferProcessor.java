@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 
 import java.util.List;
@@ -138,5 +139,9 @@ public interface OrderOfferProcessor extends BaseProcessor {
      * @return
      */
     public String buildIdentifier(OrderItem orderItem, String extraIdentifier);
+
+    public OrderMultishipOptionService getOrderMultishipOptionService();
+
+    public void setOrderMultishipOptionService(OrderMultishipOptionService orderMultishipOptionService);
     
 }

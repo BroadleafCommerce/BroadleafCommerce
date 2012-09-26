@@ -96,6 +96,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Resource(name="blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
 
+    @Override
     public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
         if (offer.getDiscountType().getType().equals(OfferDiscountType.FIX_PRICE.getType())) {
             LOG.warn("Offers of type ORDER may not have a discount type of FIX_PRICE. Ignoring order offer (name=" + offer.getName() + ")");
@@ -132,6 +133,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    @Override
     public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order) {
         return couldOfferApplyToOrder(offer, order, null, null);
     }
@@ -218,6 +220,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return promotableCandidateOrderOffer;
     }
 
+    @Override
     public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers) {
         List<PromotableCandidateOrderOffer> remainingCandidateOffers = new ArrayList<PromotableCandidateOrderOffer>();
         int offerCount = 0;
@@ -238,6 +241,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return remainingCandidateOffers;
     }
 
+    @Override
     public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
         boolean orderOffersApplied = false;
@@ -284,6 +288,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return orderOffersApplied;
     }
 
+    @Override
     public void initializeBundleSplitItems(PromotableOrder order) {
         List<OrderItem> basicOrderItems = order.getDelegate().getOrderItems();
         for (OrderItem basicOrderItem : basicOrderItems) {
@@ -307,6 +312,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    @Override
     public void initializeSplitItems(PromotableOrder order) {
         List<PromotableOrderItem> items = order.getDiscountableDiscreteOrderItems();
         for (PromotableOrderItem item : items) {
@@ -333,6 +339,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return orderOffersApplied;
     }
 
+    @Override
     public void prepareCart(PromotableOrder promotableOrder) {
         try {
             Order order = promotableOrder.getDelegate();
@@ -349,6 +356,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    @Override
     public void gatherCart(PromotableOrder promotableOrder) {
         Order order = promotableOrder.getDelegate();
         try {
@@ -549,6 +557,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    @Override
     public String buildIdentifier(OrderItem orderItem, String extraIdentifier) {
         StringBuffer identifier = new StringBuffer();
         if (orderItem.getSplitParentItemId() != null || orderService.getAutomaticallyMergeLikeItems()) {
@@ -933,58 +942,80 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         orderService.save(order.getDelegate(), false);
     }
 
+    @Override
     public void compileOrderTotal(PromotableOrder order) {
         order.assignOrderItemsFinalPrice();
         order.setSubTotal(order.calculateOrderItemsFinalPrice(true));
     }
 
+    @Override
     public OfferDao getOfferDao() {
         return offerDao;
     }
 
+    @Override
     public void setOfferDao(OfferDao offerDao) {
         this.offerDao = offerDao;
     }
 
+    @Override
     public OrderService getOrderService() {
         return orderService;
     }
 
+    @Override
     public void setOrderService(OrderService orderService) {
         this.orderService = orderService;
     }
 
+    @Override
     public OrderItemService getOrderItemService() {
         return orderItemService;
     }
 
+    @Override
     public void setOrderItemService(OrderItemService orderItemService) {
         this.orderItemService = orderItemService;
     }
 
+    @Override
     public FulfillmentGroupItemDao getFulfillmentGroupItemDao() {
         return fulfillmentGroupItemDao;
     }
 
+    @Override
     public void setFulfillmentGroupItemDao(
             FulfillmentGroupItemDao fulfillmentGroupItemDao) {
         this.fulfillmentGroupItemDao = fulfillmentGroupItemDao;
     }
 
+    @Override
     public PromotableItemFactory getPromotableItemFactory() {
         return promotableItemFactory;
     }
 
+    @Override
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
         this.promotableItemFactory = promotableItemFactory;
     }
 
+    @Override
     public FulfillmentGroupService getFulfillmentGroupService() {
 		return fulfillmentGroupService;
 	}
 
-	public void setFulfillmentGroupService(FulfillmentGroupService fulfillmentGroupService) {
+	@Override
+    public void setFulfillmentGroupService(FulfillmentGroupService fulfillmentGroupService) {
 		this.fulfillmentGroupService = fulfillmentGroupService;
 	}
 
+    @Override
+    public OrderMultishipOptionService getOrderMultishipOptionService() {
+        return orderMultishipOptionService;
+    }
+
+    @Override
+    public void setOrderMultishipOptionService(OrderMultishipOptionService orderMultishipOptionService) {
+        this.orderMultishipOptionService = orderMultishipOptionService;
+    }
 }
