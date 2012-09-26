@@ -384,10 +384,32 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             false
         );
 
-        List<String> removeKeys = new ArrayList<String>();
-        for (String key : mergedProperties.keySet()) {
+        final List<String> removeKeys = new ArrayList<String>();
+        for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {
-                removeKeys.add(key);
+                mergedProperties.get(key).accept(new MetadataVisitorAdapter() {
+                    @Override
+                    public void visit(BasicFieldMetadata metadata) {
+                        if (metadata.getExplicitFieldType() == null || metadata.getExplicitFieldType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
+                            removeKeys.add(key);
+                        }
+                    }
+
+                    @Override
+                    public void visit(AdornedTargetCollectionMetadata metadata) {
+                        removeKeys.add(key);
+                    }
+
+                    @Override
+                    public void visit(BasicCollectionMetadata metadata) {
+                        removeKeys.add(key);
+                    }
+
+                    @Override
+                    public void visit(MapMetadata metadata) {
+                        removeKeys.add(key);
+                    }
+                });
             }
         }
 
