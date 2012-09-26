@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
@@ -69,9 +72,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 
@@ -258,7 +258,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             public void onSetupSuccess(DataSource result) {
 		        productOptionsPresenter = new AssociatedProductOptionPresenterBasic(getDisplay().getProductOptionsDisplay(), (EntitySearchDialog)library.get("productOptionSearchView"), BLCMain.getMessageManager().getString("productOptionSearchPrompt"));
 		        productOptionsPresenter.setDataSource((ListGridDataSource) result, new String[]{"label", "type", "required"}, new Boolean[]{true, true, true});
-		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"value", "displayOrder"}, new Boolean[]{false, false});
+		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"displayOrder","attributeValue","priceAdjustment"}, new Boolean[]{false,false, false});
 		    }
 		}));
 		
