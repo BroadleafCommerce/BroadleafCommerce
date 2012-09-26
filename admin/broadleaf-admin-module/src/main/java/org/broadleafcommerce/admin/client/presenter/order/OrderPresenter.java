@@ -51,6 +51,7 @@ import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
@@ -59,6 +60,8 @@ import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
@@ -86,6 +89,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
     protected SubPresentable paymentResponsePresenter;
     protected SubPresentable paymentLogPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 	
 	@Override
 	protected void changeSelection(Record selectedRecord) {
@@ -121,6 +125,18 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 						if (selectedRecord.getAttributeAsStringArray("_type") == null){
 							formPresenter.disable();
 						} else {
+						    orderItemPresenter.enable();
+                            fulfillmentGroupPresenter.enable();
+                            paymentInfoPresenter.enable();
+                            additionalPaymentAttributesPresenter.enable();
+                            offerCodePresenter.enable();
+                            orderAdjustmentPresenter.enable();
+                            orderItemAdjustmentPresenter.enable();
+                            fulfillmentGroupAdjustmentPresenter.enable();
+                            feesPresenter.enable();
+                            paymentResponsePresenter.enable();
+                            paymentLogPresenter.enable();
+						    
 							formPresenter.setStartState();
 							getPresenterSequenceSetupManager().getDataSource("orderDS").resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
 							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, false, selectedRecord);
@@ -185,6 +201,24 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
                 });
             }
         });
+		
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                orderItemPresenter.disable();
+                fulfillmentGroupPresenter.disable();
+                paymentInfoPresenter.disable();
+                additionalPaymentAttributesPresenter.disable();
+                offerCodePresenter.disable();
+                orderAdjustmentPresenter.disable();
+                orderItemAdjustmentPresenter.disable();
+                fulfillmentGroupAdjustmentPresenter.disable();
+                feesPresenter.disable();
+                paymentResponsePresenter.disable();
+                paymentLogPresenter.disable();
+            }
+        });
+
 		
 		setReadOnly(true);
 		//enable the toolbar so that the export button will be able to be clicked

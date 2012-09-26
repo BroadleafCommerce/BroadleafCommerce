@@ -128,13 +128,11 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 	
 	protected void updatePresenterReadOnlyStatus() {
 		if (readOnly) {
-			disable();
-			display.getGrid().enable();
-			display.getAddButton().disable();
-			display.getRemoveButton().disable();
-			display.getRefreshButton().disable();
+    		display.getAddButton().disable();
+    		display.getRemoveButton().disable();
 		} else {
-			enable();
+    		display.getAddButton().enable();
+    		display.getRemoveButton().enable();
 		}
 	}
 
@@ -175,12 +173,12 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
             ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     String locked = associatedRecord.getAttribute("__locked");
-                    if (!(locked != null && locked.equals("true")) && !readOnly) {
-                        setReadOnly(false);
+                    if (!(locked != null && locked.equals("true"))) {
                         setStartState();
-                    } else {
-                        setReadOnly(true);
                     }
+                    
+                    updatePresenterReadOnlyStatus();
+                    
                     if (cb != null) {
                         cb.execute(response, rawData, request);
                     }

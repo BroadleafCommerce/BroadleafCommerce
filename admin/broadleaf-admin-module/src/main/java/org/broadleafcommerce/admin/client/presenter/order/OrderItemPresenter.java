@@ -16,6 +16,15 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
+import org.broadleafcommerce.admin.client.view.order.OrderItemDisplay;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -25,14 +34,6 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
-import org.broadleafcommerce.admin.client.view.order.OrderItemDisplay;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.dto.ClassTree;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 
 import java.util.Arrays;
 
@@ -48,6 +49,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 	protected Record associatedRecord;
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
 	protected Boolean disabled = false;
+	protected Boolean readOnly = false;
     protected String[] availableToTypes;
 	
 	public OrderItemPresenter(OrderItemDisplay display, String[] availableToTypes) {
@@ -102,11 +104,17 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 	}
 	
 	public void setReadOnly(Boolean readOnly) {
+	    this.readOnly = readOnly;
+	    updatePresenterReadOnlyStatus();
+	}
+	
+	protected void updatePresenterReadOnlyStatus() {
 		if (readOnly) {
-			disable();
-			display.getGrid().enable();
+    		display.getAddButton().disable();
+    		display.getRemoveButton().disable();
 		} else {
-			enable();
+    		display.getAddButton().enable();
+    		display.getRemoveButton().enable();
 		}
 	}
 
@@ -147,6 +155,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
             ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     setStartState();
+                    updatePresenterReadOnlyStatus();
                     if (cb != null) {
                         cb.execute(response, rawData, request);
                     }
@@ -170,6 +179,8 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 				} else {
 					display.getRemoveButton().disable();
 				}
+				
+				updatePresenterReadOnlyStatus();
 			}
 		});
 		display.getExpansionGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
@@ -183,6 +194,8 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 				} else {
 					//display.getRemoveButton().disable();
 				}
+				
+				updatePresenterReadOnlyStatus();
 			}
 		});
 		display.getRemoveButton().addClickHandler(new ClickHandler() {
