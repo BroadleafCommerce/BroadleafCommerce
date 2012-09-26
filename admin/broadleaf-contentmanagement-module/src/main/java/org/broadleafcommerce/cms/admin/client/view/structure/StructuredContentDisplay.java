@@ -17,13 +17,14 @@
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
 
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 
 /**
  * Created by IntelliJ IDEA.
@@ -91,5 +92,7 @@ public interface StructuredContentDisplay extends DynamicEditDisplay, RulesDispl
     public Label getOrderItemLabel();
 
     public void setOrderItemLabel(Label orderItemLabel);
+
+    public void disableRules();
 
 }

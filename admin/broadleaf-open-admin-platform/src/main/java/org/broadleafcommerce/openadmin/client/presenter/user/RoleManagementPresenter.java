@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
@@ -33,6 +31,12 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.RoleManagementDisplay;
 
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+
 /**
  * 
  * @author jfischer
@@ -41,10 +45,12 @@ import org.broadleafcommerce.openadmin.client.view.user.RoleManagementDisplay;
 public class RoleManagementPresenter extends DynamicEntityPresenter implements Instantiable {
 
     protected SubPresentable permissionsPresenter;
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 
     @Override
     protected void changeSelection(Record selectedRecord) {
         AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
+        permissionsPresenter.enable();
         permissionsPresenter.load(selectedRecord, dataSource, null);
     }
 
@@ -57,6 +63,12 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
 	public void bind() {
 		super.bind();
 		permissionsPresenter.bind();
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                permissionsPresenter.disable();
+            }
+        });
 	}
 
     public void setup() {

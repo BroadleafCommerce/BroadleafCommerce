@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
-import java.util.HashMap;
-
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerAddressDataSourceFactory;
@@ -50,6 +42,18 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+
+import java.util.HashMap;
+
 /**
  * 
  * @author jfischer
@@ -59,10 +63,12 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 
     protected SubPresentable customerAddressPresenter;
     protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		getDisplay().getUpdateLoginButton().enable();
+        customerAddressPresenter.enable();
         customerAddressPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("customerDS"));
 	}
 	
@@ -107,6 +113,12 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 				}
 			}
 		});
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                customerAddressPresenter.disable();
+            }
+        });
 	}
 
 	public void setup() {

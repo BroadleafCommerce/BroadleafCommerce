@@ -66,7 +66,6 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
                 productOptionValuesPresenter.disable();
             }
         });
-
     }
     
     public void setup() {

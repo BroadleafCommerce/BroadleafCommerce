@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -33,6 +31,12 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
 
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+
 /**
  * 
  * @author jfischer
@@ -44,9 +48,12 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	protected UserRolePresenter userRolePresenter;
 	protected EntitySearchDialog roleSearchView;
     protected EntitySearchDialog permissionSearchView;
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
+        userPermissionPresenter.enable();
+        userRolePresenter.enable();
 		userRolePresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
         userPermissionPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
 	}
@@ -59,6 +66,13 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	@Override
 	public void bind() {
 		super.bind();
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                userPermissionPresenter.disable();
+                userRolePresenter.disable();
+            }
+        });
 	}
 
 	public void setup() {
