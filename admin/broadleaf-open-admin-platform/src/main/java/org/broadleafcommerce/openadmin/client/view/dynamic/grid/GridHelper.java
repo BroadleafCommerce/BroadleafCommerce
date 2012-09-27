@@ -1,7 +1,5 @@
-package org.broadleafcommerce.openadmin.client.view.dynamic.grid;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.broadleafcommerce.openadmin.client.view.dynamic.grid;
 
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 
@@ -19,36 +17,34 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GridHelper {
 
-    private List<HandlerRegistration> extendedFetchDataHandlerRegistration;
+    protected List<HandlerRegistration> extendedFetchDataHandlerRegistration;
 
-    public GridHelper() {
-
-    }
-
-    private void clearMembers(Canvas grid, Canvas pane) {
-        // TODO Auto-generated method stub
+    protected void clearMembers(Canvas grid, Canvas pane) {
         if (pane == grid) {
             return;
         }
-        if (pane instanceof TabSet) {
 
+        if (pane instanceof TabSet) {
             for (Tab t : ((TabSet) pane).getTabs()) {
                 clearMembers(grid, t.getPane());
             }
         }
+
         if (pane instanceof com.smartgwt.client.widgets.layout.Layout) {
-            for (Canvas c : ((com.smartgwt.client.widgets.layout.Layout) pane)
-                    .getMembers()) {
+            for (Canvas c : ((com.smartgwt.client.widgets.layout.Layout) pane).getMembers()) {
                 clearMembers(grid, c);
             }
+        }
 
-        }
         if (pane instanceof com.smartgwt.client.widgets.grid.ListGrid) {
-            ((com.smartgwt.client.widgets.grid.ListGrid) pane)
-                    .setData(new ListGridRecord[] {});
+            ((com.smartgwt.client.widgets.grid.ListGrid) pane).setData(new ListGridRecord[] {});
         }
+
         if (pane instanceof DynamicForm) {
             ((DynamicForm) pane).clearValues();
         }
@@ -60,70 +56,56 @@ public class GridHelper {
 
     public void addUpdateHandlers(final ListGrid grid, final Canvas topTabSet) {
         grid.addSelectionChangedHandler(new SelectionChangedHandler() {
-
             @Override
             public void onSelectionChanged(SelectionEvent event) {
-              
-                    clearMembers(grid, topTabSet);
-              
+                clearMembers(grid, topTabSet);
             }
         });
+        
         grid.addFilterEditorSubmitHandler(new FilterEditorSubmitHandler() {
-
             @Override
             public void onFilterEditorSubmit(FilterEditorSubmitEvent event) {
                 clearMembers(grid, topTabSet);
             }
         });
+        
         grid.addFetchDataHandler(new FetchDataHandler() {
-
             @Override
-            public void onFilterData(
-                    com.smartgwt.client.widgets.events.FetchDataEvent event) {
-             clearMembers(grid,topTabSet);
-
+            public void onFilterData(com.smartgwt.client.widgets.events.FetchDataEvent event) {
+                clearMembers(grid, topTabSet);
             }
-
         });
     }
 
-    public void addSubPresentableHandlers(ListGrid grid,
-            final SubPresentable... permissionsPresenters ) {
-        
-for(final SubPresentable permissionsPresenter:permissionsPresenters) {
-        HandlerRegistration extendedFetchDataHandlerRegistration = grid
-                .addFetchDataHandler(new FetchDataHandler() {
-                    @Override
-                    public void onFilterData(FetchDataEvent event) {
-                        permissionsPresenter.disable();
+    public void addSubPresentableHandlers(ListGrid grid, final SubPresentable... permissionsPresenters) {
+        for (final SubPresentable permissionsPresenter : permissionsPresenters) {
+            HandlerRegistration extendedFetchDataHandlerRegistration = grid.addFetchDataHandler(new FetchDataHandler() {
+                @Override
+                public void onFilterData(FetchDataEvent event) {
+                    permissionsPresenter.disable();
+                }
+            });
+            add(extendedFetchDataHandlerRegistration);
 
-                    }
-                });
-        add(extendedFetchDataHandlerRegistration);
-
-        extendedFetchDataHandlerRegistration = grid
-                .addSelectionChangedHandler(new SelectionChangedHandler() {
-
-                    @Override
-                    public void onSelectionChanged(SelectionEvent event) {
-                        permissionsPresenter.enable();
-                    }
-                });
-        add(extendedFetchDataHandlerRegistration);
-        extendedFetchDataHandlerRegistration = grid
-                .addFilterEditorSubmitHandler(new FilterEditorSubmitHandler() {
-
-                    @Override
-                    public void onFilterEditorSubmit(
-                            FilterEditorSubmitEvent event) {
-                        permissionsPresenter.disable();
-                    }
-                });
-        add(extendedFetchDataHandlerRegistration);
-}
+            extendedFetchDataHandlerRegistration = grid.addSelectionChangedHandler(new SelectionChangedHandler() {
+                @Override
+                public void onSelectionChanged(SelectionEvent event) {
+                    permissionsPresenter.enable();
+                }
+            });
+            add(extendedFetchDataHandlerRegistration);
+            
+            extendedFetchDataHandlerRegistration = grid.addFilterEditorSubmitHandler(new FilterEditorSubmitHandler() {
+                @Override
+                public void onFilterEditorSubmit(FilterEditorSubmitEvent event) {
+                    permissionsPresenter.disable();
+                }
+            });
+            add(extendedFetchDataHandlerRegistration);
+        }
     }
 
-    private void add(HandlerRegistration handlerRegistration) {
+    protected void add(HandlerRegistration handlerRegistration) {
         if (extendedFetchDataHandlerRegistration == null) {
             extendedFetchDataHandlerRegistration = new ArrayList<HandlerRegistration>();
         }
@@ -133,8 +115,9 @@ for(final SubPresentable permissionsPresenter:permissionsPresenters) {
     public void traverseTreeAndAddHandlers(ListGrid grid) {
         Canvas parent = grid.getParentElement();
         parent = parent.getParentElement();
-        if(parent.getParentElement()!=null) {
-            //make sure the parent id is there or it wont know how to treverse down the right tree.(must set canvas.setParentElement() to the parent in the view.)
+        if (parent.getParentElement() != null) {
+            // make sure the parent id is there or it wont know how to treverse down the right tree.
+            // (must set canvas.setParentElement() to the parent in the view.)
             parent = parent.getParentElement();
         }
         addUpdateHandlers(grid, parent);
