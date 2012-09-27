@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
@@ -69,9 +72,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 
@@ -201,10 +201,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             @Override
             public void onFilterData(FetchDataEvent event) {
                 ((OneToOneProductSkuDisplay) display).getCloneProductButton().disable();
-                parentCategoriesPresenter.disable();
-                productOptionsPresenter.disable();
-                bundleItemsPresenter.disable();
-                skusPresenter.disable();
             }
         });
 
@@ -328,6 +324,9 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 });
             }
         });
+        gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),parentCategoriesPresenter,productOptionsPresenter,skusPresenter,bundleItemsPresenter,defaultSkuMediaMapStructurePresenter );
+        
         super.postSetup(container);
     }
 

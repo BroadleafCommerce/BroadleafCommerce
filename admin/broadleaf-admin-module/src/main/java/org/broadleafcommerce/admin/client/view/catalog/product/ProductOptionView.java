@@ -47,6 +47,7 @@ public class ProductOptionView extends HLayout implements Instantiable, ProductO
         setWidth100();
     }
     
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
         VLayout leftVerticalLayout = new VLayout();
         leftVerticalLayout.setID("productOptionLeftVerticalLayout");
@@ -56,7 +57,7 @@ public class ProductOptionView extends HLayout implements Instantiable, ProductO
         
         listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productOptionListTitle"), entityDataSource);
         leftVerticalLayout.addMember(listDisplay);
-
+        leftVerticalLayout.setParentElement(this);
         VLayout rightVerticalLayout = new VLayout();
         rightVerticalLayout.setID("productOptionVerticalLayout");
         rightVerticalLayout.setHeight100();

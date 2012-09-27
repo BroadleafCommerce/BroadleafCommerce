@@ -31,11 +31,8 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.RoleManagementDisplay;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.events.FetchDataEvent;
-import com.smartgwt.client.widgets.events.FetchDataHandler;
 
 /**
  * 
@@ -45,12 +42,10 @@ import com.smartgwt.client.widgets.events.FetchDataHandler;
 public class RoleManagementPresenter extends DynamicEntityPresenter implements Instantiable {
 
     protected SubPresentable permissionsPresenter;
-    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 
     @Override
     protected void changeSelection(Record selectedRecord) {
         AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-        permissionsPresenter.enable();
         permissionsPresenter.load(selectedRecord, dataSource, null);
     }
 
@@ -63,17 +58,14 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
 	public void bind() {
 		super.bind();
 		permissionsPresenter.bind();
-        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
-            @Override
-            public void onFilterData(FetchDataEvent event) {
-                permissionsPresenter.disable();
-            }
-        });
+		
 	}
 
+    @Override
     public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminCreateRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
+			@Override
+            public void onSetupSuccess(DataSource top) {
                 setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"description"}, new Boolean[]{true});
 			}
@@ -83,6 +75,8 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
             public void onSetupSuccess(DataSource dataSource) {
 				permissionsPresenter = new SimpleSearchListPresenter(getDisplay().getPermissionsDisplay(), new EntitySearchDialog((ListGridDataSource) dataSource), new String[]{EntityImplementations.ADMIN_ROLE}, BLCMain.getMessageManager().getString("searchForPermission"));
 				permissionsPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "description", "type"}, new Boolean[]{false, false, false});
+			        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(), permissionsPresenter);
+			        gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
             }
         }));
 	}

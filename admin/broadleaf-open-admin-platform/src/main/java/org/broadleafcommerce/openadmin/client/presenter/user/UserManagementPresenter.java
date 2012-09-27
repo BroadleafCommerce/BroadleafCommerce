@@ -31,11 +31,9 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.events.FetchDataEvent;
-import com.smartgwt.client.widgets.events.FetchDataHandler;
+import com.smartgwt.client.widgets.Canvas;
 
 /**
  * 
@@ -48,7 +46,6 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	protected UserRolePresenter userRolePresenter;
 	protected EntitySearchDialog roleSearchView;
     protected EntitySearchDialog permissionSearchView;
-    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -66,29 +63,26 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	@Override
 	public void bind() {
 		super.bind();
-        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
-            @Override
-            public void onFilterData(FetchDataEvent event) {
-                userPermissionPresenter.disable();
-                userRolePresenter.disable();
-            }
-        });
 	}
 
-	public void setup() {
+	@Override
+    public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminUserDS", new AdminUserListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
+			@Override
+            public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"name", "login", "email"}, new Boolean[]{true, true, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				roleSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				userRolePresenter = new UserRolePresenter(getDisplay().getUserRolesDisplay(), roleSearchView);
 				userRolePresenter.setDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("adminRoleDS"), new String[]{"name", "description"}, new Boolean[]{false, false});
 				userRolePresenter.setExpansionDataSource((ListGridDataSource) result , new String[]{"name", "description"}, new Boolean[]{false, false});
@@ -96,6 +90,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 			}
 		}));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminUserPermissionDS", new AdminUserPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 permissionSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 userPermissionPresenter = new UserPermissionPresenter(getDisplay().getUserPermissionDisplay(), permissionSearchView);
@@ -104,7 +99,13 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
             }
         }));
 	}
-
+@Override
+public void postSetup(Canvas container) {
+    gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+    gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),userRolePresenter,userPermissionPresenter );
+    
+    super.postSetup(container);
+}
 	@Override
 	public UserManagementDisplay getDisplay() {
 		return (UserManagementDisplay) display;

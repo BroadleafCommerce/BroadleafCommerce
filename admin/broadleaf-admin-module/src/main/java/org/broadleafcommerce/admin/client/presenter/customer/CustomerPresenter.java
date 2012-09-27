@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
+import java.util.HashMap;
+
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerAddressDataSourceFactory;
@@ -42,17 +44,13 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.FetchDataEvent;
-import com.smartgwt.client.widgets.events.FetchDataHandler;
-
-import java.util.HashMap;
 
 /**
  * 
@@ -63,7 +61,6 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 
     protected SubPresentable customerAddressPresenter;
     protected HashMap<String, Object> library = new HashMap<String, Object>(10);
-    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -83,10 +80,12 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 		super.bind();
         customerAddressPresenter.bind();
 		getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
+			@Override
+            public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					SC.confirm(BLCMain.getMessageManager().getString("confirmResetPassword"), new BooleanCallback() {
-						public void execute(Boolean value) {
+						@Override
+                        public void execute(Boolean value) {
 							if (value != null && value) {
 								BLCMain.NON_MODAL_PROGRESS.startProgress();
 								
@@ -102,7 +101,8 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
 			            		
 			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage("org.broadleafcommerce.profile.core.domain.Customer", entity, tempPerspective, new String[]{"passwordUpdate"}, BLCMain.csrfToken), new AbstractCallback<Entity>() {
-									public void onSuccess(Entity arg0) {
+									@Override
+                                    public void onSuccess(Entity arg0) {
 										BLCMain.NON_MODAL_PROGRESS.stopProgress();
 										SC.say(BLCMain.getMessageManager().getString("resetPasswordSuccessful"));
 									}	
@@ -113,23 +113,21 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 				}
 			}
 		});
-        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
-            @Override
-            public void onFilterData(FetchDataEvent event) {
-                customerAddressPresenter.disable();
-            }
-        });
+
 	}
 
-	public void setup() {
+	@Override
+    public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
+			@Override
+            public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"username", "firstName", "lastName", "emailAddress"}, new Boolean[]{true, true, true, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				((ListGridDataSource) result).resetPermanentFieldVisibility("question");
                 final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 getPresenterSequenceSetupManager().getDataSource("customerDS").
@@ -142,7 +140,8 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			}
 		}));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				((ListGridDataSource) result).resetPermanentFieldVisibility("friendlyName");
                 final EntitySearchDialog localeSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 getPresenterSequenceSetupManager().getDataSource("customerDS").
@@ -155,6 +154,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			}
 		}));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 ((ListGridDataSource) result).resetPermanentFieldVisibility(
                     "abbreviation",
@@ -165,6 +165,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("stateDS", new StateListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 ((ListGridDataSource) result).resetPermanentFieldVisibility(
                     "abbreviation",
@@ -175,6 +176,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerAddressDS", new CustomerAddressDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 customerAddressPresenter = new CreateBasedListStructurePresenter(getDisplay().getCustomerAddressDisplay(), new String[] {EntityImplementations.CUSTOMER}, BLCMain.getMessageManager().getString("newCustomerAddressTitle"));
                 customerAddressPresenter.setDataSource((ListGridDataSource) result, new String[]{"addressName", "address.addressLine1", "address.city", "address.state.name", "address.postalCode"}, new Boolean[]{true, true, true, true, true});
@@ -196,7 +198,13 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
             }
         }));
 	}
-
+@Override
+public void postSetup(Canvas container) {
+    gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+    gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),customerAddressPresenter );
+    
+    super.postSetup(container);
+}
 	@Override
 	public CustomerDisplay getDisplay() {
 		return (CustomerDisplay) display;
