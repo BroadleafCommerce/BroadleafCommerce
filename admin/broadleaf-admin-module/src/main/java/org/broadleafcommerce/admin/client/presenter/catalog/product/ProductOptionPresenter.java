@@ -48,7 +48,6 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
     @Override
     protected void changeSelection(final Record selectedRecord) {
         AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-        productOptionValuesPresenter.enable();
         productOptionValuesPresenter.load(selectedRecord, dataSource);
     }
     

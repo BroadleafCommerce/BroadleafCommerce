@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
@@ -73,6 +70,9 @@ import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * 
  * @author jfischer
@@ -97,10 +97,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
         getDisplay().getCloneProductButton().enable();
-        parentCategoriesPresenter.enable();
-        productOptionsPresenter.enable();
-        bundleItemsPresenter.enable();
-        skusPresenter.enable();
+
 	}
 
     @Override

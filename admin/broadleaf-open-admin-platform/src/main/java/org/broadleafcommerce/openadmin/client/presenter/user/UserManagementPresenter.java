@@ -49,10 +49,8 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
-        userPermissionPresenter.enable();
-        userRolePresenter.enable();
 		userRolePresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-        userPermissionPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
+                userPermissionPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
 	}
 	
 	@Override
