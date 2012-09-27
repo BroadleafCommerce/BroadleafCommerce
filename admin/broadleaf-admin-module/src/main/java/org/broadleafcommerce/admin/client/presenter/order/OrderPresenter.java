@@ -66,6 +66,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +90,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
     protected SubPresentable paymentResponsePresenter;
     protected SubPresentable paymentLogPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+	protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();;
     protected HandlerRegistration extendedFetchDataHandlerRegistration;
 	
 	@Override
@@ -103,6 +105,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 	@Override
 	public void bind() {
 		super.bind();
+		
 		orderItemPresenter.bind();
 		fulfillmentGroupPresenter.bind();
 		paymentInfoPresenter.bind();
@@ -114,29 +117,35 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		feesPresenter.bind();
         paymentResponsePresenter.bind();
         paymentLogPresenter.bind();
+        
+		subPresentables.add(orderItemPresenter);
+		subPresentables.add(fulfillmentGroupPresenter);
+		subPresentables.add(paymentInfoPresenter);
+		subPresentables.add(additionalPaymentAttributesPresenter);
+		subPresentables.add(offerCodePresenter);
+		subPresentables.add(orderAdjustmentPresenter);
+		subPresentables.add(orderItemAdjustmentPresenter);
+		subPresentables.add(fulfillmentGroupAdjustmentPresenter);
+		subPresentables.add(feesPresenter);
+        subPresentables.add(paymentResponsePresenter);
+        subPresentables.add(paymentLogPresenter);
+        
 		selectionChangedHandlerRegistration.removeHandler();
 		display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			@Override
             public void onSelectionChanged(SelectionEvent event) {
 				ListGridRecord selectedRecord = event.getSelectedRecord();
+						    
 				if (event.getState()) {
+				    for (SubPresentable sp : subPresentables) {
+				        sp.enable();
+				    }
+                    
 					if (!selectedRecord.equals(lastSelectedRecord)) {
 						lastSelectedRecord = selectedRecord;
 						if (selectedRecord.getAttributeAsStringArray("_type") == null){
 							formPresenter.disable();
 						} else {
-						    orderItemPresenter.enable();
-                            fulfillmentGroupPresenter.enable();
-                            paymentInfoPresenter.enable();
-                            additionalPaymentAttributesPresenter.enable();
-                            offerCodePresenter.enable();
-                            orderAdjustmentPresenter.enable();
-                            orderItemAdjustmentPresenter.enable();
-                            fulfillmentGroupAdjustmentPresenter.enable();
-                            feesPresenter.enable();
-                            paymentResponsePresenter.enable();
-                            paymentLogPresenter.enable();
-						    
 							formPresenter.setStartState();
 							getPresenterSequenceSetupManager().getDataSource("orderDS").resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
 							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, false, selectedRecord);
@@ -144,6 +153,10 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 						}
 						changeSelection(selectedRecord);
 					}
+					
+    			    for (SubPresentable sp : subPresentables) {
+    			        sp.setReadOnly(true);
+    			    }
 				}
 			}
 		});
@@ -205,17 +218,9 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
         extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-                orderItemPresenter.disable();
-                fulfillmentGroupPresenter.disable();
-                paymentInfoPresenter.disable();
-                additionalPaymentAttributesPresenter.disable();
-                offerCodePresenter.disable();
-                orderAdjustmentPresenter.disable();
-                orderItemAdjustmentPresenter.disable();
-                fulfillmentGroupAdjustmentPresenter.disable();
-                feesPresenter.disable();
-                paymentResponsePresenter.disable();
-                paymentLogPresenter.disable();
+			    for (SubPresentable sp : subPresentables) {
+			        sp.disable();
+			    }
             }
         });
 

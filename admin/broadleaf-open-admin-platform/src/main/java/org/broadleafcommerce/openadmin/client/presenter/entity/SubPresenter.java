@@ -130,9 +130,11 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 		if (readOnly) {
     		display.getAddButton().disable();
     		display.getRemoveButton().disable();
+    		display.getToolbar().disable();
 		} else {
     		display.getAddButton().enable();
     		display.getRemoveButton().enable();
+    		display.getToolbar().enable();
 		}
 	}
 

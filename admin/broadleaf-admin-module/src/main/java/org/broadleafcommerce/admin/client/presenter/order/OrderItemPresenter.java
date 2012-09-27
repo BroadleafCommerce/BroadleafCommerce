@@ -112,9 +112,11 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		if (readOnly) {
     		display.getAddButton().disable();
     		display.getRemoveButton().disable();
+    		display.getToolbar().disable();
 		} else {
     		display.getAddButton().enable();
     		display.getRemoveButton().enable();
+    		display.getToolbar().enable();
 		}
 	}
 
