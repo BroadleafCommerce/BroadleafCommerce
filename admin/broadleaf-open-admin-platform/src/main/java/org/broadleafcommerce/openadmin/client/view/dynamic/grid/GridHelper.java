@@ -77,11 +77,12 @@ public class GridHelper {
         });
     }
 
-    public void addSubPresentableHandlers(ListGrid grid, final SubPresentable... permissionsPresenters) {
+    public void addSubPresentableHandlers(final ListGrid grid, final SubPresentable... permissionsPresenters) {
         for (final SubPresentable permissionsPresenter : permissionsPresenters) {
             HandlerRegistration extendedFetchDataHandlerRegistration = grid.addFetchDataHandler(new FetchDataHandler() {
                 @Override
                 public void onFilterData(FetchDataEvent event) {
+                    
                     permissionsPresenter.disable();
                 }
             });
@@ -90,7 +91,9 @@ public class GridHelper {
             extendedFetchDataHandlerRegistration = grid.addSelectionChangedHandler(new SelectionChangedHandler() {
                 @Override
                 public void onSelectionChanged(SelectionEvent event) {
-                    permissionsPresenter.enable();
+                    if(event.getState()) {
+                        permissionsPresenter.enable();  
+                    }
                 }
             });
             add(extendedFetchDataHandlerRegistration);

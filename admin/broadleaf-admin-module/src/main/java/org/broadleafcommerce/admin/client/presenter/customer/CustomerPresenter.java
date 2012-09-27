@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
-import java.util.HashMap;
-
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerAddressDataSourceFactory;
@@ -52,6 +50,8 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 
+import java.util.HashMap;
+
 /**
  * 
  * @author jfischer
@@ -65,7 +65,6 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		getDisplay().getUpdateLoginButton().enable();
-        customerAddressPresenter.enable();
         customerAddressPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("customerDS"));
 	}
 	
