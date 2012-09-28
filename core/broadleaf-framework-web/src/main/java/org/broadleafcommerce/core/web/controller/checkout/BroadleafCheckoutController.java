@@ -318,6 +318,43 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
    	//append current time to redirect to fix a problem with ajax caching in IE
    	return getCheckoutPageRedirect()+ "?_=" + System.currentTimeMillis();
    }
+    
+    /**
+     * Processes the request to complete checkout
+     * 
+     * If the paymentMethod is undefined or "creditCard" delegates to the "completeSecureCreditCardCheckout"
+     * method. 
+     * 
+     * Otherwise, returns an operation not supported.
+     *
+     * This method assumes that a credit card payment info
+     * will be either sent to a third party gateway or saved in a secure schema.
+     * If the transaction is successful, the order will be assigned an order number,
+     * its status change to SUBMITTED, and given a submit date. The method then
+     * returns the default confirmation path "/confirmation/{orderNumber}"
+     *
+     * If the transaction is unsuccessful, (e.g. the gateway declines payment)
+     * processFailedOrderCheckout() is called and reverses the state of the order.
+     *
+     * Note: this method removes any existing payment infos of type CREDIT_CARD
+     * and re-creates it with the information from the BillingInfoForm
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param billingForm
+     * @return the return path
+     * @throws ServiceException 
+     */
+    public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
+            BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
+    	
+    	if (billingForm.getPaymentMethod() == null || "credit_card".equals(billingForm.getPaymentMethod())) {
+    		return completeSecureCreditCardCheckout(request, response, model, billingForm, result);
+    	} else {
+    		throw new IllegalArgumentException("Complete checkout called with payment Method " + billingForm.getPaymentMethod() + " which has not been implemented.");
+    	}
+    }
 
     /**
      * Processes the request to complete checkout using a Credit Card

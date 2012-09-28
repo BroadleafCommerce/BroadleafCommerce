@@ -90,6 +90,14 @@ public class SkuBasicClientEntityModule extends BasicClientEntityModule {
                     response.setTotalRows(result.getTotalRecords());
                     /*** END COPY FROM BasicClientEntityModule ***/
                     
+                    // First, hide all of the productOption fields becauase they may not be applicable to this particular 
+                    // product
+                    for (DataSourceField field : dataSource.getFields()) {
+                        if (field.getName().startsWith("productOption")) {
+                            field.setAttribute("formHidden", FormHiddenEnum.HIDDEN);
+                        }
+                    }
+                    
                     //In order to make the form display show up properly for creating a new single Sku, make all the product
                     //options for the Product visible on the form
                     if (result.getClassMetaData().getProperties() != null) {

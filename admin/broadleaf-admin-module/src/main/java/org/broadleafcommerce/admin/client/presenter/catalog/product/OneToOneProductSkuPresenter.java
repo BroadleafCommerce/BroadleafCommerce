@@ -16,20 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.FetchDataEvent;
-import com.smartgwt.client.widgets.events.FetchDataHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
@@ -69,6 +55,21 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -96,6 +97,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
         getDisplay().getCloneProductButton().enable();
+
 	}
 
     @Override
@@ -191,13 +193,11 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		        });
 		    }
 		});
+		
         extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
                 ((OneToOneProductSkuDisplay) display).getCloneProductButton().disable();
-                parentCategoriesPresenter.disable();
-                productOptionsPresenter.disable();
-                bundleItemsPresenter.disable();
             }
         });
 
@@ -255,7 +255,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             public void onSetupSuccess(DataSource result) {
 		        productOptionsPresenter = new AssociatedProductOptionPresenterBasic(getDisplay().getProductOptionsDisplay(), (EntitySearchDialog)library.get("productOptionSearchView"), BLCMain.getMessageManager().getString("productOptionSearchPrompt"));
 		        productOptionsPresenter.setDataSource((ListGridDataSource) result, new String[]{"label", "type", "required"}, new Boolean[]{true, true, true});
-		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"value", "displayOrder"}, new Boolean[]{false, false});
+		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"displayOrder","attributeValue","priceAdjustment"}, new Boolean[]{false,false, false});
 		    }
 		}));
 		
@@ -321,6 +321,9 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 });
             }
         });
+        gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),parentCategoriesPresenter,productOptionsPresenter,skusPresenter,bundleItemsPresenter,defaultSkuMediaMapStructurePresenter );
+        
         super.postSetup(container);
     }
 

@@ -78,7 +78,7 @@ public class ProductAttributeImpl implements ProductAttribute {
 
     /** The searchable. */
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Searchable", order=3, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true)
     protected Boolean searchable;
     
     /** The product. */

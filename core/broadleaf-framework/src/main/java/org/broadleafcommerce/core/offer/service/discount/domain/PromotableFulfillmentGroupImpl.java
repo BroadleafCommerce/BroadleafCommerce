@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
@@ -38,6 +34,10 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGroup {
 
 	private static final long serialVersionUID = 1L;
@@ -53,15 +53,18 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
 		this.itemFactory = itemFactory;
 	}
 	
-	public void reset() {
+	@Override
+    public void reset() {
 		delegate = null;
 	}
 	
-	public FulfillmentGroup getDelegate() {
+	@Override
+    public FulfillmentGroup getDelegate() {
 		return delegate;
 	}
 	
-	public List<PromotableOrderItem> getDiscountableDiscreteOrderItems() {
+	@Override
+    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems() {
         List<PromotableOrderItem> discreteOrderItems = new ArrayList<PromotableOrderItem>();
         for (FulfillmentGroupItem fgItem : delegate.getFulfillmentGroupItems()) {
         	OrderItem orderItem = fgItem.getOrderItem();
@@ -87,6 +90,7 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
      * Adds the adjustment to the order item's adjustment list and discounts the order item's adjustment
      * price by the value of the adjustment.
      */
+    @Override
     public void addFulfillmentGroupAdjustment(PromotableFulfillmentGroupAdjustment fulfillmentGroupAdjustment) {
         if (delegate.getFulfillmentGroupAdjustments().size() == 0) {
             adjustmentPrice = delegate.getRetailShippingPrice().getAmount();
@@ -96,12 +100,14 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
         order.resetTotalitarianOfferApplied();
     }
 
+    @Override
     public void removeAllAdjustments() {
         delegate.removeAllAdjustments();
         order.resetTotalitarianOfferApplied();
         adjustmentPrice = null;
     }
     
+    @Override
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
         Money currentPrice;
         if (delegate.getSaleShippingPrice() != null && allowSalesPrice) {
@@ -112,35 +118,43 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
         return currentPrice;
     }
     
+    @Override
     public Money getAdjustmentPrice() {
         return adjustmentPrice == null ? null : new Money(adjustmentPrice, delegate.getRetailShippingPrice().getCurrency(), adjustmentPrice.scale()==0? BankersRounding.DEFAULT_SCALE:adjustmentPrice.scale());
     }
 
+    @Override
     public void setAdjustmentPrice(Money adjustmentPrice) {
         this.adjustmentPrice = Money.toAmount(adjustmentPrice);
     }
     
+    @Override
     public Money getRetailShippingPrice() {
 		return delegate.getRetailShippingPrice();
 	}
 
-	public Money getSaleShippingPrice() {
+	@Override
+    public Money getSaleShippingPrice() {
 		return delegate.getSaleShippingPrice();
 	}
 	
-	public void removeAllCandidateOffers() {
+	@Override
+    public void removeAllCandidateOffers() {
 		delegate.removeAllCandidateOffers();
 	}
 	
-	public Money getShippingPrice() {
+	@Override
+    public Money getShippingPrice() {
 		return delegate.getShippingPrice();
 	}
 	
-	public void setShippingPrice(Money shippingPrice) {
+	@Override
+    public void setShippingPrice(Money shippingPrice) {
 		delegate.setShippingPrice(shippingPrice);
 	}
 	
-	public void addCandidateFulfillmentGroupOffer(PromotableCandidateFulfillmentGroupOffer candidateOffer) {
+	@Override
+    public void addCandidateFulfillmentGroupOffer(PromotableCandidateFulfillmentGroupOffer candidateOffer) {
 		delegate.addCandidateFulfillmentGroupOffer(candidateOffer.getDelegate());
 	}
     

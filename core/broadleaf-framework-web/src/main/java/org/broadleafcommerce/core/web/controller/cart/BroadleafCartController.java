@@ -113,8 +113,8 @@ public class BroadleafCartController extends AbstractCartController {
 			AddToCartItem itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
 		Order cart = CartState.getCart();
 		
-		cart = orderService.updateItemQuantity(cart.getId(), itemRequest, false);
-		cart = orderService.save(cart, true);
+		cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
+		cart = orderService.save(cart, false);
 		CartState.setCart(cart);
 		
 		if (isAjaxRequest(request)) {
@@ -198,7 +198,7 @@ public class BroadleafCartController extends AbstractCartController {
 		
 		OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
 		
-		if(offerCode!=null) {
+		if (offerCode!=null) {
 			try {
 				orderService.addOfferCode(cart, offerCode, false);
 				promoAdded = true;
@@ -219,7 +219,8 @@ public class BroadleafCartController extends AbstractCartController {
 			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
 			return getCartView();
 		} else {
-			return getCartPageRedirect();
+		    model.addAttribute("exception", exception);
+			return getCartView();
 		}
 		
 	}

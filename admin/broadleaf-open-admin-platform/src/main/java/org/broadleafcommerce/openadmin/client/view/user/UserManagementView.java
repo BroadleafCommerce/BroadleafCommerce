@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.user;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.Side;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
@@ -30,6 +23,14 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisp
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.Side;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
 
 /**
  * 
@@ -48,7 +49,8 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 		setWidth100();
 	}
 	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+	@Override
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("userLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
@@ -84,27 +86,32 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         userPermissionDisplay = new UserPermissionView(false, false);
         userPermissionsTab.setPane(userPermissionDisplay);
         topTabSet.addTab(userPermissionsTab);
-        
+        leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(topTabSet);
 	}
 
-	public Canvas asCanvas() {
+	@Override
+    public Canvas asCanvas() {
 		return this;
 	}
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
+	@Override
+    public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
 	
-	public DynamicEntityListDisplay getListDisplay() {
+	@Override
+    public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
 	}
 
-	public UserRoleView getUserRolesDisplay() {
+	@Override
+    public UserRoleView getUserRolesDisplay() {
 		return userRolesDisplay;
 	}
 
+    @Override
     public UserPermissionView getUserPermissionDisplay() {
         return userPermissionDisplay;
     }

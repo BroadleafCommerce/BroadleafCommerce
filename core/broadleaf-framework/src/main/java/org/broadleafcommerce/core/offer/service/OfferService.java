@@ -142,5 +142,9 @@ public interface OfferService {
      * @return
      */
     public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer);
+
+    public OrderItemMergeService getOrderItemMergeService();
+
+    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService);
 	
 }

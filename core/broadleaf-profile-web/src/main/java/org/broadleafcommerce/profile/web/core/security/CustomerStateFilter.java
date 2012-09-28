@@ -16,17 +16,6 @@
 
 package org.broadleafcommerce.profile.web.core.security;
 
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -42,6 +31,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component("blCustomerStateFilter")
 /**
@@ -71,7 +72,8 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
     public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME="_blc_anonymousCustomer";
     private static final String LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME="_blc_lastPublishedEvent";
 
-	public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
+	@Override
+    public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) baseRequest;
 		HttpServletResponse response = (HttpServletResponse) baseResponse;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -130,12 +132,7 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
         	// This can be used to remember their cart from a previous visit.
             // Cookie logic probably needs to be configurable - with TCS as the exception.
 
-            customer = (Customer) request.getSession(true).getAttribute(ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME);
-            if (customer == null) { 
-                customer = customerService.createNewCustomer();
-                customer.setAnonymous(true);
-                request.getSession().setAttribute(ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME, customer);
-            }
+            customer = resolveAnonymousCustomer(request);
         }
         request.setAttribute(customerRequestAttributeName, customer);
 
@@ -150,12 +147,39 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
         chain.doFilter(request, response);
     }
 
+    /**
+     * Implementors can subclass to change how anonymous customers are created.
+     * @param request
+     * @return
+     */
+    public Customer resolveAnonymousCustomer(HttpServletRequest request) {
+        Customer customer;
+        customer = (Customer) request.getSession(true).getAttribute(getAnonymousCustomerAttributeName());
+        if (customer == null) { 
+            customer = customerService.createNewCustomer();
+            customer.setAnonymous(true);
+            request.getSession().setAttribute(getAnonymousCustomerAttributeName(), customer);
+        }
+        return customer;
+    }
+
+    /**
+     * Returns the session attribute to store the anonymous customer.
+     * Some implementations may wish to have a different anonymous customer instance (and as a result a different cart). 
+     * @return
+     */
+    public String getAnonymousCustomerAttributeName() {
+        return ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME;
+    }
+
+    @Override
     public int getOrder() {
     	//FilterChainOrder has been dropped from Spring Security 3
         //return FilterChainOrder.REMEMBER_ME_FILTER+1;
     	return 1501;
     }
 
+    @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }

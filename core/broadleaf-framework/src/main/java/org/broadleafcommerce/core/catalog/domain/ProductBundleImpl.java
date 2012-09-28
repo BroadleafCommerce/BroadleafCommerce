@@ -73,6 +73,13 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
+    
+    @Override
+    public boolean isOnSale() {
+    	Money retailPrice = getRetailPrice();
+    	Money salePrice = getSalePrice();
+    	return (salePrice != null && !salePrice.isZero() && salePrice.lessThan(retailPrice));
+    }
 
     @Override
     public ProductBundlePricingModelType getPricingModel() {
@@ -105,7 +112,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     public Money getBundleItemsRetailPrice() {
         Money price = new Money(BigDecimal.ZERO);
         for (SkuBundleItem item : getSkuBundleItems()) {
-            price = price.add(item.getRetailPrice());
+            price = price.add(item.getRetailPrice().multiply(item.getQuantity()));
         }
         return price;
     }
@@ -114,9 +121,9 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         Money price = new Money(BigDecimal.ZERO);
         for (SkuBundleItem item : getSkuBundleItems()){
             if (item.getSalePrice() != null) { 
-                price = price.add(item.getSalePrice());
+                price = price.add(item.getSalePrice().multiply(item.getQuantity()));
             } else {
-                price = price.add(item.getRetailPrice());
+                price = price.add(item.getRetailPrice().multiply(item.getQuantity()));
             }
         }
         return price;

@@ -34,6 +34,7 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 
 /**
  * @author Phillip Verheyden
@@ -42,6 +43,7 @@ import com.smartgwt.client.data.Record;
 public class ProductOptionPresenter extends DynamicEntityPresenter implements Instantiable {
     
     protected SubPresentable productOptionValuesPresenter;
+
     
     @Override
     protected void changeSelection(final Record selectedRecord) {
@@ -52,11 +54,14 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
     @Override
     public void bind() {
         super.bind();
-        productOptionValuesPresenter.bind();
+        productOptionValuesPresenter.bind();  
+        
     }
     
+    @Override
     public void setup() {
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionDS", new ProductOptionListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource top) {
                 setupDisplayItems(top);
                 ((ListGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{});
@@ -64,13 +69,20 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
         }));
         
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValuesDS", new ProductOptionValueDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 productOptionValuesPresenter = new CreateBasedListStructurePresenter(getDisplay().getProductOptionValuesDisplay(), BLCMain.getMessageManager().getString("newProductOptionValue"));
                 productOptionValuesPresenter.setDataSource((ListGridDataSource)result, new String[]{}, new Boolean[]{});
             }
         }));
     }
-    
+    @Override
+    public void postSetup(Canvas container) {
+        gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),productOptionValuesPresenter );
+        
+        super.postSetup(container);
+    }
     @Override
     public ProductOptionDisplay getDisplay() {
         return (ProductOptionDisplay)display;

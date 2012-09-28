@@ -71,7 +71,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     protected String value;
 
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Searchable", order=3, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true)
     protected Boolean searchable;
     
     @ManyToOne(targetEntity = CategoryImpl.class, optional=false)

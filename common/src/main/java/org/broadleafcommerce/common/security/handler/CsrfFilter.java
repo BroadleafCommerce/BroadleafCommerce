@@ -31,8 +31,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,7 +52,7 @@ public class CsrfFilter extends GenericFilterBean {
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
-    protected List<String> excludedRequestPatterns = new ArrayList<String>();
+    protected List<String> excludedRequestPatterns;
 
 	@Override
 	public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
@@ -60,11 +60,13 @@ public class CsrfFilter extends GenericFilterBean {
 		HttpServletResponse response = (HttpServletResponse) baseResponse;
 
         boolean excludedRequestFound = false;
-        for (String pattern : excludedRequestPatterns) {
-            RequestMatcher matcher = new AntPathRequestMatcher(pattern);
-            if (matcher.matches(request)){
-                excludedRequestFound = true;
-                break;
+        if (excludedRequestPatterns != null && excludedRequestPatterns.size() > 0) {
+            for (String pattern : excludedRequestPatterns) {
+                RequestMatcher matcher = new AntPathRequestMatcher(pattern);
+                if (matcher.matches(request)){
+                    excludedRequestFound = true;
+                    break;
+                }
             }
         }
 

@@ -54,6 +54,7 @@ public interface ProductAttribute extends Serializable {
     /**
      * Gets the searchable.
      * 
+     * @deprecated in favor of Field configuration since 2.0
      * @return the searchable
      */
     Boolean getSearchable();
@@ -61,6 +62,7 @@ public interface ProductAttribute extends Serializable {
     /**
      * Sets the searchable.
      * 
+     * @deprecated in favor of Field configuration since 2.0
      * @param searchable the new searchable
      */
     void setSearchable(Boolean searchable);

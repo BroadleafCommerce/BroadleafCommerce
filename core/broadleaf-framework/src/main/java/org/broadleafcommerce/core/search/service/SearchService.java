@@ -73,6 +73,17 @@ public interface SearchService {
 	 * @throws ServiceException 
 	 */
 	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) throws ServiceException;
+	
+	/**
+	 * Performs a search for products in the given category for the given query, taking into consideration 
+	 * the ProductSearchCriteria
+	 * 
+	 * @param category
+	 * @param query
+	 * @param searchCriteria
+	 * @throws ServiceException
+	 */
+    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, ProductSearchCriteria searchCriteria) throws ServiceException;
 
 	/**
 	 * Gets all available facets for search results page
@@ -96,6 +107,7 @@ public interface SearchService {
 	 * @throws ServiceException
 	 */
 	public void rebuildIndex() throws ServiceException, IOException;
+
 
 
 }

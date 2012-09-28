@@ -23,14 +23,28 @@ import java.io.Serializable;
 
 /**
  * A form to model adding a payment to the order.
+ * 
+ * This form is primarily to support the Broadleaf Demo application.
+ * 
+ * Typically, clients will utilize 3rd party payment integrations as the final 
+ * checkout step.    See documentation specific to the integration(s) you are using 
+ * (e.g. PayPal, Braintree, Cybersource).
+ * 
+ * This form could be used for simple payment methods where only a paymentMethod and 
+ * amount is required.
+ * 
+ * For example, a custom implementation might have a payment method of "points" or "payAtPickup" which 
+ * don't require a complex Payment integration.
  *
  * @author Elbert Bautista (elbertbautista)
+ * @author Brian Polster (bpolster)
  */
 public class BillingInfoForm implements Serializable {
 	
 	private static final long serialVersionUID = 7408792703984771616L;
 	
 	private Address address = new AddressImpl();
+    private String paymentMethod;
     private String creditCardName;
     private String creditCardNumber;
     private String creditCardCvvCode;
@@ -39,7 +53,15 @@ public class BillingInfoForm implements Serializable {
     private String selectedCreditCardType;
     private boolean useShippingAddress;
 
-    public Address getAddress() {
+    public String getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public Address getAddress() {
         return address;
     }
 

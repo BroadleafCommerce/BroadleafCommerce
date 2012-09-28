@@ -16,6 +16,20 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.security.SecureCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.TileGrid;
+
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -35,19 +49,6 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedEvent;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedHandler;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.security.SecureCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.TileGrid;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -151,6 +152,7 @@ public class AssetSearchDialog extends Window {
             @Override
             public void onClick(ClickEvent event) {
             	Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
+            	saveButton.disable();
                 tileGrid.fetchData(valuesAsCriteria);
             }
         });

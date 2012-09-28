@@ -16,20 +16,18 @@
 
 package org.broadleafcommerce.admin.client.datasource.catalog.product;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
-import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DataSource;
 
 /**
  * 
@@ -39,12 +37,11 @@ import com.smartgwt.client.data.DataSource;
 public class OneToOneProductSkuDataSourceFactory implements DataSourceFactory {
 	
 	public static CustomCriteriaListGridDataSource dataSource = null;
-    public static final String defaultCategoryForeignKey = "defaultCategory";
 	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(defaultCategoryForeignKey, EntityImplementations.CATEGORY, null)});
+			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

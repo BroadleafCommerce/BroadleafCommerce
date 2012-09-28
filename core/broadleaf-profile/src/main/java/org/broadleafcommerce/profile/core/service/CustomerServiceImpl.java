@@ -116,6 +116,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return customerDao.save(customer);
     }
+    
 
     @Override
     public Customer registerCustomer(Customer customer, String password, String passwordConfirm) {
@@ -123,15 +124,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         // When unencodedPassword is set the save() will encode it
         if (customer.getId() == null) {
-            customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer"));
+            customer.setId(findNextCustomerId());
         }
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
-        Role role = roleDao.readRoleByName("ROLE_USER");
-        CustomerRole customerRole = new CustomerRoleImpl();
-        customerRole.setRole(role);
-        customerRole.setCustomer(retCustomer);
-        roleDao.addRoleToCustomer(customerRole);
+        createRegisteredCustomerRoles(retCustomer);
         
         HashMap<String, Object> vars = new HashMap<String, Object>();
 		vars.put("customer", retCustomer);
@@ -139,6 +136,19 @@ public class CustomerServiceImpl implements CustomerService {
         emailService.sendTemplateEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);        
         notifyPostRegisterListeners(retCustomer);
         return retCustomer;
+    }
+
+    /**
+     * Subclassed implementations can assign unique roles for various customer types 
+     * 
+     * @param customer
+     */
+    protected void createRegisteredCustomerRoles(Customer customer) {
+        Role role = roleDao.readRoleByName("ROLE_USER");
+        CustomerRole customerRole = new CustomerRoleImpl();
+        customerRole.setRole(role);
+        customerRole.setCustomer(customer);
+        roleDao.addRoleToCustomer(customerRole);
     }
 
     @Override
@@ -198,6 +208,8 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer createCustomer() {
         return createCustomerFromId(null);
     }
+    
+    
 
     @Override
     public Customer createCustomerFromId(Long customerId) {
@@ -207,10 +219,18 @@ public class CustomerServiceImpl implements CustomerService {
             if (customerId != null) {
                 customer.setId(customerId);
             } else {
-                customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer"));
+                customer.setId(findNextCustomerId());
             }
         }
         return customer;
+    }
+
+    /**
+     * Allow customers to call from subclassed service.
+     * @return
+     */
+    public Long findNextCustomerId() {
+        return idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer");
     }
     
     @Override

@@ -16,15 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.admin.client.view.order.OrderItemDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -33,6 +24,18 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLay
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
 import java.util.Arrays;
 
@@ -48,6 +51,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 	protected Record associatedRecord;
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
 	protected Boolean disabled = false;
+	protected Boolean readOnly = false;
     protected String[] availableToTypes;
 	
 	public OrderItemPresenter(OrderItemDisplay display, String[] availableToTypes) {
@@ -61,6 +65,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
         return (Canvas) display;
     }
 
+    @Override
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
@@ -74,7 +79,8 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		dataSource.setupGridFields(gridFields, editable);
 	}
 	
-	public void setStartState() {
+	@Override
+    public void setStartState() {
 		if (!disabled) {
 			super.setStartState();
 			display.getAddButton().enable();
@@ -83,7 +89,8 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		}
 	}
 	
-	public void enable() {
+	@Override
+    public void enable() {
 		disabled = false;
 		super.enable();
 		display.getAddButton().enable();
@@ -92,7 +99,8 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		display.getToolbar().enable();
 	}
 	
-	public void disable() {
+	@Override
+    public void disable() {
 		disabled = true;
 		super.disable();
 		display.getAddButton().disable();
@@ -101,12 +109,21 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		display.getToolbar().disable();
 	}
 	
-	public void setReadOnly(Boolean readOnly) {
+	@Override
+    public void setReadOnly(Boolean readOnly) {
+	    this.readOnly = readOnly;
+	    updatePresenterReadOnlyStatus();
+	}
+	
+	protected void updatePresenterReadOnlyStatus() {
 		if (readOnly) {
-			disable();
-			display.getGrid().enable();
+    		display.getAddButton().disable();
+    		display.getRemoveButton().disable();
+    		display.getToolbar().disable();
 		} else {
-			enable();
+    		display.getAddButton().enable();
+    		display.getRemoveButton().enable();
+    		display.getToolbar().enable();
 		}
 	}
 
@@ -145,8 +162,10 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
         if (shouldLoad) {
             String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
             ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
+                @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     setStartState();
+                    updatePresenterReadOnlyStatus();
                     if (cb != null) {
                         cb.execute(response, rawData, request);
                     }
@@ -157,10 +176,20 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
         return shouldLoad;
 	}
 	
-	public void bind() {
+	@Override
+    public void bind() {
 		super.bind();
+	    display.getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                display.getFormOnlyDisplay().getForm().clearValues();  
+                display.getFormOnlyDisplay().getForm().disable();  
+                display.getRemoveButton().disable();
+            }
+        });
 		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
+			@Override
+            public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
 					display.getRemoveButton().enable();
 					((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
@@ -170,10 +199,13 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 				} else {
 					display.getRemoveButton().disable();
 				}
+				
+				updatePresenterReadOnlyStatus();
 			}
 		});
 		display.getExpansionGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
+			@Override
+            public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
 					//display.getRemoveButton().enable();
 					((DynamicEntityDataSource) display.getExpansionGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
@@ -183,13 +215,17 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 				} else {
 					//display.getRemoveButton().disable();
 				}
+				
+				updatePresenterReadOnlyStatus();
 			}
 		});
 		display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
+			@Override
+            public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
+						@Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
 							display.getRemoveButton().disable();
 						}
 					});

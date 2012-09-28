@@ -16,12 +16,21 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -79,6 +88,7 @@ public class SkuAttributeImpl implements SkuAttribute {
 
     /** The searchable. */
     @Column(name = "SEARCHABLE")
+    @AdminPresentation(excluded = true)
     protected Boolean searchable;
   
     /** The sku. */

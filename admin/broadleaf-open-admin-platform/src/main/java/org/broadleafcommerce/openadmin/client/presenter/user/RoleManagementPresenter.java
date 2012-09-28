@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
@@ -32,6 +30,9 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.RoleManagementDisplay;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 
 /**
  * 
@@ -57,11 +58,14 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
 	public void bind() {
 		super.bind();
 		permissionsPresenter.bind();
+		
 	}
 
+    @Override
     public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminCreateRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
+			@Override
+            public void onSetupSuccess(DataSource top) {
                 setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"description"}, new Boolean[]{true});
 			}
@@ -71,6 +75,9 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
             public void onSetupSuccess(DataSource dataSource) {
 				permissionsPresenter = new SimpleSearchListPresenter(getDisplay().getPermissionsDisplay(), new EntitySearchDialog((ListGridDataSource) dataSource), new String[]{EntityImplementations.ADMIN_ROLE}, BLCMain.getMessageManager().getString("searchForPermission"));
 				permissionsPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "description", "type"}, new Boolean[]{false, false, false});
+				gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+				gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(), permissionsPresenter);
+			     
             }
         }));
 	}

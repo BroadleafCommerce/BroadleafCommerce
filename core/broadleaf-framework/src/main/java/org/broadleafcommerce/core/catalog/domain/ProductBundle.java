@@ -174,4 +174,9 @@ public interface ProductBundle extends Product, Serializable {
      */
     public BigDecimal getPotentialSavings();
 
+    /**
+     * @return whether or not the product bundle is on sale
+     */
+    public boolean isOnSale();
+
 }
