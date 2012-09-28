@@ -226,8 +226,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 			// totalitarian fg offer is better; remove all order/item offers
 			order.removeAllOrderAdjustments();
 			order.removeAllItemAdjustments();
-			gatherCart(order);
-			initializeSplitItems(order);
+			mergeService.gatherCart(order);
+			mergeService.initializeSplitItems(order);
 		}
 		return fgOfferApplied;
 	}

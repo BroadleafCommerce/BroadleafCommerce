@@ -330,7 +330,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
 
             }
-		    mergeSplitItems(order);
+		    mergeService.mergeSplitItems(order);
 		}
 		return appliedItemOffersCount;
 	}
@@ -482,7 +482,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		} while (matchFound);
 		
 		if (order.getSplitItems().size() == 0) {
-			initializeSplitItems(order);
+			mergeService.initializeSplitItems(order);
 		}
 		List<PromotableOrderItem> allSplitItems = order.getAllSplitItems();
 		for (PromotableOrderItem chargeableItem : allSplitItems) {

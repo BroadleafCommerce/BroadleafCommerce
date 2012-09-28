@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service.workflow.update;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.offer.service.MergeService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -41,10 +42,16 @@ public class UpdateOrderItemActivity extends BaseActivity {
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
+    @Resource(name = "blMergeService")
+    protected MergeService mergeService;
+
+    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Order order = request.getOrder();
+
+        mergeService.gatherSplitItemsInBundles(order);
         
     	OrderItem orderItem = null;
 		for (OrderItem oi : order.getOrderItems()) {
@@ -82,7 +89,7 @@ public class UpdateOrderItemActivity extends BaseActivity {
                 libraryQty.put(doi.getSku(), 0);
             }
         }
-        
+
         order = orderService.save(order, false);
         
         request.setAddedOrderItem(itemFromOrder);
