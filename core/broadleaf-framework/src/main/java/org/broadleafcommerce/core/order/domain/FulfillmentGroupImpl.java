@@ -325,7 +325,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public void setType(FulfillmentType type) {
-        this.type = type.getType();
+        this.type = type == null ? null : type.getType();
     }
 
     @Override
