@@ -183,13 +183,21 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                             order.getDelegate().getFulfillmentGroups().add(fg);
                             fgMap.put(key, fg);
                         }
-
-                        FulfillmentGroupItem fulfillmentGroupItem = fulfillmentGroupItemDao.create();
-                        fulfillmentGroupItem.setFulfillmentGroup(fg);
-                        fulfillmentGroupItem.setOrderItem(option.getOrderItem());
-                        fulfillmentGroupItem.setQuantity(1);
-                        fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
-                        fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
+                        checkGroup: {
+                            for (FulfillmentGroupItem fgItem : fg.getFulfillmentGroupItems()) {
+                                if (fgItem.getOrderItem().getId().equals(option.getOrderItem().getId())) {
+                                    fgItem.setQuantity(fgItem.getQuantity() + 1);
+                                    fulfillmentGroupItemDao.save(fgItem);
+                                    break checkGroup;
+                                }
+                            }
+                            FulfillmentGroupItem fulfillmentGroupItem = fulfillmentGroupItemDao.create();
+                            fulfillmentGroupItem.setFulfillmentGroup(fg);
+                            fulfillmentGroupItem.setOrderItem(option.getOrderItem());
+                            fulfillmentGroupItem.setQuantity(1);
+                            fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
+                            fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
+                        }
 
                         if (item.getQuantity() - 1 <= 0) {
                             itemsToRemove.add(item);
@@ -221,11 +229,13 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
             if (!CollectionUtils.isEmpty(order.getFulfillmentGroups())) {
                 List<OrderMultishipOption> options = orderMultishipOptionService.findOrderMultishipOptions(order.getId());
                 promotableOrder.setMultiShipOptions(options);
-                promotableOrder.setHasMultiShipOptions(!CollectionUtils.isEmpty(options));
+                promotableOrder.setHasMultiShipOptions(!CollectionUtils.isEmpty(options) && order.getFulfillmentGroups().size() > 1);
                 //collapse to a single fg - we'll rebuild later
-                fulfillmentGroupService.collapseToOneFulfillmentGroup(order, false);
-                order.getFulfillmentGroups().get(0).setAddress(null);
-                order.getFulfillmentGroups().get(0).setFulfillmentOption(null);
+                if (promotableOrder.isHasMultiShipOptions()) {
+                    fulfillmentGroupService.collapseToOneFulfillmentGroup(order, false);
+                    order.getFulfillmentGroups().get(0).setAddress(null);
+                    order.getFulfillmentGroups().get(0).setFulfillmentOption(null);
+                }
             }
         } catch (PricingException e) {
             throw new RuntimeException("Could not prepare the cart", e);
@@ -497,8 +507,6 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
             fg.setOrder(order.getDelegate());
             order.getDelegate().getFulfillmentGroups().add(fg);
         }
-        order.getDelegate().getFulfillmentGroups().get(0).setAddress(null);
-        order.getDelegate().getFulfillmentGroups().get(0).setFulfillmentOption(null);
 
         //If adjustments are removed - merge split items back together before adding to the cart
         List<PromotableOrderItem> itemsToRemove = new ArrayList<PromotableOrderItem>();
@@ -554,13 +562,23 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
         for (OrderItemSplitContainer key : order.getSplitItems()) {
             List<PromotableOrderItem> mySplits = key.getSplitItems();
             if (!CollectionUtils.isEmpty(mySplits)) {
-                Iterator<FulfillmentGroupItem> fgItems = order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().iterator();
-                while(fgItems.hasNext()) {
-                    FulfillmentGroupItem fgItem = fgItems.next();
-                    if (fgItem.getOrderItem().equals(key.getKey())) {
-                        fulfillmentGroupItemDao.delete(fgItem);
-                        fgItems.remove();
+                FulfillmentGroup identifiedFg = null;
+                for (FulfillmentGroup fg : order.getDelegate().getFulfillmentGroups()) {
+                    Iterator<FulfillmentGroupItem> fgItems = fg.getFulfillmentGroupItems().iterator();
+                    while(fgItems.hasNext()) {
+                        FulfillmentGroupItem fgItem = fgItems.next();
+                        if (fgItem.getOrderItem().equals(key.getKey())) {
+                            if (identifiedFg == null) {
+                                identifiedFg = fg;
+                            }
+                            fulfillmentGroupItemDao.delete(fgItem);
+                            fgItems.remove();
+                        }
                     }
+                }
+
+                if (identifiedFg == null) {
+                    identifiedFg = order.getDelegate().getFulfillmentGroups().get(0);
                 }
                 for (PromotableOrderItem myItem : mySplits) {
                     myItem.assignFinalPrice();
@@ -582,9 +600,9 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                         FulfillmentGroupItem fgItem = fulfillmentGroupItemDao.create();
                         fgItem.setQuantity(delegateItem.getQuantity());
                         fgItem.setOrderItem(delegateItem);
-                        fgItem.setFulfillmentGroup(order.getDelegate().getFulfillmentGroups().get(0));
+                        fgItem.setFulfillmentGroup(identifiedFg);
                         fgItem = fulfillmentGroupItemDao.save(fgItem);
-                        order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().add(fgItem);
+                        identifiedFg.getFulfillmentGroupItems().add(fgItem);
                     }
                     myItem.setDelegate(delegateItem);
                 }
@@ -673,16 +691,26 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                 val.setId(null);
                 List<DiscreteOrderItem> itemsToAdd = new ArrayList<DiscreteOrderItem>();
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItemSplitContainer.getKey().getDiscreteOrderItems()) {
+                    FulfillmentGroup identifiedFg = null;
+
                     for (FulfillmentGroup fg : order.getDelegate().getFulfillmentGroups()) {
                         Iterator<FulfillmentGroupItem> fgItems = fg.getFulfillmentGroupItems().iterator();
                         while (fgItems.hasNext()) {
                             FulfillmentGroupItem fgItem = fgItems.next();
-                            if (fgItem.getOrderItem().getId() == discreteOrderItem.getId()) {
-                                fgItem.setFulfillmentGroup(null);
+                            if (fgItem.getOrderItem().getId().equals(discreteOrderItem.getId())) {
+                                if (identifiedFg == null) {
+                                    identifiedFg = fg;
+                                }
+                                fulfillmentGroupItemDao.delete(fgItem);
                                 fgItems.remove();
                             }
                         }
                     }
+
+                    if (identifiedFg == null) {
+                        identifiedFg = order.getDelegate().getFulfillmentGroups().get(0);
+                    }
+
                     PromotableOrderItem poi = new PromotableOrderItemImpl(discreteOrderItem, null, null);
                     List<PromotableOrderItem> items = order.searchSplitItems(poi);
                     for (PromotableOrderItem temp : items) {
@@ -708,18 +736,15 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                         FulfillmentGroupItem fgItem = fulfillmentGroupItemDao.create();
                         fgItem.setQuantity(delegate.getQuantity());
                         fgItem.setOrderItem(delegate);
-                        fgItem.setFulfillmentGroup(order.getDelegate().getFulfillmentGroups().get(0));
+                        fgItem.setFulfillmentGroup(identifiedFg);
                         fgItem = fulfillmentGroupItemDao.save(fgItem);
-                        order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().add(fgItem);
+                        identifiedFg.getFulfillmentGroupItems().add(fgItem);
                     }
                 }
                 val.getDiscreteOrderItems().addAll(itemsToAdd);
 
                 order.getDelegate().getOrderItems().remove(bundleOrderItemSplitContainer.getKey());
                 bundleOrderItemSplitContainer.getKey().setOrder(null);
-
-                order.getDelegate().getFulfillmentGroups().get(0).setAddress(null);
-                order.getDelegate().getFulfillmentGroups().get(0).setFulfillmentOption(null);
 
                 val = (BundleOrderItem) addOrderItemToOrder(order.getDelegate(), val, false);
             }
