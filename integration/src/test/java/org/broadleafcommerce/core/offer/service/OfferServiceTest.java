@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -52,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -106,6 +108,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
 
         FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
         option.setPrice(new Money("8.50"));        
+        option.setFulfillmentType(FulfillmentType.PHYSICAL_SHIP);
         group.setFulfillmentOption(option);
 
         group.setFulfillmentOption(option);
