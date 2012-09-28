@@ -48,7 +48,8 @@ import java.util.Map;
 @Service("blFulfillmentGroupOfferProcessor")
 public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl implements FulfillmentGroupOfferProcessor {
 
-	public void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer) {
+	@Override
+    public void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer) {
 		for (PromotableFulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
 			boolean fgLevelQualification = false;
 			fgQualification: {
@@ -82,7 +83,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 		}
 	}
 	
-	public void calculateFulfillmentGroupTotal(PromotableOrder order) {
+	@Override
+    public void calculateFulfillmentGroupTotal(PromotableOrder order) {
 		Money totalShipping = new Money(0D);
 		for (PromotableFulfillmentGroup fulfillmentGroupMember : order.getFulfillmentGroups()) {
 			PromotableFulfillmentGroup fulfillmentGroup = (PromotableFulfillmentGroup) fulfillmentGroupMember;
@@ -126,6 +128,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 		return promotableCandidateFulfillmentGroupOffer;
 	}
 	
+    @Override
     @SuppressWarnings("unchecked")
 	public boolean applyAllFulfillmentGroupOffers(List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableOrder order) {
     	Map<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>> offerMap = new HashMap<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>>();
@@ -240,7 +243,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         fulfillmentGroupOffer.getFulfillmentGroup().addFulfillmentGroupAdjustment(promotableFulfillmentGroupAdjustment);
     }
 	
-	public List<FulfillmentGroupOfferPotential> removeTrailingNotCombinableFulfillmentGroupOffers(List<FulfillmentGroupOfferPotential> candidateOffers) {
+	@Override
+    public List<FulfillmentGroupOfferPotential> removeTrailingNotCombinableFulfillmentGroupOffers(List<FulfillmentGroupOfferPotential> candidateOffers) {
         List<FulfillmentGroupOfferPotential> remainingCandidateOffers = new ArrayList<FulfillmentGroupOfferPotential>();
         int offerCount = 0;
         for (FulfillmentGroupOfferPotential candidateOffer : candidateOffers) {

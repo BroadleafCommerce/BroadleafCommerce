@@ -79,17 +79,19 @@ public class MergeServiceImpl implements MergeService {
     @Override
     public void gatherSplitItemsInBundles(Order order) throws PricingException {
         List<DiscreteOrderItem> itemsToRemove = new ArrayList<DiscreteOrderItem>();
+        List<FulfillmentGroupItem> fgItemsToRemove = new ArrayList<FulfillmentGroupItem>();
         Map<Long, Map<String, Object[]>> gatherMap = new HashMap<Long, Map<String, Object[]>>();
         for (FulfillmentGroup group : order.getFulfillmentGroups()) {
-            Map<String, Object[]> gatheredItem = gatherMap.get(group.getId());
-            if (gatheredItem == null) {
-                gatheredItem = new HashMap<String, Object[]>();
-                gatherMap.put(group.getId(), gatheredItem);
-            }
             for (FulfillmentGroupItem fgItem : group.getFulfillmentGroupItems()) {
                 OrderItem orderItem = fgItem.getOrderItem();
                 if (orderItem instanceof DiscreteOrderItem && ((DiscreteOrderItem) orderItem).getBundleOrderItem() != null) {
-                    gatherFulfillmentGroupLinkedDiscreteOrderItem(itemsToRemove, gatheredItem, fgItem, (DiscreteOrderItem) orderItem, null, orderMultishipOptionService.findOrderMultishipOptions(order.getId()), false);
+                    Map<String, Object[]> gatheredItem = gatherMap.get(((DiscreteOrderItem) orderItem).getSku().getId());
+                    if (gatheredItem == null) {
+                        gatheredItem = new HashMap<String, Object[]>();
+                        gatherMap.put(((DiscreteOrderItem) orderItem).getSku().getId(), gatheredItem);
+                    }
+
+                    gatherFulfillmentGroupLinkedDiscreteOrderItem(itemsToRemove, fgItemsToRemove, gatheredItem, fgItem, (DiscreteOrderItem) orderItem, null, orderMultishipOptionService.findOrderMultishipOptions(order.getId()), false);
                 }
             }
         }
@@ -99,16 +101,24 @@ public class MergeServiceImpl implements MergeService {
                 fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
             }
         }
+        for (FulfillmentGroupItem fgItem : fgItemsToRemove) {
+            FulfillmentGroup fg = fgItem.getFulfillmentGroup();
+            fg.getFulfillmentGroupItems().remove(fgItem);
+            fulfillmentGroupItemDao.delete(fgItem);
+            if (fg.getFulfillmentGroupItems().isEmpty()) {
+                order.getFulfillmentGroups().remove(fg);
+                fulfillmentGroupService.delete(fg);
+            }
+        }
         for (DiscreteOrderItem orderItem : itemsToRemove) {
             if (orderItem.getBundleOrderItem() != null) {
                 BundleOrderItem bundleOrderItem = orderItem.getBundleOrderItem();
-                //orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(orderItem.getId());
-                fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
                 bundleOrderItem.getDiscreteOrderItems().remove(orderItem);
                 orderItem.setBundleOrderItem(null);
                 orderItemService.saveOrderItem(bundleOrderItem);
             }
         }
+
     }
 
     @Override
@@ -142,23 +152,6 @@ public class MergeServiceImpl implements MergeService {
     public void finalizeCart(PromotableOrder order) throws PricingException {
         if (order.isHasMultiShipOptions()) {
             List<OrderMultishipOption> multishipOptions = new ArrayList<OrderMultishipOption>(order.getMultiShipOptions());
-//            if (CollectionUtils.isEmpty(multishipOptions)) {
-//                multishipOptions =  orderMultishipOptionService.findOrderMultishipOptions(order.getDelegate().getId());
-//            } else {
-//                order.getDelegate().getFulfillmentGroups().get(0).setAddress(null);
-//                order.getDelegate().getFulfillmentGroups().get(0).setFulfillmentOption(null);
-//                Iterator<FulfillmentGroupItem> fgItems = order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().iterator();
-//                while(fgItems.hasNext()) {
-//                    FulfillmentGroupItem fgItem = fgItems.next();
-//                    fulfillmentGroupItemDao.delete(fgItem);
-//                    fgItems.remove();
-//                }
-//                for (DiscreteOrderItem delegateItem : order.getDelegate().getDiscreteOrderItems()) {
-//                    if (delegateItem.getBundleOrderItem() == null) {
-//                        configureFulfillmentGroupAndMultiShip(order, delegateItem);
-//                    }
-//                }
-//            }
             List<FulfillmentGroupItem> itemsToRemove = new ArrayList<FulfillmentGroupItem>();
             for (OrderMultishipOption option : multishipOptions) {
                 for (FulfillmentGroupItem item : order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems()) {
@@ -194,7 +187,7 @@ public class MergeServiceImpl implements MergeService {
             for (FulfillmentGroupItem item : itemsToRemove) {
                 FulfillmentGroup fg = item.getFulfillmentGroup();
                 fg.getFulfillmentGroupItems().remove(item);
-                item.setFulfillmentGroup(null);
+                fulfillmentGroupItemDao.delete(item);
                 if (fg.getFulfillmentGroupItems().size() == 0) {
                     order.getDelegate().getFulfillmentGroups().remove(fg);
                     fg.setOrder(null);
@@ -212,9 +205,8 @@ public class MergeServiceImpl implements MergeService {
             if (!CollectionUtils.isEmpty(order.getFulfillmentGroups())) {
                 List<OrderMultishipOption> options = orderMultishipOptionService.findOrderMultishipOptions(order.getId());
                 promotableOrder.setMultiShipOptions(options);
-                promotableOrder.setHasMultiShipOptions(!CollectionUtils.isEmpty(options) && order.getFulfillmentGroups().size() > 1);
+                promotableOrder.setHasMultiShipOptions(!CollectionUtils.isEmpty(options));
                 //collapse to a single fg - we'll rebuild later
-                //orderMultishipOptionService.deleteAllOrderMultishipOptions(order);
                 fulfillmentGroupService.collapseToOneFulfillmentGroup(order, false);
                 order.getFulfillmentGroups().get(0).setAddress(null);
                 order.getFulfillmentGroups().get(0).setFulfillmentOption(null);
@@ -335,7 +327,6 @@ public class MergeServiceImpl implements MergeService {
                 }
             } else {
                 BundleOrderItem bundleOrderItem = orderItem.getBundleOrderItem();
-                //orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(orderItem.getId(), orderItem.getQuantity());
                 fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
                 bundleOrderItem.getDiscreteOrderItems().remove(orderItem);
                 orderItem.setBundleOrderItem(null);
@@ -385,6 +376,7 @@ public class MergeServiceImpl implements MergeService {
 
     protected void gatherFulfillmentGroupLinkedDiscreteOrderItems(Order order, List<OrderMultishipOption> options) throws PricingException {
         List<DiscreteOrderItem> itemsToRemove = new ArrayList<DiscreteOrderItem>();
+        List<FulfillmentGroupItem> fgItemsToRemove = new ArrayList<FulfillmentGroupItem>();
         Map<Long, Map<String, Object[]>> gatherMap = new HashMap<Long, Map<String, Object[]>>();
         for (FulfillmentGroup group : order.getFulfillmentGroups()) {
             Map<String, Object[]> gatheredItem = gatherMap.get(group.getId());
@@ -397,11 +389,11 @@ public class MergeServiceImpl implements MergeService {
                 if (orderItem instanceof BundleOrderItem) {
                     for (DiscreteOrderItem discreteOrderItem : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
                         if (CollectionUtils.isEmpty(orderItem.getOrderItemAdjustments())) {
-                            gatherFulfillmentGroupLinkedDiscreteOrderItem(itemsToRemove, gatheredItem, fgItem, discreteOrderItem, String.valueOf(orderItem.getId()), options, true);
+                            gatherFulfillmentGroupLinkedDiscreteOrderItem(itemsToRemove, fgItemsToRemove, gatheredItem, fgItem, discreteOrderItem, String.valueOf(orderItem.getId()), options, true);
                         }
                     }
                 } else if (CollectionUtils.isEmpty(orderItem.getOrderItemAdjustments())) {
-                    gatherFulfillmentGroupLinkedDiscreteOrderItem(itemsToRemove, gatheredItem, fgItem, (DiscreteOrderItem) orderItem, null, options, true);
+                    gatherFulfillmentGroupLinkedDiscreteOrderItem(itemsToRemove, fgItemsToRemove, gatheredItem, fgItem, (DiscreteOrderItem) orderItem, null, options, true);
                 }
             }
         }
@@ -411,16 +403,22 @@ public class MergeServiceImpl implements MergeService {
                 fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
             }
         }
+        for (FulfillmentGroupItem fgItem : fgItemsToRemove) {
+            FulfillmentGroup fg = fgItem.getFulfillmentGroup();
+            fg.getFulfillmentGroupItems().remove(fgItem);
+            fulfillmentGroupItemDao.delete(fgItem);
+            if (fg.getFulfillmentGroupItems().isEmpty()) {
+                order.getFulfillmentGroups().remove(fg);
+                fg.setOrder(null);
+            }
+        }
+
         for (DiscreteOrderItem orderItem : itemsToRemove) {
             if (orderItem.getBundleOrderItem() == null) {
-                //orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(orderItem.getId(), orderItem.getQuantity());
-                fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
                 orderItem.getOrder().getOrderItems().remove(orderItem);
                 orderItem.setOrder(null);
             } else {
                 BundleOrderItem bundleOrderItem = orderItem.getBundleOrderItem();
-                //orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(orderItem.getId(), orderItem.getQuantity());
-                fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
                 bundleOrderItem.getDiscreteOrderItems().remove(orderItem);
                 orderItem.setBundleOrderItem(null);
                 orderItemService.saveOrderItem(bundleOrderItem);
@@ -442,7 +440,7 @@ public class MergeServiceImpl implements MergeService {
         }
     }
 
-    protected void gatherFulfillmentGroupLinkedDiscreteOrderItem(List<DiscreteOrderItem> itemsToRemove, Map<String, Object[]> gatheredItem, FulfillmentGroupItem fgItem, DiscreteOrderItem orderItem, String extraIdentifier, List<OrderMultishipOption> options, boolean includePrice) {
+    protected void gatherFulfillmentGroupLinkedDiscreteOrderItem(List<DiscreteOrderItem> itemsToRemove, List<FulfillmentGroupItem> fgItemsToRemove, Map<String, Object[]> gatheredItem, FulfillmentGroupItem fgItem, DiscreteOrderItem orderItem, String extraIdentifier, List<OrderMultishipOption> options, boolean includePrice) {
         String identifier = buildIdentifier(orderItem, extraIdentifier, includePrice);
         Object[] gatheredOrderItem = gatheredItem.get(identifier);
         if (gatheredOrderItem == null) {
@@ -450,14 +448,17 @@ public class MergeServiceImpl implements MergeService {
             return;
         }
         for (OrderMultishipOption option : options) {
-            if (option.getOrderItem().equals(orderItem)) {
-                option.setOrderItem(orderItem);
+            if (option.getOrderItem().getId().equals(orderItem.getId())) {
+                option.setOrderItem((OrderItem) gatheredOrderItem[0]);
                 orderMultishipOptionService.save(option);
             }
         }
-        ((OrderItem) gatheredOrderItem[0]).setQuantity(((OrderItem) gatheredOrderItem[0]).getQuantity() + orderItem.getQuantity());
         ((FulfillmentGroupItem) gatheredOrderItem[1]).setQuantity(((FulfillmentGroupItem) gatheredOrderItem[1]).getQuantity() + fgItem.getQuantity());
-        itemsToRemove.add(orderItem);
+        if (!((OrderItem) gatheredOrderItem[0]).getId().equals(orderItem.getId())) {
+            ((OrderItem) gatheredOrderItem[0]).setQuantity(((OrderItem) gatheredOrderItem[0]).getQuantity() + fgItem.getQuantity());
+            itemsToRemove.add(orderItem);
+        }
+        fgItemsToRemove.add(fgItem);
     }
 
     /**
@@ -603,44 +604,11 @@ public class MergeServiceImpl implements MergeService {
                     if (orderItem.getId().equals(itemToRemove.getDelegate().getId())) {
                         orderItem.setOrder(null);
                         orderItems.remove();
-//                        for (FulfillmentGroup fg : order.getDelegate().getFulfillmentGroups()) {
-//                            Iterator<FulfillmentGroupItem> fgItemItr = fg.getFulfillmentGroupItems().iterator();
-//                            while (fgItemItr.hasNext()) {
-//                                FulfillmentGroupItem fgItem = fgItemItr.next();
-//                                if (fgItem.getOrderItem().getId().equals(orderItem.getId())) {
-//                                    fgItemItr.remove();
-//                                }
-//                            }
-//                        }
                     }
                 }
             }
         }
     }
-
-//    protected DiscreteOrderItem configureFulfillmentGroupAndMultiShip(PromotableOrder order, DiscreteOrderItem delegateItem) throws PricingException {
-//        Long delegateItemBundleItemId = getBundleId(delegateItem);
-//        if (delegateItemBundleItemId == null) {
-//            for (int j=0;j<delegateItem.getQuantity();j++){
-//                Iterator<OrderMultishipOption> itr = order.getMultiShipOptions().iterator();
-//                while(itr.hasNext()) {
-//                    OrderMultishipOption option = itr.next();
-//                    if ((option.getOrderItem() instanceof DiscreteOrderItem) && ((DiscreteOrderItem) option.getOrderItem()).getSku().equals(delegateItem.getSku())) {
-//                        option.setOrderItem(delegateItem);
-//                        orderMultishipOptionService.save(option);
-//                        itr.remove();
-//                        break;
-//                    }
-//                }
-//            }
-//            FulfillmentGroupItem fgItem = fulfillmentGroupItemDao.create();
-//            fgItem.setQuantity(delegateItem.getQuantity());
-//            fgItem.setOrderItem(delegateItem);
-//            fgItem.setFulfillmentGroup(order.getDelegate().getFulfillmentGroups().get(0));
-//            order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().add(fgItem);
-//        }
-//        return delegateItem;
-//    }
 
     protected OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, Boolean priceOrder) throws PricingException {
         List<OrderItem> orderItems = order.getOrderItems();
@@ -698,7 +666,6 @@ public class MergeServiceImpl implements MergeService {
                         }
                     }
                 }
-                //fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order.getDelegate(), discreteOrderItem);
                 PromotableOrderItem poi = new PromotableOrderItemImpl(discreteOrderItem, null, null);
                 List<PromotableOrderItem> items = order.searchSplitItems(poi);
                 for (PromotableOrderItem temp : items) {
@@ -738,39 +705,6 @@ public class MergeServiceImpl implements MergeService {
             order.getDelegate().getFulfillmentGroups().get(0).setFulfillmentOption(null);
 
             val = (BundleOrderItem) addOrderItemToOrder(order.getDelegate(), val, false);
-
-//            for (DiscreteOrderItem discreteOrderItem : val.getDiscreteOrderItems()) {
-//                for (int j=0;j<discreteOrderItem.getQuantity();j++){
-//                    Iterator<OrderMultishipOption> itr = order.getMultiShipOptions().iterator();
-//                    while(itr.hasNext()) {
-//                        OrderMultishipOption option = itr.next();
-//                        if ((option.getOrderItem() instanceof DiscreteOrderItem) && ((DiscreteOrderItem) option.getOrderItem()).getSku().equals(discreteOrderItem.getSku())) {
-//                            option.setOrderItem(discreteOrderItem);
-//                            orderMultishipOptionService.save(option);
-//                            itr.remove();
-//                            break;
-//                        }
-//                    }
-//                }
-//                FulfillmentGroupItem fgItem = fulfillmentGroupItemDao.create();
-//                fgItem.setQuantity(discreteOrderItem.getQuantity());
-//                fgItem.setOrderItem(discreteOrderItem);
-//                fgItem.setFulfillmentGroup(order.getDelegate().getFulfillmentGroups().get(0));
-//                order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().add(fgItem);
-//            }
-
-//            for (int j=0;j<val.getQuantity();j++){
-//                Iterator<OrderMultishipOption> itr = order.getMultiShipOptions().iterator();
-//                while(itr.hasNext()) {
-//                    OrderMultishipOption option = itr.next();
-//                    if (buildIdentifier(option.getOrderItem(), null).equals(buildIdentifier(val, null))) {
-//                        option.setOrderItem(val);
-//                        orderMultishipOptionService.save(option);
-//                        itr.remove();
-//                        break;
-//                    }
-//                }
-//            }
         }
 
         orderService.save(order.getDelegate(), false);
