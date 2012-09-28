@@ -11,6 +11,7 @@
 	<context:component-scan base-package="org.broadleafcommerce.core.web"/>	
 	<context:component-scan base-package="org.broadleafcommerce.profile.web"/>
 
+    <bean id="blDefaultErrorHandler" class="org.broadleafcommerce.core.workflow.SilentErrorHandler" />
 
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
