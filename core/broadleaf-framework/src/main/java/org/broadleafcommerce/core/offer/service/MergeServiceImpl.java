@@ -651,60 +651,62 @@ public class MergeServiceImpl implements MergeService {
     protected void mergeSplitBundleOrderItems(PromotableOrder order) throws PricingException {
         List<BundleOrderItemSplitContainer> bundleContainers = order.getBundleSplitItems();
         for (BundleOrderItemSplitContainer bundleOrderItemSplitContainer : bundleContainers) {
-            BundleOrderItem val = bundleOrderItemSplitContainer.getSplitItems().get(0);
-            val.getDiscreteOrderItems().clear();
-            val.setId(null);
-            List<DiscreteOrderItem> itemsToAdd = new ArrayList<DiscreteOrderItem>();
-            for (DiscreteOrderItem discreteOrderItem : bundleOrderItemSplitContainer.getKey().getDiscreteOrderItems()) {
-                for (FulfillmentGroup fg : order.getDelegate().getFulfillmentGroups()) {
-                    Iterator<FulfillmentGroupItem> fgItems = fg.getFulfillmentGroupItems().iterator();
-                    while (fgItems.hasNext()) {
-                        FulfillmentGroupItem fgItem = fgItems.next();
-                        if (fgItem.getOrderItem().getId() == discreteOrderItem.getId()) {
-                            fgItem.setFulfillmentGroup(null);
-                            fgItems.remove();
-                        }
-                    }
-                }
-                PromotableOrderItem poi = new PromotableOrderItemImpl(discreteOrderItem, null, null);
-                List<PromotableOrderItem> items = order.searchSplitItems(poi);
-                for (PromotableOrderItem temp : items) {
-                    DiscreteOrderItem delegate = temp.getDelegate();
-                    delegate.setId(null);
-                    delegate.setBundleOrderItem(null);
-                    delegate = (DiscreteOrderItem) orderItemService.saveOrderItem(delegate);
-                    delegate.setBundleOrderItem(val);
-                    itemsToAdd.add(delegate);
-
-                    for (int j=0;j<delegate.getQuantity();j++){
-                        Iterator<OrderMultishipOption> itr = new ArrayList<OrderMultishipOption>(order.getMultiShipOptions()).iterator();
-                        while(itr.hasNext()) {
-                            OrderMultishipOption option = itr.next();
-                            if ((option.getOrderItem() instanceof DiscreteOrderItem) && option.getOrderItem().equals(discreteOrderItem)) {
-                                option.setOrderItem(delegate);
-                                orderMultishipOptionService.save(option);
-                                itr.remove();
-                                break;
+            if (bundleOrderItemSplitContainer.getKey().shouldSumItems()) {
+                BundleOrderItem val = bundleOrderItemSplitContainer.getSplitItems().get(0);
+                val.getDiscreteOrderItems().clear();
+                val.setId(null);
+                List<DiscreteOrderItem> itemsToAdd = new ArrayList<DiscreteOrderItem>();
+                for (DiscreteOrderItem discreteOrderItem : bundleOrderItemSplitContainer.getKey().getDiscreteOrderItems()) {
+                    for (FulfillmentGroup fg : order.getDelegate().getFulfillmentGroups()) {
+                        Iterator<FulfillmentGroupItem> fgItems = fg.getFulfillmentGroupItems().iterator();
+                        while (fgItems.hasNext()) {
+                            FulfillmentGroupItem fgItem = fgItems.next();
+                            if (fgItem.getOrderItem().getId() == discreteOrderItem.getId()) {
+                                fgItem.setFulfillmentGroup(null);
+                                fgItems.remove();
                             }
                         }
                     }
-                    FulfillmentGroupItem fgItem = fulfillmentGroupItemDao.create();
-                    fgItem.setQuantity(delegate.getQuantity());
-                    fgItem.setOrderItem(delegate);
-                    fgItem.setFulfillmentGroup(order.getDelegate().getFulfillmentGroups().get(0));
-                    fgItem = fulfillmentGroupItemDao.save(fgItem);
-                    order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().add(fgItem);
+                    PromotableOrderItem poi = new PromotableOrderItemImpl(discreteOrderItem, null, null);
+                    List<PromotableOrderItem> items = order.searchSplitItems(poi);
+                    for (PromotableOrderItem temp : items) {
+                        DiscreteOrderItem delegate = temp.getDelegate();
+                        delegate.setId(null);
+                        delegate.setBundleOrderItem(null);
+                        delegate = (DiscreteOrderItem) orderItemService.saveOrderItem(delegate);
+                        delegate.setBundleOrderItem(val);
+                        itemsToAdd.add(delegate);
+
+                        for (int j=0;j<delegate.getQuantity();j++){
+                            Iterator<OrderMultishipOption> itr = new ArrayList<OrderMultishipOption>(order.getMultiShipOptions()).iterator();
+                            while(itr.hasNext()) {
+                                OrderMultishipOption option = itr.next();
+                                if ((option.getOrderItem() instanceof DiscreteOrderItem) && option.getOrderItem().equals(discreteOrderItem)) {
+                                    option.setOrderItem(delegate);
+                                    orderMultishipOptionService.save(option);
+                                    itr.remove();
+                                    break;
+                                }
+                            }
+                        }
+                        FulfillmentGroupItem fgItem = fulfillmentGroupItemDao.create();
+                        fgItem.setQuantity(delegate.getQuantity());
+                        fgItem.setOrderItem(delegate);
+                        fgItem.setFulfillmentGroup(order.getDelegate().getFulfillmentGroups().get(0));
+                        fgItem = fulfillmentGroupItemDao.save(fgItem);
+                        order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems().add(fgItem);
+                    }
                 }
+                val.getDiscreteOrderItems().addAll(itemsToAdd);
+
+                order.getDelegate().getOrderItems().remove(bundleOrderItemSplitContainer.getKey());
+                bundleOrderItemSplitContainer.getKey().setOrder(null);
+
+                order.getDelegate().getFulfillmentGroups().get(0).setAddress(null);
+                order.getDelegate().getFulfillmentGroups().get(0).setFulfillmentOption(null);
+
+                val = (BundleOrderItem) addOrderItemToOrder(order.getDelegate(), val, false);
             }
-            val.getDiscreteOrderItems().addAll(itemsToAdd);
-
-            order.getDelegate().getOrderItems().remove(bundleOrderItemSplitContainer.getKey());
-            bundleOrderItemSplitContainer.getKey().setOrder(null);
-
-            order.getDelegate().getFulfillmentGroups().get(0).setAddress(null);
-            order.getDelegate().getFulfillmentGroups().get(0).setFulfillmentOption(null);
-
-            val = (BundleOrderItem) addOrderItemToOrder(order.getDelegate(), val, false);
         }
 
         orderService.save(order.getDelegate(), false);
