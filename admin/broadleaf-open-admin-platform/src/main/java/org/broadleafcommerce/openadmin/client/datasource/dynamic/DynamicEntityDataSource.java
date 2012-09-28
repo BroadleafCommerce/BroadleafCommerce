@@ -200,6 +200,22 @@ public class DynamicEntityDataSource extends AbstractDynamicDataSource {
 			}
 		}
 	}
+
+    public void setProminent(String... fieldNames) {
+        DataSourceField[] fields = getFields();
+        String[] sortedFieldNames = new String[fieldNames.length];
+        for (int j=0;j<fieldNames.length;j++) {
+            sortedFieldNames[j] = fieldNames[j];
+        }
+        Arrays.sort(sortedFieldNames);
+        for (DataSourceField field : fields) {
+            String fieldName = field.getName();
+            int pos = Arrays.binarySearch(sortedFieldNames, fieldName);
+            if (pos >= 0) {
+                field.setAttribute("prominent", true);
+            }
+        }
+    }
 	
 	public void permanentlyShowFields(String... fieldNames) {
 		DataSourceField[] fields = getFields();
