@@ -104,7 +104,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        ((EmbeddedSolrServer) server).shutdown();
+        if (server instanceof EmbeddedSolrServer) {
+            ((EmbeddedSolrServer) server).shutdown();
+        }
     }
 
     @Override
