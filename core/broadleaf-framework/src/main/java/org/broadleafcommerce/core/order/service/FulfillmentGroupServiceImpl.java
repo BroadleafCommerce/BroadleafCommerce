@@ -342,7 +342,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 				}
 			}
 		}
-		
+
 		return orderService.save(order, priceOrder);
 	}
 	

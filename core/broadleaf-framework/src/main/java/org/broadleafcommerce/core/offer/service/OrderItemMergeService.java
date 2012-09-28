@@ -16,15 +16,21 @@
 
 package org.broadleafcommerce.core.offer.service;
 
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
+import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 /**
  * @author Jeff Fischer
  */
-public interface MergeService {
+public interface OrderItemMergeService {
 
     public void gatherSplitItemsInBundles(Order order) throws PricingException;
 
@@ -78,4 +84,28 @@ public interface MergeService {
      * @return
      */
     public String buildIdentifier(OrderItem orderItem, String extraIdentifier);
+
+    public FulfillmentGroupItemDao getFulfillmentGroupItemDao();
+
+    public void setFulfillmentGroupItemDao(FulfillmentGroupItemDao fulfillmentGroupItemDao);
+
+    public FulfillmentGroupService getFulfillmentGroupService();
+
+    public void setFulfillmentGroupService(FulfillmentGroupService fulfillmentGroupService);
+
+    public OrderItemService getOrderItemService();
+
+    public void setOrderItemService(OrderItemService orderItemService);
+
+    public OrderMultishipOptionService getOrderMultishipOptionService();
+
+    public void setOrderMultishipOptionService(OrderMultishipOptionService orderMultishipOptionService);
+
+    public OrderService getOrderService();
+
+    public void setOrderService(OrderService orderService);
+
+    public PromotableItemFactory getPromotableItemFactory();
+
+    public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
 }

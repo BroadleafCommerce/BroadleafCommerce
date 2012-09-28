@@ -39,7 +39,6 @@ import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
@@ -75,8 +74,8 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name="blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
-    @Resource(name = "blMergeService")
-    protected MergeService mergeService;
+    @Resource(name = "blOrderItemMergeService")
+    protected OrderItemMergeService orderItemMergeService;
 
     @Override
     public List<Offer> findAllOffers() {
@@ -247,9 +246,9 @@ public class OfferServiceImpl implements OfferService {
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
                 orderOfferProcessor.compileOrderTotal(promotableOrder);
             } else {
-                mergeService.prepareCart(promotableOrder);
-                mergeService.gatherCart(promotableOrder);
-                mergeService.initializeBundleSplitItems(promotableOrder);
+                orderItemMergeService.prepareCart(promotableOrder);
+                orderItemMergeService.gatherCart(promotableOrder);
+                orderItemMergeService.initializeBundleSplitItems(promotableOrder);
                 List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
                 List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
 
@@ -263,9 +262,9 @@ public class OfferServiceImpl implements OfferService {
 
                     // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
                     itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
-                    mergeService.gatherCart(promotableOrder);
+                    orderItemMergeService.gatherCart(promotableOrder);
                 }
-                mergeService.finalizeCart(promotableOrder);
+                orderItemMergeService.finalizeCart(promotableOrder);
             }
         }
     }
@@ -291,7 +290,7 @@ public class OfferServiceImpl implements OfferService {
             if (!qualifiedFGOffers.isEmpty()) {
                 fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
             }
-            mergeService.gatherCart(promotableOrder);
+            orderItemMergeService.gatherCart(promotableOrder);
             fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
         }
     }
@@ -385,12 +384,12 @@ public class OfferServiceImpl implements OfferService {
 	}
 
     @Override
-    public MergeService getMergeService() {
-        return mergeService;
+    public OrderItemMergeService getOrderItemMergeService() {
+        return orderItemMergeService;
     }
 
     @Override
-    public void setMergeService(MergeService mergeService) {
-        this.mergeService = mergeService;
+    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService) {
+        this.orderItemMergeService = orderItemMergeService;
     }
 }

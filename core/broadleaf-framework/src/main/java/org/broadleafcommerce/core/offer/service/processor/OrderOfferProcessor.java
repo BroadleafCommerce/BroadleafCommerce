@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.service.OrderItemMergeService;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
@@ -70,5 +71,9 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	public PromotableItemFactory getPromotableItemFactory();
 
 	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+
+    public OrderItemMergeService getOrderItemMergeService();
+
+    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService);
     
 }

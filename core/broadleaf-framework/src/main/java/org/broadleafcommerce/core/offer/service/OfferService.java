@@ -143,8 +143,8 @@ public interface OfferService {
      */
     public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer);
 
-    public MergeService getMergeService();
+    public OrderItemMergeService getOrderItemMergeService();
 
-    public void setMergeService(MergeService mergeService);
+    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService);
 	
 }

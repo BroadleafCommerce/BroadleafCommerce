@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -42,6 +43,7 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -55,8 +57,8 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-@Service("blMergeService")
-public class MergeServiceImpl implements MergeService {
+@Service("blOrderItemMergeService")
+public class OrderItemMergeServiceImpl implements OrderItemMergeService {
 
     @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
@@ -148,25 +150,39 @@ public class MergeServiceImpl implements MergeService {
         }
     }
 
+    protected String getKey(Address address, FulfillmentOption option) {
+        Long addressKey = (address == null) ? -1 : address.getId();
+        Long fulfillmentOptionKey = (option == null) ? -1 : option.getId();
+        return addressKey + ":" + fulfillmentOptionKey;
+    }
+
     @Override
     public void finalizeCart(PromotableOrder order) throws PricingException {
         if (order.isHasMultiShipOptions()) {
             List<OrderMultishipOption> multishipOptions = new ArrayList<OrderMultishipOption>(order.getMultiShipOptions());
             List<FulfillmentGroupItem> itemsToRemove = new ArrayList<FulfillmentGroupItem>();
+            Map<String, FulfillmentGroup> fgMap = new HashMap<String, FulfillmentGroup>();
             for (OrderMultishipOption option : multishipOptions) {
                 for (FulfillmentGroupItem item : order.getDelegate().getFulfillmentGroups().get(0).getFulfillmentGroupItems()) {
                     if (option.getOrderItem().getId().equals(item.getOrderItem().getId())) {
-                        FulfillmentGroupRequest fgr = new FulfillmentGroupRequest();
-                        fgr.setOrder(order.getDelegate());
-                        if (option.getAddress() != null) {
-                            fgr.setAddress(option.getAddress());
+                        String key = getKey(option.getAddress(), option.getFulfillmentOption());
+                        FulfillmentGroup fg;
+                        if (fgMap.containsKey(key)) {
+                            fg = fgMap.get(key);
+                        } else {
+                            FulfillmentGroupRequest fgr = new FulfillmentGroupRequest();
+                            fgr.setOrder(order.getDelegate());
+                            if (option.getAddress() != null) {
+                                fgr.setAddress(option.getAddress());
+                            }
+                            if (option.getFulfillmentOption() != null) {
+                                fgr.setOption(option.getFulfillmentOption());
+                            }
+                            fg = fulfillmentGroupService.addFulfillmentGroupToOrder(fgr, false);
+                            fg = fulfillmentGroupService.save(fg);
+                            order.getDelegate().getFulfillmentGroups().add(fg);
+                            fgMap.put(key, fg);
                         }
-                        if (option.getFulfillmentOption() != null) {
-                            fgr.setOption(option.getFulfillmentOption());
-                        }
-                        FulfillmentGroup fg = fulfillmentGroupService.addFulfillmentGroupToOrder(fgr, false);
-                        fg = fulfillmentGroupService.save(fg);
-                        order.getDelegate().getFulfillmentGroups().add(fg);
 
                         FulfillmentGroupItem fulfillmentGroupItem = fulfillmentGroupItemDao.create();
                         fulfillmentGroupItem.setFulfillmentGroup(fg);
@@ -780,5 +796,65 @@ public class MergeServiceImpl implements MergeService {
                 identifier.append(value);
             }
         }
+    }
+
+    @Override
+    public FulfillmentGroupItemDao getFulfillmentGroupItemDao() {
+        return fulfillmentGroupItemDao;
+    }
+
+    @Override
+    public void setFulfillmentGroupItemDao(FulfillmentGroupItemDao fulfillmentGroupItemDao) {
+        this.fulfillmentGroupItemDao = fulfillmentGroupItemDao;
+    }
+
+    @Override
+    public FulfillmentGroupService getFulfillmentGroupService() {
+        return fulfillmentGroupService;
+    }
+
+    @Override
+    public void setFulfillmentGroupService(FulfillmentGroupService fulfillmentGroupService) {
+        this.fulfillmentGroupService = fulfillmentGroupService;
+    }
+
+    @Override
+    public OrderItemService getOrderItemService() {
+        return orderItemService;
+    }
+
+    @Override
+    public void setOrderItemService(OrderItemService orderItemService) {
+        this.orderItemService = orderItemService;
+    }
+
+    @Override
+    public OrderMultishipOptionService getOrderMultishipOptionService() {
+        return orderMultishipOptionService;
+    }
+
+    @Override
+    public void setOrderMultishipOptionService(OrderMultishipOptionService orderMultishipOptionService) {
+        this.orderMultishipOptionService = orderMultishipOptionService;
+    }
+
+    @Override
+    public OrderService getOrderService() {
+        return orderService;
+    }
+
+    @Override
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @Override
+    public PromotableItemFactory getPromotableItemFactory() {
+        return promotableItemFactory;
+    }
+
+    @Override
+    public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
+        this.promotableItemFactory = promotableItemFactory;
     }
 }

@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.order.service.workflow.remove;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.offer.service.MergeService;
+import org.broadleafcommerce.core.offer.service.OrderItemMergeService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
@@ -47,8 +47,8 @@ public class RemoveOrderItemActivity extends BaseActivity {
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
 
-    @Resource(name = "blMergeService")
-    protected MergeService mergeService;
+    @Resource(name = "blOrderItemMergeService")
+    protected OrderItemMergeService orderItemMergeService;
     
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
@@ -57,7 +57,7 @@ public class RemoveOrderItemActivity extends BaseActivity {
         // Find the OrderItem from the database based on its ID
 		Order order = request.getOrder();
 
-        mergeService.gatherSplitItemsInBundles(order);
+        orderItemMergeService.gatherSplitItemsInBundles(order);
 
         OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequestDTO.getOrderItemId());
         
