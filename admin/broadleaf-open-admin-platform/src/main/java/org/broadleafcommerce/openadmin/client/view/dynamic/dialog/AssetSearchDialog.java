@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -76,7 +76,7 @@ public class AssetSearchDialog extends Window {
 		tileGrid = new TileGrid();
         tileGrid.setTileWidth(120);
         tileGrid.setTileHeight(120);
-        tileGrid.setAutoFetchData(true);
+        tileGrid.setAutoFetchData(false);
         tileGrid.setSelectionType(SelectionStyle.SINGLE);
         tileGrid.setShowAllRecords(false);
         tileGrid.setHeight100();
@@ -152,6 +152,7 @@ public class AssetSearchDialog extends Window {
             @Override
             public void onClick(ClickEvent event) {
             	Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
+            	saveButton.disable();
                 tileGrid.fetchData(valuesAsCriteria);
             }
         });
@@ -206,7 +207,8 @@ public class AssetSearchDialog extends Window {
 	}
 	public void search(String title, TileGridItemSelectedHandler handler) {
 		this.setTitle(title);
-	        tileGrid.invalidateCache(); //BLC-637, invalidate cache, so that a fetch is performed every time the dialog window is opened
+        tileGrid.invalidateCache();
+        tileGrid.fetchData();
 		this.handler = handler;
 		centerInPage();
 		saveButton.disable();

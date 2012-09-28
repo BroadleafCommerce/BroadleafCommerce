@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -63,12 +63,14 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.pricing.domain.PriceData;
 import org.broadleafcommerce.core.pricing.domain.PriceDataImpl;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -137,7 +139,7 @@ public class SkuImpl implements Sku {
     /** The name. */
     @Column(name = "NAME")
     @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="200", groupOrder=1)
     protected String name;
 
     /** The description. */
@@ -225,8 +227,9 @@ public class SkuImpl implements Sku {
     /**
      * This will be non-null if and only if this Sku is the default Sku for a Product
      */
-    @OneToOne(optional=true, targetEntity=ProductImpl.class, mappedBy="defaultSku")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToOne(optional = true, targetEntity=ProductImpl.class, cascade={CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+    @JoinColumn(name = "DEFAULT_PRODUCT_ID")
     protected Product defaultProduct;
 
     /**
@@ -309,11 +312,14 @@ public class SkuImpl implements Sku {
             mapKeyOptionEntityClass = PriceListImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
             mapKeyOptionEntityValueField = "priceKey"
-      
         )
     protected Map<String, PriceData> priceDataMap = new HashMap<String , PriceData>();
-
-   
+   @Column(name = "INVENTORY_TYPE")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", group = "SkuImpl_Sku_Inventory", order=10, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.InventoryType")
+    protected String inventoryType;
+	@Column(name = "FULFILLMENT_TYPE")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", group = "SkuImpl_Sku_Inventory", order=11, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    protected String fulfillmentType;
     @Override
     public Long getId() {
         return id;
@@ -771,6 +777,25 @@ public class SkuImpl implements Sku {
 	public List<SkuAttribute> getSkuAttributes() {
 		return skuAttributes;
 	}
+    
+    @Override
+    public SkuAttribute getSkuAttributeByName(String name) {
+    	for (SkuAttribute attribute : getSkuAttributes()) {
+    		if (attribute.getName().equals(name)) {
+    			return attribute;
+    		}
+    	}
+    	return null;
+    }
+    
+    @Override
+    public Map<String, SkuAttribute> getMappedSkuAttributes() {
+    	Map<String, SkuAttribute> map = new HashMap<String, SkuAttribute>();
+    	for (SkuAttribute attr : getSkuAttributes()) {
+    		map.put(attr.getName(), attr);
+    	}
+    	return map;
+    }
 
     @Override
     public List<ProductOptionValue> getProductOptionValues() {
@@ -848,6 +873,27 @@ public class SkuImpl implements Sku {
     public void setTranslations(Map<String, SkuTranslation> translations) {
         this.translations = translations;
     }
+
+	@Override
+    public InventoryType getInventoryType() {
+        return InventoryType.getInstance(this.inventoryType);
+    }
+
+    @Override
+    public void setInventoryType(InventoryType inventoryType) {
+        this.inventoryType = inventoryType.getType();
+    }
+    
+    @Override
+    public FulfillmentType getFulfillmentType() {
+    	return FulfillmentType.getInstance(this.fulfillmentType);
+    }
+    
+    @Override
+    public void setFulfillmentType(FulfillmentType fulfillmentType) {
+    	this.fulfillmentType = fulfillmentType.getType();
+    }
+    
 
 	@Override
     public boolean equals(Object obj) {

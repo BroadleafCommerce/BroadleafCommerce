@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -104,7 +104,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "TYPE")
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=4, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
-    protected String type = FulfillmentType.PHYSICAL.getType();
+    protected String type;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
@@ -325,7 +325,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public void setType(FulfillmentType type) {
-        this.type = type.getType();
+        this.type = type == null ? null : type.getType();
     }
 
     @Override

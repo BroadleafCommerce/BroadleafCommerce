@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,15 @@
 
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.core.search.domain.SearchIntercept;
+import org.broadleafcommerce.core.search.redirect.dao.SearchRedirectDao;
+
 import java.util.List;
 
-import org.broadleafcommerce.core.search.domain.SearchIntercept;
-
+/**
+ * @deprecated Replaced in functionality by {@link SearchRedirectDao}
+ */
+@Deprecated
 public interface SearchInterceptDao {
     public SearchIntercept findInterceptByTerm(String term);
     public List<SearchIntercept> findAllIntercepts();

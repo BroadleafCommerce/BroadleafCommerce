@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,14 +74,20 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name="blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
+    @Resource(name = "blOrderItemMergeService")
+    protected OrderItemMergeService orderItemMergeService;
+
+    @Override
     public List<Offer> findAllOffers() {
         return offerDao.readAllOffers();
     }
 
+    @Override
     public Offer save(Offer offer) {
         return offerDao.save(offer);
     }
 
+    @Override
     public OfferCode saveOfferCode(OfferCode offerCode) {
         offerCode.setOffer(offerDao.save(offerCode.getOffer()));
         return offerCodeDao.save(offerCode);
@@ -95,6 +101,7 @@ public class OfferServiceImpl implements OfferService {
      * @param code
      * @return a List of offers that may apply to this order
      */
+    @Override
     public Offer lookupOfferByCode(String code) {
         Offer offer = null;
         OfferCode offerCode = offerCodeDao.readOfferCodeByCode(code);
@@ -104,6 +111,7 @@ public class OfferServiceImpl implements OfferService {
         return offer;
     }
     
+    @Override
     public OfferCode lookupOfferCodeByCode(String code){
         return offerCodeDao.readOfferCodeByCode(code);
     }
@@ -116,6 +124,7 @@ public class OfferServiceImpl implements OfferService {
      * @param order
      * @return a List of offers that may apply to this order
      */
+    @Override
     public List<Offer> buildOfferListForOrder(Order order) {
         List<Offer> offers = new ArrayList<Offer>();
         List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getCustomer());
@@ -220,56 +229,73 @@ public class OfferServiceImpl implements OfferService {
      * 9) Non-combinable offers only apply to the order and order items, fulfillment group offers will always apply
      *
      */
+    @Override
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
-    	PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
-        orderOfferProcessor.clearOffersandAdjustments(promotableOrder);
-        List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, promotableOrder.getCustomer());
+        /*
+        TODO rather than a threadlocal, we should update the "shouldPrice" boolean on the service API to
+        use a richer object to describe the parameters of the pricing call. This object would include
+        the pricing boolean, but would also include a list of activities to include or exclude in the
+        call - see http://jira.broadleafcommerce.org/browse/BLC-664
+         */
+        OfferContext offerContext = OfferContext.getOfferContext();
+        if (offerContext == null || offerContext.executePromotionCalculation) {
+            PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
+            orderOfferProcessor.clearOffersandAdjustments(promotableOrder);
+            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, promotableOrder.getCustomer());
 
-        if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
-            orderOfferProcessor.compileOrderTotal(promotableOrder);
-        } else {
-        	itemOfferProcessor.gatherCart(promotableOrder);
-            orderOfferProcessor.initializeBundleSplitItems(promotableOrder);
-            List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
-            List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
-            
-            itemOfferProcessor.filterOffers(promotableOrder, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
-
-            if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
+            if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
                 orderOfferProcessor.compileOrderTotal(promotableOrder);
             } else {
-                // At this point, we should have a PromotableOrder that contains PromotableItems each of which
-                // has a list of candidatePromotions that might be applied.
+                orderItemMergeService.prepareCart(promotableOrder);
+                orderItemMergeService.gatherCart(promotableOrder);
+                orderItemMergeService.initializeBundleSplitItems(promotableOrder);
+                List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
+                List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
 
-                // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
-                itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
-                itemOfferProcessor.gatherCart(promotableOrder);
+                itemOfferProcessor.filterOffers(promotableOrder, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
+
+                if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
+                    orderOfferProcessor.compileOrderTotal(promotableOrder);
+                } else {
+                    // At this point, we should have a PromotableOrder that contains PromotableItems each of which
+                    // has a list of candidatePromotions that might be applied.
+
+                    // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
+                    itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
+                    orderItemMergeService.gatherCart(promotableOrder);
+                }
+                orderItemMergeService.finalizeCart(promotableOrder);
             }
         }
     }
 	
-	public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
-		PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
-		promotableOrder.removeAllCandidateFulfillmentGroupOffers();
-		promotableOrder.removeAllFulfillmentAdjustments();
-    	List<Offer> possibleFGOffers = new ArrayList<Offer>();
-    	for (Offer offer : offers) {
-    		if (offer.getType().getType().equals(OfferType.FULFILLMENT_GROUP.getType())) {
-    			possibleFGOffers.add(offer);
-    		}
-    	}
-    	List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, promotableOrder.getCustomer());
-    	List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
-    	for (Offer offer : filteredOffers) {
-    		fulfillmentGroupOfferProcessor.filterFulfillmentGroupLevelOffer(promotableOrder, qualifiedFGOffers, offer);
-    	}
-    	if (!qualifiedFGOffers.isEmpty()) {
-		    fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
-    	}
-    	fulfillmentGroupOfferProcessor.gatherCart(promotableOrder);
-    	fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
+	@Override
+    public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+        OfferContext offerContext = OfferContext.getOfferContext();
+        if (offerContext == null || offerContext.executePromotionCalculation) {
+            PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
+            promotableOrder.removeAllCandidateFulfillmentGroupOffers();
+            promotableOrder.removeAllFulfillmentAdjustments();
+            List<Offer> possibleFGOffers = new ArrayList<Offer>();
+            for (Offer offer : offers) {
+                if (offer.getType().getType().equals(OfferType.FULFILLMENT_GROUP.getType())) {
+                    possibleFGOffers.add(offer);
+                }
+            }
+            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, promotableOrder.getCustomer());
+            List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
+            for (Offer offer : filteredOffers) {
+                fulfillmentGroupOfferProcessor.filterFulfillmentGroupLevelOffer(promotableOrder, qualifiedFGOffers, offer);
+            }
+            if (!qualifiedFGOffers.isEmpty()) {
+                fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
+            }
+            orderItemMergeService.gatherCart(promotableOrder);
+            fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
+        }
     }
     
+    @Override
     public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer) {
         if (customer != null && customer.getId() != null && offer != null && offer.getId() != null) {
             if (offer.getMaxUsesPerCustomer() != null && offer.getMaxUsesPerCustomer() > 0) {                
@@ -282,59 +308,73 @@ public class OfferServiceImpl implements OfferService {
         return true;
     }        
 
-	public CustomerOfferDao getCustomerOfferDao() {
+	@Override
+    public CustomerOfferDao getCustomerOfferDao() {
 		return customerOfferDao;
 	}
 
-	public void setCustomerOfferDao(CustomerOfferDao customerOfferDao) {
+	@Override
+    public void setCustomerOfferDao(CustomerOfferDao customerOfferDao) {
 		this.customerOfferDao = customerOfferDao;
 	}
 
-	public OfferCodeDao getOfferCodeDao() {
+	@Override
+    public OfferCodeDao getOfferCodeDao() {
 		return offerCodeDao;
 	}
 
-	public void setOfferCodeDao(OfferCodeDao offerCodeDao) {
+	@Override
+    public void setOfferCodeDao(OfferCodeDao offerCodeDao) {
 		this.offerCodeDao = offerCodeDao;
 	}
 
-	public OfferDao getOfferDao() {
+	@Override
+    public OfferDao getOfferDao() {
 		return offerDao;
 	}
 
-	public void setOfferDao(OfferDao offerDao) {
+	@Override
+    public void setOfferDao(OfferDao offerDao) {
 		this.offerDao = offerDao;
 	}
 
-	public OrderOfferProcessor getOrderOfferProcessor() {
+	@Override
+    public OrderOfferProcessor getOrderOfferProcessor() {
 		return orderOfferProcessor;
 	}
 
-	public void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor) {
+	@Override
+    public void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor) {
 		this.orderOfferProcessor = orderOfferProcessor;
 	}
 
-	public ItemOfferProcessor getItemOfferProcessor() {
+	@Override
+    public ItemOfferProcessor getItemOfferProcessor() {
 		return itemOfferProcessor;
 	}
 
-	public void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor) {
+	@Override
+    public void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor) {
 		this.itemOfferProcessor = itemOfferProcessor;
 	}
 
-	public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor() {
+	@Override
+    public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor() {
 		return fulfillmentGroupOfferProcessor;
 	}
 
-	public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor) {
+	@Override
+    public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor) {
 		this.fulfillmentGroupOfferProcessor = fulfillmentGroupOfferProcessor;
 	}
 
-	public PromotableItemFactory getPromotableItemFactory() {
+	@Override
+    public PromotableItemFactory getPromotableItemFactory() {
 		return promotableItemFactory;
 	}
 
-	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
+	@Override
+    public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
 		this.promotableItemFactory = promotableItemFactory;
 	}
 
@@ -343,4 +383,13 @@ public class OfferServiceImpl implements OfferService {
 		return offerCodeDao.readOfferCodeById(id);
 	}
 
+    @Override
+    public OrderItemMergeService getOrderItemMergeService() {
+        return orderItemMergeService;
+    }
+
+    @Override
+    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService) {
+        this.orderItemMergeService = orderItemMergeService;
+    }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -32,6 +30,10 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 
 /**
  * 
@@ -48,7 +50,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		userRolePresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-        userPermissionPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
+                userPermissionPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
 	}
 	
 	@Override
@@ -61,20 +63,24 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 		super.bind();
 	}
 
-	public void setup() {
+	@Override
+    public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminUserDS", new AdminUserListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
+			@Override
+            public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"name", "login", "email"}, new Boolean[]{true, true, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				roleSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
+			@Override
+            public void onSetupSuccess(DataSource result) {
 				userRolePresenter = new UserRolePresenter(getDisplay().getUserRolesDisplay(), roleSearchView);
 				userRolePresenter.setDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("adminRoleDS"), new String[]{"name", "description"}, new Boolean[]{false, false});
 				userRolePresenter.setExpansionDataSource((ListGridDataSource) result , new String[]{"name", "description"}, new Boolean[]{false, false});
@@ -82,6 +88,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 			}
 		}));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminUserPermissionDS", new AdminUserPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
                 permissionSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 userPermissionPresenter = new UserPermissionPresenter(getDisplay().getUserPermissionDisplay(), permissionSearchView);
@@ -90,7 +97,13 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
             }
         }));
 	}
-
+@Override
+public void postSetup(Canvas container) {
+    gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+    gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),userRolePresenter,userPermissionPresenter );
+    
+    super.postSetup(container);
+}
 	@Override
 	public UserManagementDisplay getDisplay() {
 		return (UserManagementDisplay) display;

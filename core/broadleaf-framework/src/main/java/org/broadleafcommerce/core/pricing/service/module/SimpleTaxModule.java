@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,42 +71,65 @@ public class SimpleTaxModule implements TaxModule {
             
             // Set taxes on the fulfillment group items
             for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                fgItem.getTaxes().clear();
-
                 if (isItemTaxable(fgItem)) {
                     Double factor = determineItemTaxRate(fulfillmentGroup.getAddress());
                     if (factor != null && factor.compareTo(0d) != 0) {
-                        TaxDetail tax = new TaxDetailImpl();
+                        TaxDetail tax;
+                        checkDetail: {
+                            for (TaxDetail detail : fgItem.getTaxes()) {
+                                if (detail.getType().equals(TaxType.COMBINED)) {
+                                    tax = detail;
+                                    break checkDetail;
+                                }
+                            }
+                            tax = new TaxDetailImpl();
+                            tax.setType(TaxType.COMBINED);
+                            fgItem.getTaxes().add(tax);
+                        }
                         tax.setRate(new BigDecimal(factor));
-                        tax.setType(TaxType.COMBINED);
                         tax.setAmount(fgItem.getPrice().multiply(fgItem.getQuantity()).multiply(factor));
-                        fgItem.getTaxes().add(tax);
                     }
                 }
             }
 
             for (FulfillmentGroupFee fgFee : fulfillmentGroup.getFulfillmentGroupFees()) {
-                fgFee.getTaxes().clear();
                 if (isFeeTaxable(fgFee)) {
                     Double factor = determineItemTaxRate(fulfillmentGroup.getAddress());
                     if (factor != null && factor.compareTo(0d) != 0) {
-                        TaxDetail tax = new TaxDetailImpl();
+                        TaxDetail tax;
+                        checkDetail: {
+                            for (TaxDetail detail : fgFee.getTaxes()) {
+                                if (detail.getType().equals(TaxType.COMBINED)) {
+                                    tax = detail;
+                                    break checkDetail;
+                                }
+                            }
+                            tax = new TaxDetailImpl();
+                            tax.setType(TaxType.COMBINED);
+                            fgFee.getTaxes().add(tax);
+                        }
                         tax.setRate(new BigDecimal(factor));
-                        tax.setType(TaxType.COMBINED);
                         tax.setAmount(fgFee.getAmount().multiply(factor));
-                        fgFee.getTaxes().add(tax);
                     }
                 }
             }
 
             Double factor = determineTaxRateForFulfillmentGroup(fulfillmentGroup);
-            fulfillmentGroup.getTaxes().clear();
             if (factor != null && factor.compareTo(0d) != 0) {
-                TaxDetail tax = new TaxDetailImpl();
+                TaxDetail tax;
+                checkDetail: {
+                    for (TaxDetail detail : fulfillmentGroup.getTaxes()) {
+                        if (detail.getType().equals(TaxType.COMBINED)) {
+                            tax = detail;
+                            break checkDetail;
+                        }
+                    }
+                    tax = new TaxDetailImpl();
+                    tax.setType(TaxType.COMBINED);
+                    fulfillmentGroup.getTaxes().add(tax);
+                }
                 tax.setRate(new BigDecimal(factor));
-                tax.setType(TaxType.COMBINED);
                 tax.setAmount(fulfillmentGroup.getShippingPrice().multiply(factor));
-                fulfillmentGroup.getTaxes().add(tax);
             }
         }
 

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,15 @@
  * 
  */
 package org.broadleafcommerce.core.catalog.domain;
+
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -520,6 +529,74 @@ public interface Category extends Serializable {
 	 */
 	
 	public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy);
+	
+	/**
+	 * Build the full category hierarchy by walking up the default category tree and the all parent
+	 * category tree.
+	 * 
+	 * @param currentHierarchy
+	 * @return the full hierarchy
+	 */
+    public List<Category> buildFullCategoryHierarchy(List<Category> currentHierarchy);
+	
+	/**
+	 * Gets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
+	 * extending the domain object itself.
+	 * 
+	 * @return
+	 * @see {@link #getMappedCategoryAttributes()}
+	 */
+    public List<CategoryAttribute> getCategoryAttributes();
+
+    /**
+     * Sets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
+     * extending the domain object and creating a new table to store custom properties.
+     * 
+     * @return
+     */
+    public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes);
+
+    /**
+     * Convenience method to get a {@link CategoryAttribute} by name
+     * 
+     * @param name
+     * @return
+     * @see {@link #getCategoryAttributes()}, {@link #getMappedCategoryAttributes()}
+     */
+    public CategoryAttribute getCategoryAttributeByName(String name);
+
+    /**
+     * Convenience method to return the {@link CategoryAttribute}s for the {@link Category} in an easily-consumable
+     * form
+     * 
+     * @return
+     */
+    public Map<String, CategoryAttribute> getMappedCategoryAttributes();
+
+    /**
+     * Returns the type of inventory for this category
+     * @return the {@link InventoryType} for this category
+     */
+    public InventoryType getInventoryType();
+
+    /**
+     * Sets the type of inventory for this category
+     * @param inventoryType the {@link InventoryType} for this category
+     */
+    public void setInventoryType(InventoryType inventoryType);
+    
+    /**
+     * Returns the default fulfillment type for skus in this category. May be null.
+     * @return
+     */
+    public FulfillmentType getFulfillmentType();
+    
+    /**
+     * Sets the default fulfillment type for skus in this category. May return null.
+     * @param fulfillmentType
+     */
+    public void setFulfillmentType(FulfillmentType fulfillmentType);
+
 	/** 
 	 * 
 	 * @return list of possible translations
@@ -530,6 +607,5 @@ public interface Category extends Serializable {
 	 * @param translations
 	 */
 	public void setTranslations(Map<String, CategoryTranslation> translations);
-
 
 }

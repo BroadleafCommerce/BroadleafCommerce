@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -62,6 +62,13 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
     public SimpleMapStructurePresenter(GridStructureDisplay display, Map<String, Object> initialValues) {
 		this(display, null, initialValues);
 	}
+
+    public SimpleMapStructurePresenter(SimpleMapStructurePresenter template) {
+        this(template.display, template.availableToTypes, template.initialValues);
+        this.abstractDynamicDataSource = template.abstractDynamicDataSource;
+        this.readOnly = template.readOnly;
+        this.gridFields = template.gridFields;
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
@@ -143,5 +150,21 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 
     public HandlerRegistration getSelectionChangedHandlerRegistration() {
         return selectionChangedHandlerRegistration;
+    }
+
+    public String[] getGridFields() {
+        return gridFields;
+    }
+
+    public void setGridFields(String[] gridFields) {
+        this.gridFields = gridFields;
+    }
+
+    public Map<String, Object> getInitialValues() {
+        return initialValues;
+    }
+
+    public void setInitialValues(Map<String, Object> initialValues) {
+        this.initialValues = initialValues;
     }
 }

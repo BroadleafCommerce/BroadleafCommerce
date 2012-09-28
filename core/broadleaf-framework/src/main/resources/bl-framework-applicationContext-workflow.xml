@@ -17,7 +17,6 @@
 		</property>
 		<property name="activities">
 			<list>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.AutoBundleActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity"/>
@@ -97,10 +96,11 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
 	</bean>
 	
 	<bean id="blUpdateItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
@@ -114,10 +114,11 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderMultishipOptionActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
 	</bean>
 	
 	<bean id="blRemoveItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
@@ -130,10 +131,11 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderMultishipOptionActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
 	</bean>
 
 	<bean id="blPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
@@ -157,12 +159,13 @@
 		<property name="activities">
 			<list>
                 <bean class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
+                <bean class="org.broadleafcommerce.core.inventory.service.workflow.DecrementInventoryActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
                 <bean class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blInventoryCompensatingCheckoutErrorHandler"/>
 	</bean>
 
     <aop:config>

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDaoTest extends BaseTest {
@@ -39,24 +40,63 @@ public class ProductDaoTest extends BaseTest {
     @Resource
     private CatalogService catalogService;
 
+    private List<Product> savedProducts = new ArrayList<Product>();
+
+    private static RelatedProduct getRelatedUpSaleProduct(Product prod, Product prodToRelate, List<RelatedProduct> upSales){
+        RelatedProduct rp1 = new UpSaleProductImpl();
+        rp1.setProduct(prod);
+        rp1.setPromotionMessage("brand new coffee");
+        rp1.setRelatedProduct(prodToRelate);
+
+        upSales.add(rp1);
+        return rp1;
+    }
+
+    private static RelatedProduct getRelatedCrossProduct(Product prod, Product prodToRelate, List<RelatedProduct> upSales){
+        RelatedProduct rp1 = new CrossSaleProductImpl();
+        rp1.setProduct(prod);
+        rp1.setPromotionMessage("brand new coffee");
+        rp1.setRelatedProduct(prodToRelate);
+
+        upSales.add(rp1);
+        return rp1;
+    }
+
     @Test(groups="createProducts", dataProvider="setupProducts", dataProviderClass=ProductDataProvider.class)
     @Rollback(false)
+    @Transactional
     public void createProducts(Product product) {
         product = catalogService.saveProduct(product);
         assert(product.getId() != null);
+        savedProducts.add(product);
     }
 
-    @Test(groups="createUpSaleValues", dataProvider="basicUpSaleValue", dataProviderClass=ProductDataProvider.class, dependsOnGroups="createProducts")
+    @Test(groups="createUpSaleValues", dependsOnGroups="createProducts")
     @Rollback(false)
-    public void createUpSaleValues(Product product){
-        product = catalogService.saveProduct(product);
-        assert(product.getId() != null);
+    @Transactional
+    public void createUpSaleValues(){
+        Product prod1 = savedProducts.get(0);
+        List<RelatedProduct> upSales = new ArrayList<RelatedProduct>();
+        getRelatedUpSaleProduct(prod1, savedProducts.get(2), upSales);
+        getRelatedUpSaleProduct(prod1, savedProducts.get(3), upSales);
+        getRelatedUpSaleProduct(prod1, savedProducts.get(4), upSales);
+        prod1.setUpSaleProducts(upSales);
+        prod1 = catalogService.saveProduct(prod1);
+        assert(prod1.getId() != null);
+
+        Product prod2 = savedProducts.get(1);
+        List<RelatedProduct> upSales2 = new ArrayList<RelatedProduct>();
+        getRelatedUpSaleProduct(prod2, savedProducts.get(5), upSales2);
+        getRelatedUpSaleProduct(prod2, savedProducts.get(6), upSales2);
+        prod2.setUpSaleProducts(upSales2);
+        prod2 = catalogService.saveProduct(prod2);
+        assert(prod2.getId() != null);
     }
 
-    @Test(groups="testReadProductsWithUpSaleValues", dataProvider="basicUpSaleValue", dataProviderClass=ProductDataProvider.class, dependsOnGroups="createUpSaleValues")
+    @Test(groups="testReadProductsWithUpSaleValues", dependsOnGroups="createUpSaleValues")
     @Transactional
-    public void testReadProductsWithUpSaleValues(Product product) {
-        Product result = productDao.readProductById(product.getId());
+    public void testReadProductsWithUpSaleValues() {
+        Product result = productDao.readProductById(savedProducts.get(0).getId());
         List<RelatedProduct> related = result.getUpSaleProducts();
 
         assert(related != null);
@@ -68,17 +108,32 @@ public class ProductDaoTest extends BaseTest {
         }
     }
 
-    @Test(groups="createCrossSaleValues", dataProvider="basicCrossSaleValue", dataProviderClass=ProductDataProvider.class, dependsOnGroups="testReadProductsWithUpSaleValues")
+    @Test(groups="createCrossSaleValues", dependsOnGroups="testReadProductsWithUpSaleValues")
     @Rollback(false)
-    public void createCrossSaleValues(Product product){
-        product = catalogService.saveProduct(product);
-        assert(product.getId() != null);
+    @Transactional
+    public void createCrossSaleValues(){
+        Product prod1 = savedProducts.get(0);
+        List<RelatedProduct> crossSale = new ArrayList<RelatedProduct>();
+        getRelatedCrossProduct(prod1, savedProducts.get(2), crossSale);
+        getRelatedCrossProduct(prod1, savedProducts.get(3), crossSale);
+        getRelatedCrossProduct(prod1, savedProducts.get(4), crossSale);
+        prod1.setCrossSaleProducts(crossSale);
+        prod1 = catalogService.saveProduct(prod1);
+        assert(prod1.getId() != null);
+
+        Product prod2 = savedProducts.get(1);
+        List<RelatedProduct> crossSale2 = new ArrayList<RelatedProduct>();
+        getRelatedCrossProduct(prod2, savedProducts.get(5), crossSale2);
+        getRelatedCrossProduct(prod2, savedProducts.get(6), crossSale2);
+        prod2.setCrossSaleProducts(crossSale2);
+        prod2 = catalogService.saveProduct(prod2);
+        assert(prod2.getId() != null);
     }
 
-    @Test(groups="testReadProductsWithCrossSaleValues", dataProvider="basicCrossSaleValue", dataProviderClass=ProductDataProvider.class, dependsOnGroups="createCrossSaleValues")
+    @Test(groups="testReadProductsWithCrossSaleValues", dependsOnGroups="createCrossSaleValues")
     @Transactional
-    public void testReadProductsWithCrossSaleValues(Product product) {
-        Product result = productDao.readProductById(product.getId());
+    public void testReadProductsWithCrossSaleValues() {
+        Product result = productDao.readProductById(savedProducts.get(1).getId());
         List<RelatedProduct> related = result.getCrossSaleProducts();
 
         assert(related != null);
@@ -91,6 +146,7 @@ public class ProductDaoTest extends BaseTest {
     }
 
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
+    @Transactional
     public void testReadProductsById(Product product) {
         product = catalogService.saveProduct(product);
         Product result = productDao.readProductById(product.getId());
@@ -107,6 +163,7 @@ public class ProductDaoTest extends BaseTest {
     }
 
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
+    @Transactional
     public void testFeaturedProduct(Product product) {
         product = catalogService.saveProduct(product);
         Long productId = product.getId();

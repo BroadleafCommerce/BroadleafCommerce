@@ -50,6 +50,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.util.StopWatch;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
@@ -66,13 +67,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * An implementation of SearchService that uses solr
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class SolrSearchServiceImpl implements SearchService {
+public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
     
@@ -98,8 +101,15 @@ public class SolrSearchServiceImpl implements SearchService {
 	public SolrSearchServiceImpl(SolrServer solrServer) {
 		this.server = solrServer;
 	}
-	
-	@Override
+
+    @Override
+    public void destroy() throws Exception {
+        if (server instanceof EmbeddedSolrServer) {
+            ((EmbeddedSolrServer) server).shutdown();
+        }
+    }
+
+    @Override
     @Transactional("blTransactionManager")
 	public void rebuildIndex() throws ServiceException, IOException {
 		LOG.info("Rebuilding the solr index...");
@@ -114,12 +124,31 @@ public class SolrSearchServiceImpl implements SearchService {
 			
 			// Add fields that are present on all products
 			document.addField("id", product.getId());
+			
+			// The explicit categories are the one defined by the product itself
 			for (Category category : product.getAllParentCategories()) {
-				document.addField("category", category.getId());
+				document.addField("explicitCategory", category.getId());
 				
 				String categorySortField = getCategorySortField(category);
 				int listIndex = category.getAllProducts().indexOf(product);
 				document.addField(categorySortField, listIndex);
+			}
+			
+			// This is the entire tree of every category defined on the product
+			Set<Category> fullCategoryHierarchy = new TreeSet<Category>(new Comparator<Category>() {
+                @Override
+                public int compare(Category o1, Category o2) {
+                    if (o1.equals(o2)) {
+                        return 0;
+                    }
+                    return 1;
+                }
+            });
+			for (Category category : product.getAllParentCategories()) {
+			    fullCategoryHierarchy.addAll(category.buildFullCategoryHierarchy(null));
+			}
+			for (Category category : fullCategoryHierarchy) {
+				document.addField("category", category.getId());
 			}
 			
 			// Add data-driven user specified searchable fields
@@ -159,6 +188,12 @@ public class SolrSearchServiceImpl implements SearchService {
 			documents.add(document);
 		}
 		
+		if (LOG.isTraceEnabled()) {
+		    for (SolrInputDocument document : documents) {
+		        LOG.trace(document);
+		    }
+		}
+		
 	    try {
 	    	server.deleteByQuery("*:*");
 	    	server.commit();
@@ -170,6 +205,14 @@ public class SolrSearchServiceImpl implements SearchService {
 	    }
 	    
 	    LOG.info("Finished rebuilding the solr index in " + s.toLapString());
+	}
+    
+	@Override
+	public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria) 
+			throws ServiceException {
+		List<SearchFacetDTO> facets = getCategoryFacets(category);
+		String query = "explicitCategory:" + category.getId();
+		return findProducts(query, facets, searchCriteria, getCategorySortField(category) + " asc");
 	}
 	
 	@Override
@@ -186,6 +229,17 @@ public class SolrSearchServiceImpl implements SearchService {
 		List<SearchFacetDTO> facets = getSearchFacets();
 		query = "searchable:*" + query + "*"; // Surrounding with * allows partial word matches
 		return findProducts(query, facets, searchCriteria, null);
+	}
+	
+	@Override
+	public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, 
+	        ProductSearchCriteria searchCriteria) throws ServiceException {
+		List<SearchFacetDTO> facets = getSearchFacets();
+		StringBuilder sb = new StringBuilder();
+		sb.append("category:").append(category.getId())
+		    .append(" AND ")
+		    .append("searchable:*").append(query).append("*"); // Surrounding with * allows partial word matches
+		return findProducts(sb.toString(), facets, searchCriteria, null);
 	}
 	
 	@Override

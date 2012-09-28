@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.core.order.dao.FulfillmentOptionDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -40,6 +41,7 @@ public class FulfillmentOptionServiceImpl implements FulfillmentOptionService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public FulfillmentOption save(FulfillmentOption option) {
         return fulfillmentOptionDao.save(option);
     }

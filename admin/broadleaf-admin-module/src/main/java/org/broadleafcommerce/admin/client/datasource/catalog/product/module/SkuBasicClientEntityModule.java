@@ -52,6 +52,7 @@ import java.util.List;
 public class SkuBasicClientEntityModule extends BasicClientEntityModule {
 
     /**
+     *
      * @param ceilingEntityFullyQualifiedClassname
      * @param persistencePerspective
      * @param service
@@ -59,12 +60,18 @@ public class SkuBasicClientEntityModule extends BasicClientEntityModule {
     public SkuBasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
         super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
     }
-    
+
     /**
      * On a server-side inspect, the fields for all of the ProductOptions are returned with no bearing on options a Product has
      * nor on what values the Skus have for that Product (because nothing has been selected at the time of inspect). This information
      * is only available to us when the Skus are actually fetched. The fetch will return the correct ProductOptions in the list
      * of Properties in the Entities that were returned so that we can show/hide the ProductOption fields accordingly
+     *
+     * @param requestId
+     * @param request
+     * @param response
+     * @param customCriteria
+     * @param cb
      */
     @Override
     public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
@@ -83,11 +90,21 @@ public class SkuBasicClientEntityModule extends BasicClientEntityModule {
                     response.setTotalRows(result.getTotalRecords());
                     /*** END COPY FROM BasicClientEntityModule ***/
                     
+                    // First, hide all of the productOption fields becauase they may not be applicable to this particular 
+                    // product
+                    for (DataSourceField field : dataSource.getFields()) {
+                        if (field.getName().startsWith("productOption")) {
+                            field.setAttribute("formHidden", FormHiddenEnum.HIDDEN);
+                        }
+                    }
+                    
                     //In order to make the form display show up properly for creating a new single Sku, make all the product
                     //options for the Product visible on the form
-                    for (Property property : result.getClassMetaData().getProperties()) {
-                        DataSourceField field = ((ListGridDataSource)dataSource).getField(property.getName());
-                        field.setAttribute("formHidden", FormHiddenEnum.VISIBLE);
+                    if (result.getClassMetaData().getProperties() != null) {
+                        for (Property property : result.getClassMetaData().getProperties()) {
+                            DataSourceField field = ((ListGridDataSource)dataSource).getField(property.getName());
+                            field.setAttribute("formHidden", FormHiddenEnum.VISIBLE);
+                        }
                     }
                     
                     //Build up a list of the product options that are relevant for this list of Skus

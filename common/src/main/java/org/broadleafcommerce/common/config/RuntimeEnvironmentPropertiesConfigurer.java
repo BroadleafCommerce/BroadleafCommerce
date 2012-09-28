@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +30,7 @@ import org.springframework.util.StringValueResolver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -73,9 +73,9 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
 
     private static final Log LOG = LogFactory.getLog(RuntimeEnvironmentPropertiesConfigurer.class);
     
-    protected static Set<String> defaultEnvironments = new HashSet<String>();
-    protected static Set<Resource> blcPropertyLocations = new HashSet<Resource>();
-    protected static Set<Resource> defaultPropertyLocations = new HashSet<Resource>();
+    protected static Set<String> defaultEnvironments = new LinkedHashSet<String>();
+    protected static Set<Resource> blcPropertyLocations = new LinkedHashSet<Resource>();
+    protected static Set<Resource> defaultPropertyLocations = new LinkedHashSet<Resource>();
 
     
     static {
@@ -112,7 +112,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     	}
     	
     	// Prepend the default property locations to the specified property locations (if any)
-		Set<Resource> combinedLocations = new HashSet<Resource>();
+		Set<Resource> combinedLocations = new LinkedHashSet<Resource>();
 		combinedLocations.addAll(defaultPropertyLocations);
     	if (propertyLocations != null && propertyLocations.size() > 0) {
     		combinedLocations.addAll(propertyLocations);

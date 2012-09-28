@@ -42,16 +42,6 @@
 	</tx:advice>
 
 	<aop:config>
-	    <aop:pointcut id="blCatalogServiceOperation" expression="execution(* org.broadleafcommerce.core.catalog.service.CatalogService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogServiceOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.OrderService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="1"/>
-	</aop:config>
-
-	<aop:config>
 		<aop:pointcut id="blLegacyOrderServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.legacy.LegacyOrderService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLegacyOrderServiceOperation" order="1"/>
 	</aop:config>
@@ -84,16 +74,6 @@
 	<aop:config>
 		<aop:pointcut id="blOrderDaoOperation5" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.update*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation5"/>
-	</aop:config>
-
-	<aop:config>
-		<aop:pointcut id="blFulfillmentGroupServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.FulfillmentGroupService.save(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blFulfillmentGroupServiceOperation"/>
-	</aop:config>
-
-	<aop:config>
-		<aop:pointcut id="blFulfillmentOptionServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.FulfillmentOptionService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blFulfillmentOptionServiceOperation"/>
 	</aop:config>
 
 	<aop:config>
@@ -185,20 +165,10 @@
 		<aop:pointcut id="blAvailabilityServiceOperation" expression="execution(* org.broadleafcommerce.core.inventory.service.AvailabilityService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAvailabilityServiceOperation"/>
 	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blRatingServiceOperation" expression="execution(* org.broadleafcommerce.core.rating.service.RatingService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRatingServiceOperation"/>
-	</aop:config>
 
 	<aop:config>
 		<aop:pointcut id="blContentServiceOperation" expression="execution(* org.broadleafcommerce.core.content.service.ContentService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blContentServiceOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blRelatedProductOperation" expression="execution(* org.broadleafcommerce.core.catalog.service.RelatedProductsService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRelatedProductOperation"/>
 	</aop:config>
 
 </beans>

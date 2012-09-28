@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,10 +27,10 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredCon
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
@@ -76,6 +76,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected HandlerRegistration ruleSaveButtonHandlerRegistration;
     protected HandlerRegistration ruleRefreshButtonHandlerRegistration;
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
     protected Record currentStructuredContentRecord;
     protected String currentStructuredContentId;
     protected Integer currentStructuredContentPos;
@@ -239,12 +240,19 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
             }
             }
         });
-        display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+        
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-            destroyContentTypeForm();
+                destroyContentTypeForm();
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
+                getDisplay().disableRules();
+                getDisplay().getRulesSaveButton().disable();
+                getDisplay().getRulesRefreshButton().disable();
             }
         });
+        
         getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

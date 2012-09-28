@@ -1,3 +1,19 @@
+/*
+ * Copyright 2008-2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -12,6 +28,7 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -39,6 +56,7 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     protected String addressUpdatedMessage = "Address successfully updated";
     protected String addressAddedMessage = "Address successfully added";
     protected String addressRemovedMessage = "Address successfully removed";
+    protected String addressRemovedErrorMessage = "Address could not be removed as it is in use";
 	
     protected static String customerAddressesView = "account/manageCustomerAddresses";
     protected static String customerAddressesRedirect = "redirect:/account/addresses";
@@ -143,8 +161,14 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     }
     
     public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
-    	customerAddressService.deleteCustomerAddressById(customerAddressId);
-    	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
+        try {
+        	customerAddressService.deleteCustomerAddressById(customerAddressId);
+        	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
+        } catch (DataIntegrityViolationException e) {
+            // This likely occurred because there is an order or cart in the system that is currently utilizing this
+            // address. Therefore, we're not able to remove it as it breaks a foreign key constraint
+            redirectAttributes.addFlashAttribute("errorMessage", getAddressRemovedErrorMessage());
+        }
     	return getCustomerAddressesRedirect();
     }
 
@@ -174,6 +198,10 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
 
 	public String getAddressRemovedMessage() {
 		return addressRemovedMessage;
+	}
+	
+	public String getAddressRemovedErrorMessage() {
+		return addressRemovedErrorMessage;
 	}
 	
 }

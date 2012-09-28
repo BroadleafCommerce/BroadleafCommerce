@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -62,6 +63,16 @@ public class DatabaseSearchServiceImpl implements SearchService {
     protected static String CACHE_NAME = "blStandardElements";
     protected static String CACHE_KEY_PREFIX = "facet:";
     protected Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
+    
+    @Override
+    public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException {
+        throw new UnsupportedOperationException("See findProductsByCategory or use the SolrSearchService implementation");
+    }
+    
+    @Override
+    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, ProductSearchCriteria searchCriteria) throws ServiceException {
+        throw new UnsupportedOperationException("This operation is only supported by the SolrSearchService by default");
+    }
     
 	@Override
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
@@ -273,5 +284,5 @@ public class DatabaseSearchServiceImpl implements SearchService {
 	public void rebuildIndex() {
 		throw new UnsupportedOperationException("Indexes are not supported by this implementation");
 	}
-	
+
 }

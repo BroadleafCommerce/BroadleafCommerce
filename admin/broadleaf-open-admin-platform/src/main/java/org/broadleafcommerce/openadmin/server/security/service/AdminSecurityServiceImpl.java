@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.server.security.service;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.security.util.PasswordChange;
@@ -45,6 +44,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,6 +77,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
+    
+    /**
+     * Optional password salt to be used with the passwordEncoder
+     */
+    protected String salt;
 
     @Resource(name="blEmailService")
     protected EmailService emailService;
@@ -94,45 +99,55 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Value("${resetPasswordURL}")
     protected String resetPasswordURL;
 
+    @Override
     public void deleteAdminPermission(AdminPermission permission) {
         adminPermissionDao.deleteAdminPermission(permission);
     }
 
+    @Override
     public void deleteAdminRole(AdminRole role) {
         adminRoleDao.deleteAdminRole(role);
     }
 
+    @Override
     public void deleteAdminUser(AdminUser user) {
         adminUserDao.deleteAdminUser(user);
     }
 
+    @Override
     public AdminPermission readAdminPermissionById(Long id) {
         return adminPermissionDao.readAdminPermissionById(id);
     }
 
+    @Override
     public AdminRole readAdminRoleById(Long id) {
         return adminRoleDao.readAdminRoleById(id);
     }
 
+    @Override
     public AdminUser readAdminUserById(Long id) {
         return adminUserDao.readAdminUserById(id);
     }
 
+    @Override
     public AdminPermission saveAdminPermission(AdminPermission permission) {
         return adminPermissionDao.saveAdminPermission(permission);
     }
 
+    @Override
     public AdminRole saveAdminRole(AdminRole role) {
         return adminRoleDao.saveAdminRole(role);
     }
 
+    @Override
     public AdminUser saveAdminUser(AdminUser user) {
     	if (user.getUnencodedPassword() != null) {
-            user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), null));
+            user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), getSalt(user)));
         }
         return adminUserDao.saveAdminUser(user);
     }
 
+    @Override
     public AdminUser changePassword(PasswordChange passwordChange) {
     	AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
@@ -144,30 +159,37 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return user;
     }
 
+    @Override
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         return adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
     }
 
+    @Override
     public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         return adminPermissionDao.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName);
     }
 
+    @Override
     public AdminUser readAdminUserByUserName(String userName) {
         return adminUserDao.readAdminUserByUserName(userName);
     }
 
+    @Override
     public List<AdminUser> readAllAdminUsers() {
         return adminUserDao.readAllAdminUsers();
     }
 
+    @Override
     public List<AdminRole> readAllAdminRoles() {
         return adminRoleDao.readAllAdminRoles();
     }
 
+    @Override
     public List<AdminPermission> readAllAdminPermissions() {
         return adminPermissionDao.readAllAdminPermissions();
     }
 
+    @Override
     public GenericResponse sendForgotUsernameNotification(String emailAddress) {
         GenericResponse response = new GenericResponse();
         List<AdminUser> users = null;
@@ -196,6 +218,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return response;
     }
 
+    @Override
     public GenericResponse sendResetPasswordNotification(String username) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
@@ -212,7 +235,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
             ForgotPasswordSecurityToken fpst = new ForgotPasswordSecurityTokenImpl();
             fpst.setAdminUserId(user.getId());
-            fpst.setToken(passwordEncoder.encodePassword(token,null));
+            fpst.setToken(passwordEncoder.encodePassword(token, null));
             fpst.setCreateDate(SystemTime.asDate());
             forgotPasswordSecurityTokenDao.saveToken(fpst);
             
@@ -233,6 +256,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return response;
     }
 
+    @Override
     public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
@@ -248,7 +272,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         ForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
-            fpst = forgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token,null));
+            fpst = forgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token, null));
             if (fpst == null) {
                 response.addErrorCode("invalidToken");
             } else if (fpst.isTokenUsedFlag()) {
@@ -332,6 +356,26 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     public void setResetPasswordEmailInfo(EmailInfo resetPasswordEmailInfo) {
         this.resetPasswordEmailInfo = resetPasswordEmailInfo;
+    }
+    
+    /**
+     * Optionally provide a salt based on a a specific AdminUser.  By default, this returns
+     * the salt property of this class
+     * 
+     * @param customer
+     * @return
+     * @see {@link AdminSecurityServiceImpl#getSalt()}
+     */
+    public String getSalt(AdminUser user) {
+        return getSalt();
+    }
+    
+    public String getSalt() {
+        return salt;
+    }
+    
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
 	@Override

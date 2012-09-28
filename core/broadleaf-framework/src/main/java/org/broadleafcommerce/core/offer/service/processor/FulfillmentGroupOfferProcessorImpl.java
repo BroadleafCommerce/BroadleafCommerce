@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -88,7 +88,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     public void calculateFulfillmentGroupTotal(PromotableOrder order) {
 		Money totalShipping = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,order.getDelegate().getCurrency());
 		for (PromotableFulfillmentGroup fulfillmentGroupMember : order.getFulfillmentGroups()) {
-			PromotableFulfillmentGroup fulfillmentGroup = fulfillmentGroupMember;
+			PromotableFulfillmentGroup fulfillmentGroup = (PromotableFulfillmentGroup) fulfillmentGroupMember;
 			if (fulfillmentGroup.getAdjustmentPrice() != null) {
 	            fulfillmentGroup.setShippingPrice(fulfillmentGroup.getAdjustmentPrice());
 	        } else if (fulfillmentGroup.getSaleShippingPrice() != null) {
@@ -234,16 +234,16 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 			// totalitarian fg offer is better; remove all order/item offers
 			order.removeAllOrderAdjustments();
 			order.removeAllItemAdjustments();
-			gatherCart(order);
-			initializeSplitItems(order);
+			orderItemMergeService.gatherCart(order);
+			orderItemMergeService.initializeSplitItems(order);
 		}
 		return fgOfferApplied;
 	}
 	
 	protected void applyFulfillmentGroupOffer(PromotableCandidateFulfillmentGroupOffer fulfillmentGroupOffer) {
         FulfillmentGroupAdjustment fulfillmentGroupAdjustment = offerDao.createFulfillmentGroupAdjustment();
-        fulfillmentGroupAdjustment.init(fulfillmentGroupOffer.getFulfillmentGroup().getDelegate(), fulfillmentGroupOffer.getOffer(), fulfillmentGroupOffer.getOffer().getName());
-        PromotableFulfillmentGroupAdjustment promotableFulfillmentGroupAdjustment = promotableItemFactory.createPromotableFulfillmentGroupAdjustment(fulfillmentGroupAdjustment, fulfillmentGroupOffer.getFulfillmentGroup());
+        fulfillmentGroupAdjustment.init(((PromotableFulfillmentGroup) fulfillmentGroupOffer.getFulfillmentGroup()).getDelegate(), fulfillmentGroupOffer.getOffer(), fulfillmentGroupOffer.getOffer().getName());
+        PromotableFulfillmentGroupAdjustment promotableFulfillmentGroupAdjustment = promotableItemFactory.createPromotableFulfillmentGroupAdjustment(fulfillmentGroupAdjustment, (PromotableFulfillmentGroup) fulfillmentGroupOffer.getFulfillmentGroup());
         //add to adjustment
         fulfillmentGroupOffer.getFulfillmentGroup().addFulfillmentGroupAdjustment(promotableFulfillmentGroupAdjustment);
     }

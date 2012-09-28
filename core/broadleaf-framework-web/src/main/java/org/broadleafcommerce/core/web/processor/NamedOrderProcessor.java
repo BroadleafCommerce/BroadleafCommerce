@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -28,8 +25,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-
-import java.util.List;
 
 /**
  * A Thymeleaf processor that will add the desired named order to the model
@@ -65,9 +60,9 @@ public class NamedOrderProcessor extends AbstractModelVariableModifierProcessor 
 
         Order order = orderService.findNamedOrderForCustomer(orderName, customer);
         if (order != null) {
-            addToModel(orderVar, order);
+            addToModel(arguments, orderVar, order);
         } else {
-            addToModel(orderVar, new NullOrderImpl());
+            addToModel(arguments, orderVar, new NullOrderImpl());
         }
     }
 }

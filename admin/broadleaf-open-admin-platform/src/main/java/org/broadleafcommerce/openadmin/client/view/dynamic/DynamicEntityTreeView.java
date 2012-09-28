@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,9 @@
  */
 
 package org.broadleafcommerce.openadmin.client.view.dynamic;
+
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
@@ -28,8 +31,6 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 
 /**
  * 
@@ -75,7 +76,7 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
         showArchivedButton.setTitle(archivedButtonTitle);
         showArchivedButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/find.png");
         showArchivedButton.setVisibility(Visibility.HIDDEN);
-        toolBar.addButton(showArchivedButton);
+      //  toolBar.addButton(showArchivedButton);
 
         toolBar.addSpacer(6);
         
@@ -112,26 +113,32 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
         addMember(grid);
 	}
 
-	public ToolStripButton getAddButton() {
+	@Override
+    public ToolStripButton getAddButton() {
 		return addButton;
 	}
 
-	public ToolStripButton getRemoveButton() {
+	@Override
+    public ToolStripButton getRemoveButton() {
 		return removeButton;
 	}
 
-	public ComboBoxItem getEntityType() {
+	@Override
+    public ComboBoxItem getEntityType() {
 		return entityType;
 	}
 
-	public ListGrid getGrid() {
+	@Override
+    public ListGrid getGrid() {
 		return grid;
 	}
 
-	public ToolStrip getToolBar() {
+	@Override
+    public ToolStrip getToolBar() {
 		return toolBar;
 	}
 
+    @Override
     public ToolStripButton getShowArchivedButton() {
         return showArchivedButton;
     }

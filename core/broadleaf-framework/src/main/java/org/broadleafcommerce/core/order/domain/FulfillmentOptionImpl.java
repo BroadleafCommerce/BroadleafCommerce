@@ -78,7 +78,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Column(name = "FULFILLMENT_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "Fulfillment Type", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
-    protected String fulfillmentType = FulfillmentType.PHYSICAL.getType();
+    protected String fulfillmentType;
 
     @ManyToMany(targetEntity = FulfillmentOptionTranslationImpl.class)
     @JoinTable(name = "BLC_FULFILLMENT_OPTION_TRANSLATION_XREF",

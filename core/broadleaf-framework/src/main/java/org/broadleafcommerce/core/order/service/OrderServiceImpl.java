@@ -50,6 +50,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -118,6 +119,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
+    @Transactional("blTransactionManager")
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
         namedOrder.setCustomer(customer);
@@ -167,6 +169,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
+    @Transactional("blTransactionManager")
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo) {
         payment.setOrder(order);
         order.getPaymentInfos().add(payment);
@@ -181,6 +184,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 	@Override
+    @Transactional(value = "blTransactionManager")
 	public Order save(Order order, Boolean priceOrder) throws PricingException {
         if (priceOrder) {
             order = pricingService.executePricing(order);
@@ -195,11 +199,13 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+    @Transactional("blTransactionManager")
 	public void cancelOrder(Order order) {
         orderDao.delete(order);
 	}
 
 	@Override
+    @Transactional("blTransactionManager")
 	public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
         if( !order.getAddedOfferCodes().contains(offerCode)) {
             if (! offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode.getOffer())) {
@@ -212,6 +218,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 	@Override
+    @Transactional("blTransactionManager")
 	public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
         order.getAddedOfferCodes().remove(offerCode);
         order = save(order, priceOrder);
@@ -219,6 +226,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 	@Override
+    @Transactional("blTransactionManager")
 	public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
 		 order.getAddedOfferCodes().clear();
 		 order = save(order, priceOrder);
@@ -262,11 +270,13 @@ public class OrderServiceImpl implements OrderService {
     }
 	
 	@Override
+    @Transactional("blTransactionManager")
     public Order confirmOrder(Order order) {
         return orderDao.submitOrder(order);
     }
 	
     @Override
+    @Transactional("blTransactionManager")
     public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
@@ -290,6 +300,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     @Override
+    @Transactional("blTransactionManager")
     public Order addItemFromNamedOrder(Order namedOrder, OrderItem item, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
@@ -311,6 +322,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     @Override
+    @Transactional("blTransactionManager")
     public Order addItemFromNamedOrder(Order namedOrder, OrderItem item, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException {
     	// Validate that the quantity requested makes sense
         if (quantity < 1 || quantity > item.getQuantity()) {
@@ -340,6 +352,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
 	@Override
+    @Transactional("blTransactionManager")
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
         item.setOrder(order);
@@ -352,6 +365,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
     	try {
     		CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
@@ -363,6 +377,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 	@Override
+    @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
 	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
 		if (orderItemRequestDTO.getQuantity() == 0) {
 			return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
@@ -378,6 +393,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+    @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
 	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
     	try {
     		OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
@@ -419,11 +435,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void removeAllPaymentsFromOrder(Order order) {
         removePaymentsFromOrder(order, null);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType) {
         List<PaymentInfo> infos = new ArrayList<PaymentInfo>();
         for (PaymentInfo paymentInfo : order.getPaymentInfos()) {

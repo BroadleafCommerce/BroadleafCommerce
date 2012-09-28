@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,19 +17,14 @@
 package org.broadleafcommerce.core.catalog;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.testng.annotations.DataProvider;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class ProductDataProvider {
 
@@ -70,88 +65,6 @@ public class ProductDataProvider {
         return objs;
     }
 
-    @DataProvider(name="basicCrossSaleValue")
-    public static Object[][] provideBasicCrossSale() {
-        Product p1 = getProduct(1L);
-        Product p2 = getProduct(2L);
-
-        Product rel1 = getProduct(3L);
-        Product rel2 = getProduct(4L);
-        Product rel3 = getProduct(5L);
-        Product rel4 = getProduct(6L);
-        Product rel5 = getProduct(7L);
-
-        //p1 associated RelatedProducts
-        List<RelatedProduct> p1UpSales = new ArrayList<RelatedProduct>();
-        getRelatedCrossProduct(p1, rel1, p1UpSales);
-        getRelatedCrossProduct(p1, rel2, p1UpSales);
-        getRelatedCrossProduct(p1, rel3, p1UpSales);
-        p1.setCrossSaleProducts(p1UpSales);
-
-        //p2 associated RelatedProducts
-        List<RelatedProduct> p2UpSales = new ArrayList<RelatedProduct>();
-        getRelatedCrossProduct(p2, rel4, p2UpSales);
-        getRelatedCrossProduct(p2, rel5, p2UpSales);
-        p2.setCrossSaleProducts(p2UpSales);
-
-        Object[][] objs = new Object[2][1];
-        objs[0] = new Object[]{p1};
-        objs[1] = new Object[]{p2};
-
-        return objs;
-    }
-
-    @DataProvider(name="basicUpSaleValue")
-    public static Object[][] provideBasicUpSale() {
-        Product p1 = getProduct(1L);
-        Product p2 = getProduct(2L);
-
-        Product rel1 = getProduct(3L);
-        Product rel2 = getProduct(4L);
-        Product rel3 = getProduct(5L);
-        Product rel4 = getProduct(6L);
-        Product rel5 = getProduct(7L);
-
-        //p1 associated RelatedProducts
-        List<RelatedProduct> p1UpSales = new ArrayList<RelatedProduct>();
-        getRelatedUpSaleProduct(p1, rel1, p1UpSales);
-        getRelatedUpSaleProduct(p1, rel2, p1UpSales);
-        getRelatedUpSaleProduct(p1, rel3, p1UpSales);
-        p1.setUpSaleProducts(p1UpSales);
-
-        //p2 associated RelatedProducts
-        List<RelatedProduct> p2UpSales = new ArrayList<RelatedProduct>();
-        getRelatedUpSaleProduct(p2, rel4, p2UpSales);
-        getRelatedUpSaleProduct(p2, rel5, p2UpSales);
-        p2.setUpSaleProducts(p2UpSales);
-
-        Object[][] objs = new Object[2][1];
-        objs[0] = new Object[]{p1};
-        objs[1] = new Object[]{p2};
-
-        return objs;
-    }
-
-    private static RelatedProduct getRelatedUpSaleProduct(Product prod, Product prodToRelate, List<RelatedProduct> upSales){
-        RelatedProduct rp1 = new UpSaleProductImpl();
-        rp1.setProduct(prod);
-        rp1.setPromotionMessage("brand new coffee");
-        rp1.setRelatedProduct(prodToRelate);
-
-        upSales.add(rp1);
-        return rp1;
-    }
-
-    private static RelatedProduct getRelatedCrossProduct(Product prod, Product prodToRelate, List<RelatedProduct> upSales){
-        RelatedProduct rp1 = new CrossSaleProductImpl();
-        rp1.setProduct(prod);
-        rp1.setPromotionMessage("brand new coffee");
-        rp1.setRelatedProduct(prodToRelate);
-
-        upSales.add(rp1);
-        return rp1;
-    }
-
     private static Product getProduct(Long id) {
     	Calendar activeStartCal = Calendar.getInstance();
     	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
@@ -167,6 +80,7 @@ public class ProductDataProvider {
         }
         product.setId(id);
         defaultSku.setName(id.toString());
+        defaultSku.setId(id);
         return product;
     }
 }

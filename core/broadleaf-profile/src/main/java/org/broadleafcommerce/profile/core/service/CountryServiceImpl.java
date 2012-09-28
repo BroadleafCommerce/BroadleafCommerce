@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.profile.core.dao.CountryDao;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("blCountryService")
 public class CountryServiceImpl implements CountryService {
@@ -37,7 +38,8 @@ public class CountryServiceImpl implements CountryService {
     public Country findCountryByAbbreviation(String abbreviation) {
         return countryDao.findCountryByAbbreviation(abbreviation);
     }
-    
+
+    @Transactional("blTransactionManager")
     public Country save(Country country) {
     	return countryDao.save(country);
     }

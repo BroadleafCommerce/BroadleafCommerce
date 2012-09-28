@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,6 +47,7 @@ import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
@@ -923,6 +924,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                             field = new DataSourceDateTimeField(propertyName, friendlyName);
                             field.setCanEdit(mutable);
                             field.setRequired(required);
+                            field.setEditorType(new MiniDateRangeItem());
                             //field.setValidOperators(getBasicDateOperators());
                             break;
                         case INTEGER:
@@ -1161,17 +1163,26 @@ public class BasicClientEntityModule implements DataSourceModule {
 
                 @Override
                 public void visit(final BasicCollectionMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    //protect against non dynamic entity presenter usage
+                    if (presenterSequenceSetupManager != null) {
+                        DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    }
                 }
 
                 @Override
                 public void visit(AdornedTargetCollectionMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    //protect against non dynamic entity presenter usage
+                    if (presenterSequenceSetupManager != null) {
+                        DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    }
                 }
 
                 @Override
                 public void visit(MapMetadata metadata) {
-                    DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    //protect against non dynamic entity presenter usage
+                    if (presenterSequenceSetupManager != null) {
+                        DynamicEntityPresenter.collectionMetadatas.put(presenterSequenceSetupManager.getPresenter().getClass().getName() + "_" + property.getName(), metadata);
+                    }
                 }
             });
 		}
@@ -1201,7 +1212,6 @@ public class BasicClientEntityModule implements DataSourceModule {
 
 	public void setDataSource(AbstractDynamicDataSource dataSource) {
 		this.dataSource = dataSource;
-        this.dataSource.setAttribute("COLLECTION_PROPERTIES", new HashMap(), true);
 	}
 
 	public String getCeilingEntityFullyQualifiedClassname() {

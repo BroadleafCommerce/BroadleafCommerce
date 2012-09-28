@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.CriteriaPolicy;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.GwtRpcDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
@@ -28,7 +29,9 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallbackH
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 
@@ -89,10 +92,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 		setCacheMaxAge(0);
 		this.service = service;
 		this.persistencePerspective = persistencePerspective;
-		for (DataSourceModule module : modules) {
-			module.setDataSource(this);
-		}
-		this.modules = modules;
+		setModules(modules);
 	}
 
 	public LinkedHashMap<String, String> getPolymorphicEntities() {
@@ -127,7 +127,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 	
 	public String getPrimaryKeyValue(Record record) {
 		String primaryKey = getPrimaryKeyFieldName();
-		return record.getAttribute(primaryKey);
+		return stripDuplicateAllowSpecialCharacters(record.getAttribute(primaryKey));
 	}
 
     public ClassTree getPolymorphicEntityTree() {
@@ -183,5 +183,38 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 
     public PersistencePerspective getPersistencePerspective() {
         return persistencePerspective;
+    }
+
+    public DataSourceModule[] getModules() {
+        return modules;
+    }
+
+    public void setModules(DataSourceModule[] modules) {
+        for (DataSourceModule module : modules) {
+            module.setDataSource(this);
+        }
+        this.modules = modules;
+    }
+
+    public void replaceModuleByType(OperationType type, DataSourceModule module) {
+        List<DataSourceModule> moduleList = new ArrayList<DataSourceModule>(modules.length);
+        boolean moduleAdded = false;
+        for (DataSourceModule existingModule : modules) {
+            if (existingModule.isCompatible(type) && !moduleAdded) {
+                moduleList.add(module);
+                module.setDataSource(this);
+            } else {
+                moduleList.add(existingModule);
+            }
+        }
+        modules = moduleList.toArray(modules);
+    }
+
+    public DynamicEntityServiceAsync getService() {
+        return service;
+    }
+
+    public void setService(DynamicEntityServiceAsync service) {
+        this.service = service;
     }
 }

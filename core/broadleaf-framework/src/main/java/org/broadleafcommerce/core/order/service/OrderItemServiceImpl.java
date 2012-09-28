@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -82,6 +82,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
         item.setOrder(itemRequest.getOrder());
+
         if (itemRequest.getItemAttributes() != null && itemRequest.getItemAttributes().size() > 0) {
             Map<String,OrderItemAttribute> orderItemAttributes = new HashMap<String,OrderItemAttribute>();
             item.setOrderItemAttributes(orderItemAttributes);
@@ -102,7 +103,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         populateDiscreteOrderItem(item, itemRequest);
         
-        item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
+        item.setBaseSalePrice(itemRequest.getSalePriceOverride()==null?itemRequest.getSku().getSalePrice():itemRequest.getSalePriceOverride());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
         for (DiscreteOrderItemFeePrice feePrice : item.getDiscreteOrderItemFeePrices()) {
@@ -204,6 +205,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         bundleOrderItem.setName(itemRequest.getName());
         bundleOrderItem.setProductBundle(productBundle);
         bundleOrderItem.setOrder(itemRequest.getOrder());
+
         for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
             Product bundleProduct = skuBundleItem.getBundle();
             Sku bundleSku = skuBundleItem.getSku();
@@ -224,6 +226,8 @@ public class OrderItemServiceImpl implements OrderItemService {
 	        bundleItemRequest.setSku(bundleSku);
 	        bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
 	        bundleItemRequest.setOrder(itemRequest.getOrder());
+            bundleItemRequest.setSalePriceOverride(skuBundleItem.getSalePrice());
+            
             DiscreteOrderItem bundleDiscreteItem = createDiscreteOrderItem(bundleItemRequest);
             bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
             bundleDiscreteItem.setBundleOrderItem(bundleOrderItem);

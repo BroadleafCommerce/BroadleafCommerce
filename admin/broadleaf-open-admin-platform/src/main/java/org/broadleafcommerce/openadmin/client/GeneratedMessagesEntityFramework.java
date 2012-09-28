@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -272,6 +272,7 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
    
     public String BundleOrderItemImpl_Base_Retail_Price();
     public String BundleOrderItemImpl_Base_Sale_Price();
+    public String ProductImpl_Can_Sell_Without_Options();
     public String PriceListImpl_Currenc();
     public String PriceListImpl_Is_Default();
     public String PriceListImpl_Key();
@@ -280,4 +281,5 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
     public String PriceListImpl_Primary_Key();
     public String PriceListImpl_Details();
     public String PriceListImpl_friendyName();
+
 }

@@ -16,17 +16,16 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 
@@ -61,20 +60,18 @@ public class SkusPresenter extends SubPresenter {
                     initialValues.put(foreignKey.getManyToField(), abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord));
                     String[] type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
                     initialValues.put("_type", type);
-                    BLCMain.ENTITY_ADD.editNewRecord(newEntityDialogTitle, ds, initialValues, null, null, null);
-                }
-            }
-        });
-        removedClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (event.isLeftButtonDown()) {
-                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                    ItemEditedHandler editHandler = new ItemEditedHandler() {
                         @Override
-                        public void execute(DSResponse response, Object rawData, DSRequest request) {
-                            display.getRemoveButton().disable();
+                        public void onItemEdited(ItemEdited event) {
+                            //Editing a single sku could change the grid columns if the product option values changed
+                            for (String attribute : event.getRecord().getAttributes()) {
+                                if (attribute.startsWith("productOption")) {
+                                    display.getGrid().showField(attribute);
+                                }
+                            }
                         }
-                    });
+                    };
+                    BLCMain.ENTITY_ADD.editNewRecord(newEntityDialogTitle, ds, initialValues, editHandler, null, null);
                 }
             }
         });

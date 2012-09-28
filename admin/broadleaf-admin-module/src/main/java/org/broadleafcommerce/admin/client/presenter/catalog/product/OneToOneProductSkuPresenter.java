@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,8 +54,8 @@ import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -66,6 +66,8 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 import java.util.HashMap;
@@ -85,6 +87,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected SubPresentable skusPresenter;
 	protected SubPresentable bundleItemsPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -94,6 +97,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
         getDisplay().getCloneProductButton().enable();
+
 	}
 
     @Override
@@ -113,30 +117,33 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                SC.confirm(BLCMain.getMessageManager().getString("generateSkusConfirm"), new BooleanCallback() {
-                    @Override
-                    public void execute(Boolean value) {
-                        if (value) {
-                            Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
-                            AppServices.CATALOG.generateSkusFromProduct(productId, new AsyncCallback<Integer>() {
-                                @Override
-                                public void onSuccess(Integer result) {
-                                    //we just finished creating a bunch of Skus, reload the grid
-                                    getDisplay().getSkusDisplay().getGrid().invalidateCache();
-                                    SC.say(result + " " + BLCMain.getMessageManager().getString("skuGenerationSuccess"));
-                                }
-                                
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    SC.say(BLCMain.getMessageManager().getString("skuGenerationFail"));
-                                }
-                            });
-                        } else {
-                            SC.say(BLCMain.getMessageManager().getString("noSkusGenerated"));
+                if (getDisplay().getProductOptionsDisplay().getGrid().getTotalRows() <= 0) {
+                    SC.say(BLCMain.getMessageManager().getString("skuGenerationInvalid"));
+                } else {
+                    SC.confirm(BLCMain.getMessageManager().getString("generateSkusConfirm"), new BooleanCallback() {
+                        @Override
+                        public void execute(Boolean value) {
+                            if (value) {
+                                Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
+                                AppServices.CATALOG.generateSkusFromProduct(productId, new AsyncCallback<Integer>() {
+                                    @Override
+                                    public void onSuccess(Integer result) {
+                                        //we just finished creating a bunch of Skus, reload the grid
+                                        getDisplay().getSkusDisplay().getGrid().invalidateCache();
+                                        SC.say(result + " " + BLCMain.getMessageManager().getString("skuGenerationSuccess"));
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable caught) {
+                                        SC.say(BLCMain.getMessageManager().getString("skuGenerationFail"));
+                                    }
+                                });
+                            } else {
+                                SC.say(BLCMain.getMessageManager().getString("noSkusGenerated"));
+                            }
                         }
-                    }
-                });
-                
+                    });
+                }
             }
         });
 		
@@ -186,6 +193,13 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		        });
 		    }
 		});
+		
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                ((OneToOneProductSkuDisplay) display).getCloneProductButton().disable();
+            }
+        });
 
 	}
 	
@@ -241,7 +255,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             public void onSetupSuccess(DataSource result) {
 		        productOptionsPresenter = new AssociatedProductOptionPresenterBasic(getDisplay().getProductOptionsDisplay(), (EntitySearchDialog)library.get("productOptionSearchView"), BLCMain.getMessageManager().getString("productOptionSearchPrompt"));
 		        productOptionsPresenter.setDataSource((ListGridDataSource) result, new String[]{"label", "type", "required"}, new Boolean[]{true, true, true});
-		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"value", "displayOrder"}, new Boolean[]{false, false});
+		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"displayOrder","attributeValue","priceAdjustment"}, new Boolean[]{false,false, false});
 		    }
 		}));
 		
@@ -260,14 +274,15 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 ListGridDataSource skuSearchDataSource = (ListGridDataSource)result;
                 skuSearchDataSource.resetPermanentFieldVisibility("name", "retailPrice", "salePrice");
                 skuSearchView = new EntitySearchDialog(skuSearchDataSource, true);
+                skuSearchView.setWidth(800);
             }
         }));
 
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleSkusDS", new SkuBundleItemsDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                bundleItemsPresenter = new EditableAdornedTargetListPresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "salePrice"});
-                bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"sku.name", "quantity"}, new Boolean[]{false, true});
+                bundleItemsPresenter = new EditableAdornedTargetListPresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "itemSalePrice"});
+                bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "quantity", "itemSalePrice"}, new Boolean[]{false, false, false});
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
@@ -289,6 +304,10 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
     @Override
     public void postSetup(Canvas container) {
+        MapStructurePresenter simplePresenter = (MapStructurePresenter) subPresentables.get("productMediaMapDS");
+        DefaultSkuMediaMapStructurePresenter defaultSkuMediaMapStructurePresenter = new DefaultSkuMediaMapStructurePresenter(simplePresenter);
+        subPresentables.put("productMediaMapDS", defaultSkuMediaMapStructurePresenter);
+
         getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
             @Override
             public void execute(final FormItem formItem) {
@@ -297,16 +316,14 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                     public void onSearchItemSelected(TileGridItemSelected event) {
                         String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
                         formItem.setValue(staticAssetFullUrl);
-                        for (SubPresentable subPresentable : subPresentables) {
-                            if (((GridStructureDisplay) subPresentable.getDisplay()).getGrid().getDataSource().getDataURL().equals(getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getDataURL())) {
-                                ((MapStructurePresenter) subPresentable).getEntityEditDialog().updateMedia(staticAssetFullUrl);
-                                break;
-                            }
-                        }
+                        ((MapStructurePresenter) subPresentables.get("productMediaMapDS")).getEntityEditDialog().updateMedia(staticAssetFullUrl);
                     }
                 });
             }
         });
+        gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),parentCategoriesPresenter,productOptionsPresenter,skusPresenter,bundleItemsPresenter,defaultSkuMediaMapStructurePresenter );
+        
         super.postSetup(container);
     }
 

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,14 +16,16 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.util.List;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.List;
 
 public interface PromotableOrder {
 
@@ -140,4 +142,13 @@ public interface PromotableOrder {
 
     public List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key);
 
+    public OrderItem searchSplitItemsForKey(OrderItem orderItem);
+
+    public List<OrderMultishipOption> getMultiShipOptions();
+
+    public void setMultiShipOptions(List<OrderMultishipOption> multiShipOptions);
+
+    public boolean isHasMultiShipOptions();
+
+    public void setHasMultiShipOptions(boolean hasMultiShipOptions);
 }

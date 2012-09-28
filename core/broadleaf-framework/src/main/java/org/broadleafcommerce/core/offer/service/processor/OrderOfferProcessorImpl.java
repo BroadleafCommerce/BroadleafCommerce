@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -24,7 +23,7 @@ import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.core.offer.service.OrderItemMergeService;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
@@ -32,36 +31,15 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFa
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
-import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
-import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
-import org.broadleafcommerce.core.order.service.OrderItemService;
-import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
-import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
-import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author jfischer
@@ -74,21 +52,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
 
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
-
-    @Resource(name = "blOrderItemService")
-    protected OrderItemService orderItemService;
-    
-    @Resource(name = "blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
-
-	@Resource(name = "blFulfillmentGroupItemDao")
-    protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
-
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
+    @Resource(name = "blOrderItemMergeService")
+    protected OrderItemMergeService orderItemMergeService;
+
+    @Override
     public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
         if (offer.getDiscountType().getType().equals(OfferDiscountType.FIX_PRICE.getType())) {
             LOG.warn("Offers of type ORDER may not have a discount type of FIX_PRICE. Ignoring order offer (name=" + offer.getName() + ")");
@@ -125,6 +95,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    @Override
     public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order) {
         return couldOfferApplyToOrder(offer, order, null, null);
     }
@@ -211,6 +182,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return promotableCandidateOrderOffer;
     }
 
+    @Override
     public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers) {
         List<PromotableCandidateOrderOffer> remainingCandidateOffers = new ArrayList<PromotableCandidateOrderOffer>();
         int offerCount = 0;
@@ -231,6 +203,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return remainingCandidateOffers;
     }
 
+    @Override
     public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
         boolean orderOffersApplied = false;
@@ -277,50 +250,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return orderOffersApplied;
     }
 
-    public void initializeBundleSplitItems(PromotableOrder order) {
-        List<OrderItem> basicOrderItems = order.getDelegate().getOrderItems();
-        for (OrderItem basicOrderItem : basicOrderItems) {
-            if (basicOrderItem instanceof BundleOrderItem) {
-                BundleOrderItem bundleOrderItem = (BundleOrderItem) basicOrderItem;
-                List<BundleOrderItem> searchHit = order.searchBundleSplitItems(bundleOrderItem);
-                if (searchHit == null) {
-                    searchHit = new ArrayList<BundleOrderItem>();
-                    BundleOrderItemSplitContainer container = new BundleOrderItemSplitContainer();
-                    container.setKey(bundleOrderItem);
-                    container.setSplitItems(searchHit);
-                    order.getBundleSplitItems().add(container);
-                }
-                long count = 0L;
-                if (bundleOrderItem.getQuantity() > 1) {
-                    for (int j = 1; j <= bundleOrderItem.getQuantity(); j++) {
-                        count++;
-                        BundleOrderItem temp = (BundleOrderItem) bundleOrderItem.clone();
-                        temp.setQuantity(1);
-                        temp.setId(count);
-                        searchHit.add(temp);
-                    }
-                } else {
-                    count++;
-                    BundleOrderItem temp = (BundleOrderItem) bundleOrderItem.clone();
-                    temp.setId(count);
-                    searchHit.add(temp);
-                }
-            }
-        }
-    }
-
-    public void initializeSplitItems(PromotableOrder order) {
-        List<PromotableOrderItem> items = order.getDiscountableDiscreteOrderItems();
-        for (PromotableOrderItem item : items) {
-            List<PromotableOrderItem> temp = new ArrayList<PromotableOrderItem>();
-            temp.add(item);
-            OrderItemSplitContainer container = new OrderItemSplitContainer();
-            container.setKey(item.getDelegate());
-            container.setSplitItems(temp);
-            order.getSplitItems().add(container);
-        }
-    }
-
     protected boolean compareAndAdjustOrderAndItemOffers(PromotableOrder order, boolean orderOffersApplied) {
         if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
             // item offer is better; remove not combinable order offer and process other order offers
@@ -329,257 +258,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         } else {
             // totalitarian order offer is better; remove all item offers
             order.removeAllItemAdjustments();
-            gatherCart(order);
-            initializeSplitItems(order);
+            orderItemMergeService.gatherCart(order);
+            orderItemMergeService.initializeSplitItems(order);
         }
         return orderOffersApplied;
-    }
-
-    public void gatherCart(PromotableOrder promotableOrder) {
-        Order order = promotableOrder.getDelegate();
-        try {
-            if (!CollectionUtils.isEmpty(order.getFulfillmentGroups())) {
-                //stage 1 - gather possible split items - including those inside a bundle order item
-                gatherFulfillmentGroupLinkedDiscreteOrderItems(order);
-                //stage 2 - gather the bundles themselves
-                gatherFulfillmentGroupLinkedBundleOrderItems(order);
-            } else {
-                //stage 1 - gather possible split items - including those inside a bundle order item
-                gatherOrderLinkedDiscreteOrderItems(order);
-                //stage 2 - gather the bundles themselves
-                gatherOrderLinkedBundleOrderItems(order);
-            }
-
-        } catch (PricingException e) {
-            throw new RuntimeException("Could not gather the cart", e);
-        }
-        promotableOrder.resetDiscreteOrderItems();
-    }
-
-    protected void gatherOrderLinkedBundleOrderItems(Order order) throws PricingException {
-        Map<String, BundleOrderItem> gatherBundle = new HashMap<String, BundleOrderItem>();
-        List<BundleOrderItem> bundlesToRemove = new ArrayList<BundleOrderItem>();
-        for (OrderItem orderItem : order.getOrderItems()) {
-            if (orderItem instanceof BundleOrderItem) {
-                String identifier = buildIdentifier(orderItem, null);
-                BundleOrderItem retrieved = gatherBundle.get(identifier);
-                if (retrieved == null) {
-                    gatherBundle.put(identifier, (BundleOrderItem) orderItem);
-                    continue;
-                }
-                retrieved.setQuantity(retrieved.getQuantity() + orderItem.getQuantity());
-                bundlesToRemove.add((BundleOrderItem) orderItem);
-            }
-        }
-        for (BundleOrderItem bundleOrderItem : gatherBundle.values()) {
-            orderItemService.saveOrderItem(bundleOrderItem);
-        }
-        for (BundleOrderItem orderItem : bundlesToRemove) {
-        	try {
-        		orderService.removeItem(order.getId(), orderItem.getId(), false);
-        	} catch (RemoveFromCartException e) {
-        		throw new PricingException("Item could not be removed", e);
-        	}
-        }
-    }
-
-    protected void gatherOrderLinkedDiscreteOrderItems(Order order) throws PricingException {
-        List<DiscreteOrderItem> itemsToRemove = new ArrayList<DiscreteOrderItem>();
-        Map<String, OrderItem> gatheredItem = new HashMap<String, OrderItem>();
-        for (OrderItem orderItem : order.getOrderItems()) {
-            if (orderItem instanceof BundleOrderItem) {
-                for (DiscreteOrderItem discreteOrderItem : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
-                    gatherOrderLinkedDiscreteOrderItem(itemsToRemove, gatheredItem, discreteOrderItem, String.valueOf(orderItem.getId()));
-                }
-            } else {
-                gatherOrderLinkedDiscreteOrderItem(itemsToRemove, gatheredItem, (DiscreteOrderItem) orderItem, null);
-            }
-
-        }
-        for (OrderItem orderItem : gatheredItem.values()) {
-            orderItemService.saveOrderItem(orderItem);
-        }
-        for (DiscreteOrderItem orderItem : itemsToRemove) {
-            if (orderItem.getBundleOrderItem() == null) {
-	        	try {
-					orderService.removeItem(order.getId(), orderItem.getId(), false);
-				} catch (RemoveFromCartException e) {
-					throw new PricingException("Could not remove item", e);
-				}
-            } else {
-            	removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
-            }
-        }
-    }
-
-    protected void gatherFulfillmentGroupLinkedBundleOrderItems(Order order) throws PricingException {
-        List<BundleOrderItem> bundlesToRemove = new ArrayList<BundleOrderItem>();
-        Map<Long, Map<String, Object[]>> gatherBundle = new HashMap<Long, Map<String, Object[]>>();
-        for (FulfillmentGroup group : order.getFulfillmentGroups()) {
-            Map<String, Object[]> gatheredItem = gatherBundle.get(group.getId());
-            if (gatheredItem == null) {
-                gatheredItem = new HashMap<String, Object[]>();
-                gatherBundle.put(group.getId(), gatheredItem);
-            }
-            for (FulfillmentGroupItem fgItem : group.getFulfillmentGroupItems()) {
-                OrderItem orderItem = fgItem.getOrderItem();
-                if (orderItem instanceof BundleOrderItem) {
-                    String identifier = buildIdentifier(orderItem, null);
-                    Object[] gatheredOrderItem = gatheredItem.get(identifier);
-                    if (gatheredOrderItem == null) {
-                        gatheredItem.put(identifier, new Object[]{orderItem, fgItem});
-                        continue;
-                    }
-                    ((OrderItem) gatheredOrderItem[0]).setQuantity(((OrderItem) gatheredOrderItem[0]).getQuantity() + orderItem.getQuantity());
-                    ((FulfillmentGroupItem) gatheredOrderItem[1]).setQuantity(((FulfillmentGroupItem) gatheredOrderItem[1]).getQuantity() + fgItem.getQuantity());
-                    bundlesToRemove.add((BundleOrderItem) orderItem);
-                }
-            }
-        }
-        for (Map<String, Object[]> values : gatherBundle.values()) {
-            for (Object[] item : values.values()) {
-                orderItemService.saveOrderItem((OrderItem) item[0]);
-                fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
-            }
-        }
-        for (BundleOrderItem orderItem : bundlesToRemove) {
-        	try {
-        		orderService.removeItem(order.getId(), orderItem.getId(), false);
-        	} catch (RemoveFromCartException e) {
-        		throw new PricingException("Item could not be removed", e);
-        	}
-        }
-    }
-
-    protected void gatherFulfillmentGroupLinkedDiscreteOrderItems(Order order) throws PricingException {
-        List<DiscreteOrderItem> itemsToRemove = new ArrayList<DiscreteOrderItem>();
-        Map<Long, Map<String, Object[]>> gatherMap = new HashMap<Long, Map<String, Object[]>>();
-        for (FulfillmentGroup group : order.getFulfillmentGroups()) {
-            Map<String, Object[]> gatheredItem = gatherMap.get(group.getId());
-            if (gatheredItem == null) {
-                gatheredItem = new HashMap<String, Object[]>();
-                gatherMap.put(group.getId(), gatheredItem);
-            }
-            for (FulfillmentGroupItem fgItem : group.getFulfillmentGroupItems()) {
-                OrderItem orderItem = fgItem.getOrderItem();
-                if (orderItem instanceof BundleOrderItem) {
-                    for (DiscreteOrderItem discreteOrderItem : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
-                        gatherFulfillmentGroupLinkedDiscreteOrderItem(itemsToRemove, gatheredItem, fgItem, discreteOrderItem, String.valueOf(orderItem.getId()));
-                    }
-                } else {
-                    gatherFulfillmentGroupLinkedDiscreteOrderItem(itemsToRemove, gatheredItem, fgItem, (DiscreteOrderItem) orderItem, null);
-                }
-            }
-        }
-        for (Map<String, Object[]> values : gatherMap.values()) {
-            for (Object[] item : values.values()) {
-                orderItemService.saveOrderItem((OrderItem) item[0]);
-                fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
-            }
-        }
-        for (DiscreteOrderItem orderItem : itemsToRemove) {
-            if (orderItem.getBundleOrderItem() == null) {
-	        	try {
-	        		orderService.removeItem(order.getId(), orderItem.getId(), false);
-				} catch (RemoveFromCartException e) {
-					throw new PricingException("Could not remove item", e);
-				}
-            } else {
-                removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
-            }
-        }
-    }
-
-    protected void gatherOrderLinkedDiscreteOrderItem(List<DiscreteOrderItem> itemsToRemove, Map<String, OrderItem> gatheredItem, DiscreteOrderItem orderItem, String extraIdentifier) {
-        if (CollectionUtils.isEmpty(orderItem.getOrderItemAdjustments())) {
-            String identifier = buildIdentifier(orderItem, extraIdentifier);
-
-            OrderItem gatheredOrderItem = gatheredItem.get(identifier);
-            if (gatheredOrderItem == null) {
-                gatheredItem.put(identifier, orderItem);
-                return;
-            }
-            gatheredOrderItem.setQuantity(gatheredOrderItem.getQuantity() + orderItem.getQuantity());
-            itemsToRemove.add(orderItem);
-        }
-    }
-
-    /**
-     * Appends the item attributes so that items with different attibutes are not merged together
-     * as part of the merge/split logic.
-     *
-     * @param identifier
-     * @param orderItem
-     */
-    protected void addOptionAttributesToIdentifier(StringBuffer identifier, OrderItem orderItem) {
-        if (orderItem.getOrderItemAttributes() != null && orderItem.getOrderItemAttributes().size() > 0) {
-            List<String> valueList = new ArrayList<String>();
-            for (OrderItemAttribute itemAttribute : orderItem.getOrderItemAttributes().values()) {
-                valueList.add(itemAttribute.getName() + "_" + itemAttribute.getValue());
-            }
-            Collections.sort(valueList);
-            identifier.append('_');
-            for (String value : valueList) {
-                identifier.append(value);
-            }
-        }
-    }
-
-    public String buildIdentifier(OrderItem orderItem, String extraIdentifier) {
-        StringBuffer identifier = new StringBuffer();
-        if (orderItem.getSplitParentItemId() != null || orderService.getAutomaticallyMergeLikeItems()) {
-            if (!orderService.getAutomaticallyMergeLikeItems()) {
-                identifier.append(orderItem.getSplitParentItemId());
-            } else {
-                if (orderItem instanceof BundleOrderItem) {
-                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-                    if (bundleOrderItem.getSku() != null) {
-                        identifier.append(bundleOrderItem.getSku().getId());
-                    } else {
-                        if (orderItem.getSplitParentItemId() != null) {
-                            identifier.append(orderItem.getSplitParentItemId());
-                        } else {
-                            identifier.append(orderItem.getId());
-                        }
-                    }
-                } else if (orderItem instanceof DiscreteOrderItem) {
-                    DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-                    identifier.append(discreteOrderItem.getSku().getId());
-                } else {
-                    if (orderItem.getSplitParentItemId() != null) {
-                        identifier.append(orderItem.getSplitParentItemId());
-                    } else {
-                        identifier.append(orderItem.getId());
-                    }
-                }
-            }
-
-            identifier.append('_').append(orderItem.getPrice().stringValue());
-            if (extraIdentifier != null) {
-                identifier.append('_').append(extraIdentifier);
-            }
-
-            addOptionAttributesToIdentifier(identifier, orderItem);
-        } else {
-            identifier.append(orderItem.getId());
-        }
-        return identifier.toString();
-    }
-
-    protected void gatherFulfillmentGroupLinkedDiscreteOrderItem(List<DiscreteOrderItem> itemsToRemove, Map<String, Object[]> gatheredItem, FulfillmentGroupItem fgItem, DiscreteOrderItem orderItem, String extraIdentifier) {
-        if (CollectionUtils.isEmpty(orderItem.getOrderItemAdjustments())) {
-            String identifier = buildIdentifier(orderItem, extraIdentifier);
-
-
-            Object[] gatheredOrderItem = gatheredItem.get(identifier);
-            if (gatheredOrderItem == null) {
-                gatheredItem.put(identifier, new Object[]{orderItem, fgItem});
-                return;
-            }
-            ((OrderItem) gatheredOrderItem[0]).setQuantity(((OrderItem) gatheredOrderItem[0]).getQuantity() + orderItem.getQuantity());
-            ((FulfillmentGroupItem) gatheredOrderItem[1]).setQuantity(((FulfillmentGroupItem) gatheredOrderItem[1]).getQuantity() + fgItem.getQuantity());
-            itemsToRemove.add(orderItem);
-        }
     }
 
     /**
@@ -596,320 +278,39 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         order.addOrderAdjustments(promotableOrderAdjustment);
     }
 
-    protected void mergeSplitItems(final PromotableOrder order) {
-        try {
-            mergeSplitDiscreteOrderItems(order);
-
-            mergeSplitBundleOrderItems(order);
-
-            order.resetDiscreteOrderItems();
-
-            for (PromotableOrderItem myItem : order.getDiscountableDiscreteOrderItems()) {
-                //reset adjustment retail and sale values, since their transient values are erased after the above persistence events
-                if (myItem.isHasOrderItemAdjustments()) {
-                    for (OrderItemAdjustment adjustment : myItem.getDelegate().getOrderItemAdjustments()) {
-                        PromotableOrderItemAdjustment promotableOrderItemAdjustment = promotableItemFactory.createPromotableOrderItemAdjustment(adjustment, myItem);
-                        myItem.resetAdjustmentPrice();
-                        promotableOrderItemAdjustment.computeAdjustmentValues();
-                        myItem.computeAdjustmentPrice();
-                    }
-                }
-            }
-
-
-        } catch (PricingException e) {
-            throw new RuntimeException("Could not propagate the items split by the promotion engine into the order", e);
-        }
-    }
-
-    /**
-     * Returns null if the item is not part of a bundle.
-     * @return
-     */
-    private Long getBundleId(OrderItem item) {
-        if (item instanceof DiscreteOrderItem) {
-            DiscreteOrderItem discreteItem =  (DiscreteOrderItem) item;
-            if (discreteItem.getBundleOrderItem() != null) {
-                return discreteItem.getBundleOrderItem().getId();
-            }
-        }
-        return null;
-    }
-
-    protected void mergeSplitDiscreteOrderItems(PromotableOrder order) throws PricingException {
-        //If adjustments are removed - merge split items back together before adding to the cart
-        List<PromotableOrderItem> itemsToRemove = new ArrayList<PromotableOrderItem>();
-        List<DiscreteOrderItem> delegatesToRemove = new ArrayList<DiscreteOrderItem>();
-        Iterator<PromotableOrderItem> finalItems = order.getDiscountableDiscreteOrderItems().iterator();
-        Map<String, PromotableOrderItem> allItems = new HashMap<String, PromotableOrderItem>();
-        while (finalItems.hasNext()) {
-            PromotableOrderItem nextItem = finalItems.next();
-            List<PromotableOrderItem> mySplits = order.searchSplitItems(nextItem);
-            if (!CollectionUtils.isEmpty(mySplits)) {
-                PromotableOrderItem cloneItem = nextItem.clone();
-                cloneItem.clearAllDiscount();
-                cloneItem.clearAllQualifiers();
-                cloneItem.removeAllAdjustments();
-                cloneItem.setQuantity(0);
-                Iterator<PromotableOrderItem> splitItemIterator = mySplits.iterator();
-                while (splitItemIterator.hasNext()) {
-                    PromotableOrderItem splitItem = splitItemIterator.next();
-                    if (!splitItem.isHasOrderItemAdjustments()) {
-                        cloneItem.setQuantity(cloneItem.getQuantity() + splitItem.getQuantity());
-                        splitItemIterator.remove();
-                    }
-                }
-                if (cloneItem.getQuantity() > 0) {
-                    String identifier = String.valueOf(cloneItem.getSku().getId());
-                    Long bundleItemId = getBundleId(cloneItem.getDelegate());
-                    if (bundleItemId != null) {
-                        identifier += bundleItemId;
-                    }
-                    if (allItems.containsKey(identifier)) {
-                        PromotableOrderItem savedItem = allItems.get(identifier);
-                        savedItem.setQuantity(savedItem.getQuantity() + cloneItem.getQuantity());
-                    } else {
-                        allItems.put(identifier, cloneItem);
-                        mySplits.add(cloneItem);
-                    }
-                }
-
-                if (nextItem.getDelegate().getBundleOrderItem() == null) {
-                    if (mySplits.contains(nextItem)) {
-                        mySplits.remove(nextItem);
-                    } else {
-                        itemsToRemove.add(nextItem);
-                        delegatesToRemove.add(nextItem.getDelegate());
-                    }
-                } else {
-                    itemsToRemove.add(nextItem);
-                    delegatesToRemove.add(nextItem.getDelegate());
-                }
-            }
-        }
-
-        for (OrderItemSplitContainer key : order.getSplitItems()) {
-            List<PromotableOrderItem> mySplits = key.getSplitItems();
-            if (!CollectionUtils.isEmpty(mySplits)) {
-                PromotableFulfillmentGroup targetGroup = getTargetFulfillmentGroup(order, key.getKey());
-                for (PromotableOrderItem myItem : mySplits) {
-                    myItem.assignFinalPrice();
-                    DiscreteOrderItem delegateItem = myItem.getDelegate();
-                    Long delegateItemBundleItemId = getBundleId(delegateItem);
-                    if (delegateItemBundleItemId == null) {
-                    	delegateItem = (DiscreteOrderItem) addOrderItemToOrder(order.getDelegate(), delegateItem, false);
-                        if (targetGroup != null) {
-                        	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
-                        	fgItemRequest.setFulfillmentGroup(targetGroup.getDelegate());
-                        	fgItemRequest.setOrderItem(delegateItem);
-                        	fgItemRequest.setOrder(order.getDelegate());
-                        	fgItemRequest.setQuantity(delegateItem.getQuantity());
-                        	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
-                        }
-                    } else {
-                        delegateItem = addOrderItemToBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), delegateItem, false);
-                    }
-                    myItem.setDelegate(delegateItem);
-                }
-            }
-        }
-
-        //compile a list of any gift wrap items that we're keeping
-        List<GiftWrapOrderItem> giftWrapItems = new ArrayList<GiftWrapOrderItem>();
-        for (DiscreteOrderItem discreteOrderItem : order.getDelegate().getDiscreteOrderItems()) {
-            if (discreteOrderItem instanceof GiftWrapOrderItem) {
-                if (!delegatesToRemove.contains(discreteOrderItem)) {
-                    giftWrapItems.add((GiftWrapOrderItem) discreteOrderItem);
-                } else {
-                    Iterator<OrderItem> wrappedItems = ((GiftWrapOrderItem) discreteOrderItem).getWrappedItems().iterator();
-                    while (wrappedItems.hasNext()) {
-                        OrderItem wrappedItem = wrappedItems.next();
-                        wrappedItem.setGiftWrapOrderItem(null);
-                        wrappedItems.remove();
-                    }
-                }
-            }
-        }
-
-        for (PromotableOrderItem itemToRemove : itemsToRemove) {
-            DiscreteOrderItem delegateItem = itemToRemove.getDelegate();
-
-            mergeSplitGiftWrapOrderItems(order, giftWrapItems, itemToRemove, delegateItem);
-
-            if (delegateItem.getBundleOrderItem() == null) {
-	        	try {
-	        		orderService.removeItem(order.getDelegate().getId(), delegateItem.getId(), false);
-				} catch (RemoveFromCartException e) {
-					throw new PricingException("Could not remove item", e);
-				}
-            } else {
-                delegateItem.getBundleOrderItem().getDiscreteOrderItems().remove(itemToRemove.getDelegate());
-            }
-        }
-    }
-    
-    protected OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, Boolean priceOrder) throws PricingException {
-        List<OrderItem> orderItems = order.getOrderItems();
-        newOrderItem.setOrder(order);
-        newOrderItem = orderItemService.saveOrderItem(newOrderItem);
-        orderItems.add(newOrderItem);
-        order = orderService.save(order, priceOrder);
-        return newOrderItem;
-    }
-    
-    protected DiscreteOrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
-        List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
-        newOrderItem.setBundleOrderItem(bundle);
-        newOrderItem = (DiscreteOrderItem) orderItemService.saveOrderItem(newOrderItem);
-        orderItems.add(newOrderItem);
-        order = orderService.save(order, priceOrder);
-        return newOrderItem;
-    }
-
-    protected Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
-        DiscreteOrderItem itemFromBundle = bundle.getDiscreteOrderItems().remove(bundle.getDiscreteOrderItems().indexOf(item));
-        orderItemService.delete(itemFromBundle);
-        itemFromBundle.setBundleOrderItem(null);
-        order = orderService.save(order, priceOrder);
-        return order;
-    }
-
-    protected void mergeSplitGiftWrapOrderItems(PromotableOrder order, List<GiftWrapOrderItem> giftWrapItems, PromotableOrderItem itemToRemove, DiscreteOrderItem delegateItem) {
-        for (GiftWrapOrderItem giftWrapOrderItem : giftWrapItems) {
-            List<OrderItem> newItems = new ArrayList<OrderItem>();
-            Iterator<OrderItem> wrappedItems = giftWrapOrderItem.getWrappedItems().iterator();
-            boolean foundItems = false;
-            while (wrappedItems.hasNext()) {
-                OrderItem wrappedItem = wrappedItems.next();
-                if (wrappedItem.equals(delegateItem)) {
-                    foundItems = true;
-                    //add in the new wrapped items (split or not)
-                    List<PromotableOrderItem> searchHits = order.searchSplitItems(itemToRemove);
-                    if (!CollectionUtils.isEmpty(searchHits)) {
-                        for (PromotableOrderItem searchHit : searchHits) {
-                            newItems.add(searchHit.getDelegate());
-                            searchHit.getDelegate().setGiftWrapOrderItem(giftWrapOrderItem);
-                        }
-                    }
-                    //eradicate the old wrapped items
-                    delegateItem.setGiftWrapOrderItem(null);
-                    wrappedItems.remove();
-                }
-            }
-            if (foundItems) {
-                giftWrapOrderItem.getWrappedItems().addAll(newItems);
-                orderItemService.saveOrderItem(giftWrapOrderItem);
-            }
-        }
-    }
-
-    protected void mergeSplitBundleOrderItems(PromotableOrder order) throws PricingException {
-        List<BundleOrderItemSplitContainer> bundleContainers = order.getBundleSplitItems();
-        for (BundleOrderItemSplitContainer bundleContainer : bundleContainers) {
-            PromotableFulfillmentGroup targetGroup = getTargetFulfillmentGroup(order, bundleContainer.getKey());
-            List<BundleOrderItem> bundleOrderItems = bundleContainer.getSplitItems();
-            Map<String, BundleOrderItem> gatheredBundleItems = new HashMap<String, BundleOrderItem>();
-            for (BundleOrderItem bundleOrderItem : bundleOrderItems) {
-                bundleOrderItem.assignFinalPrice();
-                String hash = bundleOrderItem.getPrice().stringValue();
-                if (!gatheredBundleItems.containsKey(hash)) {
-                    gatheredBundleItems.put(hash, bundleOrderItem);
-                } else {
-                    BundleOrderItem temp = gatheredBundleItems.get(hash);
-                    temp.setQuantity(temp.getQuantity() + 1);
-                }
-            }
-            
-        	try {
-				orderService.removeItem(order.getDelegate().getId(), bundleContainer.getKey().getId(), false);
-			} catch (RemoveFromCartException e) {
-				throw new PricingException("Could not remove item", e);
-			}
-        	
-            for (BundleOrderItem vals : gatheredBundleItems.values()) {
-                vals.setId(null);
-                
-            	BundleOrderItem temp = (BundleOrderItem) addOrderItemToOrder(order.getDelegate(), vals, false);
-
-                if (targetGroup != null) {
-                	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
-                	fgItemRequest.setFulfillmentGroup(targetGroup.getDelegate());
-                	fgItemRequest.setOrderItem(temp);
-                	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
-                }
-            }
-        }
-    }
-    
-    protected PromotableFulfillmentGroup getTargetFulfillmentGroup(PromotableOrder order, OrderItem key) {
-        //find fulfillment group for original order item
-        PromotableFulfillmentGroup targetGroup = null;
-        checkGroups:
-        {
-            for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
-                for (FulfillmentGroupItem fgItem : fg.getDelegate().getFulfillmentGroupItems()) {
-                    if (fgItem.getOrderItem().equals(key)) {
-                        targetGroup = fg;
-                        break checkGroups;
-                    }
-                }
-            }
-        }
-        return targetGroup;
-    }
-
+    @Override
     public void compileOrderTotal(PromotableOrder order) {
         order.assignOrderItemsFinalPrice();
         order.setSubTotal(order.calculateOrderItemsFinalPrice(true));
     }
 
+    @Override
     public OfferDao getOfferDao() {
         return offerDao;
     }
 
+    @Override
     public void setOfferDao(OfferDao offerDao) {
         this.offerDao = offerDao;
     }
 
-    public OrderService getOrderService() {
-        return orderService;
-    }
-
-    public void setOrderService(OrderService orderService) {
-        this.orderService = orderService;
-    }
-
-    public OrderItemService getOrderItemService() {
-        return orderItemService;
-    }
-
-    public void setOrderItemService(OrderItemService orderItemService) {
-        this.orderItemService = orderItemService;
-    }
-
-    public FulfillmentGroupItemDao getFulfillmentGroupItemDao() {
-        return fulfillmentGroupItemDao;
-    }
-
-    public void setFulfillmentGroupItemDao(
-            FulfillmentGroupItemDao fulfillmentGroupItemDao) {
-        this.fulfillmentGroupItemDao = fulfillmentGroupItemDao;
-    }
-
+    @Override
     public PromotableItemFactory getPromotableItemFactory() {
         return promotableItemFactory;
     }
 
+    @Override
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
         this.promotableItemFactory = promotableItemFactory;
     }
 
-    public FulfillmentGroupService getFulfillmentGroupService() {
-		return fulfillmentGroupService;
-	}
+    @Override
+    public OrderItemMergeService getOrderItemMergeService() {
+        return orderItemMergeService;
+    }
 
-	public void setFulfillmentGroupService(FulfillmentGroupService fulfillmentGroupService) {
-		this.fulfillmentGroupService = fulfillmentGroupService;
-	}
-
+    @Override
+    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService) {
+        this.orderItemMergeService = orderItemMergeService;
+    }
 }

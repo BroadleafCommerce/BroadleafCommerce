@@ -39,6 +39,8 @@ public class ProductOptionType implements Serializable, BroadleafEnumerationType
     public static final ProductOptionType BOOLEAN  = new ProductOptionType("BOOLEAN","Boolean");
     public static final ProductOptionType DECIMAL  = new ProductOptionType("DECIMAL","Decimal");
     public static final ProductOptionType INTEGER  = new ProductOptionType("INTEGER","Integer");
+    public static final ProductOptionType INPUT  = new ProductOptionType("INPUT","Input");
+    public static final ProductOptionType PRODUCT  = new ProductOptionType("PRODUCT","Product");
 
     public static ProductOptionType getInstance(final String type) {
         return TYPES.get(type);

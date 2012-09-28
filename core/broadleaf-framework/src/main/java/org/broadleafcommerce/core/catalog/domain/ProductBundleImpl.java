@@ -54,19 +54,19 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
-    @AdminPresentation(friendlyName = "productBundleAutoBundle", tooltip="productBundleAutoBundleTooltip", group="productBundleGroup")
-    protected Boolean autoBundle;
+    @AdminPresentation(excluded = true)
+    protected Boolean autoBundle = false;
 
     @Column(name = "ITEMS_PROMOTABLE")
-    @AdminPresentation(friendlyName = "productBundlePromotableItems", group="productBundleGroup")
-    protected Boolean itemsPromotable;
+    @AdminPresentation(excluded = true)
+    protected Boolean itemsPromotable = false;
 
     @Column(name = "BUNDLE_PROMOTABLE")
-    @AdminPresentation(friendlyName = "productBundlePromotable", group="productBundleGroup")
-    protected Boolean bundlePromotable;
+    @AdminPresentation(excluded = true)
+    protected Boolean bundlePromotable = false;
 
     @Column(name = "BUNDLE_PRIORITY")
-    @AdminPresentation(friendlyName = "productBundlePriority", group="productBundleGroup")
+    @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group="productBundleGroup")
     protected int priority=99;
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
@@ -74,6 +74,13 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
+    
+    @Override
+    public boolean isOnSale() {
+    	Money retailPrice = getRetailPrice();
+    	Money salePrice = getSalePrice();
+    	return (salePrice != null && !salePrice.isZero() && salePrice.lessThan(retailPrice));
+    }
 
     @Override
     public ProductBundlePricingModelType getPricingModel() {
@@ -109,9 +116,9 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         for (SkuBundleItem item : getSkuBundleItems()) {
             if(price.isZero()) {
                 //make sure that the currency is updated;
-                price= item.getRetailPrice();
+                price = item.getRetailPrice();
             } else {
-                price = price.add(item.getRetailPrice());
+                price = price.add(item.getRetailPrice().multiply(item.getQuantity()));
             }
         }
         return price;
@@ -123,9 +130,9 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         for (SkuBundleItem item : getSkuBundleItems()){
             if(price.isZero()) {
               //make sure that the currency is updated;
-                price= item.getSalePrice();
+                price = price.add(item.getSalePrice().multiply(item.getQuantity()));
             } else {
-                price = price.add(item.getSalePrice());
+                price = price.add(item.getRetailPrice().multiply(item.getQuantity()));
             }
         }
         return price;
@@ -133,7 +140,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Override
     public Boolean getAutoBundle() {
-        return autoBundle;
+        return autoBundle == null ? false : autoBundle;
     }
 
     @Override
@@ -143,7 +150,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Override
     public Boolean getItemsPromotable() {
-        return itemsPromotable;
+        return itemsPromotable == null ? false : itemsPromotable;
     }
 
     @Override
@@ -153,7 +160,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Override
     public Boolean getBundlePromotable() {
-        return bundlePromotable;
+        return bundlePromotable == null ? false : bundlePromotable;
     }
 
     @Override

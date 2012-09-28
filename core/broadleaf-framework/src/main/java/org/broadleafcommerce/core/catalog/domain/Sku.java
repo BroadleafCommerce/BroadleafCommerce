@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,10 +24,18 @@ import java.util.Map;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.domain.PriceData;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
@@ -418,6 +426,42 @@ public interface Sku extends Serializable {
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
 
     /**
+     * Convenience method to return a given sku attribute by its name
+     * @param name
+     * @return the SkuAttribute
+     */
+    public SkuAttribute getSkuAttributeByName(String name);
+
+	/**
+	 * @return a Map of all the sku attributes on this sku keyed by the attribute name
+	 */
+    public Map<String, SkuAttribute> getMappedSkuAttributes();
+
+    /**
+     * Returns the type of inventory for this sku
+     * @return the {@link org.broadleafcommerce.core.inventory.service.type.InventoryType} for this sku
+     */
+    public InventoryType getInventoryType();
+
+    /**
+     * Sets the type of inventory for this sku
+     * @param inventoryType the {@link InventoryType} for this sku
+     */
+    public void setInventoryType(InventoryType inventoryType);
+    
+    /**
+     * Returns the fulfillment type for this sku. May be null.
+     * @return
+     */
+    public FulfillmentType getFulfillmentType();
+    
+    /**
+     * Sets the fulfillment type for this sku. May return null.
+     * @param fulfillmentType
+     */
+    public void setFulfillmentType(FulfillmentType fulfillmentType);
+
+	/**
      * Gets the {@link PriceData} that this {@link Sku} is attached to.
      *
      * @return
@@ -444,4 +488,5 @@ public interface Sku extends Serializable {
      * @return
      */
     public void setTranslations(Map<String, SkuTranslation> translations);
+
 }

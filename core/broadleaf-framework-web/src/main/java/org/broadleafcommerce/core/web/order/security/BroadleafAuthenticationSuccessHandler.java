@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.web.order.security;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -36,6 +37,12 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         mergeCartProcessor.execute(request, response, authentication);
-        super.onAuthenticationSuccess(request, response, authentication);
+        
+        String targetUrl = request.getParameter(getTargetUrlParameter());
+        if (StringUtils.isNotBlank(targetUrl) && targetUrl.contains(":")) {
+            getRedirectStrategy().sendRedirect(request, response, getDefaultTargetUrl());
+        } else {
+            super.onAuthenticationSuccess(request, response, authentication);
+        }
     }
 }

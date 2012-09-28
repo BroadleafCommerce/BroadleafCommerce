@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,34 +15,6 @@
  */
 
 package org.broadleafcommerce.core.order.domain;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
@@ -79,6 +51,33 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyManyToMany;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -195,7 +194,8 @@ public class OrderImpl implements Order {
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="value")
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    
+	@ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", order=1, group = "PriceListImpl_Details")
     protected BroadleafCurrency currency;
@@ -242,7 +242,11 @@ public class OrderImpl implements Order {
         	} else {
         		price = orderItem.getTaxablePrice();
         	}
-            calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
+            if (orderItem instanceof BundleOrderItem) {
+                calculatedSubTotal = calculatedSubTotal.add(price);
+            } else {
+                calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
+            }
         }
         return calculatedSubTotal;
     }
@@ -425,10 +429,18 @@ public class OrderImpl implements Order {
     
     @Override
     public boolean containsSku(Sku sku) {
-    	for (DiscreteOrderItem discreteOrderItem : getDiscreteOrderItems()) {
-    		if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
-    			return true;
-    		}
+    	for (OrderItem orderItem : getOrderItems()) {
+    	    if (orderItem instanceof DiscreteOrderItem) {
+    	        DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+        		if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
+        			return true;
+        		}
+    	    } else if (orderItem instanceof BundleOrderItem) {
+    	        BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+    	        if (bundleOrderItem.getSku() != null && bundleOrderItem.getSku().equals(sku)) {
+    	            return true;
+    	        }
+    	    }
     	}
     	
     	return false;

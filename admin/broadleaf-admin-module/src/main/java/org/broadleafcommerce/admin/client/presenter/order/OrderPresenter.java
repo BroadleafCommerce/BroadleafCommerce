@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,6 +51,7 @@ import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
@@ -59,10 +60,13 @@ import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +90,8 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
     protected SubPresentable paymentResponsePresenter;
     protected SubPresentable paymentLogPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+	protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();;
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
 	
 	@Override
 	protected void changeSelection(Record selectedRecord) {
@@ -99,6 +105,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 	@Override
 	public void bind() {
 		super.bind();
+		
 		orderItemPresenter.bind();
 		fulfillmentGroupPresenter.bind();
 		paymentInfoPresenter.bind();
@@ -110,26 +117,46 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		feesPresenter.bind();
         paymentResponsePresenter.bind();
         paymentLogPresenter.bind();
+        
+		subPresentables.add(orderItemPresenter);
+		subPresentables.add(fulfillmentGroupPresenter);
+		subPresentables.add(paymentInfoPresenter);
+		subPresentables.add(additionalPaymentAttributesPresenter);
+		subPresentables.add(offerCodePresenter);
+		subPresentables.add(orderAdjustmentPresenter);
+		subPresentables.add(orderItemAdjustmentPresenter);
+		subPresentables.add(fulfillmentGroupAdjustmentPresenter);
+		subPresentables.add(feesPresenter);
+        subPresentables.add(paymentResponsePresenter);
+        subPresentables.add(paymentLogPresenter);
+        
 		selectionChangedHandlerRegistration.removeHandler();
 		display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			@Override
             public void onSelectionChanged(SelectionEvent event) {
 				ListGridRecord selectedRecord = event.getSelectedRecord();
+						    
 				if (event.getState()) {
+				    for (SubPresentable sp : subPresentables) {
+				        sp.enable();
+				    }
+                    
 					if (!selectedRecord.equals(lastSelectedRecord)) {
 						lastSelectedRecord = selectedRecord;
 						if (selectedRecord.getAttributeAsStringArray("_type") == null){
 							formPresenter.disable();
-							display.getListDisplay().getRemoveButton().disable();
 						} else {
 							formPresenter.setStartState();
 							getPresenterSequenceSetupManager().getDataSource("orderDS").resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
 							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, false, selectedRecord);
 							display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
-							display.getListDisplay().getRemoveButton().enable();
 						}
 						changeSelection(selectedRecord);
 					}
+					
+    			    for (SubPresentable sp : subPresentables) {
+    			        sp.setReadOnly(true);
+    			    }
 				}
 			}
 		});
@@ -141,8 +168,8 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 					additionalPaymentAttributesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("paymentInfoDS"), null);
                     
                     String id = getPresenterSequenceSetupManager().getDataSource("paymentInfoDS").getPrimaryKeyValue(selectedRecord);
-                    getDisplay().getPaymentResponseDisplay().getGrid().fetchData(new Criteria("paymentInfoId", id));
-                    getDisplay().getPaymentLogDisplay().getGrid().fetchData(new Criteria("paymentInfoId", id));
+                    getDisplay().getPaymentResponseDisplay().getGrid().fetchData(new Criteria("paymentInfoReferenceNumber", selectedRecord.getAttributeAsString("referenceNumber")));
+                    getDisplay().getPaymentLogDisplay().getGrid().fetchData(new Criteria("paymentInfoReferenceNumber", selectedRecord.getAttributeAsString("referenceNumber")));
 				}
 			}
 		});
@@ -187,6 +214,16 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
                 });
             }
         });
+		
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+			    for (SubPresentable sp : subPresentables) {
+			        sp.disable();
+			    }
+            }
+        });
+
 		
 		setReadOnly(true);
 		//enable the toolbar so that the export button will be able to be clicked

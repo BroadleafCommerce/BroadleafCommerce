@@ -1,5 +1,22 @@
+/*
+ * Copyright 2008-2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.broadleafcommerce.core.web.processor;
 
+import net.entropysoft.transmorph.cache.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -20,6 +37,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +54,8 @@ import java.util.Map;
 public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
 
 	private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
-	
+    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
+
 	public ProductOptionsProcessor() {
 		super("product_options");
 	}
@@ -51,12 +71,12 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 		Long productId = (Long) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("productId"));
 		Product product = catalogService.findProductById(productId);
 		if (product != null) {
-			addAllProductOptionsToModel(product);
-			addProductOptionPricingToModel(product);
+			addAllProductOptionsToModel(arguments, product);
+			addProductOptionPricingToModel(arguments, product);
 		}
 	}
 	
-	private void addProductOptionPricingToModel(Product product) {
+	private void addProductOptionPricingToModel(Arguments arguments, Product product) {
 		List<Sku> skus = product.getSkus();
 		List<ProductOptionPricingDTO> skuPricing = new ArrayList<ProductOptionPricingDTO>();
 		for (Sku sku : skus) {
@@ -82,10 +102,10 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			dto.setSelectedOptions(values);
 			skuPricing.add(dto);
 		}
-		writeJSONToModel("skuPricing", skuPricing);
+		writeJSONToModel(arguments, "skuPricing", skuPricing);
 	}
 	
-	private void addAllProductOptionsToModel(Product product) {
+	private void addAllProductOptionsToModel(Arguments arguments, Product product) {
 		List<ProductOption> productOptions = product.getProductOptions();
 		List<ProductOptionDTO> dtos = new ArrayList<ProductOptionDTO>();
 		for (ProductOption option : productOptions) {
@@ -99,15 +119,18 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			dto.setValues(values);
 			dtos.add(dto);
 		}
-		writeJSONToModel("allProductOptions", dtos);
+		writeJSONToModel(arguments, "allProductOptions", dtos);
 	}
 	
-	private void writeJSONToModel(String modelKey, Object o) {
+	private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			Writer strWriter = new StringWriter();
-			mapper.writeValue(strWriter, o);
-			addToModel(modelKey, strWriter.toString());
+            if (!JSON_CACHE.containsKey(o)) {
+                ObjectMapper mapper = new ObjectMapper();
+                Writer strWriter = new StringWriter();
+                mapper.writeValue(strWriter, o);
+                JSON_CACHE.put(o, strWriter.toString());
+            }
+            addToModel(arguments, modelKey, JSON_CACHE.get(o));
 		} catch (Exception ex) {
 			LOG.error("There was a problem writing the product option map to JSON", ex);
 		}
@@ -162,7 +185,32 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 		public void setSelectedValue(String selectedValue) {
 			this.selectedValue = selectedValue;
 		}
-	}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ProductOptionDTO)) return false;
+
+            ProductOptionDTO that = (ProductOptionDTO) o;
+
+            if (id != null ? !id.equals(that.id) : that.id != null) return false;
+            if (selectedValue != null ? !selectedValue.equals(that.selectedValue) : that.selectedValue != null)
+                return false;
+            if (type != null ? !type.equals(that.type) : that.type != null) return false;
+            if (values != null ? !values.equals(that.values) : that.values != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id != null ? id.hashCode() : 0;
+            result = 31 * result + (type != null ? type.hashCode() : 0);
+            result = 31 * result + (values != null ? values.hashCode() : 0);
+            result = 31 * result + (selectedValue != null ? selectedValue.hashCode() : 0);
+            return result;
+        }
+    }
 	
 	private class ProductOptionPricingDTO {
 		private Long[] skuOptions;
@@ -181,6 +229,26 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 		public void setPrice(String price) {
 			this.price = price;
 		}
-	}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ProductOptionPricingDTO)) return false;
+
+            ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;
+
+            if (price != null ? !price.equals(that.price) : that.price != null) return false;
+            if (!Arrays.equals(skuOptions, that.skuOptions)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = skuOptions != null ? Arrays.hashCode(skuOptions) : 0;
+            result = 31 * result + (price != null ? price.hashCode() : 0);
+            return result;
+        }
+    }
 
 }

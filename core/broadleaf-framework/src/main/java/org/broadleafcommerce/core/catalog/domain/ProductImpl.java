@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,30 +26,15 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationAdornedTargetCollectionOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationDataDrivenEnumerationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMapOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationToOneLookupOverride;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.profile.core.domain.CountryImpl;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -77,6 +62,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -134,7 +120,7 @@ public class ProductImpl implements Product, Status {
     protected Long id;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO",groupOrder=2)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO",groupOrder=2, requiredOverride = RequiredOverride.REQUIRED)
     protected String url;
 
     @Column(name = "URL_KEY")
@@ -159,9 +145,8 @@ public class ProductImpl implements Product, Status {
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=11, group = "ProductImpl_Product_Description", prominent=false)
     protected Boolean isFeaturedProduct = false;
     
-    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL})
-    @JoinColumn(name = "DEFAULT_SKU_ID")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL}, mappedBy = "defaultProduct")
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     protected Sku defaultSku;
     
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
@@ -345,6 +330,7 @@ public class ProductImpl implements Product, Status {
 
 	@Override
 	public void setDefaultSku(Sku defaultSku) {
+        defaultSku.setDefaultProduct(this);
 		this.defaultSku = defaultSku;
 	}
 
@@ -363,7 +349,7 @@ public class ProductImpl implements Product, Status {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
         for (Sku additionalSku : additionalSkus) {
-            if (additionalSku.getId() != getDefaultSku().getId()) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 allSkus.add(additionalSku);
             }
         }
@@ -586,7 +572,7 @@ public class ProductImpl implements Product, Status {
         Iterator<RelatedProduct> itr = returnProducts.iterator();
         while(itr.hasNext()) {
             RelatedProduct relatedProduct = itr.next();
-            if (relatedProduct.getProduct().equals(this)) {
+            if (relatedProduct.getRelatedProduct().equals(this)) {
                 itr.remove();
             }
         }
@@ -605,7 +591,7 @@ public class ProductImpl implements Product, Status {
         Iterator<RelatedProduct> itr = returnProducts.iterator();
         while(itr.hasNext()) {
             RelatedProduct relatedProduct = itr.next();
-            if (relatedProduct.getProduct().equals(this)) {
+            if (relatedProduct.getRelatedProduct().equals(this)) {
                 itr.remove();
             }
         }

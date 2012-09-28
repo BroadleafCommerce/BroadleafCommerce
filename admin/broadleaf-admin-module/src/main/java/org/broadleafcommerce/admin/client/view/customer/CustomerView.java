@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.admin.client.view.customer;
 
-import com.google.gwt.core.client.GWT;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -32,6 +24,15 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDispl
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
+
+import com.google.gwt.core.client.GWT;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 /**
  * 
@@ -50,7 +51,8 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
 		setWidth100();
 	}
 	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+	@Override
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("customerLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
@@ -59,7 +61,7 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
         
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("customerListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
-        
+       
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("customerDetailsTitle"), entityDataSource);
         dynamicFormDisplay.setWidth("50%");
         ToolStrip toolbar = dynamicFormDisplay.getToolbar();
@@ -77,27 +79,32 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
         updateLoginButton.setDisabled(true);
         toolbar.addButton(updateLoginButton);
         toolbar.addSpacer(6);
-        
+        leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(dynamicFormDisplay);
 	}
 
-	public Canvas asCanvas() {
+	@Override
+    public Canvas asCanvas() {
 		return this;
 	}
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
+	@Override
+    public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
 	
-	public DynamicEntityListDisplay getListDisplay() {
+	@Override
+    public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
 	}
 
-	public ToolStripButton getUpdateLoginButton() {
+	@Override
+    public ToolStripButton getUpdateLoginButton() {
 		return updateLoginButton;
 	}
 
+    @Override
     public GridStructureView getCustomerAddressDisplay() {
         return customerAddressDisplay;
     }

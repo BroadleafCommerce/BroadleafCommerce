@@ -34,12 +34,34 @@ public interface SearchService {
 	/**
 	 * Performs a search for products in the given category, taking into consideration the ProductSearchCriteria
 	 * 
+	 * This method will return products that are in any sub-level of a given category. For example, if you had a 
+	 * "Routers" category and a "Enterprise Routers" sub-category, asking for products in "Routers", would return
+	 * products that are in the "Enterprise Routers" category. 
+	 * 
+	 * @see #findExplicitProductsByCategory(Category, ProductSearchCriteria)
+	 * 
 	 * @param category
 	 * @param searchCriteria
 	 * @return the result of the search
 	 * @throws ServiceException 
 	 */
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException;
+	
+	/**
+	 * Performs a search for products in the given category, taking into consideration the ProductSearchCriteria
+	 * 
+	 * This method will NOT return products that are in a sub-level of a given category. For example, if you had a 
+	 * "Routers" category and a "Enterprise Routers" sub-category, asking for products in "Routers", would NOT return
+	 * products that are in the "Enterprise Routers" category. 
+	 * 
+	 * @see #findProductsByCategory(Category, ProductSearchCriteria)
+	 * 
+	 * @param category
+	 * @param searchCriteria
+	 * @return
+	 * @throws ServiceException
+	 */
+    public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException;
 	
 	/**
 	 * Performs a search for products across all categories for the given query, taking into consideration
@@ -51,6 +73,17 @@ public interface SearchService {
 	 * @throws ServiceException 
 	 */
 	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) throws ServiceException;
+	
+	/**
+	 * Performs a search for products in the given category for the given query, taking into consideration 
+	 * the ProductSearchCriteria
+	 * 
+	 * @param category
+	 * @param query
+	 * @param searchCriteria
+	 * @throws ServiceException
+	 */
+    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, ProductSearchCriteria searchCriteria) throws ServiceException;
 
 	/**
 	 * Gets all available facets for search results page
@@ -74,5 +107,7 @@ public interface SearchService {
 	 * @throws ServiceException
 	 */
 	public void rebuildIndex() throws ServiceException, IOException;
+
+
 
 }

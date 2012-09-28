@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@ package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -26,6 +27,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
@@ -266,6 +268,25 @@ public class CatalogEndpoint implements ApplicationContextAware {
     }
 
     @GET
+    @Path("category/{id}/product-attributes")
+    public List<CategoryAttributeWrapper> findCategoryAttributesForCategory(@Context HttpServletRequest request,
+                                                                         @PathParam("id") Long id) {
+        Category category = catalogService.findCategoryById(id);
+        if (category != null) {
+            ArrayList<CategoryAttributeWrapper> out = new ArrayList<CategoryAttributeWrapper>();
+            if (category.getCategoryAttributes() != null) {
+                for (CategoryAttribute attribute : category.getCategoryAttributes()) {
+                    CategoryAttributeWrapper wrapper = (CategoryAttributeWrapper)context.getBean(CategoryAttributeWrapper.class.getName());
+                    wrapper.wrap(attribute, request);
+                    out.add(wrapper);
+                }
+            }
+            return out;
+        }
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+    
+    @GET
     @Path("category/{id}/products")
     public List<ProductWrapper> findProductsForCategory(@Context HttpServletRequest request,
                                                         @PathParam("id") Long id,
@@ -346,7 +367,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
-
+    
     @GET
     @Path("product/{id}/product-attributes")
     public List<ProductAttributeWrapper> findProductAttributesForProduct(@Context HttpServletRequest request,

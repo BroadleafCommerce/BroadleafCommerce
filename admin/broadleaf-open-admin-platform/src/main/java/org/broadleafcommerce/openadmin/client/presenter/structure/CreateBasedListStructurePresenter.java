@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,9 +15,6 @@
  */
 
 package org.broadleafcommerce.openadmin.client.presenter.structure;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
@@ -33,13 +30,16 @@ import com.smartgwt.client.widgets.grid.events.EditCompleteEvent;
 import com.smartgwt.client.widgets.grid.events.EditCompleteHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -75,6 +75,13 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 		this.editDialogTitle = editDialogTitle;
 		this.initialValues = initialValues;
 	}
+
+    public CreateBasedListStructurePresenter(CreateBasedListStructurePresenter template) {
+        this(template.display, template.availableToTypes, template.editDialogTitle, template.initialValues);
+        this.abstractDynamicDataSource = template.abstractDynamicDataSource;
+        this.readOnly = template.readOnly;
+        this.gridFields = template.gridFields;
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
@@ -157,5 +164,29 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 
     public HandlerRegistration getSelectionChangedHandlerRegistration() {
         return selectionChangedHandlerRegistration;
+    }
+
+    public String getEditDialogTitle() {
+        return editDialogTitle;
+    }
+
+    public void setEditDialogTitle(String editDialogTitle) {
+        this.editDialogTitle = editDialogTitle;
+    }
+
+    public String[] getGridFields() {
+        return gridFields;
+    }
+
+    public void setGridFields(String[] gridFields) {
+        this.gridFields = gridFields;
+    }
+
+    public Map<String, Object> getInitialValues() {
+        return initialValues;
+    }
+
+    public void setInitialValues(Map<String, Object> initialValues) {
+        this.initialValues = initialValues;
     }
 }

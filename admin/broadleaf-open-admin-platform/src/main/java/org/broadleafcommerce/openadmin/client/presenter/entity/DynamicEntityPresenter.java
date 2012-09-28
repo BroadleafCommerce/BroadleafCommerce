@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,48 @@
  */
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.logging.Level;
+
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionLookupDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.ForeignKeyLookupDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.LookupMetadata;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.Display;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridHelper;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
@@ -45,47 +87,6 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.AdvancedCollectionLookupDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.ForeignKeyLookupDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.LookupMetadata;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassTree;
-import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
-import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.Display;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.logging.Level;
 
 /**
  * @author jfischer
@@ -99,7 +100,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected ListGridRecord lastSelectedRecord;
     protected Boolean loaded = false;
     protected DynamicFormPresenter formPresenter;
-
+    protected GridHelper gridHelper=new GridHelper();
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickHandlerRegistration;
     protected HandlerRegistration addClickHandlerRegistration;
@@ -109,7 +110,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration showArchivedButtonHandlerRegistration;
     protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
-    protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();
+    protected Map<String, SubPresentable> subPresentables = new HashMap<String, SubPresentable>();
 
     protected Boolean disabled = false;
 
@@ -174,8 +175,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         }
     }
 
-    public void addSubPresentable(SubPresentable subPresentable) {
-        subPresentables.add(subPresentable);
+    public void setSubPresentable(String dataSourceName, SubPresentable subPresentable) {
+        subPresentables.put(dataSourceName, subPresentable);
     }
 
     public void bind() {
@@ -218,8 +219,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 setStartState();
                 formPresenter.disable();
                 display.getListDisplay().getGrid().deselectAllRecords();
-                for (SubPresentable subPresentable : subPresentables) {
-                    subPresentable.disable();
+                for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
+                    subPresentable.getValue().disable();
                 }
                 lastSelectedRecord = null;
             }
@@ -243,10 +244,10 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                             display.getListDisplay().getRemoveButton().enable();
                         }
                         changeSelection(selectedRecord);
-                        for (SubPresentable subPresentable : subPresentables) {
+                        for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
                             //this is only suitable when no callback is required for the load - which is most cases
-                            subPresentable.setStartState();
-                            subPresentable.load(selectedRecord, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource());
+                            subPresentable.getValue().setStartState();
+                            subPresentable.getValue().load(selectedRecord, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource());
                         }
                         display.getDynamicFormDisplay().getSaveButton().disable();
                         display.getDynamicFormDisplay().getRefreshButton().disable();
@@ -313,8 +314,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             display.show();
         } else {
             bind();
-            for (SubPresentable subPresentable : subPresentables) {
-                subPresentable.bind();
+            for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
+                subPresentable.getValue().bind();
             }
             container.addChild(display.asCanvas());
             loaded = true;

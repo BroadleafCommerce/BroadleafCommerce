@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -64,6 +64,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
     
+    /**
+     * Optional password salt to be used with the passwordEncoder
+     */
+    protected String salt;
+    
     @Resource(name="blRoleDao")
     protected RoleDao roleDao;
     
@@ -89,41 +94,41 @@ public class CustomerServiceImpl implements CustomerService {
     protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<PasswordUpdatedHandler>();
     protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<PasswordUpdatedHandler>();
 
+    @Override
     public Customer saveCustomer(Customer customer) {
         return saveCustomer(customer, true);
     }
 
+    @Override
     public Customer saveCustomer(Customer customer, boolean register) {
         if (register && !customer.isRegistered()) {
             customer.setRegistered(true);
         }
         if (customer.getUnencodedPassword() != null) {
-            customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), null));
+            customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), getSalt(customer)));
         }
 
         // let's make sure they entered a new challenge answer (we will populate
         // the password field with hashed values so check that they have changed
         // id
         if (customer.getUnencodedChallengeAnswer() != null && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
-            customer.setChallengeAnswer(passwordEncoder.encodePassword(customer.getUnencodedChallengeAnswer(), null));
+            customer.setChallengeAnswer(passwordEncoder.encodePassword(customer.getUnencodedChallengeAnswer(), getSalt(customer)));
         }
         return customerDao.save(customer);
     }
+    
 
+    @Override
     public Customer registerCustomer(Customer customer, String password, String passwordConfirm) {
         customer.setRegistered(true);
 
         // When unencodedPassword is set the save() will encode it
         if (customer.getId() == null) {
-            customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer"));
+            customer.setId(findNextCustomerId());
         }
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
-        Role role = roleDao.readRoleByName("ROLE_USER");
-        CustomerRole customerRole = new CustomerRoleImpl();
-        customerRole.setRole(role);
-        customerRole.setCustomer(retCustomer);
-        roleDao.addRoleToCustomer(customerRole);
+        createRegisteredCustomerRoles(retCustomer);
         
         HashMap<String, Object> vars = new HashMap<String, Object>();
 		vars.put("customer", retCustomer);
@@ -133,10 +138,25 @@ public class CustomerServiceImpl implements CustomerService {
         return retCustomer;
     }
 
+    /**
+     * Subclassed implementations can assign unique roles for various customer types 
+     * 
+     * @param customer
+     */
+    protected void createRegisteredCustomerRoles(Customer customer) {
+        Role role = roleDao.readRoleByName("ROLE_USER");
+        CustomerRole customerRole = new CustomerRoleImpl();
+        customerRole.setRole(role);
+        customerRole.setCustomer(customer);
+        roleDao.addRoleToCustomer(customerRole);
+    }
+
+    @Override
     public Customer readCustomerByEmail(String emailAddress) {
         return customerDao.readCustomerByEmail(emailAddress);
     }
 
+    @Override
     public Customer changePassword(PasswordChange passwordChange) {
         Customer customer = readCustomerByUsername(passwordChange.getUsername());
         customer.setUnencodedPassword(passwordChange.getNewPassword());
@@ -150,7 +170,8 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
     
-	public Customer resetPassword(PasswordReset passwordReset) {
+	@Override
+    public Customer resetPassword(PasswordReset passwordReset) {
         Customer customer = readCustomerByUsername(passwordReset.getUsername());
         String newPassword = PasswordUtils.generateTemporaryPassword(passwordReset.getPasswordLength());
         customer.setUnencodedPassword(newPassword);
@@ -164,10 +185,12 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
+    @Override
     public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners) {
         this.postRegisterListeners.add(postRegisterListeners);
     }
 
+    @Override
     public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners) {
         if (this.postRegisterListeners.contains(postRegisterListeners)) {
             this.postRegisterListeners.remove(postRegisterListeners);
@@ -181,10 +204,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    @Override
     public Customer createCustomer() {
         return createCustomerFromId(null);
     }
+    
+    
 
+    @Override
     public Customer createCustomerFromId(Long customerId) {
         Customer customer = customerId != null ? readCustomerById(customerId) : null;
         if (customer == null) {
@@ -192,20 +219,31 @@ public class CustomerServiceImpl implements CustomerService {
             if (customerId != null) {
                 customer.setId(customerId);
             } else {
-                customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer"));
+                customer.setId(findNextCustomerId());
             }
         }
         return customer;
     }
+
+    /**
+     * Allow customers to call from subclassed service.
+     * @return
+     */
+    public Long findNextCustomerId() {
+        return idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer");
+    }
     
+    @Override
     public Customer createNewCustomer() {
         return createCustomerFromId(null);
     }
 
+    @Override
     public Customer readCustomerByUsername(String username) {
         return customerDao.readCustomerByUsername(username);
     }
 
+    @Override
     public Customer readCustomerById(Long id) {
         return customerDao.readCustomerById(id);
     }
@@ -217,24 +255,49 @@ public class CustomerServiceImpl implements CustomerService {
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
+    
+    /**
+     * Optionally provide a salt based on a customer.  By default, this returns
+     * the salt property
+     * 
+     * @param customer
+     * @return
+     * @see {@link CustomerServiceImpl#getSalt()}
+     */
+    public String getSalt(Customer customer) {
+        return getSalt();
+    }
+    
+    public String getSalt() {
+        return salt;
+    }
+    
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
 
-	public List<PasswordUpdatedHandler> getPasswordResetHandlers() {
+	@Override
+    public List<PasswordUpdatedHandler> getPasswordResetHandlers() {
 		return passwordResetHandlers;
 	}
 
-	public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers) {
+	@Override
+    public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers) {
 		this.passwordResetHandlers = passwordResetHandlers;
 	}
 
-	public List<PasswordUpdatedHandler> getPasswordChangedHandlers() {
+	@Override
+    public List<PasswordUpdatedHandler> getPasswordChangedHandlers() {
 		return passwordChangedHandlers;
 	}
 
-	public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers) {
+	@Override
+    public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers) {
 		this.passwordChangedHandlers = passwordChangedHandlers;
 	}
 	
-	public GenericResponse sendForgotUsernameNotification(String emailAddress) {
+	@Override
+    public GenericResponse sendForgotUsernameNotification(String emailAddress) {
 		GenericResponse response = new GenericResponse();
 		List<Customer> customers = null;
 		if (emailAddress != null) {
@@ -263,7 +326,8 @@ public class CustomerServiceImpl implements CustomerService {
 		return response;
 	}
 
-	public GenericResponse sendForgotPasswordNotification(String username, String resetPasswordUrl) {
+	@Override
+    public GenericResponse sendForgotPasswordNotification(String username, String resetPasswordUrl) {
 		GenericResponse response = new GenericResponse();
 		Customer customer = null;
 
@@ -279,7 +343,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 			CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
 			fpst.setCustomerId(customer.getId());
-			fpst.setToken(passwordEncoder.encodePassword(token,null));
+			fpst.setToken(passwordEncoder.encodePassword(token, null));
 			fpst.setCreateDate(SystemTime.asDate());
 			customerForgotPasswordSecurityTokenDao.saveToken(fpst);
 
@@ -298,7 +362,8 @@ public class CustomerServiceImpl implements CustomerService {
 		return response;
 	}
 	
-	public GenericResponse checkPasswordResetToken(String token) {
+	@Override
+    public GenericResponse checkPasswordResetToken(String token) {
 		GenericResponse response = new GenericResponse();
         checkPasswordResetToken(token, response);               
         return response;
@@ -312,7 +377,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
-            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token,null));
+            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token, null));
             if (fpst == null) {
                 response.addErrorCode("invalidToken");
             } else if (fpst.isTokenUsedFlag()) {
@@ -324,6 +389,7 @@ public class CustomerServiceImpl implements CustomerService {
         return fpst;
 	}
     
+    @Override
     public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
         GenericResponse response = new GenericResponse();
         Customer customer = null;
@@ -394,7 +460,6 @@ public class CustomerServiceImpl implements CustomerService {
     public void setPasswordTokenLength(int passwordTokenLength) {
         this.passwordTokenLength = passwordTokenLength;
     }
-
 
 	public EmailInfo getForgotPasswordEmailInfo() {
 		return forgotPasswordEmailInfo;

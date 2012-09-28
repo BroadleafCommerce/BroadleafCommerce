@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,6 +39,7 @@ import org.broadleafcommerce.core.rating.service.type.RatingSortType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("blRatingService")
 public class RatingServiceImpl implements RatingService {
@@ -49,10 +50,12 @@ public class RatingServiceImpl implements RatingService {
     @Resource(name="blReviewDetailDao")
     private ReviewDetailDao reviewDetailDao;
 
+    @Transactional("blTransactionManager")
     public void deleteRatingSummary(RatingSummary ratingSummary) {
         ratingSummaryDao.deleteRatingSummary(ratingSummary);
     }
 
+    @Transactional("blTransactionManager")
     public void markReviewHelpful(Long reviewId, Customer customer, Boolean helpful) {
         ReviewDetail reviewDetail = reviewDetailDao.readReviewDetailById(reviewId);
 
@@ -67,6 +70,7 @@ public class RatingServiceImpl implements RatingService {
 
     }
 
+    @Transactional("blTransactionManager")
     public void rateItem(String itemId, RatingType type, Customer customer, Double rating) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
@@ -129,10 +133,12 @@ public class RatingServiceImpl implements RatingService {
         return reviewsToReturn;
     }
 
+    @Transactional("blTransactionManager")
     public RatingSummary saveRatingSummary(RatingSummary ratingSummary) {
         return ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
+    @Transactional("blTransactionManager")
     public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 

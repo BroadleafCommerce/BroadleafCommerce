@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,7 +92,8 @@ public class OfferDataItemProvider {
 	
 	public static IAnswer<FulfillmentGroup> getAddItemToFulfillmentGroupAnswer() {
 		return new IAnswer<FulfillmentGroup>() {
-			public FulfillmentGroup answer() throws Throwable {
+			@Override
+            public FulfillmentGroup answer() throws Throwable {
 				FulfillmentGroupItemRequest fgItemRequest = (FulfillmentGroupItemRequest) EasyMock.getCurrentArguments()[0];
 				FulfillmentGroup fg = fgItemRequest.getFulfillmentGroup();
 				FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
@@ -104,10 +105,20 @@ public class OfferDataItemProvider {
 			}
 		};
 	}
+
+    public static IAnswer<FulfillmentGroupItem> getCreateFulfillmentGroupItemAnswer() {
+        return new IAnswer<FulfillmentGroupItem>() {
+            @Override
+            public FulfillmentGroupItem answer() throws Throwable {
+                return new FulfillmentGroupItemImpl();
+            }
+        };
+    }
 	
 	public static IAnswer<OrderItem> getAddOrderItemToOrderAnswer() {
 		return new IAnswer<OrderItem>() {
-			public OrderItem answer() throws Throwable {
+			@Override
+            public OrderItem answer() throws Throwable {
 				Order order = (Order) EasyMock.getCurrentArguments()[0];
 				order.getOrderItems().add((OrderItem) EasyMock.getCurrentArguments()[1]);
 				if (((OrderItem) EasyMock.getCurrentArguments()[1]).getId() == null) {
@@ -120,7 +131,8 @@ public class OfferDataItemProvider {
 	
 	public static IAnswer<OrderItem> getSaveOrderItemAnswer() {
 		return new IAnswer<OrderItem>() {
-			public OrderItem answer() throws Throwable {
+			@Override
+            public OrderItem answer() throws Throwable {
 				OrderItem orderItem = (OrderItem) EasyMock.getCurrentArguments()[0];
 				if (orderItem.getId() == null) {
 					orderItem.setId(getOrderItemId());
@@ -132,7 +144,8 @@ public class OfferDataItemProvider {
 	
 	public static IAnswer<Order> getSaveOrderAnswer() {
 		return new IAnswer<Order>() {
-			public Order answer() throws Throwable {
+			@Override
+            public Order answer() throws Throwable {
 				Order order = (Order) EasyMock.getCurrentArguments()[0];
 				order.setId(getOrderId());
 				orders.put(order.getId(), order);
@@ -140,10 +153,21 @@ public class OfferDataItemProvider {
 			}
 		};
 	}
+
+    public static IAnswer<Order> getSameOrderAnswer() {
+        return new IAnswer<Order>() {
+            @Override
+            public Order answer() throws Throwable {
+                return (Order) EasyMock.getCurrentArguments()[0];
+            }
+        };
+    }
+
 	
 	public static IAnswer<FulfillmentGroupItem> getSaveFulfillmentGroupItemAnswer() {
 		return new IAnswer<FulfillmentGroupItem>() {
-			public FulfillmentGroupItem answer() throws Throwable {
+			@Override
+            public FulfillmentGroupItem answer() throws Throwable {
 				return (FulfillmentGroupItem) EasyMock.getCurrentArguments()[0];
 			}
 		};
@@ -151,7 +175,8 @@ public class OfferDataItemProvider {
 	
 	public static IAnswer<Order> getRemoveItemFromOrderAnswer() {
 		return new IAnswer<Order>() {
-			public Order answer() throws Throwable {
+			@Override
+            public Order answer() throws Throwable {
 				Long orderId = (Long) EasyMock.getCurrentArguments()[0];
 				Order order = orders.get(orderId);
 				

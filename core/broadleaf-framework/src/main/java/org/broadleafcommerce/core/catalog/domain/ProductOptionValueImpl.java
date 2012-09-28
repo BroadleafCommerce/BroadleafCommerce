@@ -234,4 +234,31 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     public void setTranslations(Map<String, ProductOptionValueTranslation> translations) {
     }
 
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ProductOptionValueImpl other = (ProductOptionValueImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (getAttributeValue() == null) {
+            if (other.getAttributeValue() != null) {
+                return false;
+            }
+        } else if (!getAttributeValue().equals(other.getAttributeValue())) {
+            return false;
+        }
+        return true;
+    }
+
 }

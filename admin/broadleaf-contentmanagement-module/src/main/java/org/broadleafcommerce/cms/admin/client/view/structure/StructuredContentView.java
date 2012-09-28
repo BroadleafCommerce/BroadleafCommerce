@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,9 +15,6 @@
  */
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
@@ -47,6 +44,9 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -450,5 +450,19 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
     @Override
     public void setOrderItemLabel(Label orderItemLabel) {
         this.orderItemLabel = orderItemLabel;
+    }
+    
+    @Override
+    public void disableRules() {
+        getAddItemButton().setDisabled(true);
+        getCustomerFilterBuilder().setDisabled(true);
+        getCustomerLabel().setBaseStyle("disabledLabel");
+        getOrderItemLabel().setBaseStyle("disabledLabel");
+        getProductFilterBuilder().setDisabled(true);
+        getProductLabel().setBaseStyle("disabledLabel");
+        getRequestFilterBuilder().setDisabled(true);
+        getRequestLabel().setBaseStyle("disabledLabel");
+        getTimeFilterBuilder().setDisabled(true);
+        getTimeLabel().setBaseStyle("disabledLabel");
     }
 }

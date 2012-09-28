@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.inventory.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
 /**
  * Implementations of this interface are used to hold data about SKU availability.
@@ -29,7 +30,10 @@ import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
  *
  * @see {@link SkuAvailabilityImpl}
  * @author bpolster
+ * 
+ * @deprecated This is no longer required. See {@link InventoryService}
  */
+@Deprecated
 public interface SkuAvailability extends Serializable {
 
     /**

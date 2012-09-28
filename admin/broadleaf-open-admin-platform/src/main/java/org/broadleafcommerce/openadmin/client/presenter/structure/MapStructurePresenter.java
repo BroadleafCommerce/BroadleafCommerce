@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,6 +74,13 @@ public class MapStructurePresenter extends AbstractSubPresentable {
     public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle) {
 		this(display, entityEditDialog, null, entityEditDialogTitle, null);
 	}
+
+    public MapStructurePresenter(MapStructurePresenter template) {
+        this(template.display, template.entityEditDialog, template.availableToTypes, template.entityEditDialogTitle, template.initialValues);
+        this.abstractDynamicDataSource = template.abstractDynamicDataSource;
+        this.readOnly = template.readOnly;
+        this.gridFields = template.gridFields;
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
@@ -163,5 +170,21 @@ public class MapStructurePresenter extends AbstractSubPresentable {
 
     public void setEntityEditDialog(MapStructureEntityEditDialog entityEditDialog) {
         this.entityEditDialog = entityEditDialog;
+    }
+
+    public String getEntityEditDialogTitle() {
+        return entityEditDialogTitle;
+    }
+
+    public void setEntityEditDialogTitle(String entityEditDialogTitle) {
+        this.entityEditDialogTitle = entityEditDialogTitle;
+    }
+
+    public Map<String, Object> getInitialValues() {
+        return initialValues;
+    }
+
+    public void setInitialValues(Map<String, Object> initialValues) {
+        this.initialValues = initialValues;
     }
 }

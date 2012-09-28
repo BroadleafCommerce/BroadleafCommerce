@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,10 +33,15 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -50,7 +55,9 @@ import org.testng.annotations.Test;
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class OfferServiceTest extends CommonSetupBaseTest {
 
@@ -68,6 +75,12 @@ public class OfferServiceTest extends CommonSetupBaseTest {
 
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+
+    @Resource(name="blOrderMultishipOptionService")
+    protected OrderMultishipOptionService orderMultishipOptionService;
+
+    @Resource(name="blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
 
     private Order createTestOrderWithOfferAndGiftWrap() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
@@ -95,6 +108,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
 
         FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
         option.setPrice(new Money("8.50"));        
+        option.setFulfillmentType(FulfillmentType.PHYSICAL_SHIP);
         group.setFulfillmentOption(option);
 
         group.setFulfillmentOption(option);
@@ -210,7 +224,27 @@ public class OfferServiceTest extends CommonSetupBaseTest {
 
             offerService.save(offer);
         }
-        order = orderService.save(order, true);
+
+        order = orderService.save(order, false);
+
+        Set<OrderMultishipOption> options = new HashSet<OrderMultishipOption>();
+        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+            Address address = fg.getAddress();
+            for (FulfillmentGroupItem fgItem : fg.getFulfillmentGroupItems()) {
+                for (int j=0;j<fgItem.getQuantity();j++) {
+                    OrderMultishipOption option = new OrderMultishipOptionImpl();
+                    option.setOrder(order);
+                    option.setAddress(address);
+                    option.setOrderItem(fgItem.getOrderItem());
+                    option.setFulfillmentOption(fg.getFulfillmentOption());
+                    options.add(option);
+                }
+            }
+        }
+        for (OrderMultishipOption option : options) {
+            orderMultishipOptionService.save(option);
+        }
+        order = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(order, true);
 
         assert order.getOrderItems().size() == 4;
         assert order.getTotalTax().equals(new Money("2.00"));
