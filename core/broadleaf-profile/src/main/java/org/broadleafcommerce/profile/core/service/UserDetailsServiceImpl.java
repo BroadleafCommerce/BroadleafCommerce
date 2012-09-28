@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.profile.core.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,8 +24,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
-//@Service("blUserDetailsService")
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service("blUserDetailsService")
 @Deprecated
 public class UserDetailsServiceImpl implements UserDetailsService {
 
