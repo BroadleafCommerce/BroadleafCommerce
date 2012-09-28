@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.Arrays;
-
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -37,6 +35,8 @@ import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+
+import java.util.Arrays;
 
 /**
  * 
@@ -100,6 +100,8 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 			super.setStartState();
 			display.getAddButton().enable();
 			display.getGrid().enable();
+			  display.getFormOnlyDisplay().getForm().clearValues();
+			display.getFormOnlyDisplay().getForm().disable(); 
 			display.getRemoveButton().disable();
 		}
 	}
@@ -110,8 +112,9 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 		super.enable();
 		display.getAddButton().enable();
 		display.getGrid().enable();
-		display.getRemoveButton().enable();
+		
 		display.getToolbar().enable();
+		
 	}
 	
 	@Override
@@ -120,8 +123,9 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 		super.disable();
 		display.getAddButton().disable();
 		display.getGrid().disable();
-		display.getRemoveButton().disable();
+
 		display.getToolbar().disable();
+		
 	}
 	
 	@Override
@@ -133,11 +137,11 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 	protected void updatePresenterReadOnlyStatus() {
 		if (readOnly) {
     		display.getAddButton().disable();
-    		display.getRemoveButton().disable();
+    		
     		display.getToolbar().disable();
 		} else {
     		display.getAddButton().enable();
-    		display.getRemoveButton().enable();
+    		
     		display.getToolbar().enable();
 		}
 	}
@@ -203,6 +207,8 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
                     @Override
                     public void onFilterData(FetchDataEvent event) {
                         display.getFormOnlyDisplay().getForm().clearValues();  
+                        display.getFormOnlyDisplay().getForm().disable();  
+                        display.getRemoveButton().disable();
                     }
                 });
 
@@ -215,8 +221,12 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 					display.getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),showDisabledState, canEdit, showId, event.getRecord());
 					display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
 					display.getFormOnlyDisplay().getForm().enable();
+					 
+					  
 				} else {
-					display.getRemoveButton().disable();
+				    display.getFormOnlyDisplay().getForm().clearValues();  
+                    display.getFormOnlyDisplay().getForm().disable();  
+                    display.getRemoveButton().disable();
 				}
 				
 				updatePresenterReadOnlyStatus();
@@ -229,7 +239,7 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
 						@Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
+						    setStartState(); 
 						}
 					});
 				}
