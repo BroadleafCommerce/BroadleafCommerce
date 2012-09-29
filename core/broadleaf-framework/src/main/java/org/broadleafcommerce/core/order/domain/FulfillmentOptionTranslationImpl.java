@@ -67,11 +67,6 @@ public class FulfillmentOptionTranslationImpl implements java.io.Serializable, F
     @AdminPresentation(friendlyName = "FulfillmentOptionTranslationImpl_locale", order = 4, group = "FulfillmentOptionTranslationImpl_LongDescription", prominent = true, groupOrder = 1)
     protected Locale locale;
 
-    @ManyToOne(targetEntity = FulfillmentOptionImpl.class)
-    @JoinColumn(name = "FULFILLMENT_OPTION_ID")
-    @Index(name = "FULFILLMENT_OPTION_TRANSLATION_INDEX", columnNames = { "TRANSLATION_ID" })
-    protected FulfillmentOption fulfillmentOption;
-
     @Override
     public Long getId() {
         return id;
@@ -110,15 +105,6 @@ public class FulfillmentOptionTranslationImpl implements java.io.Serializable, F
     @Override
     public void setLocale(Locale locale) {
         this.locale = locale;
-    }
-    @Override
-    public FulfillmentOption getFulfillmentOption() {
-        return fulfillmentOption;
-    }
-
-    @Override
-    public void setFulfillmentOption(FulfillmentOption fulfillmentOption) {
-        this.fulfillmentOption = fulfillmentOption;
     }
 
 }

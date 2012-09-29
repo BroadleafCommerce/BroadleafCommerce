@@ -62,11 +62,6 @@ public class ProductOptionValueTranslationImpl implements java.io.Serializable, 
     @AdminPresentation(friendlyName = "ProductOptionTranslationImpl_locale", order = 3, group = "ProductOptionValueTranslationImpl_AttributeValue", prominent = true, groupOrder = 1)
     protected Locale locale;
 
-    @ManyToOne(targetEntity = ProductOptionValueImpl.class)
-    @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID")
-    @Index(name = "PRODUCT_OPTION_VALUE_TRANSLATION_INDEX", columnNames = { "TRANSLATION_ID" })
-    protected ProductOptionValue productOptionValue;
-
     @Override
     public Long getId() {
         return id;
@@ -95,15 +90,6 @@ public class ProductOptionValueTranslationImpl implements java.io.Serializable, 
     @Override
     public void setLocale(Locale locale) {
         this.locale = locale;
-    }
-    @Override
-    public ProductOptionValue getProductOptionValue() {
-        return productOptionValue;
-    }
-
-    @Override
-    public void setProductOptionValue(ProductOptionValue productOptionValue) {
-        this.productOptionValue = productOptionValue;
     }
 
 }

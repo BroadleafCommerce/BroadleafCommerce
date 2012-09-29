@@ -68,20 +68,6 @@ public interface FulfillmentOptionTranslation extends LocaleIf {
     public void setLongDescription(String longDescription);
 
     /**
-     * Returns the associated FulfillmentOption
-     *
-     * @return
-     */
-    public FulfillmentOption getFulfillmentOption();
-
-    /**
-     * Sets the associated product option.
-     *
-     * @param fulfillmentOption
-     */
-    public void setFulfillmentOption(FulfillmentOption fulfillmentOption);
-
-    /**
      * Returns the locale
      *
      * @return

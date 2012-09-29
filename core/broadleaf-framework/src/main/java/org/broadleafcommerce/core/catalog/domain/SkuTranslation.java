@@ -6,10 +6,6 @@ public interface SkuTranslation extends LocaleIf {
 
     public void setId(Long id);
 
-    public Sku getSku();
-
-    public void setSku(Sku Sku);
-
     public String getDescription();
 
     public void setDescription(String description);

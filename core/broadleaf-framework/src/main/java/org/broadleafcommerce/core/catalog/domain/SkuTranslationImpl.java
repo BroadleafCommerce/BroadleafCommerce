@@ -66,11 +66,6 @@ public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation,
     @AdminPresentation(friendlyName = "SkuTranslationImpl_locale", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected Locale locale;
 
-    @ManyToOne(targetEntity = SkuImpl.class)
-    @JoinColumn(name = "SKU_ID")
-    @Index(name = "SKU_TRANSLATION_INDEX", columnNames = { "TRANSLATION_ID" })
-    protected Sku sku;
-
     @Column(name = "NAME", nullable = false)
     @AdminPresentation(friendlyName = "SkuTranslationImpl_name", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected String name;
@@ -112,15 +107,7 @@ public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation,
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-    @Override
-    public Sku getSku() {
-        return sku;
-    }
 
-    @Override
-    public void setSku(Sku Sku) {
-        this.sku = Sku;
-    }
     @Override
     public String getLongDescription() {
         return longDescription;

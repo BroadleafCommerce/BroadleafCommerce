@@ -53,20 +53,6 @@ public interface ProductOptionValueTranslation extends LocaleIf {
     public void setAttributeValue(String attributeValue);
 
     /**
-     * Returns the associated ProductOptionValue
-     *
-     * @return
-     */
-    public ProductOptionValue getProductOptionValue();
-
-    /**
-     * Sets the associated product option.
-     *
-     * @param productOptionValue
-     */
-    public void setProductOptionValue(ProductOptionValue productOptionValue);
-
-    /**
      * Returns the locale
      *
      * @return
