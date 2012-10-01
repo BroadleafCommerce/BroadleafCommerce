@@ -60,11 +60,6 @@ public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation 
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Long_Description", order=6, group = "SkuTranslationImpl_description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
-    @ManyToOne(targetEntity = LocaleImpl.class, optional = true)
-    @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
-    protected Locale locale;
-
     @Column(name = "NAME", nullable = false)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected String name;
