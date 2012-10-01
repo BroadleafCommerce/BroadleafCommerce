@@ -56,5 +56,5 @@ public class EntityImplementations {
     public static final String PRICELIST = "org.broadleafcommerce.core.pricing.domain.PriceListImpl";
     public static final String PRICE_ADJUSTMENT = "org.broadleafcommerce.core.pricing.domain.PriceAdjustmentImpl";
     public static final String PRODUCT_OPTION_VALUE_TRANSLATION = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueTranslationImpl";
-
+    public static final String SKU_TRANSLATION = "org.broadleafcommerce.core.catalog.domain.SkuTranslationImpl";
 }

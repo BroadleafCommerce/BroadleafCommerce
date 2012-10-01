@@ -1,5 +1,18 @@
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,20 +26,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Type;
 
 /**
  * @author priyeshpatel
@@ -61,7 +60,7 @@ public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation,
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Long_Description", order=6, group = "SkuTranslationImpl_description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
-    @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
+    @ManyToOne(targetEntity = LocaleImpl.class, optional = true)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "SkuTranslationImpl_locale", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected Locale locale;

@@ -46,4 +46,6 @@ public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
 	public ToolStripButton getExportProductsButton();
 
     GridStructureView getSkuPriceListDisplay();
+
+    public GridStructureDisplay getTranslationsDisplay();
 }

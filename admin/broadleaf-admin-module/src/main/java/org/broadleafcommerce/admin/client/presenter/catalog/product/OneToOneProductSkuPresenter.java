@@ -78,7 +78,6 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -96,8 +95,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
     protected HandlerRegistration extendedFetchDataHandlerRegistration;
     protected MapStructurePresenter priceListPresenter;
-    private MapStructureEntityEditDialog mapEntityAdd;
-
+    protected MapStructureEntityEditDialog mapEntityAdd;
+    protected SubPresentable translationsPresenter;
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
@@ -123,13 +122,14 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		skusPresenter.bind();
 		bundleItemsPresenter.bind();
         priceListPresenter.bind();
+        translationsPresenter.bind();
         getDisplay().getSkusDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
                 @Override
                 public void onSelectionChanged(SelectionEvent event) {
                         if (event.getState()) {
                            
                             priceListPresenter.load(event.getSelectedRecord(),  getPresenterSequenceSetupManager().getDataSource("skusDS"),null);
-                            
+                            translationsPresenter.load(event.getSelectedRecord(),  getPresenterSequenceSetupManager().getDataSource("skusDS"),null);
                                 
                         }
                 }
@@ -290,16 +290,21 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
                   @Override
           public void onSetupSuccess(DataSource result) {
-                  Map<String, Object> initialValues = new HashMap<String, Object>(2);
-                  initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
-                  initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
+            
                               priceListPresenter = new MapStructurePresenter(getDisplay().getSkuPriceListDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
                             priceListPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
                              
                   }
                     
               }));
-		
+		    getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuTranslationMapDS", new SkuTranslationsMapDataSourceFactory(this), new AsyncCallbackAdapter() {
+	              @Override
+	              public void onSetupSuccess(DataSource result) {
+	                  translationsPresenter = new MapStructurePresenter(getDisplay().getTranslationsDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
+	                  translationsPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
+	              }
+	          }));
+	        
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skusDS", new ProductSkusDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
@@ -377,7 +382,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             }
         });
         gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
-        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),parentCategoriesPresenter,productOptionsPresenter,skusPresenter,bundleItemsPresenter,defaultSkuMediaMapStructurePresenter ,priceListPresenter);
+        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),parentCategoriesPresenter,productOptionsPresenter,skusPresenter,bundleItemsPresenter,defaultSkuMediaMapStructurePresenter ,priceListPresenter,translationsPresenter);
         
         super.postSetup(container);
     }
@@ -386,4 +391,5 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	public OneToOneProductSkuDisplay getDisplay() {
 		return (OneToOneProductSkuDisplay) display;
 	}
+	
 }
