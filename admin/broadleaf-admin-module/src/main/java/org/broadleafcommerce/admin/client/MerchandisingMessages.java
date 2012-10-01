@@ -154,5 +154,5 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String skuGenerationInvalid();
     public String productOptionPriceAdjMainTitle();
     public String productOptionImpl_Translations();
-    
+    public String categoryImpl_Translations();
 }

@@ -30,14 +30,15 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
-import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -290,13 +291,13 @@ public class CategoryImpl implements Category, Status {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 10)
     @AdminPresentationMap(
-            friendlyName = "CategoryImpl_Translations",
+            friendlyName = "categoryImpl_Translations",
             dataSourceName = "categoryTranslationDS",
             keyPropertyFriendlyName = "TranslationsImpl_Key",
             deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = CategoryTranslationImpl.class,
+            mapKeyOptionEntityClass = PriceListImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "translationsKey"
+            mapKeyOptionEntityValueField = "pricesKey"
     )
     protected Map<String, CategoryTranslation> translations = new HashMap<String,CategoryTranslation>();
     @Embedded
@@ -801,10 +802,12 @@ public class CategoryImpl implements Category, Status {
     	this.fulfillmentType = fulfillmentType.getType();
     }
 
-	public Map<String, CategoryTranslation> getTranslations() {
+	@Override
+    public Map<String, CategoryTranslation> getTranslations() {
         return translations;
     }
 
+    @Override
     public void setTranslations(Map<String, CategoryTranslation> translations) {
         this.translations = translations;
     }
