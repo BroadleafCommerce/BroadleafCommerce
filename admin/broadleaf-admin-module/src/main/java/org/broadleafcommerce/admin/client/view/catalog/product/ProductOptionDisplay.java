@@ -17,7 +17,9 @@
 package org.broadleafcommerce.admin.client.view.catalog.product;
 
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 /**
  * 
@@ -26,6 +28,11 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDis
  */
 public interface ProductOptionDisplay extends DynamicEditDisplay {
     
-    public GridStructureDisplay getProductOptionValuesDisplay();
-    
+
+    public SubItemView getProductOptionValueDisplay();
+
+    public GridStructureDisplay getPriceAdjustmentDisplay();
+
+    GridStructureView getTranslationsDisplay();
+
 }

@@ -152,4 +152,7 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String SkuImpl_PriceData();
     public String priceListMainTitle();
     public String skuGenerationInvalid();
+    public String productOptionPriceAdjMainTitle();
+    public String productOptionImpl_Translations();
+    
 }

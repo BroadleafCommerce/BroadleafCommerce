@@ -48,8 +48,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(generator = "PriceDateID", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PriceDateID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PriceDateID", allocationSize = 50)
+    @GeneratedValue(generator = "PriceDataID", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "PriceDataID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PriceDataID", allocationSize = 50)
     @Column(name = "PRICE_DATA_ID")
     @AdminPresentation(friendlyName = "PriceDataImpl_Sku_ID", group = "PriceDataImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;

@@ -56,7 +56,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     
     /** The sale price. */
     @Column(name = "PRICE_ADJUSTMENT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", order=2, group = "SkuImpl_Price", prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
+    @AdminPresentation(friendlyName = "Adjustment", order=2, prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal priceAdjustment;
 
   

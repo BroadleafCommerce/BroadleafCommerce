@@ -16,22 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
@@ -52,6 +36,22 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -101,6 +101,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @AdminPresentationMap(
             friendlyName = "SkuImpl_PriceData",
             keyPropertyFriendlyName = "PriceListImpl_Key",
+            targetUIElementId="productOptionValueTab",
             deleteEntityUponRemove = true,
             mapKeyOptionEntityClass = PriceListImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
@@ -123,7 +124,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
             deleteEntityUponRemove = true,
             mapKeyOptionEntityClass = ProductOptionValueTranslationImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "translationsKey"
+            mapKeyOptionEntityValueField = "priceKey"
 
     )
     protected Map<String, ProductOptionValueTranslation> translations = new HashMap<String,ProductOptionValueTranslation>();

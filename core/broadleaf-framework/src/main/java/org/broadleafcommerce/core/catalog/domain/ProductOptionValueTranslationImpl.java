@@ -26,9 +26,19 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 /**
  * Author: jerryocanas
@@ -57,7 +67,7 @@ public class ProductOptionValueTranslationImpl implements java.io.Serializable, 
     @AdminPresentation(friendlyName = "ProductOptionValueImpl_AttributeValue", order = 3, group = "ProductOptionValueTranslationImpl_AttributeValue", prominent = true, groupOrder = 1)
     protected String attributeValue;
 
-    @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
+    @ManyToOne(targetEntity = LocaleImpl.class, optional = true)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "ProductOptionTranslationImpl_locale", order = 3, group = "ProductOptionValueTranslationImpl_AttributeValue", prominent = true, groupOrder = 1)
     protected Locale locale;

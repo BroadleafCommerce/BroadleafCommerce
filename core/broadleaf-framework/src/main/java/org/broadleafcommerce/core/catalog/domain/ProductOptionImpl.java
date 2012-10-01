@@ -16,10 +16,23 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,16 +49,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.util.LocaleUtil;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
-import org.hibernate.annotations.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -109,13 +116,13 @@ public class ProductOptionImpl implements ProductOption {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 10)
     @AdminPresentationMap(
-            friendlyName = "ProductOptionImpl_Translations",
+            friendlyName = "productOptionImpl_Translations",
             dataSourceName = "productOptionTranslationDS",
             keyPropertyFriendlyName = "TranslationsImpl_Key",
             deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = ProductOptionTranslationImpl.class,
+            mapKeyOptionEntityClass = PriceListImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "translationsKey"
+            mapKeyOptionEntityValueField = "priceKey"
 
     )
     protected Map<String, ProductOptionTranslation> translations = new HashMap<String,ProductOptionTranslation>();
@@ -191,11 +198,13 @@ public class ProductOptionImpl implements ProductOption {
         this.required = required;
     }
 
+    @Override
     public Integer getDisplayOrder() {
 		return displayOrder;
 	}
 
-	public void setDisplayOrder(Integer displayOrder) {
+	@Override
+    public void setDisplayOrder(Integer displayOrder) {
 		this.displayOrder = displayOrder;
 	}
 
@@ -219,10 +228,12 @@ public class ProductOptionImpl implements ProductOption {
         this.allowedValues = allowedValues;
     }
 
+    @Override
     public Map<String, ProductOptionTranslation> getTranslations() {
         return translations;
     }
 
+    @Override
     public void setTranslations(Map<String, ProductOptionTranslation> translations) {
         this.translations = translations;
     }

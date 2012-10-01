@@ -20,6 +20,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.ExpandableGridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
@@ -43,4 +44,6 @@ public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
 	public ToolStripButton getCloneProductButton();
 
 	public ToolStripButton getExportProductsButton();
+
+    GridStructureView getSkuPriceListDisplay();
 }
