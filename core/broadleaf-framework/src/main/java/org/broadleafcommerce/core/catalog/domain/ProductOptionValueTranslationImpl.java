@@ -64,7 +64,7 @@ public class ProductOptionValueTranslationImpl implements java.io.Serializable, 
     protected Long id;
 
     @Column(name = "ATTRIBUTE_VALUE", nullable = false)
-    @AdminPresentation(friendlyName = "ProductOptionValueImpl_AttributeValue", order = 3, group = "ProductOptionValueTranslationImpl_AttributeValue", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "Attribute_Value", order = 3, group = "ProductOptionValueTranslationImpl_AttributeValue", prominent = true, groupOrder = 1)
     protected String attributeValue;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = true)

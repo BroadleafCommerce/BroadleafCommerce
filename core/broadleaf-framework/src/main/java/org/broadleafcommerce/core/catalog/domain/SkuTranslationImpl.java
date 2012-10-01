@@ -62,11 +62,11 @@ public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation 
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = true)
     @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "SkuTranslationImpl_locale", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected Locale locale;
 
     @Column(name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName = "SkuTranslationImpl_name", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = 3, group = "SkuTranslationImpl_description", prominent = true, groupOrder = 1)
     protected String name;
 
     @Override

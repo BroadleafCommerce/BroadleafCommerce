@@ -17,13 +17,13 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.hibernate.annotations.BatchSize;
@@ -120,9 +120,9 @@ public class ProductOptionImpl implements ProductOption {
             dataSourceName = "productOptionTranslationDS",
             keyPropertyFriendlyName = "TranslationsImpl_Key",
             deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = PriceListImpl.class,
+            mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "priceKey"
+            mapKeyOptionEntityValueField = "localeCode"
 
     )
     protected Map<String, ProductOptionTranslation> translations = new HashMap<String,ProductOptionTranslation>();

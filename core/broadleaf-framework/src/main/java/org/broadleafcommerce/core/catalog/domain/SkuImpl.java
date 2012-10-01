@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -285,9 +286,9 @@ public class SkuImpl implements Sku {
             //dataSourceName = "skuTranslationDS",
             keyPropertyFriendlyName = "TranslationsImpl_Key",
             deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = PriceListImpl.class,
+            mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "priceKey"
+            mapKeyOptionEntityValueField = "localeCode"
     )
     protected Map<String, SkuTranslation> translations = new HashMap<String,SkuTranslation>();
     

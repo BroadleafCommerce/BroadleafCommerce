@@ -45,7 +45,7 @@ public class ProductOptionTranslationMapDataSourceFactory implements DataSourceF
         public static ComplexValueMapStructureDataSource dataSource = null;
         private final DynamicEntityPresenter presenter;
        
-     public ProductOptionTranslationMapDataSourceFactory(DynamicEntityPresenter presenter) {
+    public ProductOptionTranslationMapDataSourceFactory(DynamicEntityPresenter presenter) {
        this.presenter=presenter;
     }
         
@@ -61,7 +61,7 @@ public class ProductOptionTranslationMapDataSourceFactory implements DataSourceF
                                 new MapStructureClientModule(CeilingEntities.PRODUCT_OPTION_VALUE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
                         };
                      //   dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (LinkedHashMap<String, String>) additionalItems[0]);
-                        dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules,presenter.getPresenterSequenceSetupManager().getDataSource("productOptionPriceListDS"),"friendlyName","priceKey");
+                        dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules,presenter.getPresenterSequenceSetupManager().getDataSource("productOptionLocaleDS"),"friendlyName","localeCode");
                         
                         dataSource.buildFields(null, false, cb);
                 } else {

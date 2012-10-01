@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -76,11 +77,11 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     protected Long id;
 
     @Column(name = "ATTRIBUTE_VALUE")
-    @AdminPresentation(friendlyName = "Attribute Value")
+    @AdminPresentation(friendlyName = "Attribute_Value")
     protected String attributeValue;
 
     @Column(name ="DISPLAY_ORDER")
-    @AdminPresentation(friendlyName = "Display Order")
+    @AdminPresentation(friendlyName = "Display_Order")
     protected Long displayOrder;
     
     @Column(name = "PRICE_ADJUSTMENT", precision=19, scale=5)
@@ -122,9 +123,9 @@ public class ProductOptionValueImpl implements ProductOptionValue {
             dataSourceName = "productOptionValueTranslationDS",
             keyPropertyFriendlyName = "TranslationsImpl_Key",
             deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = ProductOptionValueTranslationImpl.class,
+            mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "priceKey"
+            mapKeyOptionEntityValueField = "localeCode"
 
     )
     protected Map<String, ProductOptionValueTranslation> translations = new HashMap<String,ProductOptionValueTranslation>();

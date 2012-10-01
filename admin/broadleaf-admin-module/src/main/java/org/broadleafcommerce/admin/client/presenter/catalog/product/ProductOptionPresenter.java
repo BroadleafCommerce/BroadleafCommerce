@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.Canvas;
@@ -48,23 +49,22 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
  */
 public class ProductOptionPresenter extends DynamicEntityPresenter implements Instantiable {
     
-  //  protected SubPresentable productOptionValuesPresenter;
+ 
     protected SubPresentable productOptionValuePresenter;
     protected MapStructurePresenter priceListPresenter;
     protected SubPresentable translationsPresenter;
     @Override
     protected void changeSelection(final Record selectedRecord) {
         AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-     //   productOptionValuesPresenter.load(selectedRecord, dataSource);
         productOptionValuePresenter.load(selectedRecord, dataSource);
     }
     
     @Override
     public void bind() {
         super.bind();
-     //   productOptionValuesPresenter.bind();
         productOptionValuePresenter.bind();
         translationsPresenter.bind();
+        priceListPresenter.bind(); 
         getDisplay().getProductOptionValueDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
             @Override
             public void onSelectionChanged(SelectionEvent event) {
@@ -86,18 +86,10 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
                 ((ListGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{});
             }
         }));
-//        
-//        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValuesDS", new ProductOptionValueDataSourceFactory(), new AsyncCallbackAdapter() {
-//            @Override
-//            public void onSetupSuccess(DataSource result) {
-//                productOptionValuesPresenter = new CreateBasedListStructurePresenter(getDisplay().getProductOptionValuesDisplay(), BLCMain.getMessageManager().getString("newProductOptionValue"));
-//                productOptionValuesPresenter.setDataSource((ListGridDataSource)result, new String[]{}, new Boolean[]{});
-//            }
-//        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionPriceListDS", new PriceListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
 public void onSetupSuccess(DataSource top) {
-               
+            GWT.log("created datasource");   
             
             }
     }));
@@ -106,21 +98,42 @@ public void onSetupSuccess(DataSource top) {
 
           @Override
   public void onSetupSuccess(DataSource result) {
-                      priceListPresenter = new MapStructurePresenter(getDisplay().getPriceAdjustmentDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
+                      priceListPresenter = new MapStructurePresenter(getDisplay().getPriceAdjustmentDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newPriceAdjustment"));
                       priceListPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
                       
           }
+      
+          protected MapStructureEntityEditDialog getMediaEntityView() {
+              
+                  mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE,getPresenterSequenceSetupManager().getDataSource("productOptionPriceListDS"),"friendlyName","priceKey");
+                       mapEntityAdd.setShowMedia(false);
+                      
+             
+          return mapEntityAdd;
+           }
             
       }));
-
+          getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionLocaleDS", new LocaleDataSourceFactory(org.broadleafcommerce.openadmin.client.datasource.CeilingEntities.LOCALE), new AsyncCallbackAdapter() {
+              @Override
+  public void onSetupSuccess(DataSource top) {
+                 
+              
+              }
+      }));
           getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValueTranslationMapDS", new ProductOptionTranslationMapDataSourceFactory(this), new AsyncCallbackAdapter() {
               @Override
               public void onSetupSuccess(DataSource result) {
                   translationsPresenter = new MapStructurePresenter(getDisplay().getTranslationsDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
                   translationsPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
               }
+              protected MapStructureEntityEditDialog getMediaEntityView() {
+                   MapStructureEntityEditDialog mapEntityAdd2;
+                      mapEntityAdd2 = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE,getPresenterSequenceSetupManager().getDataSource("productOptionLocaleDS"),"friendlyName","localeCode");
+                           mapEntityAdd2.setShowMedia(false);
+                           //mapEntityAdd2.setMediaField("url");
+              return mapEntityAdd2;
+               }
           }));
-        
         
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValueDS", new ProductOptionValueDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
@@ -142,24 +155,8 @@ public void onSetupSuccess(DataSource top) {
     public ProductOptionDisplay getDisplay() {
         return (ProductOptionDisplay)display;
     }
-    private MapStructureEntityEditDialog mapEntityAdd;
 
-    protected MapStructureEntityEditDialog getMediaEntityView() {
-        if (mapEntityAdd == null) {
-            mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE,getPresenterSequenceSetupManager().getDataSource("productOptionPriceListDS"),"friendlyName","priceKey");
-                 mapEntityAdd.setShowMedia(true);
-                 mapEntityAdd.setMediaField("url");
-       };
-    return mapEntityAdd;
-     }
-    private MapStructureEntityEditDialog mapEntityAdd2;
+    protected MapStructureEntityEditDialog mapEntityAdd;
+   
 
-    protected MapStructureEntityEditDialog getMediaEntityView2() {
-        if (mapEntityAdd2== null) {
-            mapEntityAdd2 = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE,getPresenterSequenceSetupManager().getDataSource("productOptionPriceListDS"),"friendlyName","priceKey");
-                 mapEntityAdd2.setShowMedia(true);
-                 mapEntityAdd2.setMediaField("url");
-       };
-    return mapEntityAdd2;
-     }
 }

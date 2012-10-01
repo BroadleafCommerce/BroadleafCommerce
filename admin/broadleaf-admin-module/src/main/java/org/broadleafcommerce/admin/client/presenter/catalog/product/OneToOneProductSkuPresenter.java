@@ -95,7 +95,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
     protected HandlerRegistration extendedFetchDataHandlerRegistration;
     protected MapStructurePresenter priceListPresenter;
-    protected MapStructureEntityEditDialog mapEntityAdd;
+  
     protected SubPresentable translationsPresenter;
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -285,24 +285,46 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                     
                     }
             }));
+	      getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuLocaleDS", new LocaleDataSourceFactory(org.broadleafcommerce.openadmin.client.datasource.CeilingEntities.LOCALE), new AsyncCallbackAdapter() {
+              @Override
+  public void onSetupSuccess(DataSource top) {
+                 
+              
+              }
+      }));
 		  getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("priceListMapDS", new PriceListMapDataSourceFactory(this), null, null, new AsyncCallbackAdapter() {
-                      private MapStructureEntityEditDialog mapEntityAdd;
-
+                   
                   @Override
           public void onSetupSuccess(DataSource result) {
             
-                              priceListPresenter = new MapStructurePresenter(getDisplay().getSkuPriceListDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
+                            priceListPresenter = new MapStructurePresenter(getDisplay().getSkuPriceListDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
                             priceListPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
                              
                   }
+                  protected MapStructureEntityEditDialog getMediaEntityView() {
+                      MapStructureEntityEditDialog mapEntityAdd;
+                              mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE,getPresenterSequenceSetupManager().getDataSource("skuPriceListDS"),"friendlyName","priceKey");
+                               mapEntityAdd.setShowMedia(true);
+                               mapEntityAdd.setMediaField("url");
+                   
+                  return mapEntityAdd;
+                   }
                     
               }));
+		  
 		    getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuTranslationMapDS", new SkuTranslationsMapDataSourceFactory(this), new AsyncCallbackAdapter() {
 	              @Override
 	              public void onSetupSuccess(DataSource result) {
 	                  translationsPresenter = new MapStructurePresenter(getDisplay().getTranslationsDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
 	                  translationsPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
 	              }
+	              protected MapStructureEntityEditDialog getMediaEntityView() {
+	                   MapStructureEntityEditDialog mapEntityAdd;
+	                             mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE,getPresenterSequenceSetupManager().getDataSource("skuLocaleDS"),"friendlyName","localeCode");
+	                             mapEntityAdd.setShowMedia(true);
+	                             mapEntityAdd.setMediaField("url");
+	                return mapEntityAdd;
+	                 }
 	          }));
 	        
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skusDS", new ProductSkusDataSourceFactory(), new AsyncCallbackAdapter() {
@@ -354,14 +376,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	    
  
            
-           protected MapStructureEntityEditDialog getMediaEntityView() {
-                    if (mapEntityAdd == null) {
-                            mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE,getPresenterSequenceSetupManager().getDataSource("skuPriceListDS"),"friendlyName","priceKey");
-                             mapEntityAdd.setShowMedia(true);
-                             mapEntityAdd.setMediaField("url");
-                   };
-                return mapEntityAdd;
-                 }
+       
     @Override
     public void postSetup(Canvas container) {
         MapStructurePresenter simplePresenter = (MapStructurePresenter) subPresentables.get("productMediaMapDS");
