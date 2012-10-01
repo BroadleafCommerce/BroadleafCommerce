@@ -17,10 +17,13 @@
 package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.BatchDynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.BatchPersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.springframework.security.access.annotation.Secured;
 
 /**
  * Asynchronous version of {@link EntityService}.
@@ -38,5 +41,6 @@ public interface DynamicEntityServiceAsync {
     void update(PersistencePackage persistencePackage, AsyncCallback<Entity> cb);
     
 	void remove(PersistencePackage persistencePackage, AsyncCallback<Void> cb);
-    
+
+    void batchInspect(BatchPersistencePackage persistencePackage, AsyncCallback<BatchDynamicResultSet> async);
 }
