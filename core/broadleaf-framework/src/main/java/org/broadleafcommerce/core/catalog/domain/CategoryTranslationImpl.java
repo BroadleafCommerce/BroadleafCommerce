@@ -52,8 +52,7 @@ import javax.persistence.Transient;
 @Table(name = "BLC_CATEGORY_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SearchRedirectImpl_friendyName")
-public class CategoryTranslationImpl implements java.io.Serializable,
-        CategoryTranslation, LocaleIf {
+public class CategoryTranslationImpl implements java.io.Serializable, CategoryTranslation {
 
     private static final long serialVersionUID = 1L;
     @Transient
@@ -79,11 +78,6 @@ public class CategoryTranslationImpl implements java.io.Serializable,
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=6, group = "CategoryTranslationImpl_description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
-
-    @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
-    @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "CategoryTranslationImpl_locale", order = 3, group = "CategoryTranslationImpl_description", prominent = true, groupOrder = 1)
-    protected Locale locale;
 
     @Override
     public Long getId() {
@@ -112,15 +106,6 @@ public class CategoryTranslationImpl implements java.io.Serializable,
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
     @Override

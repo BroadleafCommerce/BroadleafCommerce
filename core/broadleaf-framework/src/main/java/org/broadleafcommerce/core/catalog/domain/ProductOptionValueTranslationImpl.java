@@ -49,7 +49,7 @@ import javax.persistence.Transient;
 @Table(name = "BLC_PRODUCT_OPTION_VALUE_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductOptionTranslationImpl_friendyName")
-public class ProductOptionValueTranslationImpl implements java.io.Serializable, ProductOptionValueTranslation, LocaleIf {
+public class ProductOptionValueTranslationImpl implements java.io.Serializable, ProductOptionValueTranslation {
 
     private static final long serialVersionUID = 1L;
 
@@ -90,16 +90,6 @@ public class ProductOptionValueTranslationImpl implements java.io.Serializable, 
     @Override
     public void setAttributeValue(String attributeValue) {
         this.attributeValue = attributeValue;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
 }

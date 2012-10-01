@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-public interface ProductOptionTranslation extends LocaleIf {
+public interface ProductOptionTranslation {
 
     public Long getId();
 

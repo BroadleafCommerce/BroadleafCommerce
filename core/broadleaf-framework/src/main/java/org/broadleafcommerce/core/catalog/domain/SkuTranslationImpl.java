@@ -36,7 +36,7 @@ import javax.persistence.Transient;
 @Table(name = "BLC_SKU_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SKUTranslationImpl_friendyName")
-public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation, LocaleIf {
+public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation {
 
     private static final long serialVersionUID = 1L;
 
@@ -96,15 +96,6 @@ public class SkuTranslationImpl implements java.io.Serializable, SkuTranslation,
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
     @Override

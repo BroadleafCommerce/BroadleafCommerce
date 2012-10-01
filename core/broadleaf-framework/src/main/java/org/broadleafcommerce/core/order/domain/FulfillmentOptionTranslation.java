@@ -17,13 +17,12 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.core.catalog.domain.LocaleIf;
 
 /**
  * Author: jerryocanas
  * Date: 9/25/12
  */
-public interface FulfillmentOptionTranslation extends LocaleIf {
+public interface FulfillmentOptionTranslation {
 
     /**
      * Returns the id
@@ -66,19 +65,5 @@ public interface FulfillmentOptionTranslation extends LocaleIf {
      * @param longDescription
      */
     public void setLongDescription(String longDescription);
-
-    /**
-     * Returns the locale
-     *
-     * @return
-     */
-    public Locale getLocale();
-
-    /**
-     * Sets the locale
-     *
-     * @param locale
-     */
-    public void setLocale(Locale locale);
 
 }

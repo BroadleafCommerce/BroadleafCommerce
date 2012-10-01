@@ -40,7 +40,7 @@ import javax.persistence.*;
 @Table(name = "BLC_FULFILLMENT_OPTION_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentOptionTranslationImpl_friendyName")
-public class FulfillmentOptionTranslationImpl implements java.io.Serializable, FulfillmentOptionTranslation, LocaleIf {
+public class FulfillmentOptionTranslationImpl implements java.io.Serializable, FulfillmentOptionTranslation {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,11 +61,6 @@ public class FulfillmentOptionTranslationImpl implements java.io.Serializable, F
     @Column(name = "LONG_DESCRIPTION", nullable = false)
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_LongDescription", order = 3, group = "FulfillmentOptionTranslationImpl_LongDescription", prominent = true, groupOrder = 1)
     protected String longDescription;
-
-    @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
-    @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "FulfillmentOptionTranslationImpl_locale", order = 4, group = "FulfillmentOptionTranslationImpl_LongDescription", prominent = true, groupOrder = 1)
-    protected Locale locale;
 
     @Override
     public Long getId() {
@@ -95,16 +90,6 @@ public class FulfillmentOptionTranslationImpl implements java.io.Serializable, F
     @Override
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
 }

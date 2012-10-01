@@ -50,8 +50,7 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_PRODUCT_OPTION_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductOptionTranslationImpl_friendyName")
-public class ProductOptionTranslationImpl implements java.io.Serializable,
-        ProductOptionTranslation, LocaleIf {
+public class ProductOptionTranslationImpl implements java.io.Serializable, ProductOptionTranslation {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,11 +67,6 @@ public class ProductOptionTranslationImpl implements java.io.Serializable,
     @Column(name = "LABEL", nullable = false)
     @AdminPresentation(friendlyName = "ProductOptionImpl_Label", order = 3, group = "ProductOptionTranslationImpl_Label", prominent = true, groupOrder = 1)
     protected String label;
-
-    @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
-    @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "ProductOptionTranslationImpl_locale", order = 3, group = "ProductOptionTranslationImpl_Label", prominent = true, groupOrder = 1)
-    protected Locale locale;
 
     @Override
     public Long getId() {
@@ -92,16 +86,6 @@ public class ProductOptionTranslationImpl implements java.io.Serializable,
     @Override
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
 }
