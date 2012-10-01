@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.admin.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.openadmin.client.AbstractModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityCommon;
@@ -28,6 +25,9 @@ import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityProfile;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -103,19 +103,7 @@ public class MerchandisingModule extends AbstractModule {
 			"org.broadleafcommerce.admin.client.presenter.promotion.OfferPresenter",
 			offerPermissions
 		);
-	        List<String> priceListPermissions = new ArrayList<String>();
-                priceListPermissions.add("PERMISSION_CREATE_PRICELIST");
-                priceListPermissions.add("PERMISSION_UPDATE_PRICELIST");
-                priceListPermissions.add("PERMISSION_DELETE_PRICELIST");
-                priceListPermissions.add("PERMISSION_READ_PRICELIST");
-                setSection(
-            BLCMain.getMessageManager().getString("priceListMainTitle"),
-                        "priceListView",
-                        "org.broadleafcommerce.admin.client.view.pricelist.PriceListView",
-                        "priceListPresenter",
-                        "org.broadleafcommerce.admin.client.presenter.pricelist.PriceListPresenter",
-                        priceListPermissions
-                );
+
         setOrder(50);
 
 		registerModule();
