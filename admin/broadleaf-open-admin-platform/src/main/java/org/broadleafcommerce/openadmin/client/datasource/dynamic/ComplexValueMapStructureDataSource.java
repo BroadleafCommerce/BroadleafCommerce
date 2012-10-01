@@ -78,7 +78,8 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         		prominentFields.add(field);
         	}
             if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType")) && !prominentFields.contains(field)) {
-                resetPermanentFieldVisibility(field.getName());
+                permanentlyShowFields(field.getName());
+                setProminent(field.getName());
                 prominentFields.add(field);
                 keyProperty = field.getName();
             }
