@@ -16,11 +16,14 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
+import org.broadleafcommerce.openadmin.client.dto.BatchDynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.BatchPersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -55,11 +58,23 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     protected ExploitProtectionService exploitProtectionService;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+    @Override
+    public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException, ApplicationSecurityException {
+        DynamicResultSet[] results = new DynamicResultSet[batchPersistencePackage.getPersistencePackages().length];
+        for (int j=0;j<batchPersistencePackage.getPersistencePackages().length;j++){
+            results[j] = inspect(batchPersistencePackage.getPersistencePackages()[j]);
+        }
+        BatchDynamicResultSet batchResults = new BatchDynamicResultSet();
+        batchResults.setDynamicResultSets(results);
+
+        return batchResults;
+    }
+
+    @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -81,6 +96,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         }
     }
 
+    @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -128,6 +144,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         }
     }
 
+    @Override
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -146,6 +163,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         }
     }
 
+    @Override
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -164,6 +182,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         }
     }
 
+    @Override
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
