@@ -70,6 +70,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException, ApplicationSecurityException {
         String key = String.valueOf(batchPersistencePackage.hashCode());
         if (METADATA_CACHE.containsKey(key)) {
+            for (PersistencePackage persistencePackage : batchPersistencePackage.getPersistencePackages()) {
+                exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
+            }
             return METADATA_CACHE.get(key);
         }
         DynamicResultSet[] results = new DynamicResultSet[batchPersistencePackage.getPersistencePackages().length];

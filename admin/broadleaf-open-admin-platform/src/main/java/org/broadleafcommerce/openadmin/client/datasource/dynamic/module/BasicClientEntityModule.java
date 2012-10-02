@@ -738,46 +738,6 @@ public class BasicClientEntityModule implements DataSourceModule {
     
     @Override
     public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-//        AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
-//
-//            @Override
-//            protected void onOtherException(Throwable exception) {
-//                super.onOtherException(exception);
-//                if (cb != null) {
-//                    cb.onFailure(exception);
-//                }
-//            }
-//
-//            @Override
-//            protected void onSecurityException(ApplicationSecurityException exception) {
-//                super.onSecurityException(exception);
-//                if (cb != null) {
-//                    cb.onFailure(exception);
-//                }
-//            }
-//
-//            @Override
-//            public void onSuccess(DynamicResultSet result) {
-//                super.onSuccess(result);
-//                ClassMetadata metadata = result.getClassMetaData();
-//                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.ADORNEDTARGETLIST}, overrideFieldSort, ((AsyncCallbackAdapter) cb).getDataSourceSetupManager());
-//
-//                //Add a hidden field to store the polymorphic type for this entity
-//                DataSourceField typeField = new DataSourceTextField("_type");
-//                typeField.setCanEdit(false);
-//                typeField.setHidden(true);
-//                typeField.setAttribute("permanentlyHidden", true);
-//                dataSource.addField(typeField);
-//                dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
-//                dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
-//
-//                if (cb != null) {
-//                    cb.onSuccess(dataSource);
-//                }
-//            }
-//
-//        });
-        //TODO make all CRUD RPC operations (and inspect) go through a Communications Manager so that we have a central place to handle batch operations
         BatchManager batchManager = BatchManager.getInstance();
         BatchPackage batchPackage = new BatchPackage();
         batchPackage.setPersistencePackage(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken));
