@@ -59,6 +59,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -125,9 +126,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 			// Add fields that are present on all products
 			document.addField("id", product.getId());
 			
-			// The explicit categories are the one defined by the product itself
+			// The explicit categories are the ones defined by the product itself
 			for (Category category : product.getAllParentCategories()) {
-				document.addField("explicitCategory", category.getId());
+				document.addField(getExplicitCategoryFieldName(), category.getId());
 				
 				String categorySortField = getCategorySortField(category);
 				int listIndex = category.getAllProducts().indexOf(product);
@@ -148,7 +149,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 			    fullCategoryHierarchy.addAll(category.buildFullCategoryHierarchy(null));
 			}
 			for (Category category : fullCategoryHierarchy) {
-				document.addField("category", category.getId());
+				document.addField(getCategoryFieldName(), category.getId());
 			}
 			
 			// Add data-driven user specified searchable fields
@@ -164,17 +165,19 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 					Object propertyValue = PropertyUtils.getProperty(product, propertyName);
 					
 					// Index the searchable fields
-					for (FieldType searchableFieldType : field.getSearchableFieldTypes()) {
-						String solrPropertyName = field.getPropertyName() + "_" + searchableFieldType.getType();
-						document.addField(solrPropertyName, propertyValue);
-						addedProperties.add(solrPropertyName);
-						copyFieldValue.add(propertyValue.toString());
+					if (field.getSearchable()) {
+    					for (FieldType searchableFieldType : field.getSearchableFieldTypes()) {
+    						String solrPropertyName = getPropertyNameForFieldSearchable(field, searchableFieldType);
+    						document.addField(solrPropertyName, propertyValue);
+    						addedProperties.add(solrPropertyName);
+    						copyFieldValue.add(propertyValue.toString());
+    					}
 					}
 					
 					// Index the faceted field type as well
 					FieldType facetFieldType = field.getFacetFieldType();
 					if (facetFieldType != null) {
-						String solrFacetPropertyName = field.getPropertyName() + "_" + facetFieldType.getType();
+						String solrFacetPropertyName = getPropertyNameForFieldFacet(field);
 						if (!addedProperties.contains(solrFacetPropertyName)) {
 							document.addField(solrFacetPropertyName, propertyValue);
 						}
@@ -184,7 +187,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 							+ product.getId() + "]");
 				}
 			}
-			document.addField("searchable", StringUtils.join(copyFieldValue, " "));
+			document.addField(getSearchableFieldName(), StringUtils.join(copyFieldValue, " "));
 			documents.add(document);
 		}
 		
@@ -211,7 +214,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria) 
 			throws ServiceException {
 		List<SearchFacetDTO> facets = getCategoryFacets(category);
-		String query = "explicitCategory:" + category.getId();
+		String query = getExplicitCategoryFieldName() + ":" + category.getId();
 		return findProducts(query, facets, searchCriteria, getCategorySortField(category) + " asc");
 	}
 	
@@ -219,7 +222,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) 
 			throws ServiceException {
 		List<SearchFacetDTO> facets = getCategoryFacets(category);
-		String query = "category:" + category.getId();
+		String query = getCategoryFieldName() + ":" + category.getId();
 		return findProducts(query, facets, searchCriteria, getCategorySortField(category) + " asc");
 	}
 	
@@ -227,7 +230,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) 
 			throws ServiceException {
 		List<SearchFacetDTO> facets = getSearchFacets();
-		query = "searchable:*" + query + "*"; // Surrounding with * allows partial word matches
+		
+		query = sanitizeQuery(query);
+		
+		query = getSearchableFieldName() + ":(" + query + ")"; 
 		return findProducts(query, facets, searchCriteria, null);
 	}
 	
@@ -235,10 +241,13 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, 
 	        ProductSearchCriteria searchCriteria) throws ServiceException {
 		List<SearchFacetDTO> facets = getSearchFacets();
+		
+		query = sanitizeQuery(query);
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append("category:").append(category.getId())
+		sb.append(getCategoryFieldName()).append(":").append(category.getId())
 		    .append(" AND ")
-		    .append("searchable:*").append(query).append("*"); // Surrounding with * allows partial word matches
+		    .append(getSearchableFieldName()).append(":(").append(query).append(")"); 
 		return findProducts(sb.toString(), facets, searchCriteria, null);
 	}
 	
@@ -284,11 +293,22 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	    attachSortClause(solrQuery, searchCriteria, defaultSort);
 	    attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
 	    attachFacets(solrQuery, namedFacetMap);
-
+	    
+	    if (LOG.isTraceEnabled()) {
+	        try {
+	            LOG.trace(URLDecoder.decode(solrQuery.toString(), "UTF-8"));
+	        } catch (Exception e) {
+	            LOG.trace("Couldn't UTF-8 URL Decode: " + solrQuery.toString());
+	        }
+	    }
+	    
 	    // Query solr
 	    QueryResponse response;
 	    try {
 	    	response = server.query(solrQuery);
+	    	if (LOG.isTraceEnabled()) {
+	    	    LOG.trace(response.toString());
+	    	}
 	    } catch (SolrServerException e) {
 	    	throw new ServiceException("Could not perform search", e);
 	    }
@@ -306,7 +326,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	    setPagingAttributes(result, response, searchCriteria);
 	    return result;
 	}
-	
 	
 	/**
 	 * Sets up the sorting criteria. This will support sorting by multiple fields at a time
@@ -554,10 +573,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 		return sb.toString();
 	}
 	
-	protected String getCategorySortField(Category category) {
-		return "category_" + category.getId() + "_sort_i";
-	}
-	
 	/**
 	 * Create the wrapper DTO around the SearchFacet
 	 * 
@@ -620,13 +635,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	 * as "refurbished", we may want to index "price" to "refurbishedSku.retailPrice_td". That mapping occurs here.
 	 * 
 	 * @param fields
+	 * @param searchCriteria the searchCriteria in case it is needed to determine the field key
 	 * @return the solr field index key to use
 	 */
 	protected String getSolrFieldKey(Field field, ProductSearchCriteria searchCriteria) {
-		if (field.getFacetFieldType() != null) {
-			return field.getPropertyName() + "_" + field.getFacetFieldType().getType();
-		}
-		return null;
+	    return getPropertyNameForFieldFacet(field);
 	}
 	
 	/**
@@ -655,6 +668,136 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 			namedFacetMap.put(getSolrFieldKey(facetField, searchCriteria), facet);
 		}
 		return namedFacetMap;
+	}
+	
+	/**
+	 * Perform any necessary query sanitation here. For example, we disallow open and close parentheses, and we also
+	 * ensure that quotes are actual quotes (") and not the URL encoding (&quot;) so that Solr is able to properly handle
+	 * the user's intent.
+	 * 
+	 * @param query
+	 * @return the sanitized query
+	 */
+	protected String sanitizeQuery(String query) {
+		return query.replace("(", "").replace("%28", "")
+		            .replace(")", "").replace("%29", "")
+		            .replace(":", "").replace("%3A", "").replace("%3a", "")
+		            .replace("&quot;", "\""); // Allow quotes in the query for more finely tuned matches
+	}
+	
+	/**
+	 * Determines if there is a prefix that needs to be applied to all fields for this particular request.
+	 * For example, if you have multiple sites set up, you may want to filter that here. 
+	 * 
+	 * Note: This method should NOT return null. If there is no prefix, it should return the empty string.
+	 * 
+	 * @return the global prefix if there is one, "" if there isn't
+	 */
+	protected String getGlobalPrefix() {
+	    return "";
+	}
+	
+	/**
+	 * Determines if there is a locale prefix that needs to be applied to fields for this particular request.
+	 * By default, a locale prefix is not applicable for category, explicitCategory, or fields that have type Price
+	 * 
+	 * Note: This method should NOT return null. If there is no prefix, it should return the empty string.
+	 * 
+	 * @return the global prefix if there is one, "" if there isn't
+	 */
+	protected String getLocalePrefix() {
+	    return "";
+	}
+	
+	/**
+	 * Determines if there is a pricelist prefix that needs to be applied to fields for this particular request.
+	 * By default, a pricelist prefix will only apply to fields that have type Price
+	 * 
+	 * Note: This method should NOT return null. If there is no prefix, it should return the empty string.
+	 * 
+	 * @return the global prefix if there is one, "" if there isn't
+	 */
+	protected String getPricelistPrefix() {
+	    return "";
+	}
+	
+	/**
+	 * Returns the property name for the given field and field type. This will apply the global prefix to the field,
+	 * and it will also apply either the locale prefix or the pricelist prefix, depending on whether or not the field
+	 * type was set to FieldType.PRICE
+	 * 
+	 * @param field
+	 * @param searchableFieldType
+	 * @return the property name for the field and fieldtype
+	 */
+	protected String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType) {
+	    return new StringBuilder()
+	        .append(getGlobalPrefix())
+	        .append(searchableFieldType.equals(FieldType.PRICE) ? getPricelistPrefix() : getLocalePrefix())
+	        .append(field.getPropertyName()).append("_").append(searchableFieldType.getType())
+	        .toString();
+	}
+	
+	/**
+	 * Returns the property name for the given field and its configured facet field type. This will apply the global prefix 
+	 * to the field, and it will also apply either the locale prefix or the pricelist prefix, depending on whether or not 
+	 * the field type was set to FieldType.PRICE
+	 * 
+	 * @param field
+	 * @return the property name for the facet type of this field
+	 */
+	protected String getPropertyNameForFieldFacet(Field field) {
+	    if (field.getFacetFieldType() == null) { 
+	        return null;
+	    }
+	    
+	    return new StringBuilder()
+	        .append(getGlobalPrefix())
+	        .append(field.getFacetFieldType().equals(FieldType.PRICE) ? getPricelistPrefix() : getLocalePrefix())
+	        .append(field.getPropertyName()).append("_").append(field.getFacetFieldType().getType())
+	        .toString();
+	}
+	
+	/**
+	 * @return the searchable field name, with the global and locale prefixes as appropriate
+	 */
+	protected String getSearchableFieldName() {
+	    return new StringBuilder()
+	        .append(getGlobalPrefix())
+	        .append(getLocalePrefix())
+	        .append("searchable")
+	        .toString();
+	}
+	
+	/**
+	 * @return the category field name, with the global prefix as appropriate
+	 */
+	protected String getCategoryFieldName() {
+	    return new StringBuilder()
+	        .append(getGlobalPrefix())
+	        .append("category")
+	        .toString();
+	}
+	
+	/**
+	 * @return the explicit category field name, with the global prefix as appropriate
+	 */
+	protected String getExplicitCategoryFieldName() {
+	    return new StringBuilder()
+	        .append(getGlobalPrefix())
+	        .append("explicitCategory")
+	        .toString();
+	}
+	
+	/**
+	 * @param category
+	 * @return the default sort field name for this category
+	 */
+	protected String getCategorySortField(Category category) {
+	    return new StringBuilder()
+	        .append(getCategoryFieldName())
+	        .append("_").append(category.getId()).append("_").append("sort_i")
+	        .toString();
 	}
 
 }
