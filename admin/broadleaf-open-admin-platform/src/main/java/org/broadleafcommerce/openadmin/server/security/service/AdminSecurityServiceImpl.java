@@ -56,7 +56,6 @@ import java.util.List;
  *
  */
 @Service("blAdminSecurityService")
-@Transactional("blTransactionManager")
 public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     private static final Log LOG = LogFactory.getLog(AdminSecurityServiceImpl.class);
@@ -100,16 +99,19 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     protected String resetPasswordURL;
 
     @Override
+    @Transactional("blTransactionManager")
     public void deleteAdminPermission(AdminPermission permission) {
         adminPermissionDao.deleteAdminPermission(permission);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void deleteAdminRole(AdminRole role) {
         adminRoleDao.deleteAdminRole(role);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void deleteAdminUser(AdminUser user) {
         adminUserDao.deleteAdminUser(user);
     }
@@ -130,16 +132,19 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public AdminPermission saveAdminPermission(AdminPermission permission) {
         return adminPermissionDao.saveAdminPermission(permission);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public AdminRole saveAdminRole(AdminRole role) {
         return adminRoleDao.saveAdminRole(role);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public AdminUser saveAdminUser(AdminUser user) {
     	if (user.getUnencodedPassword() != null) {
             user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), getSalt(user)));
@@ -148,6 +153,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public AdminUser changePassword(PasswordChange passwordChange) {
     	AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
@@ -190,6 +196,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public GenericResponse sendForgotUsernameNotification(String emailAddress) {
         GenericResponse response = new GenericResponse();
         List<AdminUser> users = null;
@@ -219,6 +226,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public GenericResponse sendResetPasswordNotification(String username) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
@@ -257,6 +265,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
@@ -379,6 +388,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
 	@Override
+    @Transactional("blTransactionManager")
 	public GenericResponse changePassword(String username,
 			String oldPassword, String password, String confirmPassword) {
 		GenericResponse response = new GenericResponse();
