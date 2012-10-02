@@ -215,4 +215,42 @@ public class Entity implements IsSerializable, Serializable {
     public void setLockedDate(String lockedDate) {
         this.lockedDate = lockedDate;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Entity)) return false;
+
+        Entity entity = (Entity) o;
+
+        if (isDirty != entity.isDirty) return false;
+        if (isValidationFailure != entity.isValidationFailure) return false;
+        if (multiPartAvailableOnThread != entity.multiPartAvailableOnThread) return false;
+        if (isActive != null ? !isActive.equals(entity.isActive) : entity.isActive != null) return false;
+        if (isDeleted != null ? !isDeleted.equals(entity.isDeleted) : entity.isDeleted != null) return false;
+        if (isInactive != null ? !isInactive.equals(entity.isInactive) : entity.isInactive != null) return false;
+        if (isLocked != null ? !isLocked.equals(entity.isLocked) : entity.isLocked != null) return false;
+        if (lockedBy != null ? !lockedBy.equals(entity.lockedBy) : entity.lockedBy != null) return false;
+        if (lockedDate != null ? !lockedDate.equals(entity.lockedDate) : entity.lockedDate != null) return false;
+        if (!Arrays.equals(properties, entity.properties)) return false;
+        if (!Arrays.equals(type, entity.type)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? Arrays.hashCode(type) : 0;
+        result = 31 * result + (properties != null ? Arrays.hashCode(properties) : 0);
+        result = 31 * result + (isDirty ? 1 : 0);
+        result = 31 * result + (isDeleted != null ? isDeleted.hashCode() : 0);
+        result = 31 * result + (isInactive != null ? isInactive.hashCode() : 0);
+        result = 31 * result + (isActive != null ? isActive.hashCode() : 0);
+        result = 31 * result + (isLocked != null ? isLocked.hashCode() : 0);
+        result = 31 * result + (lockedBy != null ? lockedBy.hashCode() : 0);
+        result = 31 * result + (lockedDate != null ? lockedDate.hashCode() : 0);
+        result = 31 * result + (multiPartAvailableOnThread ? 1 : 0);
+        result = 31 * result + (isValidationFailure ? 1 : 0);
+        return result;
+    }
 }

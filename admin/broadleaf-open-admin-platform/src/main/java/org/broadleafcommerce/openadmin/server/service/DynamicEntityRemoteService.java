@@ -17,6 +17,8 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
+import net.entropysoft.transmorph.cache.LRUMap;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -50,6 +53,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
+    protected static final Map<String, BatchDynamicResultSet> METADATA_CACHE = MapUtils.synchronizedMap(new LRUMap<String, BatchDynamicResultSet>(1000));
 
     protected String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
     private ApplicationContext applicationContext;
@@ -64,14 +68,19 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException, ApplicationSecurityException {
+        String key = String.valueOf(batchPersistencePackage.hashCode());
+        if (METADATA_CACHE.containsKey(key)) {
+            return METADATA_CACHE.get(key);
+        }
         DynamicResultSet[] results = new DynamicResultSet[batchPersistencePackage.getPersistencePackages().length];
         for (int j=0;j<batchPersistencePackage.getPersistencePackages().length;j++){
             results[j] = inspect(batchPersistencePackage.getPersistencePackages()[j]);
         }
         BatchDynamicResultSet batchResults = new BatchDynamicResultSet();
         batchResults.setDynamicResultSets(results);
+        METADATA_CACHE.put(key, batchResults);
 
-        return batchResults;
+        return METADATA_CACHE.get(key);
     }
 
     @Override

@@ -379,7 +379,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
                 dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
 
                 if (cb != null) {
-                    cb.onSuccess(dataSource);
+                    ((AsyncCallbackAdapter) cb).onBatchSuccess(dataSource);
                 }
             }
         });
