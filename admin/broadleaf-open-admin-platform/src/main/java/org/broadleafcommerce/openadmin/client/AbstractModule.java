@@ -16,11 +16,13 @@
 
 package org.broadleafcommerce.openadmin.client;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.reflection.ModuleFactory;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
+
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -35,12 +37,13 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	protected String moduleTitle;
 	protected String moduleKey;
     protected Integer order = Integer.MAX_VALUE;
-	
+	protected List<ModuleSectionPojo> sections=new ArrayList<ModuleSectionPojo>();
 	public void registerModule() {
 		BLCMain.addModule(this);
 	}
 	
-	public String getModuleTitle() {
+	@Override
+    public String getModuleTitle() {
 		return moduleTitle;
 	}
 	
@@ -51,7 +54,8 @@ public abstract class AbstractModule implements EntryPoint, Module {
         }
 	}
 	
-	public String getModuleKey() {
+	@Override
+    public String getModuleKey() {
 		return moduleKey;
 	}
 
@@ -71,6 +75,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		String sectionPresenterClass,
 		List<String> sectionPermissions
 	) {
+	    sections.add(new ModuleSectionPojo(sectionTitle,sectionViewKey,sectionViewClass,sectionPresenterKey,sectionPresenterClass,sectionPermissions));
 		pages.put(sectionTitle, new String[]{sectionViewKey, sectionPresenterKey});
 		ModuleFactory moduleFactory = ModuleFactory.getInstance();
 		moduleFactory.put(sectionViewKey, sectionViewClass);
@@ -94,15 +99,18 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	}
 	
 
-	public LinkedHashMap<String, String[]> getPages() {
+	@Override
+    public LinkedHashMap<String, String[]> getPages() {
 		return pages;
 	}
 
-	public void postDraw() {
+	@Override
+    public void postDraw() {
 		//do nothing
 	}
 
-	public void preDraw() {
+	@Override
+    public void preDraw() {
 		//do nothing
 	}
 
@@ -114,5 +122,21 @@ public abstract class AbstractModule implements EntryPoint, Module {
     @Override
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    
+    protected List<ModuleSectionPojo> getSections() {
+        return sections;
+    }
+
+    
+    protected void setSections(List<ModuleSectionPojo> sections) {
+        this.sections = sections;
+    }
+
+    @Override
+    public void onModuleLoad() {
+        // TODO Auto-generated method stub
+        
     }
 }
