@@ -79,7 +79,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
 			query = null;
 		}
 		
-		if (query.length() == 0) {
+		if (query == null || query.length() == 0) {
 			return "redirect:/";
 		}
 		
@@ -110,15 +110,14 @@ public class BroadleafSearchController extends AbstractCatalogController {
 		} else {
 			// Else, if we received a GET to the category URL (either the user performed a search or we redirected
 			// from the POST method, we can actually process the results
-		        SearchRedirect handler = searchRedirectService
-	                        .findSearchRedirectBySearchTerm(query);
+		    SearchRedirect handler = searchRedirectService.findSearchRedirectBySearchTerm(query);
 	               
-	                if (handler != null) {
-	                    String contextPath = request.getContextPath();
-	                    String url = UrlUtil.fixRedirectUrl(contextPath, handler.getUrl());
-	                    response.sendRedirect(url);   
-	                    return null;
-	                }; 
+            if (handler != null) {
+                String contextPath = request.getContextPath();
+                String url = UrlUtil.fixRedirectUrl(contextPath, handler.getUrl());
+                response.sendRedirect(url);   
+                return null;
+            }
 
 			if (StringUtils.isNotEmpty(query)) {
 				List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
