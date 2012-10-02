@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.service.workflow.add;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -37,6 +35,8 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
+import javax.annotation.Resource;
+
 public class AddOrderItemActivity extends BaseActivity {
     private static Log LOG = LogFactory.getLog(AddOrderItemActivity.class);
     
@@ -49,7 +49,6 @@ public class AddOrderItemActivity extends BaseActivity {
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
@@ -80,7 +79,6 @@ public class AddOrderItemActivity extends BaseActivity {
 	        itemRequest.setProduct(product);
 	        itemRequest.setSku(sku);
 	        itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
-	        itemRequest.setOrder(order);
 	        itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
         	item = orderItemService.createDiscreteOrderItem(itemRequest);
         } else {
@@ -91,7 +89,6 @@ public class AddOrderItemActivity extends BaseActivity {
         	bundleItemRequest.setQuantity(orderItemRequestDTO.getQuantity());
         	bundleItemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
         	bundleItemRequest.setName(product.getName());
-        	bundleItemRequest.setOrder(order);
         	item = orderItemService.createBundleOrderItem(bundleItemRequest);
         }
         

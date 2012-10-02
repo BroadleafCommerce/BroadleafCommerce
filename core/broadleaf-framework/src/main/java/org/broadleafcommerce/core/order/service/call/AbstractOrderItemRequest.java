@@ -46,7 +46,6 @@ public abstract class AbstractOrderItemRequest {
     private Money salePriceOverride;
     private PersonalMessage personalMessage;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
-    private Order order;
     public Sku getSku() {
         return sku;
     }
@@ -138,13 +137,5 @@ public abstract class AbstractOrderItemRequest {
 
     public void setPersonalMessage(PersonalMessage personalMessage) {
         this.personalMessage = personalMessage;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 }

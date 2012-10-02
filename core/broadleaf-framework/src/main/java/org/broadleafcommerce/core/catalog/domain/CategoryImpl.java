@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
@@ -34,7 +35,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -295,9 +295,9 @@ public class CategoryImpl implements Category, Status {
             dataSourceName = "categoryTranslationDS",
             keyPropertyFriendlyName = "TranslationsImpl_Key",
             deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = PriceListImpl.class,
+            mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "pricesKey"
+            mapKeyOptionEntityValueField = "localeCode"
     )
     protected Map<String, CategoryTranslation> translations = new HashMap<String,CategoryTranslation>();
     @Embedded

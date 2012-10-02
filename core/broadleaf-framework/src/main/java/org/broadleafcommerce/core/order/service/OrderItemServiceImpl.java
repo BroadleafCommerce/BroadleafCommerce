@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -46,6 +40,12 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
@@ -81,7 +81,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
-        item.setOrder(itemRequest.getOrder());
 
         if (itemRequest.getItemAttributes() != null && itemRequest.getItemAttributes().size() > 0) {
             Map<String,OrderItemAttribute> orderItemAttributes = new HashMap<String,OrderItemAttribute>();
@@ -204,7 +203,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         bundleOrderItem.setSku(itemRequest.getSku());
         bundleOrderItem.setName(itemRequest.getName());
         bundleOrderItem.setProductBundle(productBundle);
-        bundleOrderItem.setOrder(itemRequest.getOrder());
 
         for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
             Product bundleProduct = skuBundleItem.getBundle();
@@ -225,7 +223,6 @@ public class OrderItemServiceImpl implements OrderItemService {
 	        bundleItemRequest.setQuantity(skuBundleItem.getQuantity());
 	        bundleItemRequest.setSku(bundleSku);
 	        bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
-	        bundleItemRequest.setOrder(itemRequest.getOrder());
             bundleItemRequest.setSalePriceOverride(skuBundleItem.getSalePrice());
             
             DiscreteOrderItem bundleDiscreteItem = createDiscreteOrderItem(bundleItemRequest);

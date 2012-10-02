@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,7 +92,7 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         		ComboBoxItem selectItem = new ComboBoxItem();
         		//selectItem.setMultiple(false);
                 if (keyMap == null && optionDataSource == null) {
-                    throw new RuntimeException("Must supply either a key map or option data source to support the key values for this map structure.");
+                    throw new RuntimeException("Must supply either a key map or option data source to support the key values for this map structure."+ getDataURL());
                 }
                 if (keyMap != null) {
         		    selectItem.setValueMap(keyMap);
