@@ -20,6 +20,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.openadmin.client.dto.BatchDynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.BatchPersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -35,6 +37,9 @@ public interface DynamicEntityService extends RemoteService {
     
 	@Secured("PERMISSION_OTHER_DEFAULT")
 	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
+
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException, ApplicationSecurityException;
 	
 	@Secured("PERMISSION_OTHER_DEFAULT")
 	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException, ApplicationSecurityException;

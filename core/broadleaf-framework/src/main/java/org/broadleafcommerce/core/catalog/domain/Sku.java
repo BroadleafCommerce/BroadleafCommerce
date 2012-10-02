@@ -18,9 +18,11 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -427,5 +429,29 @@ public interface Sku extends Serializable {
 	 * @return a Map of all the sku attributes on this sku keyed by the attribute name
 	 */
     public Map<String, SkuAttribute> getMappedSkuAttributes();
+
+    /**
+     * Returns the type of inventory for this sku
+     * @return the {@link org.broadleafcommerce.core.inventory.service.type.InventoryType} for this sku
+     */
+    public InventoryType getInventoryType();
+
+    /**
+     * Sets the type of inventory for this sku
+     * @param inventoryType the {@link InventoryType} for this sku
+     */
+    public void setInventoryType(InventoryType inventoryType);
     
+    /**
+     * Returns the fulfillment type for this sku. May be null.
+     * @return
+     */
+    public FulfillmentType getFulfillmentType();
+    
+    /**
+     * Sets the fulfillment type for this sku. May return null.
+     * @param fulfillmentType
+     */
+    public void setFulfillmentType(FulfillmentType fulfillmentType);
+
 }

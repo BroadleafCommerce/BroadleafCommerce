@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service.exception;
+package org.broadleafcommerce.openadmin.client.dto;
 
-public class InventoryUnavailableException extends Exception {
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-    private static final long serialVersionUID = 1L;
+import java.io.Serializable;
 
-    public InventoryUnavailableException() {
-        super();
+/**
+ * @author Jeff Fischer
+ */
+public class BatchDynamicResultSet implements IsSerializable, Serializable {
+
+    protected DynamicResultSet[] dynamicResultSets;
+
+    public DynamicResultSet[] getDynamicResultSets() {
+        return dynamicResultSets;
     }
 
-    public InventoryUnavailableException(String message, Throwable cause) {
-        super(message, cause);
+    public void setDynamicResultSets(DynamicResultSet[] dynamicResultSets) {
+        this.dynamicResultSets = dynamicResultSets;
     }
-
-    public InventoryUnavailableException(String message) {
-        super(message);
-    }
-
-    public InventoryUnavailableException(Throwable cause) {
-        super(cause);
-    }
-
 }

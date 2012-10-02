@@ -28,6 +28,7 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -55,6 +56,7 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     protected String addressUpdatedMessage = "Address successfully updated";
     protected String addressAddedMessage = "Address successfully added";
     protected String addressRemovedMessage = "Address successfully removed";
+    protected String addressRemovedErrorMessage = "Address could not be removed as it is in use";
 	
     protected static String customerAddressesView = "account/manageCustomerAddresses";
     protected static String customerAddressesRedirect = "redirect:/account/addresses";
@@ -159,8 +161,14 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     }
     
     public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
-    	customerAddressService.deleteCustomerAddressById(customerAddressId);
-    	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
+        try {
+        	customerAddressService.deleteCustomerAddressById(customerAddressId);
+        	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
+        } catch (DataIntegrityViolationException e) {
+            // This likely occurred because there is an order or cart in the system that is currently utilizing this
+            // address. Therefore, we're not able to remove it as it breaks a foreign key constraint
+            redirectAttributes.addFlashAttribute("errorMessage", getAddressRemovedErrorMessage());
+        }
     	return getCustomerAddressesRedirect();
     }
 
@@ -190,6 +198,10 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
 
 	public String getAddressRemovedMessage() {
 		return addressRemovedMessage;
+	}
+	
+	public String getAddressRemovedErrorMessage() {
+		return addressRemovedErrorMessage;
 	}
 	
 }

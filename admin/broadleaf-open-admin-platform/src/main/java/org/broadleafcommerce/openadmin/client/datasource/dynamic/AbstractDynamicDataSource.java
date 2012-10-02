@@ -127,7 +127,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 	
 	public String getPrimaryKeyValue(Record record) {
 		String primaryKey = getPrimaryKeyFieldName();
-		return record.getAttribute(primaryKey);
+		return stripDuplicateAllowSpecialCharacters(record.getAttribute(primaryKey));
 	}
 
     public ClassTree getPolymorphicEntityTree() {

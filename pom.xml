@@ -960,6 +960,15 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.social</groupId>
+                <artifactId>spring-social-web</artifactId>
+                <version>1.0.2.RELEASE</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
 
             <!--Admin Libraries-->
             <dependency>

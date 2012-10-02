@@ -47,6 +47,7 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillment
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -141,6 +142,7 @@ public class OfferTest extends CommonSetupBaseTest {
         Order order = orderService.createNewCartForCustomer(createCustomer());
         FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
         option.setPrice(new Money(0));
+        option.setFulfillmentType(FulfillmentType.PHYSICAL_SHIP);
         order.setFulfillmentGroups(createFulfillmentGroups(option, 5D, order));
         orderService.save(order, false);
 
@@ -436,6 +438,7 @@ public class OfferTest extends CommonSetupBaseTest {
         Order order = orderService.createNewCartForCustomer(createCustomer());
         FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
         option.setPrice(new Money(0));
+        option.setFulfillmentType(FulfillmentType.PHYSICAL_SHIP);
         order.setFulfillmentGroups(createFulfillmentGroups(option, 5D, order));
         orderService.save(order, false);
         

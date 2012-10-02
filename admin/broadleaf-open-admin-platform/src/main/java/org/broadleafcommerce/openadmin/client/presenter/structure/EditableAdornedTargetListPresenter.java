@@ -177,7 +177,9 @@ public class EditableAdornedTargetListPresenter extends AbstractSubPresentable {
             @Override
             public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
                 AdornedTargetList adornedTargetList = (AdornedTargetList) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-                display.getGrid().getSelectedRecord().setAttribute(adornedTargetList.getSortField(), Integer.parseInt(display.getGrid().getSelectedRecord().getAttribute(adornedTargetList.getSortField()))-1);
+                if (adornedTargetList.getSortField() != null) {
+                    display.getGrid().getSelectedRecord().setAttribute(adornedTargetList.getSortField(), Integer.parseInt(display.getGrid().getSelectedRecord().getAttribute(adornedTargetList.getSortField()))-1);
+                }
                 BLCMain.ENTITY_ADD.editRecord(adornedTargetEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), new ItemEditedHandler() {
                     @Override
                     public void onItemEdited(ItemEdited event) {

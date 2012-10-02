@@ -35,6 +35,7 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillment
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
@@ -349,6 +350,7 @@ public class CheckoutTest extends BaseTest {
         group.setShippingPrice(total);
         FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
         option.setPrice(new Money(0));
+        option.setFulfillmentType(FulfillmentType.PHYSICAL_SHIP);
         group.setFulfillmentOption(option);
         return group;
     }

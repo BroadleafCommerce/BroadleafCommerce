@@ -62,6 +62,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -119,7 +120,7 @@ public class ProductImpl implements Product, Status {
     protected Long id;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO",groupOrder=2)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO",groupOrder=2, requiredOverride = RequiredOverride.REQUIRED)
     protected String url;
 
     @Column(name = "URL_KEY")
@@ -348,7 +349,7 @@ public class ProductImpl implements Product, Status {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
         for (Sku additionalSku : additionalSkus) {
-            if (additionalSku.getId() != getDefaultSku().getId()) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 allSkus.add(additionalSku);
             }
         }

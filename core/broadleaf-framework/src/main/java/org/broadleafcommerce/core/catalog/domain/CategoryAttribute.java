@@ -56,6 +56,7 @@ public interface CategoryAttribute extends Serializable {
     /**
      * Gets the searchable.
      * 
+     * @deprecated in favor of Field configuration since 2.0
      * @return the searchable
      */
     public Boolean getSearchable();
@@ -63,6 +64,7 @@ public interface CategoryAttribute extends Serializable {
     /**
      * Sets the searchable.
      * 
+     * @deprecated in favor of Field configuration since 2.0
      * @param searchable the new searchable
      */
     public void setSearchable(Boolean searchable);

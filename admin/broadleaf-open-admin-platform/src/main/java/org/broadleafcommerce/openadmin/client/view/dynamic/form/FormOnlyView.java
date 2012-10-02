@@ -16,10 +16,13 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.TitleOrientation;
+import com.smartgwt.client.widgets.events.VisibilityChangedEvent;
+import com.smartgwt.client.widgets.events.VisibilityChangedHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.layout.VLayout;
 
@@ -60,6 +63,20 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         }
         addMember(form);
         setOverflow(Overflow.AUTO);
+        addVisibilityChangedHandler(new VisibilityChangedHandler() {
+            @Override
+            public void onVisibilityChanged(VisibilityChangedEvent event) {
+                if (event.getIsVisible()) {
+                    Timer timer = new Timer() {
+                        @Override
+                        public void run() {
+                            form.redraw();
+                        }
+                    };
+                    timer.schedule(100);
+                }
+            }
+        });
 	}
 	
 	@Override

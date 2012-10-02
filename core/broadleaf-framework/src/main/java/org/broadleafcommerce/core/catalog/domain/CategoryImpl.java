@@ -33,8 +33,10 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -93,43 +95,6 @@ public class CategoryImpl implements Category, Status {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
-
-    private static String buildLink(Category category, boolean ignoreTopLevel) {
-        Category myCategory = category;
-        StringBuilder linkBuffer = new StringBuilder(50);
-        while (myCategory != null) {
-            if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
-                if (linkBuffer.length() == 0) {
-                    linkBuffer.append(myCategory.getUrlKey());
-                } else if(myCategory.getUrlKey() != null && !"/".equals(myCategory.getUrlKey())){
-                    linkBuffer.insert(0, myCategory.getUrlKey() + '/');
-                }
-            }
-            myCategory = myCategory.getDefaultParentCategory();
-        }
-
-        return linkBuffer.toString();
-    }
-
-    private static void fillInURLMapForCategory(Map<String, List<Long>> categoryUrlMap, Category category, String startingPath, List<Long> startingCategoryList) throws CacheFactoryException {
-        String urlKey = category.getUrlKey();
-        if (urlKey == null) {
-        	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
-        }
-
-        String currentPath = "";
-        if (! "/".equals(category.getUrlKey())) {
-            currentPath = startingPath + "/" + category.getUrlKey();
-        }
-
-        List<Long> newCategoryList = new ArrayList<Long>(startingCategoryList);
-        newCategoryList.add(category.getId());
-
-        categoryUrlMap.put(currentPath, newCategoryList);
-        for (Category currentCategory : category.getChildCategories()) {
-            fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
-        }
-    }
 
     @Id
     @GeneratedValue(generator= "CategoryId")
@@ -266,6 +231,14 @@ public class CategoryImpl implements Category, Status {
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS")
     protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
+
+    @Column(name = "INVENTORY_TYPE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", group = "CategoryImpl_Sku_Inventory", order=10, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.InventoryType")
+    protected String inventoryType;
+    
+    @Column(name = "FULFILLMENT_TYPE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", group = "CategoryImpl_Sku_Inventory", order=11, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    protected String fulfillmentType;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -509,6 +482,31 @@ public class CategoryImpl implements Category, Status {
     }
     
     @Override
+    public List<Category> buildFullCategoryHierarchy(List<Category> currentHierarchy) {
+        if (currentHierarchy == null) { 
+            currentHierarchy = new ArrayList<Category>();
+            currentHierarchy.add(this);
+        }
+        
+        List<Category> myParentCategories = new ArrayList<Category>();
+        if (defaultParentCategory != null) {
+            myParentCategories.add(defaultParentCategory);
+        }
+        if (allParentCategories != null && allParentCategories.size() > 0) {
+            myParentCategories.addAll(allParentCategories);
+        }
+        
+        for (Category category : myParentCategories) {
+            if (!currentHierarchy.contains(category)) {
+                currentHierarchy.add(category);
+                category.buildFullCategoryHierarchy(currentHierarchy);
+            }
+        }
+        
+        return currentHierarchy;
+    }
+    
+    @Override
     public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy) {
     	if (currentHierarchy == null) {
     		currentHierarchy = new ArrayList<Category>();
@@ -680,6 +678,26 @@ public class CategoryImpl implements Category, Status {
 	public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets) {
 		this.excludedSearchFacets = excludedSearchFacets;
 	}
+
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.getInstance(this.inventoryType);
+    }
+
+    @Override
+    public void setInventoryType(InventoryType inventoryType) {
+        this.inventoryType = inventoryType.getType();
+    }
+    
+    @Override
+    public FulfillmentType getFulfillmentType() {
+    	return FulfillmentType.getInstance(this.fulfillmentType);
+    }
+    
+    @Override
+    public void setFulfillmentType(FulfillmentType fulfillmentType) {
+    	this.fulfillmentType = fulfillmentType.getType();
+    }
     
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
@@ -813,5 +831,43 @@ public class CategoryImpl implements Category, Status {
 			return o1.getSequence().compareTo(o2.getSequence());
 		}
 	};
+	
+    private static String buildLink(Category category, boolean ignoreTopLevel) {
+        Category myCategory = category;
+        StringBuilder linkBuffer = new StringBuilder(50);
+        while (myCategory != null) {
+            if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
+                if (linkBuffer.length() == 0) {
+                    linkBuffer.append(myCategory.getUrlKey());
+                } else if(myCategory.getUrlKey() != null && !"/".equals(myCategory.getUrlKey())){
+                    linkBuffer.insert(0, myCategory.getUrlKey() + '/');
+                }
+            }
+            myCategory = myCategory.getDefaultParentCategory();
+        }
+
+        return linkBuffer.toString();
+    }
+
+    private static void fillInURLMapForCategory(Map<String, List<Long>> categoryUrlMap, Category category, String startingPath, List<Long> startingCategoryList) throws CacheFactoryException {
+        String urlKey = category.getUrlKey();
+        if (urlKey == null) {
+        	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
+        }
+
+        String currentPath = "";
+        if (! "/".equals(category.getUrlKey())) {
+            currentPath = startingPath + "/" + category.getUrlKey();
+        }
+
+        List<Long> newCategoryList = new ArrayList<Long>(startingCategoryList);
+        newCategoryList.add(category.getId());
+
+        categoryUrlMap.put(currentPath, newCategoryList);
+        for (Category currentCategory : category.getChildCategories()) {
+            fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
+        }
+    }
+
 
 }

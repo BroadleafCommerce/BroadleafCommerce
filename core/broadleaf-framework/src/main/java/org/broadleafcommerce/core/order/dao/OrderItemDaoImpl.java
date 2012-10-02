@@ -57,6 +57,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
             }
         }
         em.remove(orderItem);
+        em.flush();
     }
 
     public OrderItem create(final OrderItemType orderItemType) {

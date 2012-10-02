@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.inventory.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
 /**
  * Implementations of this interface are used to hold data about SKU availability.
@@ -29,7 +30,10 @@ import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
  *
  * @see {@link SkuAvailabilityImpl}
  * @author bpolster
+ * 
+ * @deprecated This is no longer required. See {@link InventoryService}
  */
+@Deprecated
 public interface SkuAvailability extends Serializable {
 
     /**

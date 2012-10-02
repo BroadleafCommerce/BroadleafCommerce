@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client.datasource;
 
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaTileGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -35,7 +35,7 @@ import com.smartgwt.client.data.DataSource;
  */
 public class StaticAssetsTileGridDataSourceFactory implements DataSourceFactory {
 
-	public static CustomCriteriaTileGridDataSource dataSource = null;
+	public  CustomCriteriaTileGridDataSource dataSource = null;
 
 	@Override
     public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {

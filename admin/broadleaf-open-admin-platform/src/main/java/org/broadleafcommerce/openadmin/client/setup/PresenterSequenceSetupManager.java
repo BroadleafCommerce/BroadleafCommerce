@@ -17,6 +17,8 @@
 package org.broadleafcommerce.openadmin.client.setup;
 
 import com.smartgwt.client.widgets.Canvas;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.BatchManager;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.BatchSuccessHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
 
@@ -144,12 +146,27 @@ public class PresenterSequenceSetupManager {
 	protected void next() {
 		if (itemsIterator.hasNext()) {
 			itemsIterator.next().invoke();
-        } else if (supplementalItemsIterator == null) {
-            launchSupplemental();
-		} else if (supplementalItemsIterator.hasNext()) {
+		} else if (supplementalItemsIterator != null && supplementalItemsIterator.hasNext()) {
             supplementalItemsIterator.next().invoke();
         } else {
-			presenter.postSetup(canvas);
+            BatchManager batchManager = BatchManager.getInstance();
+            if (!batchManager.getBatchPackages().isEmpty()) {
+                batchManager.executeBatchRPC(new BatchSuccessHandler() {
+                    @Override
+                    public void onSuccess() {
+                        if (supplementalItemsIterator == null) {
+                            supplementalItemsIterator = supplementalItems.iterator();
+                        }
+                        if (supplementalItemsIterator.hasNext()) {
+                            next();
+                        } else {
+                            presenter.postSetup(canvas);
+                        }
+                    }
+                });
+            } else {
+			    presenter.postSetup(canvas);
+            }
 		}
 	}
 

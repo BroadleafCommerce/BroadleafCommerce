@@ -76,7 +76,7 @@ public class AssetSearchDialog extends Window {
 		tileGrid = new TileGrid();
         tileGrid.setTileWidth(120);
         tileGrid.setTileHeight(120);
-        tileGrid.setAutoFetchData(true);
+        tileGrid.setAutoFetchData(false);
         tileGrid.setSelectionType(SelectionStyle.SINGLE);
         tileGrid.setShowAllRecords(false);
         tileGrid.setHeight100();
@@ -152,6 +152,7 @@ public class AssetSearchDialog extends Window {
             @Override
             public void onClick(ClickEvent event) {
             	Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
+            	saveButton.disable();
                 tileGrid.fetchData(valuesAsCriteria);
             }
         });
@@ -206,7 +207,8 @@ public class AssetSearchDialog extends Window {
 	}
 	public void search(String title, TileGridItemSelectedHandler handler) {
 		this.setTitle(title);
-	        tileGrid.invalidateCache(); //BLC-637, invalidate cache, so that a fetch is performed every time the dialog window is opened
+        tileGrid.invalidateCache();
+        tileGrid.fetchData();
 		this.handler = handler;
 		centerInPage();
 		saveButton.disable();

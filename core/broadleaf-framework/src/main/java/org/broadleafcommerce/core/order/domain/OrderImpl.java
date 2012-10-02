@@ -70,6 +70,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -226,7 +227,11 @@ public class OrderImpl implements Order {
         	} else {
         		price = orderItem.getTaxablePrice();
         	}
-            calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
+            if (orderItem instanceof BundleOrderItem) {
+                calculatedSubTotal = calculatedSubTotal.add(price);
+            } else {
+                calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
+            }
         }
         return calculatedSubTotal;
     }
@@ -381,10 +386,18 @@ public class OrderImpl implements Order {
     
     @Override
     public boolean containsSku(Sku sku) {
-    	for (DiscreteOrderItem discreteOrderItem : getDiscreteOrderItems()) {
-    		if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
-    			return true;
-    		}
+    	for (OrderItem orderItem : getOrderItems()) {
+    	    if (orderItem instanceof DiscreteOrderItem) {
+    	        DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+        		if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
+        			return true;
+        		}
+    	    } else if (orderItem instanceof BundleOrderItem) {
+    	        BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+    	        if (bundleOrderItem.getSku() != null && bundleOrderItem.getSku().equals(sku)) {
+    	            return true;
+    	        }
+    	    }
     	}
     	
     	return false;
@@ -483,8 +496,8 @@ public class OrderImpl implements Order {
 	@Override
 	public int getItemCount() {
 		int count = 0;
-		for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
-			count += doi.getQuantity();
+		for (OrderItem oi : getOrderItems()) {
+			count += oi.getQuantity();
 		}
 		return count;
 	}

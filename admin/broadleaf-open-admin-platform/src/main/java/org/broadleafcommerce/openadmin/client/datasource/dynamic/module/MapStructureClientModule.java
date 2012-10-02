@@ -32,6 +32,9 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.BatchManager;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.BatchOperationType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.BatchPackage;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
@@ -45,7 +48,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
-import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 
@@ -279,7 +281,59 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 
 	@Override
 	public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-        AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
+//        AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
+//
+//            @Override
+//            protected void onOtherException(Throwable exception) {
+//                super.onOtherException(exception);
+//                if (cb != null) {
+//                    cb.onFailure(exception);
+//                }
+//            }
+//
+//            @Override
+//            protected void onSecurityException(ApplicationSecurityException exception) {
+//                super.onSecurityException(exception);
+//                if (cb != null) {
+//                    cb.onFailure(exception);
+//                }
+//            }
+//
+//            public void onSuccess(DynamicResultSet result) {
+//                super.onSuccess(result);
+//                ClassMetadata metadata = result.getClassMetaData();
+//                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.MAPSTRUCTUREKEY, MergedPropertyType.MAPSTRUCTUREVALUE}, overrideFieldSort, ((AsyncCallbackAdapter) cb).getDataSourceSetupManager());
+//
+//                DataSourceField symbolicIdField = new DataSourceTextField("symbolicId");
+//                symbolicIdField.setCanEdit(false);
+//                symbolicIdField.setHidden(true);
+//                symbolicIdField.setAttribute("rawName", "symbolicId");
+//                dataSource.addField(symbolicIdField);
+//
+//                DataSourceField priorKeyField = new DataSourceTextField("priorKey");
+//                priorKeyField.setCanEdit(false);
+//                priorKeyField.setHidden(true);
+//                priorKeyField.setAttribute("rawName", "priorKey");
+//                dataSource.addField(priorKeyField);
+//
+//                //Add a hidden field to store the polymorphic type for this entity
+//                DataSourceField typeField = new DataSourceTextField("_type");
+//                typeField.setCanEdit(false);
+//                typeField.setHidden(true);
+//                typeField.setAttribute("rawName", "_type");
+//                dataSource.addField(typeField);
+//                dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
+//                dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
+//
+//                if (cb != null) {
+//                    cb.onSuccess(dataSource);
+//                }
+//            }
+//        });
+        BatchManager batchManager = BatchManager.getInstance();
+        BatchPackage batchPackage = new BatchPackage();
+        batchPackage.setPersistencePackage(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken));
+        batchPackage.setAsyncCallback(new AbstractCallback<DynamicResultSet>() {
 
             @Override
             protected void onOtherException(Throwable exception) {
@@ -297,6 +351,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
                 }
             }
 
+            @Override
             public void onSuccess(DynamicResultSet result) {
                 super.onSuccess(result);
                 ClassMetadata metadata = result.getClassMetaData();
@@ -328,6 +383,9 @@ public class MapStructureClientModule extends BasicClientEntityModule {
                 }
             }
         });
+        batchPackage.setBatchOperationType(BatchOperationType.INSPECT);
+        batchManager.addBatchPackage(batchPackage);
+        ((AsyncCallbackAdapter) cb).notifyManager();
 	}
 	
 	@Override

@@ -26,9 +26,6 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 
@@ -75,19 +72,6 @@ public class SkusPresenter extends SubPresenter {
                         }
                     };
                     BLCMain.ENTITY_ADD.editNewRecord(newEntityDialogTitle, ds, initialValues, editHandler, null, null);
-                }
-            }
-        });
-        removedClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (event.isLeftButtonDown()) {
-                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-                        @Override
-                        public void execute(DSResponse response, Object rawData, DSRequest request) {
-                            display.getRemoveButton().disable();
-                        }
-                    });
                 }
             }
         });

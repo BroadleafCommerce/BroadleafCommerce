@@ -73,21 +73,21 @@ public class ExportCriteriaDialog extends Window {
         formLayout.addMember(form);
         addItem(formLayout);
 
+        this.setTitle("Custom Criteria");
+        this.setIsModal(true);
+        this.setShowModalMask(true);
+        this.setShowMinimizeButton(false);
+        this.setCanDragResize(true);
+        this.setOverflow(Overflow.AUTO);
+        this.setVisible(false);
+
+        formLayout.setLayoutMargin(20);
+        formLayout.setAlign(Alignment.CENTER);
+        formLayout.setWidth100();
+        
         if (getShouldShowForm()) {
-            this.setTitle("Custom Criteria");
-            this.setIsModal(true);
-            this.setShowModalMask(true);
-            this.setShowMinimizeButton(false);
             this.setWidth(550);
             this.setHeight(400);
-            this.setCanDragResize(true);
-            this.setOverflow(Overflow.AUTO);
-            this.setVisible(false);
-
-            formLayout.setLayoutMargin(20);
-            formLayout.setAlign(Alignment.CENTER);
-            formLayout.setWidth100();
-            
             
             ArrayList<FormItem> formItems = new ArrayList<FormItem>();
             for (Property property : exporter.getAdditionalCriteriaProperties()) {
@@ -143,9 +143,12 @@ public class ExportCriteriaDialog extends Window {
             addItem(hLayout);
 
         } else {
-            this.setWidth(1);
-            this.setHeight(1);
-            form.setFields(new FormItem[]{exporterNameField});
+            this.setWidth(10);
+            this.setHeight(10);
+            ArrayList<FormItem> items = new ArrayList<FormItem>();
+            items.add(exporterNameField);
+            setFormItems(items);
+            form.setFields(items.toArray(new FormItem[]{}));
         }
 
     }

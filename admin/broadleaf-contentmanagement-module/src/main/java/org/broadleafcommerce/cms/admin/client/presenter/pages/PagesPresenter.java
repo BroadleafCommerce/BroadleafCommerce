@@ -26,10 +26,10 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDa
 import org.broadleafcommerce.cms.admin.client.datasource.structure.RequestDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
@@ -75,6 +75,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected HandlerRegistration ruleSaveButtonHandlerRegistration;
     protected HandlerRegistration ruleRefreshButtonHandlerRegistration;
+    protected HandlerRegistration extendedFetchDataHandlerRegistration;
     protected Record currentPageRecord;
     protected String currentPageId;
     protected Integer currentPagePos;
@@ -282,36 +283,41 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         ruleRefreshButtonHandlerRegistration = getDisplay().getRulesRefreshButton().addClickHandler(new ClickHandler() {
  			@Override
 			public void onClick(ClickEvent event) {
-             if (event.isLeftButtonDown()) {
-                 extractor.getRemovedItemQualifiers().clear();
-                 
-             }
-         }
-         });
+                if (event.isLeftButtonDown()) {
+                    extractor.getRemovedItemQualifiers().clear();
+                }
+ 			}
+        });
         ruleSaveButtonHandlerRegistration = getDisplay().getRulesSaveButton() .addClickHandler(new ClickHandler() {
             @Override
-	    public void onClick(ClickEvent event) {
+            public void onClick(ClickEvent event) {
             	if (event.isLeftButtonDown()) {
             		extractor.applyData(currentPageRecord);
                 }
-            }});
+            }
+        });
         
-        
-        display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+        extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
                 destroyTemplateForm();
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
+                getDisplay().disableRules();
+                getDisplay().getRulesSaveButton().disable();
+                getDisplay().getRulesRefreshButton().disable();
             }
         });
+        
         getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {
             @Override
-	    public void onClick(ClickEvent event) {
-            if (event.isLeftButtonDown()) {
-                final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
-                bindItemBuilderEvents(display);
-                display.setDirty(true);
-                resetButtons();
-            }
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
+                    bindItemBuilderEvents(display);
+                    display.setDirty(true);
+                    resetButtons();
+                }
             }
         });
         for (ItemBuilderDisplay itemBuilder : getDisplay().getItemBuilderViews()) {
@@ -319,25 +325,25 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         }
         getDisplay().getCustomerFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             @Override
-	    public void onFilterChanged(FilterChangedEvent event) {
+            public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
             }
         });
         getDisplay().getProductFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             @Override
-	    public void onFilterChanged(FilterChangedEvent event) {
+            public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
             }
         });
         getDisplay().getRequestFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             @Override
-	    public void onFilterChanged(FilterChangedEvent event) {
+            public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
             }
         });
         getDisplay().getTimeFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             @Override
-	    public void onFilterChanged(FilterChangedEvent event) {
+            public void onFilterChanged(FilterChangedEvent event) {
                 resetButtons();
             }
         });

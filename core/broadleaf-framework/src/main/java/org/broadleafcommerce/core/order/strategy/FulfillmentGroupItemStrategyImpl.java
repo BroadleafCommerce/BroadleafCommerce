@@ -16,7 +16,10 @@
 
 package org.broadleafcommerce.core.order.strategy;
 
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -25,13 +28,16 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -60,28 +66,111 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 	public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
 		Order order = request.getOrder();
 		OrderItem orderItem = request.getAddedOrderItem();
+		Map<FulfillmentType, FulfillmentGroup> fulfillmentGroups = new HashMap<FulfillmentType, FulfillmentGroup>();
+		FulfillmentGroup nullFulfillmentTypeGroup = null;
 		
-		FulfillmentGroup fulfillmentGroup = null;
-		if (order.getFulfillmentGroups().size() == 0) {
-			fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
-			fulfillmentGroup.setOrder(order);
-			fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
-			order.getFulfillmentGroups().add(fulfillmentGroup);
-		} else {
-			fulfillmentGroup = order.getFulfillmentGroups().get(0);
+		//First, let's organize fulfillment groups according to their fulfillment type
+		//We'll use the first of each type that we find. Implementors can choose to move groups / items around later.
+		if (order.getFulfillmentGroups() != null) {
+			for (FulfillmentGroup group : order.getFulfillmentGroups()) {
+				if (group.getType() == null) {
+					if (nullFulfillmentTypeGroup == null) {
+						nullFulfillmentTypeGroup = group;
+					}
+				} else {
+					if (fulfillmentGroups.get(group.getType()) == null) {
+						fulfillmentGroups.put(group.getType(), group);
+					}
+				}
+			}
 		}
 		
+		if (orderItem instanceof BundleOrderItem) {
+			//We only care about the discrete order items
+			List<DiscreteOrderItem> itemsToAdd = new ArrayList<DiscreteOrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
+		    for (DiscreteOrderItem doi : itemsToAdd) {
+		    	FulfillmentGroup fulfillmentGroup = null;
+				FulfillmentType type = resolveFulfillmentType(doi.getSku());
+				if (type == null) {
+					//Use the fulfillment group with a null type
+					fulfillmentGroup = nullFulfillmentTypeGroup;
+				} else {
+					if (FulfillmentType.PHYSICAL_PICKUP_OR_SHIP.equals(type)) {
+						//This is really a special case. "PICKUP_OR_SHIP" is convenient to allow a sku to be picked up or shipped.
+						//However, it is ambiguous when actually trying to create a fulfillment group. So we default to "PHYSICAL_SHIP".
+						type = FulfillmentType.PHYSICAL_SHIP;
+					}
+					
+					//Use the fulfillment group with the specified type
+					fulfillmentGroup = fulfillmentGroups.get(type);
+				}
+				
+				//If the null type or specified type, above were null, then we need to create a new fulfillment group
+				if (fulfillmentGroup == null) {
+					fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
+					//Set the type
+					fulfillmentGroup.setType(type);
+					fulfillmentGroup.setOrder(order);
+					fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
+					order.getFulfillmentGroups().add(fulfillmentGroup);
+				}
+		    	
+		        fulfillmentGroup = addItemToFulfillmentGroup(order, doi, fulfillmentGroup);
+		        order = fulfillmentGroup.getOrder();
+		    }
+		} else {
+			DiscreteOrderItem doi = (DiscreteOrderItem)orderItem;
+			FulfillmentGroup fulfillmentGroup = null;
+			FulfillmentType type = resolveFulfillmentType(doi.getSku());
+			if (type == null) {
+				//Use the fulfillment group with a null type
+				fulfillmentGroup = nullFulfillmentTypeGroup;
+			} else {
+				if (FulfillmentType.PHYSICAL_PICKUP_OR_SHIP.equals(type)) {
+					//This is really a special case. "PICKUP_OR_SHIP" is convenient to allow a sku to be picked up or shipped.
+					//However, it is ambiguous when actually trying to create a fulfillment group. So we default to "PHYSICAL_SHIP".
+					type = FulfillmentType.PHYSICAL_SHIP;
+				}
+				
+				//Use the fulfillment group with the specified type
+				fulfillmentGroup = fulfillmentGroups.get(type);
+			}
+			
+			//If the null type or specified type, above were null, then we need to create a new fulfillment group
+			if (fulfillmentGroup == null) {
+				fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
+				//Set the type
+				fulfillmentGroup.setType(type);
+				fulfillmentGroup.setOrder(order);
+				fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
+				order.getFulfillmentGroups().add(fulfillmentGroup);
+			}
+			
+			fulfillmentGroup = addItemToFulfillmentGroup(order, (DiscreteOrderItem)orderItem, fulfillmentGroup);
+			order = fulfillmentGroup.getOrder();
+		}
+		
+		request.setOrder(order);
+		return request;
+	}
+	
+	protected FulfillmentType resolveFulfillmentType(Sku sku) {
+		if (sku.getFulfillmentType() != null) {
+			return sku.getFulfillmentType();
+		}
+		if (sku.getDefaultProduct() != null && sku.getDefaultProduct().getDefaultCategory() != null) {
+			return sku.getDefaultProduct().getDefaultCategory().getFulfillmentType();
+		}
+		return null;
+	}
+	
+	protected FulfillmentGroup addItemToFulfillmentGroup(Order order, DiscreteOrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
 		FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
 		fulfillmentGroupItemRequest.setOrder(order);
 		fulfillmentGroupItemRequest.setOrderItem(orderItem);
 		fulfillmentGroupItemRequest.setQuantity(orderItem.getQuantity());
 		fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
-		
-		fulfillmentGroup = fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false);
-		order = fulfillmentGroup.getOrder();
-		
-		request.setOrder(order);
-		return request;
+		return fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false);
 	}
 	
 	@Override
@@ -89,12 +178,30 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		Order order = request.getOrder();
 		OrderItem orderItem = request.getAddedOrderItem();
 		Integer orderItemQuantityDelta = request.getOrderItemQuantityDelta();
-		boolean done = false;
 		
 		if (orderItemQuantityDelta == 0) {
 			// If the quantity didn't change, nothing needs to happen
 			return request;
-		} else if (orderItemQuantityDelta > 0) {
+		} else {
+    		if (orderItem instanceof BundleOrderItem) {
+    		    List<OrderItem> itemsToUpdate = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
+    		    for (OrderItem oi : itemsToUpdate) {
+    		        int qtyMultiplier = oi.getQuantity() / orderItem.getQuantity();
+    		        order = updateItemQuantity(order, oi, (qtyMultiplier * orderItemQuantityDelta));
+    		    }
+    		} else {
+    		    order = updateItemQuantity(order, orderItem, orderItemQuantityDelta);
+    		}
+		}
+		
+		request.setOrder(order);
+		return request;
+	}
+		
+	protected Order updateItemQuantity(Order order, OrderItem orderItem, Integer orderItemQuantityDelta) throws PricingException {
+	    boolean done = false;
+	    
+		if (orderItemQuantityDelta > 0) {
 			// If the quantity is now greater, we can simply add quantity to the first
 			// fulfillment group we find that has that order item in it. 
 			for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
@@ -141,8 +248,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		}
 		
 		order = orderService.save(order, false);
-		request.setOrder(order);
-		return request;
+		return order;
 	}
 
 	@Override
@@ -150,7 +256,14 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		Order order = request.getOrder();
         OrderItem orderItem = orderItemService.readOrderItemById(request.getItemRequest().getOrderItemId());
         
-        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
+		if (orderItem instanceof BundleOrderItem) {
+		    List<OrderItem> itemsToRemove = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
+		    for (OrderItem oi : itemsToRemove) {
+		        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, oi);
+		    }
+		} else {
+		    fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
+		}
         
         return request;
 	}
@@ -171,7 +284,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         }
         
         Map<Long, Integer> oiQuantityMap = new HashMap<Long, Integer>();
-        for (OrderItem oi : order.getOrderItems()) {
+        for (OrderItem oi : order.getDiscreteOrderItems()) {
         	Integer oiQuantity = oiQuantityMap.get(oi.getId());
         	if (oiQuantity == null) {
         		oiQuantity = 0;
@@ -213,5 +326,4 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 		this.removeEmptyFulfillmentGroups = removeEmptyFulfillmentGroups;
 	}
 
-	
 }

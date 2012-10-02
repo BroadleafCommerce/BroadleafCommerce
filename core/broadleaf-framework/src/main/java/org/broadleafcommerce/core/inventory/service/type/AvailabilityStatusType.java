@@ -21,12 +21,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+import org.broadleafcommerce.core.inventory.service.InventoryService;
 
 /**
  * An extendible enumeration of availability status types.
  * 
  * @author jfischer
+ * 
+ * @deprecated This is no longer required. See {@link InventoryService}
  */
+@Deprecated
 public class AvailabilityStatusType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;

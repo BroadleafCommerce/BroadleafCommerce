@@ -28,10 +28,12 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -131,7 +133,7 @@ public class SkuImpl implements Sku {
     /** The name. */
     @Column(name = "NAME")
     @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="200", groupOrder=1)
     protected String name;
 
     /** The description. */
@@ -267,6 +269,14 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
+
+    @Column(name = "INVENTORY_TYPE")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", group = "SkuImpl_Sku_Inventory", order=10, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.InventoryType")
+    protected String inventoryType;
+    
+    @Column(name = "FULFILLMENT_TYPE")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", group = "SkuImpl_Sku_Inventory", order=11, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    protected String fulfillmentType;
 
     @Override
     public Long getId() {
@@ -704,6 +714,26 @@ public class SkuImpl implements Sku {
     @Override
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions) {
         this.excludedFulfillmentOptions = excludedFulfillmentOptions;
+    }
+
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.getInstance(this.inventoryType);
+    }
+
+    @Override
+    public void setInventoryType(InventoryType inventoryType) {
+        this.inventoryType = inventoryType.getType();
+    }
+    
+    @Override
+    public FulfillmentType getFulfillmentType() {
+    	return FulfillmentType.getInstance(this.fulfillmentType);
+    }
+    
+    @Override
+    public void setFulfillmentType(FulfillmentType fulfillmentType) {
+    	this.fulfillmentType = fulfillmentType.getType();
     }
     
 	@Override

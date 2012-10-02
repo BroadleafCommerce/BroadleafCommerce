@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
@@ -60,6 +61,8 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected List<PromotableOrderItem> discountableDiscreteOrderItems;
     protected boolean currentSortParam = false;
     protected PromotableItemFactory itemFactory;
+    protected List<OrderMultishipOption> multiShipOptions = new ArrayList<OrderMultishipOption>();
+    protected boolean hasMultiShipOptions = false;
     
     public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory) {
     	this.delegate = order;
@@ -72,6 +75,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     	resetDiscreteOrderItems();
     }
     
+    @Override
     public void resetFulfillmentGroups() {
     	for (PromotableFulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
     		fulfillmentGroup.reset();
@@ -79,6 +83,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     	fulfillmentGroups = null;
     }
     
+    @Override
     public void resetDiscreteOrderItems() {
         if (discreteOrderItems != null) {
             for (PromotableOrderItem orderItem : discreteOrderItems) {
@@ -94,6 +99,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         }
     }
     
+    @Override
     public void resetTotalitarianOfferApplied() {
     	totalitarianOfferApplied = false;
     	notCombinableOfferAppliedAtAnyLevel = false;
@@ -141,6 +147,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     	}
     }
     
+    @Override
     public void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment) {
         if (delegate.getOrderAdjustments().size() == 0) {
             adjustmentPrice = delegate.getSubTotal().getAmount();
@@ -154,12 +161,14 @@ public class PromotableOrderImpl implements PromotableOrder {
         hasOrderAdjustments = true;
     }
     
+    @Override
     public void removeAllAdjustments() {
         removeAllItemAdjustments();
         removeAllFulfillmentAdjustments();
         removeAllOrderAdjustments();
     }
 
+    @Override
     public void removeAllOrderAdjustments() {
         if (delegate.getOrderAdjustments() != null) {
             for (OrderAdjustment adjustment : delegate.getOrderAdjustments()) {
@@ -173,6 +182,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         resetTotalitarianOfferApplied();
    }
 
+    @Override
     public void removeAllItemAdjustments() {
         for (OrderItem orderItem : getDelegate().getOrderItems()) {
             orderItem.removeAllAdjustments();
@@ -190,53 +200,65 @@ public class PromotableOrderImpl implements PromotableOrder {
         splitItems.clear();
     }
 
+    @Override
     public void removeAllFulfillmentAdjustments() {
         for (PromotableFulfillmentGroup fulfillmentGroup : getFulfillmentGroups()) {
             fulfillmentGroup.removeAllAdjustments();
         }
     }
     
+    @Override
     public Money getAdjustmentPrice() {
         return adjustmentPrice == null ? null : new Money(adjustmentPrice, delegate.getSubTotal().getCurrency(), adjustmentPrice.scale()==0? BankersRounding.DEFAULT_SCALE:adjustmentPrice.scale());
     }
 
+    @Override
     public void setAdjustmentPrice(Money adjustmentPrice) {
         this.adjustmentPrice = Money.toAmount(adjustmentPrice);
     }
     
+    @Override
     public boolean isNotCombinableOfferApplied() {
 		return notCombinableOfferApplied;
 	}
 
-	public boolean isHasOrderAdjustments() {
+	@Override
+    public boolean isHasOrderAdjustments() {
 		return hasOrderAdjustments;
 	}
 	
-	public boolean isTotalitarianOfferApplied() {
+	@Override
+    public boolean isTotalitarianOfferApplied() {
 		return totalitarianOfferApplied;
 	}
 
-	public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied) {
+	@Override
+    public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied) {
 		this.totalitarianOfferApplied = totalitarianOfferApplied;
 	}
 
-	public boolean isNotCombinableOfferAppliedAtAnyLevel() {
+	@Override
+    public boolean isNotCombinableOfferAppliedAtAnyLevel() {
 		return notCombinableOfferAppliedAtAnyLevel;
 	}
 
-	public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel) {
+	@Override
+    public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel) {
 		this.notCombinableOfferAppliedAtAnyLevel = notCombinableOfferAppliedAtAnyLevel;
 	}
 
-	public List<OrderItemSplitContainer> getSplitItems() {
+	@Override
+    public List<OrderItemSplitContainer> getSplitItems() {
 		return splitItems;
 	}
 
-	public void setSplitItems(List<OrderItemSplitContainer> splitItems) {
+	@Override
+    public void setSplitItems(List<OrderItemSplitContainer> splitItems) {
 		this.splitItems = splitItems;
 	}
 	
-	public List<PromotableOrderItem> searchSplitItems(PromotableOrderItem key) {
+	@Override
+    public List<PromotableOrderItem> searchSplitItems(PromotableOrderItem key) {
 		for (OrderItemSplitContainer container : splitItems) {
 			if (container.getKey().equals(key.getDelegate())) {
 				return container.getSplitItems();
@@ -245,6 +267,19 @@ public class PromotableOrderImpl implements PromotableOrder {
 		return null;
 	}
 
+    @Override
+    public OrderItem searchSplitItemsForKey(OrderItem orderItem) {
+        for (OrderItemSplitContainer container : splitItems) {
+            for (PromotableOrderItem splitItem : container.getSplitItems()) {
+                if (splitItem.getDelegate().equals(orderItem)) {
+                    return container.getKey();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key) {
         for (BundleOrderItemSplitContainer container : bundleSplitItems) {
             if (container.getKey().equals(key)) {
@@ -254,7 +289,8 @@ public class PromotableOrderImpl implements PromotableOrder {
         return null;
     }
 	
-	public void removeAllCandidateOffers() {
+	@Override
+    public void removeAllCandidateOffers() {
     	removeAllCandidateOrderOffers();
         for (OrderItem orderItem : getDelegate().getOrderItems()) {
             orderItem.removeAllCandidateItemOffers();
@@ -263,6 +299,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         removeAllCandidateFulfillmentGroupOffers();
     }
     
+    @Override
     public void removeAllCandidateFulfillmentGroupOffers() {
     	if (getFulfillmentGroups() != null) {
             for (PromotableFulfillmentGroup fg : getFulfillmentGroups()) {
@@ -271,6 +308,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         }
     }
 
+    @Override
     public void removeAllCandidateOrderOffers() {
         if (delegate.getCandidateOrderOffers() != null) {
             for (CandidateOrderOffer candidate : delegate.getCandidateOrderOffers()) {
@@ -280,6 +318,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         }
     }
     
+    @Override
     public boolean containsNotStackableFulfillmentGroupOffer() {
         boolean isContainsNotStackableFulfillmentGroupOffer = false;
         for (FulfillmentGroup fg : delegate.getFulfillmentGroups()) {
@@ -296,6 +335,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     /*
      * Checks the order adjustment to see if it is not stackable
      */
+    @Override
     public boolean containsNotStackableOrderOffer() {
         boolean isContainsNotStackableOrderOffer = false;
         for (OrderAdjustment orderAdjustment: delegate.getOrderAdjustments()) {
@@ -307,16 +347,19 @@ public class PromotableOrderImpl implements PromotableOrder {
         return isContainsNotStackableOrderOffer;
     }
 
+    @Override
     public void removeAllAddedOfferCodes() {
         if (delegate.getAddedOfferCodes() != null) {
             delegate.getAddedOfferCodes().clear();
         }
     }
     
+    @Override
     public void addCandidateOrderOffer(PromotableCandidateOrderOffer candidateOrderOffer) {
         delegate.getCandidateOrderOffers().add(candidateOrderOffer.getDelegate());
     }
     
+    @Override
     public Money calculateOrderItemsCurrentPrice() {
         Money calculatedSubTotal = new Money();
         for (PromotableOrderItem orderItem : getDiscountableDiscreteOrderItems()) {
@@ -326,6 +369,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         return calculatedSubTotal;
     }
     
+    @Override
     public Money calculateOrderItemsPriceWithoutAdjustments() {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : delegate.getOrderItems()) {
@@ -335,6 +379,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         return calculatedSubTotal;
     }
     
+    @Override
     public List<PromotableOrderItem> getAllSplitItems() {
     	List<PromotableOrderItem> response = new ArrayList<PromotableOrderItem>();
     	for (OrderItemSplitContainer container : getSplitItems()) {
@@ -344,10 +389,12 @@ public class PromotableOrderImpl implements PromotableOrder {
     	return response;
     }
     
+    @Override
     public Money getSubTotal() {
 		return delegate.getSubTotal();
 	}
     
+    @Override
     public List<PromotableFulfillmentGroup> getFulfillmentGroups() {
 		if (fulfillmentGroups == null) {
 			fulfillmentGroups = new ArrayList<PromotableFulfillmentGroup>();
@@ -358,18 +405,22 @@ public class PromotableOrderImpl implements PromotableOrder {
 		return Collections.unmodifiableList(fulfillmentGroups);
 	}
     
+    @Override
     public void setTotalShipping(Money totalShipping) {
 		delegate.setTotalShipping(totalShipping);
 	}
     
+    @Override
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
 		return delegate.calculateOrderItemsFinalPrice(includeNonTaxableItems);
 	}
     
+    @Override
     public void setSubTotal(Money subTotal) {
 		delegate.setSubTotal(subTotal);
 	}
     
+    @Override
     public void assignOrderItemsFinalPrice() {
 		for (PromotableOrderItem orderItem : getDiscountableDiscreteOrderItems()) {
             orderItem.assignFinalPrice();
@@ -381,10 +432,12 @@ public class PromotableOrderImpl implements PromotableOrder {
         }
 	}
     
+    @Override
     public Customer getCustomer() {
 		return delegate.getCustomer();
 	}
     
+    @Override
     public List<PromotableOrderItem> getDiscreteOrderItems() {
 		if (discreteOrderItems == null) {
 			discreteOrderItems = new ArrayList<PromotableOrderItem>();
@@ -430,7 +483,10 @@ public class PromotableOrderImpl implements PromotableOrder {
                 }
             }
             for (BundleOrderItemSplitContainer container : bundleSplitItems) {
-                basicOrderItems.addAll(container.getSplitItems());
+                //filter out explicitly priced bundles so that their items are not included in promotion calculations
+                if (container.getKey().shouldSumItems()) {
+                    basicOrderItems.addAll(container.getSplitItems());
+                }
             }
 			try {
 				for (OrderItem temp : basicOrderItems) {
@@ -444,11 +500,13 @@ public class PromotableOrderImpl implements PromotableOrder {
 		return discreteOrderItems;
     }
 	
-	public List<PromotableOrderItem> getDiscountableDiscreteOrderItems() {
+	@Override
+    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems() {
 		return getDiscountableDiscreteOrderItems(false);
 	}
 	
-	public List<PromotableOrderItem> getDiscountableDiscreteOrderItems(boolean applyDiscountToSalePrice) {
+	@Override
+    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems(boolean applyDiscountToSalePrice) {
 		if (discountableDiscreteOrderItems == null) {
 			discountableDiscreteOrderItems = new ArrayList<PromotableOrderItem>();
 			for (PromotableOrderItem orderItem : getDiscreteOrderItems()) {
@@ -475,15 +533,38 @@ public class PromotableOrderImpl implements PromotableOrder {
 		return discountableDiscreteOrderItems;
     }
 
-	public Order getDelegate() {
+	@Override
+    public Order getDelegate() {
 		return delegate;
 	}
 
+    @Override
     public List<BundleOrderItemSplitContainer> getBundleSplitItems() {
         return bundleSplitItems;
     }
 
+    @Override
     public void setBundleSplitItems(List<BundleOrderItemSplitContainer> bundleSplitItems) {
         this.bundleSplitItems = bundleSplitItems;
+    }
+
+    @Override
+    public List<OrderMultishipOption> getMultiShipOptions() {
+        return multiShipOptions;
+    }
+
+    @Override
+    public void setMultiShipOptions(List<OrderMultishipOption> multiShipOptions) {
+        this.multiShipOptions = multiShipOptions;
+    }
+
+    @Override
+    public boolean isHasMultiShipOptions() {
+        return hasMultiShipOptions;
+    }
+
+    @Override
+    public void setHasMultiShipOptions(boolean hasMultiShipOptions) {
+        this.hasMultiShipOptions = hasMultiShipOptions;
     }
 }

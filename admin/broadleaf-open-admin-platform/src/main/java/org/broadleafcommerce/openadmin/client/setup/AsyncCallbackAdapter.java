@@ -34,7 +34,8 @@ public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> 
 		this.manager = manager;
 	}
 
-	public void onFailure(Throwable arg0) {
+	@Override
+    public void onFailure(Throwable arg0) {
 		//do nothing - let the framework handle the exception
 		//override to custom handle failures
 	}
@@ -43,13 +44,21 @@ public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> 
         return manager;
     }
 
-	public final void onSuccess(DataSource dataSource) {
+	@Override
+    public final void onSuccess(DataSource dataSource) {
 		onSetupSuccess(dataSource);
         if (manager != null) {
-            manager.addDataSource((DynamicEntityDataSource) dataSource);
-		    manager.next();
+            if (dataSource != null) {
+                manager.addDataSource((DynamicEntityDataSource) dataSource);
+            }
         }
 	}
+
+    public final void notifyManager() {
+        if (manager != null) {
+            manager.next();
+        }
+    }
 	
 	public abstract void onSetupSuccess(DataSource dataSource);
 	

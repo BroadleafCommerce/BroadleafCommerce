@@ -35,7 +35,9 @@ public class FulfillmentType implements Serializable, BroadleafEnumerationType {
     private static final Map<String, FulfillmentType> TYPES = new HashMap<String, FulfillmentType>();
 
     public static final FulfillmentType DIGITAL = new FulfillmentType("DIGITAL", "Digital");
-    public static final FulfillmentType PHYSICAL = new FulfillmentType("PHYSICAL", "Physical");
+    public static final FulfillmentType PHYSICAL_SHIP = new FulfillmentType("PHYSICAL_SHIP", "Physical Ship");
+    public static final FulfillmentType PHYSICAL_PICKUP = new FulfillmentType("PHYSICAL_PICKUP", "Physical Ship");
+    public static final FulfillmentType PHYSICAL_PICKUP_OR_SHIP = new FulfillmentType("PHYSICAL_PICKUP_OR_SHIP", "Physical Pickup or Ship");
     @Deprecated
     public static final FulfillmentType SHIPPING = new FulfillmentType("SHIPPING", "Shipping");
 
