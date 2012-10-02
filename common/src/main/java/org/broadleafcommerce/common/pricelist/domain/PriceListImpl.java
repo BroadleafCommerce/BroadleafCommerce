@@ -16,6 +16,16 @@
 
 package org.broadleafcommerce.common.pricelist.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,15 +37,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 
@@ -72,8 +73,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "PriceListImpl_Currency", order=2,group = "PriceListImpl_Details", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
-   // @AdminPresentation(friendlyName = "PriceListImpl_Currency", order=3,group = "PriceListImpl_Details",  requiredOverride = RequiredOverride.REQUIRED)
-   // @AdminPresentationToOneLookup(lookupDisplayProperty="friendlyName")
+    @AdminPresentationToOneLookup(lookupDisplayProperty="friendlyName")
     protected BroadleafCurrency currencyCode;
     
     
