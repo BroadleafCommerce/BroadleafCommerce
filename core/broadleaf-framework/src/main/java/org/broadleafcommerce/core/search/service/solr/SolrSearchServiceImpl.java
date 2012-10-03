@@ -72,7 +72,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * An implementation of SearchService that uses solr
+ * An implementation of SearchService that uses Solr
  * 
  * @author Andre Azzolini (apazzolini)
  */
@@ -124,7 +124,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 			SolrInputDocument document = new SolrInputDocument();
 			
 			// Add fields that are present on all products
-			document.addField("id", product.getId());
+			document.addField(getIdFieldName(), product.getId());
 			
 			// The explicit categories are the ones defined by the product itself
 			for (Category category : product.getAllParentCategories()) {
@@ -198,7 +198,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 		}
 		
 	    try {
-	    	server.deleteByQuery("*:*");
+	    	server.deleteByQuery(getGlobalPrefix() + "*:*");
 	    	server.commit();
 	    	
 		    server.add(documents);
@@ -285,7 +285,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 		// Build the basic query
 	    SolrQuery solrQuery = new SolrQuery()
 	    	.setQuery(qualifiedSolrQuery)
-	    	.setFields("id")
+	    	.setFields(getIdFieldName())
     		.setRows(searchCriteria.getPageSize())
     		.setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
 	    
@@ -518,7 +518,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	    final List<Long> productIds = new ArrayList<Long>();
 		SolrDocumentList docs = response.getResults();
     	for (SolrDocument doc : docs) {
-    		productIds.add((Long) doc.getFieldValue("id"));
+    		productIds.add((Long) doc.getFieldValue(getIdFieldName()));
     	}
     	
 	    List<Product> products = productDao.readProductsByIds(productIds); 
@@ -671,7 +671,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	}
 	
 	/**
-	 * Perform any necessary query sanitation here. For example, we disallow open and close parentheses, and we also
+	 * Perform any necessary query sanitation here. For example, we disallow open and close parentheses, colons, and we also
 	 * ensure that quotes are actual quotes (") and not the URL encoding (&quot;) so that Solr is able to properly handle
 	 * the user's intent.
 	 * 
@@ -755,6 +755,16 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	        .append(getGlobalPrefix())
 	        .append(field.getFacetFieldType().equals(FieldType.PRICE) ? getPricelistPrefix() : getLocalePrefix())
 	        .append(field.getPropertyName()).append("_").append(field.getFacetFieldType().getType())
+	        .toString();
+	}
+	
+	/**
+	 * @return the id field name, with the global prefix as appropriate
+	 */
+	protected String getIdFieldName() {
+	    return new StringBuilder()
+	        .append(getGlobalPrefix())
+	        .append("id")
 	        .toString();
 	}
 	
