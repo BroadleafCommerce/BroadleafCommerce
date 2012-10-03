@@ -64,7 +64,8 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 
     private boolean isEntitySecurityExplicit = false;
 	
-	public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException {
+	@Override
+    public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException {
         AdminUser persistentAdminUser = getPersistentAdminUser();
         if (persistentAdminUser != null) {
             org.broadleafcommerce.openadmin.client.security.AdminUser response = new org.broadleafcommerce.openadmin.client.security.AdminUser();

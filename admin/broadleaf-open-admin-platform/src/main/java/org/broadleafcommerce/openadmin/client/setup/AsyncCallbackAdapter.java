@@ -44,8 +44,7 @@ public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> 
         return manager;
     }
 
-	@Override
-    public final void onSuccess(DataSource dataSource) {
+    public final void onBatchSuccess(DataSource dataSource) {
 		onSetupSuccess(dataSource);
         if (manager != null) {
             if (dataSource != null) {
@@ -53,6 +52,15 @@ public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> 
             }
         }
 	}
+
+    @Override
+    public final void onSuccess(DataSource dataSource) {
+        onSetupSuccess(dataSource);
+        if (manager != null) {
+            manager.addDataSource((DynamicEntityDataSource) dataSource);
+            notifyManager();
+        }
+    }
 
     public final void notifyManager() {
         if (manager != null) {
