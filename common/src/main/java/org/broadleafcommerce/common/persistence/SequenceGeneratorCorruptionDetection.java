@@ -58,6 +58,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
     @Value("${auto.correct.sequence.generator.inconsistencies}")
     protected boolean automaticallyCorrectInconsistencies = false;
 
+    @Value("${default.schema.sequence.generator}")
+    protected String defaultSchemaSequenceGenerator = "";
+
     @Override
     @Transactional("blTransactionManager")
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -108,6 +111,10 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                     sb2.append("select ");
                     sb2.append(valueColumnName);
                     sb2.append(" from ");
+                    if (!tableName.contains(".") && !StringUtils.isEmpty(defaultSchemaSequenceGenerator)) {
+                        sb2.append(defaultSchemaSequenceGenerator);
+                        sb2.append(".");
+                    }
                     sb2.append(tableName);
                     sb2.append(" where ");
                     sb2.append(segmentColumnName);
@@ -134,6 +141,10 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                                 if (automaticallyCorrectInconsistencies) {
                                     StringBuilder sb3 = new StringBuilder();
                                     sb3.append("update ");
+                                    if (!tableName.contains(".") && !StringUtils.isEmpty(defaultSchemaSequenceGenerator)) {
+                                        sb2.append(defaultSchemaSequenceGenerator);
+                                        sb2.append(".");
+                                    }
                                     sb3.append(tableName);
                                     sb3.append(" set ");
                                     sb3.append(valueColumnName);
@@ -155,8 +166,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                                         "has stopped startup of the application in order to allow you to resolve the issue and avoid possible data corruption. If you wish to disable this detection, you may\n" +
                                         "set the 'detect.sequence.generator.inconsistencies' property to false in your application's common.properties or common-shared.properties. If you would like for this component\n" +
                                         "to autocorrect these problems by setting the sequence generator value to a value greater than the max entity id, then set the 'auto.correct.sequence.generator.inconsistencies'\n" +
-                                        "property to true in your application's common.properties or common-shared.properties. Also, if you are upgrading from 1.6 or below, please refer to\n" +
-                                        "http://docs.broadleafcommerce.org/current/1.6-to-2.0-Migration.html for important information regarding migrating your SEQUENCE_GENERATOR table.";
+                                        "property to true in your application's common.properties or common-shared.properties. If you would like to provide a default schema to be used to qualify table names used in the\n" +
+                                        "queries for this detection, set the 'default.schema.sequence.generator' property in your application's common.properties or common-shared.properties. Also, if you are upgrading\n" +
+                                        "from 1.6 or below, please refer to http://docs.broadleafcommerce.org/current/1.6-to-2.0-Migration.html for important information regarding migrating your SEQUENCE_GENERATOR table.";
                                     LOG.error("Broadleaf Commerce failed to start", new RuntimeException(reason));
                                     System.exit(1);
                                 }
