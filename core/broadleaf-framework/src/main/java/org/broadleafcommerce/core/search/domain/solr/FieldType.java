@@ -48,6 +48,7 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
     public static final FieldType BOOLEANS = new FieldType("bs", "Boolean (Multi)");
     public static final FieldType DOUBLE = new FieldType("d", "Double");
     public static final FieldType DOUBLES = new FieldType("ds", "Double (Multi)");
+    public static final FieldType PRICE = new FieldType("p", "Price");
     public static final FieldType DATE = new FieldType("dt", "Date");
     public static final FieldType DATES = new FieldType("dts", "Date (Multi)");
     public static final FieldType TRIEINT = new FieldType("tint", "Trie Integer");

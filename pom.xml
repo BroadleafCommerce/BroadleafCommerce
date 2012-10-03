@@ -49,18 +49,10 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-         <repositories>
-            <repository>
-			<id>smartclient</id>
-			<name>smartclient.com</name>
-			<url>http://www.smartclient.com/maven2</url>
-		</repository>
-    </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gwt.version>2.4.0</gwt.version>
         <smartgwt.version>2.5</smartgwt.version>
-   
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
@@ -166,9 +158,9 @@
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                   <formats>
-                       <format>xml</format>
-                   </formats>
+                    <formats>
+                        <format>xml</format>
+                    </formats>
                 </configuration>
             </plugin>
             <plugin>
@@ -425,11 +417,11 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-               <groupId>commons-codec</groupId>
-               <artifactId>commons-codec</artifactId>
-               <version>1.4</version>
-               <type>jar</type>
-               <scope>compile</scope>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.4</version>
+                <type>jar</type>
+                <scope>compile</scope>
             </dependency>
 
             <!-- Logging -->
@@ -570,20 +562,20 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
-			<dependency>
-				<groupId>org.thymeleaf</groupId>
-				<artifactId>thymeleaf</artifactId>
-				<version>2.0.13</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.thymeleaf</groupId>
-				<artifactId>thymeleaf-spring3</artifactId>
-				<version>2.0.13</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf</artifactId>
+                <version>2.0.13</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf-spring3</artifactId>
+                <version>2.0.13</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
 
             <!-- Testing Libraries -->
             <dependency>
@@ -623,20 +615,20 @@
             </dependency>
 
             <!-- Search Related Libraries -->
-			<dependency>
-	            <artifactId>solr-solrj</artifactId>
-	            <groupId>org.apache.solr</groupId>
-	            <version>3.6.1</version>
-	            <type>jar</type>
-	            <scope>compile</scope>
-	        </dependency>
-	        <dependency>
-	            <artifactId>solr-core</artifactId>
-	            <groupId>org.apache.solr</groupId>
-	            <version>3.6.1</version>
-	            <type>jar</type>
-	            <scope>compile</scope>
-        	</dependency>
+            <dependency>
+                <artifactId>solr-solrj</artifactId>
+                <groupId>org.apache.solr</groupId>
+                <version>3.6.1</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <artifactId>solr-core</artifactId>
+                <groupId>org.apache.solr</groupId>
+                <version>3.6.1</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
 
             <!-- Byte Code Manipulation Libraries-->
             <dependency>
@@ -954,21 +946,12 @@
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>3.1.1.RELEASE</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-web</artifactId>
                 <version>1.0.2.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
-
-
 
             <!--Admin Libraries-->
             <dependency>

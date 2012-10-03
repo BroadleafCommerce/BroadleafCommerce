@@ -39,7 +39,6 @@ import java.util.Calendar;
 import java.util.List;
 
 @Service(value = "blSandBoxService")
-@Transactional("blTransactionManager")
 public class SandBoxServiceImpl implements SandBoxService {
     
     private static final Log LOG = LogFactory.getLog(SandBoxServiceImpl.class);
@@ -77,11 +76,13 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void promoteAllSandBoxItems(SandBox fromSandBox, String comment) {
         promoteSelectedItems(fromSandBox, comment, new ArrayList<SandBoxItem>(sandBoxItemDao.retrieveSandBoxItemsForSandbox(fromSandBox.getId())));
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void promoteSelectedItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
         SandBox destinationSandBox = determineNextSandBox(fromSandBox);
         SandBoxAction action = createSandBoxAction(SandBoxActionType.PROMOTE, comment);
@@ -109,6 +110,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void revertAllSandBoxItems(SandBox originalSandBox, SandBox sandBox) {
          List<SandBoxItem> items = new ArrayList<SandBoxItem>();
          List<SandBoxItem> sandBoxItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox.getId());
@@ -121,6 +123,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void revertSelectedSandBoxItems(SandBox fromSandBox, List<SandBoxItem> sandBoxItems) {
         for (SandBoxItem item : sandBoxItems) {
             if (item.getArchivedFlag()) {
@@ -143,6 +146,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void rejectAllSandBoxItems(SandBox originalSandBox, SandBox sandBox, String comment) {        
         List<SandBoxItem> items = new ArrayList<SandBoxItem>();
         List<SandBoxItem> currentItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox.getId());
@@ -155,6 +159,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void rejectSelectedSandBoxItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
         for (SandBoxItem item : sandBoxItems) {
             if (item.getOriginalSandBoxId() == null) {

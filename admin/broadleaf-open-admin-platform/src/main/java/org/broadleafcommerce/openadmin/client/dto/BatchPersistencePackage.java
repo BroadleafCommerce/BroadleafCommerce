@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.client.dto;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * @author Jeff Fischer
@@ -33,5 +34,22 @@ public class BatchPersistencePackage implements IsSerializable, Serializable {
 
     public void setPersistencePackages(PersistencePackage[] persistencePackages) {
         this.persistencePackages = persistencePackages;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BatchPersistencePackage)) return false;
+
+        BatchPersistencePackage that = (BatchPersistencePackage) o;
+
+        if (!Arrays.equals(persistencePackages, that.persistencePackages)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return persistencePackages != null ? Arrays.hashCode(persistencePackages) : 0;
     }
 }

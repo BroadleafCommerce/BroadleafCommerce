@@ -281,55 +281,6 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 
 	@Override
 	public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-//        AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
-//
-//            @Override
-//            protected void onOtherException(Throwable exception) {
-//                super.onOtherException(exception);
-//                if (cb != null) {
-//                    cb.onFailure(exception);
-//                }
-//            }
-//
-//            @Override
-//            protected void onSecurityException(ApplicationSecurityException exception) {
-//                super.onSecurityException(exception);
-//                if (cb != null) {
-//                    cb.onFailure(exception);
-//                }
-//            }
-//
-//            public void onSuccess(DynamicResultSet result) {
-//                super.onSuccess(result);
-//                ClassMetadata metadata = result.getClassMetaData();
-//                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.MAPSTRUCTUREKEY, MergedPropertyType.MAPSTRUCTUREVALUE}, overrideFieldSort, ((AsyncCallbackAdapter) cb).getDataSourceSetupManager());
-//
-//                DataSourceField symbolicIdField = new DataSourceTextField("symbolicId");
-//                symbolicIdField.setCanEdit(false);
-//                symbolicIdField.setHidden(true);
-//                symbolicIdField.setAttribute("rawName", "symbolicId");
-//                dataSource.addField(symbolicIdField);
-//
-//                DataSourceField priorKeyField = new DataSourceTextField("priorKey");
-//                priorKeyField.setCanEdit(false);
-//                priorKeyField.setHidden(true);
-//                priorKeyField.setAttribute("rawName", "priorKey");
-//                dataSource.addField(priorKeyField);
-//
-//                //Add a hidden field to store the polymorphic type for this entity
-//                DataSourceField typeField = new DataSourceTextField("_type");
-//                typeField.setCanEdit(false);
-//                typeField.setHidden(true);
-//                typeField.setAttribute("rawName", "_type");
-//                dataSource.addField(typeField);
-//                dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
-//                dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
-//
-//                if (cb != null) {
-//                    cb.onSuccess(dataSource);
-//                }
-//            }
-//        });
         BatchManager batchManager = BatchManager.getInstance();
         BatchPackage batchPackage = new BatchPackage();
         batchPackage.setPersistencePackage(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken));
@@ -379,7 +330,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
                 dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
 
                 if (cb != null) {
-                    cb.onSuccess(dataSource);
+                    ((AsyncCallbackAdapter) cb).onBatchSuccess(dataSource);
                 }
             }
         });
