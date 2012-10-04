@@ -61,7 +61,7 @@ public class PriceListMapDataSourceFactory implements DataSourceFactory {
                                 new MapStructureClientModule(CeilingEntities.SKU, persistencePerspective, AppServices.DYNAMIC_ENTITY)
                         };
                      //   dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (LinkedHashMap<String, String>) additionalItems[0]);
-                        dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules,presenter.getPresenterSequenceSetupManager().getDataSource("skuPriceListDS"),"friendlyName","priceKey");
+                        dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules,presenter.getPresenterSequenceSetupManager(), "skuPriceListDS","friendlyName","priceKey");
                         
                         dataSource.buildFields(null, false, cb);
                 } else {
