@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
 /**
@@ -35,30 +36,16 @@ public class LocaleServiceImpl implements LocaleService {
     @Resource(name="blLocaleDao")
     protected LocaleDao localeDao;
 
-
-    /**
-     * @return The locale for the passed in code
-     */
     @Override
     public Locale findLocaleByCode(String localeCode) {
         return localeDao.findLocaleByCode(localeCode);
     }
-
-    /**
-     * Returns the page template with the passed in id.
-     *
-     * @param id - the id of the page template
-     * @return The default locale
-     */
+    
     @Override
     public Locale findDefaultLocale() {
         return localeDao.findDefaultLocale();
     }
 
-
-    /**
-     * Returns list of supported locales.
-     */
     @Override
     public List<Locale> findAllLocales() {
         return localeDao.findAllLocales();
