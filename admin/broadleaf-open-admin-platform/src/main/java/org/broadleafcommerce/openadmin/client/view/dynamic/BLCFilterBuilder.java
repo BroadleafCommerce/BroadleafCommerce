@@ -16,13 +16,15 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.widgets.form.FilterBuilder;
+import com.smartgwt.client.widgets.form.fields.DateItem;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BLCFilterBuilder extends FilterBuilder {
     public BLCFilterBuilder() {
@@ -30,44 +32,64 @@ public class BLCFilterBuilder extends FilterBuilder {
     }
 
     @Override
+    public String getEditorType(DataSourceField fieldName, OperatorId operatorId) {
+        if (FieldType.DATE == fieldName.getType() || FieldType.DATETIME == fieldName.getType()) {
+            return DateItem.class.getName();
+        }
+        return super.getEditorType(fieldName, operatorId);
+    }
+
+    @Override
     public void setDataSource(DataSource dataSource) {
-        OperatorId[] operatorsForNumbers = new OperatorId[] {
-                OperatorId.GREATER_THAN, OperatorId.GREATER_OR_EQUAL,
-                OperatorId.GREATER_THAN_FIELD, OperatorId.BETWEEN,
-                OperatorId.BETWEEN_INCLUSIVE, OperatorId.LESS_THAN,
-                OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN_FIELD,
-                OperatorId.EQUALS, OperatorId.EQUALS_FIELD,
-                OperatorId.NOT_EQUAL_FIELD, OperatorId.NOT_EQUAL };
         Map<FieldType, OperatorId[]> map = new HashMap<FieldType, OperatorId[]>();
 
-        for (FieldType fieldType : new FieldType[] { FieldType.ANY,
-                FieldType.BINARY, FieldType.BOOLEAN, FieldType.CREATOR,
-                FieldType.CREATORTIMESTAMP, FieldType.ENUM, FieldType.IMAGE,
-                FieldType.IMAGEFILE, FieldType.ANY, FieldType.MODIFIER,
-                FieldType.MODIFIERTIMESTAMP, FieldType.TEXT,
-                FieldType.SEQUENCE, FieldType.PASSWORD, FieldType.CUSTOM }) {
+        for (FieldType fieldType : new FieldType[] { FieldType.TEXT, FieldType.ANY,
+                FieldType.BINARY, FieldType.IMAGE,
+                FieldType.IMAGEFILE, FieldType.MODIFIER,
+                FieldType.MODIFIERTIMESTAMP, FieldType.SEQUENCE, FieldType.CUSTOM }) {
             // we have to save the values, then reapply, since the operators
             // are cleared on write.
             map.put(fieldType, dataSource.getTypeOperators(fieldType));
 
         }
-        // removing operators that don't make sense for numbers. BLC-380
-        dataSource.setTypeOperators(FieldType.FLOAT, operatorsForNumbers);
-        dataSource.setTypeOperators(FieldType.INTEGER, operatorsForNumbers);
-        dataSource.setTypeOperators(FieldType.TIME, operatorsForNumbers);
-        dataSource.setTypeOperators(FieldType.DATE, operatorsForNumbers);
-        dataSource.setTypeOperators(FieldType.DATETIME, operatorsForNumbers);
+        dataSource.setTypeOperators(FieldType.BOOLEAN, getBasicBooleanOperators());
+        dataSource.setTypeOperators(FieldType.DATE, getBasicDateOperators());
+        dataSource.setTypeOperators(FieldType.DATETIME, getBasicDateOperators());
+        dataSource.setTypeOperators(FieldType.ENUM, getBasicEnumerationOperators());
+        dataSource.setTypeOperators(FieldType.FLOAT, getBasicNumericOperators());
+        dataSource.setTypeOperators(FieldType.INTEGER, getBasicNumericOperators());
+        dataSource.setTypeOperators(FieldType.PASSWORD, getBasicTextOperators());
+        dataSource.setTypeOperators(FieldType.TIME, getBasicDateOperators());
 
-        for (FieldType fieldType : new FieldType[] { FieldType.ANY,
-                FieldType.BINARY, FieldType.BOOLEAN, FieldType.CREATOR,
-                FieldType.CREATORTIMESTAMP, FieldType.ENUM, FieldType.IMAGE,
-                FieldType.IMAGEFILE, FieldType.ANY, FieldType.MODIFIER,
-                FieldType.MODIFIERTIMESTAMP, FieldType.TEXT,
-                FieldType.SEQUENCE, FieldType.PASSWORD, FieldType.CUSTOM }) {
+        for (FieldType fieldType : new FieldType[] { FieldType.TEXT, FieldType.ANY,
+                FieldType.BINARY, FieldType.IMAGE,
+                FieldType.IMAGEFILE, FieldType.MODIFIER,
+                FieldType.MODIFIERTIMESTAMP, FieldType.SEQUENCE, FieldType.CUSTOM }) {
             // we have to reapply the values, since the operators are
             // cleared on write above. mabye due to bug in smartgwt
             dataSource.setTypeOperators(fieldType, map.get(fieldType));
         }
+
         super.setDataSource(dataSource);
+    }
+
+    protected OperatorId[] getBasicBooleanOperators() {
+        return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
+    }
+
+    protected OperatorId[] getBasicDateOperators() {
+        return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.BETWEEN, OperatorId.BETWEEN_INCLUSIVE};
+    }
+
+    protected OperatorId[] getBasicNumericOperators() {
+        return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET, OperatorId.BETWEEN, OperatorId.BETWEEN_INCLUSIVE};
+    }
+
+    protected OperatorId[] getBasicTextOperators() {
+        return new OperatorId[]{OperatorId.CONTAINS, OperatorId.NOT_CONTAINS, OperatorId.STARTS_WITH, OperatorId.ENDS_WITH, OperatorId.NOT_STARTS_WITH, OperatorId.NOT_ENDS_WITH, OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
+    }
+
+    protected OperatorId[] getBasicEnumerationOperators() {
+        return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
     }
 }
