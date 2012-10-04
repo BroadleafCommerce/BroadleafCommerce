@@ -26,6 +26,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSour
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,9 +42,10 @@ import java.util.List;
 public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDataSource {
 	
 	protected LinkedHashMap<String, String> keyMap;
-    protected DataSource optionDataSource;
     protected String displayField;
     protected String valueField;
+    protected String lookupDataSourcename;
+    protected PresenterSequenceSetupManager presenterSequenceSetupManager;
 
 	/**
 	 * @param name
@@ -56,9 +58,10 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
 		this.keyMap = keyMap;
 	}
 
-    public ComplexValueMapStructureDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, DataSource optionDataSource, String displayField, String valueField) {
+    public ComplexValueMapStructureDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, PresenterSequenceSetupManager presenterSequenceSetupManager, String lookupDataSourceName, String displayField, String valueField) {
 		super(name, persistencePerspective, service, modules);
-		this.optionDataSource = optionDataSource;
+		this.presenterSequenceSetupManager = presenterSequenceSetupManager;
+        this.lookupDataSourcename = lookupDataSourceName;
         this.displayField = displayField;
         this.valueField = valueField;
 	}
@@ -90,6 +93,10 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         	if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
         		ComboBoxItem selectItem = new ComboBoxItem();
         		//selectItem.setMultiple(false);
+                DataSource optionDataSource = null;
+                if (presenterSequenceSetupManager != null && lookupDataSourcename != null) {
+                    optionDataSource = presenterSequenceSetupManager.getDataSource(lookupDataSourcename);
+                }
                 if (keyMap == null && optionDataSource == null) {
                     throw new RuntimeException("Must supply either a key map or option data source to support the key values for this map structure.");
                 }

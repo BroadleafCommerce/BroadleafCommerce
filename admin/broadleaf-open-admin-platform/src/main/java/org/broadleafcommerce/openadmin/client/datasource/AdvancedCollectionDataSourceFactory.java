@@ -127,7 +127,7 @@ public class AdvancedCollectionDataSourceFactory implements DataSourceFactory {
                         }
                         dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, keys);
                     } else {
-                        dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, presenter.getPresenterSequenceSetupManager().getDataSource(name + "Lookup"), metadata.getMapKeyOptionEntityDisplayField(), metadata.getMapKeyOptionEntityValueField());
+                        dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, presenter.getPresenterSequenceSetupManager(), name + "Lookup", metadata.getMapKeyOptionEntityDisplayField(), metadata.getMapKeyOptionEntityValueField());
                     }
                 }
                 if (metadata.getCustomCriteria() != null && metadata.getCustomCriteria().length > 0) {

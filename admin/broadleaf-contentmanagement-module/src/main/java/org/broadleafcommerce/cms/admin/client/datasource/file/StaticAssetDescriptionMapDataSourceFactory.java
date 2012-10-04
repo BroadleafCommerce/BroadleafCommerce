@@ -59,7 +59,7 @@ public class StaticAssetDescriptionMapDataSourceFactory implements DataSourceFac
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new MapStructureClientModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-			dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, presenter.getPresenterSequenceSetupManager().getDataSource("localeDS"), "friendlyName", "localeCode");
+			dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, presenter.getPresenterSequenceSetupManager(), "localeDS", "friendlyName", "localeCode");
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {
