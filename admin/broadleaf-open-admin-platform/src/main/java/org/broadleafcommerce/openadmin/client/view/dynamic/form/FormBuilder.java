@@ -310,6 +310,7 @@ public class FormBuilder {
 		        	checkForPasswordField(showDisabledState, canEdit, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem, form);
 	        	}
         	}
+            field.setAttribute("tempFormHidden", false);
         	
         	canEdit = originalEdit;
         }
