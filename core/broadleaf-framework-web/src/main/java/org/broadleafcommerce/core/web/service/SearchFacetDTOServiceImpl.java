@@ -36,6 +36,9 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
     
     @Value("${web.defaultPageSize}")
     protected Integer defaultPageSize;
+    
+    @Value("${web.maxPageSize}")
+    protected Integer maxPageSize;
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -54,7 +57,11 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
 			} else if (key.equals(ProductSearchCriteria.PAGE_NUMBER)) {
 				searchCriteria.setPage(Integer.parseInt(entry.getValue()[0]));
 			} else if (key.equals(ProductSearchCriteria.PAGE_SIZE_STRING)) {
-				searchCriteria.setPageSize(Integer.parseInt(entry.getValue()[0]));
+			    int requestedPageSize = Integer.parseInt(entry.getValue()[0]);
+			    if (maxPageSize == null) {
+			        maxPageSize = requestedPageSize;
+			    }
+				searchCriteria.setPageSize(Math.min(requestedPageSize, maxPageSize));
 			} else if (key.equals(ProductSearchCriteria.QUERY_STRING)) {
 				continue; // This is handled by the controller
 			} else {
