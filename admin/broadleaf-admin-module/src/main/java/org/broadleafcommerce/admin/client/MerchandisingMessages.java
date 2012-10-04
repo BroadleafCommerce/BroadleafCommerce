@@ -143,6 +143,7 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String FieldImpl_abbreviation();
     public String FieldImpl_searchable();
     public String FieldImpl_facetFieldType();
+    public String FieldImpl_translatable();
     public String SearchFacetRangeImpl_MIN_VALUE();
     public String SearchFacetRangeImpl_MAX_VALUE();
     public String CategorySearchFacetImpl_sequence();

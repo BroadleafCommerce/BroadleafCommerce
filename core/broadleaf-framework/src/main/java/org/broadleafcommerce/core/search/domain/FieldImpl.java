@@ -71,12 +71,12 @@ public class FieldImpl implements Field,Serializable {
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition")
     protected String abbreviation;
     
-    @Column(name =  "SEARCHABLE")
+    @Column(name = "SEARCHABLE")
     @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition")
     protected Boolean searchable = false;
     
     // This is a broadleaf enumeration
-    @Column(name =  "FACET_FIELD_TYPE")
+    @Column(name = "FACET_FIELD_TYPE")
     @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_descrpition")
     protected String facetFieldType;
 
@@ -87,6 +87,10 @@ public class FieldImpl implements Field,Serializable {
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 	protected List<String> searchableFieldTypes = new ArrayList<String>();
+	
+	@Column(name = "TRANSLATABLE")
+	@AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_description")
+	protected Boolean translatable = false;
     
     @Override
     public String getQualifiedFieldName() {
@@ -170,8 +174,18 @@ public class FieldImpl implements Field,Serializable {
 		}
 		this.searchableFieldTypes = fieldTypes;
 	}
+	
+	@Override
+    public Boolean getTranslatable() {
+        return translatable;
+    }
 
 	@Override
+    public void setTranslatable(Boolean translatable) {
+        this.translatable = translatable;
+    }
+
+    @Override
 	public List<SearchConfig> getSearchConfigs() {
 		throw new UnsupportedOperationException("The default Field implementation does not support search configs");
 	}
