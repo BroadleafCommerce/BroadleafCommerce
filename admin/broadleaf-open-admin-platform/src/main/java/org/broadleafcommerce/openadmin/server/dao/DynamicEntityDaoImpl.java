@@ -404,7 +404,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 mergedProperties.get(key).accept(new MetadataVisitorAdapter() {
                     @Override
                     public void visit(BasicFieldMetadata metadata) {
-                        if (metadata.getExplicitFieldType() == null || metadata.getExplicitFieldType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
+                        if (metadata.getExplicitFieldType() == null || metadata.getExplicitFieldType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY || key.contains(".")) {
                             removeKeys.add(key);
                         }
                     }

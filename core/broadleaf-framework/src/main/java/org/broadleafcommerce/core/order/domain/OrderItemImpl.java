@@ -71,6 +71,8 @@ import org.hibernate.annotations.NotFoundAction;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationOverrides(
     {
+        @AdminPresentationOverride(name="giftWrapOrderItem", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="skuBundleItem", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="product.defaultCategory", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="product.name", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="product.description", value=@AdminPresentation(excluded = true)),
