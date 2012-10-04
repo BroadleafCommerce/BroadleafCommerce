@@ -260,6 +260,7 @@ public class FormBuilder {
         	String name = field.getName();
         	String fieldType = field.getAttribute("fieldType");
             FormHiddenEnum enumVal = (FormHiddenEnum) field.getAttributeAsObject("formHidden");
+            Boolean tempFormHidden = field.getAttribute("tempFormHidden") != null && Boolean.parseBoolean(field.getAttribute("tempFormHidden"));
             /*
                 Check to make sure this field exists for this record. This could be a polymorphic type
                 for this record that does not have this field. This is normally taken care of during inspection
@@ -277,7 +278,7 @@ public class FormBuilder {
             } else {
                 isFieldAvailableForRecord = true;
             }
-        	if (fieldType != null && (!field.getHidden() || enumVal == FormHiddenEnum.VISIBLE) && enumVal != FormHiddenEnum.HIDDEN && isFieldAvailableForRecord) {
+        	if (fieldType != null && (!field.getHidden() || enumVal == FormHiddenEnum.VISIBLE) && enumVal != FormHiddenEnum.HIDDEN && isFieldAvailableForRecord && !tempFormHidden) {
 	    		String group = field.getAttribute("formGroup");
 	    		String temp = field.getAttribute("formGroupOrder");
                 if (field.getAttributeAsBoolean("formGroupCollapsed") != null) {

@@ -268,8 +268,10 @@ public class DynamicEntityDataSource extends AbstractDynamicDataSource {
 			int pos = Arrays.binarySearch(sortedFieldNames, fieldName);
 			if (pos >= 0) {
 				field.setHidden(false);
+                field.setAttribute("tempFormHidden", false);
 			} else {
 				field.setHidden(true);
+                field.setAttribute("tempFormHidden", true);
 			}
 		}
 	}

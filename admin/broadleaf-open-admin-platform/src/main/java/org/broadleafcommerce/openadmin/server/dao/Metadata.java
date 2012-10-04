@@ -506,6 +506,7 @@ public class Metadata {
         if (metadata.getExplicitFieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
             metadata.setExcluded(true);
+            metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
         } else {
             if (basicFieldMetadata.getExcluded()!=null) {
                 metadata.setExcluded(basicFieldMetadata.getExcluded());
