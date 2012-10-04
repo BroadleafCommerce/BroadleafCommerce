@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service.call;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.Order;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class ProductBundleOrderItemRequest {
     protected String name;
     protected Category category;
     protected Sku sku;
+    protected Order order;
     protected int quantity;
     protected ProductBundle productBundle;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
@@ -55,6 +57,14 @@ public class ProductBundleOrderItemRequest {
 	public void setSku(Sku sku) {
 		this.sku = sku;
 	}
+	
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+    
+    public Order getOrder() {
+        return order;
+    }
 
 	public int getQuantity() {
         return quantity;

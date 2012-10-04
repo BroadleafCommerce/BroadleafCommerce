@@ -49,6 +49,7 @@ public class AddOrderItemActivity extends BaseActivity {
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
+    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
@@ -80,6 +81,7 @@ public class AddOrderItemActivity extends BaseActivity {
 	        itemRequest.setSku(sku);
 	        itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
 	        itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+	        itemRequest.setOrder(order);
         	item = orderItemService.createDiscreteOrderItem(itemRequest);
         } else {
         	ProductBundleOrderItemRequest bundleItemRequest = new ProductBundleOrderItemRequest();
@@ -89,10 +91,10 @@ public class AddOrderItemActivity extends BaseActivity {
         	bundleItemRequest.setQuantity(orderItemRequestDTO.getQuantity());
         	bundleItemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
         	bundleItemRequest.setName(product.getName());
+        	bundleItemRequest.setOrder(order);
         	item = orderItemService.createBundleOrderItem(bundleItemRequest);
         }
         
-        item.setOrder(order);
         item = orderItemService.saveOrderItem(item);
         order.getOrderItems().add(item);
         order = orderService.save(order, false);

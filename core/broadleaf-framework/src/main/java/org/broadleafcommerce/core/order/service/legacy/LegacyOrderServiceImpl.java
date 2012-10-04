@@ -56,16 +56,13 @@ import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotPr
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import javax.annotation.Resource;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -107,12 +104,15 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
 
+    @Override
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order) {
         return fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
     }
     
-    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Sku sku, Product product, Category category, Integer quantity, Map<String, String> itemAttributes) {
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Order order, BundleOrderItem bundleOrderItem, Sku sku, Product product, Category category, Integer quantity, Map<String, String> itemAttributes) {
         DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+        itemRequest.setOrder(order);
+        itemRequest.setBundleOrderItem(bundleOrderItem);
         itemRequest.setCategory(category);
         itemRequest.setProduct(product);
         itemRequest.setQuantity(quantity);
@@ -121,7 +121,8 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     	return itemRequest;
     }
     
-    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity) {
+    @Override
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) {
     	Sku sku = skuDao.readSkuById(skuId);
     	Product product;
         if (productId != null) {
@@ -136,27 +137,36 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
             category = null;
         }
         
-        return createDiscreteOrderItemRequest(sku, product, category, quantity, null);
+        Order order = orderDao.readOrderById(orderId);
+        
+        return createDiscreteOrderItemRequest(order, null, sku, product, category, quantity, null);
     }
 
 
+    @Override
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException {
+        itemRequest.setOrder(order);
     	return addGiftWrapItemToOrder(order, itemRequest, true);
     }
 
+    @Override
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException {
     	return addBundleItemToOrder(order, itemRequest, true);
     }
 
+    @Override
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
+        itemRequest.setOrder(order);
         BundleOrderItem item = orderItemService.createBundleOrderItem(itemRequest);
         return addOrderItemToOrder(order, item, priceOrder);
     }
     
+    @Override
     public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException {
     	return removeItemFromOrder(orderId, itemId, true);
     }
 
+    @Override
     public Order removeItemFromOrder(Long orderId, Long itemId, boolean priceOrder) throws PricingException {
         Order order = findOrderById(orderId);
         OrderItem orderItem = orderItemService.readOrderItemById(itemId);
@@ -164,10 +174,12 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return removeItemFromOrder(order, orderItem, priceOrder);
     }
     
+    @Override
     public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException {
     	return removeItemFromOrder(order, item, true);
     }
 
+    @Override
     public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException {
         fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, item);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
@@ -190,14 +202,17 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     	return destinationOrder;
     }
 
+    @Override
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
         return addPaymentToOrder(order, payment, null);
     }
 
+    @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException {
     	return addFulfillmentGroupToOrder(fulfillmentGroupRequest, true);
     }
 
+    @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException {
         FulfillmentGroup fg = fulfillmentGroupDao.create();
         fg.setAddress(fulfillmentGroupRequest.getAddress());
@@ -215,10 +230,12 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return fg;
     }
     
+    @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
     	return addFulfillmentGroupToOrder(order, fulfillmentGroup, true);
     }
 
+    @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
         FulfillmentGroup dfg = findDefaultFulfillmentGroupForOrder(order);
         if (dfg == null) {
@@ -252,14 +269,17 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return order.getFulfillmentGroups().get(fulfillmentGroupIndex);
     }
     
+    @Override
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException {
     	return addItemToFulfillmentGroup(item, fulfillmentGroup, quantity, true);
     }
 
+    @Override
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
         return addItemToFulfillmentGroup(item.getOrder(), item, fulfillmentGroup, quantity, priceOrder);
     }
 
+    @Override
     public FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
 
         // 1) Find the item's existing fulfillment group, if any
@@ -290,18 +310,22 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return fulfillmentGroup;
     }
 
+    @Override
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException {
     	return addItemToFulfillmentGroup(item, fulfillmentGroup, true);
     }
 
+    @Override
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
         return addItemToFulfillmentGroup(item, fulfillmentGroup, item.getQuantity(), priceOrder);
     }
     
+    @Override
     public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
     	updateItemQuantity(order, item, true);
     }
     
+    @Override
     public void updateItemQuantity(Order order, OrderItemRequestDTO orderItemRequestDTO) throws ItemNotFoundException, PricingException {
     	OrderItem orderItem = null;
 		for (DiscreteOrderItem doi : order.getDiscreteOrderItems()) {
@@ -316,6 +340,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     }
     
 
+    @Override
     public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException {
         if (!order.getOrderItems().contains(item)) {
             throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() + ")");
@@ -332,10 +357,12 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         } 
     }
 
+    @Override
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException {
         removeAllFulfillmentGroupsFromOrder(order, false);
     }
 
+    @Override
     public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException {
         if (order.getFulfillmentGroups() != null) {
             for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {
@@ -347,6 +374,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         }
     }
     
+    @Override
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
     	removeFulfillmentGroupFromOrder(order, fulfillmentGroup, true);
     }
@@ -358,11 +386,13 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         updateOrder(order, priceOrder);
     }
 
+    @Override
     public void removeNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = findNamedOrderForCustomer(name, customer);
         cancelOrder(namedOrder);
     }
 
+    @Override
     public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
         return paymentInfoDao.readPaymentInfosForOrder(order);
     }
@@ -538,6 +568,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         }
     }
 
+    @Override
     public Order removeOrderItemAttribute(Order order, OrderItem item, String attributeName, boolean priceOrder) throws ItemNotFoundException, PricingException {
         if (!order.getOrderItems().contains(item)) {
             throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() + ")");
@@ -560,6 +591,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         }
     }
 
+    @Override
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             if (fulfillmentGroup.isPrimary()) {
@@ -617,6 +649,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         this.orderItemService = orderItemService;
     }
 
+    @Override
     public Order findOrderByOrderNumber(String orderNumber) {
         return orderDao.readOrderByOrderNumber(orderNumber);
     }
@@ -840,10 +873,9 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         Category category = determineCategory(product, orderItemRequestDTO.getCategoryId());
 
         if (product == null || ! (product instanceof ProductBundle)) {
-            DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(createDiscreteOrderItemRequest(sku, product, category, orderItemRequestDTO.getQuantity(), orderItemRequestDTO.getItemAttributes()));
+            DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(createDiscreteOrderItemRequest(order, null, sku, product, category, orderItemRequestDTO.getQuantity(), orderItemRequestDTO.getItemAttributes()));
             List<OrderItem> orderItems = order.getOrderItems();
             orderItems.add(item);
-            item.setOrder(order);
             return updateOrder(order, priceOrder);
         } else {
             ProductBundle bundle = (ProductBundle) product;
@@ -853,6 +885,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
             bundleOrderItem.setSku(sku);
             bundleOrderItem.setName(product.getName());
             bundleOrderItem.setProductBundle(bundle);
+            bundleOrderItem.setOrder(order);
 
             for (SkuBundleItem skuBundleItem : bundle.getSkuBundleItems()) {
                 Product bundleProduct = skuBundleItem.getBundle();
@@ -860,9 +893,8 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
                 Category bundleCategory = determineCategory(bundleProduct, orderItemRequestDTO.getCategoryId());
 
-                DiscreteOrderItem bundleDiscreteItem = orderItemService.createDiscreteOrderItem(createDiscreteOrderItemRequest(bundleSku, bundleProduct, bundleCategory, skuBundleItem.getQuantity(), orderItemRequestDTO.getItemAttributes()));
+                DiscreteOrderItem bundleDiscreteItem = orderItemService.createDiscreteOrderItem(createDiscreteOrderItemRequest(null, bundleOrderItem, bundleSku, bundleProduct, bundleCategory, skuBundleItem.getQuantity(), orderItemRequestDTO.getItemAttributes()));
                 bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
-                bundleDiscreteItem.setBundleOrderItem(bundleOrderItem);
                 bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
             }
 
@@ -871,7 +903,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
             List<OrderItem> orderItems = order.getOrderItems();
             orderItems.add(bundleOrderItem);
-            bundleOrderItem.setOrder(order);
             return updateOrder(order, priceOrder);
         }
     }
@@ -880,32 +911,39 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
      * DEPRECATED METHODS                                                              *
      * *********************************************************************************/
     
+    @Override
     @Deprecated
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
     	return addDiscreteItemToOrder(order, itemRequest, true);
     }
 
+    @Override
     @Deprecated
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
+        itemRequest.setOrder(order);
         DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
         return addOrderItemToOrder(order, item, priceOrder);
     }
     
+    @Override
     @Deprecated
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
     	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, null);
     }
     
+    @Override
     @Deprecated
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> itemAttributes) throws PricingException {
     	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, itemAttributes);
     }
     
+    @Override
     @Deprecated
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
         return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, priceOrder, null);
     }
 
+    @Override
     @Deprecated
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> itemAttributes) throws PricingException {
         if (orderId == null || (productId == null && skuId == null) || quantity == null) {
@@ -926,6 +964,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return findLastMatchingItem(order, skuId, productId);
     }
     
+    @Override
     @Deprecated
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
         List<OrderItem> orderItems = order.getOrderItems();
@@ -935,16 +974,19 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return findLastMatchingItem(order, newOrderItem);
     }
     
+    @Override
     @Deprecated
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
     	return addOrderItemToOrder(order, newOrderItem, true);
     }
     
+    @Override
     @Deprecated
     public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException {
     	return addDynamicPriceDiscreteItemToOrder(order, itemRequest, skuPricingConsiderations, true);
     }
 
+    @Override
     @Deprecated
     public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException {
         DiscreteOrderItem item = orderItemService.createDynamicPriceDiscreteOrderItem(itemRequest, skuPricingConsiderations);
