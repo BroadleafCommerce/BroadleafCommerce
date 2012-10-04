@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.translation;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONObject;
@@ -35,6 +30,11 @@ import com.smartgwt.client.util.JSOHelper;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.form.fields.RelativeDateItem;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -265,9 +265,9 @@ public class AdvancedCriteriaToMVELTranslator {
 				SupportedFieldType.DATE.toString().equals(type.toString())
 			) {
 				sb.append("(");
-				buildExpression(sb, entityKey, field, extractDate(criteria, OperatorId.GREATER_OR_EQUAL, (Map) values.get("start"), "start"), type, secondaryType, ">=", false, false, false, false, false);
+				buildExpression(sb, entityKey, field, extractDate(criteria, OperatorId.GREATER_OR_EQUAL, values, "start"), type, secondaryType, ">=", false, false, false, false, false);
 				sb.append("&&");
-				buildExpression(sb, entityKey, field, extractDate(criteria, OperatorId.LESS_OR_EQUAL, (Map) values.get("end"), "end"), type, secondaryType, "<=", false, false, false, false, false);
+				buildExpression(sb, entityKey, field, extractDate(criteria, OperatorId.LESS_OR_EQUAL, values, "end"), type, secondaryType, "<=", false, false, false, false, false);
 				sb.append(")");
 			} else {
 				sb.append("(");

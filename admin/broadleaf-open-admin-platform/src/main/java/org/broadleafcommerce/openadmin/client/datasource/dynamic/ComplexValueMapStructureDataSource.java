@@ -18,7 +18,9 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -90,6 +92,9 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         int availableSlots = 4;
         for (DataSourceField field : prominentFields) {
         	gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+            if (FieldType.DATE == field.getType() || FieldType.DATETIME == field.getType()) {
+                gridFields[j].setEditorType(new MiniDateRangeItem());
+            }
         	if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
         		ComboBoxItem selectItem = new ComboBoxItem();
         		//selectItem.setMultiple(false);
@@ -123,6 +128,9 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         for (DataSourceField field : fields) {
         	if (!prominentFields.contains(field)) {
         		gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+                if (FieldType.DATE == field.getType() || FieldType.DATETIME == field.getType()) {
+                    gridFields[j].setEditorType(new MiniDateRangeItem());
+                }
         		if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
             		SelectItem selectItem = new SelectItem();
             		selectItem.setMultiple(false);
