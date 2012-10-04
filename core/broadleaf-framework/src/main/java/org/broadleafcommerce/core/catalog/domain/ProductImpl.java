@@ -31,7 +31,9 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -654,11 +656,12 @@ public class ProductImpl implements Product, Status {
     
     @Override
     public Map<String, ProductAttribute> getMappedProductAttributes() {
-    	Map<String, ProductAttribute> map = new HashMap<String, ProductAttribute>();
-    	for (ProductAttribute attr : getProductAttributes()) {
-    		map.put(attr.getName(), attr);
-    	}
-    	return map;
+        return BLCMapUtils.keyedMap(getProductAttributes(), new TypedClosure<String, ProductAttribute>() {
+            @Override
+            public String getKey(ProductAttribute value) {
+                return value.getName();
+            }
+        });
     }
 
     @Override
