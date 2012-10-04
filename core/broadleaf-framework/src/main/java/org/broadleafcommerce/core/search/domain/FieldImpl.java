@@ -177,7 +177,7 @@ public class FieldImpl implements Field,Serializable {
 	
 	@Override
     public Boolean getTranslatable() {
-        return translatable;
+        return translatable == null ? false : translatable;
     }
 
 	@Override
