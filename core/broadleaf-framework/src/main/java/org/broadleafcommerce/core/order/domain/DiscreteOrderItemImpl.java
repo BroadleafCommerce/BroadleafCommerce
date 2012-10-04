@@ -16,23 +16,6 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -67,6 +50,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -205,6 +189,16 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 		}
 		return name;
 	}
+    
+    @Override
+    public Order getOrder() {
+        if (order == null) {
+            if (getBundleOrderItem() != null) {
+                return getBundleOrderItem().getOrder();
+            }
+        }
+        return order;
+    }
 
 	@Override
     public boolean updatePrices() {
