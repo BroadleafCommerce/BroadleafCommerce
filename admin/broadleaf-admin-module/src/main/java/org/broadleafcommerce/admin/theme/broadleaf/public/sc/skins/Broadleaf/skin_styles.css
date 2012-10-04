@@ -764,6 +764,7 @@ Button (also used as MenuButton base style)
   line-height: 18px;
   color: #333333;
   font-weight: normal;
+  padding-bottom: 8px;
 }
 /* text items */
 .textItem,
