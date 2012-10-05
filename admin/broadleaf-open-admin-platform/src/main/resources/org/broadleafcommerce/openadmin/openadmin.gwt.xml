@@ -12,9 +12,11 @@
 
 	<source path="client" />
 	<generate-with class="org.broadleafcommerce.openadmin.generator.FactoryGenerator">
-		<when-type-assignable
-			class="org.broadleafcommerce.openadmin.client.reflection.FactoryWrapper" />
+		<when-type-assignable class="org.broadleafcommerce.openadmin.client.reflection.FactoryWrapper" />
 	</generate-with>
+    <generate-with class="org.broadleafcommerce.openadmin.generator.i18nConstantsGenerator">
+        <when-type-assignable class="org.broadleafcommerce.openadmin.client.i18nConstants" />
+    </generate-with>
 	
 	<entry-point class="org.broadleafcommerce.openadmin.client.BLCMain" />
 </module>

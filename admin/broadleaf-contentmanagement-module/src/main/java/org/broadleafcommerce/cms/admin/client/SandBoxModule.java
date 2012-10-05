@@ -17,7 +17,6 @@
 package org.broadleafcommerce.cms.admin.client;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.AbstractModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityCommon;
@@ -25,6 +24,7 @@ import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityFramework;
 import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityOpenAdmin;
 import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityProfile;
 import org.broadleafcommerce.openadmin.client.OpenAdminMessages;
+import org.broadleafcommerce.openadmin.client.i18nConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +37,13 @@ import java.util.List;
 public class SandBoxModule extends AbstractModule {
 	
 	public void onModuleLoad() {
-        addConstants(GWT.<ConstantsWithLookup>create(ContentManagementMessages.class));
-        addConstants(GWT.<ConstantsWithLookup>create(SandBoxMessages.class));
-        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityCommon.class));
-        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityFramework.class));
-        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityProfile.class));
-        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityOpenAdmin.class));
-        addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
+        addConstants(GWT.<i18nConstants>create(ContentManagementMessages.class));
+        addConstants(GWT.<i18nConstants>create(SandBoxMessages.class));
+        addConstants(GWT.<i18nConstants>create(GeneratedMessagesEntityCommon.class));
+        addConstants(GWT.<i18nConstants>create(GeneratedMessagesEntityFramework.class));
+        addConstants(GWT.<i18nConstants>create(GeneratedMessagesEntityProfile.class));
+        addConstants(GWT.<i18nConstants>create(GeneratedMessagesEntityOpenAdmin.class));
+        addConstants(GWT.<i18nConstants>create(OpenAdminMessages.class));
 
         setModuleTitle(BLCMain.getMessageManager().getString("sandBoxModuleTitle"));
         setModuleKey("BLCSandBox");

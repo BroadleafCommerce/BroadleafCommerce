@@ -16,14 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.UrlBuilder;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.smartgwt.client.util.SC;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.callback.PostLaunch;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
@@ -44,12 +41,13 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTyp
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFactory;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.UrlBuilder;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.smartgwt.client.util.SC;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -60,7 +58,7 @@ public class BLCMain implements EntryPoint {
 	
 	public static final MessageManager MESSAGE_MANAGER = new MessageManager();
     static {
-        MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
+        MESSAGE_MANAGER.addConstants(GWT.<i18nConstants>create(OpenAdminMessages.class));
     }
 	private static HashMap<String, Module> modules = new HashMap<String, Module>(10);
     private static List<PreProcessor> preProcessors = new ArrayList<PreProcessor>(10);

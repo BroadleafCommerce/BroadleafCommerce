@@ -17,7 +17,6 @@
 package org.broadleafcommerce.openadmin.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.reflection.ModuleFactory;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
@@ -59,7 +58,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		this.moduleKey = moduleKey;
 	}
 
-    public void addConstants(ConstantsWithLookup constants) {
+    public void addConstants(i18nConstants constants) {
         BLCMain.MESSAGE_MANAGER.addConstants(constants);
     }
 

@@ -38,7 +38,7 @@ public class ModuleFactory extends HashMap<String, String> {
 		return ModuleFactory.viewList;
 	}
 	
-	private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
+	private Factory factory = GWT.create(ReflectiveFactory.class);
 	
 	private ModuleFactory() {
 		//do nothing
