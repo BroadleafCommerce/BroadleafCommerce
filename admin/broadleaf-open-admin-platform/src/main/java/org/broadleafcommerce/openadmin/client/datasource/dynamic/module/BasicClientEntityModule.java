@@ -42,12 +42,10 @@ import com.smartgwt.client.data.fields.DataSourceIntegerField;
 import com.smartgwt.client.data.fields.DataSourcePasswordField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.FieldType;
-import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
@@ -784,30 +782,6 @@ public class BasicClientEntityModule implements DataSourceModule {
         batchManager.addBatchPackage(batchPackage);
         ((AsyncCallbackAdapter) cb).notifyManager();
 	}
-    
-    protected OperatorId[] getBasicIdOperators() {
-    	return new OperatorId[]{OperatorId.CONTAINS, OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN};
-    }
-    
-    protected OperatorId[] getBasicBooleanOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
-    }
-    
-    protected OperatorId[] getBasicDateOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD};
-    }
-    
-    protected OperatorId[] getBasicNumericOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET};
-    }
-    
-    protected OperatorId[] getBasicTextOperators() {
-    	return new OperatorId[]{OperatorId.CONTAINS, OperatorId.NOT_CONTAINS, OperatorId.STARTS_WITH, OperatorId.ENDS_WITH, OperatorId.NOT_STARTS_WITH, OperatorId.NOT_ENDS_WITH, OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET};
-    }
-    
-    protected OperatorId[] getBasicEnumerationOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
-    }
 	
 	protected void filterProperties(ClassMetadata metadata, final MergedPropertyType[] includeTypes, Boolean overrideFieldSort, final PresenterSequenceSetupManager presenterSequenceSetupManager) throws IllegalStateException {
 		if (BLCMain.isLogDebugEnabled("classmetadata")) {
@@ -846,6 +820,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 				}
 			});
 		}
+
 		for (final Property property : metadata.getProperties()) {
             property.getMetadata().accept(new MetadataVisitorAdapter() {
                 @Override
@@ -951,7 +926,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                             field = new DataSourceDateTimeField(propertyName, friendlyName);
                             field.setCanEdit(mutable);
                             field.setRequired(required);
-                            field.setEditorType(new MiniDateRangeItem());
+                            //field.setEditorType(new MiniDateRangeItem());
                             //field.setValidOperators(getBasicDateOperators());
                             break;
                         case INTEGER:

@@ -18,7 +18,9 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.widgets.DataBoundComponent;
+import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -94,6 +96,9 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         for (DataSourceField field : prominentFields) {
         	String columnWidth = field.getAttribute("columnWidth");
         	gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+            if (FieldType.DATE == field.getType() || FieldType.DATETIME == field.getType()) {
+                gridFields[j].setEditorType(new MiniDateRangeItem());
+            }
         	if (j == 0) {
         		if (fieldNames == null || fieldNames.length == 0) {
         			//gridFields[j].setFrozen(true);
@@ -116,6 +121,9 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         for (DataSourceField field : fields) {
         	if (!prominentFields.contains(field)) {
         		gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+                if (FieldType.DATE == field.getType() || FieldType.DATETIME == field.getType()) {
+                    gridFields[j].setEditorType(new MiniDateRangeItem());
+                }
         		if (field.getAttributeAsBoolean("permanentlyHidden")) {
         			gridFields[j].setHidden(true);
 	        		gridFields[j].setCanHide(false);
