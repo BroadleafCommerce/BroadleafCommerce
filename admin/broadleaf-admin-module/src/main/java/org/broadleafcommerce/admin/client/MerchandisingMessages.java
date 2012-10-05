@@ -150,4 +150,25 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String SkuImpl_Sku_Media();
     public String SkuImpl_Sku_Media_Key();
     public String skuGenerationInvalid();
+
+    //inventory messages
+    public String fulfillmentLocationMainTitle();
+    public String fulfillmentLocationListTitle();
+    public String fulfillmentLocationDetailsTitle();
+
+    public String inventoryListTitle();
+
+    public String FulfillmentLocationImpl_baseFulfillmentLocation();
+    public String FulfillmentLocationImpl_pickupLocation();
+    public String FulfillmentLocationImpl_shippingLocation();
+    public String FulfillmentLocationImpl_defaultLocation();
+
+    public String InventoryImpl_baseInventory();
+    public String InventoryImpl_quantityOnHand();
+    public String InventoryImpl_quantityAvailable();
+    public String newInventory();
+    public String skuSearchPrompt();
+    public String InventoryImpl_skuId();
+    public String InventoryImpl_skuName();
+
 }

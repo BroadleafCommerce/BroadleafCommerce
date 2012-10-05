@@ -102,6 +102,20 @@ public class MerchandisingModule extends AbstractModule {
 			offerPermissions
 		);
 
+        List<String> fulfillmentLocationPermissions = new ArrayList<String>();
+        fulfillmentLocationPermissions.add("PERMISSION_CREATE_FULFILLMENT_LOCATION");
+        fulfillmentLocationPermissions.add("PERMISSION_UPDATE_FULFILLMENT_LOCATION");
+        fulfillmentLocationPermissions.add("PERMISSION_DELETE_FULFILLMENT_LOCATION");
+        fulfillmentLocationPermissions.add("PERMISSION_READ_FULFILLMENT_LOCATION");
+        setSection(
+                BLCMain.getMessageManager().getString("fulfillmentLocationMainTitle"),
+                "fulfillmentLocations",
+                "org.broadleafcommerce.admin.client.view.catalog.inventory.FulfillmentLocationView",
+                "fulfillmentLocationPresenter",
+                "org.broadleafcommerce.admin.client.presenter.catalog.inventory.FulfillmentLocationPresenter",
+                fulfillmentLocationPermissions
+        );
+
         setOrder(50);
 
 		registerModule();
