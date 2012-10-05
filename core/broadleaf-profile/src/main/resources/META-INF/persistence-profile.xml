@@ -9,6 +9,7 @@
 		<mapping-file>config/bc/jpa/domain/Country.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Customer.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/CustomerAddress.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CustomerPayment.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/CustomerPhone.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/IdGeneration.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Phone.orm.xml</mapping-file>
@@ -18,6 +19,7 @@
         <class>org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CountryImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerAddressImpl</class>
+        <class>org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl</class>        
         <class>org.broadleafcommerce.profile.core.domain.CustomerImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl</class>
