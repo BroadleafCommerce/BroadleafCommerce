@@ -743,4 +743,11 @@ public class ProductImpl implements Product, Status {
 		return null;
 	}
 
+    @Override
+    public void clearDynamicPrices() {
+        for (Sku sku : getAllSkus()) {
+            sku.clearDynamicPrices();
+        }
+    }
+
 }

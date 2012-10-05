@@ -424,7 +424,6 @@ public class SkuImpl implements Sku {
     public Money getRetailPrice() {
         Money returnPrice = null;
         
-       
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             if (dynamicPrices != null) {
                 returnPrice = dynamicPrices.getRetailPrice();
@@ -898,6 +897,10 @@ public class SkuImpl implements Sku {
     	this.fulfillmentType = fulfillmentType.getType();
     }
     
+    @Override
+    public void clearDynamicPrices() {
+        this.dynamicPrices = null;
+    }
 
 	@Override
     public boolean equals(Object obj) {
