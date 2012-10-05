@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.inventory.service;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.broadleafcommerce.core.inventory.dao.FulfillmentLocationDao;
 import org.broadleafcommerce.core.inventory.domain.FulfillmentLocation;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,10 @@ public class FulfillmentLocationServiceImpl implements FulfillmentLocationServic
     @Override
     public void delete(FulfillmentLocation fulfillmentLocation) {
         fulfillmentLocationDao.delete(fulfillmentLocation);
+    }
+
+    @Override
+    public void updateOtherDefaultLocationToFalse(FulfillmentLocation fulfillmentLocation) {
+        fulfillmentLocationDao.updateOtherDefaultLocationToFalse(fulfillmentLocation);
     }
 }

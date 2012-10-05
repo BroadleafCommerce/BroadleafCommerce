@@ -6,6 +6,7 @@ import org.broadleafcommerce.core.inventory.domain.Inventory;
 import org.broadleafcommerce.core.inventory.exception.ConcurrentInventoryModificationException;
 import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -95,11 +96,31 @@ public interface InventoryService {
     public Inventory readInventory(Sku sku, FulfillmentLocation fulfillmentLocation);
 
     /**
-     * Retrieves all of the inventory objects for this sku.
+     * Retrieves inventory for this sku at the default fulfillment location.
      *
      * @param sku
      * @return
      */
     public Inventory readInventory(Sku sku);
+
+    /**
+     * Retrieves all instances of Inventory for this fulfillmentLocation
+     *
+     * @param fulfillmentLocation
+     * @return list of {@link Inventory}
+     */
+    public List<Inventory> readInventoryForFulfillmentLocation(FulfillmentLocation fulfillmentLocation);
+
+    /**
+     * Persists the inventory
+     */
+    public Inventory save(Inventory inventory) throws ConcurrentInventoryModificationException;
+
+    /**
+     * Retrieves skus that do not have inventory records at a particular fulfillment location
+     * @param fulfillmentLocation
+     * @return
+     */
+    public List<Sku> readSkusNotAtFulfillmentLocation(FulfillmentLocation fulfillmentLocation);
 
 }

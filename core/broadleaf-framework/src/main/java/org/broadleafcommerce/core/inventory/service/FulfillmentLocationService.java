@@ -47,4 +47,9 @@ public interface FulfillmentLocationService {
      */
     public void delete(FulfillmentLocation fulfillmentLocation);
 
+    /**
+     * Sets the defaultLocation flag to false for all fulfillmentLocations
+     */
+    public void updateOtherDefaultLocationToFalse(FulfillmentLocation fulfillmentLocation);
+
 }

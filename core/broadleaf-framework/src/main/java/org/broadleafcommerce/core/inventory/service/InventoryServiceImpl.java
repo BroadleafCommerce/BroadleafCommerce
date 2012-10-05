@@ -29,12 +29,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @Service("blInventoryService")
+@Transactional(value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
 public class InventoryServiceImpl implements InventoryService {
 
     @Resource(name="blInventoryDao")
@@ -44,29 +45,27 @@ public class InventoryServiceImpl implements InventoryService {
     protected EntityConfiguration entityConfiguration;
 
     @Override
-    @Transactional(value="blTransactionManager")
     public boolean isQuantityAvailable(Sku sku, Integer quantity) {
         return isQuantityAvailable(sku, quantity, null);
     }
 
     @Override
-    @Transactional(value="blTransactionManager")
     public boolean isQuantityAvailable(Sku sku, Integer quantity, FulfillmentLocation fulfillmentLocation) {
 
-        //if the sku is not active, there is no quantity available
-        if (! sku.isActive()) {
+        //if the sku does not exist or is not active, there is no quantity available
+        if (!sku.isActive()) {
             return false;
         }
 
-        if (sku.getInventoryType() == null 
-        		&& (sku.getDefaultProduct().getDefaultCategory() == null
-        		|| sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null)) {
+        if (sku.getInventoryType() == null
+        		&& (sku.getProduct().getDefaultCategory() == null
+        		|| sku.getProduct().getDefaultCategory().getInventoryType() == null)) {
             return true;
-        } else if (InventoryType.NONE.equals(sku.getInventoryType()) 
-        		|| (sku.getDefaultProduct().getDefaultCategory() != null 
-        		&& InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory().getInventoryType()))){
+        } else if (InventoryType.NONE.equals(sku.getInventoryType())
+        		|| (sku.getProduct().getDefaultCategory() != null
+        		&& InventoryType.NONE.equals(sku.getProduct().getDefaultCategory().getInventoryType()))){
             return true;
-        } 
+        }
 
         //quantity must be greater than 0
         if (quantity == null || quantity < 0) {
@@ -86,13 +85,11 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
     public void decrementInventory(Map<Sku, Integer> skuInventory) throws ConcurrentInventoryModificationException, InventoryUnavailableException {
         decrementInventory(skuInventory, null);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
     public void decrementInventory(Map<Sku, Integer> skuInventory, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException, InventoryUnavailableException {
 
         Set<Sku> skus = skuInventory.keySet();
@@ -105,14 +102,10 @@ public class InventoryServiceImpl implements InventoryService {
             /*
              * If the inventory type of the sku or category is null or InventoryType.NONE, do not adjust inventory
              */
-            if (sku.getInventoryType() == null 
-            		&& (sku.getDefaultProduct().getDefaultCategory() == null
-            		|| sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null)) {
-                continue;
-            } else if (InventoryType.NONE.equals(sku.getInventoryType()) 
-            		|| (sku.getDefaultProduct().getDefaultCategory() != null 
-            		&& InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory().getInventoryType()))){
-                continue;
+            if (sku.getInventoryType() == null && sku.getProduct().getDefaultCategory().getInventoryType() == null) {
+               continue;
+            } else if (InventoryType.NONE.equals(sku.getInventoryType()) || InventoryType.NONE.equals(sku.getProduct().getDefaultCategory())) {
+               continue;
             }
 
             //quantity must not be null
@@ -127,9 +120,9 @@ public class InventoryServiceImpl implements InventoryService {
             //check available inventory
             Inventory inventory = null;
             if (fulfillmentLocation != null) {
-                inventory = inventoryDao.readInventoryForUpdate(sku, fulfillmentLocation);
+                inventory = inventoryDao.readInventory(sku, fulfillmentLocation);
             } else {
-                inventory = inventoryDao.readInventoryForUpdateForDefaultFulfillmentLocation(sku);
+                inventory = inventoryDao.readInventoryForDefaultFulfillmentLocation(sku);
             }
 
             if (inventory != null) {
@@ -159,13 +152,8 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
     public void incrementInventory(Map<Sku, Integer> skuInventory, FulfillmentLocation fulfillmentLocation) throws ConcurrentInventoryModificationException {
-        
-    	if (fulfillmentLocation == null) {
-    		throw new IllegalArgumentException("The fulfillment location must be specified in order to increment inventory.");
-    	}
-    	
+        //TODO
         Set<Sku> skus = skuInventory.keySet();
         for (Sku sku : skus) {
             Integer quantity = skuInventory.get(sku);
@@ -173,13 +161,9 @@ public class InventoryServiceImpl implements InventoryService {
             /*
              * If the inventory type of the sku or category is null or InventoryType.NONE, do not adjust inventory
              */
-            if (sku.getInventoryType() == null 
-            		&& (sku.getDefaultProduct().getDefaultCategory() == null
-            		|| sku.getDefaultProduct().getDefaultCategory().getInventoryType() == null)) {
+            if (sku.getInventoryType() == null && sku.getProduct().getDefaultCategory().getInventoryType() == null) {
                 continue;
-            } else if (InventoryType.NONE.equals(sku.getInventoryType()) 
-            		|| (sku.getDefaultProduct().getDefaultCategory() != null 
-            		&& InventoryType.NONE.equals(sku.getDefaultProduct().getDefaultCategory().getInventoryType()))){
+            } else if (InventoryType.NONE.equals(sku.getInventoryType()) || InventoryType.NONE.equals(sku.getProduct().getDefaultCategory())) {
                 continue;
             }
 
@@ -192,7 +176,7 @@ public class InventoryServiceImpl implements InventoryService {
                 continue;
             }
 
-            Inventory inventory = inventoryDao.readInventoryForUpdate(sku, fulfillmentLocation);
+            Inventory inventory = readInventory(sku, fulfillmentLocation);
 
             if (inventory != null) {
                 inventory.setQuantityAvailable(inventory.getQuantityAvailable() + quantity);
@@ -213,7 +197,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
     
     @Override
-    @Transactional(propagation=Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
+    @Transactional(propagation= Propagation.REQUIRES_NEW,value="blTransactionManager", rollbackFor={InventoryUnavailableException.class,ConcurrentInventoryModificationException.class})
     public void incrementInventory(Map<Sku, Integer> skuInventory) throws ConcurrentInventoryModificationException {
         
         Set<Sku> skus = skuInventory.keySet();
@@ -256,15 +240,27 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    @Transactional(value="blTransactionManager")
     public Inventory readInventory(Sku sku, FulfillmentLocation fulfillmentLocation) {
         return inventoryDao.readInventory(sku, fulfillmentLocation);
     }
 
     @Override
-    @Transactional(value="blTransactionManager")
     public Inventory readInventory(Sku sku) {
         return inventoryDao.readInventoryForDefaultFulfillmentLocation(sku);
     }
 
+    @Override
+    public List<Inventory> readInventoryForFulfillmentLocation(FulfillmentLocation fulfillmentLocation) {
+        return inventoryDao.readInventoryForFulfillmentLocation(fulfillmentLocation);
+    }
+
+    @Override
+    public Inventory save(Inventory inventory) throws ConcurrentInventoryModificationException {
+        return inventoryDao.save(inventory);
+    }
+
+    @Override
+    public List<Sku> readSkusNotAtFulfillmentLocation(FulfillmentLocation fulfillmentLocation) {
+        return inventoryDao.readSkusNotAtFulfillmentLocation(fulfillmentLocation);
+    }
 }

@@ -79,4 +79,19 @@ public interface InventoryDao {
      */
     public void delete(Inventory inventory);
 
+    /**
+     * Retrieves all instances of Inventory for this fulfillmentLocation
+     *
+     * @param fulfillmentLocation
+     * @return list of {@link Inventory}
+     */
+    public List<Inventory> readInventoryForFulfillmentLocation(FulfillmentLocation fulfillmentLocation);
+
+    /**
+     * Retrieves skus that do not have inventory records at a particular fulfillment location
+     * @param fulfillmentLocation
+     * @return
+     */
+    public List<Sku> readSkusNotAtFulfillmentLocation(FulfillmentLocation fulfillmentLocation);
+
 }

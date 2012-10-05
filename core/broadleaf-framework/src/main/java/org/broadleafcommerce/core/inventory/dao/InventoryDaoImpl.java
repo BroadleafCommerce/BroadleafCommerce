@@ -124,5 +124,20 @@ public class InventoryDaoImpl implements InventoryDao {
         }
         return inventory;
     }
-    
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Inventory> readInventoryForFulfillmentLocation(FulfillmentLocation fulfillmentLocation) {
+       Query query = em.createNamedQuery("BC_READ_INVENTORY_FOR_FULFILLMENT_LOCATION");
+       query.setParameter("fulfillmentLocationId", fulfillmentLocation.getId());
+       return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Sku> readSkusNotAtFulfillmentLocation(FulfillmentLocation fulfillmentLocation) {
+        Query query = em.createNamedQuery("BC_READ_SKUS_NOT_AT_FULFILLMENT_LOCATION");
+        query.setParameter("fulfillmentLocationId", fulfillmentLocation.getId());
+        return query.getResultList();
+    }
 }

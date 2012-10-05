@@ -15,12 +15,12 @@
  */
 package org.broadleafcommerce.core.inventory.dao;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.broadleafcommerce.core.inventory.domain.FulfillmentLocation;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 
 @Repository("blFulfillmentLocationDao")
@@ -42,9 +42,6 @@ public class FulfillmentLocationDaoImpl implements FulfillmentLocationDao {
 
     @Override
     public FulfillmentLocation save(FulfillmentLocation fulfillmentLocation) {
-        if (BooleanUtils.isTrue(fulfillmentLocation.getDefaultLocation())) {
-            em.createNamedQuery("BC_UPDATE_ALL_FULFILLMENT_LOCATIONS_TO_NOT_DEFAULT").executeUpdate();
-        }
         return em.merge(fulfillmentLocation);
     }
 
@@ -53,4 +50,10 @@ public class FulfillmentLocationDaoImpl implements FulfillmentLocationDao {
         em.remove(fulfillmentLocation);
     }
 
+    @Override
+    public void updateOtherDefaultLocationToFalse(FulfillmentLocation fulfillmentLocation) {
+        Query query = em.createNamedQuery("BC_UPDATE_ALL_FULFILLMENT_LOCATIONS_TO_NOT_DEFAULT");
+        query.setParameter("fulfillmentLocationId", fulfillmentLocation.getId());
+        query.executeUpdate();
+    }
 }
