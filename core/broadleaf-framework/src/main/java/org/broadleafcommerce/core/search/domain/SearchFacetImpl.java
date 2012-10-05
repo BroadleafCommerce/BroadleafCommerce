@@ -16,8 +16,14 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,11 +39,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -145,8 +148,28 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 
 	@Override
 	public List<SearchFacetRange> getSearchFacetRanges() {
-		return searchFacetRanges;
+        List<SearchFacetRange> ranges = new ArrayList<SearchFacetRange>(searchFacetRanges);
+		CollectionUtils.filter(ranges, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg) {
+                return ((SearchFacetRange) arg).getPriceList() == null;
+            }
+        });    		
+		return ranges;
 	}
+	
+    @Override
+    public List<SearchFacetRange> getSearchFacetRanges(final PriceList priceList) {
+        List<SearchFacetRange> ranges = new ArrayList<SearchFacetRange>(searchFacetRanges);
+		CollectionUtils.filter(ranges, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg) {
+                PriceList pl = ((SearchFacetRange) arg).getPriceList();
+                return pl != null && pl.getPriceKey().equals(priceList.getPriceKey());
+            }
+        });    		
+		return ranges;
+    }
 
 	@Override
 	public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
