@@ -7,6 +7,7 @@
         <query>
             UPDATE org.broadleafcommerce.core.inventory.domain.FulfillmentLocation fulfillmentLocation
             SET fulfillmentLocation.defaultLocation = false
+            WHERE fulfillmentLocationId != :fulfillmentLocationId
         </query>
     </named-query>
 
