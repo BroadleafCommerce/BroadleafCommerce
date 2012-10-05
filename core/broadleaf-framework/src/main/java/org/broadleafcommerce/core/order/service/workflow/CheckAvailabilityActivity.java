@@ -57,8 +57,7 @@ public class CheckAvailabilityActivity extends BaseActivity {
         }
 
         //Available inventory will not be decremented for this sku until checkout. This activity is assumed to be
-        //part of the add to cart / update cart workflow, and therefore each time the quantity changes for a sku,
-        //the total quantity requested for that sku needs to be tallied and the available inventory checked.
+        //part of the add to cart / update cart workflow
 
         boolean quantityAvailable = inventoryService.isQuantityAvailable(sku, request.getItemRequest().getQuantity());
 
