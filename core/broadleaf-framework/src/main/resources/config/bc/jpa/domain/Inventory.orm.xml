@@ -17,4 +17,25 @@
         </query>
     </named-query>
 
+    <named-query name="BC_READ_INVENTORY_FOR_FULFILLMENT_LOCATION">
+        <query>
+            SELECT inventory
+            FROM org.broadleafcommerce.core.inventory.domain.Inventory inventory
+            WHERE inventory.fulfillmentLocation.id = :fulfillmentLocationId
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_SKUS_NOT_AT_FULFILLMENT_LOCATION">
+        <query>
+            SELECT sku
+            FROM org.broadleafcommerce.core.catalog.domain.Sku sku
+            WHERE sku.id NOT IN
+                (
+                    SELECT inventory.sku.id
+                    FROM org.broadleafcommerce.core.inventory.domain.Inventory inventory
+                    WHERE inventory.fulfillmentLocation.id = :fulfillmentLocationId
+                )
+        </query>
+    </named-query>
+
 </entity-mappings>
