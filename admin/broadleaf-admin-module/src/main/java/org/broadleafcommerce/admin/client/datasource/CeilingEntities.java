@@ -49,5 +49,7 @@ public class CeilingEntities {
     public static final String CUSTOMERADDRESS = "org.broadleafcommerce.profile.core.domain.CustomerAddress";
     public static final String PAYMENT_RESPONSE_ITEM = "org.broadleafcommerce.core.payment.domain.PaymentResponseItem";
     public static final String PAYMENT_LOG = "org.broadleafcommerce.core.payment.domain.PaymentLog";
+    public static final String FULFILLMENT_LOCATION = "org.broadleafcommerce.core.inventory.domain.FulfillmentLocation";
+    public static final String INVENTORY = "org.broadleafcommerce.core.inventory.domain.Inventory";
 
 }
