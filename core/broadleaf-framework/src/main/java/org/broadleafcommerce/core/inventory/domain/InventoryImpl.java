@@ -15,6 +15,11 @@
  */
 package org.broadleafcommerce.core.inventory.domain;
 
+import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -26,6 +31,16 @@ import java.util.Date;
 @Table(name = "BLC_INVENTORY", uniqueConstraints = {@UniqueConstraint(columnNames = {"FULFILLMENT_LOCATION_ID", "SKU_ID"})})
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blInventoryElements")
 @Inheritance(strategy = InheritanceType.JOINED)
+@AdminPresentationOverrides(
+    {
+        //TODO this is needed because of a probable bug because Overrides are late stage in the inspection lifecycle.
+        // It likely needs to be made additionally aware of parent exclusions. It already does this as part of the normal inspection process, but the override is happening after this step and I bet it's tweaking the desired exclusion.
+        @AdminPresentationOverride(name = "sku.id", value = @AdminPresentation(friendlyName = "InventoryImpl_skuId", excluded = false, prominent = true, order = 1)),
+        @AdminPresentationOverride(name = "sku.name", value = @AdminPresentation(friendlyName ="InventoryImpl_skuName", excluded = false, prominent = true, order = 2, visibility = VisibilityEnum.FORM_HIDDEN)),
+        @AdminPresentationOverride(name = "fulfillmentLocation.address.addressLine1", value = @AdminPresentation(excluded = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "InventoryImpl_baseInventory")
 public class InventoryImpl implements Inventory {
 
     /** The Constant serialVersionUID. */
@@ -37,18 +52,39 @@ public class InventoryImpl implements Inventory {
     @Column(name = "INVENTORY_ID")
     protected Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = FulfillmentLocationImpl.class, optional=false)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = FulfillmentLocationImpl.class, optional = false)
     @JoinColumn(name = "FULFILLMENT_LOCATION_ID", nullable = false)
+    @AdminPresentation(excluded=true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected FulfillmentLocation fulfillmentLocation;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", nullable = false)
+    @AdminPresentation(friendlyName="Sku", order = 1)
+    @AdminPresentationToOneLookup()
     protected Sku sku;
 
     @Column(name = "QUANTITY_AVAILABLE", nullable = false)
+    @AdminPresentation(friendlyName = "InventoryImpl_quantityAvailable", prominent = true, order = 3, fieldType = SupportedFieldType.INTEGER,
+            validationConfigurations = {
+                    @ValidationConfiguration(
+                            validationImplementation="com.smartgwt.client.widgets.form.validator.IntegerRangeValidator",
+                            configurationItems={
+                                    @ConfigurationItem(itemName="min", itemValue="0")
+                            }
+                    )
+            })
     protected Integer quantityAvailable;
 
     @Column(name = "QUANTITY_ON_HAND", nullable = false)
+    @AdminPresentation(friendlyName = "InventoryImpl_quantityOnHand", prominent = true, order = 4,
+            validationConfigurations = {
+                    @ValidationConfiguration(
+                            validationImplementation="com.smartgwt.client.widgets.form.validator.IntegerRangeValidator",
+                            configurationItems={
+                                    @ConfigurationItem(itemName="min", itemValue="0")
+                            }
+                    )
+            })
     protected Integer quantityOnHand;
 
     @Column(name = "EXPECTED_AVAILABILITY_DATE")

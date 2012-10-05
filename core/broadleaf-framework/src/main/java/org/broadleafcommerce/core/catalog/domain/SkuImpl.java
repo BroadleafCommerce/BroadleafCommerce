@@ -163,7 +163,7 @@ public class SkuImpl implements Sku {
     /** The available. */
     @Column(name = "AVAILABLE_FLAG")
     @Index(name="SKU_AVAILABLE_INDEX", columnNames={"AVAILABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", order=6, group = "SkuImpl_Sku_Inventory", groupOrder=5)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", group = "SkuImpl_Sku_Inventory", groupOrder=5, order = 2)
     protected Character available;
 
     /** The active start date. */
