@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.openadmin.client.validation;
 
-import java.util.Map;
-import java.util.MissingResourceException;
-
 import com.google.gwt.core.client.GWT;
+import com.smartgwt.client.widgets.form.validator.IntegerRangeValidator;
 import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Factory;
 import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
+
+import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * 
@@ -63,6 +64,17 @@ public class BroadleafDefaultValidationFactory implements ValidationFactory {
 		} else if (configurationItems.containsKey("errorMessage")) {
 			valid.setErrorMessage(configurationItems.get("errorMessage"));
 		}
+
+        if (valid instanceof IntegerRangeValidator) {
+            IntegerRangeValidator integerRangeValidator = (IntegerRangeValidator) valid;
+            if (configurationItems.containsKey("min")) {
+                integerRangeValidator.setMin(Integer.parseInt(configurationItems.get("min")));
+            }
+            if (configurationItems.containsKey("max")) {
+                integerRangeValidator.setMin(Integer.parseInt(configurationItems.get("max")));
+            }
+        }
+
 		return valid;
 	}
 
