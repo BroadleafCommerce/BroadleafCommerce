@@ -19,6 +19,8 @@ package org.broadleafcommerce.common.pricelist.service;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 
+import java.util.List;
+
 public interface PriceListService {
 
     /**
@@ -26,7 +28,7 @@ public interface PriceListService {
      *
      * @return The pricelist for the passed in key
      */
-    PriceList findPriceListByKey(String key);
+    public PriceList findPriceListByKey(String key);
 
     /**
      * Returns a pricelist that matches the passed in currency
@@ -34,13 +36,18 @@ public interface PriceListService {
      * @param currency
      * @return pricelist
      */
-    PriceList findPriceListByCurrency(BroadleafCurrency currency);
+    public PriceList findPriceListByCurrency(BroadleafCurrency currency);
 
     /**
      * Returns the default pricelist
      *
      * @return the default pricelist
      */
-    PriceList findDefaultPricelist();
+    public PriceList findDefaultPricelist();
+
+    /**
+     * @return a list of all currently configured price lists
+     */
+    public List<PriceList> findAllPriceLists();
 
 }

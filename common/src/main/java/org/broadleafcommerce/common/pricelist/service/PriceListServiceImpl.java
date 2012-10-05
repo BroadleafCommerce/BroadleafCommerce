@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.util.List;
+
 @Service("blPriceListService")
 public class PriceListServiceImpl implements PriceListService {
     private static final Log LOG = LogFactory.getLog(PriceListServiceImpl.class);
@@ -74,6 +76,11 @@ public class PriceListServiceImpl implements PriceListService {
     @Override
     public PriceList findDefaultPricelist() {
         return priceListDao.findDefaultPricelist();
+    }
+    
+    @Override
+    public List<PriceList> findAllPriceLists() {
+        return priceListDao.readAllPriceLists();
     }
 
 }

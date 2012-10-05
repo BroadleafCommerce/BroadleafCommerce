@@ -1,16 +1,20 @@
 package org.broadleafcommerce.common.pricelist.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blPriceListDao")
 public class PriceListDaoImpl implements PriceListDao{
@@ -35,6 +39,17 @@ public class PriceListDaoImpl implements PriceListDao{
             return priceList.get(0);
         }
         return null;
+    }
+    
+    @Override
+    public List<PriceList> readAllPriceLists() {
+    	CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<PriceList> criteria = builder.createQuery(PriceList.class);
+		
+		Root<PriceListImpl> priceList = criteria.from(PriceListImpl.class);
+		criteria.select(priceList);
+		
+    	return (List<PriceList>) em.createQuery(criteria).getResultList();
     }
 
     /**
