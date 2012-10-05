@@ -30,6 +30,8 @@
                 <bean class="org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.ChildCategoriesCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.SkuCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.admin.server.service.handler.InventoryCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.admin.server.service.handler.InventorySkuCustomPersistenceHandler"/>
             </list>
         </property>
     </bean>
