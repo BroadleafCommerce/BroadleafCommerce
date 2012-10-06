@@ -17,7 +17,10 @@
 package org.broadleafcommerce.openadmin.client;
 
 /**
- * 
+ * This marker interface is necessary for identifying the message bundle
+ * during GWT compilation, but it is not required to declare any methods
+ * (this differs from normal GWT i18n approaches like ConstantsWithLookup)
+ *
  * @author jfischer
  *
  */

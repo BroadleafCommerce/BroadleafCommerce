@@ -18,6 +18,13 @@ package org.broadleafcommerce.admin.client;
 
 import org.broadleafcommerce.openadmin.client.i18nConstants;
 
+/**
+ * This marker interface is necessary for identifying the message bundle
+ * during GWT compilation, but it is not required to declare any methods
+ * (this differs from normal GWT i18n approaches like ConstantsWithLookup)
+ *
+ * @author Jeff Fischer
+ */
 public interface PromotionMessages extends i18nConstants {
 
 }
