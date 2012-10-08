@@ -137,6 +137,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         populateDiscreteOrderItem(item, itemRequest);
 
         DynamicSkuPrices prices = dynamicSkuPricingService.getSkuPrices(itemRequest.getSku(), skuPricingConsiderations);
+        item.setBundleOrderItem(itemRequest.getBundleOrderItem());
         item.setBaseRetailPrice(prices.getRetailPrice());
         item.setBaseSalePrice(prices.getSalePrice());
         item.setSalePrice(prices.getSalePrice());

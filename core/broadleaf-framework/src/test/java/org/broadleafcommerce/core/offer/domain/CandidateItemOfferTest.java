@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -34,10 +33,14 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 /**
  * 
@@ -100,6 +103,9 @@ public class CandidateItemOfferTest extends TestCase {
 		orderItem1.setSku(sku1);
 		orderItem1.setRetailPrice(new Money(19.99D));
 		orderItem1.setPrice(new Money(19.99D));
+		
+		Order order = new OrderImpl();
+		orderItem1.setOrder(order);
 		
 		promotableOrderItem = new PromotableOrderItemImpl(orderItem1, null, new PromotableItemFactoryImpl());
 		

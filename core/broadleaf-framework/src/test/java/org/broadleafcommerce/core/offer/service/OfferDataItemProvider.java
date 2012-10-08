@@ -97,7 +97,7 @@ public class OfferDataItemProvider {
 				FulfillmentGroupItemRequest fgItemRequest = (FulfillmentGroupItemRequest) EasyMock.getCurrentArguments()[0];
 				FulfillmentGroup fg = fgItemRequest.getFulfillmentGroup();
 				FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
-				fgItem.setOrderItem((OrderItem) fgItemRequest.getOrderItem());
+				fgItem.setOrderItem(fgItemRequest.getOrderItem());
 				fgItem.setQuantity(fgItemRequest.getQuantity());
 				fg.getFulfillmentGroupItems().add(fgItem);
 				
@@ -183,7 +183,7 @@ public class OfferDataItemProvider {
 				Iterator<OrderItem> orderItemItr = order.getOrderItems().listIterator();
 				while (orderItemItr.hasNext()) {
 					OrderItem item = orderItemItr.next();
-					if (item.getId().equals((Long) EasyMock.getCurrentArguments()[1])) {
+					if (item.getId().equals(EasyMock.getCurrentArguments()[1])) {
 						orderItemItr.remove();
 					}
 				}
@@ -191,7 +191,7 @@ public class OfferDataItemProvider {
 				for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
 					Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
 					while (itr.hasNext()) {
-						if (itr.next().getOrderItem().getId().equals((Long) EasyMock.getCurrentArguments()[1])) {
+						if (itr.next().getOrderItem().getId().equals(EasyMock.getCurrentArguments()[1])) {
 							itr.remove();
 						}
 					}
@@ -246,6 +246,7 @@ public class OfferDataItemProvider {
 		orderItem1.setRetailPrice(new Money(19.99D));
 		orderItem1.setPrice(new Money(19.99D));
 		orderItem1.setId(getOrderItemId());
+		orderItem1.setOrder(order);
 		
 		order.getOrderItems().add(orderItem1);
 		
@@ -260,6 +261,7 @@ public class OfferDataItemProvider {
 		orderItem2.setRetailPrice(new Money(29.99D));
 		orderItem2.setPrice(new Money(29.99D));
 		orderItem2.setId(getOrderItemId());
+		orderItem2.setOrder(order);
 		
 		order.getOrderItems().add(orderItem2);
 		
@@ -303,6 +305,7 @@ public class OfferDataItemProvider {
 		fg1.setRetailShippingPrice(new Money(10D));
 		fg1.setShippingPrice(new Money(10D));
 		fg1.setType(FulfillmentType.SHIPPING);
+		fg1.setOrder(order);
 		
 		FulfillmentGroupItem fgItem1 = new FulfillmentGroupItemImpl();
 		fgItem1.setFulfillmentGroup(fg1);
@@ -342,6 +345,7 @@ public class OfferDataItemProvider {
 		fg2.setRetailShippingPrice(new Money(20D));
 		fg2.setShippingPrice(new Money(20D));
 		fg2.setType(FulfillmentType.SHIPPING);
+		fg2.setOrder(order);
 		
 		FulfillmentGroupItem fgItem2 = new FulfillmentGroupItemImpl();
 		fgItem2.setFulfillmentGroup(fg2);

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
@@ -29,8 +30,7 @@ public class FulfillmentGroupDataProvider {
         FulfillmentGroupImpl sos = new FulfillmentGroupImpl();
         sos.setReferenceNumber("123456789");
         FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
-        option.setPrice(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0d,sos.getOrder().getCurrency()));
-        option.setCurrency(sos.getOrder().getCurrency());
+        option.setPrice(new Money(0));
         sos.setFulfillmentOption(option);
         return new Object[][] { { sos } };
     }
