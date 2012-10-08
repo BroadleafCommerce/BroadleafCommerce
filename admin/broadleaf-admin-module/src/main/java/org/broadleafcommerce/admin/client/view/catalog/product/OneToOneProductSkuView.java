@@ -83,7 +83,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         topTabSet.setID("productSkuTopTabSet");
         topTabSet.setTabBarPosition(Side.TOP);  
         topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
-        topTabSet.setWidth("50%");  
+        topTabSet.setWidth("50%");
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
@@ -102,7 +102,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         crossLayout.setID("productSkuCrossLayout");
         crossLayout.setHeight100();
         crossLayout.setWidth100();
-        crossLayout.setBackgroundColor("#eaeaea");
+        crossLayout.setStyleName("blcFormBg");
         crossLayout.setOverflow(Overflow.AUTO);
         crossSaleTab.setPane(crossLayout);
         
@@ -113,7 +113,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         mediaLayout.setID("productSkuMediaLayout");
         mediaLayout.setHeight100();
         mediaLayout.setWidth100();
-        mediaLayout.setBackgroundColor("#eaeaea");
+        mediaLayout.setStyleName("blcFormBg");
         mediaLayout.setOverflow(Overflow.AUTO);
         
         Tab productOptionsTab = new Tab(BLCMain.getMessageManager().getString("productOptionsTabTitle"));
@@ -123,7 +123,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         productOptionsLayout.setID("productSkuProductOptionsLayout");
         productOptionsLayout.setHeight100();
         productOptionsLayout.setWidth100();
-        productOptionsLayout.setBackgroundColor("#eaeaea");
+        productOptionsLayout.setStyleName("blcFormBg");
         productOptionsLayout.setOverflow(Overflow.AUTO);
         
         productOptionsDisplay = new ExpandableGridStructureView(BLCMain.getMessageManager().getString("productOptionsListTitle"), false, true);
@@ -141,7 +141,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         categoriesLayout.setID("productSkuCategoriesLayout");
         categoriesLayout.setHeight100();
         categoriesLayout.setWidth100();
-        categoriesLayout.setBackgroundColor("#eaeaea");
+        categoriesLayout.setStyleName("blcFormBg");
         categoriesLayout.setOverflow(Overflow.AUTO);
         
         allCategoriesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("allParentCategoriesListTitle"), false, false);

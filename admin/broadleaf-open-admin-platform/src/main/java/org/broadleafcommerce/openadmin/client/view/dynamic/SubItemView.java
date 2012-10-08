@@ -53,14 +53,14 @@ public class SubItemView extends VLayout implements SubItemDisplay {
 	public SubItemView(String title, Boolean canReorder, Boolean canEdit, Boolean showFilterEditor) {
         setHeight100();
         setWidth100();
-        setBackgroundColor("#eaeaea");
+        setStyleName("blcFormBg");
         setOverflow(Overflow.AUTO);
 		
 		HStack hStack = new HStack(10);
 		
 		hStack.setHeight("45%");
 		hStack.setWidth100();
-		hStack.setBackgroundColor("#eaeaea");
+		hStack.setStyleName("blcFormBg");
 		hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();

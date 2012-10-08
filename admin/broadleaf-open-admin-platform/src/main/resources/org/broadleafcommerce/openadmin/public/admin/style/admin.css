@@ -108,16 +108,15 @@
 
 .headerItem, .headerItemDisabled {
     padding-top: 5px;
-    border-bottom:1px solid #808080;
     height: 15px;
 }
 
 .blcHeader, .blcHeaderDisabled {
-    color: #4C4C4C;
-    font-family: Arial,sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    padding-bottom: 5px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    line-height: 18px;
+    color: #333;
+    font-weight: normal;
 }
 
 .adminModalMask {
@@ -145,6 +144,10 @@
 
 textarea {
    
+}
+
+label {
+    display: inline-block;
 }
 
 .gwt-RichTextArea {

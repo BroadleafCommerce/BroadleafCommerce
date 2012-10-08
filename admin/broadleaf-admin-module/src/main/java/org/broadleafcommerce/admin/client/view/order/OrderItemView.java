@@ -55,14 +55,14 @@ public class OrderItemView extends VLayout implements OrderItemDisplay {
 	public OrderItemView(String title, Boolean canReorder, Boolean canEdit) {
         setHeight100();
         setWidth100();
-        setBackgroundColor("#eaeaea");
+        setStyleName("blcFormBg");
         setOverflow(Overflow.AUTO);
 		
 		HStack hStack = new HStack(10);
 		
 		hStack.setHeight("45%");
 		hStack.setWidth100();
-		hStack.setBackgroundColor("#eaeaea");
+        hStack.setStyleName("blcFormBg");
 		hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();

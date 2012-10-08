@@ -42,7 +42,7 @@ public class ProgressWindow extends Window implements Stoppable {
 	}
 
 	public void startProgress(Timer timer) {
-		show();
+		//show();
 		simpleProgress.startProgress();
 		timer.schedule(300);
 	}
@@ -52,7 +52,7 @@ public class ProgressWindow extends Window implements Stoppable {
 	}
 	
 	public void finalizeProgress() {
-		hide();
+		//hide();
 	}
 	
 	public Boolean isActive() {

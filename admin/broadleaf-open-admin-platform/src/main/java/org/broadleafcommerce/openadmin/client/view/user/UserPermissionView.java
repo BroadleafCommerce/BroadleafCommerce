@@ -42,7 +42,7 @@ public class UserPermissionView extends VLayout implements UserPermissionDisplay
 	public UserPermissionView(Boolean canReorder, Boolean canEdit) {
         setHeight100();
         setWidth100();
-        setBackgroundColor("#eaeaea");
+        setStyleName("blcFormBg");
         setOverflow(Overflow.AUTO);
 		
 		HStack hStack = new HStack(10);
@@ -50,7 +50,7 @@ public class UserPermissionView extends VLayout implements UserPermissionDisplay
 		
 		hStack.setHeight("45%");
 		hStack.setWidth100();
-		hStack.setBackgroundColor("#eaeaea");
+		hStack.setStyleName("blcFormBg");
 		hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();

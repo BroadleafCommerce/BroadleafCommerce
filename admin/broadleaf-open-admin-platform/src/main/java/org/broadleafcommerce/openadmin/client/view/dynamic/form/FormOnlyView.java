@@ -47,8 +47,8 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
 		super();
 		
         setWidth100();
-        setBackgroundColor("#eaeaea");
-        form = new DynamicForm(); 
+        setStyleName("blcFormBg");
+        form = new DynamicForm();
         form.setHeight(175);
         form.setWidth100();
         form.setPadding(10);
@@ -57,7 +57,7 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form.setNumCols(1);
         form.setWrapItemTitles(false);
         form.disable();
-        form.setBackgroundColor("#eaeaea");
+        form.setStyleName("blcFormView");
         if (dataSource != null) {
         	buildFields(dataSource, showDisabedState==null?true:showDisabedState, canEdit==null?false:canEdit, showId==null?false:showId, null);
         }

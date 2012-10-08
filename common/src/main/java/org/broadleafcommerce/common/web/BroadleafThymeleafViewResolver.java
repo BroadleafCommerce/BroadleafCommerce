@@ -20,6 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.util.PatternMatchUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 import org.thymeleaf.spring3.view.AbstractThymeleafView;
@@ -152,13 +154,13 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     }
     
     protected boolean isIFrameRequest() {
-        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     	String iFrameParameter = request.getParameter("blcIFrame");
     	return  (iFrameParameter != null && "true".equals(iFrameParameter));
     }
     
     protected boolean isAjaxRequest() {
-        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         return BroadleafControllerUtility.isAjaxRequest(request);
     }
 

@@ -24,6 +24,8 @@
 	<bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
 	    <property name="processors">
 		  <set>
+            <bean class="org.broadleafcommerce.openadmin.web.processor.AdminUserProcessor" />
+            <bean class="org.broadleafcommerce.openadmin.web.processor.AdminModuleProcessor" />
 			<bean class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />

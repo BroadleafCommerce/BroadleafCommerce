@@ -61,7 +61,7 @@ public class ExpandableGridStructureView extends HLayout implements ExpandableGr
         this.canEdit = canEdit;
         setHeight(300);
         setWidth100();
-        setBackgroundColor("#eaeaea");
+        setStyleName("blcFormBg");
         setAlign(Alignment.CENTER);
         
         VStack stack = new VStack();

@@ -41,6 +41,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.util.SC;
 
 import java.util.ArrayList;
@@ -251,7 +252,10 @@ public class BLCMain implements EntryPoint {
 
         modules.get(currentModuleKey).preDraw();
         MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, orderedModules);
-        MASTERVIEW.draw();
+        //MASTERVIEW.draw();
+
+        RootPanel.get("gwt-component").add(MASTERVIEW);
+
         AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
         modules.get(currentModuleKey).postDraw();
     }
