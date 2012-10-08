@@ -16,13 +16,8 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -36,8 +31,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -72,42 +73,52 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Reporting_Code", order=3, group = "DiscreteOrderItemFeePriceImpl_Description", prominent=true)
     private String reportingCode;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-	public DiscreteOrderItem getDiscreteOrderItem() {
+	@Override
+    public DiscreteOrderItem getDiscreteOrderItem() {
 		return discreteOrderItem;
 	}
 
-	public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem) {
+	@Override
+    public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem) {
 		this.discreteOrderItem = discreteOrderItem;
 	}
 
-	public Money getAmount() {
-        return amount == null ? null : new Money(amount);
+	@Override
+    public Money getAmount() {
+        return amount == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amount,getDiscreteOrderItem().getBundleOrderItem().getOrder().getCurrency());
     }
 
+    @Override
     public void setAmount(Money amount) {
         this.amount = Money.toAmount(amount);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getReportingCode() {
         return reportingCode;
     }
 
+    @Override
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
     }
@@ -120,6 +131,7 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
         }
     }
 
+    @Override
     public DiscreteOrderItemFeePrice clone() {
         //instantiate from the fully qualified name via reflection
         DiscreteOrderItemFeePrice clone;
@@ -155,38 +167,51 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DiscreteOrderItemFeePriceImpl other = (DiscreteOrderItemFeePriceImpl) obj;
         if (amount == null) {
-            if (other.amount != null)
+            if (other.amount != null) {
                 return false;
-        } else if (!amount.equals(other.amount))
+            }
+        } else if (!amount.equals(other.amount)) {
             return false;
+        }
         if (discreteOrderItem == null) {
-            if (other.discreteOrderItem != null)
+            if (other.discreteOrderItem != null) {
                 return false;
-        } else if (!discreteOrderItem.equals(other.discreteOrderItem))
+            }
+        } else if (!discreteOrderItem.equals(other.discreteOrderItem)) {
             return false;
+        }
         if (id == null) {
-            if (other.id != null)
+            if (other.id != null) {
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!id.equals(other.id)) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (reportingCode == null) {
-            if (other.reportingCode != null)
+            if (other.reportingCode != null) {
                 return false;
-        } else if (!reportingCode.equals(other.reportingCode))
+            }
+        } else if (!reportingCode.equals(other.reportingCode)) {
             return false;
+        }
         return true;
     }
 }

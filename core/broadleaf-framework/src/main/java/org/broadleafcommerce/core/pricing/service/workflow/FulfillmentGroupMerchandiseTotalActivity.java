@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
@@ -36,10 +37,11 @@ public class FulfillmentGroupMerchandiseTotalActivity extends BaseActivity {
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext) context).getSeedData();
 
-        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            Money merchandiseTotal = new Money(0D);
-            for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                merchandiseTotal = merchandiseTotal.add(fgItem.getPrice().multiply(fgItem.getQuantity()));
+        for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            Money merchandiseTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,fulfillmentGroup.getOrder().getCurrency());
+            for(FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                OrderItem item = fulfillmentGroupItem.getOrderItem();
+                merchandiseTotal = merchandiseTotal.add(item.getPrice().multiply(item.getQuantity()));
             }
             fulfillmentGroup.setMerchandiseTotal(merchandiseTotal);
         }

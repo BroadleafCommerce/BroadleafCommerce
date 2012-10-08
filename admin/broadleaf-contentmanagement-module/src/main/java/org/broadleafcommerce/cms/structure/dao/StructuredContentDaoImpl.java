@@ -98,9 +98,15 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
     @Override
     public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale locale) {
+        return findActiveStructuredContentByType(sandBox, type, locale, null);
+    }
 
-
+    @Override
+    public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale fullLocale, Locale languageOnlyLocale) {
         String queryName = null;
+        if (languageOnlyLocale == null)  {
+            languageOnlyLocale = fullLocale;
+        }
         if (sandBox == null) {
             queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE";
         } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
@@ -111,7 +117,8 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
         Query query = em.createNamedQuery(queryName);
         query.setParameter("contentType", type);
-        query.setParameter("locale", locale);
+        query.setParameter("fullLocale", fullLocale);
+        query.setParameter("languageOnlyLocale", languageOnlyLocale);
         if (sandBox != null)  {
             query.setParameter("sandboxId", sandBox.getId());
         }
@@ -121,9 +128,16 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
     @Override
     public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale) {
+        return findActiveStructuredContentByNameAndType(sandBox, type, name, locale, null);
+    }
 
+    @Override
+    public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale fullLocale, Locale languageOnlyLocale) {
         String queryName = null;
-        final Query query; 
+        if (languageOnlyLocale == null)  {
+            languageOnlyLocale = fullLocale;
+        }
+        final Query query;
         if (sandBox == null) {
             query = em.createNamedQuery("BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME");
         } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
@@ -134,17 +148,24 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
             query.setParameter("sandboxId", sandBox.getId());
         }
 
-        
         query.setParameter("contentType", type);
         query.setParameter("contentName", name);
-        query.setParameter("locale", locale);
+        query.setParameter("fullLocale", fullLocale);
+        query.setParameter("languageOnlyLocale", languageOnlyLocale);
         return query.getResultList();
     }
 
     @Override
     public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale locale) {
+        return findActiveStructuredContentByName(sandBox, name, locale, null);
+    }
 
+    @Override
+    public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale fullLocale, Locale languageOnlyLocale) {
         String queryName = null;
+        if (languageOnlyLocale == null)  {
+            languageOnlyLocale = fullLocale;
+        }
         if (sandBox == null) {
             queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME";
         } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
@@ -155,7 +176,8 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
         Query query = em.createNamedQuery(queryName);
         query.setParameter("contentName", name);
-        query.setParameter("locale", locale);
+        query.setParameter("fullLocale", fullLocale);
+        query.setParameter("languageOnlyLocale", languageOnlyLocale);
         if (sandBox != null) {
             query.setParameter("sandbox", sandBox);
         }

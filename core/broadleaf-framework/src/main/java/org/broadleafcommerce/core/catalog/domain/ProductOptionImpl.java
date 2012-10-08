@@ -16,15 +16,22 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
@@ -43,7 +50,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -98,6 +107,26 @@ public class ProductOptionImpl implements ProductOption {
     @BatchSize(size = 50)
     protected List<Product> products;
     
+    @ManyToMany(targetEntity = ProductOptionTranslationImpl.class)
+    @JoinTable(name = "BLC_PRODUCT_OPTION_TRANSLATION_XREF",
+            joinColumns = @JoinColumn(name = "PRODUCT_OPTION_ID", referencedColumnName = "PRODUCT_OPTION_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TRANSLATION_ID", referencedColumnName = "TRANSLATION_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @MapKey(columns = { @Column(name = "MAP_KEY", nullable = false) })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 10)
+    @AdminPresentationMap(
+            friendlyName = "productOptionImpl_Translations",
+            dataSourceName = "productOptionTranslationDS",
+            keyPropertyFriendlyName = "TranslationsImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = LocaleImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "localeCode"
+
+    )
+    protected Map<String, ProductOptionTranslation> translations = new HashMap<String,ProductOptionTranslation>();
+    
     @Override
     public Long getId() {
         return id;
@@ -130,6 +159,27 @@ public class ProductOptionImpl implements ProductOption {
     
     @Override
     public String getLabel() {
+        if (translations != null && BroadleafRequestContext.hasLocale()) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+
+            // Search for translation based on locale
+            String localeCode = locale.getLocaleCode();
+            if (localeCode != null) {
+                ProductOptionTranslation translation = translations.get(localeCode);
+                if (translation != null && translation.getLabel() != null) {
+                    return translation.getLabel();
+                }
+            }
+
+            // try just the language
+            String languageCode = LocaleUtil.findLanguageCode(locale);
+            if (languageCode != null && ! localeCode.equals(languageCode)) {
+                ProductOptionTranslation translation = translations.get(languageCode);
+                if (translation != null && translation.getLabel() != null) {
+                    return translation.getLabel();
+                }
+            }
+        }
         return label;
     }
     
@@ -148,11 +198,13 @@ public class ProductOptionImpl implements ProductOption {
         this.required = required;
     }
 
+    @Override
     public Integer getDisplayOrder() {
 		return displayOrder;
 	}
 
-	public void setDisplayOrder(Integer displayOrder) {
+	@Override
+    public void setDisplayOrder(Integer displayOrder) {
 		this.displayOrder = displayOrder;
 	}
 
@@ -174,6 +226,16 @@ public class ProductOptionImpl implements ProductOption {
     @Override
     public void setAllowedValues(List<ProductOptionValue> allowedValues) {
         this.allowedValues = allowedValues;
+    }
+
+    @Override
+    public Map<String, ProductOptionTranslation> getTranslations() {
+        return translations;
+    }
+
+    @Override
+    public void setTranslations(Map<String, ProductOptionTranslation> translations) {
+        this.translations = translations;
     }
 
 }

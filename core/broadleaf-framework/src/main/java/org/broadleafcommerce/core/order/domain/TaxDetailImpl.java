@@ -16,13 +16,7 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,9 +24,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -72,6 +76,12 @@ public class TaxDetailImpl implements TaxDetail {
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Rate", order=1, group = "TaxDetailImpl_Tax_Detail")
     protected BigDecimal rate;
     
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order=1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent=true)
+    protected BroadleafCurrency currency;
+
+    
     public TaxDetailImpl() {
         
     }
@@ -104,7 +114,7 @@ public class TaxDetailImpl implements TaxDetail {
 
     @Override
     public Money getAmount() {
-        return new Money(amount);
+        return org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amount,currency);
     }
 
     @Override
@@ -120,6 +130,16 @@ public class TaxDetailImpl implements TaxDetail {
     @Override
     public void setRate(BigDecimal rate) {
         this.rate = rate;
+    }
+
+    @Override
+    public BroadleafCurrency getCurrency() {
+        return currency;
+    }
+
+    @Override
+    public void setCurrency(BroadleafCurrency currency) {
+        this.currency = currency;
     }
     
 }

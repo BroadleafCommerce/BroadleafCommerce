@@ -16,6 +16,28 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -41,27 +63,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @Entity
@@ -174,91 +175,113 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @AdminPresentation(excluded = true)
     protected Long splitParentItemId;
 
+    @Override
     public Money getRetailPrice() {
-        return retailPrice == null ? null : new Money(retailPrice);
+        return retailPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(retailPrice,getOrder().getCurrency());
     }
 
+    @Override
     public void setRetailPrice(Money retailPrice) {
         this.retailPrice = Money.toAmount(retailPrice);
     }
 
+    @Override
     public Money getSalePrice() {
-        return salePrice == null ? null : new Money(salePrice);
+        return salePrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(salePrice,getOrder().getCurrency());
     }
 
+    @Override
     public void setSalePrice(Money salePrice) {
         this.salePrice = Money.toAmount(salePrice);
     }
 
+    @Override
     public Money getPrice() {
-        return price == null ? null : new Money(price);
+        return price == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(price,getOrder().getCurrency());
     }
 
+    @Override
     public void setPrice(Money finalPrice) {
         this.price = Money.toAmount(finalPrice);
     }
 
+    @Override
     public Money getTaxablePrice() {
         return getPrice();
     }
 
+    @Override
     public int getQuantity() {
         return quantity;
     }
 
+    @Override
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
+    @Override
     public Category getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(Category category) {
         this.category = category;
     }
 
+    @Override
     public List<CandidateItemOffer> getCandidateItemOffers() {
         return candidateItemOffers;
     }
 
+    @Override
     public void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers) {
     	this.candidateItemOffers = candidateItemOffers;
     }
 
+    @Override
     public PersonalMessage getPersonalMessage() {
         return personalMessage;
     }
 
+    @Override
     public void setPersonalMessage(PersonalMessage personalMessage) {
         this.personalMessage = personalMessage;
     }
 
+    @Override
     public Order getOrder() {
         return order;
     }
 
+    @Override
     public void setOrder(Order order) {
         this.order = order;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	@Override
+    public void setName(String name) {
 		this.name = name;
 	}
 
-	public boolean isInCategory(String categoryName) {
+	@Override
+    public boolean isInCategory(String categoryName) {
         Category currentCategory = category;
         if (currentCategory != null) {
             if (currentCategory.getName().equals(categoryName)) {
@@ -274,38 +297,46 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     }
 
+    @Override
     public List<OrderItemAdjustment> getOrderItemAdjustments() {
         return this.orderItemAdjustments;
     }
 
+    @Override
     public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {    	
         this.orderItemAdjustments = orderItemAdjustments;
     }
 
+    @Override
     public Money getAdjustmentValue() {
-        Money adjustmentValue = new Money(0);
+        Money adjustmentValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getOrder().getCurrency());
         for (OrderItemAdjustment itemAdjustment : orderItemAdjustments) {
             adjustmentValue = adjustmentValue.add(itemAdjustment.getValue());
         }
         return adjustmentValue;
     }
 
+    @Override
     public GiftWrapOrderItem getGiftWrapOrderItem() {
         return giftWrapOrderItem;
     }
 
+    @Override
     public void setGiftWrapOrderItem(GiftWrapOrderItem giftWrapOrderItem) {
         this.giftWrapOrderItem = giftWrapOrderItem;
     }
 
+    @Override
     public OrderItemType getOrderItemType() {
         return OrderItemType.getInstance(orderItemType);
     }
 
+    @Override
     public void setOrderItemType(OrderItemType orderItemType) {
         this.orderItemType = orderItemType.getType();
     }
 
+    @Override
     public boolean getIsOnSale() {
         if (getSalePrice() != null) {
             return !getSalePrice().equals(getRetailPrice());
@@ -314,6 +345,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         }
     }
 
+    @Override
     public boolean getIsDiscounted() {
         if (getPrice() != null) {
             return !getPrice().equals(getRetailPrice());
@@ -322,14 +354,17 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         }
     }
 
-	public boolean updatePrices() {
+	@Override
+    public boolean updatePrices() {
         return false;
     }
 	
-	public void assignFinalPrice() {
+	@Override
+    public void assignFinalPrice() {
         setPrice(getCurrentPrice());
     }
     
+    @Override
     public Money getCurrentPrice() {
         updatePrices();
         Money currentPrice = null;
@@ -343,6 +378,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         return currentPrice;
     }
     
+    @Override
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
     	updatePrices();
         Money currentPrice = null;
@@ -354,10 +390,12 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         return currentPrice;
     }
     
+    @Override
     public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
         getCandidateItemOffers().add(candidateItemOffer);
     }
     
+    @Override
     public void removeAllCandidateItemOffers() {
         if (getCandidateItemOffers() != null) {
             for (CandidateItemOffer candidate : getCandidateItemOffers()) {
@@ -367,6 +405,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         }
     }
     
+    @Override
     public int removeAllAdjustments() {
     	int removedAdjustmentCount = 0;
         if (getOrderItemAdjustments() != null) {
@@ -383,6 +422,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     /**
      * A list of arbitrary attributes added to this item.
      */
+    @Override
     public Map<String,OrderItemAttribute> getOrderItemAttributes() {
         return orderItemAttributeMap;
     }
@@ -392,6 +432,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
      *
      * @param orderItemAttributes
      */
+    @Override
     public void setOrderItemAttributes(Map<String,OrderItemAttribute> orderItemAttributes) {
         this.orderItemAttributeMap = orderItemAttributes;
     }
@@ -405,7 +446,8 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 		}
 	}
 	
-	public OrderItem clone() {
+	@Override
+    public OrderItem clone() {
 		//this is likely an extended class - instantiate from the fully qualified name via reflection
 		OrderItem clonedOrderItem;
 		try {
@@ -451,7 +493,8 @@ public class OrderItemImpl implements OrderItem, Cloneable {
  		return clonedOrderItem;
 	}
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((category == null) ? 0 : category.hashCode());
@@ -466,13 +509,17 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         return result;
     }
 
+    @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         OrderItemImpl other = (OrderItemImpl) obj;
 
         if (id != null && other.id != null) {
@@ -480,66 +527,88 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         }
 
         if (category == null) {
-            if (other.category != null)
+            if (other.category != null) {
                 return false;
-        } else if (!category.equals(other.category))
+            }
+        } else if (!category.equals(other.category)) {
             return false;
+        }
         if (giftWrapOrderItem == null) {
-            if (other.giftWrapOrderItem != null)
+            if (other.giftWrapOrderItem != null) {
                 return false;
-        } else if (!giftWrapOrderItem.equals(other.giftWrapOrderItem))
+            }
+        } else if (!giftWrapOrderItem.equals(other.giftWrapOrderItem)) {
             return false;
+        }
         if (order == null) {
-            if (other.order != null)
+            if (other.order != null) {
                 return false;
-        } else if (!order.equals(other.order))
+            }
+        } else if (!order.equals(other.order)) {
             return false;
+        }
         if (orderItemType == null) {
-            if (other.orderItemType != null)
+            if (other.orderItemType != null) {
                 return false;
-        } else if (!orderItemType.equals(other.orderItemType))
+            }
+        } else if (!orderItemType.equals(other.orderItemType)) {
             return false;
+        }
         if (personalMessage == null) {
-            if (other.personalMessage != null)
+            if (other.personalMessage != null) {
                 return false;
-        } else if (!personalMessage.equals(other.personalMessage))
+            }
+        } else if (!personalMessage.equals(other.personalMessage)) {
             return false;
+        }
         if (price == null) {
-            if (other.price != null)
+            if (other.price != null) {
                 return false;
-        } else if (!price.equals(other.price))
+            }
+        } else if (!price.equals(other.price)) {
             return false;
-        if (quantity != other.quantity)
+        }
+        if (quantity != other.quantity) {
             return false;
+        }
         if (retailPrice == null) {
-            if (other.retailPrice != null)
+            if (other.retailPrice != null) {
                 return false;
-        } else if (!retailPrice.equals(other.retailPrice))
+            }
+        } else if (!retailPrice.equals(other.retailPrice)) {
             return false;
+        }
         if (salePrice == null) {
-            if (other.salePrice != null)
+            if (other.salePrice != null) {
                 return false;
-        } else if (!salePrice.equals(other.salePrice))
+            }
+        } else if (!salePrice.equals(other.salePrice)) {
             return false;
+        }
         return true;
     }
 
+    @Override
     public void accept(OrderItemVisitor visitor) throws PricingException {
         visitor.visit(this);
     }
 
+    @Override
     public Boolean isTaxable() {
         return itemTaxable == null ? true : itemTaxable;
     }
 
+    @Override
     public void setTaxable(Boolean taxable) {
         this.itemTaxable = taxable;
     }
 
+    @Override
     public Long getSplitParentItemId() {
         return splitParentItemId;
     }
 
+    @Override
     public void setSplitParentItemId(Long splitParentItemId) {
         this.splitParentItemId = splitParentItemId;
     }

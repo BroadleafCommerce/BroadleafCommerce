@@ -32,7 +32,6 @@ import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +51,8 @@ public class BroadleafCartController extends AbstractCartController {
 	 * 
 	 * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
 	 * Otherwise, it will render the "cart" template.
+     *
+     * Will reprice the order if the currency has been changed.
 	 * 
 	 * @param request
 	 * @param response
@@ -59,7 +60,8 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @throws PricingException
 	 */
 	public String cart(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-		return getCartView();
+        repriceOrderProcessor.execute(request, response);
+        return getCartView();
 	}
 	
 	/**
@@ -85,6 +87,9 @@ public class BroadleafCartController extends AbstractCartController {
 		if (cart == null || cart.equals(orderService.getNullOrder())) {
 			cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
 		}
+
+        // Will reprice the order if the currency has been changed since the last addition to the cart
+        repriceOrderProcessor.execute(request, response);
 		
 		cart = orderService.addItem(cart.getId(), itemRequest, false);
 		cart = orderService.save(cart,  true);
@@ -137,7 +142,6 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @param request
 	 * @param response
 	 * @param model
-	 * @param nonAjaxSuccessUrl
 	 * @param itemRequest
 	 * @throws IOException
 	 * @throws PricingException
@@ -230,7 +234,6 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @param request
 	 * @param response
 	 * @param model
-	 * @param offerId
 	 * @return the return view
 	 * @throws IOException
 	 * @throws PricingException

@@ -37,6 +37,8 @@ import org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.message.ArchivedStructuredContentPublisher;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
@@ -77,6 +79,9 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
+
+    @Resource(name="blLocaleService")
+    protected LocaleService localeService;
 
     @Resource(name="blContentRuleProcessors")
     protected List<StructuredContentRuleProcessor> contentRuleProcessors;
@@ -451,12 +456,14 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     public List<StructuredContentDTO> lookupStructuredContentItemsByType(SandBox sandBox, StructuredContentType contentType, Locale locale, Integer count, Map<String, Object> ruleDTOs, boolean secure) {
         
         List<StructuredContent> sandBoxContentList = null;
+
+        Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         
         String cacheKey = buildTypeKey(getProductionSandBox(sandBox), locale, contentType.getName()); 
         cacheKey = cacheKey+"-"+secure;
         List<StructuredContentDTO> productionContentDTOList = getStructuredContentListFromCache(cacheKey);
         if (productionContentDTOList == null) {
-            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByType(getProductionSandBox(sandBox), contentType, locale);
+            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByType(getProductionSandBox(sandBox), contentType, locale, languageOnlyLocale);
             productionContentDTOList = buildStructuredContentDTOList(productionContentList, secure);
             if (productionContentDTOList != null) {
                 addStructuredContentListToCache(cacheKey, productionContentDTOList);
@@ -465,7 +472,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         
         final List<StructuredContentDTO> contentList;
         if (! isProductionSandBox(sandBox)) {
-            sandBoxContentList = structuredContentDao.findActiveStructuredContentByType(sandBox, contentType, locale);
+            sandBoxContentList = structuredContentDao.findActiveStructuredContentByType(sandBox, contentType, locale, languageOnlyLocale);
             contentList = mergeContent(productionContentDTOList, sandBoxContentList, secure);
         } else {
             contentList = productionContentDTOList;
@@ -477,12 +484,13 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     @Override
     public List<StructuredContentDTO> lookupStructuredContentItemsByName(SandBox sandBox, StructuredContentType contentType, String contentName, org.broadleafcommerce.common.locale.domain.Locale locale, Integer count, Map<String, Object> ruleDTOs, boolean secure) {
         List<StructuredContent> sandBoxContentList = null;
+        Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         
         String cacheKey = buildNameKey(getProductionSandBox(sandBox), locale, contentType.getName(), contentName); 
         cacheKey = cacheKey+"-"+secure;
         List<StructuredContentDTO> productionContentDTOList = getStructuredContentListFromCache(cacheKey);
         if (productionContentDTOList == null) {                
-            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByNameAndType(getProductionSandBox(sandBox), contentType, contentName, locale);
+            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByNameAndType(getProductionSandBox(sandBox), contentType, contentName, locale, languageOnlyLocale);
             productionContentDTOList = buildStructuredContentDTOList(productionContentList, secure);
             if (productionContentDTOList != null) {
                 addStructuredContentListToCache(cacheKey, productionContentDTOList);
@@ -491,7 +499,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
         final List<StructuredContentDTO> contentList;
         if (! isProductionSandBox(sandBox)) {
-            sandBoxContentList = structuredContentDao.findActiveStructuredContentByNameAndType(sandBox, contentType, contentName, locale);
+            sandBoxContentList = structuredContentDao.findActiveStructuredContentByNameAndType(sandBox, contentType, contentName, locale, languageOnlyLocale);
             contentList = mergeContent(productionContentDTOList, sandBoxContentList, secure);
         } else {
             contentList = productionContentDTOList;
@@ -503,12 +511,13 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     @Override
     public List<StructuredContentDTO> lookupStructuredContentItemsByName(SandBox sandBox, String contentName, org.broadleafcommerce.common.locale.domain.Locale locale, Integer count, Map<String, Object> ruleDTOs, boolean secure) {
         List<StructuredContent> sandBoxContentList = null;
+        Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
 
         String cacheKey = buildNameKey(getProductionSandBox(sandBox), locale, "any", contentName);
         cacheKey = cacheKey+"-"+secure;
         List<StructuredContentDTO> productionContentDTOList = getStructuredContentListFromCache(cacheKey);
         if (productionContentDTOList == null) {
-            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByName(getProductionSandBox(sandBox), contentName, locale);
+            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByName(getProductionSandBox(sandBox), contentName, locale, languageOnlyLocale);
             productionContentDTOList = buildStructuredContentDTOList(productionContentList, secure);
             if (productionContentDTOList != null) {
                 addStructuredContentListToCache(cacheKey, productionContentDTOList);
@@ -517,7 +526,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
         final List<StructuredContentDTO> contentList;
         if (! isProductionSandBox(sandBox)) {
-            sandBoxContentList = structuredContentDao.findActiveStructuredContentByName(sandBox, contentName, locale);
+            sandBoxContentList = structuredContentDao.findActiveStructuredContentByName(sandBox, contentName, locale, languageOnlyLocale);
             contentList = mergeContent(productionContentDTOList, sandBoxContentList, secure);
         } else {
             contentList = productionContentDTOList;
@@ -737,5 +746,15 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
     public void setAutomaticallyApproveAndPromoteStructuredContent(boolean automaticallyApproveAndPromoteStructuredContent) {
         this.automaticallyApproveAndPromoteStructuredContent = automaticallyApproveAndPromoteStructuredContent;
+    }
+
+    private Locale findLanguageOnlyLocale(Locale locale) {
+        if (locale != null ) {
+            Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
+            if (languageOnlyLocale != null) {
+                return languageOnlyLocale;
+            }
+        }
+        return locale;
     }
 }

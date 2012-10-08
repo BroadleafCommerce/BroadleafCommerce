@@ -98,25 +98,34 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<Page> findPageByURI(SandBox sandBox, Locale locale, String uri) {
+    public List<Page> findPageByURI(SandBox sandBox, Locale fullLocale, Locale languageOnlyLocale, String uri) {
         Query query;
+
+        if (languageOnlyLocale == null)  {
+            languageOnlyLocale = fullLocale;
+        }
+
+        // locale
         if (sandBox == null) {
             query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
-            query.setParameter("uri", uri);
-            query.setParameter("locale", locale);
         } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
             query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_PRODUCTION_SANDBOX");
             query.setParameter("sandbox", sandBox);
-            query.setParameter("locale", locale);
-            query.setParameter("uri", uri);
         } else {
             query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_USER_SANDBOX");
             query.setParameter("sandboxId", sandBox.getId());
-            query.setParameter("locale", locale);
-            query.setParameter("uri", uri);
         }
 
+        query.setParameter("fullLocale", fullLocale);
+        query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setParameter("uri", uri);
+
         return query.getResultList();
+    }
+
+    @Override
+    public List<Page> findPageByURI(SandBox sandBox, Locale locale, String uri) {
+        return findPageByURI(sandBox, locale, null, uri);
     }
 
     @Override

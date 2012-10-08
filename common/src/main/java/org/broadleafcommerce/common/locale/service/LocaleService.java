@@ -25,26 +25,27 @@ import java.util.List;
  */
 public interface LocaleService {
 
-
     /**
-     * @return The locale for the passed in code
+     * @return the locale for the passed in code
      */
     public Locale findLocaleByCode(String localeCode);
 
     /**
-     * Returns the page template with the passed in id.
-     *
-     * @return The default locale
+     * @return the default locale
      */
     public Locale findDefaultLocale();
 
     /**
-     * Returns the page template with the passed in id.
-     *
-     * @return The default locale
+     * @return a list of all known locales
      */
     public List<Locale> findAllLocales();
     
+    /**
+     * Persists the given locale
+     * 
+     * @param locale
+     * @return the persisted locale
+     */
     public Locale save(Locale locale);
     
 }

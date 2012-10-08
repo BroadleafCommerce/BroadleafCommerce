@@ -18,17 +18,29 @@ package org.broadleafcommerce.core.order.service.call;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.order.domain.BundleOrderItemFeePrice;
+import org.broadleafcommerce.core.order.domain.Order;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BundleOrderItemRequest {
 
-    private String name;
-    private Category category;
-    private int quantity;
-    private List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-    private List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
+    protected String name;
+    protected Category category;
+    protected int quantity;
+    protected Order order;
+    protected List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
+    protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
+
+    
+    public Order getOrder() {
+        return order;
+    }
+
+    
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 
     public String getName() {
         return name;

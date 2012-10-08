@@ -42,6 +42,8 @@ public interface PageDao {
 
     public Page addPage(Page clonedPage);
 
+    public List<Page> findPageByURI(SandBox sandBox, Locale fullLocale, Locale languageOnlyLocale, String uri);
+
     public List<Page> findPageByURI(SandBox sandBox, Locale locale, String uri);
 
     public void detachPage(Page page);

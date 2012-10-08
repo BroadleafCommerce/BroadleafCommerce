@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.web.processor;
 import net.entropysoft.transmorph.cache.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -33,7 +35,7 @@ import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -90,11 +92,13 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			productOptionValueIds.toArray(values);
 			
 			ProductOptionPricingDTO dto = new ProductOptionPricingDTO();
+            Money currentPrice;
 			if (sku.isOnSale()) {
-				dto.setPrice(sku.getSalePrice().getAmount());
+                currentPrice = sku.getSalePrice();
 			} else {
-				dto.setPrice(sku.getRetailPrice().getAmount());
+                currentPrice = sku.getRetailPrice();
 			}
+            dto.setPrice(formatPrice(currentPrice));
 			dto.setSelectedOptions(values);
 			skuPricing.add(dto);
 		}
@@ -131,6 +135,21 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			LOG.error("There was a problem writing the product option map to JSON", ex);
 		}
 	}
+
+    private String formatPrice(Money price){
+        if (price == null){
+            return null;
+        }
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc.getJavaLocale() != null) {
+            NumberFormat format = NumberFormat.getCurrencyInstance(brc.getJavaLocale());
+            format.setCurrency(price.getCurrency());
+            return format.format(price.getAmount());
+        } else {
+            // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
+            return "$ " + price.getAmount().toString();
+        }
+    }
 	
 	private class ProductOptionDTO {
 		private Long id;
@@ -195,7 +214,7 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 	
 	private class ProductOptionPricingDTO {
 		private Long[] skuOptions;
-		private BigDecimal price;
+		private String price;
 		@SuppressWarnings("unused")
 		public Long[] getSelectedOptions() {
 			return skuOptions;
@@ -204,10 +223,10 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 			this.skuOptions = skuOptions;
 		}
 		@SuppressWarnings("unused")
-		public BigDecimal getPrice() {
+		public String getPrice() {
 			return price;
 		}
-		public void setPrice(BigDecimal price) {
+		public void setPrice(String price) {
 			this.price = price;
 		}
 

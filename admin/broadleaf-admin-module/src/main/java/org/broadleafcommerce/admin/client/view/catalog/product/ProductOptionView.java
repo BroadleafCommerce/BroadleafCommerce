@@ -18,8 +18,10 @@ package org.broadleafcommerce.admin.client.view.catalog.product;
 
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
@@ -27,9 +29,12 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDis
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
 
 /**
  * 
@@ -40,7 +45,9 @@ public class ProductOptionView extends HLayout implements Instantiable, ProductO
     
     protected DynamicFormView dynamicFormDisplay;
     protected DynamicEntityListView listDisplay;
-    protected GridStructureView productOptionValuesDisplay;
+    protected SubItemView productOptionValueDisplay;
+    protected GridStructureView priceAdjustmentDisplay;
+    protected GridStructureView translationsDisplay;
     
     public ProductOptionView() {
         setHeight100();
@@ -57,20 +64,45 @@ public class ProductOptionView extends HLayout implements Instantiable, ProductO
         
         listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productOptionListTitle"), entityDataSource);
         leftVerticalLayout.addMember(listDisplay);
-        leftVerticalLayout.setParentElement(this);
-        VLayout rightVerticalLayout = new VLayout();
-        rightVerticalLayout.setID("productOptionVerticalLayout");
-        rightVerticalLayout.setHeight100();
-        rightVerticalLayout.setWidth("50%");
-        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("productOptionDetailsTitle"), entityDataSource);
 
-        productOptionValuesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionValuesTitle"), false, true);
-        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(productOptionValuesDisplay);
+       
         
-        rightVerticalLayout.addMember(dynamicFormDisplay);
+        TabSet topTabSet = new TabSet(); 
+        topTabSet.setID("productOptionTopTabSet");
+        topTabSet.setTabBarPosition(Side.TOP);  
+        topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
+        topTabSet.setWidth("50%");  
+        topTabSet.setHeight100();
+        topTabSet.setPaneMargin(0); 
         
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("detailsTabTitle"));
+        detailsTab.setID("productOptionDetailsTab");
+        
+        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("productOptionDetailsTitle"), entityDataSource);
+       // productOptionValuesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionValuesTitle"), false, true);
+      //  ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(productOptionValuesDisplay);
+        detailsTab.setPane(dynamicFormDisplay);
+        
+        Tab productOptionValueTab = new Tab(BLCMain.getMessageManager().getString("productOptionDetailsTitle")); 
+        productOptionValueTab.setID("productOptionValueTab");
+        productOptionValueDisplay = new SubItemView(BLCMain.getMessageManager().getString("productOptionValuesTitle"), true, true);
+        
+        priceAdjustmentDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionPriceAdjMainTitle"), false, true);
+     //   ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(skuPriceListDisplay);
+        ((FormOnlyView) productOptionValueDisplay.getFormOnlyDisplay()).addMember(priceAdjustmentDisplay);
+        translationsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionImpl_Translations"), false, true);
+        //   ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(skuPriceListDisplay);
+           ((FormOnlyView) productOptionValueDisplay.getFormOnlyDisplay()).addMember(translationsDisplay);
+        productOptionValueTab.setPane(productOptionValueDisplay);
+        
+        topTabSet.addTab(detailsTab);
+        topTabSet.addTab(productOptionValueTab);
+        
+        
+        
+        leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
-        addMember(rightVerticalLayout);
+        addMember(topTabSet);
     }
     
     @Override
@@ -88,9 +120,24 @@ public class ProductOptionView extends HLayout implements Instantiable, ProductO
         return listDisplay;
     }
     
+
     @Override
-    public GridStructureDisplay getProductOptionValuesDisplay() {
-        return productOptionValuesDisplay;
+    public SubItemView getProductOptionValueDisplay() {
+       return productOptionValueDisplay;
     }
+
+    @Override
+    public GridStructureDisplay getPriceAdjustmentDisplay() {
+       return priceAdjustmentDisplay;
+    }
+    @Override
+    public GridStructureView getTranslationsDisplay() {
+        return translationsDisplay;
+    }
+
+    public void setTranslationsDisplay(GridStructureView translationsDisplay) {
+        this.translationsDisplay = translationsDisplay;
+    }
+
     
 }

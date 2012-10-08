@@ -18,13 +18,20 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
@@ -34,6 +41,8 @@ import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.pricing.domain.PriceData;
+import org.broadleafcommerce.core.pricing.domain.PriceDataImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -95,6 +104,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct2")
 public class SkuImpl implements Sku {
 	
 	private static final Log LOG = LogFactory.getLog(SkuImpl.class);
@@ -176,6 +186,7 @@ public class SkuImpl implements Sku {
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "ProductImpl_Product_Description", tooltip="skuEndDateTooltip", groupOrder=1)
     protected Date activeEndDate;
+
     
     /** The product dimensions **/
     @Embedded
@@ -261,6 +272,25 @@ public class SkuImpl implements Sku {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
+
+    @ManyToMany(targetEntity = SkuTranslationImpl.class)
+    @JoinTable(name = "BLC_SKU_TRANSLATION_XREF",
+            joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TRANSLATION_ID", referencedColumnName = "TRANSLATION_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @MapKey(columns = { @Column(name = "MAP_KEY", nullable = false) })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 10)
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_Translations",
+            //dataSourceName = "skuTranslationDS",
+            keyPropertyFriendlyName = "TranslationsImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = LocaleImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "localeCode"
+    )
+    protected Map<String, SkuTranslation> translations = new HashMap<String,SkuTranslation>();
     
     @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
     @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED", 
@@ -270,14 +300,30 @@ public class SkuImpl implements Sku {
     @BatchSize(size = 50)
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
 
-    @Column(name = "INVENTORY_TYPE")
+    /** The pricelist/pricedata. */
+    @ManyToMany(targetEntity = PriceDataImpl.class)
+    @JoinTable(name = "BLC_SKU_PRICE_DATA", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRICE_DATA_ID", referencedColumnName = "PRICE_DATA_ID"))
+    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 20)
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_PriceData",
+            //targetUIElementId = "productSkuDetailsTab",
+            //dataSourceName = "skuPriceDataMapDS",
+            keyPropertyFriendlyName = "PriceListImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = PriceListImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "priceKey"
+        )
+    protected Map<String, PriceData> priceDataMap = new HashMap<String , PriceData>();
+   @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", group = "SkuImpl_Sku_Inventory", order=10, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
-    
-    @Column(name = "FULFILLMENT_TYPE")
+	@Column(name = "FULFILLMENT_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", group = "SkuImpl_Sku_Inventory", order=11, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
-
     @Override
     public Long getId() {
         return id;
@@ -314,9 +360,10 @@ public class SkuImpl implements Sku {
             for (ProductOptionValue value : getProductOptionValues()) {
                 if (value.getPriceAdjustment() != null) {
                     if (optionValuePriceAdjustments == null) {
-                        optionValuePriceAdjustments = Money.ZERO;
+                        optionValuePriceAdjustments = value.getPriceAdjustment();
+                    } else {
+                        optionValuePriceAdjustments = optionValuePriceAdjustments.add(value.getPriceAdjustment());
                     }
-                    optionValuePriceAdjustments = optionValuePriceAdjustments.add(value.getPriceAdjustment());
                 }
             }
         }
@@ -325,32 +372,48 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getSalePrice() {
-        if (salePrice == null && hasDefaultSku()) {
-            return lookupDefaultSku().getSalePrice();
+        
+        Money returnPrice = null;
+        
+        // TODO:  See if there is a dynamic price for this SKU
+        if (SkuPricingConsiderationContext.hasDynamicPricing()) {
+            if (dynamicPrices != null) {
+                returnPrice = dynamicPrices.getSalePrice();
+            } else {
+                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+                
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                returnPrice = dynamicPrices.getSalePrice();
+            }
+        } else {
+            if (salePrice != null) {
+                returnPrice = new Money(salePrice,Money.defaultCurrency());
+            }
         }
-
-    	if (dynamicPrices != null) {
-    		return dynamicPrices.getSalePrice();
-    	}
-    	if (
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
-    			SkuPricingConsiderationContext.getSkuPricingService() != null
-    	) {
-    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
-    		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-    		
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-    		handler.reset();
-    		return dynamicPrices.getSalePrice();
-    	} else {
-    	    if (getProductOptionValueAdjustments() == null) {
-    	        return salePrice == null ? null : new Money(salePrice);
-    	    } else {
-    	        return salePrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(salePrice));
-    	    }
+        
+        // Get the price from the default SKU
+        if (returnPrice == null && hasDefaultSku()) {
+            returnPrice = lookupDefaultSku().getSalePrice();
         }
+        
+        Money optionValueAdjustments = null;
+        if (dynamicPrices != null) {
+            optionValueAdjustments = dynamicPrices.getPriceAdjustment();               
+        } else {
+            optionValueAdjustments = getProductOptionValueAdjustments();
+        }
+        
+        if (optionValueAdjustments == null) {
+            //return returnPrice;
+        } else {
+            returnPrice = salePrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
+        }
+  
+        return returnPrice;
+    	
     }
+
 
     @Override
     public void setSalePrice(Money salePrice) {
@@ -359,30 +422,43 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getRetailPrice() {
-        if (retailPrice == null && hasDefaultSku()) {
-            return lookupDefaultSku().getRetailPrice();
-        }
-
-    	if (dynamicPrices != null) {
-    		return dynamicPrices.getRetailPrice();
-    	}
-    	if (
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
-    			SkuPricingConsiderationContext.getSkuPricingService() != null
-    	) {
-    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
-    		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-    		
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-    		handler.reset();
-    		return dynamicPrices.getRetailPrice();
-    	}
-    	if (getProductOptionValueAdjustments() == null) {
-            return retailPrice == null ? null : new Money(retailPrice);
+        Money returnPrice = null;
+        
+        if (SkuPricingConsiderationContext.hasDynamicPricing()) {
+            if (dynamicPrices != null) {
+                returnPrice = dynamicPrices.getRetailPrice();
+            } else {
+                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+                
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                returnPrice = dynamicPrices.getRetailPrice();
+            }
         } else {
-            return retailPrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(retailPrice));
+            if (retailPrice != null) {
+                returnPrice = new Money(retailPrice,Money.defaultCurrency());
+            }
         }
+        
+        // Get the price from the default SKU
+        if (returnPrice == null && hasDefaultSku()) {
+            returnPrice = lookupDefaultSku().getRetailPrice();
+        }
+        
+        Money optionValueAdjustments = null;
+        if (dynamicPrices != null) {
+            optionValueAdjustments = dynamicPrices.getPriceAdjustment();               
+        } else {
+            optionValueAdjustments = getProductOptionValueAdjustments();
+        }
+        
+    	if (optionValueAdjustments == null) {
+            //return returnPrice;
+        } else {
+            returnPrice= retailPrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
+        }
+    	
+        return returnPrice;
     }
 
     @Override
@@ -404,6 +480,28 @@ public class SkuImpl implements Sku {
     public String getName() {
         if (name == null && hasDefaultSku()) {
             return lookupDefaultSku().getName();
+        } else {
+            if (translations != null && BroadleafRequestContext.hasLocale()) {
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+
+                // Search for translation based on locale
+                String localeCode = locale.getLocaleCode();
+                if (localeCode != null) {
+                    SkuTranslation translation = translations.get(localeCode);
+                    if (translation != null && translation.getName() != null) {
+                        return translation.getName();
+                    }
+                }
+
+                // try just the language
+                String languageCode = LocaleUtil.findLanguageCode(locale);
+                if (languageCode != null && ! localeCode.equals(languageCode)) {
+                    SkuTranslation translation = translations.get(languageCode);
+                    if (translation != null && translation.getName() != null) {
+                        return translation.getName();
+                    }
+                }
+            }
         }
         return name;
     }
@@ -417,6 +515,28 @@ public class SkuImpl implements Sku {
     public String getDescription() {
         if (description == null && hasDefaultSku()) {
             return lookupDefaultSku().getDescription();
+        } else {
+            if (translations != null && BroadleafRequestContext.hasLocale()) {
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+
+                // Search for translation based on locale
+                String localeCode = locale.getLocaleCode();
+                if (localeCode != null) {
+                    SkuTranslation translation = translations.get(localeCode);
+                    if (translation != null && translation.getDescription() != null) {
+                        return translation.getDescription();
+                    }
+                }
+
+                // try just the language
+                String languageCode = LocaleUtil.findLanguageCode(locale);
+                if (languageCode != null && ! localeCode.equals(languageCode)) {
+                    SkuTranslation translation = translations.get(languageCode);
+                    if (translation != null && translation.getDescription() != null) {
+                        return translation.getDescription();
+                    }
+                }
+            }
         }
         return description;
     }
@@ -430,6 +550,28 @@ public class SkuImpl implements Sku {
     public String getLongDescription() {
         if (longDescription == null && hasDefaultSku()) {
             return lookupDefaultSku().getLongDescription();
+        } else {
+            if (translations != null && BroadleafRequestContext.hasLocale()) {
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+
+                // Search for translation based on locale
+                String localeCode = locale.getLocaleCode();
+                if (localeCode != null) {
+                    SkuTranslation translation = translations.get(localeCode);
+                    if (translation != null && translation.getLongDescription() != null) {
+                        return translation.getLongDescription();
+                    }
+                }
+
+                // try just the language
+                String languageCode = LocaleUtil.findLanguageCode(locale);
+                if (languageCode != null && ! localeCode.equals(languageCode)) {
+                    SkuTranslation translation = translations.get(languageCode);
+                    if (translation != null && translation.getLongDescription() != null) {
+                        return translation.getLongDescription();
+                    }
+                }
+            }
         }
         return longDescription;
     }
@@ -715,8 +857,27 @@ public class SkuImpl implements Sku {
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions) {
         this.excludedFulfillmentOptions = excludedFulfillmentOptions;
     }
+    @Override
+    public Map<String, PriceData> getPriceDataMap() {
+        return priceDataMap;
+    }
 
     @Override
+    public void setPriceDataMap(Map<String, PriceData> priceDataMap) {
+        this.priceDataMap = priceDataMap;
+    }
+
+    @Override
+    public Map<String, SkuTranslation> getTranslations() {
+        return translations;
+    }
+
+    @Override
+    public void setTranslations(Map<String, SkuTranslation> translations) {
+        this.translations = translations;
+    }
+
+	@Override
     public InventoryType getInventoryType() {
         return InventoryType.getInstance(this.inventoryType);
     }
@@ -736,14 +897,22 @@ public class SkuImpl implements Sku {
     	this.fulfillmentType = fulfillmentType.getType();
     }
     
+    @Override
+    public void clearDynamicPrices() {
+        this.dynamicPrices = null;
+    }
+
 	@Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         SkuImpl other = (SkuImpl) obj;
 
         if (id != null && other.id != null) {
@@ -751,10 +920,12 @@ public class SkuImpl implements Sku {
         }
 
         if (getName() == null) {
-            if (other.getName() != null)
+            if (other.getName() != null) {
                 return false;
-        } else if (!getName().equals(other.getName()))
+            }
+        } else if (!getName().equals(other.getName())) {
             return false;
+        }
         return true;
     }
 
@@ -765,5 +936,5 @@ public class SkuImpl implements Sku {
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         return result;
     }
-    
+
 }

@@ -140,4 +140,16 @@ public interface Field {
 	 * @return the qualifiedFieldName
 	 */
 	public String getQualifiedFieldName();
+
+	/**
+	 * Returns whether or not this field should be considered translatable
+	 * @return translatable
+	 */
+    public Boolean getTranslatable();
+    
+    /**
+     * Sets whether or not this field should be considered translatable
+     * @param translatable
+     */
+    public void setTranslatable(Boolean translatable);
 }

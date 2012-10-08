@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
 
-
-    private List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
+    protected BundleOrderItem bundleOrderItem;
+    
+    protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
     public DiscreteOrderItemRequest() {
         super();
@@ -37,10 +38,12 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
         setProduct(request.getProduct());
         setQuantity(request.getQuantity());
         setSku(request.getSku());
+        setOrder(request.getOrder());
         setSalePriceOverride(request.getSalePriceOverride());
     }
 
 
+    @Override
     public DiscreteOrderItemRequest clone() {
     	DiscreteOrderItemRequest returnRequest = new DiscreteOrderItemRequest();
         copyProperties(returnRequest);
@@ -48,6 +51,13 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
         return returnRequest;
     }
 
+    public BundleOrderItem getBundleOrderItem() {
+        return bundleOrderItem;
+    }
+    
+    public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
+        this.bundleOrderItem = bundleOrderItem;
+    }
 
 	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
 		return discreteOrderItemFeePrices;

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+
+    <named-query name="BC_READ_PRICE_LIST" >
+		<query>SELECT priceList
+               FROM org.broadleafcommerce.common.pricelist.domain.PriceListImpl priceList
+               WHERE
+                 priceList.priceKey = :key 
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_PRICE_LIST_BY_CURRENCY_CODE" >
+        <query>SELECT priceList
+            FROM org.broadleafcommerce.common.pricelist.domain.PriceListImpl priceList
+            WHERE priceList.currencyCode = :currency
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_DEFAULT_PRICE_LIST" >
+        <query>SELECT priceList
+            FROM org.broadleafcommerce.common.pricelist.domain.PriceListImpl priceList
+            WHERE priceList.useDefaultIfNotFound = true
+        </query>
+    </named-query>
+
+
+</entity-mappings>

@@ -16,8 +16,12 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,10 +35,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -53,10 +55,15 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     @Column(name = "SEARCH_FACET_RANGE_ID")
     protected Long id;
     
-	@ManyToOne(targetEntity = SearchFacetImpl.class, optional = false)
+	@ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
     @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
     protected SearchFacet searchFacet = new SearchFacetImpl();
+	
+	@ManyToOne(targetEntity = PriceListImpl.class)
+    @JoinColumn(name = "PRICE_LIST_ID")
+    @Index(name="PRICE_LIST_INDEX", columnNames={"PRICE_LIST_ID"})
+	protected PriceList priceList;
     
     @Column(name = "MIN_VALUE", precision=19, scale=5, nullable = false)
     @AdminPresentation(friendlyName = "SearchFacetRangeImpl_MIN_VALUE", order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
@@ -87,6 +94,16 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
 	}
 
 	@Override
+    public PriceList getPriceList() {
+        return priceList;
+    }
+    
+	@Override
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
+    }
+
+    @Override
 	public BigDecimal getMinValue() {
 		return minValue;
 	}

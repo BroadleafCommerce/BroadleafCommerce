@@ -708,4 +708,9 @@ public interface Product extends Serializable {
 	 */
 	public List<RelatedProduct> getCumulativeUpSaleProducts();
 
+	/**
+	 * Removes any currently stored dynamic pricing
+	 */
+    public void clearDynamicPrices();
+
 }

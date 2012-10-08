@@ -21,24 +21,27 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionTranslation;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionTranslationImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValueTranslation;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
+import javax.persistence.MapKey;
 import javax.persistence.Table;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -77,6 +80,26 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     @AdminPresentation(friendlyName = "Fulfillment Type", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
+    @ManyToMany(targetEntity = FulfillmentOptionTranslationImpl.class)
+    @JoinTable(name = "BLC_FULFILLMENT_OPTION_TRANSLATION_XREF",
+            joinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TRANSLATION_ID", referencedColumnName = "TRANSLATION_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @org.hibernate.annotations.MapKey(columns = { @Column(name = "MAP_KEY", nullable = false) })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 10)
+    @AdminPresentationMap(
+            friendlyName = "FulfillmentOptionImpl_Translations",
+            dataSourceName = "productOptionTranslationDS",
+            keyPropertyFriendlyName = "TranslationsImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = FulfillmentOptionTranslationImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "translationsKey"
+
+    )
+    protected Map<String, FulfillmentOptionTranslation> translations = new HashMap<String,FulfillmentOptionTranslation>();
+
     @Override
     public Long getId() {
         return id;
@@ -89,6 +112,27 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Override
     public String getName() {
+        if (translations != null && BroadleafRequestContext.hasLocale())  {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+
+            // Search for translation based on locale
+            String localeCode = locale.getLocaleCode();
+            if (localeCode != null) {
+                FulfillmentOptionTranslation translation = translations.get(localeCode);
+                if (translation != null && translation.getName() != null) {
+                    return translation.getName();
+                }
+            }
+
+            // try just the language
+            String languageCode = LocaleUtil.findLanguageCode(locale);
+            if (languageCode != null && ! localeCode.equals(languageCode)) {
+                FulfillmentOptionTranslation translation = translations.get(languageCode);
+                if (translation != null && translation.getName() != null) {
+                    return translation.getName();
+                }
+            }
+        }
         return name;
     }
 
@@ -99,6 +143,27 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Override
     public String getLongDescription() {
+        if (translations != null && BroadleafRequestContext.hasLocale())  {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+
+            // Search for translation based on locale
+            String localeCode = locale.getLocaleCode();
+            if (localeCode != null) {
+                FulfillmentOptionTranslation translation = translations.get(localeCode);
+                if (translation != null && translation.getLongDescription() != null) {
+                    return translation.getLongDescription();
+                }
+            }
+
+            // try just the language
+            String languageCode = LocaleUtil.findLanguageCode(locale);
+            if (languageCode != null && ! localeCode.equals(languageCode)) {
+                FulfillmentOptionTranslation translation = translations.get(languageCode);
+                if (translation != null && translation.getLongDescription() != null) {
+                    return translation.getLongDescription();
+                }
+            }
+        }
         return longDescription;
     }
 

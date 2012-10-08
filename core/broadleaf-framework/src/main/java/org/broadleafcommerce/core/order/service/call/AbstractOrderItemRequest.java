@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 
 import java.util.HashMap;
@@ -38,14 +39,15 @@ import java.util.Map;
  */
 public abstract class AbstractOrderItemRequest {
 
-    private Sku sku;
-    private Category category;
-    private Product product;
-    private int quantity;
-    private Money salePriceOverride;
-    private PersonalMessage personalMessage;
-    private Map<String,String> itemAttributes = new HashMap<String,String>();
-
+    protected Sku sku;
+    protected Category category;
+    protected Product product;
+    protected Order order;
+    protected int quantity;
+    protected Money salePriceOverride;
+    protected PersonalMessage personalMessage;
+    protected Map<String,String> itemAttributes = new HashMap<String,String>();
+    
     public Sku getSku() {
         return sku;
     }
@@ -68,6 +70,14 @@ public abstract class AbstractOrderItemRequest {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+    
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+    
+    public Order getOrder() {
+        return order;
     }
 
     public int getQuantity() {
@@ -101,6 +111,7 @@ public abstract class AbstractOrderItemRequest {
         newRequest.setProduct(product);
         newRequest.setQuantity(quantity);
         newRequest.setSku(sku);
+        newRequest.setOrder(order);
         newRequest.setSalePriceOverride(salePriceOverride);
     }
 
@@ -117,6 +128,7 @@ public abstract class AbstractOrderItemRequest {
         if (salePriceOverride != null ? !salePriceOverride.equals(that.salePriceOverride) : that.salePriceOverride != null)
             return false;
         if (sku != null ? !sku.equals(that.sku) : that.sku != null) return false;
+        if (order != null ? !order.equals(that.order) : that.order != null) return false;
 
         return true;
     }
@@ -126,6 +138,7 @@ public abstract class AbstractOrderItemRequest {
         int result = sku != null ? sku.hashCode() : 0;
         result = 31 * result + (category != null ? category.hashCode() : 0);
         result = 31 * result + (product != null ? product.hashCode() : 0);
+        result = 31 * result + (order != null ? order.hashCode() : 0);
         result = 31 * result + quantity;
         result = 31 * result + (salePriceOverride != null ? salePriceOverride.hashCode() : 0);
         return result;

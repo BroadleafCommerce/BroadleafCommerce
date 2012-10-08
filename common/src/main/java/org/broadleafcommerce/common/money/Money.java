@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
@@ -43,6 +44,10 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     private final Currency currency;
     
     public static final Money ZERO = new NonModifiableMoney(BigDecimal.ZERO);
+
+    public Money(Currency currency) {
+        this(BankersRounding.zeroAmount(), currency);
+    }
 
     public Money() {
         this(BankersRounding.zeroAmount(), defaultCurrency());
@@ -255,6 +260,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         return amount.compareTo(value) >= 0;
     }
 
+    @Override
     public int compareTo(Money other) {
         return amount.compareTo(other.amount);
     }
@@ -263,32 +269,40 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         return amount.compareTo(value);
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof Money))
+        }
+        if (!(o instanceof Money)) {
             return false;
+        }
 
         Money money = (Money) o;
 
-        if (amount != null ? !amount.equals(money.amount) : money.amount != null)
+        if (amount != null ? !amount.equals(money.amount) : money.amount != null) {
             return false;
-        if (currency != null ? !currency.equals(money.currency) : money.currency != null)
+        }
+        if (currency != null ? !currency.equals(money.currency) : money.currency != null) {
             return false;
+        }
 
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result = amount != null ? amount.hashCode() : 0;
         result = 31 * result + (currency != null ? currency.hashCode() : 0);
         return result;
     }
 
+    @Override
     public Object clone() {
         return new Money(amount, currency);
     }
 
+    @Override
     public String toString() {
         return amount.toString();
     }
@@ -369,6 +383,14 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         ) {
             return Currency.getInstance(CurrencyConsiderationContext.getCurrencyDeterminationService().getCurrencyCode(CurrencyConsiderationContext.getCurrencyConsiderationContext()));
         }
+
+        // Check the BLC Thread
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+
+        if (brc != null && brc.getBroadleafCurrency() != null) {
+            assert brc.getBroadleafCurrency().getCurrencyCode()!=null;
+            return Currency.getInstance(brc.getBroadleafCurrency().getCurrencyCode());
+        }
         if (System.getProperty("currency.default") != null) {
             return Currency.getInstance(System.getProperty("currency.default"));
         }
@@ -379,12 +401,14 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         return Currency.getInstance("USD");
     }
 
+    @Override
     public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
         // Read in the server properties from the client representation.
         amount = new BigDecimal( in.readFloat());
 
     }
 
+    @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         // Write out the client properties from the server representation.
         out.writeFloat(amount.floatValue());

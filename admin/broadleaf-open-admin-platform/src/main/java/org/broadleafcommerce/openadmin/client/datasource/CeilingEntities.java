@@ -28,4 +28,7 @@ public class CeilingEntities {
 	public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRole";
 	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermission";
     public static final String STATICASSETS = "org.broadleafcommerce.cms.file.domain.StaticAsset";
+    public static final String PRICE_LIST = "org.broadleafcommerce.common.pricelist.domain.PriceList";
+    public static final String CURRENCY = "org.broadleafcommerce.common.currency.domain.BroadleafCurrency";
+    public static final String LOCALE = "org.broadleafcommerce.common.locale.domain.Locale";
 }

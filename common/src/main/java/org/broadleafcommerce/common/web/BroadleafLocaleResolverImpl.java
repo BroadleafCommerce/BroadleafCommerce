@@ -58,6 +58,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
         if (locale == null && request.getParameter(LOCALE_CODE_PARAM) != null) {
             String localeCode = request.getParameter(LOCALE_CODE_PARAM);
             locale = localeService.findLocaleByCode(localeCode);
+            request.getSession().removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attempt to find locale by param " + localeCode + " resulted in " + locale);
             }
@@ -77,6 +78,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
         // Finally, use the default
         if (locale == null) {
             locale = localeService.findDefaultLocale();
+            request.getSession().removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Locale set to default locale " + locale);
             }

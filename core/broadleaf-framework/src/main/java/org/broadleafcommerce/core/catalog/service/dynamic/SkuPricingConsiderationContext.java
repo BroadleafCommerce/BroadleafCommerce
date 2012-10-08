@@ -46,4 +46,12 @@ public class SkuPricingConsiderationContext {
 	public static void setSkuPricingService(DynamicSkuPricingService skuPricingService) {
 		SkuPricingConsiderationContext.skuPricingService.set(skuPricingService);
 	}
+	
+	public static boolean hasDynamicPricing() {
+	    return (
+                    getSkuPricingConsiderationContext() != null && 
+                    getSkuPricingConsiderationContext().size() > 0 &&
+                    getSkuPricingService() != null
+                   ); 
+	}
 }

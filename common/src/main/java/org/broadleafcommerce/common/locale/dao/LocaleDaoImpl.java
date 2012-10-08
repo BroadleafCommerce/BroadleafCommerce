@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.locale.dao;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
@@ -24,6 +26,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.List;
 
 /**
@@ -31,6 +34,7 @@ import java.util.List;
  */
 @Repository("blLocaleDao")
 public class LocaleDaoImpl implements LocaleDao {
+    private static final Log LOG = LogFactory.getLog(LocaleDaoImpl.class);
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -47,6 +51,9 @@ public class LocaleDaoImpl implements LocaleDao {
         query.setParameter("localeCode", localeCode);
         List<Locale> localeList = (List<Locale>) query.getResultList();
         if (localeList.size() >= 1) {
+            if (localeList.size() > 1) {
+                LOG.warn("Locale code " + localeCode + " exists for more than one locale");
+            }
             return localeList.get(0);
         }
         return null;
@@ -62,6 +69,9 @@ public class LocaleDaoImpl implements LocaleDao {
         Query query = em.createNamedQuery("BC_READ_DEFAULT_LOCALE");
         List<Locale> localeList = (List<Locale>) query.getResultList();
         if (localeList.size() >= 1) {
+            if (localeList.size() > 1) {
+                LOG.warn("There is more than one default locale configured");
+            }
             return localeList.get(0);
         }
         return null;

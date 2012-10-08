@@ -17,7 +17,9 @@
 package org.broadleafcommerce.common.web;
 
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -25,6 +27,7 @@ import org.broadleafcommerce.common.site.domain.Theme;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Currency;
 
 public class BroadleafRequestContext {
 	
@@ -37,14 +40,26 @@ public class BroadleafRequestContext {
 	public static void setBroadleafRequestContext(BroadleafRequestContext broadleafRequestContext) {
 		BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
 	}
+
+    public static boolean hasLocale(){
+        if (getBroadleafRequestContext() != null) {
+            if(getBroadleafRequestContext().getLocale() != null){
+                return true;
+            }
+        }
+        return false;
+    }
 	
 	private HttpServletRequest request;
     private HttpServletResponse response;
     private SandBox sandbox;
     private Locale locale;
+    private BroadleafCurrency broadleafCurrency;
+    private PriceList priceList;
     private Site site;
     private Theme theme;
     public java.util.Locale javaLocale;
+    public Currency javaCurrency;
 
     public HttpServletRequest getRequest() {
         return request;
@@ -93,13 +108,26 @@ public class BroadleafRequestContext {
     	return this.javaLocale;
     }
 
+    /**
+     * Returns the java.util.Currency constructed from the org.broadleafcommerce.common.currency.domain.BroadleafCurrency
+     * @return
+     */
+    public Currency getJavaCurrency() {
+        if (this.javaCurrency == null) {
+            if (getBroadleafCurrency() != null && getBroadleafCurrency().getCurrencyCode() != null) {
+                this.javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
+            }
+        }
+        return this.javaCurrency;
+    }
+
     public void setLocale(Locale locale) {
         this.locale = locale;
         this.javaLocale = convertLocaleToJavaLocale();
     }
 
     public String getRequestURIWithoutContext() {
-    	String requestURIWithoutContext; 
+    	String requestURIWithoutContext;
     	
     	if (request.getContextPath() != null) {
     		requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
@@ -153,5 +181,21 @@ public class BroadleafRequestContext {
 
     public void setTheme(Theme theme) {
         this.theme = theme;
+    }
+
+    public BroadleafCurrency getBroadleafCurrency() {
+        return broadleafCurrency;
+    }
+
+    public void setBroadleafCurrency(BroadleafCurrency broadleafCurrency) {
+        this.broadleafCurrency = broadleafCurrency;
+    }
+
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
     }
 }

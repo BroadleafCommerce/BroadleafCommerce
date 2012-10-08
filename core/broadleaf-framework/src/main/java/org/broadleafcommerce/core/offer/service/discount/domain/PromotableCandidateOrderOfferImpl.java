@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.common.money.Money;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 
 public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrderOffer {
 
@@ -40,23 +40,26 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
 		this.order = order;
 	}
 	
-	public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
+	@Override
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
 		return candidateQualifiersMap;
 	}
 
-	public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
+	@Override
+    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
 		this.candidateQualifiersMap = candidateItemsMap;
 	}
 	
-	public void computeDiscountedPriceAndAmount() {
+	@Override
+    public void computeDiscountedPriceAndAmount() {
         if (getOffer() != null && getOrder() != null){
             if (getOrder().getSubTotal() != null) {
                 Money priceToUse = getOrder().getSubTotal();
-                Money discountAmount = new Money(0);
+                Money discountAmount = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0d,getOrder().getDelegate().getCurrency());
                 if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountAmount = new Money(getOffer().getValue());
+                    discountAmount = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOffer().getValue(),getOrder().getDelegate().getCurrency());
                 } else if (getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountAmount = priceToUse.subtract(new Money(getOffer().getValue()));
+                    discountAmount = priceToUse.subtract(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOffer().getValue(),getOrder().getDelegate().getCurrency()));
                 } else if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                     discountAmount = priceToUse.multiply(getOffer().getValue().divide(new BigDecimal("100")));
                 }
@@ -69,19 +72,23 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
         }
     }
 	
-	public void reset() {
+	@Override
+    public void reset() {
 		delegate = null;
 	}
 	
-	public CandidateOrderOffer getDelegate() {
+	@Override
+    public CandidateOrderOffer getDelegate() {
 		return delegate;
 	}
 	
-	public PromotableOrder getOrder() {
+	@Override
+    public PromotableOrder getOrder() {
 		return this.order;
 	}
 	
-	public Offer getOffer() {
+	@Override
+    public Offer getOffer() {
 		return delegate.getOffer();
 	}
 	

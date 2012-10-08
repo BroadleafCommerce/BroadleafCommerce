@@ -16,17 +16,21 @@
 
 package org.broadleafcommerce.common.locale.domain;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Created by jfischer
@@ -52,6 +56,11 @@ public class LocaleImpl implements Locale {
     @Column (name = "DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order=3, group = "LocaleImpl_Details", prominent=true)
     protected Boolean defaultFlag;
+
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order=4, group = "LocaleImpl_Details", prominent=true)
+    protected BroadleafCurrency defaultCurrency;
 
     @Override
     public String getLocaleCode() {
@@ -84,14 +93,32 @@ public class LocaleImpl implements Locale {
     }
 
     @Override
+    public BroadleafCurrency getDefaultCurrency() {
+        return defaultCurrency;
+    }
+
+    @Override
+    public void setDefaultCurrency(BroadleafCurrency defaultCurrency) {
+        this.defaultCurrency = defaultCurrency;
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Locale)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Locale)) {
+            return false;
+        }
 
         LocaleImpl locale = (LocaleImpl) o;
 
-        if (localeCode != null ? !localeCode.equals(locale.localeCode) : locale.localeCode != null) return false;
-        if (friendlyName != null ? !friendlyName.equals(locale.friendlyName) : locale.friendlyName != null) return false;
+        if (localeCode != null ? !localeCode.equals(locale.localeCode) : locale.localeCode != null) {
+            return false;
+        }
+        if (friendlyName != null ? !friendlyName.equals(locale.friendlyName) : locale.friendlyName != null) {
+            return false;
+        }
 
         return true;
     }

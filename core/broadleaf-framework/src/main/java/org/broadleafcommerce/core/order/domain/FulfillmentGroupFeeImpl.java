@@ -86,66 +86,82 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order=9, group = "FulfillmentGroupFeeImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public FulfillmentGroup getFulfillmentGroup() {
         return fulfillmentGroup;
     }
 
+    @Override
     public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         this.fulfillmentGroup = fulfillmentGroup;
     }
 
+    @Override
     public Money getAmount() {
-        return amount == null ? null : new Money(amount);
+        return amount == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amount,getFulfillmentGroup().getOrder().getCurrency());
     }
 
+    @Override
     public void setAmount(Money amount) {
         this.amount = Money.toAmount(amount);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getReportingCode() {
         return reportingCode;
     }
 
+    @Override
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
     }
     
+    @Override
     public Boolean isTaxable() {
         return feeTaxable == null ? true : feeTaxable;
     }
 
+    @Override
     public void setTaxable(Boolean taxable) {
         this.feeTaxable = taxable;
     }
     
+    @Override
     public List<TaxDetail> getTaxes() {
         return taxes;
     }
 
+    @Override
     public void setTaxes(List<TaxDetail> taxes) {
         this.taxes = taxes;
     }
     
+    @Override
     public Money getTotalTax() {
-        return totalTax == null ? null : new Money(totalTax);
+        return totalTax == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalTax,getFulfillmentGroup().getOrder().getCurrency());
     }
 
+    @Override
     public void setTotalTax(Money totalTax) { 
         this.totalTax = Money.toAmount(totalTax);
     }
@@ -165,38 +181,51 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         FulfillmentGroupFeeImpl other = (FulfillmentGroupFeeImpl) obj;
         if (amount == null) {
-            if (other.amount != null)
+            if (other.amount != null) {
                 return false;
-        } else if (!amount.equals(other.amount))
+            }
+        } else if (!amount.equals(other.amount)) {
             return false;
+        }
         if (fulfillmentGroup == null) {
-            if (other.fulfillmentGroup != null)
+            if (other.fulfillmentGroup != null) {
                 return false;
-        } else if (!fulfillmentGroup.equals(other.fulfillmentGroup))
+            }
+        } else if (!fulfillmentGroup.equals(other.fulfillmentGroup)) {
             return false;
+        }
         if (id == null) {
-            if (other.id != null)
+            if (other.id != null) {
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!id.equals(other.id)) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (reportingCode == null) {
-            if (other.reportingCode != null)
+            if (other.reportingCode != null) {
                 return false;
-        } else if (!reportingCode.equals(other.reportingCode))
+            }
+        } else if (!reportingCode.equals(other.reportingCode)) {
             return false;
+        }
         return true;
     }
 }

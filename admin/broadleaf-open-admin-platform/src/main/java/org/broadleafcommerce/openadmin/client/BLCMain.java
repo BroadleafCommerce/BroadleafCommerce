@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.UrlBuilder;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.smartgwt.client.util.SC;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.callback.PostLaunch;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
@@ -40,6 +35,13 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDial
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFactory;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
+
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.UrlBuilder;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.smartgwt.client.util.SC;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,7 +87,21 @@ public class BLCMain implements EntryPoint {
 	public static final boolean DEBUG = true;
 	
 	public static void addModule(Module module) {
-		modules.put(module.getModuleKey(), module);
+	   Module existing=modules.get(module.getModuleKey());
+	    if(existing ==null || existing==module) {
+	        modules.put(module.getModuleKey(), module);
+	        return;
+	    } 
+	    //Merge the two modules named same.
+	   for(ModuleSectionPojo section : new ArrayList<ModuleSectionPojo>(((AbstractModule)module).getSections())) {
+	       //remove section from the new module that is already in our list
+	       ((AbstractModule)module).removeSection(section.getSectionTitle());
+	       //add the removed section back into the existing module that is already in the map.
+	       ((AbstractModule)existing).setSection(section.getSectionTitle(),section.sectionViewKey,section.sectionViewClass,section.sectionPresenterKey,section.sectionPresenterClass,
+	               section.sectionPermissions);
+	      
+	   }
+	  
 	}
 
     public static void removeModule(String moduleKey) {

@@ -16,6 +16,20 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -33,20 +47,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -84,10 +84,12 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentation(excluded = true)
     protected ProductBundle productBundle;
 
+    @Override
     public Sku getSku() {
            return sku;
     }
 
+    @Override
     public void setSku(Sku sku) {
        this.sku = sku;
         if (sku != null) {
@@ -102,27 +104,33 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
     }
 
+    @Override
     public ProductBundle getProductBundle() {
         return productBundle;
     }
 
+    @Override
     public void setProductBundle(ProductBundle productBundle) {
         this.productBundle = productBundle;
     }
 
+    @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         return discreteOrderItems;
     }
 
+    @Override
     public void setDiscreteOrderItems(List<DiscreteOrderItem> discreteOrderItems) {
         this.discreteOrderItems = discreteOrderItems;
     }
 
+    @Override
     public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices() {
 		return bundleOrderItemFeePrices;
 	}
 
-	public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
+	@Override
+    public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
 		this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
 	}
 
@@ -163,10 +171,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @Override
     public Money getTaxablePrice() {
         if (shouldSumItems()) {
-            Money currentBundleTaxablePrice = new Money();
+            Money currentBundleTaxablePrice = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOrder().getCurrency());
             for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                 Money currentItemTaxablePrice = discreteOrderItem.getTaxablePrice();
-                currentBundleTaxablePrice = currentBundleTaxablePrice.add(new Money(currentItemTaxablePrice.doubleValue() * discreteOrderItem.getQuantity()));
+                currentBundleTaxablePrice = currentBundleTaxablePrice.add(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(currentItemTaxablePrice.doubleValue() * discreteOrderItem.getQuantity(),getOrder().getCurrency()));
             }
             for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
                 if (fee.isTaxable()) {
@@ -175,7 +183,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             }
             return currentBundleTaxablePrice;
         } else {
-            Money taxablePrice = new Money(0D);
+            Money taxablePrice = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,getOrder().getCurrency());
             if (sku != null && sku.isTaxable() == null || sku.isTaxable()) {
                 taxablePrice = getPrice();
             }
@@ -193,10 +201,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @Override
     public Money getRetailPrice() {
         if (shouldSumItems()) {
-            Money bundleRetailPrice = new Money();
+            Money bundleRetailPrice = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOrder().getCurrency());
             for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                 Money itemRetailPrice = discreteOrderItem.getRetailPrice();
-                bundleRetailPrice = bundleRetailPrice.add(new Money(itemRetailPrice.doubleValue() * discreteOrderItem.getQuantity()));
+                bundleRetailPrice = bundleRetailPrice.add(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(itemRetailPrice.doubleValue() * discreteOrderItem.getQuantity(),getOrder().getCurrency()));
             }
             for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
                 bundleRetailPrice = bundleRetailPrice.add(fee.getAmount());
@@ -214,7 +222,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         if (shouldSumItems()) {
             Money bundleSalePrice = null;
             if (hasSaleItems()) {
-                bundleSalePrice = new Money();
+                bundleSalePrice = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOrder().getCurrency());
                 for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                     Money itemSalePrice = null;
                     if (discreteOrderItem.getSalePrice() != null) {
@@ -222,7 +230,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                     } else {
                         itemSalePrice = discreteOrderItem.getRetailPrice();
                     }
-                    bundleSalePrice = bundleSalePrice.add(new Money(itemSalePrice.doubleValue() * discreteOrderItem.getQuantity()));
+                    bundleSalePrice = bundleSalePrice.add(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(itemSalePrice.doubleValue() * discreteOrderItem.getQuantity(),getOrder().getCurrency()));
                 }
                 for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
                     bundleSalePrice = bundleSalePrice.add(fee.getAmount());
@@ -234,19 +242,23 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
     }
 
+    @Override
     public Money getBaseRetailPrice() {
-   		return baseRetailPrice != null?new Money(baseRetailPrice):null;
+   		return baseRetailPrice != null?org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(baseRetailPrice,getOrder().getCurrency()):null;
    	}
 
-   	public void setBaseRetailPrice(Money baseRetailPrice) {
+   	@Override
+    public void setBaseRetailPrice(Money baseRetailPrice) {
    		this.baseRetailPrice = baseRetailPrice==null?null:baseRetailPrice.getAmount();
    	}
 
-   	public Money getBaseSalePrice() {
-   		return baseSalePrice!=null?new Money(baseRetailPrice):null;
+   	@Override
+    public Money getBaseSalePrice() {
+   		return baseSalePrice!=null?org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(baseRetailPrice,getOrder().getCurrency()):null;
    	}
 
-   	public void setBaseSalePrice(Money baseSalePrice) {
+   	@Override
+    public void setBaseSalePrice(Money baseSalePrice) {
    		this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
    	}
 
@@ -259,9 +271,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         return false;
     }
     
+    @Override
     public boolean hasAdjustedItems() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            if (discreteOrderItem.getAdjustmentValue().greaterThan(new Money(0D))) {
+            if (discreteOrderItem.getAdjustmentValue().greaterThan(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,getOrder().getCurrency()))) {
                 return true;
             }
         }
@@ -271,10 +284,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @Override
     public Money getCurrentPrice() {
         if (shouldSumItems()) {
-            Money currentBundlePrice = new Money();
+            Money currentBundlePrice = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOrder().getCurrency());
             for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                 Money currentItemPrice = discreteOrderItem.getCurrentPrice();
-                currentBundlePrice = currentBundlePrice.add(new Money(currentItemPrice.doubleValue() * discreteOrderItem.getQuantity()));
+                currentBundlePrice = currentBundlePrice.add(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(currentItemPrice.doubleValue() * discreteOrderItem.getQuantity(),getOrder().getCurrency()));
             }
             return currentBundlePrice;
         } else {
@@ -305,12 +318,15 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BundleOrderItemImpl other = (BundleOrderItemImpl) obj;
         
         if (!super.equals(obj)) {
@@ -322,13 +338,16 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
 
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         return true;
     }
 
+    @Override
     public Product getProduct() {
         return getProductBundle();
     }

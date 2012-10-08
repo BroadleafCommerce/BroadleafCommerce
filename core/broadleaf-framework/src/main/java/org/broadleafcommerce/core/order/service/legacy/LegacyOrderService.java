@@ -29,7 +29,6 @@ import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -50,6 +49,15 @@ public interface LegacyOrderService extends OrderService {
 
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
+    /**
+     * Note: This method will automatically associate the given <b>order</b> to the given <b>itemRequest</b> such that
+     * then resulting {@link OrderItem} will already have an {@link Order} associated to it.
+     * 
+     * @param order
+     * @param itemRequest
+     * @return
+     * @throws PricingException
+     */
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException;
 
     /**
@@ -75,6 +83,9 @@ public interface LegacyOrderService extends OrderService {
      * may wish to perform many cart operations without pricing and
      * then use priceOrder = true on the last operation to avoid
      * exercising the pricing engine in a batch order update mode.
+     * 
+     * NOTE: this will automatically associate the given <b>order</b> to the given <b>itemRequest</b> such that the
+     * resulting {@link OrderItem} will already have the {@link Order} associated to it
      *
      * @param order
      * @param itemRequest
@@ -180,13 +191,14 @@ public interface LegacyOrderService extends OrderService {
 	 * Not typically used in versions since 1.7.
 	 * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
 	 * 
+	 * @param orderId
 	 * @param skuId
 	 * @param productId
 	 * @param categoryId
 	 * @param quantity
 	 * @return
 	 */
-    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);    
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity);    
 
     /**
      * Adds the passed in name/value pair to the order-item.    If the
@@ -241,6 +253,9 @@ public interface LegacyOrderService extends OrderService {
      *
      * Due to cart merging and gathering requirements, the item returned is not an
      * actual cart item.
+     *
+     * NOTE: this will automatically associate the given <b>order</b> to the given <b>itemRequest</b> such that the
+     * resulting {@link OrderItem} will already have the {@link Order} associated to it
      *
      * @param order
      * @param itemRequest

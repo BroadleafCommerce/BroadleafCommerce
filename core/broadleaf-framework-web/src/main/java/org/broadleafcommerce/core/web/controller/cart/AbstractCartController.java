@@ -16,10 +16,13 @@
 
 package org.broadleafcommerce.core.web.controller.cart;
 
+import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.web.processor.RepriceOrderProcessor;
+import org.broadleafcommerce.core.web.service.RepriceOrderService;
 
 import javax.annotation.Resource;
 
@@ -39,5 +42,8 @@ public abstract class AbstractCartController extends BroadleafAbstractController
 	
 	@Resource(name = "blOfferService")
 	protected OfferService offerService;
+
+    @Resource(name="blRepriceOrderProcessor")
+    protected RepriceOrderProcessor repriceOrderProcessor;
 	
 }

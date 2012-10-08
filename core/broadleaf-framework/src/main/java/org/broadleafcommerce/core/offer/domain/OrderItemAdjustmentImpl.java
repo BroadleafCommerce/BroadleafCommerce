@@ -16,6 +16,19 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -29,19 +42,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -125,36 +125,44 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     protected Money salesValue;
 
 
+    @Override
     public void init(OrderItem orderItem, Offer offer, String reason){
         this.orderItem = orderItem;
         this.offer = offer;
         this.reason = reason;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public OrderItem getOrderItem() {
         return orderItem;
     }
 
+    @Override
     public Offer getOffer() {
         return offer;
     }
 
+    @Override
     public String getReason() {
         return reason;
     }
 
+    @Override
     public void setReason(String reason) {
         this.reason = reason;
     }
 
+    @Override
     public void setOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
     }
@@ -163,22 +171,27 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
         this.offer = offer;
     }
 
+    @Override
     public Money getValue() {
-        return value == null ? null : new Money(value);
+        return value == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(value,getOrderItem().getOrder().getCurrency());
     }
     
+    @Override
     public void setValue(Money value) {
     	this.value = value.getAmount();
     }
 
+    @Override
     public boolean isAppliedToSalePrice() {
         return appliedToSalePrice;
     }
 
+    @Override
     public void setAppliedToSalePrice(boolean appliedToSalePrice) {
         this.appliedToSalePrice = appliedToSalePrice;
     }
 
+    @Override
     public Money getRetailPriceValue() {
         if (retailValue == null) {
             return Money.ZERO;
@@ -186,10 +199,12 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
         return this.retailValue;
     }
 
+    @Override
     public void setRetailPriceValue(Money retailPriceValue) {
         this.retailValue = retailPriceValue;
     }
 
+    @Override
     public Money getSalesPriceValue() {
         if (salesValue == null) {
             return Money.ZERO;
@@ -197,6 +212,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
         return salesValue;
     }
 
+    @Override
     public void setSalesPriceValue(Money salesPriceValue) {
         this.salesValue = salesPriceValue;
     }
@@ -214,12 +230,15 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         OrderItemAdjustmentImpl other = (OrderItemAdjustmentImpl) obj;
 
         if (id != null && other.id != null) {
@@ -227,25 +246,33 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
         }
 
         if (offer == null) {
-            if (other.offer != null)
+            if (other.offer != null) {
                 return false;
-        } else if (!offer.equals(other.offer))
+            }
+        } else if (!offer.equals(other.offer)) {
             return false;
+        }
         if (orderItem == null) {
-            if (other.orderItem != null)
+            if (other.orderItem != null) {
                 return false;
-        } else if (!orderItem.equals(other.orderItem))
+            }
+        } else if (!orderItem.equals(other.orderItem)) {
             return false;
+        }
         if (reason == null) {
-            if (other.reason != null)
+            if (other.reason != null) {
                 return false;
-        } else if (!reason.equals(other.reason))
+            }
+        } else if (!reason.equals(other.reason)) {
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
-        } else if (!value.equals(other.value))
+            }
+        } else if (!value.equals(other.value)) {
             return false;
+        }
         return true;
     }
 

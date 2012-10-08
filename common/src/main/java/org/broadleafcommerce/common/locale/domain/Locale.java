@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.locale.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+
 import java.io.Serializable;
 
 /**
@@ -34,5 +36,9 @@ public interface Locale extends Serializable {
     public void setDefaultFlag(Boolean defaultFlag);
 
     public Boolean getDefaultFlag();
+
+    public BroadleafCurrency getDefaultCurrency();
+
+    public void setDefaultCurrency(BroadleafCurrency currency);
 
 }

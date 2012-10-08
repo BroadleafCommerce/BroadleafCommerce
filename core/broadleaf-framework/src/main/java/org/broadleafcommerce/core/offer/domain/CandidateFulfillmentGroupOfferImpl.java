@@ -16,14 +16,7 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +28,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_FG_OFFER")
@@ -83,32 +83,39 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
         this.id = id;
     }
 
+    @Override
     public Offer getOffer() {
         return offer;
     }
 
+    @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
         discountedPrice = null;
     }
 
+    @Override
     public Money getDiscountedPrice() {
-        return discountedPrice == null ? null : new Money(discountedPrice);
+        return discountedPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(discountedPrice,getFulfillmentGroup().getOrder().getCurrency());
     }
     
+    @Override
     public void setDiscountedPrice(Money discountedPrice) {
     	this.discountedPrice = discountedPrice.getAmount();
     }
 
+    @Override
     public FulfillmentGroup getFulfillmentGroup() {
         return fulfillmentGroup;
     }
 
+    @Override
     public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         this.fulfillmentGroup = fulfillmentGroup;
         discountedPrice = null;
     }
 
+    @Override
     public int getPriority() {
         return offer.getPriority();
     }
@@ -125,12 +132,15 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CandidateFulfillmentGroupOfferImpl other = (CandidateFulfillmentGroupOfferImpl) obj;
 
         if (id != null && other.id != null) {
@@ -138,20 +148,26 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
         }
 
         if (discountedPrice == null) {
-            if (other.discountedPrice != null)
+            if (other.discountedPrice != null) {
                 return false;
-        } else if (!discountedPrice.equals(other.discountedPrice))
+            }
+        } else if (!discountedPrice.equals(other.discountedPrice)) {
             return false;
+        }
         if (fulfillmentGroup == null) {
-            if (other.fulfillmentGroup != null)
+            if (other.fulfillmentGroup != null) {
                 return false;
-        } else if (!fulfillmentGroup.equals(other.fulfillmentGroup))
+            }
+        } else if (!fulfillmentGroup.equals(other.fulfillmentGroup)) {
             return false;
+        }
         if (offer == null) {
-            if (other.offer != null)
+            if (other.offer != null) {
                 return false;
-        } else if (!offer.equals(other.offer))
+            }
+        } else if (!offer.equals(other.offer)) {
             return false;
+        }
         return true;
     }
 

@@ -53,21 +53,25 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
     
-    @Resource(name="blDynamicSkuPricingService")
+    @Resource(name="blPriceListDynamicSkuPricingService" )
     protected DynamicSkuPricingService dynamicSkuPricingService;
 
+    @Override
     public OrderItem readOrderItemById(final Long orderItemId) {
         return orderItemDao.readOrderItemById(orderItemId);
     }
 
+    @Override
     public OrderItem saveOrderItem(final OrderItem orderItem) {
         return orderItemDao.saveOrderItem(orderItem);
     }
     
+    @Override
     public void delete(final OrderItem item) {
         orderItemDao.delete(item);
     }
     
+    @Override
     public PersonalMessage createPersonalMessage() {
         return orderItemDao.createPersonalMessage();
     }
@@ -77,7 +81,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
-        
+        item.setOrder(itemRequest.getOrder());
+
         if (itemRequest.getItemAttributes() != null && itemRequest.getItemAttributes().size() > 0) {
             Map<String,OrderItemAttribute> orderItemAttributes = new HashMap<String,OrderItemAttribute>();
             item.setOrderItemAttributes(orderItemAttributes);
@@ -93,10 +98,12 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
     }
 
+    @Override
     public DiscreteOrderItem createDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest) {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         populateDiscreteOrderItem(item, itemRequest);
         
+        item.setBundleOrderItem(itemRequest.getBundleOrderItem());
         item.setBaseSalePrice(itemRequest.getSalePriceOverride()==null?itemRequest.getSku().getSalePrice():itemRequest.getSalePriceOverride());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
@@ -124,6 +131,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
     
+    @Override
     public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.EXTERNALLY_PRICED);
         populateDiscreteOrderItem(item, itemRequest);
@@ -145,9 +153,12 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
+    @Override
     public GiftWrapOrderItem createGiftWrapOrderItem(final GiftWrapOrderItemRequest itemRequest) {
         final GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
         item.setSku(itemRequest.getSku());
+        item.setOrder(itemRequest.getOrder());
+        item.setBundleOrderItem(itemRequest.getBundleOrderItem());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
@@ -164,21 +175,23 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
+    @Override
     public BundleOrderItem createBundleOrderItem(final BundleOrderItemRequest itemRequest) {
         final BundleOrderItem item = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setName(itemRequest.getName());
         item.setBundleOrderItemFeePrices(itemRequest.getBundleOrderItemFeePrices());
+        item.setOrder(itemRequest.getOrder());
 
         for (DiscreteOrderItemRequest discreteItemRequest : itemRequest.getDiscreteOrderItems()) {
+            discreteItemRequest.setBundleOrderItem(item);
             DiscreteOrderItem discreteOrderItem;
             if (discreteItemRequest instanceof GiftWrapOrderItemRequest) {
                 discreteOrderItem = createGiftWrapOrderItem((GiftWrapOrderItemRequest) discreteItemRequest);
             } else {
                 discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
             }
-            discreteOrderItem.setBundleOrderItem(item);
             item.getDiscreteOrderItems().add(discreteOrderItem);
             item.assignFinalPrice();
         }
@@ -195,6 +208,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         bundleOrderItem.setSku(itemRequest.getSku());
         bundleOrderItem.setName(itemRequest.getName());
         bundleOrderItem.setProductBundle(productBundle);
+        bundleOrderItem.setOrder(itemRequest.getOrder());
 
         for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
             Product bundleProduct = skuBundleItem.getBundle();
@@ -216,10 +230,10 @@ public class OrderItemServiceImpl implements OrderItemService {
 	        bundleItemRequest.setSku(bundleSku);
 	        bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
             bundleItemRequest.setSalePriceOverride(skuBundleItem.getSalePrice());
+            bundleItemRequest.setBundleOrderItem(bundleOrderItem);
             
             DiscreteOrderItem bundleDiscreteItem = createDiscreteOrderItem(bundleItemRequest);
             bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
-            bundleDiscreteItem.setBundleOrderItem(bundleOrderItem);
             bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
         }
 

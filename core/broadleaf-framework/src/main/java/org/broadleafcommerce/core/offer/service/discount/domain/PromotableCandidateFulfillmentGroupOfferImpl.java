@@ -16,15 +16,15 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.common.money.Money;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 
 public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableCandidateFulfillmentGroupOffer {
 
@@ -40,15 +40,18 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
 		this.promotableFulfillmentGroup = promotableFulfillmentGroup;
 	}
 	
-	public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
+	@Override
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
 		return candidateQualifiersMap;
 	}
 
-	public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
+	@Override
+    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
 		this.candidateQualifiersMap = candidateItemsMap;
 	}
 	
-	public void computeDiscountedPriceAndAmount() {
+	@Override
+    public void computeDiscountedPriceAndAmount() {
         if (delegate.getOffer() != null && delegate.getFulfillmentGroup() != null){
 
             if (delegate.getFulfillmentGroup().getRetailShippingPrice() != null) {
@@ -59,9 +62,9 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
                 }
 
                 if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountedAmount = new Money(delegate.getOffer().getValue());
+                    discountedAmount = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(delegate.getOffer().getValue(),delegate.getFulfillmentGroup().getOrder().getCurrency());
                 } else if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountedAmount = priceToUse.subtract(new Money(delegate.getOffer().getValue()));
+                    discountedAmount = priceToUse.subtract(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(delegate.getOffer().getValue(),delegate.getFulfillmentGroup().getOrder().getCurrency()));
                 } else if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                     discountedAmount = priceToUse.multiply(delegate.getOffer().getValue().divide(new BigDecimal("100")));
                 }
@@ -74,21 +77,25 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
         }
     }
 	
-	public void reset() {
+	@Override
+    public void reset() {
 		delegate = null;
 	}
 	
-	public CandidateFulfillmentGroupOffer getDelegate() {
+	@Override
+    public CandidateFulfillmentGroupOffer getDelegate() {
 		return delegate;
 	}
 	
-	public Money getDiscountedPrice() {
+	@Override
+    public Money getDiscountedPrice() {
 		if (delegate.getDiscountedPrice() == null) {
             computeDiscountedPriceAndAmount();
         }
 		return delegate.getDiscountedPrice();
 	}
 
+    @Override
     public Money getDiscountedAmount() {
         if (delegate.getDiscountedPrice() == null) {
             computeDiscountedPriceAndAmount();
@@ -96,11 +103,13 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
         return discountedAmount;
     }
 
-	public Offer getOffer() {
+	@Override
+    public Offer getOffer() {
 		return delegate.getOffer();
 	}
 	
-	public PromotableFulfillmentGroup getFulfillmentGroup() {
+	@Override
+    public PromotableFulfillmentGroup getFulfillmentGroup() {
 		return promotableFulfillmentGroup;
 	}
 

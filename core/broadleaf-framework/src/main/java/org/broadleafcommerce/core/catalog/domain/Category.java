@@ -33,6 +33,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
+
 /**
  * Implementations of this interface are used to hold data about a Category.  A category is a group of products.
  * <br>
@@ -520,6 +527,7 @@ public interface Category extends Serializable {
 	 * @param currentHierarchy
 	 * @return
 	 */
+	
 	public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy);
 	
 	/**
@@ -588,5 +596,16 @@ public interface Category extends Serializable {
      * @param fulfillmentType
      */
     public void setFulfillmentType(FulfillmentType fulfillmentType);
+
+	/** 
+	 * 
+	 * @return list of possible translations
+	 */
+	public Map<String, CategoryTranslation> getTranslations();
+	/**
+	 *      
+	 * @param translations
+	 */
+	public void setTranslations(Map<String, CategoryTranslation> translations);
 
 }

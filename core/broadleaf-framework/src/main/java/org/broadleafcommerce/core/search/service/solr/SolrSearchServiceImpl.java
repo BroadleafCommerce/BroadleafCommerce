@@ -33,10 +33,20 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.common.pricelist.service.PriceListService;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.TypedClosure;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
+import org.broadleafcommerce.core.catalog.service.dynamic.PriceListDynamicSkuPricingServiceImpl;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
@@ -58,6 +68,7 @@ import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -65,11 +76,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * An implementation of SearchService that uses Solr
@@ -78,7 +89,13 @@ import java.util.TreeSet;
  */
 public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
+    
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
+    protected static final String DEFAULT_NAMESPACE = "d";
+    
+    protected static Locale defaultLocale;
+    protected static PriceList defaultPriceList;
+    protected static Boolean ignoreDefaultPriceList = false;
     
 	@Resource(name = "blProductDao")
 	protected ProductDao productDao;
@@ -89,7 +106,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	@Resource(name = "blSearchFacetDao")
 	protected SearchFacetDao searchFacetDao;
 	
+	@Resource(name = "blLocaleService")
+	protected LocaleService localeService;
+	
+	@Resource(name = "blPriceListService")
+	protected PriceListService priceListService;
+	
+	@Resource(name = "blPriceListDynamicSkuPricingService")
+	protected PriceListDynamicSkuPricingServiceImpl priceListPricingService;
+	
 	protected SolrServer server;
+	
+	protected Boolean indexPriceLists = false;
 
 	public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
 		System.setProperty("solr.solr.home", solrServer);
@@ -109,86 +137,36 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             ((EmbeddedSolrServer) server).shutdown();
         }
     }
-
+    
     @Override
+    @SuppressWarnings("rawtypes")
     @Transactional("blTransactionManager")
 	public void rebuildIndex() throws ServiceException, IOException {
 		LOG.info("Rebuilding the solr index...");
 		StopWatch s = new StopWatch();
 		
-		List<Product> products = productDao.readAllActiveProducts(SystemTime.asDate());
+		// Save off the current context - we may need to modify things on it while building the index
+        BroadleafRequestContext savedContext = BroadleafRequestContext.getBroadleafRequestContext();
+        HashMap savedPricing = SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
+        DynamicSkuPricingService savedPricingService = SkuPricingConsiderationContext.getSkuPricingService();
+        
+        if (indexPriceLists) {
+            // Put something on the sku pricing consideration context to activate indexing pricelists
+            HashMap<String, String> pricingMap = new HashMap<String, String>();
+            pricingMap.put("INDEX_PRICE_LIST", "true");
+            SkuPricingConsiderationContext.setSkuPricingConsiderationContext(pricingMap);
+            SkuPricingConsiderationContext.setSkuPricingService(priceListPricingService);
+        }
+		
+		List<Product> products = readAllActiveProducts();
 		List<Field> fields = fieldDao.readAllProductFields();
+		
+		List<Locale> locales = getAllLocales();
+		List<PriceList> priceLists = getAllPriceLists();
 		
 	    Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
 		for (Product product : products) {
-			SolrInputDocument document = new SolrInputDocument();
-			
-			// Add fields that are present on all products
-			document.addField(getIdFieldName(), product.getId());
-			
-			// The explicit categories are the ones defined by the product itself
-			for (Category category : product.getAllParentCategories()) {
-				document.addField(getExplicitCategoryFieldName(), category.getId());
-				
-				String categorySortField = getCategorySortField(category);
-				int listIndex = category.getAllProducts().indexOf(product);
-				document.addField(categorySortField, listIndex);
-			}
-			
-			// This is the entire tree of every category defined on the product
-			Set<Category> fullCategoryHierarchy = new TreeSet<Category>(new Comparator<Category>() {
-                @Override
-                public int compare(Category o1, Category o2) {
-                    if (o1.equals(o2)) {
-                        return 0;
-                    }
-                    return 1;
-                }
-            });
-			for (Category category : product.getAllParentCategories()) {
-			    fullCategoryHierarchy.addAll(category.buildFullCategoryHierarchy(null));
-			}
-			for (Category category : fullCategoryHierarchy) {
-				document.addField(getCategoryFieldName(), category.getId());
-			}
-			
-			// Add data-driven user specified searchable fields
-			List<String> addedProperties = new ArrayList<String>();
-			List<String> copyFieldValue = new ArrayList<String>();
-			for (Field field : fields) {
-				try {
-					String propertyName = field.getPropertyName();
-					if (propertyName.contains("productAttributes.")) {
-						propertyName = convertToMappedProperty(propertyName, "productAttributes", 
-								"mappedProductAttributes");
-					}
-					Object propertyValue = PropertyUtils.getProperty(product, propertyName);
-					
-					// Index the searchable fields
-					if (field.getSearchable()) {
-    					for (FieldType searchableFieldType : field.getSearchableFieldTypes()) {
-    						String solrPropertyName = getPropertyNameForFieldSearchable(field, searchableFieldType);
-    						document.addField(solrPropertyName, propertyValue);
-    						addedProperties.add(solrPropertyName);
-    						copyFieldValue.add(propertyValue.toString());
-    					}
-					}
-					
-					// Index the faceted field type as well
-					FieldType facetFieldType = field.getFacetFieldType();
-					if (facetFieldType != null) {
-						String solrFacetPropertyName = getPropertyNameForFieldFacet(field);
-						if (!addedProperties.contains(solrFacetPropertyName)) {
-							document.addField(solrFacetPropertyName, propertyValue);
-						}
-					}
-				} catch (Exception e) {
-					LOG.debug("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
-							+ product.getId() + "]");
-				}
-			}
-			document.addField(getSearchableFieldName(), StringUtils.join(copyFieldValue, " "));
-			documents.add(document);
+	        documents.add(buildDocument(product, fields, locales, priceLists));
 		}
 		
 		if (LOG.isTraceEnabled()) {
@@ -198,24 +176,245 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 		}
 		
 	    try {
-	    	server.deleteByQuery(getGlobalPrefix() + "*:*");
+	        String deleteQuery = getNamespaceFieldName() + ":" + getCurrentNamespace();
+	    	LOG.trace("Deleting by query: " + deleteQuery);
+	    	server.deleteByQuery(deleteQuery);
 	    	server.commit();
 	    	
 		    server.add(documents);
 		    server.commit();
 	    } catch (SolrServerException e) {
 	    	throw new ServiceException("Could not rebuild index", e);
+	    } finally {
+	        // Restore the current context, regardless of whether an exception happened or not
+	        BroadleafRequestContext.setBroadleafRequestContext(savedContext);
+	        SkuPricingConsiderationContext.setSkuPricingConsiderationContext(savedPricing);
+	        SkuPricingConsiderationContext.setSkuPricingService(savedPricingService);
 	    }
 	    
 	    LOG.info("Finished rebuilding the solr index in " + s.toLapString());
 	}
+    
+    /**
+     * This method to read all active products will be slow if you have a large catalog. In this case, you will want to
+     * read the products in a different manner. For example, if you know the fields that will be indexed, you can configure
+     * a DAO object to only load those fields. You could also use a JDBC based DAO for even faster access. This default
+     * implementation is only suitable for small catalogs.
+     * 
+     * @return the list of all active products to be used by the index building task
+     */
+    protected List<Product> readAllActiveProducts() {
+		return productDao.readAllActiveProducts(SystemTime.asDate());
+    }
+    
+    /**
+     * @return a list of all possible locale prefixes to consider
+     */
+    protected List<Locale> getAllLocales() {
+        return localeService.findAllLocales();
+    }
+    
+    /**
+     * @return a list of all possible pricelist prefixes to consider
+     */
+    protected List<PriceList> getAllPriceLists() {
+        return indexPriceLists ? priceListService.findAllPriceLists() : null;
+    }
+    
+    /**
+     * Given a product, fields that relate to that product, and a list of locales and pricelists, builds a SolrInputDocument
+     * to be added to the Solr index.
+     * 
+     * @param product
+     * @param fields
+     * @param locales
+     * @param priceLists
+     * @return the document
+     */
+    protected SolrInputDocument buildDocument(Product product, List<Field> fields, 
+            List<Locale> locales, List<PriceList> priceLists) {
+        SolrInputDocument document = new SolrInputDocument();
+        
+        attachBasicDocumentFields(product, document);
+        
+        // Add data-driven user specified searchable fields
+        List<String> addedProperties = new ArrayList<String>();
+        Map<String, List<String>> copyFieldValues = new HashMap<String, List<String>>();
+        
+        for (Field field : fields) {
+            try {
+                // Index the searchable fields
+                if (field.getSearchable()) {
+                    for (FieldType sft : field.getSearchableFieldTypes()) {
+                        Map<String, Object> propertyValues = getPropertyValues(product, field, sft, locales, priceLists);
+                        
+                        // Build out the field for every prefix
+                        for (Entry<String, Object> entry : propertyValues.entrySet()) {
+                            String prefix = entry.getKey();
+                            prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
+                            
+                            String solrPropertyName = getPropertyNameForFieldSearchable(field, sft, prefix);
+                            Object value = entry.getValue();
+                            
+                            // Add the field to Solr to search directly against it
+                            if (sft.equals(FieldType.PRICE) || field.getTranslatable() || 
+                                    prefix.equals(getDefaultLocalePrefix())) {
+                                document.addField(solrPropertyName, value);
+                                addedProperties.add(solrPropertyName);
+                            }
+                            
+                            // Add this field to the copyField so that we can search against its content generally
+                            List<String> copyFieldValue = copyFieldValues.get(prefix);
+                            if (copyFieldValue == null) {
+                                copyFieldValue = new ArrayList<String>();
+                                copyFieldValues.put(prefix, copyFieldValue);
+                            }
+                            copyFieldValue.add(value.toString());
+                        }
+                    }
+                }
+                
+                // Index the faceted field type as well
+                FieldType facetType = field.getFacetFieldType();
+                if (facetType != null) {
+                    Map<String, Object> propertyValues = getPropertyValues(product, field, facetType, locales, priceLists);
+                    
+                    // Build out the field for every prefix
+                    for (Entry<String, Object> entry : propertyValues.entrySet()) {
+                        String prefix = entry.getKey();
+                        prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
+                        
+                        String solrFacetPropertyName = getPropertyNameForFieldFacet(field, prefix);
+                        Object value = entry.getValue();
+                        
+                        if (facetType.equals(FieldType.PRICE) || field.getTranslatable() || 
+                                prefix.equals(getDefaultLocalePrefix())) {
+                            if (!addedProperties.contains(solrFacetPropertyName)) {
+                                document.addField(solrFacetPropertyName, value);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
+                        + product.getId() + "]");
+            }
+        }
+        
+        for (Entry<String, List<String>> entry : copyFieldValues.entrySet()) {
+            document.addField(getSearchableFieldName(entry.getKey()), StringUtils.join(entry.getValue(), " "));
+        }
+        
+        return document;
+    }
+
+    /**
+     * Adds the ID, category, and explicitCategory fields for the product to the document
+     * 
+     * @param product
+     * @param document
+     */
+    protected void attachBasicDocumentFields(Product product, SolrInputDocument document) {
+        // Add the namespace and ID fields for this product
+        document.addField(getNamespaceFieldName(), getCurrentNamespace());
+        document.addField(getIdFieldName(), product.getId());
+        
+        // The explicit categories are the ones defined by the product itself
+        for (Category category : product.getAllParentCategories()) {
+            document.addField(getExplicitCategoryFieldName(), category.getId());
+            
+            String categorySortFieldName = getCategorySortFieldName(category);
+            int listIndex = category.getAllProducts().indexOf(product);
+            document.addField(categorySortFieldName, listIndex);
+        }
+        
+        // This is the entire tree of every category defined on the product
+        Set<Category> fullCategoryHierarchy = new HashSet<Category>();
+        for (Category category : product.getAllParentCategories()) {
+            fullCategoryHierarchy.addAll(category.buildFullCategoryHierarchy(null));
+        }
+        for (Category category : fullCategoryHierarchy) {
+            document.addField(getCategoryFieldName(), category.getId());
+        }
+    }
+    
+    /**
+     * Returns a map of prefix to value for the requested attributes. For example, if the requested field corresponds to
+     * a Sku's description and the locales list has the en_US locale and the es_ES locale, the resulting map could be
+     * 
+     * { "en_US" : "A description",
+     *   "es_ES" : "Una descripcion" }
+     * 
+     * @param product
+     * @param field
+     * @param isPriceField
+     * @param prefix
+     * @return the value of the property
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
+    protected Map<String, Object> getPropertyValues(Product product, Field field, FieldType fieldType, List<Locale> locales, 
+            List<PriceList> priceLists) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        
+        String propertyName = field.getPropertyName();
+        if (propertyName.contains("productAttributes.")) {
+            propertyName = convertToMappedProperty(propertyName, "productAttributes", "mappedProductAttributes");
+        }
+        
+        Map<String, Object> values = new HashMap<String, Object>();
+        
+        if (fieldType.equals(FieldType.PRICE)) {
+            // Establish the no-pricelist price index
+            BroadleafRequestContext tempContext = new BroadleafRequestContext();
+            tempContext.setPriceList(null);
+            BroadleafRequestContext.setBroadleafRequestContext(tempContext);
+            
+            Object propertyValue = PropertyUtils.getProperty(product, propertyName);
+            values.put("", propertyValue);
+            
+            // Build out the index for the additional price lists as appropriate
+            if (priceLists != null) {
+                for (PriceList priceList : priceLists) {
+                    tempContext = new BroadleafRequestContext();
+                    tempContext.setPriceList(priceList);
+                    BroadleafRequestContext.setBroadleafRequestContext(tempContext);
+                    product.clearDynamicPrices();
+                    
+                    propertyValue = PropertyUtils.getProperty(product, propertyName);
+                    values.put(priceList.getPriceKey(), propertyValue);
+                }
+            }
+        } else {
+            for (Locale locale : locales) {
+                String localeCode = locale.getLocaleCode();
+                
+                // If the field isn't translatable, we want to use the default locale's property
+                if (!field.getTranslatable() && !locale.getDefaultFlag()) {
+                    locale = getDefaultLocale();
+                }
+                
+                // To fetch the appropriate translated property, we need to set the current request context's locale
+                if (field.getTranslatable()) {
+                    BroadleafRequestContext tempContext = new BroadleafRequestContext();
+                    tempContext.setLocale(locale);
+                    BroadleafRequestContext.setBroadleafRequestContext(tempContext);
+                }
+                    
+                Object propertyValue = PropertyUtils.getProperty(product, propertyName);
+                values.put(localeCode, propertyValue);
+            }
+        }
+        
+        return values;
+    }
     
 	@Override
 	public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria) 
 			throws ServiceException {
 		List<SearchFacetDTO> facets = getCategoryFacets(category);
 		String query = getExplicitCategoryFieldName() + ":" + category.getId();
-		return findProducts(query, facets, searchCriteria, getCategorySortField(category) + " asc");
+		return findProducts(query, facets, searchCriteria, getCategorySortFieldName(category) + " asc");
 	}
 	
 	@Override
@@ -223,7 +422,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 			throws ServiceException {
 		List<SearchFacetDTO> facets = getCategoryFacets(category);
 		String query = getCategoryFieldName() + ":" + category.getId();
-		return findProducts(query, facets, searchCriteria, getCategorySortField(category) + " asc");
+		return findProducts(query, facets, searchCriteria, getCategorySortFieldName(category) + " asc");
 	}
 	
 	@Override
@@ -285,8 +484,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 		// Build the basic query
 	    SolrQuery solrQuery = new SolrQuery()
 	    	.setQuery(qualifiedSolrQuery)
-	    	.setFields(getIdFieldName())
-    		.setRows(searchCriteria.getPageSize())
+            .setFields(getIdFieldName())
+            .setRows(searchCriteria.getPageSize())
+            .setFilterQueries(getNamespaceFieldName() + ":" + getCurrentNamespace())
     		.setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
 	    
 	    // Attach additional restrictions
@@ -308,6 +508,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	    	response = server.query(solrQuery);
 	    	if (LOG.isTraceEnabled()) {
 	    	    LOG.trace(response.toString());
+	        
+    	        for (SolrDocument doc : response.getResults()) {
+    	            LOG.trace(doc);
+    	        }
 	    	}
 	    } catch (SolrServerException e) {
 	    	throw new ServiceException("Could not perform search", e);
@@ -413,8 +617,19 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 		for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
 			SearchFacetDTO dto = entry.getValue();
 			String facetTagField = entry.getValue().isActive() ? GLOBAL_FACET_TAG_FIELD : entry.getKey();
-			if (dto.getFacet().getSearchFacetRanges().size() > 0) {
-				for (SearchFacetRange range : dto.getFacet().getSearchFacetRanges()) {
+			
+			List<SearchFacetRange> searchFacetRanges = null;
+			PriceList priceList = BroadleafRequestContext.getBroadleafRequestContext().getPriceList();
+			if (indexPriceLists && priceList != null && !priceList.getPriceKey().equals(getDefaultPricelist().getPriceKey())) {
+			    searchFacetRanges = dto.getFacet().getSearchFacetRanges(priceList);
+			}
+			
+			if (searchFacetRanges == null || searchFacetRanges.size() == 0) {
+			    searchFacetRanges = dto.getFacet().getSearchFacetRanges();
+			}
+			
+			if (searchFacetRanges != null && searchFacetRanges.size() > 0) {
+				for (SearchFacetRange range : searchFacetRanges) {
 					query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), facetTagField, "ex", range));
 				}
 			} else {
@@ -661,13 +876,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	 * @return a map of fully qualified solr index field key to the searchFacetDTO object
 	 */
 	protected Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets, 
-			ProductSearchCriteria searchCriteria) {
-		Map<String, SearchFacetDTO> namedFacetMap = new HashMap<String, SearchFacetDTO>();
-		for (SearchFacetDTO facet : facets) {
-			Field facetField = facet.getFacet().getField();
-			namedFacetMap.put(getSolrFieldKey(facetField, searchCriteria), facet);
-		}
-		return namedFacetMap;
+			final ProductSearchCriteria searchCriteria) {
+	    return BLCMapUtils.keyedMap(facets, new TypedClosure<String, SearchFacetDTO>() {
+            public String getKey(SearchFacetDTO facet) {
+                return getSolrFieldKey(facet.getFacet().getField(), searchCriteria);
+            }
+        });
 	}
 	
 	/**
@@ -686,39 +900,142 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	}
 	
 	/**
-	 * Determines if there is a prefix that needs to be applied to all fields for this particular request.
-	 * For example, if you have multiple sites set up, you may want to filter that here. 
+	 * Determines the current namespace we are operating on. For example, if you have multiple sites set up, 
+	 * you may want to filter that here. 
 	 * 
-	 * Note: This method should NOT return null. If there is no prefix, it should return the empty string.
+	 * <ul>
+	 *     <li>Note: This method should ALWAYS return a non-empty string.</li>
+	 * </ul>
 	 * 
-	 * @return the global prefix if there is one, "" if there isn't
+	 * @return the global namespace 
 	 */
-	protected String getGlobalPrefix() {
-	    return "";
+	protected String getCurrentNamespace() {
+	    return DEFAULT_NAMESPACE;
 	}
 	
 	/**
-	 * Determines if there is a locale prefix that needs to be applied to fields for this particular request.
-	 * By default, a locale prefix is not applicable for category, explicitCategory, or fields that have type Price
+	 * Determines if there is a locale prefix that needs to be applied to the given field for this particular request.
+	 * By default, a locale prefix is not applicable for category, explicitCategory, or fields that have type Price.
+	 * Also, it is not applicable for non-translatable fields
 	 * 
-	 * Note: This method should NOT return null. If there is no prefix, it should return the empty string.
+	 * <ul>
+	 *     <li>Note: This method should NOT return null. There must be a default locale configured.</li>
+	 * </ul>
 	 * 
 	 * @return the global prefix if there is one, "" if there isn't
 	 */
 	protected String getLocalePrefix() {
-	    return "";
+	    if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+	        Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+	        if (locale != null) {
+	            return locale.getLocaleCode() + "_";
+	        }
+	    }
+	    return getDefaultLocalePrefix();
+	}
+	
+	/**
+	 * Returns the default locale. Will cache the result for subsequent use.
+	 * 
+	 * Note: There is no currently configured cache invalidation strategy for the the default locale. 
+	 * Override this method to provide for one if you need it.
+	 * 
+	 * @return the default locale
+	 */
+	protected Locale getDefaultLocale() {
+	    if (defaultLocale == null) {
+	        defaultLocale = localeService.findDefaultLocale();
+	    }
+	    
+	    return defaultLocale;
+	}
+	
+	/**
+	 * @return the default locale's prefix
+	 */
+	protected String getDefaultLocalePrefix() {
+	    return getDefaultLocale().getLocaleCode() + "_";
+	}
+	
+	/**
+	 * Returns the default price list. Will cache the result for subsequent use.
+	 * 
+	 * Note: There is no currently configured cache invalidation strategy for the the default pricelist. 
+	 * Override this method to provide for one if you need it.
+	 *
+	 * @return the default price list if there is one, null otherwise
+	 */
+	protected PriceList getDefaultPricelist() {
+	    if (defaultPriceList == null && !ignoreDefaultPriceList) {
+	        defaultPriceList = priceListService.findDefaultPricelist();
+	        if (defaultPriceList == null) {
+	            ignoreDefaultPriceList = true;
+	        }
+	    }
+	    
+	    return defaultPriceList;
+	}
+	
+	/**
+	 * @return the default price list's prefix
+	 */
+	protected String getDefaultPriceListPrefix() {
+	    PriceList priceList = getDefaultPricelist();
+	    return priceList == null ? "" : priceList.getPriceKey() + "_";
 	}
 	
 	/**
 	 * Determines if there is a pricelist prefix that needs to be applied to fields for this particular request.
 	 * By default, a pricelist prefix will only apply to fields that have type Price
 	 * 
-	 * Note: This method should NOT return null. If there is no prefix, it should return the empty string.
+	 * <ul>
+	 *     <li>Note: This method should NOT return null. If there is no prefix, it should return the empty string.</li>
+	 *     <li>Note: If there is a prefix, it MUST end in an underscore</li>
+	 * </ul>
 	 * 
 	 * @return the global prefix if there is one, "" if there isn't
 	 */
 	protected String getPricelistPrefix() {
-	    return "";
+	    if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+	        PriceList priceList = BroadleafRequestContext.getBroadleafRequestContext().getPriceList();
+	        if (priceList != null) {
+	            return priceList.getPriceKey() + "_";
+	        }
+	    }
+	    return getDefaultPriceListPrefix();
+	}
+	
+	/**
+	 * Returns the property name for the given field, field type, and prefix
+	 * 
+	 * @param field
+	 * @param searchableFieldType
+	 * @param prefix
+	 * @return the property name for the field and fieldtype
+	 */
+	protected String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType, String prefix) {
+	    return new StringBuilder()
+	        .append(prefix)
+	        .append(field.getPropertyName()).append("_").append(searchableFieldType.getType())
+	        .toString();
+	}
+	
+	/**
+	 * Returns the property name for the given field, its configured facet field type, and the given prefix
+	 * 
+	 * @param field
+	 * @param prefix
+	 * @return the property name for the facet type of this field
+	 */
+	protected String getPropertyNameForFieldFacet(Field field, String prefix) {
+	    if (field.getFacetFieldType() == null) { 
+	        return null;
+	    }
+	    
+	    return new StringBuilder()
+	        .append(prefix)
+	        .append(field.getPropertyName()).append("_").append(field.getFacetFieldType().getType())
+	        .toString();
 	}
 	
 	/**
@@ -731,11 +1048,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	 * @return the property name for the field and fieldtype
 	 */
 	protected String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType) {
-	    return new StringBuilder()
-	        .append(getGlobalPrefix())
-	        .append(searchableFieldType.equals(FieldType.PRICE) ? getPricelistPrefix() : getLocalePrefix())
-	        .append(field.getPropertyName()).append("_").append(searchableFieldType.getType())
-	        .toString();
+	    String prefix;
+	    if (searchableFieldType.equals(FieldType.PRICE)) {
+	        prefix = getPricelistPrefix();
+	    } else {
+	        if (field.getTranslatable()) {
+	            prefix = getLocalePrefix();
+	        } else {
+	            prefix = getDefaultLocalePrefix();
+	        }
+	    }
+	    
+	    return getPropertyNameForFieldSearchable(field, searchableFieldType, prefix);
 	}
 	
 	/**
@@ -747,24 +1071,61 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	 * @return the property name for the facet type of this field
 	 */
 	protected String getPropertyNameForFieldFacet(Field field) {
-	    if (field.getFacetFieldType() == null) { 
+	    FieldType fieldType = field.getFacetFieldType();
+	    if (fieldType == null) {
 	        return null;
 	    }
 	    
-	    return new StringBuilder()
-	        .append(getGlobalPrefix())
-	        .append(field.getFacetFieldType().equals(FieldType.PRICE) ? getPricelistPrefix() : getLocalePrefix())
-	        .append(field.getPropertyName()).append("_").append(field.getFacetFieldType().getType())
-	        .toString();
+	    String prefix;
+	    if (fieldType.equals(FieldType.PRICE)) {
+	        prefix = getPricelistPrefix();
+	    } else {
+	        if (field.getTranslatable()) {
+	            prefix = getLocalePrefix();
+	        } else {
+	            prefix = getDefaultLocalePrefix();
+	        }
+	    }
+	    
+	    return getPropertyNameForFieldFacet(field, prefix);
+	}
+	
+	/**
+	 * @return the name of the field that keeps track what namespace this document belongs to
+	 */
+	protected String getNamespaceFieldName() {
+	    return "namespace";
 	}
 	
 	/**
 	 * @return the id field name, with the global prefix as appropriate
 	 */
 	protected String getIdFieldName() {
+	    return "id";
+	}
+	
+	/**
+	 * @return the category field name, with the global prefix as appropriate
+	 */
+	protected String getCategoryFieldName() {
+	    return "category";
+	}
+	
+	/**
+	 * @return the explicit category field name, with the global prefix as appropriate
+	 */
+	protected String getExplicitCategoryFieldName() {
+	    return "explicitCategory";
+	}
+	
+	/**
+	 * @param prefix
+	 * @return the searchable field name, with the global and specific prefix as appropriate
+	 */
+	protected String getSearchableFieldName(String prefix) {
 	    return new StringBuilder()
-	        .append(getGlobalPrefix())
-	        .append("id")
+	        .append(prefix)
+	        .append("searchable")
 	        .toString();
 	}
 	
@@ -772,42 +1133,33 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	 * @return the searchable field name, with the global and locale prefixes as appropriate
 	 */
 	protected String getSearchableFieldName() {
-	    return new StringBuilder()
-	        .append(getGlobalPrefix())
-	        .append(getLocalePrefix())
-	        .append("searchable")
-	        .toString();
-	}
-	
-	/**
-	 * @return the category field name, with the global prefix as appropriate
-	 */
-	protected String getCategoryFieldName() {
-	    return new StringBuilder()
-	        .append(getGlobalPrefix())
-	        .append("category")
-	        .toString();
-	}
-	
-	/**
-	 * @return the explicit category field name, with the global prefix as appropriate
-	 */
-	protected String getExplicitCategoryFieldName() {
-	    return new StringBuilder()
-	        .append(getGlobalPrefix())
-	        .append("explicitCategory")
-	        .toString();
+	    return getSearchableFieldName(getLocalePrefix());
 	}
 	
 	/**
 	 * @param category
 	 * @return the default sort field name for this category
 	 */
-	protected String getCategorySortField(Category category) {
+	protected String getCategorySortFieldName(Category category) {
 	    return new StringBuilder()
 	        .append(getCategoryFieldName())
 	        .append("_").append(category.getId()).append("_").append("sort_i")
 	        .toString();
 	}
+    
+	/**
+	 * @return whether or not price lists should be indexed
+	 */
+    public Boolean getIndexPriceLists() {
+        return indexPriceLists;
+    }
+
+    /**
+     * Sets the boolean that determines whether or not price lists should be indexed
+     * @param indexPriceLists
+     */
+    public void setIndexPriceLists(Boolean indexPriceLists) {
+        this.indexPriceLists = indexPriceLists;
+    }
 
 }
