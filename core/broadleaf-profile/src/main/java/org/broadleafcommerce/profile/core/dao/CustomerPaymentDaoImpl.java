@@ -23,6 +23,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
@@ -46,6 +47,19 @@ public class CustomerPaymentDaoImpl implements CustomerPaymentDao {
     @Override
     public CustomerPayment save(CustomerPayment customerPayment) {
         return em.merge(customerPayment);
+    }
+
+    @Override
+    public CustomerPayment readCustomerPaymentByToken(String token) {
+        Query query = em.createNamedQuery("BC_READ_CUSTOMER_PAYMENT_BY_TOKEN");
+        query.setParameter("token", token);
+        CustomerPayment payment = null;
+        try{
+            payment = (CustomerPayment) query.getSingleResult();
+        } catch (NoResultException e) {
+           //do nothing
+        }
+        return  payment;
     }
 
     @Override
