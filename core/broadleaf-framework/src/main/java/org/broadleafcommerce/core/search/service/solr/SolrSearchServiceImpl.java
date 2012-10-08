@@ -62,9 +62,11 @@ import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.util.StopWatch;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.xml.sax.SAXException;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.IOException;
@@ -796,16 +798,63 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	 */
 	protected List<SearchFacetDTO> buildSearchFacetDTOs(List<SearchFacet> searchFacets) {
 		List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
+		HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 		
 		for (SearchFacet facet : searchFacets) {
-			SearchFacetDTO dto = new SearchFacetDTO();
-			dto.setFacet(facet);
-			dto.setShowQuantity(true);
-			facets.add(dto);
+		    if (facetIsAvailable(facet, request)) {
+    			SearchFacetDTO dto = new SearchFacetDTO();
+    			dto.setFacet(facet);
+    			dto.setShowQuantity(true);
+    			facets.add(dto);
+		    }
 		}
 		
 		return facets;
 	}
+	
+	/**
+	 * Checks to see if the requiredFacets condition for a given facet is met.
+	 * 
+	 * @param facet
+	 * @param request
+	 * @return whether or not the facet parameter is available 
+	 */
+    protected boolean facetIsAvailable(SearchFacet facet, HttpServletRequest request) {
+	    // Facets are available by default if they have no requiredFacets
+	    if (CollectionUtils.isEmpty(facet.getRequiredFacets())) {
+            return true;
+        }
+	    
+	    // This is the valid type for this map according to the JavaDocs, but the getter does not return a typed map
+	    @SuppressWarnings("unchecked")
+        Map<String, String[]> params = request.getParameterMap();
+        
+        // If we have at least one required facet but no active facets, it's impossible for this facet to be available
+        if (CollectionUtils.isEmpty(params)) {
+            return false;
+        }
+        
+        // We must either match all or just one of the required facets depending on the requiresAllDependentFacets flag
+        int requiredMatches = facet.getRequiresAllDependentFacets() ? facet.getRequiredFacets().size() : 1;
+        int matchesSoFar = 0;
+        
+        for (SearchFacet requiredFacet : facet.getRequiredFacets()) {
+            if (requiredMatches == matchesSoFar) {
+                return true;
+            }
+            
+            // Check to see if the required facet has a value in the current request parameters
+            for (Entry<String, String[]> entry : params.entrySet()) {
+                String key = entry.getKey();
+                if (key.equals(requiredFacet.getField().getAbbreviation())) {
+                    matchesSoFar++;
+                    break;
+                }
+            }
+        }
+        
+        return requiredMatches == matchesSoFar;
+    }
 	
 	/**
 	 * Converts a propertyName to one that is able to reference inside a map. For example, consider the property

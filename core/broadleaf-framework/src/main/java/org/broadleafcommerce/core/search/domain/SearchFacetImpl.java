@@ -21,6 +21,7 @@ import org.apache.commons.collections.Predicate;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -34,6 +35,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -85,7 +88,18 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected List<SearchFacetRange> searchFacetRanges  = new ArrayList<SearchFacetRange>();
-
+    
+    @ManyToMany(targetEntity = SearchFacetImpl.class)
+    @JoinTable(name = "BLC_SEARCH_FACET_XREF", joinColumns = @JoinColumn(name = "SEARCH_FACET_ID"), inverseJoinColumns = @JoinColumn(name = "REQUIRED_FACET_ID", referencedColumnName = "SEARCH_FACET_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<SearchFacet> requiredFacets = new ArrayList<SearchFacet>();
+    
+    @Column(name = "REQUIRES_ALL_DEPENDENT")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
+    protected Boolean requiresAllDependentFacets = false;
+    
 	@Override
 	public Long getId() {
 		return id;
@@ -145,8 +159,28 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	public void setCanMultiselect(Boolean canMultiselect) {
 		this.canMultiselect = canMultiselect;
 	}
+	
+	@Override
+    public List<SearchFacet> getRequiredFacets() {
+        return requiredFacets;
+    }
 
 	@Override
+    public void setRequiredFacets(List<SearchFacet> requiredFacets) {
+        this.requiredFacets = requiredFacets;
+    }
+
+	@Override
+    public Boolean getRequiresAllDependentFacets() {
+        return requiresAllDependentFacets == null ? false : requiresAllDependentFacets;
+    }
+
+	@Override
+    public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets) {
+        this.requiresAllDependentFacets = requiresAllDependentFacets;
+    }
+
+    @Override
 	public List<SearchFacetRange> getSearchFacetRanges() {
         List<SearchFacetRange> ranges = new ArrayList<SearchFacetRange>(searchFacetRanges);
 		CollectionUtils.filter(ranges, new Predicate() {
