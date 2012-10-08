@@ -304,7 +304,7 @@ public class SkuImpl implements Sku {
             for (ProductOptionValue value : getProductOptionValues()) {
                 if (value.getPriceAdjustment() != null) {
                     if (optionValuePriceAdjustments == null) {
-                        optionValuePriceAdjustments = Money.ZERO;
+                        optionValuePriceAdjustments = new Money(BigDecimal.ZERO);
                     }
                     optionValuePriceAdjustments = optionValuePriceAdjustments.add(value.getPriceAdjustment());
                 }
