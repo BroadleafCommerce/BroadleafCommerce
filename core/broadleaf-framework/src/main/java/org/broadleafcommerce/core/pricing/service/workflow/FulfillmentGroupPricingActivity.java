@@ -16,14 +16,17 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import javax.annotation.Resource;
-
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+
+import javax.annotation.Resource;
+
+import java.math.BigDecimal;
 
 /**
  * Called during the pricing workflow to compute all of the fulfillment costs
@@ -52,7 +55,7 @@ public class FulfillmentGroupPricingActivity extends BaseActivity {
          * 3. add FG back to order
          */
 
-        Money totalShipping = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,order.getCurrency());
+        Money totalShipping = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             if (fulfillmentGroup != null) {
                 fulfillmentGroup = fulfillmentPricingService.calculateCostForFulfillmentGroup(fulfillmentGroup);

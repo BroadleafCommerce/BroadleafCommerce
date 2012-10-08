@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -23,6 +24,8 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+
+import java.math.BigDecimal;
 
 /**
  * Called during the pricing workflow to set the merchandise total for each FulfillmentGroup
@@ -38,7 +41,7 @@ public class FulfillmentGroupMerchandiseTotalActivity extends BaseActivity {
         Order order = ((PricingContext) context).getSeedData();
 
         for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            Money merchandiseTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,fulfillmentGroup.getOrder().getCurrency());
+            Money merchandiseTotal = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency());
             for(FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 OrderItem item = fulfillmentGroupItem.getOrderItem();
                 merchandiseTotal = merchandiseTotal.add(item.getPrice().multiply(item.getQuantity()));

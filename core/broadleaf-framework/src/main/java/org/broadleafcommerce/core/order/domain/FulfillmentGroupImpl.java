@@ -16,27 +16,7 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -57,6 +37,27 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -310,7 +311,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getRetailShippingPrice() {
-        return retailShippingPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(retailShippingPrice,getOrder().getCurrency());
+        return retailShippingPrice == null ? null : BroadleafCurrencyUtils.getMoney(retailShippingPrice, getOrder().getCurrency());
     }
 
     @Override
@@ -361,7 +362,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
-    	Money adjustmentsValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getOrder().getCurrency());
+    	Money adjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
         for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
         	adjustmentsValue = adjustmentsValue.add(adjustment.getValue());
         }
@@ -385,7 +386,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getSaleShippingPrice() {
-        return saleShippingPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(saleShippingPrice,getOrder().getCurrency());
+        return saleShippingPrice == null ? null : BroadleafCurrencyUtils.getMoney(saleShippingPrice, getOrder().getCurrency());
     }
 
     @Override
@@ -395,7 +396,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getShippingPrice() {
-        return shippingPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(shippingPrice,getOrder().getCurrency());
+        return shippingPrice == null ? null : BroadleafCurrencyUtils.getMoney(shippingPrice, getOrder().getCurrency());
     }
 
     @Override
@@ -415,7 +416,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getTotalTax() {
-        return totalTax == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalTax,getOrder().getCurrency());
+        return totalTax == null ? null : BroadleafCurrencyUtils.getMoney(totalTax, getOrder().getCurrency());
     }
 
     @Override
@@ -425,7 +426,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     
     @Override
     public Money getTotalItemTax() {
-		return totalItemTax == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalItemTax,getOrder().getCurrency());
+		return totalItemTax == null ? null : BroadleafCurrencyUtils.getMoney(totalItemTax, getOrder().getCurrency());
 	}
 
 	@Override
@@ -435,7 +436,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
 	@Override
     public Money getTotalFeeTax() {
-		return totalFeeTax == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalFeeTax,getOrder().getCurrency());
+		return totalFeeTax == null ? null : BroadleafCurrencyUtils.getMoney(totalFeeTax, getOrder().getCurrency());
 	}
 
 	@Override
@@ -445,7 +446,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
 	@Override
     public Money getTotalFulfillmentGroupTax() {
-		return totalFulfillmentGroupTax == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalFulfillmentGroupTax,getOrder().getCurrency());
+		return totalFulfillmentGroupTax == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentGroupTax, getOrder().getCurrency());
 	}
 
 	@Override
@@ -485,7 +486,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getMerchandiseTotal() {
-        return merchandiseTotal == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(merchandiseTotal,getOrder().getCurrency());
+        return merchandiseTotal == null ? null : BroadleafCurrencyUtils.getMoney(merchandiseTotal, getOrder().getCurrency());
     }
 
     @Override
@@ -495,7 +496,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getTotal() {
-        return total == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(total,getOrder().getCurrency());
+        return total == null ? null : BroadleafCurrencyUtils.getMoney(total, getOrder().getCurrency());
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -24,6 +25,8 @@ import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.pricing.service.ShippingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+
+import java.math.BigDecimal;
 
 /**
  * @deprecated Should use the {@link FulfillmentOption} paradigm, implemented in {@link FulfillmentPricingService}.
@@ -50,7 +53,7 @@ public class ShippingActivity extends BaseActivity {
          * 3. add FG back to order
          */
 
-        Money totalShipping = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,order.getCurrency());
+        Money totalShipping = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             fulfillmentGroup = shippingService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
             totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());

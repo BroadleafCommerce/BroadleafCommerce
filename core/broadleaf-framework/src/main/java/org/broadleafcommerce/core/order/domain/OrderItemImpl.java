@@ -16,12 +16,32 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
+import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
+import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
+import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
+import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,31 +58,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
-import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Entity
@@ -177,7 +178,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getRetailPrice() {
-        return retailPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(retailPrice,getOrder().getCurrency());
+        return retailPrice == null ? null : BroadleafCurrencyUtils.getMoney(retailPrice, getOrder().getCurrency());
     }
 
     @Override
@@ -187,7 +188,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getSalePrice() {
-        return salePrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(salePrice,getOrder().getCurrency());
+        return salePrice == null ? null : BroadleafCurrencyUtils.getMoney(salePrice, getOrder().getCurrency());
     }
 
     @Override
@@ -197,7 +198,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getPrice() {
-        return price == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(price,getOrder().getCurrency());
+        return price == null ? null : BroadleafCurrencyUtils.getMoney(price, getOrder().getCurrency());
     }
 
     @Override
@@ -309,7 +310,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getAdjustmentValue() {
-        Money adjustmentValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getOrder().getCurrency());
+        Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
         for (OrderItemAdjustment itemAdjustment : orderItemAdjustments) {
             adjustmentValue = adjustmentValue.add(itemAdjustment.getValue());
         }

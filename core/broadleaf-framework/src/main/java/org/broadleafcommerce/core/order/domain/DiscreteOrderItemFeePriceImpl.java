@@ -16,8 +16,14 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -32,13 +38,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -95,7 +96,7 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
 
 	@Override
     public Money getAmount() {
-        return amount == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amount,getDiscreteOrderItem().getBundleOrderItem().getOrder().getCurrency());
+        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getDiscreteOrderItem().getBundleOrderItem().getOrder().getCurrency());
     }
 
     @Override

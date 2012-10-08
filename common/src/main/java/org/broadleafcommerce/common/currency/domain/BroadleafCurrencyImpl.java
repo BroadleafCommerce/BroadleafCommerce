@@ -1,6 +1,10 @@
 package org.broadleafcommerce.common.currency.domain;
 
-import java.math.BigDecimal;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,12 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Author: jerryocanas Date: 9/6/12
@@ -73,32 +71,5 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency {
     public void setDefaultFlag(boolean defaultFlag) {
         this.defaultFlag = new Boolean(defaultFlag);
     }
-
-    public static Money getMoney(double d, BroadleafCurrency currency) {
-        if (currency != null) {
-            return new Money(d, currency.getCurrencyCode());
-        } else {
-            return new Money(d);
-        }
-    }
-
-    public static Money getMoney(BigDecimal d, BroadleafCurrency currency) {
-        if(d==null) {
-            return null;
-        }
-        if (currency != null) {
-            return new Money(d, currency.getCurrencyCode());
-        } else {
-            return new Money(d);
-        }
-    }
-    public static Money getMoney(BroadleafCurrency currency) {
-        if (currency != null) {
-            return new Money(currency.getCurrencyCode());
-        } else {
-            return new Money();
-        }
-    }
-
 
 }

@@ -16,15 +16,10 @@
 
 package org.broadleafcommerce.core.pricing.service.module;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
@@ -33,6 +28,11 @@ import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
+
+import javax.annotation.Resource;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * @deprecated Superceded by functionality given by {@link BandedPriceFulfillmentOption} and {@link BandedFulfillmentPricingProvider}
@@ -68,9 +68,9 @@ public class BandedShippingModule implements ShippingModule {
     	}
     	if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
     		LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
-    		fulfillmentGroup.setShippingPrice(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,fulfillmentGroup.getOrder().getCurrency()));
-            fulfillmentGroup.setSaleShippingPrice(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,fulfillmentGroup.getOrder().getCurrency()));
-            fulfillmentGroup.setRetailShippingPrice(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,fulfillmentGroup.getOrder().getCurrency()));
+    		fulfillmentGroup.setShippingPrice(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency()));
+            fulfillmentGroup.setSaleShippingPrice(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency()));
+            fulfillmentGroup.setRetailShippingPrice(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency()));
     		return;
     	}
         Address address = fulfillmentGroup.getAddress();
@@ -98,7 +98,7 @@ public class BandedShippingModule implements ShippingModule {
         } else {
             shippingPrice = sr.getBandResultQuantity();
         }
-        fulfillmentGroup.setShippingPrice(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(shippingPrice,fulfillmentGroup.getOrder().getCurrency()));
+        fulfillmentGroup.setShippingPrice(BroadleafCurrencyUtils.getMoney(shippingPrice, fulfillmentGroup.getOrder().getCurrency()));
         fulfillmentGroup.setSaleShippingPrice(fulfillmentGroup.getShippingPrice());
         fulfillmentGroup.setRetailShippingPrice(fulfillmentGroup.getSaleShippingPrice());
     }

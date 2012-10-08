@@ -16,12 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
@@ -43,6 +38,12 @@ import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitorAdapter;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class PromotableOrderImpl implements PromotableOrder {
 
@@ -361,7 +362,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     
     @Override
     public Money calculateOrderItemsCurrentPrice() {
-        Money calculatedSubTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getDelegate().getCurrency());
+        Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getDelegate().getCurrency());
         for (PromotableOrderItem orderItem : getDiscountableDiscreteOrderItems()) {
             Money currentPrice = orderItem.getCurrentPrice();
             calculatedSubTotal = calculatedSubTotal.add(currentPrice.multiply(orderItem.getQuantity()));
@@ -371,7 +372,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     
     @Override
     public Money calculateOrderItemsPriceWithoutAdjustments() {
-        Money calculatedSubTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getDelegate().getCurrency());
+        Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getDelegate().getCurrency());
         for (OrderItem orderItem : delegate.getOrderItems()) {
             Money price = orderItem.getPriceBeforeAdjustments(true);
             calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
@@ -511,7 +512,7 @@ public class PromotableOrderImpl implements PromotableOrder {
 			discountableDiscreteOrderItems = new ArrayList<PromotableOrderItem>();
 			for (PromotableOrderItem orderItem : getDiscreteOrderItems()) {
 				if (orderItem.getSku().isDiscountable() == null || orderItem.getSku().isDiscountable()) {
-					discountableDiscreteOrderItems.add((PromotableOrderItem) orderItem);
+					discountableDiscreteOrderItems.add(orderItem);
 				}
 			}
 			

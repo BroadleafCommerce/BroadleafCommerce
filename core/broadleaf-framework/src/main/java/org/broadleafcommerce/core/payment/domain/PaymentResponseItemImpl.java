@@ -16,10 +16,17 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.core.payment.service.type.TransactionType;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.MapKey;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,16 +44,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -219,7 +220,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Override
     public Money getAmountPaid() {
-        return org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amountPaid,getCurrency());
+        return BroadleafCurrencyUtils.getMoney(amountPaid, getCurrency());
     }
 
     @Override
@@ -299,7 +300,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Override
     public Money getRemainingBalance() {
-        return remainingBalance==null?null:org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(remainingBalance,getCurrency());
+        return remainingBalance == null ? null : BroadleafCurrencyUtils.getMoney(remainingBalance, getCurrency());
     }
 
     @Override

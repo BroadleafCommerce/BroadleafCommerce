@@ -16,7 +16,15 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,14 +36,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER")
@@ -103,7 +104,7 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     @Override
     public Money getDiscountedPrice() {
-        return discountedPrice == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(discountedPrice,getOrder().getCurrency());
+        return discountedPrice == null ? null : BroadleafCurrencyUtils.getMoney(discountedPrice, getOrder().getCurrency());
     }
     
     @Override

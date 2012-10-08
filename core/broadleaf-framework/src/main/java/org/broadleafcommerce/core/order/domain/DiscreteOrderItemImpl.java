@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -129,7 +130,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Money getTaxablePrice() {
-        Money taxablePrice = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,getOrder().getCurrency());
+        Money taxablePrice = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
         if (sku.isTaxable() == null || sku.isTaxable()) {
             taxablePrice = getPrice();
         }
@@ -251,7 +252,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
 	@Override
     public Money getBaseRetailPrice() {
-		return baseRetailPrice != null?org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(baseRetailPrice,getOrder().getCurrency()):null;
+		return baseRetailPrice == null ? null : BroadleafCurrencyUtils.getMoney(baseRetailPrice, getOrder().getCurrency());
 	}
 
 	@Override
@@ -261,7 +262,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
 	@Override
     public Money getBaseSalePrice() {
-		return baseSalePrice!=null?org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(baseRetailPrice,getOrder().getCurrency()):null;
+		return baseSalePrice == null ? null : BroadleafCurrencyUtils.getMoney(baseRetailPrice, getOrder().getCurrency());
 	}
 
 	@Override

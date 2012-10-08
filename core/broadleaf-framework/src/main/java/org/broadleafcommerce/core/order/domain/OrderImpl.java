@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -72,6 +73,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -224,7 +226,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getSubTotal() {
-        return subTotal == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(subTotal,getCurrency());
+        return subTotal == null ? null : BroadleafCurrencyUtils.getMoney(subTotal, getCurrency());
     }
 
     @Override
@@ -234,7 +236,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
-        Money calculatedSubTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getCurrency());
+        Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getCurrency());
         for (OrderItem orderItem : orderItems) {
         	Money price;
         	if (includeNonTaxableItems) {
@@ -263,7 +265,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getTotal() {
-        return total == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(total,getCurrency());
+        return total == null ? null : BroadleafCurrencyUtils.getMoney(total, getCurrency());
     }
 
     @Override
@@ -277,7 +279,7 @@ public class OrderImpl implements Order {
         if (myTotal == null) {
             return null;
         }
-        Money totalPayments = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,getCurrency());
+        Money totalPayments = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (PaymentInfo pi : getPaymentInfos()) {
             if (pi.getAmount() != null) {
                 totalPayments = totalPayments.add(pi.getAmount());
@@ -363,7 +365,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getTotalTax() {
-        return totalTax == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalTax,getCurrency());
+        return totalTax == null ? null : BroadleafCurrencyUtils.getMoney(totalTax, getCurrency());
     }
 
     @Override
@@ -373,7 +375,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getTotalShipping() {
-        return totalShipping == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(totalShipping,getCurrency());
+        return totalShipping == null ? null : BroadleafCurrencyUtils.getMoney(totalShipping, getCurrency());
     }
 
     @Override
@@ -488,7 +490,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getItemAdjustmentsValue() {
-        Money itemAdjustmentsValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getCurrency());
+        Money itemAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderItem orderItem : orderItems) {
             itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getAdjustmentValue().multiply(orderItem.getQuantity()));
         }
@@ -497,7 +499,7 @@ public class OrderImpl implements Order {
     
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
-    	Money adjustmentValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getCurrency());
+    	Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
         	adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFulfillmentGroupAdjustmentsValue());
         }
@@ -506,7 +508,7 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getOrderAdjustmentsValue() {
-        Money orderAdjustmentsValue = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,getCurrency());
+        Money orderAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderAdjustment orderAdjustment : orderAdjustments) {
             orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
         }

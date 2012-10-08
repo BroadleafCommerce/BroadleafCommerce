@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.catalog.service.dynamic;
 
 import java.util.HashMap;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -58,9 +58,9 @@ public class PriceListDynamicSkuPricingServiceImpl implements DynamicSkuPricingS
                         .getPriceDataMap().get(priceList.getPriceKey());
                 if (priceData != null) {
                     prices = new DynamicSkuPrices();
-                    prices.setRetailPrice(BroadleafCurrencyImpl.getMoney(
+                    prices.setRetailPrice(BroadleafCurrencyUtils.getMoney(
                             priceData.getRetailPrice(), priceList.getCurrencyCode()));
-                    prices.setSalePrice(BroadleafCurrencyImpl.getMoney(
+                    prices.setSalePrice(BroadleafCurrencyUtils.getMoney(
                             priceData.getSalePrice(), priceList.getCurrencyCode()));
                 }
             }
@@ -71,7 +71,7 @@ public class PriceListDynamicSkuPricingServiceImpl implements DynamicSkuPricingS
                     if (optionValue.getPriceAdjustmentMap() != null) {                        
                         PriceAdjustment adjustment = optionValue.getPriceAdjustmentMap().get(priceList.getPriceKey());
                         if (adjustment != null && adjustment.getPriceAdjustment() != null) {
-                            Money adjustmentAsMoney = BroadleafCurrencyImpl.getMoney(adjustment.getPriceAdjustment(), priceList.getCurrencyCode());
+                            Money adjustmentAsMoney = BroadleafCurrencyUtils.getMoney(adjustment.getPriceAdjustment(), priceList.getCurrencyCode());
                             if (adjustments == null) {
                                 adjustments = adjustmentAsMoney;
                             } else {
@@ -117,7 +117,7 @@ public class PriceListDynamicSkuPricingServiceImpl implements DynamicSkuPricingS
                          .getPriceDataMap().get(priceList.getPriceKey());
                 if (priceData != null) {
                     prices = new DynamicSkuPrices();
-                    prices.setSalePrice(BroadleafCurrencyImpl.getMoney(
+                    prices.setSalePrice(BroadleafCurrencyUtils.getMoney(
                     priceData.getSalePrice(), priceList.getCurrencyCode()));
                   
                 }
@@ -159,7 +159,7 @@ public class PriceListDynamicSkuPricingServiceImpl implements DynamicSkuPricingS
                         .getPriceAdjustmentMap().get(priceList.getPriceKey());
                 if (priceData != null) {
                     prices = new DynamicSkuPrices();
-                    prices.setPriceAdjustment(BroadleafCurrencyImpl.getMoney(
+                    prices.setPriceAdjustment(BroadleafCurrencyUtils.getMoney(
                             priceData.getPriceAdjustment(), priceList.getCurrencyCode()));
                   
                 }

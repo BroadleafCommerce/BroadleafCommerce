@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.Order;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
 
 public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrderOffer {
 
@@ -55,11 +56,11 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
         if (getOffer() != null && getOrder() != null){
             if (getOrder().getSubTotal() != null) {
                 Money priceToUse = getOrder().getSubTotal();
-                Money discountAmount = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0d,getOrder().getDelegate().getCurrency());
+                Money discountAmount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getDelegate().getCurrency());
                 if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountAmount = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOffer().getValue(),getOrder().getDelegate().getCurrency());
+                    discountAmount = BroadleafCurrencyUtils.getMoney(getOffer().getValue(), getOrder().getDelegate().getCurrency());
                 } else if (getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountAmount = priceToUse.subtract(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOffer().getValue(),getOrder().getDelegate().getCurrency()));
+                    discountAmount = priceToUse.subtract(BroadleafCurrencyUtils.getMoney(getOffer().getValue(), getOrder().getDelegate().getCurrency()));
                 } else if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                     discountAmount = priceToUse.multiply(getOffer().getValue().divide(new BigDecimal("100")));
                 }

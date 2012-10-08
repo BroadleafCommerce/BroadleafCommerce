@@ -20,6 +20,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
@@ -88,7 +89,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 
     @Override
     public void calculateFulfillmentGroupTotal(PromotableOrder order) {
-        Money totalShipping = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D, order.getDelegate().getCurrency());
+        Money totalShipping = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getDelegate().getCurrency());
         for (PromotableFulfillmentGroup fulfillmentGroupMember : order.getFulfillmentGroups()) {
             PromotableFulfillmentGroup fulfillmentGroup = fulfillmentGroupMember;
             if (fulfillmentGroup.getAdjustmentPrice() != null) {
@@ -221,13 +222,13 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     }
 
     protected boolean compareAndAdjustFulfillmentGroupOffers(PromotableOrder order, boolean fgOfferApplied) {
-        Money regularOrderDiscountShippingTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D, order.getDelegate().getCurrency());
+        Money regularOrderDiscountShippingTotal = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getDelegate().getCurrency());
         regularOrderDiscountShippingTotal = regularOrderDiscountShippingTotal.add(order.calculateOrderItemsPriceWithoutAdjustments());
         for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
             regularOrderDiscountShippingTotal = regularOrderDiscountShippingTotal.add(fg.getAdjustmentPrice());
         }
 
-        Money discountOrderRegularShippingTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D, order.getDelegate().getCurrency());
+        Money discountOrderRegularShippingTotal = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getDelegate().getCurrency());
         discountOrderRegularShippingTotal = discountOrderRegularShippingTotal.add(order.getSubTotal());
         for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
             discountOrderRegularShippingTotal = discountOrderRegularShippingTotal.add(fg.getPriceBeforeAdjustments(true));

@@ -16,7 +16,15 @@
 
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,14 +34,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.math.BigDecimal;
 
 /**
  * 
@@ -60,7 +61,7 @@ public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl imple
 
     @Override
     public Money getPrice() {
-        return price == null ? null : org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(price,getCurrency());
+        return price == null ? null : BroadleafCurrencyUtils.getMoney(price, getCurrency());
     }
 
     @Override

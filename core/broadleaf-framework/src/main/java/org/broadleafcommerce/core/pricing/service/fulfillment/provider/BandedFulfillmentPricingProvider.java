@@ -16,14 +16,9 @@
 
 package org.broadleafcommerce.core.pricing.service.fulfillment.provider;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.UnitOfMeasureUtil;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
@@ -40,6 +35,12 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBand;
 import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>Used in conjunction with {@link BandedPriceFulfillmentOption} and {@link BandedWeightFulfillmentOption}. 
@@ -216,7 +217,7 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                 //add the flat rate amount calculated on the Sku
                 lowestBandFulfillmentPrice = lowestBandFulfillmentPrice.add(flatTotal);
 
-                shippingPrices.put(option, org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(lowestBandFulfillmentPrice,fulfillmentGroup.getOrder().getCurrency()));
+                shippingPrices.put(option, BroadleafCurrencyUtils.getMoney(lowestBandFulfillmentPrice, fulfillmentGroup.getOrder().getCurrency()));
             }
         }
 

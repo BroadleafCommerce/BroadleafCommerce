@@ -16,8 +16,16 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
+import org.broadleafcommerce.core.payment.service.type.TransactionType;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,15 +41,8 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.annotations.Index;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -211,7 +212,7 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Override
     public Money getAmountPaid() {
-        return org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(amountPaid,currency);
+        return BroadleafCurrencyUtils.getMoney(amountPaid, currency);
     }
 
     @Override

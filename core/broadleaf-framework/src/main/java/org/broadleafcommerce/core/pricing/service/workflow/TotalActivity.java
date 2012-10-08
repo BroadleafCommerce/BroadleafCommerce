@@ -16,8 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import java.math.BigDecimal;
-
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
@@ -26,6 +25,8 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.TaxDetail;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+
+import java.math.BigDecimal;
 
 /**
  * The TotalActivity is responsible for calculating and setting totals for a given order.
@@ -43,7 +44,7 @@ public class TotalActivity extends BaseActivity {
         
         setTaxSums(order);
         
-        Money total = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency());
+        Money total = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
         total = total.add(order.getSubTotal());
         total = total.subtract(order.getOrderAdjustmentsValue());
         total = total.add(order.getTotalShipping());
@@ -52,9 +53,9 @@ public class TotalActivity extends BaseActivity {
             total = total.add(order.getTotalTax());
         }
 
-        Money fees = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency());
+        Money fees = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            Money fgTotal = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0D,order.getCurrency());
+            Money fgTotal = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
             fgTotal = fgTotal.add(fulfillmentGroup.getMerchandiseTotal());
             fgTotal = fgTotal.add(fulfillmentGroup.getShippingPrice());
             fgTotal = fgTotal.add(fulfillmentGroup.getTotalTax());
@@ -75,12 +76,12 @@ public class TotalActivity extends BaseActivity {
     }
     
     protected void setTaxSums(Order order) {
-        Money orderTotalTax = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency());
+        Money orderTotalTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
         
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-            Money fgTotalFgTax = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency());
-            Money fgTotalItemTax = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency());
-            Money fgTotalFeeTax = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency());
+            Money fgTotalFgTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
+            Money fgTotalItemTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
+            Money fgTotalFeeTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
             
             // Add in all FG specific taxes (such as shipping tax)
             if (fg.getTaxes() != null) {
@@ -90,7 +91,7 @@ public class TotalActivity extends BaseActivity {
             }
             
             for (FulfillmentGroupItem item : fg.getFulfillmentGroupItems()) {
-                Money itemTotalTax = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency());
+                Money itemTotalTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
                 
                 // Add in all taxes for this item
                 if (item.getTaxes() != null) {
@@ -104,7 +105,7 @@ public class TotalActivity extends BaseActivity {
             }
             
             for (FulfillmentGroupFee fee : fg.getFulfillmentGroupFees()) {
-                Money feeTotalTax = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency());
+                Money feeTotalTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
                 
                 // Add in all taxes for this fee
                 if (fee.getTaxes() != null) {
@@ -117,7 +118,7 @@ public class TotalActivity extends BaseActivity {
                 fgTotalFeeTax = fgTotalFeeTax.add(feeTotalTax);
             }
             
-            Money fgTotalTax = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(BigDecimal.ZERO,order.getCurrency()).add(fgTotalFgTax).add(fgTotalItemTax).add(fgTotalFeeTax);
+            Money fgTotalTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency()).add(fgTotalFgTax).add(fgTotalItemTax).add(fgTotalFeeTax);
             
             // Set the fulfillment group tax sums
             fg.setTotalFulfillmentGroupTax(fgTotalFgTax);

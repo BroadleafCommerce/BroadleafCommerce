@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PromotableCandidateItemOfferImpl implements PromotableCandidateItemOffer {
 	
@@ -64,18 +65,18 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
 
 	@Override
     public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
-		Money savings = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(0,orderItem.getDelegate().getOrder().getCurrency());
+		Money savings = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, orderItem.getDelegate().getOrder().getCurrency());
 		Money salesPrice = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
 		if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
 			//Price reduction by a fixed amount
-			savings = savings.add(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOffer().getValue(),orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings));
+			savings = savings.add(BroadleafCurrencyUtils.getMoney(getOffer().getValue(), orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings));
 		} else if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
 			//Price reduction by a percent off
 			BigDecimal savingsPercent = getOffer().getValue().divide(new BigDecimal(100));
 			savings = savings.add(salesPrice.multiply(savingsPercent).multiply(qtyToReceiveSavings));
 		} else {
 			//Different price (presumably less than the normal price)
-			savings = savings.add(salesPrice.multiply(qtyToReceiveSavings).subtract(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(getOffer().getValue(),orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings)));
+			savings = savings.add(salesPrice.multiply(qtyToReceiveSavings).subtract(BroadleafCurrencyUtils.getMoney(getOffer().getValue(), orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings)));
 		}
 		return savings;
 	}

@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
 
 public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableCandidateFulfillmentGroupOffer {
 
@@ -62,9 +63,9 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
                 }
 
                 if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountedAmount = org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(delegate.getOffer().getValue(),delegate.getFulfillmentGroup().getOrder().getCurrency());
+                    discountedAmount = BroadleafCurrencyUtils.getMoney(delegate.getOffer().getValue(), delegate.getFulfillmentGroup().getOrder().getCurrency());
                 } else if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountedAmount = priceToUse.subtract(org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl.getMoney(delegate.getOffer().getValue(),delegate.getFulfillmentGroup().getOrder().getCurrency()));
+                    discountedAmount = priceToUse.subtract(BroadleafCurrencyUtils.getMoney(delegate.getOffer().getValue(), delegate.getFulfillmentGroup().getOrder().getCurrency()));
                 } else if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                     discountedAmount = priceToUse.multiply(delegate.getOffer().getValue().divide(new BigDecimal("100")));
                 }
