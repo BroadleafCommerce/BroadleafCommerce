@@ -28,6 +28,8 @@ public interface CustomerPaymentDao {
 
     public CustomerPayment readCustomerPaymentById(Long customerPaymentId);
 
+    public CustomerPayment readCustomerPaymentByToken(String token);
+
     public void deleteCustomerPaymentById(Long customerPaymentId);
 
     public CustomerPayment create();

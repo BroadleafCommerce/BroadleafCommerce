@@ -9,4 +9,9 @@
             ORDER BY cp.id</query>
     </named-query>
 
+    <named-query name="BC_READ_CUSTOMER_PAYMENT_BY_TOKEN" >
+        <query>SELECT cp FROM org.broadleafcommerce.profile.core.domain.CustomerPayment cp
+            WHERE cp.paymentToken = :token</query>
+    </named-query>
+
 </entity-mappings>
