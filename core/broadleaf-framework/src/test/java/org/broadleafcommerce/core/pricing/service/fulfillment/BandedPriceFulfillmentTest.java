@@ -162,7 +162,8 @@ public class BandedPriceFulfillmentTest extends TestCase {
         if (flatRates != null && flatRates.length > orderItemsToCreate) {
             throw new IllegalStateException("Flat rates for Skus should be less than or equal to the number of order items being created");
         }
-        
+        Order result = new OrderImpl();
+
         List<FulfillmentGroupItem> fulfillmentItems = new ArrayList<FulfillmentGroupItem>();
         for (int i = 0; i < orderItemsToCreate; i++) {
             OrderItem orderItem = (flatRates != null && i < flatRates.length) ? new DiscreteOrderItemImpl() : new OrderItemImpl();
@@ -174,6 +175,7 @@ public class BandedPriceFulfillmentTest extends TestCase {
             }
             
             orderItem.setPrice(new Money(retailTotal.divide(new BigDecimal(orderItemsToCreate))));
+            orderItem.setOrder(result);
             FulfillmentGroupItem fulfillmentItem = new FulfillmentGroupItemImpl();
             fulfillmentItem.setOrderItem(orderItem);
             fulfillmentItem.setQuantity(1);
@@ -182,11 +184,11 @@ public class BandedPriceFulfillmentTest extends TestCase {
         }
         
         FulfillmentGroup group = new FulfillmentGroupImpl();
+        group.setOrder(result);
         group.setFulfillmentGroupItems(fulfillmentItems);
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         groups.add(group);
         
-        Order result = new OrderImpl();
         result.setFulfillmentGroups(groups);
         return result;
     }

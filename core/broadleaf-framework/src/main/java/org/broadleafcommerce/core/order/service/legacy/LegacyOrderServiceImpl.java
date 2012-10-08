@@ -874,6 +874,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
         if (product == null || ! (product instanceof ProductBundle)) {
             DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(createDiscreteOrderItemRequest(order, null, sku, product, category, orderItemRequestDTO.getQuantity(), orderItemRequestDTO.getItemAttributes()));
+            item.setOrder(order);
             List<OrderItem> orderItems = order.getOrderItems();
             orderItems.add(item);
             return updateOrder(order, priceOrder);
@@ -894,6 +895,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
                 Category bundleCategory = determineCategory(bundleProduct, orderItemRequestDTO.getCategoryId());
 
                 DiscreteOrderItem bundleDiscreteItem = orderItemService.createDiscreteOrderItem(createDiscreteOrderItemRequest(null, bundleOrderItem, bundleSku, bundleProduct, bundleCategory, skuBundleItem.getQuantity(), orderItemRequestDTO.getItemAttributes()));
+                bundleDiscreteItem.setBundleOrderItem(bundleOrderItem);
                 bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
                 bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
             }
