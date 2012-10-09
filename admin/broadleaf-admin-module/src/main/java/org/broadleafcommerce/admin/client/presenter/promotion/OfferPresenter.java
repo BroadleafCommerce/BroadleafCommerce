@@ -89,7 +89,6 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
     }
 
     protected void initializeDisplay(final Record selectedRecord, final FilterRestartCallback cb) {
-        BLCMain.MASTERVIEW.clearStatus();
         getDisplay().getAdvancedButton().setSelected(false);
         getDisplay().getAdvancedButton().enable();
         getDisplay().getDeliveryTypeRadio().enable();
@@ -299,7 +298,6 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    BLCMain.MASTERVIEW.clearStatus();
                     getDisplay().getAdvancedButton().setSelected(false);
                     getDisplay().getAdvancedButton().disable();
                     getDisplay().getDeliveryTypeRadio().disable();

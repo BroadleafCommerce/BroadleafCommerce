@@ -39,7 +39,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessPro
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.util.SC;
@@ -251,7 +250,7 @@ public class BLCMain implements EntryPoint {
         modules = orderedModules;
 
         modules.get(currentModuleKey).preDraw();
-        MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, orderedModules);
+        MASTERVIEW = new MasterView(orderedModules);
         //MASTERVIEW.draw();
 
         RootPanel.get("gwt-component").add(MASTERVIEW);

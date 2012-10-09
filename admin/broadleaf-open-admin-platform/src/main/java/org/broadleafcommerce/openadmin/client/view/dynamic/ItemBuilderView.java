@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic;
 
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
@@ -26,6 +24,7 @@ import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.IntegerItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
@@ -126,7 +125,8 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 
 		itemFilterBuilder = new BLCFilterBuilder();  
 		itemFilterBuilder.setDataSource(itemDataSource);
-		itemFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(itemDataSource));
+		//itemFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(itemDataSource));
+        itemFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
 		itemFilterBuilder.setLayoutBottomMargin(10);
 		itemFilterBuilder.setAllowEmpty(true);
 		itemFilterBuilder.setValidateOnChange(false);
