@@ -63,14 +63,15 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
 	@ManyToOne(targetEntity = PriceListImpl.class)
     @JoinColumn(name = "PRICE_LIST_ID")
     @Index(name="PRICE_LIST_INDEX", columnNames={"PRICE_LIST_ID"})
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_priceList", order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
 	protected PriceList priceList;
     
     @Column(name = "MIN_VALUE", precision=19, scale=5, nullable = false)
-    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_MIN_VALUE", order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_minValue", order=2, group = "SearchFacetRangeImpl_Description", prominent=true)
     protected BigDecimal minValue;
     
     @Column(name = "MAX_VALUE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_MAX_VALUE", order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_maxValue", order=3, group = "SearchFacetRangeImpl_Description", prominent=true)
     protected BigDecimal maxValue;
     
 	@Override

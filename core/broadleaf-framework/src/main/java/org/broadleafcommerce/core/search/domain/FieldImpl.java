@@ -77,7 +77,7 @@ public class FieldImpl implements Field,Serializable {
     
     // This is a broadleaf enumeration
     @Column(name = "FACET_FIELD_TYPE")
-    @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_descrpition")
+    @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_descrpition", excluded = true)
     protected String facetFieldType;
 
     // This is a broadleaf enumeration
