@@ -56,8 +56,6 @@ import javax.persistence.TableGenerator;
     @AdminPresentation(friendlyName = "PriceListImpl_ID", group = "PriceListImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-
-
     @Column (name = "FRIENDLY_NAME")
     @AdminPresentation(friendlyName = "PriceListImpl_Friendly_Name", order=2, group = "PriceListImpl_Details", prominent=true)
     protected String friendlyName;

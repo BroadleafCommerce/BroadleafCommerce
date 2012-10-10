@@ -17,6 +17,12 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.hibernate.annotations.Cache;
@@ -42,6 +48,11 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_FACET_RANGE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationOverrides({
+        @AdminPresentationOverride(name = "searchFacet", value = @AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name = "priceList.friendlyName", value = @AdminPresentation(excluded = false, friendlyName = "PriceListImpl_Friendly_Name", order=1, group = "SearchFacetRangeImpl_Description", prominent=true, visibility = VisibilityEnum.FORM_HIDDEN))
+})
 public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
 	
     /**
@@ -63,10 +74,11 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
 	@ManyToOne(targetEntity = PriceListImpl.class)
     @JoinColumn(name = "PRICE_LIST_ID")
     @Index(name="PRICE_LIST_INDEX", columnNames={"PRICE_LIST_ID"})
-    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_priceList", order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
+	@AdminPresentation(friendlyName = "SearchFacetRangeImpl_priceList", excluded = true, order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
 	protected PriceList priceList;
     
-    @Column(name = "MIN_VALUE", precision=19, scale=5, nullable = false)
+    @Column(name = "MIN_VALUE", precision=19, scale=5, nullable = false) 
     @AdminPresentation(friendlyName = "SearchFacetRangeImpl_minValue", order=2, group = "SearchFacetRangeImpl_Description", prominent=true)
     protected BigDecimal minValue;
     
