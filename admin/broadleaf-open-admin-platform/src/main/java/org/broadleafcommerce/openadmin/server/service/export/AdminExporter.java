@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.server.service.export;
+package org.broadleafcommerce.openadmin.server.service.export;
 
-import org.broadleafcommerce.admin.client.dto.AdminExporterType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 
 import javax.servlet.ServletOutputStream;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +92,7 @@ public interface AdminExporter {
      * The type of this exporter
      * @return
      */
-    public AdminExporterType getType();
+    public String getType();
 
     /**
      * The file name used in the Content-Disposition header for "attachment"

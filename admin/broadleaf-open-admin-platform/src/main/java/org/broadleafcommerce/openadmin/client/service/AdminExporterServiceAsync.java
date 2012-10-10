@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.dto;
+package org.broadleafcommerce.openadmin.client.service;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
+
+import java.util.List;
 
 /**
  * 
  * @author Phillip Verheyden
  */
-public enum AdminExporterType implements IsSerializable {
-    ORDER,
-    PRODUCT
+public interface AdminExporterServiceAsync {
+
+    public void getExporters(String type, AsyncCallback<List<AdminExporterDTO>> callback);
+
 }

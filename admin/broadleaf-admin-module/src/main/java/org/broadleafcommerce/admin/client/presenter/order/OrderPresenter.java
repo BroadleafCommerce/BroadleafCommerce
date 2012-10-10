@@ -32,8 +32,8 @@ import org.broadleafcommerce.admin.client.datasource.order.PaymentInfoListDataSo
 import org.broadleafcommerce.admin.client.datasource.order.PaymentLogListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.PaymentResponseItemListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.StateListDataSourceFactory;
-import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
-import org.broadleafcommerce.admin.client.dto.AdminExporterType;
+import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
+import org.broadleafcommerce.admin.client.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.dialog.ExportListSelectionDialog;
 import org.broadleafcommerce.admin.client.view.order.OrderDisplay;
@@ -195,7 +195,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getDisplay().getExportOrdersButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                AppServices.EXPORT.getExporters(AdminExporterType.ORDER, new AsyncCallback<List<AdminExporterDTO>>() {
+                AppServices.EXPORT.getExporters(AdminExporterType.ORDER.toString(), new AsyncCallback<List<AdminExporterDTO>>() {
                     @Override
                     public void onSuccess(final List<AdminExporterDTO> result) {
                         if (result == null || result.size() == 0) {

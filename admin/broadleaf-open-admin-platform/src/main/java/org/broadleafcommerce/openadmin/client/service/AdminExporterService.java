@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.service;
-
-import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
-import org.broadleafcommerce.admin.client.dto.AdminExporterType;
-import org.springframework.security.access.annotation.Secured;
+package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
+import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.List;
 
@@ -32,6 +30,6 @@ import java.util.List;
 public interface AdminExporterService extends RemoteService {
 
     @Secured("PERMISSION_OTHER_DEFAULT")
-    public List<AdminExporterDTO> getExporters(AdminExporterType type) throws ApplicationSecurityException;
+    public List<AdminExporterDTO> getExporters(String type) throws ApplicationSecurityException;
 
 }

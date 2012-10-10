@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.admin.client.view.dialog;
 
-import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
+import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;

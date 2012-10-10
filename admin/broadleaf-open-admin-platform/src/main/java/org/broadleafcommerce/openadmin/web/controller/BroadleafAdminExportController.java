@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.web.controller;
+package org.broadleafcommerce.openadmin.web.controller;
 
-import org.broadleafcommerce.admin.server.service.export.AdminExporter;
+import org.broadleafcommerce.openadmin.server.service.export.AdminExporter;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;

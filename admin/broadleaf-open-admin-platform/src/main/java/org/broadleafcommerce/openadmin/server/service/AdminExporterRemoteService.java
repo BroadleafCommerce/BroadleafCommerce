@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.server.service;
+package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
-import org.broadleafcommerce.admin.client.dto.AdminExporterType;
-import org.broadleafcommerce.admin.client.service.AdminExporterService;
-import org.broadleafcommerce.admin.server.service.export.AdminExporter;
+import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
+import org.broadleafcommerce.openadmin.client.service.AdminExporterService;
+import org.broadleafcommerce.openadmin.server.service.export.AdminExporter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -46,7 +45,7 @@ public class AdminExporterRemoteService implements AdminExporterService, Applica
     protected List<AdminExporter> exporters;
     
     @Override
-    public List<AdminExporterDTO> getExporters(AdminExporterType type) {
+    public List<AdminExporterDTO> getExporters(String type) {
         List<AdminExporterDTO> result = new ArrayList<AdminExporterDTO>();
         if (!CollectionUtils.isEmpty(getExporters())) {
             for (AdminExporter exporter : getExporters()) {

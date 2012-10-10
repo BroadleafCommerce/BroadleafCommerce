@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.web.controller;
+package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 

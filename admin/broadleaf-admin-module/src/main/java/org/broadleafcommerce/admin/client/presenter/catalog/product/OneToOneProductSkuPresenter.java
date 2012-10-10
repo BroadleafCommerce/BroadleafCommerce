@@ -30,8 +30,8 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductSkus
 import org.broadleafcommerce.admin.client.datasource.catalog.product.SkuBundleItemsDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.pricelist.PriceListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.pricelist.PriceListMapDataSourceFactory;
-import org.broadleafcommerce.admin.client.dto.AdminExporterDTO;
-import org.broadleafcommerce.admin.client.dto.AdminExporterType;
+import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
+import org.broadleafcommerce.admin.client.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
 import org.broadleafcommerce.admin.client.view.dialog.ExportListSelectionDialog;
@@ -194,7 +194,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		getDisplay().getExportProductsButton().addClickHandler(new ClickHandler() {
 		    @Override
 		    public void onClick(ClickEvent event) {
-		        AppServices.EXPORT.getExporters(AdminExporterType.PRODUCT, new AsyncCallback<List<AdminExporterDTO>>() {
+		        AppServices.EXPORT.getExporters(AdminExporterType.PRODUCT.toString(), new AsyncCallback<List<AdminExporterDTO>>() {
 		            @Override
 		            public void onSuccess(final List<AdminExporterDTO> result) {
 		                if (result == null || result.size() == 0) {
