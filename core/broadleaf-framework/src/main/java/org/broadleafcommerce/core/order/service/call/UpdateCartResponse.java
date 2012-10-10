@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepriceOrderResponse implements Serializable {
+public class UpdateCartResponse implements Serializable {
     protected static final long serialVersionUID = 1L;
 
     protected Order order;

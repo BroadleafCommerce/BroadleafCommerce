@@ -21,6 +21,8 @@ import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -31,6 +33,8 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
@@ -201,8 +205,16 @@ public class OrderImpl implements Order {
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "PriceListImpl_Currency_Code", order=1, group = "PriceListImpl_Details")
     protected BroadleafCurrency currency;
-  
 
+    @ManyToOne(targetEntity = PriceListImpl.class)
+    @JoinColumn(name = "PRICELIST_ID")
+    @AdminPresentation(friendlyName = "PriceListImpl_Code", order=1, group = "PriceListImpl_Details")
+    protected PriceList priceList;
+
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "LOCALE_CODE")
+    @AdminPresentation(friendlyName = "LocaleImpl_Code", order=1, group = "LocaleImpl_Details")
+    protected Locale locale;
 
     @Override
     public Long getId() {
@@ -562,6 +574,26 @@ public class OrderImpl implements Order {
 	@Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
+    }
+
+    @Override
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    @Override
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     @Override

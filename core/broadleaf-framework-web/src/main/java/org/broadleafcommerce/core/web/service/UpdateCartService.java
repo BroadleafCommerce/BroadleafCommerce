@@ -18,10 +18,7 @@ package org.broadleafcommerce.core.web.service;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.call.RepriceOrderResponse;
-import org.broadleafcommerce.core.order.service.exception.AddToCartException;
-import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
 
 /**
  * Provides methods to facilitate order repricing.
@@ -29,7 +26,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
  * Author: jerryocanas
  * Date: 9/26/12
  */
-public interface RepriceOrderService {
+public interface UpdateCartService {
 
     /**
      * Sets the currency that was set as active on last pass through.
@@ -51,13 +48,20 @@ public interface RepriceOrderService {
      *
      * @return
      */
-    public boolean needsRepricing();
+    public boolean currencyHasChanged();
 
     /**
      * Reprices the order by removing all items and recreating the cart calling for a reprice on the new cart.
      *
      * @return
      */
-    public RepriceOrderResponse repriceOrder(Order order)
-            throws PricingException, RemoveFromCartException, AddToCartException;
+    public UpdateCartResponse copyCartToNewLocaleAndPricelist(Order order);
+
+    /**
+     * Validates the cart against the active price list and locale.
+     *
+     * @param cart
+     * @throws IllegalArgumentException
+     */
+    public void validateCart (Order cart) throws IllegalArgumentException;
 }

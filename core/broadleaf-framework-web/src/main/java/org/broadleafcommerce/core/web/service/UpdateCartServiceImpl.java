@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.RepriceOrderResponse;
+import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -42,9 +42,9 @@ import java.util.List;
  * Author: jerryocanas
  * Date: 9/26/12
  */
-@Service("blCurrencyRepriceOrderService")
-public class RepriceOrderServiceImpl implements RepriceOrderService {
-    protected static final Log LOG = LogFactory.getLog(RepriceOrderServiceImpl.class);
+@Service("blUpdateCartService")
+public class UpdateCartServiceImpl implements UpdateCartService {
+    protected static final Log LOG = LogFactory.getLog(UpdateCartServiceImpl.class);
 
     protected static BroadleafCurrency savedCurrency;
 
@@ -52,7 +52,7 @@ public class RepriceOrderServiceImpl implements RepriceOrderService {
     protected OrderService orderService;
 
     @Override
-    public boolean needsRepricing() {
+    public boolean currencyHasChanged() {
         BroadleafCurrency currency = findActiveCurrency();
         if (getSavedCurrency() == null) {
             setSavedCurrency(currency);
@@ -63,8 +63,7 @@ public class RepriceOrderServiceImpl implements RepriceOrderService {
     }
 
     @Override
-    public RepriceOrderResponse repriceOrder(Order currentCart)
-            throws PricingException, RemoveFromCartException, AddToCartException {
+    public UpdateCartResponse copyCartToNewLocaleAndPricelist(Order currentCart) {
         if(currentCart.getOrderItems() == null){
             return null;
         }
@@ -109,22 +108,54 @@ public class RepriceOrderServiceImpl implements RepriceOrderService {
         }
 
         for(OrderItem orderItem: itemsToReset){
-            currentCart = orderService.removeItem(currentCart.getId(), orderItem.getId(), false);
+            try {
+                currentCart = orderService.removeItem(currentCart.getId(), orderItem.getId(), false);
+            } catch (RemoveFromCartException e) {
+                e.printStackTrace();
+            }
         }
 
         for(AddToCartItem itemRequest: itemsToReprice){
-            currentCart = orderService.addItem(currentCart.getId(), itemRequest, false);
+            try {
+                currentCart = orderService.addItem(currentCart.getId(), itemRequest, false);
+            } catch (AddToCartException e) {
+                e.printStackTrace();
+            }
         }
 
         // Reprice and save the cart
-        currentCart = orderService.save(currentCart, repriceOrder);
+        try {
+         currentCart = orderService.save(currentCart, repriceOrder);
+        } catch (PricingException e) {
+         e.printStackTrace();
+        }
         setSavedCurrency(currency);
 
-        RepriceOrderResponse repriceOrderResponse = new RepriceOrderResponse();
-        repriceOrderResponse.setRemovedItems(itemsToRemove);
-        repriceOrderResponse.setOrder(currentCart);
+        UpdateCartResponse updateCartResponse = new UpdateCartResponse();
+        updateCartResponse.setRemovedItems(itemsToRemove);
+        updateCartResponse.setOrder(currentCart);
 
-        return repriceOrderResponse;
+        return updateCartResponse;
+    }
+
+    @Override
+    public void validateCart(Order cart) {
+        if(BroadleafRequestContext.hasLocale()){
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            String validationMsg;
+            if(brc.getPriceList() != cart.getPriceList()){
+                validationMsg = "The cart price list [" + cart.getPriceList().getFriendlyName() +
+                        "] does not match the current price list [" + brc.getPriceList().getFriendlyName() + "]";
+                LOG.error(validationMsg);
+                throw new IllegalArgumentException(validationMsg);
+            }
+            if(!brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())){
+                validationMsg = "The cart Locale [" + cart.getLocale().getLocaleCode() +
+                        "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]";
+                LOG.error(validationMsg);
+                throw new IllegalArgumentException(validationMsg);
+            }
+        }
     }
 
     protected BroadleafCurrency findActiveCurrency(){
@@ -159,4 +190,6 @@ public class RepriceOrderServiceImpl implements RepriceOrderService {
     public BroadleafCurrency getSavedCurrency() {
         return savedCurrency;
     }
+
+
 }

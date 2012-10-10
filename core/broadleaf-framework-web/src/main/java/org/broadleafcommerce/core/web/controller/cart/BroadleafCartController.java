@@ -16,8 +16,10 @@
 
 package org.broadleafcommerce.core.web.controller.cart;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
@@ -60,7 +62,6 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @throws PricingException
 	 */
 	public String cart(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-        repriceOrderProcessor.execute(request, response);
         return getCartView();
 	}
 	
@@ -84,13 +85,17 @@ public class BroadleafCartController extends AbstractCartController {
 		
 		// If the cart is currently empty, it will be the shared, "null" cart. We must detect this
 		// and provision a fresh cart for the current customer upon the first cart add
-		if (cart == null || cart.equals(orderService.getNullOrder())) {
-			cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
-		}
+		if (cart == null || cart instanceof NullOrderImpl) {
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            if (BroadleafRequestContext.hasLocale() && (brc.getPriceList() != null)){
+                cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request), brc.getPriceList(), brc.getLocale());
+            } else {
+                cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
+            }
+        }
 
-        // Will reprice the order if the currency has been changed since the last addition to the cart
-        repriceOrderProcessor.execute(request, response);
-		
+        updateCartService.validateCart(cart);
+
 		cart = orderService.addItem(cart.getId(), itemRequest, false);
 		cart = orderService.save(cart,  true);
 		CartState.setCart(cart);
@@ -260,5 +265,5 @@ public class BroadleafCartController extends AbstractCartController {
 	public String getCartPageRedirect() {
 		return cartPageRedirect;
 	}
-	
+
 }

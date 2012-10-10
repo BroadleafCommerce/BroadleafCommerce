@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.core.order.dao;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -102,6 +104,17 @@ public class OrderDaoImpl implements OrderDao {
         order.setCustomer(customer);
         order.setEmailAddress(customer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS);
+
+        order = save(order);
+
+        return order;
+    }
+
+    @Override
+    public Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale) {
+        Order order = createNewCartForCustomer(customer);
+        order.setPriceList(priceList);
+        order.setLocale(locale);
 
         order = save(order);
 

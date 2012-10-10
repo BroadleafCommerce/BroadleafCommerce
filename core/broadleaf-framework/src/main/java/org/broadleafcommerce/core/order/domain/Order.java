@@ -23,7 +23,9 @@ import java.util.Map;
 
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -222,6 +224,14 @@ public interface Order extends Serializable {
     BroadleafCurrency getCurrency();
 
     void setCurrency(BroadleafCurrency currency);
+
+    public PriceList getPriceList();
+
+    public void setPriceList(PriceList priceList);
+
+    public Locale getLocale();
+
+    public void setLocale(Locale locale);
 
 
 }

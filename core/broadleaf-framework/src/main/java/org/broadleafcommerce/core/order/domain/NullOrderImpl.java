@@ -16,22 +16,20 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferCode;
-import org.broadleafcommerce.core.offer.domain.OfferInfo;
-import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.offer.domain.*;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * NullOrderImpl is a class that represents an unmodifiable, empty order. This class is used as the default order
@@ -324,4 +322,22 @@ public class NullOrderImpl implements Order {
         public void setCurrency(BroadleafCurrency currency) {
             throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
         }
+
+    @Override
+    public PriceList getPriceList() {
+        return null;
+    }
+
+    @Override
+    public void setPriceList(PriceList priceList) {
+    }
+
+    @Override
+    public Locale getLocale() {
+        return null;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+    }
 }

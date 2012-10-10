@@ -18,8 +18,11 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
+import org.broadleafcommerce.core.web.service.UpdateCartService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
 import org.springframework.core.Ordered;
@@ -53,8 +56,13 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
+    protected static boolean copyCartToNewLocaleAndPricelist = false;
+
     @Resource(name="blOrderService")
     protected OrderService orderService;
+
+    @Resource(name="blUpdateCartService")
+    protected UpdateCartService updateCartService;
 
     private static String cartRequestAttributeName = "cart";
 
@@ -70,7 +78,21 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 	    	
 	    	if (cart == null) { 
 	    		cart = orderService.getNullOrder();
-	    	}
+	    	} else {
+                try {
+                    updateCartService.validateCart(cart);
+                } catch (IllegalArgumentException e){
+                    if (copyCartToNewLocaleAndPricelist) {
+                        UpdateCartResponse updateCartResponse = updateCartService.copyCartToNewLocaleAndPricelist(cart);
+                        request.setAttribute("updateCartResponse", updateCartResponse);
+                    } else {
+                        // Delete old cart and create new blank cart
+                        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+                        orderService.cancelOrder(cart);
+                        cart = orderService.createNewCartForCustomer(customer, brc.getPriceList(), brc.getLocale());
+                    }
+                }
+            }
 
 	    	request.setAttribute(cartRequestAttributeName, cart);
 

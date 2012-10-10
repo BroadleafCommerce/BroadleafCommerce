@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -117,8 +119,13 @@ public class OrderServiceImpl implements OrderService {
 	public Order createNewCartForCustomer(Customer customer) {
         return orderDao.createNewCartForCustomer(customer);
 	}
-	
-	@Override
+
+    @Override
+    public Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale) {
+        return orderDao.createNewCartForCustomer(customer, priceList, locale);
+    }
+
+    @Override
     @Transactional("blTransactionManager")
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
@@ -128,7 +135,15 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.save(namedOrder); // No need to price here
     }
 
-	@Override
+    @Override
+    public Order createNamedOrderForCustomer(String name, Customer customer, PriceList priceList, Locale locale) {
+        Order namedOrder = createNamedOrderForCustomer(name, customer);
+        namedOrder.setPriceList(priceList);
+        namedOrder.setLocale(locale);
+        return orderDao.save(namedOrder);
+    }
+
+    @Override
     public Order findNamedOrderForCustomer(String name, Customer customer) {
         return orderDao.readNamedOrderForCustomer(customer, name);
     }
