@@ -19,6 +19,7 @@ package org.broadleafcommerce.profile.core.service;
 import org.broadleafcommerce.profile.core.dao.CustomerPaymentDao;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -30,6 +31,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     protected CustomerPaymentDao customerPaymentDao;
 
     @Override
+    @Transactional("blTransactionManager")
     public CustomerPayment saveCustomerPayment(CustomerPayment customerPayment) {
         return customerPaymentDao.save(customerPayment);
     }
@@ -50,11 +52,13 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void deleteCustomerPaymentById(Long customerPaymentId) {
         customerPaymentDao.deleteCustomerPaymentById(customerPaymentId);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public CustomerPayment create() {
         return customerPaymentDao.create();
     }
