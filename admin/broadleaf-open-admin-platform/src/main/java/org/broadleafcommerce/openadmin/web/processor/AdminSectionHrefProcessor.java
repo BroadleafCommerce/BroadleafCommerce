@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.openadmin.web.processor;
 
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
-import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
-import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
 import org.thymeleaf.spring3.context.SpringWebContext;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Thymeleaf processor that will generate the HREF of a given Admin Section.
@@ -33,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author elbertbautista
  */
-public class AdminSectionHrefProcessor extends AbstractModelVariableModifierProcessor {
+public class AdminSectionHrefProcessor extends AbstractAttributeModifierAttrProcessor {
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -48,27 +49,48 @@ public class AdminSectionHrefProcessor extends AbstractModelVariableModifierProc
     }
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
+    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
         String href = "#";
-        String resultVar = element.getAttributeValue("resultVar");
-        String sectionStr = element.getAttributeValue("section");
-
-        AdminSection section = (AdminSection) StandardExpressionProcessor.processExpression(arguments, sectionStr);
-        if (section == null) {
-            addToModel(arguments, resultVar, href);
-            return;
+		
+		AdminSection section = (AdminSection) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        if (section != null) {
+            HttpServletRequest request = ((SpringWebContext) arguments.getContext()).getHttpServletRequest();
+            
+            // The url is based on the current context
+            String context = request.getContextPath();
+            href = context + section.getUrl();
+            
+            // If we're using the default handler, we're loading a GWT module
+            if (section.getUseDefaultHandler()) {
+                
+                // Append the GWT dev mode parameter if it exists
+                if (request.getParameter("gwt.codesvr") != null ) {
+                    href += "?gwt.codesvr=" + request.getParameter("gwt.codesvr");
+                }
+        
+                // Append the necessary GWT module keys
+                href += "#moduleKey=" + section.getModule().getModuleKey() + "&pageKey=" + section.getSectionKey();
+            }
         }
+		
+		Map<String, String> attrs = new HashMap<String, String>();
+		attrs.put("href", href);
+		return attrs;
+    }
 
-        HttpServletRequest request = ((SpringWebContext) arguments.getContext()).getHttpServletRequest();
-        String context = request.getContextPath();
-        String gwtDebug = "";
+    @Override
+    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
+        return ModificationType.SUBSTITUTION;
+    }
 
-        if (request.getParameter("gwt.codesvr") != null ) {
-            gwtDebug = "?gwt.codesvr=" + request.getParameter("gwt.codesvr");
-        }
+    @Override
+    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
+        return true;
+    }
 
-        href = context + section.getUrl() + gwtDebug + "#moduleKey=" + section.getModule().getModuleKey() + "&pageKey=" + section.getSectionKey();
-        addToModel(arguments, resultVar, href);
+    @Override
+    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
+        return false;
     }
 
 }
