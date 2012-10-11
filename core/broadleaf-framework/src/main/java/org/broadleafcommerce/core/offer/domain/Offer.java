@@ -16,18 +16,18 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface Offer extends Serializable {
 
@@ -199,8 +199,9 @@ public interface Offer extends Serializable {
     
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
 
-    BroadleafCurrency getCurrency();
+    List<OfferRestrictedPriceList> getRestrictedPriceLists();
 
-    void setCurrency(BroadleafCurrency currency);
+
+    void setRestrictedPriceLists(List<OfferRestrictedPriceList> restrictedPriceLists);
 	
 }

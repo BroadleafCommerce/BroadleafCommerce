@@ -16,13 +16,12 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -57,15 +56,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -225,12 +225,13 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)
     protected BigDecimal qualifyingItemSubTotal;
 
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
-    @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_currency", order = 2, group = "PaymentLogImpl_Payment_Log", readOnly = true)
-    private BroadleafCurrency currency;
-    
 
+    @OneToMany(mappedBy = "offer", targetEntity = OfferRestrictedPriceListImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "priceList", friendlyName = "offerRestrictedPriceListTitle", dataSourceName = "offerRestrictedPriceListDS", gridVisibleFields = {"priceKey", "friendlyName"})
+    protected List<OfferRestrictedPriceList> restrictedPriceLists = new ArrayList<OfferRestrictedPriceList>();
+    
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
@@ -589,20 +590,23 @@ public class OfferImpl implements Offer, Status {
     
     @Override
     public Money getQualifyingItemSubTotal() {
-        return qualifyingItemSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(qualifyingItemSubTotal, getCurrency());
+        return qualifyingItemSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(qualifyingItemSubTotal, null);
     }
 
     @Override
     public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
         this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
     }
-    @Override
-    public BroadleafCurrency getCurrency() {
-        return currency;
+
+
+    @Override 
+    public List<OfferRestrictedPriceList> getRestrictedPriceLists() {
+        return restrictedPriceLists;
     }
+
     @Override
-    public void setCurrency(BroadleafCurrency currency) {
-        this.currency = currency;
+    public void setRestrictedPriceLists(List<OfferRestrictedPriceList> restrictedPriceLists) {
+        this.restrictedPriceLists = restrictedPriceLists;
     }
 
     @Override
