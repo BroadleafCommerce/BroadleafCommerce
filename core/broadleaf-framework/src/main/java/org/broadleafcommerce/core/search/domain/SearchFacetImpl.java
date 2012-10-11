@@ -22,15 +22,22 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.locale.util.LocaleUtil;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -43,7 +50,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -97,6 +106,26 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     @Column(name = "REQUIRES_ALL_DEPENDENT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
     protected Boolean requiresAllDependentFacets = false;
+
+    @ManyToMany(targetEntity = SearchFacetTranslationImpl.class)
+    @JoinTable(name = "BLC_SEARCH_FACET_TRANSLATION_XREF",
+            joinColumns = @JoinColumn(name = "SEARCH_FACET_ID", referencedColumnName = "SEARCH_FACET_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TRANSLATION_ID", referencedColumnName = "TRANSLATION_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @MapKey(columns = { @Column(name = "MAP_KEY", nullable = false) })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 10)
+    @AdminPresentationMap(
+            friendlyName = "searchFacetImpl_Translations",
+            dataSourceName = "searchFacetTranslationDS",
+            keyPropertyFriendlyName = "TranslationsImpl_Key",
+            deleteEntityUponRemove = true,
+            mapKeyOptionEntityClass = LocaleImpl.class,
+            mapKeyOptionEntityDisplayField = "friendlyName",
+            mapKeyOptionEntityValueField = "localeCode"
+
+    )
+    protected Map<String, SearchFacetTranslation> translations = new HashMap<String,SearchFacetTranslation>();
     
 	@Override
 	public Long getId() {
@@ -120,7 +149,28 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 
 	@Override
 	public String getLabel() {
-		return label;
+        if (translations != null && BroadleafRequestContext.hasLocale()) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+
+            // Search for translation based on locale
+            String localeCode = locale.getLocaleCode();
+            if (localeCode != null) {
+                SearchFacetTranslation translation = translations.get(localeCode);
+                if (translation != null && translation.getLabel() != null) {
+                    return translation.getLabel();
+                }
+            }
+
+            // try just the language
+            String languageCode = LocaleUtil.findLanguageCode(locale);
+            if (languageCode != null && ! localeCode.equals(languageCode)) {
+                SearchFacetTranslation translation = translations.get(languageCode);
+                if (translation != null && translation.getLabel() != null) {
+                    return translation.getLabel();
+                }
+            }
+        }
+        return label;
 	}
 
 	@Override
@@ -174,6 +224,16 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	@Override
     public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets) {
         this.requiresAllDependentFacets = requiresAllDependentFacets;
+    }
+
+    @Override
+    public Map<String, SearchFacetTranslation> getTranslations() {
+        return translations;
+    }
+
+    @Override
+    public void setTranslations(Map<String, SearchFacetTranslation> translations) {
+        this.translations = translations;
     }
 
     @Override
