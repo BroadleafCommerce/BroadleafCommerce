@@ -122,6 +122,22 @@ public interface OrderService {
      * @return the named order requested
      */
     public Order findNamedOrderForCustomer(String name, Customer customer);
+
+
+
+    /**
+     * Looks up an Order by the given customer and a specified order name.
+     *
+     * This is typically used to retrieve a "wishlist" order.
+     *
+     * @see #createNamedOrderForCustomer(String name, Customer customer)
+     *
+     * @param name
+     * @param customer
+     * @return the named order requested
+     */
+    public Order findNamedOrderForCustomerByPricelistAndLocale(String name, Customer customer, PriceList priceList, Locale locale);
+
     
     /**
      * Looks up an Order by its database id

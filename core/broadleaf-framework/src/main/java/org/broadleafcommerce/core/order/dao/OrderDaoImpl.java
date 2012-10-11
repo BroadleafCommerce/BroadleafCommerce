@@ -30,7 +30,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 import java.util.List;
 
 @Repository("blOrderDao")
@@ -139,6 +138,29 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("orderName", name);
         List<Order> orders = query.getResultList();
         return orders == null || orders.isEmpty() ? null : orders.get(0);
+    }
+
+    public Order readNamedOrderForCustomerByPricelistAndLocale(final Customer customer, final String name, final PriceList priceList, final Locale locale) {
+        final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
+        query.setParameter("customerId", customer.getId());
+        query.setParameter("orderStatus", OrderStatus.NAMED.getType());
+        query.setParameter("orderName", name);
+        List<Order> orders = query.getResultList();
+
+        if (orders == null || orders.isEmpty()) { return null; }
+
+        for(Order order: orders){
+            if(locale != null){
+                if((order.getPriceList() == priceList) && (order.getLocale().getLocaleCode().equalsIgnoreCase(locale.getLocaleCode()))){
+                    return order;
+                }
+            }  else {
+                if(order.getPriceList() == priceList){
+                    return order;
+                }
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")

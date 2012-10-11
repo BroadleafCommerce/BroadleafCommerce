@@ -59,4 +59,6 @@ public interface OrderDao {
     //
     //    List<Order> readSubmittedOrdersForCustomer(Customer customer);
     //
+
+    Order readNamedOrderForCustomerByPricelistAndLocale(Customer customer, String name, PriceList priceList, Locale locale);
 }

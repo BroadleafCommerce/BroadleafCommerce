@@ -15,6 +15,7 @@
 */
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -45,10 +46,22 @@ public class BroadleafManageWishlistController extends AbstractAccountController
 
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
             AddToCartItem itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
-        
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+
+        Order wishlist = orderService.findNamedOrderForCustomerByPricelistAndLocale(
+                wishlistName,
+                CustomerState.getCustomer(request),
+                brc.getPriceList(),
+                brc.getLocale()
+        );
+
         if (wishlist == null) {
-            wishlist = orderService.createNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
+            wishlist = orderService.createNamedOrderForCustomer(
+                    wishlistName,
+                    CustomerState.getCustomer(request),
+                    brc.getPriceList(),
+                    brc.getLocale()
+            );
         }
         
         wishlist = orderService.addItem(wishlist.getId(), itemRequest, true);
@@ -58,14 +71,26 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     
     public String viewWishlist(HttpServletRequest request, HttpServletResponse response, Model model,
             String wishlistName) {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Order wishlist = orderService.findNamedOrderForCustomerByPricelistAndLocale(
+                wishlistName,
+                CustomerState.getCustomer(),
+                brc.getPriceList(),
+                brc.getLocale()
+        );
         model.addAttribute("wishlist", wishlist);
         return getAccountWishlistView();
     }
 
     public String removeItemFromWishlist(HttpServletRequest request, HttpServletResponse response, Model model,
             String wishlistName, Long itemId) throws RemoveFromCartException {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Order wishlist = orderService.findNamedOrderForCustomerByPricelistAndLocale(
+                wishlistName,
+                CustomerState.getCustomer(),
+                brc.getPriceList(),
+                brc.getLocale()
+        );
         
         orderService.removeItem(wishlist.getId(), itemId, false);
 
@@ -75,7 +100,13 @@ public class BroadleafManageWishlistController extends AbstractAccountController
 
     public String moveItemToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
             String wishlistName, Long orderItemId) throws RemoveFromCartException, AddToCartException {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Order wishlist = orderService.findNamedOrderForCustomerByPricelistAndLocale(
+                wishlistName,
+                CustomerState.getCustomer(),
+                brc.getPriceList(),
+                brc.getLocale()
+        );
         List<OrderItem> orderItems = wishlist.getOrderItems();
 
         OrderItem orderItem = null;
@@ -99,7 +130,13 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     
     public String moveListToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
             String wishlistName) throws RemoveFromCartException, AddToCartException {
-        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Order wishlist = orderService.findNamedOrderForCustomerByPricelistAndLocale(
+                wishlistName,
+                CustomerState.getCustomer(),
+                brc.getPriceList(),
+                brc.getLocale()
+        );
         
         orderService.addAllItemsFromNamedOrder(wishlist, true);
         

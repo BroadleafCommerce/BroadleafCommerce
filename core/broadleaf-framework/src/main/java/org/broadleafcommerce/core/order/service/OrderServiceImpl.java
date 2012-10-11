@@ -148,7 +148,12 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.readNamedOrderForCustomer(customer, name);
     }
 
-	@Override
+    @Override
+    public Order findNamedOrderForCustomerByPricelistAndLocale(String name, Customer customer, PriceList priceList, Locale locale) {
+        return orderDao.readNamedOrderForCustomerByPricelistAndLocale(customer, name, priceList, locale);
+    }
+
+    @Override
 	public Order findOrderById(Long orderId) {
         return orderDao.readOrderById(orderId);
 	}
