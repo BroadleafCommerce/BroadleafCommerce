@@ -40,7 +40,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -50,14 +49,10 @@ import java.math.BigDecimal;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @AdminPresentationOverrides({
-        @AdminPresentationOverride(name = "searchFacet", value = @AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name = "priceList.friendlyName", value = @AdminPresentation(excluded = false, friendlyName = "PriceListImpl_Friendly_Name", order=1, group = "SearchFacetRangeImpl_Description", prominent=true, visibility = VisibilityEnum.FORM_HIDDEN))
 })
 public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
-	
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -69,12 +64,13 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
 	@ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
     @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
+    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected SearchFacet searchFacet = new SearchFacetImpl();
 	
 	@ManyToOne(targetEntity = PriceListImpl.class)
     @JoinColumn(name = "PRICE_LIST_ID")
     @Index(name="PRICE_LIST_INDEX", columnNames={"PRICE_LIST_ID"})
-	@AdminPresentation(friendlyName = "SearchFacetRangeImpl_priceList", excluded = true, order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
+	@AdminPresentation(friendlyName = "SearchFacetRangeImpl_priceList", order=1, group = "SearchFacetRangeImpl_Description")
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
 	protected PriceList priceList;
     

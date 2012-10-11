@@ -16,17 +16,35 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.logging.Level;
-
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.ResultSet;
+import com.smartgwt.client.rpc.RPCResponse;
+import com.smartgwt.client.types.DSOperationType;
+import com.smartgwt.client.types.Visibility;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellSavedEvent;
+import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.tree.TreeGrid;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
@@ -58,35 +76,15 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDispl
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridHelper;
 
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.data.ResultSet;
-import com.smartgwt.client.rpc.RPCResponse;
-import com.smartgwt.client.types.DSOperationType;
-import com.smartgwt.client.types.Visibility;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.FetchDataEvent;
-import com.smartgwt.client.widgets.events.FetchDataHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
-import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.grid.events.CellSavedEvent;
-import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionEvent;
-import com.smartgwt.client.widgets.layout.Layout;
-import com.smartgwt.client.widgets.tree.TreeGrid;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * @author jfischer
@@ -94,7 +92,6 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
 public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     public static Map<String, CollectionMetadata> collectionMetadatas = new LinkedHashMap<String, CollectionMetadata>();
-    public static Map<String, LookupMetadata> lookupMetadatas = new HashMap<String, LookupMetadata>();
 
     protected DynamicEditDisplay display;
     protected ListGridRecord lastSelectedRecord;
@@ -377,55 +374,53 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         getDisplay().build(entityDataSource, additionalDataSources);
         formPresenter = new DynamicFormPresenter(display.getDynamicFormDisplay());
         ((PresentationLayerAssociatedDataSource) entityDataSource).setAssociatedGrid(display.getListDisplay().getGrid());
+        initializeAdvancedCollections();
+    }
 
-        for (final Map.Entry<String, LookupMetadata> entry : lookupMetadatas.entrySet()) {
-            if (entry.getKey().startsWith(getClass().getName())) {
-                final String key = entry.getKey().substring(entry.getKey().indexOf("_") + 1, entry.getKey().length());
-                final String dataSourceName = key + "Lookup";
-                if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
-                    java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
-                    continue;
-                }
-                presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new ForeignKeyLookupDataSourceFactory(entry.getValue().getLookupForeignKey()), new AsyncCallbackAdapter() {
-                    @Override
-                    public void onSetupSuccess(DataSource lookupDS) {
-                        EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDS, true);
-                        String viewTitle;
-                        try {
-                            viewTitle = BLCMain.getMessageManager().getString(entry.getValue().getFriendlyName());
-                        } catch (MissingResourceException e) {
-                            viewTitle = entry.getValue().getFriendlyName();
-                        }
-                        DynamicEntityDataSource parentDataSource;
-                        if (entry.getValue().getParentDataSourceName() == null || entry.getValue().getParentDataSourceName().length() == 0) {
-                            parentDataSource = (DynamicEntityDataSource) entityDataSource;
-                        } else {
-                            parentDataSource = presenterSequenceSetupManager.getDataSource(entry.getValue().getParentDataSourceName());
-                        }
-                        DynamicFormDisplay target;
-                        if (entry.getValue().getTargetDynamicFormDisplayId() == null || entry.getValue().getTargetDynamicFormDisplayId().length() == 0) {
-                            target = getDisplay().getDynamicFormDisplay();
-                        } else {
-                            Layout temp = FormBuilder.findMemberById((Layout) getDisplay(), entry.getValue().getTargetDynamicFormDisplayId());
-                            if (!(temp instanceof DynamicFormDisplay)) {
-                                throw new RuntimeException("The target destination for a foreign key lookup must be an instance of DynamicFormDisplay. The requested destination (" + entry.getValue().getTargetDynamicFormDisplayId() + ") is an instance of " + temp.getClass().getName());
-                            }
-                            target = (DynamicFormDisplay) temp;
-                        }
-                        parentDataSource.
-                                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                                key,
-                                searchView,
-                                viewTitle,
-                                target,
-                                entry.getValue().getLookupForeignKey(),
-                                null
-                        );
-                    }
-                }));
-            }
+    public void initializeLookup(final String propertyName, final LookupMetadata metadata) {
+        final String dataSourceName = propertyName + "Lookup";
+        if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
+            java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
+            return;
         }
+        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new ForeignKeyLookupDataSourceFactory(metadata.getLookupForeignKey()), new AsyncCallbackAdapter() {
+            @Override
+            public void onSetupSuccess(DataSource lookupDS) {
+                EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDS, true);
+                String viewTitle = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
+                if (viewTitle == null) {
+                    viewTitle = metadata.getFriendlyName();
+                }
+                DynamicEntityDataSource parentDataSource;
+                if (metadata.getParentDataSourceName() == null || metadata.getParentDataSourceName().length() == 0) {
+                    parentDataSource = (DynamicEntityDataSource) metadata.getDefaultDataSource();
+                } else {
+                    parentDataSource = presenterSequenceSetupManager.getDataSource(metadata.getParentDataSourceName());
+                }
+                DynamicFormDisplay target;
+                if (metadata.getTargetDynamicFormDisplayId() == null || metadata.getTargetDynamicFormDisplayId().length() == 0) {
+                    target = getDisplay().getDynamicFormDisplay();
+                } else {
+                    Layout temp = FormBuilder.findMemberById((Layout) getDisplay(), metadata.getTargetDynamicFormDisplayId());
+                    if (!(temp instanceof DynamicFormDisplay)) {
+                        throw new RuntimeException("The target destination for a foreign key lookup must be an instance of DynamicFormDisplay. The requested destination (" + metadata.getTargetDynamicFormDisplayId() + ") is an instance of " + temp.getClass().getName());
+                    }
+                    target = (DynamicFormDisplay) temp;
+                }
+                parentDataSource.
+                        getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                        propertyName,
+                        searchView,
+                        viewTitle,
+                        target,
+                        metadata.getLookupForeignKey(),
+                        null
+                );
+            }
+        }));
+    }
 
+    protected void initializeAdvancedCollections() {
         //sort the collection metadatas based on their order attribute
         List<Map.Entry<String, CollectionMetadata>> list = new LinkedList<Map.Entry<String, CollectionMetadata>>(collectionMetadatas.entrySet());
         Iterator<Map.Entry<String, CollectionMetadata>> itr = list.iterator();

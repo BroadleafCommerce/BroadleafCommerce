@@ -78,44 +78,50 @@ public class BatchManager {
 
             @Override
             protected void onOtherException(Throwable exception) {
-                try {
-                    super.onOtherException(exception);
-                    for (BatchPackage batchPackage : batchPackages) {
-                        if (batchPackage.getAsyncCallback() != null) {
-                            batchPackage.getAsyncCallback().onFailure(exception);
-                            break;
-                        }
+                List<BatchPackage> myPackages = new ArrayList<BatchPackage>();
+                for (BatchPackage batchPackage : batchPackages) {
+                    myPackages.add(batchPackage);
+                }
+                batchPackages.clear();
+                super.onOtherException(exception);
+                for (BatchPackage batchPackage : myPackages) {
+                    if (batchPackage.getAsyncCallback() != null) {
+                        batchPackage.getAsyncCallback().onFailure(exception);
+                        break;
                     }
-                } finally {
-                    batchPackages.clear();
                 }
             }
 
             @Override
             protected void onSecurityException(ApplicationSecurityException exception) {
-                try {
-                    super.onSecurityException(exception);
-                    for (BatchPackage batchPackage : batchPackages) {
-                        if (batchPackage.getAsyncCallback() != null) {
-                            batchPackage.getAsyncCallback().onFailure(exception);
-                            break;
-                        }
+                List<BatchPackage> myPackages = new ArrayList<BatchPackage>();
+                for (BatchPackage batchPackage : batchPackages) {
+                    myPackages.add(batchPackage);
+                }
+                batchPackages.clear();
+                super.onSecurityException(exception);
+                for (BatchPackage batchPackage : myPackages) {
+                    if (batchPackage.getAsyncCallback() != null) {
+                        batchPackage.getAsyncCallback().onFailure(exception);
+                        break;
                     }
-                } finally {
-                    batchPackages.clear();
                 }
             }
 
             @Override
             public void onSuccess(BatchDynamicResultSet result) {
+                List<BatchPackage> myPackages = new ArrayList<BatchPackage>();
+                for (BatchPackage batchPackage : batchPackages) {
+                    myPackages.add(batchPackage);
+                }
+                batchPackages.clear();
                 super.onSuccess(result);
-                for (int j=0;j<batchPackages.size();j++) {
-                    BatchPackage batchPackage = batchPackages.get(j);
+                for (int j=0;j<myPackages.size();j++) {
+                    BatchPackage batchPackage = myPackages.get(j);
                     if (batchPackage.getAsyncCallback() != null) {
                         batchPackage.getAsyncCallback().onSuccess(result.getDynamicResultSets()[j]);
                     }
                 }
-                batchPackages.clear();
                 if (successHandler != null) {
                     successHandler.onSuccess();
                 }

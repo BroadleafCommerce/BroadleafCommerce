@@ -42,6 +42,8 @@ public class PresenterSequenceSetupManager {
 	private Canvas canvas;
 	private EntityPresenter presenter;
     private Map<String, DynamicEntityDataSource> dataSourceLibrary = new HashMap<String, DynamicEntityDataSource>();
+    private boolean stage1 = false;
+    private boolean stage2 = false;
 	
 	public PresenterSequenceSetupManager(EntityPresenter presenter) {
 		this.presenter = presenter;
@@ -76,10 +78,19 @@ public class PresenterSequenceSetupManager {
                 items.add(item);
             }
         } else {
-            if (pos >= 0) {
-                supplementalItems.add(pos, item);
+            if (!stage2) {
+                if (pos >= 0) {
+                    supplementalItems.add(pos, item);
+                } else {
+                    supplementalItems.add(item);
+                }
             } else {
-                supplementalItems.add(item);
+                /*
+                This must be a late stage addition. This can happen when a AdminPresentationToOneLookup is discovered
+                inside an entity managed by an annotated advanced collection, such as AdminPresentationCollection. In these
+                cases, we cannot batch handle the call and must one-off handle the datasource
+                 */
+                item.invoke();
             }
         }
 	}
@@ -145,8 +156,10 @@ public class PresenterSequenceSetupManager {
 
 	protected void next() {
 		if (itemsIterator.hasNext()) {
+            stage1 = true;
 			itemsIterator.next().invoke();
 		} else if (supplementalItemsIterator != null && supplementalItemsIterator.hasNext()) {
+            stage2 = true;
             supplementalItemsIterator.next().invoke();
         } else {
             BatchManager batchManager = BatchManager.getInstance();

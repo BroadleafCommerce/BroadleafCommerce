@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.datasource;
 
+import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 
@@ -29,6 +30,7 @@ public class LookupMetadata {
     private ForeignKey lookupForeignKey;
     private String friendlyName;
     private SupportedFieldType fieldType;
+    private DataSource defaultDataSource;
 
     public ForeignKey getLookupForeignKey() {
         return lookupForeignKey;
@@ -68,6 +70,14 @@ public class LookupMetadata {
 
     public void setFieldType(SupportedFieldType fieldType) {
         this.fieldType = fieldType;
+    }
+
+    public DataSource getDefaultDataSource() {
+        return defaultDataSource;
+    }
+
+    public void setDefaultDataSource(DataSource defaultDataSource) {
+        this.defaultDataSource = defaultDataSource;
     }
 
     @Override

@@ -156,14 +156,14 @@ public interface SearchFacet {
 	 * 
 	 * @return a list of SearchFacets that must have an active value set for this SearchFacet to be applicable.
 	 */
-    public List<SearchFacet> getRequiredFacets();
+    public List<RequiredFacet> getRequiredFacets();
 
     /**
      * Sets the list of facets which this facet depends on.
      * 
      * @param dependentFacets
      */
-    public void setRequiredFacets(List<SearchFacet> requiredFacets);
+    public void setRequiredFacets(List<RequiredFacet> requiredFacets);
 
     /**
      * This boolean controls whether or not this particular facet requires one of the dependent facets to be active, or if

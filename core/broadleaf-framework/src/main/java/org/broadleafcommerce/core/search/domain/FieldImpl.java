@@ -59,20 +59,20 @@ public class FieldImpl implements Field,Serializable {
     protected Long id;
     
     // This is a broadleaf enumeration
-    @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_descrpition")
+    @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_descrpition", order = 2, prominent = true)
     @Column(name = "ENTITY_TYPE", nullable = false)
     protected String entityType;
     
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition")
+    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
     protected String propertyName;
     
     @Column(name = "ABBREVIATION", unique = true)
-    @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition")
+    @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition", order = 3, prominent = true)
     protected String abbreviation;
     
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition")
+    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition", order = 4, prominent = true)
     protected Boolean searchable = false;
     
     // This is a broadleaf enumeration

@@ -19,8 +19,13 @@ package org.broadleafcommerce.core.search.domain;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,10 +55,7 @@ import java.util.List;
 @Table(name = "BLC_SEARCH_FACET")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
-	
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -65,11 +67,12 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_field",  order = 2,group = "SearchFacetImpl_description", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_field",  order = 2, group = "SearchFacetImpl_description")
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "propertyName")
     protected Field field;
     
     @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description", groupOrder = 1, prominent = true)
     protected String label;
     
     @Column(name =  "SHOW_ON_SEARCH")
@@ -87,14 +90,14 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "newRangeTitle", dataSourceName = "searchFacetRangeDS")
     protected List<SearchFacetRange> searchFacetRanges  = new ArrayList<SearchFacetRange>();
     
-    @ManyToMany(targetEntity = SearchFacetImpl.class)
-    @JoinTable(name = "BLC_SEARCH_FACET_XREF", joinColumns = @JoinColumn(name = "SEARCH_FACET_ID"), inverseJoinColumns = @JoinColumn(name = "REQUIRED_FACET_ID", referencedColumnName = "SEARCH_FACET_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @OneToMany(mappedBy = "searchFacet", targetEntity = RequiredFacetImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    protected List<SearchFacet> requiredFacets = new ArrayList<SearchFacet>();
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle", dataSourceName = "requiredFacetDS", gridVisibleFields = {"label", "searchDisplayPriority", "canMultiselect", "requiresAllDependentFacets"})
+    protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
     
     @Column(name = "REQUIRES_ALL_DEPENDENT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
@@ -159,18 +162,16 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	public void setCanMultiselect(Boolean canMultiselect) {
 		this.canMultiselect = canMultiselect;
 	}
-	
-	@Override
-    public List<SearchFacet> getRequiredFacets() {
+
+    public List<RequiredFacet> getRequiredFacets() {
         return requiredFacets;
     }
 
-	@Override
-    public void setRequiredFacets(List<SearchFacet> requiredFacets) {
+    public void setRequiredFacets(List<RequiredFacet> requiredFacets) {
         this.requiredFacets = requiredFacets;
     }
 
-	@Override
+    @Override
     public Boolean getRequiresAllDependentFacets() {
         return requiresAllDependentFacets == null ? false : requiresAllDependentFacets;
     }
