@@ -55,7 +55,7 @@ public class AdminSectionImpl implements AdminSection {
     @AdminPresentation(friendlyName = "AdminSectionImpl_Name", order=1, group = "AdminSectionImpl_Section", prominent=true)
     protected String name;
 
-    @Column(name = "SECTION_KEY", nullable=false)
+    @Column(name = "SECTION_KEY", nullable=false, unique = true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Section_Key", order=2, group = "AdminSectionImpl_Section", prominent=true)
     protected String sectionKey;
 
