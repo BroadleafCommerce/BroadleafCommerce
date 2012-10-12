@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import net.entropysoft.transmorph.cache.LRUMap;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -43,6 +44,7 @@ import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
+import org.broadleafcommerce.openadmin.client.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.EntityMode;
 import org.hibernate.MappingException;
@@ -58,6 +60,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -100,6 +103,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
     @Resource(name="blEJB3ConfigurationDao")
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
+    @Resource(name="blAppConfigurationRemoteService")
+    protected AppConfigurationService appConfigurationRemoteService;
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -399,6 +404,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         );
 
         final List<String> removeKeys = new ArrayList<String>();
+ 
         for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {
                 mergedProperties.get(key).accept(new MetadataVisitorAdapter() {
@@ -906,6 +912,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
                         fieldMetadata.setCollectionCeilingEntity(type.getReturnedClass().getName());
                     }
+                    //set excluded if showIfProperty set
+                    setExcludedBasedOnShowIfProperty(fieldMetadata);
                     fieldMetadata.setInheritedFromType(targetClass.getName());
                     fieldMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
                     fields.put(propertyName, fieldMetadata);
@@ -1014,6 +1022,18 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			}
 		}
 	}
+
+    protected boolean setExcludedBasedOnShowIfProperty(FieldMetadata fieldMetadata) {
+        if(fieldMetadata.getShowIfProperty()!=null && !fieldMetadata.getShowIfProperty().equals("") 
+                && appConfigurationRemoteService.getBooleanPropertyValue(fieldMetadata.getShowIfProperty())!=null
+                && !appConfigurationRemoteService.getBooleanPropertyValue(fieldMetadata.getShowIfProperty())
+                ) {
+            //do not include this in the display if it returns false. 
+            fieldMetadata.setExcluded(true);
+            return false;
+        }
+        return true;
+    }
 
 	protected void buildProperty(
 		Class<?> targetClass, 
@@ -1222,7 +1242,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	}
 
     public Boolean testPropertyInclusion(FieldMetadata presentationAttribute) {
+        setExcludedBasedOnShowIfProperty(presentationAttribute);
+         
         return !(presentationAttribute != null && presentationAttribute.getExcluded());
+    
     }
 
     protected boolean testForeignProperty(ForeignKey foreignField, String prefix, String propertyName) {

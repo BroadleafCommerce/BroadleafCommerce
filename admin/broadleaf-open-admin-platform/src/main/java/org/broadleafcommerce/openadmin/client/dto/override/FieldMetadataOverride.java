@@ -111,7 +111,8 @@ public class FieldMetadataOverride {
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
     private Serializable[][] optionFilterValues;
-
+    private String showIfProperty;
+    
     public SupportedFieldType getFieldType() {
         return fieldType;
     }
@@ -692,5 +693,13 @@ public class FieldMetadataOverride {
 
     public void setValuePropertyFriendlyName(String valuePropertyFriendlyName) {
         this.valuePropertyFriendlyName = valuePropertyFriendlyName;
+    }
+
+    public String getShowIfProperty() {
+        return showIfProperty;
+    }
+
+    public void setShowIfProperty(String showIfProperty) {
+        this.showIfProperty = showIfProperty;
     }
 }

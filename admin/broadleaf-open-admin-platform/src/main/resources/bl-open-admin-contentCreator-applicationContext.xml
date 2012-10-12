@@ -26,7 +26,13 @@
             </list>
         </property>
     </bean>
-
+    <bean id="blAppConfigurationMap" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
+        <property name="sourceMap">
+            <map>
+                <entry key="admin.showIfProperty.priceList" value="true"/>
+            </map>
+        </property>
+    </bean>
     <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
         <property name="sourceMap">
             <map>

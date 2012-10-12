@@ -70,6 +70,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -346,6 +347,7 @@ public class Metadata {
             override.setRemoveType(map.operationTypes().removeType());
             override.setUpdateType(map.operationTypes().updateType());
             override.setInspectType(map.operationTypes().inspectType());
+            override.setShowIfProperty(map.showIfProperty());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationMap annotation not found on field");
@@ -376,6 +378,7 @@ public class Metadata {
             override.setRemoveType(adornedTargetCollection.operationTypes().removeType());
             override.setUpdateType(adornedTargetCollection.operationTypes().updateType());
             override.setInspectType(adornedTargetCollection.operationTypes().inspectType());
+            override.setShowIfProperty(adornedTargetCollection.showIfProperty());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationAdornedTargetCollection annotation not found on field.");
@@ -399,6 +402,7 @@ public class Metadata {
             override.setRemoveType(annotColl.operationTypes().removeType());
             override.setUpdateType(annotColl.operationTypes().updateType());
             override.setInspectType(annotColl.operationTypes().inspectType());
+            override.setShowIfProperty(annotColl.showIfProperty());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationCollection annotation not found on Field");
@@ -423,6 +427,7 @@ public class Metadata {
             override.setVisibility(annot.visibility());
             override.setProminent(annot.prominent());
             override.setReadOnly(annot.readOnly());
+            override.setShowIfProperty(annot.showIfProperty());
             if (annot.validationConfigurations().length != 0) {
                 ValidationConfiguration[] configurations = annot.validationConfigurations();
                 for (ValidationConfiguration configuration : configurations) {
@@ -552,6 +557,9 @@ public class Metadata {
         if (basicFieldMetadata.getHint()!=null) {
             metadata.setHint(basicFieldMetadata.getHint());
         }
+        if (basicFieldMetadata.getShowIfProperty()!=null) {
+            metadata.setShowIfProperty(basicFieldMetadata.getShowIfProperty());
+        }
         if (basicFieldMetadata.getLookupDisplayProperty()!=null) {
             metadata.setLookupDisplayProperty(basicFieldMetadata.getLookupDisplayProperty());
             metadata.setForeignKeyDisplayValueProperty(basicFieldMetadata.getLookupDisplayProperty());
@@ -614,7 +622,10 @@ public class Metadata {
         if (map.getReadOnly() != null) {
             metadata.setMutable(!map.getReadOnly());
         }
-
+        if (map.getShowIfProperty()!=null) {
+            metadata.setShowIfProperty(map.getShowIfProperty());
+        }
+        
         metadata.setTargetClass(targetClass.getName());
         metadata.setFieldName(field.getName());
         org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
@@ -633,7 +644,7 @@ public class Metadata {
         if (map.getUpdateType() != null) {
             dtoOperationTypes.setUpdateType(map.getUpdateType());
         }
-
+        
         //don't allow additional non-persistent properties or additional foreign keys for an advanced collection datasource - they don't make sense in this context
         PersistencePerspective persistencePerspective;
         if (serverMetadata != null) {
@@ -850,7 +861,10 @@ public class Metadata {
         if (adornedTargetCollectionMetadata.getReadOnly() != null) {
             metadata.setMutable(!adornedTargetCollectionMetadata.getReadOnly());
         }
-
+        if (adornedTargetCollectionMetadata.getShowIfProperty()!=null) {
+            metadata.setShowIfProperty(adornedTargetCollectionMetadata.getShowIfProperty());
+        }
+        
         org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC);
         if (adornedTargetCollectionMetadata.getAddType() != null) {
             dtoOperationTypes.setAddType(adornedTargetCollectionMetadata.getAddType());
@@ -1020,7 +1034,10 @@ public class Metadata {
         if (collectionMetadata.getAddMethodType() != null) {
             metadata.setAddMethodType(collectionMetadata.getAddMethodType());
         }
-
+        if (collectionMetadata.getShowIfProperty()!=null) {
+            metadata.setShowIfProperty(collectionMetadata.getShowIfProperty());
+        }
+        
         org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
         if (collectionMetadata.getAddType() != null) {
             dtoOperationTypes.setAddType(collectionMetadata.getAddType());
@@ -1037,7 +1054,7 @@ public class Metadata {
         if (collectionMetadata.getUpdateType() != null) {
             dtoOperationTypes.setUpdateType(collectionMetadata.getUpdateType());
         }
-
+        
         if (AddMethodType.LOOKUP == metadata.getAddMethodType()) {
             dtoOperationTypes.setRemoveType(OperationType.NONDESTRUCTIVEREMOVE);
         }

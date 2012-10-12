@@ -34,6 +34,7 @@
                 <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService"/>
                 <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService"/>
                 <entry key="/**/utility.service" value-ref="blUtilityRemoteService"/>
+                <entry key="/**/app.configuration.service" value-ref="blAppConfigurationRemoteService"/>
             </map>
         </property>
         <property name="serviceExporterFactory">

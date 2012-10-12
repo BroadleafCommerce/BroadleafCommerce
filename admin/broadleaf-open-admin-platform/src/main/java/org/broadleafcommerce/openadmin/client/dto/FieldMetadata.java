@@ -16,8 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -41,6 +42,8 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     //temporary fields
     private String targetClass;
     private String fieldName;
+
+    private String showIfProperty;
 
 	public String[] getAvailableToTypes() {
 		return availableToTypes;
@@ -79,8 +82,18 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         metadata.order = order;
         metadata.targetClass = targetClass;
         metadata.fieldName = fieldName;
-
+        metadata.showIfProperty = showIfProperty;
         return metadata;
+    }
+
+    
+    public String getShowIfProperty() {
+        return showIfProperty;
+    }
+
+    
+    public void setShowIfProperty(String showIfProperty) {
+        this.showIfProperty = showIfProperty;
     }
 
     public String getFriendlyName() {
@@ -129,22 +142,42 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FieldMetadata)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FieldMetadata)) {
+            return false;
+        }
 
         FieldMetadata that = (FieldMetadata) o;
 
-        if (!Arrays.equals(availableToTypes, that.availableToTypes)) return false;
-        if (excluded != null ? !excluded.equals(that.excluded) : that.excluded != null) return false;
-        if (fieldName != null ? !fieldName.equals(that.fieldName) : that.fieldName != null) return false;
-        if (friendlyName != null ? !friendlyName.equals(that.friendlyName) : that.friendlyName != null) return false;
-        if (inheritedFromType != null ? !inheritedFromType.equals(that.inheritedFromType) : that.inheritedFromType != null)
+        if (!Arrays.equals(availableToTypes, that.availableToTypes)) {
             return false;
-        if (order != null ? !order.equals(that.order) : that.order != null) return false;
-        if (securityLevel != null ? !securityLevel.equals(that.securityLevel) : that.securityLevel != null)
+        }
+        if (excluded != null ? !excluded.equals(that.excluded) : that.excluded != null) {
             return false;
-        if (targetClass != null ? !targetClass.equals(that.targetClass) : that.targetClass != null) return false;
-
+        }
+        if (fieldName != null ? !fieldName.equals(that.fieldName) : that.fieldName != null) {
+            return false;
+        }
+        if (friendlyName != null ? !friendlyName.equals(that.friendlyName) : that.friendlyName != null) {
+            return false;
+        }
+        if (inheritedFromType != null ? !inheritedFromType.equals(that.inheritedFromType) : that.inheritedFromType != null) {
+            return false;
+        }
+        if (order != null ? !order.equals(that.order) : that.order != null) {
+            return false;
+        }
+        if (securityLevel != null ? !securityLevel.equals(that.securityLevel) : that.securityLevel != null) {
+            return false;
+        }
+        if (targetClass != null ? !targetClass.equals(that.targetClass) : that.targetClass != null) {
+            return false;
+        }
+        if (showIfProperty != null ? !showIfProperty.equals(that.showIfProperty) : that.showIfProperty != null) {
+            return false;
+        }
         return true;
     }
 
@@ -158,6 +191,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         result = 31 * result + (order != null ? order.hashCode() : 0);
         result = 31 * result + (targetClass != null ? targetClass.hashCode() : 0);
         result = 31 * result + (fieldName != null ? fieldName.hashCode() : 0);
+        result = 31 * result + (showIfProperty != null ? showIfProperty.hashCode() : 0);
         return result;
     }
 }
