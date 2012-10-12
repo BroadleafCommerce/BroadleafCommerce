@@ -161,12 +161,12 @@ public @interface AdminPresentationCollection {
     AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(addType = OperationType.BASIC, fetchType = OperationType.BASIC, inspectType = OperationType.BASIC, removeType = OperationType.BASIC, updateType = OperationType.BASIC);
 
     /**
-     * <p>Optional - propertyName , only required if you want hide the field based on this property</p>
+     * <p>Optional - propertyName , only required if you want hide the field based on this property's value</p>
      *
-     * <p>If the property is defined and found to be set to false, the AppConfiguraionService, then this field will be excluded in the
+     * <p>If the property is defined and found to be set to false, in the AppConfiguraionService, then this field will be excluded in the
      * admin presentation layer</p>
      *
-     * @return whether or not the field should be excluded
+     * @return name of the property 
      */
     String showIfProperty() default "";
 
