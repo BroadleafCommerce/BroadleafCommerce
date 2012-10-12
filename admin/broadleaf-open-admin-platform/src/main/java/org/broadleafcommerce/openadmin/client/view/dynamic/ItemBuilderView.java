@@ -37,8 +37,9 @@ import com.smartgwt.client.widgets.layout.VLayout;
  *
  */
 public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
-	
-	protected FormItem itemQuantity;
+
+    public static final int BTN_WIDTH_HEIGHT = 16;
+    protected FormItem itemQuantity;
 	protected FilterBuilder itemFilterBuilder;
 	protected ImgButton removeButton;
 	protected Label label;
@@ -57,20 +58,20 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 			VLayout removeLayout = new VLayout();
 			removeLayout.setAlign(VerticalAlignment.TOP);
 			removeLayout.setHeight(46);
-			removeLayout.setWidth(16);
+			removeLayout.setWidth(BTN_WIDTH_HEIGHT);
 
             VLayout innerRemoveLayout = new VLayout();
             innerRemoveLayout.setAlign(VerticalAlignment.CENTER);
 			innerRemoveLayout.setHeight(38);
-			innerRemoveLayout.setWidth(16);
+			innerRemoveLayout.setWidth(BTN_WIDTH_HEIGHT);
 
 			removeButton = new ImgButton();
 			removeButton.setSrc(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/remove.png");
 			removeButton.setShowRollOver(false);
 			removeButton.setShowDownIcon(false);
 			removeButton.setShowDown(false);
-			removeButton.setWidth(16);
-			removeButton.setHeight(16);
+			removeButton.setWidth(BTN_WIDTH_HEIGHT);
+			removeButton.setHeight(BTN_WIDTH_HEIGHT);
 
             innerRemoveLayout.addMember(removeButton);
 			removeLayout.addMember(innerRemoveLayout);
@@ -88,6 +89,7 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		innerFormLayout.setHeight(38);
 
 		itemForm = new DynamicForm();
+        itemForm.setStyleName("blcPromoItemForm");
         itemQuantity = new IntegerItem();
         itemQuantity.setShowTitle(false);
         itemQuantity.setValue(1);
@@ -123,15 +125,17 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		innerBuilderLayout.setHeight(38);
 		innerBuilderLayout.setAlign(VerticalAlignment.CENTER);
 
-		itemFilterBuilder = new BLCFilterBuilder();  
-		itemFilterBuilder.setDataSource(itemDataSource);
+		itemFilterBuilder = new BLCFilterBuilder();
+        itemFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
+        itemFilterBuilder.setDataSource(itemDataSource);
 		//itemFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(itemDataSource));
         itemFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
-		itemFilterBuilder.setLayoutBottomMargin(10);
+		//itemFilterBuilder.setLayoutBottomMargin(10);
 		itemFilterBuilder.setAllowEmpty(true);
 		itemFilterBuilder.setValidateOnChange(false);
 		innerBuilderLayout.addMember(itemFilterBuilder);
         rawItemForm = new DynamicForm();
+        rawItemForm.setStyleName("blcPromoRawItemForm");
 		rawItemForm.setVisible(false);
         rawItemTextArea = new TextAreaItem();
         rawItemTextArea.setHeight(70);

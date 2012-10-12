@@ -60,6 +60,13 @@ import java.util.List;
  */
 public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
+    public static final int LAYOUT_MARGIN = 15;
+    public static final int LABEL_HEIGHT = 50;
+    public static final int ADD_ITEM_BUTTON_WIDTH = 160;
+    public static final String RADIO_GROUP_WIDTH = "400px";
+    public static final int HELP_BUTTON_WIDTH = 18;
+    public static final int HELP_BUTTON_HEIGHT = 18;
+
     protected DynamicForm stepFGForm;
     protected DynamicForm stepItemForm;
     protected DynamicForm stepBogoForm;
@@ -169,10 +176,10 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         listDisplay.getGrid().setAlternateBodyStyleName("");
 
         //listDisplay.getToolBar().addFill();
-        cloneButton = new ToolStripButton();
-        cloneButton.setDisabled(true);
-        cloneButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/double_arrow_right.png");
-        cloneButton.setPrompt(BLCMain.getMessageManager().getString("clonePromotionHelp"));
+        //cloneButton = new ToolStripButton();
+        //cloneButton.setDisabled(true);
+        //cloneButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/double_arrow_right.png");
+        //cloneButton.setPrompt(BLCMain.getMessageManager().getString("clonePromotionHelp"));
         //listDisplay.getToolBar().addButton(cloneButton);
         //listDisplay.getToolBar().addSpacer(6);
         leftVerticalLayout.addMember(listDisplay);
@@ -194,18 +201,20 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).setLayoutTopMargin(10);
 
 
+        //---- Advance Restrictions ---
         VLayout restrictLayout = new VLayout();
         restrictLayout.setID("offerRestrictLayout");
-        restrictLayout.setLayoutLeftMargin(10);
+        restrictLayout.setLayoutLeftMargin(LAYOUT_MARGIN);
         Label restrictLabel = new Label(BLCMain.getMessageManager().getString("restrictOnlyPromotionLabel"));
         restrictLabel.setWrap(false);
-        restrictLabel.setHeight(30);
+        restrictLabel.setHeight(LABEL_HEIGHT);
         restrictLabel.setStyleName("blcFormBg");
         restrictLabel.setStyleName("label-bold");
         restrictLayout.addMember(restrictLabel);
 
         restrictForm = new DynamicForm();
         restrictRuleRadio = new RadioGroupItem();
+        restrictRuleRadio.setWidth(RADIO_GROUP_WIDTH);
         restrictRuleRadio.setShowTitle(false);
         restrictRuleRadio.setWrap(false);
         restrictRuleRadio.setDefaultValue("NO");
@@ -222,17 +231,18 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         restrictionSectionView.getContentLayout().addMember(restrictLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(restrictionSectionView);
 
+        //---- Customer Qualification ---
         customerLayout = new VLayout();
         customerLayout.setVisible(false);
         customerLayout.setID("offerCustomerLayout");
-        customerLayout.setLayoutLeftMargin(10);
+        customerLayout.setLayoutLeftMargin(LAYOUT_MARGIN);
         HStack customerObtainHStack = new HStack(10);
         customerObtainHStack.setID("offerCustomerObtainHStack");
         customerObtainHStack.setWidth100();
-        customerObtainHStack.setHeight(30);
+        customerObtainHStack.setHeight(LABEL_HEIGHT);
         Label customerObtainLabel = new Label(BLCMain.getMessageManager().getString("customerObtainLabel"));
         customerObtainLabel.setWrap(false);
-        customerObtainLabel.setHeight(30);
+        customerObtainLabel.setHeight(LABEL_HEIGHT);
         customerObtainLabel.setStyleName("blcFormBg");
         customerObtainLabel.setStyleName("label-bold");
         customerObtainHStack.addMember(customerObtainLabel);
@@ -241,8 +251,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         helpCustomerObtainVStack.setAlign(VerticalAlignment.CENTER);
         helpButtonType = new ImgButton();
         helpButtonType.setSrc(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/help.png");
-        helpButtonType.setWidth(16);
-        helpButtonType.setHeight(16);
+        helpButtonType.setWidth(HELP_BUTTON_WIDTH);
+        helpButtonType.setHeight(HELP_BUTTON_HEIGHT);
         helpCustomerObtainVStack.addMember(helpButtonType);
         customerObtainHStack.addMember(helpCustomerObtainVStack);
         customerLayout.addMember(customerObtainHStack);
@@ -250,6 +260,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerObtainForm = new DynamicForm();
         customerObtainForm.setNumCols(4);
         deliveryTypeRadio = new RadioGroupItem();
+        deliveryTypeRadio.setColSpan(2);
+        deliveryTypeRadio.setWidth(RADIO_GROUP_WIDTH);
         deliveryTypeRadio.setShowTitle(false);
         deliveryTypeRadio.setWrap(false);
         deliveryTypeRadio.setDisabled(true);
@@ -268,13 +280,14 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         Label whichCustomerLabel = new Label(BLCMain.getMessageManager().getString("whichCustomerLabel"));
         whichCustomerLabel.setWrap(false);
-        whichCustomerLabel.setHeight(30);
+        whichCustomerLabel.setHeight(LABEL_HEIGHT);
         whichCustomerLabel.setStyleName("blcFormBg");
         whichCustomerLabel.setStyleName("label-bold");
         customerLayout.addMember(whichCustomerLabel);
 
         whichCustomerForm = new DynamicForm();
         customerRuleRadio = new RadioGroupItem();
+        customerRuleRadio.setWidth(RADIO_GROUP_WIDTH);
         customerRuleRadio.setShowTitle(false);
         customerRuleRadio.setWrap(false);
         customerRuleRadio.setDisabled(true);
@@ -302,11 +315,11 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerFilterBuilder.setDataSource(customerDataSource);
         customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
         customerFilterBuilder.setVisible(false);
-        customerFilterBuilder.setLayoutBottomMargin(10);
+        customerFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);
         customerFilterBuilder.setAllowEmpty(true);
         customerFilterBuilder.setValidateOnChange(false);
         customerLayout.addMember(customerFilterBuilder);
-        customerLayout.setLayoutBottomMargin(10);
+        customerLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
 
         customerSection = new SectionView(BLCMain.getMessageManager().getString("customerSectionViewTitle"));
         customerSection.setVisible(false);
@@ -315,19 +328,21 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerSection.getContentLayout().addMember(customerLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(customerSection);
 
+        //---- Order Qualification ---
         orderSectionLayout = new VLayout();
         orderSectionLayout.setVisible(false);
         orderSectionLayout.setID("offerOrderSectionLayout");
-        orderSectionLayout.setLayoutLeftMargin(10);
+        orderSectionLayout.setLayoutLeftMargin(LAYOUT_MARGIN);
         Label orderLabel = new Label(BLCMain.getMessageManager().getString("orderSectionLabel"));
         orderLabel.setWrap(false);
-        orderLabel.setHeight(30);
+        orderLabel.setHeight(LABEL_HEIGHT);
         orderLabel.setStyleName("blcFormBg");
         orderLabel.setStyleName("label-bold");
         orderSectionLayout.addMember(orderLabel);
 
         orderForm = new DynamicForm();
         orderRuleRadio = new RadioGroupItem();
+        orderRuleRadio.setWidth(RADIO_GROUP_WIDTH);
         orderRuleRadio.setShowTitle(false);
         orderRuleRadio.setWrap(false);
         orderRuleRadio.setDisabled(true);
@@ -354,7 +369,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderFilterBuilder.setDataSource(orderDataSource);
         orderFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(orderDataSource));
         orderFilterBuilder.setVisible(false);
-        orderFilterBuilder.setLayoutBottomMargin(10);
+        orderFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);
         orderFilterBuilder.setAllowEmpty(true);
         orderFilterBuilder.setValidateOnChange(false);
         orderSectionLayout.addMember(orderFilterBuilder);
@@ -362,7 +377,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderCombineLabel = new Label(BLCMain.getMessageManager().getString("orderCombineLabel"));
         orderCombineLabel.setVisible(false);
         orderCombineLabel.setWrap(false);
-        orderCombineLabel.setHeight(30);
+        orderCombineLabel.setHeight(LABEL_HEIGHT);
         orderCombineLabel.setStyleName("blcFormBg");
         orderCombineLabel.setStyleName("label-bold");
         orderSectionLayout.addMember(orderCombineLabel);
@@ -370,6 +385,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderCombineForm = new DynamicForm();
         orderCombineForm.setVisible(false);
         orderCombineRuleRadio = new RadioGroupItem();
+        orderCombineRuleRadio.setWidth(RADIO_GROUP_WIDTH);
         orderCombineRuleRadio.setShowTitle(false);
         orderCombineRuleRadio.setWrap(false);
         orderCombineRuleRadio.setDefaultValue("NO");
@@ -387,14 +403,15 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderSection.getContentLayout().addMember(orderSectionLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(orderSection);
 
+        //---- Item Qualification ---
         VStack itemSectionLayout = new VStack();
         itemSectionLayout.setID("offerItemSectionLayout");
-        itemSectionLayout.setLayoutLeftMargin(10);
+        itemSectionLayout.setLayoutLeftMargin(LAYOUT_MARGIN);
 
         orderItemCombineLabel = new Label(BLCMain.getMessageManager().getString("orderItemCombineLabel"));
         orderItemCombineLabel.setVisible(false);
         orderItemCombineLabel.setWrap(false);
-        orderItemCombineLabel.setHeight(30);
+        orderItemCombineLabel.setHeight(LABEL_HEIGHT);
         orderItemCombineLabel.setStyleName("blcFormBg");
         orderItemCombineLabel.setStyleName("label-bold");
         itemSectionLayout.addMember(orderItemCombineLabel);
@@ -402,6 +419,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderItemCombineForm = new DynamicForm();
         orderItemCombineForm.setVisible(false);
         orderItemCombineRuleRadio = new RadioGroupItem();
+        orderItemCombineRuleRadio.setWidth(RADIO_GROUP_WIDTH);
         orderItemCombineRuleRadio.setShowTitle(false);
         orderItemCombineRuleRadio.setWrap(false);
         orderItemCombineRuleRadio.setDefaultValue("YES");
@@ -417,10 +435,10 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         HStack hStackBogo = new HStack(10);
         hStackBogo.setID("offerHStackBogo");
         hStackBogo.setWidth100();
-        hStackBogo.setHeight(30);
+        hStackBogo.setHeight(LABEL_HEIGHT);
         bogoQuestionLabel = new Label(BLCMain.getMessageManager().getString("bogoQuestionLabel"));
         bogoQuestionLabel.setWrap(false);
-        bogoQuestionLabel.setHeight(30);
+        bogoQuestionLabel.setHeight(LABEL_HEIGHT);
         bogoQuestionLabel.setStyleName("blcFormBg");
         bogoQuestionLabel.setStyleName("label-bold");
         hStackBogo.addMember(bogoQuestionLabel);
@@ -437,6 +455,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         stepBogoForm = new DynamicForm();
         bogoRadio = new RadioGroupItem();
+        bogoRadio.setWidth(RADIO_GROUP_WIDTH);
         bogoRadio.setShowTitle(false);
         bogoRadio.setWrap(false);
         bogoRadio.setDefaultValue("NO");
@@ -452,7 +471,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         requiredItemsLayout.setVisible(false);
         requiredItemsLabel = new Label(BLCMain.getMessageManager().getString("requiredItemsLabel"));
         requiredItemsLabel.setWrap(false);
-        requiredItemsLabel.setHeight(30);
+        requiredItemsLabel.setHeight(LABEL_HEIGHT);
         requiredItemsLabel.setStyleName("blcFormBg");
         requiredItemsLabel.setStyleName("label-bold");
         requiredItemsLayout.addMember(requiredItemsLabel);
@@ -461,6 +480,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderItemLayout.setVisible(false);
         stepItemForm = new DynamicForm();
         itemRuleRadio = new RadioGroupItem();
+        itemRuleRadio.setWidth(RADIO_GROUP_WIDTH);
         itemRuleRadio.setShowTitle(false);
         itemRuleRadio.setWrap(false);
         itemRuleRadio.setDefaultValue("NONE");
@@ -479,15 +499,15 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         buttonLayout.setID("offerButtonLayout");
         buttonLayout.setWidth100();
         buttonLayout.setAlign(Alignment.LEFT);
-        buttonLayout.setHeight(30);
-        buttonLayout.setLayoutTopMargin(15);
+        buttonLayout.setHeight(LABEL_HEIGHT);
+        buttonLayout.setLayoutTopMargin(LAYOUT_MARGIN);
         addItemButton = new Button();
         addItemButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
         addItemButton.setTitle(BLCMain.getMessageManager().getString("newItemRuleButtonTitle"));
-        addItemButton.setWidth(136);
+        addItemButton.setWidth(ADD_ITEM_BUTTON_WIDTH);
         addItemButton.setWrap(false);
         buttonLayout.addMember(addItemButton);
-        buttonLayout.setLayoutBottomMargin(10);
+        buttonLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
         newItemBuilderLayout.addMember(buttonLayout);
         itemBuilderContainerLayout = new VLayout();
         newItemBuilderLayout.addMember(itemBuilderContainerLayout);
@@ -501,12 +521,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         newItemBuilderLayout.addMember(advancedItemCriteria);
         Label receiveFromAnotherPromoLabel = new Label(BLCMain.getMessageManager().getString("receiveFromAnotherPromoLabel"));
         receiveFromAnotherPromoLabel.setWrap(false);
-        receiveFromAnotherPromoLabel.setHeight(30);
-        receiveFromAnotherPromoLabel.setStyleName("blcFormBg");
+        receiveFromAnotherPromoLabel.setHeight(LABEL_HEIGHT);
+        receiveFromAnotherPromoLabel.setStyleName("blcPromoAdditionalQuestion");
         advancedItemCriteria.addMember(receiveFromAnotherPromoLabel);
 
         receiveFromAnotherPromoForm = new DynamicForm();
         receiveFromAnotherPromoRadio = new RadioGroupItem();
+        receiveFromAnotherPromoRadio.setWidth(RADIO_GROUP_WIDTH);
         receiveFromAnotherPromoRadio.setShowTitle(false);
         receiveFromAnotherPromoRadio.setWrap(false);
         receiveFromAnotherPromoRadio.setDefaultValue("NO");
@@ -519,12 +540,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         Label qualifiyForAnotherPromoLabel = new Label(BLCMain.getMessageManager().getString("qualifiyForAnotherPromoLabel"));
         qualifiyForAnotherPromoLabel.setWrap(false);
-        qualifiyForAnotherPromoLabel.setHeight(30);
-        qualifiyForAnotherPromoLabel.setStyleName("blcFormBg");
+        qualifiyForAnotherPromoLabel.setHeight(LABEL_HEIGHT);
+        qualifiyForAnotherPromoLabel.setStyleName("blcPromoAdditionalQuestion");
         advancedItemCriteria.addMember(qualifiyForAnotherPromoLabel);
 
         qualifyForAnotherPromoForm = new DynamicForm();
         qualifyForAnotherPromoRadio = new RadioGroupItem();
+        qualifyForAnotherPromoRadio.setWidth(RADIO_GROUP_WIDTH);
         qualifyForAnotherPromoRadio.setShowTitle(false);
         qualifyForAnotherPromoRadio.setWrap(false);
         qualifyForAnotherPromoRadio.setDefaultValue("NO");
@@ -553,7 +575,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         requiredItemsLayout.addMember(qualifyingItemSubTotalForm);
 
         itemSectionLayout.addMember(requiredItemsLayout);
-        itemSectionLayout.setLayoutBottomMargin(10);
+        itemSectionLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
 
         itemQualificationSectionView = new SectionView(BLCMain.getMessageManager().getString("itemQualificationSectionTitle"));
         itemQualificationSectionView.setWidth("98%");
@@ -561,11 +583,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         itemQualificationSectionView.setVisible(false);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(itemQualificationSectionView);
 
+
+        //---- Item Discount Target ---
         targetItemsLayout = new VLayout();
-        targetItemsLayout.setLayoutLeftMargin(10);
+        targetItemsLayout.setLayoutLeftMargin(LAYOUT_MARGIN);
         targetItemsLabel = new Label(BLCMain.getMessageManager().getString("targetItemsLabel"));
         targetItemsLabel.setWrap(false);
-        targetItemsLabel.setHeight(30);
+        targetItemsLabel.setHeight(LABEL_HEIGHT);
         targetItemsLabel.setStyleName("blcFormBg");
         targetItemsLabel.setStyleName("label-bold");
         targetItemsLayout.addMember(targetItemsLabel);
@@ -578,15 +602,15 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         targetButtonLayout.setID("targetOfferButtonLayout");
         targetButtonLayout.setWidth100();
         targetButtonLayout.setAlign(Alignment.LEFT);
-        targetButtonLayout.setHeight(30);
-        targetButtonLayout.setLayoutTopMargin(15);
+        targetButtonLayout.setHeight(LABEL_HEIGHT);
+        targetButtonLayout.setLayoutTopMargin(LAYOUT_MARGIN);
         targetAddItemButton = new Button();
         targetAddItemButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
         targetAddItemButton.setTitle(BLCMain.getMessageManager().getString("newItemRuleButtonTitle"));
-        targetAddItemButton.setWidth(136);
+        targetAddItemButton.setWidth(ADD_ITEM_BUTTON_WIDTH);
         targetAddItemButton.setWrap(false);
         targetButtonLayout.addMember(targetAddItemButton);
-        targetButtonLayout.setLayoutBottomMargin(10);
+        targetButtonLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
         newTargetItemBuilderLayout.addMember(targetButtonLayout);
         targetItemBuilderContainerLayout = new VLayout();
         newTargetItemBuilderLayout.addMember(targetItemBuilderContainerLayout);
@@ -594,19 +618,20 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
             targetItemBuilderContainerLayout.addMember((ItemBuilderView) widget);
         }
         targetItemsLayout.addMember(newTargetItemBuilderLayout);
-        targetItemsLayout.setLayoutBottomMargin(10);
+        targetItemsLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
 
         advancedItemCriteriaTarget = new VLayout();
         advancedItemCriteriaTarget.setVisible(false);
         targetItemsLayout.addMember(advancedItemCriteriaTarget);
         Label receiveFromAnotherPromoTargetLabel = new Label(BLCMain.getMessageManager().getString("receiveFromAnotherPromoTargetLabel"));
         receiveFromAnotherPromoTargetLabel.setWrap(false);
-        receiveFromAnotherPromoTargetLabel.setHeight(30);
-        receiveFromAnotherPromoTargetLabel.setStyleName("blcFormBg");
+        receiveFromAnotherPromoTargetLabel.setHeight(LABEL_HEIGHT);
+        receiveFromAnotherPromoTargetLabel.setStyleName("blcPromoAdditionalQuestion");
         advancedItemCriteriaTarget.addMember(receiveFromAnotherPromoTargetLabel);
 
         receiveFromAnotherPromoTargetForm = new DynamicForm();
         receiveFromAnotherPromoTargetRadio = new RadioGroupItem();
+        receiveFromAnotherPromoRadio.setWidth(RADIO_GROUP_WIDTH);
         receiveFromAnotherPromoTargetRadio.setShowTitle(false);
         receiveFromAnotherPromoTargetRadio.setWrap(false);
         receiveFromAnotherPromoTargetRadio.setDefaultValue("NO");
@@ -619,12 +644,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         Label qualifiyForAnotherPromoTargetLabel = new Label(BLCMain.getMessageManager().getString("qualifiyForAnotherPromoTargetLabel"));
         qualifiyForAnotherPromoTargetLabel.setWrap(false);
-        qualifiyForAnotherPromoTargetLabel.setHeight(30);
-        qualifiyForAnotherPromoTargetLabel.setStyleName("blcFormBg");
+        qualifiyForAnotherPromoTargetLabel.setHeight(LABEL_HEIGHT);
+        qualifiyForAnotherPromoTargetLabel.setStyleName("blcPromoAdditionalQuestion");
         advancedItemCriteriaTarget.addMember(qualifiyForAnotherPromoTargetLabel);
 
         qualifyForAnotherPromoTargetForm = new DynamicForm();
         qualifyForAnotherPromoTargetRadio = new RadioGroupItem();
+        qualifyForAnotherPromoTargetRadio.setWidth(RADIO_GROUP_WIDTH);
         qualifyForAnotherPromoTargetRadio.setShowTitle(false);
         qualifyForAnotherPromoTargetRadio.setWrap(false);
         qualifyForAnotherPromoTargetRadio.setDefaultValue("NO");
@@ -642,17 +668,18 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(itemTargetSectionView);
 
         fgQuestionLayout = new VLayout();
-        fgQuestionLayout.setLayoutLeftMargin(10);
+        fgQuestionLayout.setLayoutLeftMargin(LAYOUT_MARGIN);
 
         Label fgCombineLabel = new Label(BLCMain.getMessageManager().getString("fgCombineLabel"));
         fgCombineLabel.setWrap(false);
-        fgCombineLabel.setHeight(30);
-        fgCombineLabel.setStyleName("blcFormBg");
+        fgCombineLabel.setHeight(LABEL_HEIGHT);
+        fgCombineLabel.setStyleName("blcPromoAdditionalQuestion");
         fgCombineLabel.setStyleName("label-bold");
         fgQuestionLayout.addMember(fgCombineLabel);
 
         fgCombineForm = new DynamicForm();
         fgCombineRuleRadio = new RadioGroupItem();
+        fgCombineRuleRadio.setWidth(RADIO_GROUP_WIDTH);
         fgCombineRuleRadio.setShowTitle(false);
         fgCombineRuleRadio.setWrap(false);
         fgCombineRuleRadio.setDefaultValue("NO");
@@ -665,13 +692,14 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         stepFGLabel = new Label(BLCMain.getMessageManager().getString("stepFGLabel"));
         stepFGLabel.setWrap(false);
-        stepFGLabel.setHeight(30);
-        stepFGLabel.setStyleName("blcFormBg");
+        stepFGLabel.setHeight(LABEL_HEIGHT);
+        stepFGLabel.setStyleName("blcPromoAdditionalQuestion");
         stepFGLabel.setStyleName("label-bold");
         fgQuestionLayout.addMember(stepFGLabel);
 
         stepFGForm = new DynamicForm();
         fgRuleRadio = new RadioGroupItem();
+        fgRuleRadio.setWidth(RADIO_GROUP_WIDTH);
         fgRuleRadio.setShowTitle(false);
         fgRuleRadio.setWrap(false);
         fgRuleRadio.setDefaultValue("ALL");
@@ -688,7 +716,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fulfillmentGroupFilterBuilder.setAllowEmpty(true);
         fulfillmentGroupFilterBuilder.setValidateOnChange(false);
         fgQuestionLayout.addMember(fulfillmentGroupFilterBuilder);
-        fgQuestionLayout.setLayoutBottomMargin(10);
+        fgQuestionLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
 
         rawFGForm = new DynamicForm();
         rawFGForm.setVisible(false);

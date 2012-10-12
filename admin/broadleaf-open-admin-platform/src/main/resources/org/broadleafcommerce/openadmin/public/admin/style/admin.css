@@ -157,3 +157,57 @@ label {
     font-size:11px;
     resise: both;
 }
+
+
+/*============================================================
+  BLC Styles
+============================================================*/
+.blcPromoHeader {
+    font-family: @baseFontFamily;
+    font-size: 18px;
+    line-height: @baseLineHeight;
+    color: @grayDark;
+    font-weight: normal;
+    padding: 8px;
+}
+
+.blcPromoAdditionalQuestion {
+    border-bottom: 1px solid #A7ABB4;
+}
+
+/*============================================================
+  Forms
+============================================================*/
+
+.blcFormBg {
+    background: none repeat scroll 0 0 #F9F9F9;
+    border: 1px solid #A7ABB4;
+}
+
+.blcFormBg img {
+    vertical-align: text-top;
+}
+
+.blcFormView {
+    background: none repeat scroll 0 0 #F9F9F9;
+}
+
+.tabSetContainer .blcFormBg {
+    border: none;
+}
+
+.blcFormView table tr {
+    border-top: 1px solid white;
+    border-bottom: 1px solid #EEE;
+    padding: 5px;
+}
+
+.blcHtmlPane {
+    border: 1px solid #CCC;
+    margin: 5px;
+    padding: 5px;
+}
+
+.blcPromoItemFilterBuilder input[type="text"] {
+    margin: 0;
+}

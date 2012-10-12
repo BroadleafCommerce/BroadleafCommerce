@@ -32,16 +32,18 @@ public class SectionView extends VLayout {
 	protected ToolStrip toolbar;
 	
 	public SectionView(String title) {
-		setLayoutBottomMargin(10);
+		//setLayoutBottomMargin(10);
 		toolbar = new ToolStrip();
 		toolbar.setWidth100();
 		Label label = new Label(title);
+        label.setStyleName("blcPromoHeader");
 		label.setWrap(false);
-		toolbar.addSpacer(6);
+		//toolbar.addSpacer(6);
 		toolbar.addMember(label);
 		addMember(toolbar);
-		contentLayout = new VStack(10);
-		addMember(contentLayout);
+		contentLayout = new VStack();
+        contentLayout.setStyleName("blcPromoSection");
+        addMember(contentLayout);
 	}
 
 	public VStack getContentLayout() {
