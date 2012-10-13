@@ -167,7 +167,7 @@ public class FormBuilder {
             @Override
             public void visit(AdornedTargetCollectionMetadata metadata) {
                 String sortField = ((AdornedTargetList) ((DynamicEntityDataSource) dataSource).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getSortField();
-                GridStructureView advancedCollectionView = new GridStructureView(viewTitle, sortField!=null&sortField.length()>0, true);
+                GridStructureView advancedCollectionView = new GridStructureView(viewTitle, sortField!=null&&sortField.length()>0, true);
                 destination.addMember(advancedCollectionView);
                 List<String> prominentNames = new ArrayList<String>();
                 for (DataSourceField field : lookupDataSource.getFields()) {
