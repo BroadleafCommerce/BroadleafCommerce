@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerAddressDataSourceFactory;
@@ -42,122 +49,112 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-
 import java.util.HashMap;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class CustomerPresenter extends DynamicEntityPresenter implements Instantiable {
 
     protected SubPresentable customerAddressPresenter;
     protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 
-	@Override
-	protected void changeSelection(final Record selectedRecord) {
-		getDisplay().getUpdateLoginButton().enable();
+    @Override
+    protected void changeSelection(final Record selectedRecord) {
+        getDisplay().getUpdateLoginButton().enable();
         customerAddressPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("customerDS"));
-	}
-	
-	@Override
-	protected void addClicked() {
-		initialValues.put("username", BLCMain.getMessageManager().getString("usernameDefault"));
+    }
+
+    @Override
+    protected void addClicked() {
+        initialValues.put("username", BLCMain.getMessageManager().getString("usernameDefault"));
         super.addClicked(BLCMain.getMessageManager().getString("newCustomerTitle"));
-	}
+    }
 
-	@Override
-	public void bind() {
-		super.bind();
+    @Override
+    public void bind() {
+        super.bind();
         customerAddressPresenter.bind();
-		getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
-			@Override
+        getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					SC.confirm(BLCMain.getMessageManager().getString("confirmResetPassword"), new BooleanCallback() {
-						@Override
+                if (event.isLeftButtonDown()) {
+                    SC.confirm(BLCMain.getMessageManager().getString("confirmResetPassword"), new BooleanCallback() {
+                        @Override
                         public void execute(Boolean value) {
-							if (value != null && value) {
-								BLCMain.NON_MODAL_PROGRESS.startProgress();
-								
-								PersistencePerspective tempPerspective = new PersistencePerspective();
-			            		OperationTypes opTypes = new OperationTypes();
-			            		tempPerspective.setOperationTypes(opTypes);
-			            		
-								final Entity entity = new Entity();
-			            		Property prop = new Property();
-			            		prop.setName("username");
-			            		prop.setValue(display.getListDisplay().getGrid().getSelectedRecord().getAttribute("username"));
-			            		entity.setProperties(new Property[]{prop});
-			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
-			            		
-			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage("org.broadleafcommerce.profile.core.domain.Customer", entity, tempPerspective, new String[]{"passwordUpdate"}, BLCMain.csrfToken), new AbstractCallback<Entity>() {
-									@Override
+                            if (value != null && value) {
+                                BLCMain.NON_MODAL_PROGRESS.startProgress();
+
+                                PersistencePerspective tempPerspective = new PersistencePerspective();
+                                OperationTypes opTypes = new OperationTypes();
+                                tempPerspective.setOperationTypes(opTypes);
+
+                                final Entity entity = new Entity();
+                                Property prop = new Property();
+                                prop.setName("username");
+                                prop.setValue(display.getListDisplay().getGrid().getSelectedRecord().getAttribute("username"));
+                                entity.setProperties(new Property[]{prop});
+                                entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
+
+                                AppServices.DYNAMIC_ENTITY.update(new PersistencePackage("org.broadleafcommerce.profile.core.domain.Customer", entity, tempPerspective, new String[]{"passwordUpdate"}, BLCMain.csrfToken), new AbstractCallback<Entity>() {
+                                    @Override
                                     public void onSuccess(Entity arg0) {
-										BLCMain.NON_MODAL_PROGRESS.stopProgress();
-										SC.say(BLCMain.getMessageManager().getString("resetPasswordSuccessful"));
-									}	
-			            		}); 
-							}
-						}
-					});
-				}
-			}
-		});
+                                        BLCMain.NON_MODAL_PROGRESS.stopProgress();
+                                        SC.say(BLCMain.getMessageManager().getString("resetPasswordSuccessful"));
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
-	}
+    }
 
-	@Override
+    @Override
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource top) {
-				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"username", "firstName", "lastName", "emailAddress"}, new Boolean[]{true, true, true, true});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                setupDisplayItems(top);
+                ((ListGridDataSource) top).setupGridFields(new String[]{"username", "firstName", "lastName", "emailAddress"}, new Boolean[]{true, true, true, true});
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				((ListGridDataSource) result).resetPermanentFieldVisibility("question");
+                ((ListGridDataSource) result).resetPermanentFieldVisibility("question");
                 final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 getPresenterSequenceSetupManager().getDataSource("customerDS").
-                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                    "challengeQuestion",
-                    challengeQuestionSearchView,
-                    BLCMain.getMessageManager().getString("challengeQuestionSearchPrompt"),
-                    display.getDynamicFormDisplay()
+                        getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                        "challengeQuestion",
+                        challengeQuestionSearchView,
+                        BLCMain.getMessageManager().getString("challengeQuestionSearchPrompt"),
+                        display.getDynamicFormDisplay()
                 );
-			}
-		}));
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+            @Override
             public void onSetupSuccess(DataSource result) {
-				((ListGridDataSource) result).resetPermanentFieldVisibility("friendlyName");
+                ((ListGridDataSource) result).resetPermanentFieldVisibility("friendlyName");
                 final EntitySearchDialog localeSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 getPresenterSequenceSetupManager().getDataSource("customerDS").
-                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                    "customerLocale",
-                    localeSearchView,
-                    BLCMain.getMessageManager().getString("localeSearchPrompt"),
-                    display.getDynamicFormDisplay()
+                        getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                        "customerLocale",
+                        localeSearchView,
+                        BLCMain.getMessageManager().getString("localeSearchPrompt"),
+                        display.getDynamicFormDisplay()
                 );
-			}
-		}));
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
                 ((ListGridDataSource) result).resetPermanentFieldVisibility(
-                    "abbreviation",
-                    "name"
+                        "abbreviation",
+                        "name"
                 );
                 EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 library.put("countrySearchView", countrySearchView);
@@ -167,8 +164,8 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
             @Override
             public void onSetupSuccess(DataSource result) {
                 ((ListGridDataSource) result).resetPermanentFieldVisibility(
-                    "abbreviation",
-                    "name"
+                        "abbreviation",
+                        "name"
                 );
                 EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 library.put("stateSearchView", stateSearchView);
@@ -177,36 +174,38 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerAddressDS", new CustomerAddressDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                customerAddressPresenter = new CreateBasedListStructurePresenter(getDisplay().getCustomerAddressDisplay(), new String[] {EntityImplementations.CUSTOMER}, BLCMain.getMessageManager().getString("newCustomerAddressTitle"));
+                customerAddressPresenter = new CreateBasedListStructurePresenter(getDisplay().getCustomerAddressDisplay(), new String[]{EntityImplementations.CUSTOMER}, BLCMain.getMessageManager().getString("newCustomerAddressTitle"));
                 customerAddressPresenter.setDataSource((ListGridDataSource) result, new String[]{"addressName", "address.addressLine1", "address.city", "address.state.name", "address.postalCode"}, new Boolean[]{true, true, true, true, true});
 
                 ((DynamicEntityDataSource) result).
-                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                    "address.country",
-                    (EntitySearchDialog) library.get("countrySearchView"),
-                    BLCMain.getMessageManager().getString("countrySearchPrompt"),
-                    display.getDynamicFormDisplay()
+                        getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                        "address.country",
+                        (EntitySearchDialog) library.get("countrySearchView"),
+                        BLCMain.getMessageManager().getString("countrySearchPrompt"),
+                        display.getDynamicFormDisplay()
                 );
                 ((DynamicEntityDataSource) result).
-                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                    "address.state",
-                    (EntitySearchDialog) library.get("stateSearchView"),
-                    BLCMain.getMessageManager().getString("stateSearchPrompt"),
-                    display.getDynamicFormDisplay()
+                        getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                        "address.state",
+                        (EntitySearchDialog) library.get("stateSearchView"),
+                        BLCMain.getMessageManager().getString("stateSearchPrompt"),
+                        display.getDynamicFormDisplay()
                 );
             }
         }));
-	}
-@Override
-public void postSetup(Canvas container) {
-    gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
-    gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),customerAddressPresenter );
-    
-    super.postSetup(container);
-}
-	@Override
-	public CustomerDisplay getDisplay() {
-		return (CustomerDisplay) display;
-	}
-	
+    }
+
+    @Override
+    public void postSetup(Canvas container) {
+        //gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+        //gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(), customerAddressPresenter);
+
+        super.postSetup(container);
+    }
+
+    @Override
+    public CustomerDisplay getDisplay() {
+        return (CustomerDisplay) display;
+    }
+
 }

@@ -146,8 +146,8 @@ public void onSetupSuccess(DataSource top) {
     }
     @Override
     public void postSetup(Canvas container) {
-        gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
-        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),productOptionValuePresenter ,translationsPresenter,priceListPresenter);
+        //gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+        //gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),productOptionValuePresenter ,translationsPresenter,priceListPresenter);
         
         super.postSetup(container);
     }

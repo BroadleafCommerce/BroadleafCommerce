@@ -74,7 +74,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridHelper;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -97,7 +96,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected ListGridRecord lastSelectedRecord;
     protected Boolean loaded = false;
     protected DynamicFormPresenter formPresenter;
-    protected GridHelper gridHelper=new GridHelper();
+    //protected GridHelper gridHelper=new GridHelper();
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickHandlerRegistration;
     protected HandlerRegistration addClickHandlerRegistration;
