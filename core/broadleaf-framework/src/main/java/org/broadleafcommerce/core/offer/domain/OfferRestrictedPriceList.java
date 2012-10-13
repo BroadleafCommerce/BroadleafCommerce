@@ -2,8 +2,10 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 
+import java.io.Serializable;
 
-public interface OfferRestrictedPriceList {
+
+public interface OfferRestrictedPriceList extends Serializable {
 
     PriceList getPriceList();
 

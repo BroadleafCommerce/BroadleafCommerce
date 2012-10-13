@@ -225,11 +225,10 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)
     protected BigDecimal qualifyingItemSubTotal;
 
-
     @OneToMany(mappedBy = "offer", targetEntity = OfferRestrictedPriceListImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "priceList", friendlyName = "offerRestrictedPriceListTitle", dataSourceName = "offerRestrictedPriceListDS", gridVisibleFields = {"priceKey", "friendlyName"})
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "priceList", friendlyName = "offerRestrictedPriceListTitle", dataSourceName = "offerRestrictedPriceListDS")
     protected List<OfferRestrictedPriceList> restrictedPriceLists = new ArrayList<OfferRestrictedPriceList>();
     
     @Embedded
