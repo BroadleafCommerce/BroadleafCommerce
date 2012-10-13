@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
 import org.hibernate.SessionFactory;
 import org.hibernate.SessionFactoryObserver;
@@ -45,6 +46,13 @@ public class SessionFactoryChangeListener implements SessionFactoryObserver {
                 Field metadataCache = DynamicEntityRemoteService.class.getDeclaredField("METADATA_CACHE");
                 metadataCache.setAccessible(true);
                 ((Map) metadataCache.get(null)).clear();
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                Field fieldCache = IdOverrideTableGenerator.class.getDeclaredField("FIELD_CACHE");
+                fieldCache.setAccessible(true);
+                ((Map) fieldCache.get(null)).clear();
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
