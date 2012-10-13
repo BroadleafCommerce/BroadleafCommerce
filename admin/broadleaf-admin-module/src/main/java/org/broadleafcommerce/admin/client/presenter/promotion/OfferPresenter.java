@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
@@ -355,6 +356,11 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                             getDisplay().getListDisplay().getRemoveButton().enable();
                         }
                         changeSelection(selectedRecord);
+                        for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
+                            //this is only suitable when no callback is required for the load - which is most cases
+                            subPresentable.getValue().setStartState();
+                            subPresentable.getValue().load(selectedRecord, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource());
+                        }
                     }
                 }
             }
