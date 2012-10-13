@@ -67,8 +67,8 @@ public class AdvancedCollectionDataSourceFactory implements DataSourceFactory {
         collectionMetadata.accept(new MetadataVisitorAdapter() {
             @Override
             public void visit(AdornedTargetCollectionMetadata metadata) {
-                dataSourceModuleList.add(new BasicClientEntityModule(metadata.getParentObjectClass(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
-                dataSourceModuleList.add(new AdornedTargetListClientModule(metadata.getParentObjectClass(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
+                dataSourceModuleList.add(new BasicClientEntityModule(metadata.getCollectionCeilingEntity(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
+                dataSourceModuleList.add(new AdornedTargetListClientModule(metadata.getCollectionCeilingEntity(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
 
                 DataSourceModule[] modules = new DataSourceModule[dataSourceModuleList.size()];
                 modules = dataSourceModuleList.toArray(modules);

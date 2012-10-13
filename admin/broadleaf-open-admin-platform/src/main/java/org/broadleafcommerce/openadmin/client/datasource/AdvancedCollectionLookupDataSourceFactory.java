@@ -56,7 +56,7 @@ public class AdvancedCollectionLookupDataSourceFactory implements DataSourceFact
         collectionMetadata.accept(new MetadataVisitorAdapter(){
             @Override
             public void visit(AdornedTargetCollectionMetadata metadata) {
-                dataSourceModuleList.add(new BasicClientEntityModule(metadata.getParentObjectClass(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
+                dataSourceModuleList.add(new BasicClientEntityModule(metadata.getCollectionCeilingEntity(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
             }
 
             @Override

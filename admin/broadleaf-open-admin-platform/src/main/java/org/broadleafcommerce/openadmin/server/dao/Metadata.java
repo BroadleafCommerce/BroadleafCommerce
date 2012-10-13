@@ -69,6 +69,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -120,7 +121,7 @@ public class Metadata {
                 buildCollectionMetadata(targetClass, attributes, field, override);
             } else if (adornedTargetCollection != null) {
                 FieldMetadataOverride override = constructAdornedTargetCollectionMetadataOverride(adornedTargetCollection);
-                buildAdornedTargetCollectionMetadata(targetClass, attributes, field, override);
+                buildAdornedTargetCollectionMetadata(targetClass, attributes, field, override, dynamicEntityDao);
             } else if (map != null) {
                 FieldMetadataOverride override = constructMapMetadataOverride(map);
                 buildMapMetadata(targetClass, attributes, field, override, dynamicEntityDao);
@@ -835,7 +836,7 @@ public class Metadata {
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildAdornedTargetCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride adornedTargetCollectionMetadata) {
+    protected void buildAdornedTargetCollectionMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride adornedTargetCollectionMetadata, DynamicEntityDao dynamicEntityDao) {
         AdornedTargetCollectionMetadata serverMetadata = (AdornedTargetCollectionMetadata) attributes.get(field.getName());
 
         AdornedTargetCollectionMetadata metadata;
@@ -906,20 +907,6 @@ public class Metadata {
             sortProperty = adornedTargetCollectionMetadata.getSortProperty();
         }
 
-        String ceiling = null;
-        checkCeiling: {
-            if (oneToMany != null && oneToMany.targetEntity() != void.class) {
-                ceiling = oneToMany.targetEntity().getName();
-                break checkCeiling;
-            }
-            if (manyToMany != null && manyToMany.targetEntity() != void.class) {
-                ceiling = manyToMany.targetEntity().getName();
-                break checkCeiling;
-            }
-        }
-        if (!StringUtils.isEmpty(ceiling)) {
-            metadata.setCollectionCeilingEntity(ceiling);
-        }
         metadata.setParentObjectClass(targetClass.getName());
         if (adornedTargetCollectionMetadata.getMaintainedAdornedTargetFields() != null) {
             metadata.setMaintainedAdornedTargetFields(adornedTargetCollectionMetadata.getMaintainedAdornedTargetFields());
@@ -941,6 +928,35 @@ public class Metadata {
         if (adornedTargetCollectionMetadata.getTargetObjectProperty()!=null) {
             targetObjectProperty = adornedTargetCollectionMetadata.getTargetObjectProperty();
         }
+
+        Class<?> collectionTarget = null;
+        checkCeiling: {
+            if (oneToMany != null && oneToMany.targetEntity() != void.class) {
+                collectionTarget = oneToMany.targetEntity();
+                break checkCeiling;
+            }
+            if (manyToMany != null && manyToMany.targetEntity() != void.class) {
+                collectionTarget = manyToMany.targetEntity();
+                break checkCeiling;
+            }
+        }
+        if (collectionTarget == null) {
+            throw new IllegalArgumentException("Unable to infer the type of the collection from the targetEntity property of a OneToMany or ManyToMany collection.");
+        }
+        Field collectionTargetField = dynamicEntityDao.getFieldManager().getField(collectionTarget, targetObjectProperty);
+        ManyToOne manyToOne = collectionTargetField.getAnnotation(ManyToOne.class);
+        String ceiling = null;
+        checkCeiling: {
+            if (manyToOne != null && manyToOne.targetEntity() != void.class) {
+                ceiling = manyToOne.targetEntity().getName();
+                break checkCeiling;
+            }
+            ceiling = collectionTargetField.getType().getName();
+        }
+        if (!StringUtils.isEmpty(ceiling)) {
+            metadata.setCollectionCeilingEntity(ceiling);
+        }
+
         String targetObjectIdProperty = null;
         if (serverMetadata != null) {
             targetObjectIdProperty = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getTargetIdProperty();
@@ -963,11 +979,11 @@ public class Metadata {
             adornedTargetList.setLinkedIdProperty(parentObjectIdProperty);
             adornedTargetList.setTargetObjectPath(targetObjectProperty);
             adornedTargetList.setTargetIdProperty(targetObjectIdProperty);
-            adornedTargetList.setAdornedTargetEntityClassname(ceiling);
+            adornedTargetList.setAdornedTargetEntityClassname(collectionTarget.getName());
             adornedTargetList.setSortField(sortProperty);
             adornedTargetList.setSortAscending(isAscending);
         } else {
-            AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, parentObjectIdProperty, targetObjectProperty, targetObjectIdProperty, ceiling, sortProperty, isAscending);
+            AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, parentObjectIdProperty, targetObjectProperty, targetObjectIdProperty, collectionTarget.getName(), sortProperty, isAscending);
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, adornedTargetList);
         }
 
@@ -1180,7 +1196,7 @@ public class Metadata {
                                     Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
-                                    buildAdornedTargetCollectionMetadata(targetClass, temp, field, localMetadata);
+                                    buildAdornedTargetCollectionMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao);
                                     serverMetadata = (AdornedTargetCollectionMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
@@ -1517,7 +1533,7 @@ public class Metadata {
                         FieldMetadataOverride localMetadata = constructAdornedTargetCollectionMetadataOverride(annot);
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
                         Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                        buildAdornedTargetCollectionMetadata(targetClass, temp, field, localMetadata);
+                        buildAdornedTargetCollectionMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao);
                         AdornedTargetCollectionMetadata result = (AdornedTargetCollectionMetadata) temp.get(field.getName());
                         result.setInheritedFromType(serverMetadata.getInheritedFromType());
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
