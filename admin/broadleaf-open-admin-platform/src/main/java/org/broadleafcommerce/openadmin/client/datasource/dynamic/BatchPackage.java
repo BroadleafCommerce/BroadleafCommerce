@@ -25,6 +25,13 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
  */
 public class BatchPackage {
 
+    private static int counter = 0;
+
+    public BatchPackage() {
+        batchPackageId = counter++;
+    }
+
+    private final Integer batchPackageId;
     protected PersistencePackage persistencePackage;
     protected AsyncCallback<DynamicResultSet> asyncCallback;
     protected BatchOperationType batchOperationType;
@@ -51,5 +58,26 @@ public class BatchPackage {
 
     public void setBatchOperationType(BatchOperationType batchOperationType) {
         this.batchOperationType = batchOperationType;
+    }
+
+    public Integer getBatchPackageId() {
+        return batchPackageId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BatchPackage)) return false;
+
+        BatchPackage that = (BatchPackage) o;
+
+        if (batchPackageId != that.batchPackageId) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return batchPackageId;
     }
 }

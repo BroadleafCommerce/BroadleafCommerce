@@ -53,7 +53,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
-    protected static final Map<String, BatchDynamicResultSet> METADATA_CACHE = MapUtils.synchronizedMap(new LRUMap<String, BatchDynamicResultSet>(1000));
+    protected static final Map<BatchPersistencePackage, BatchDynamicResultSet> METADATA_CACHE = MapUtils.synchronizedMap(new LRUMap<BatchPersistencePackage, BatchDynamicResultSet>(1000));
 
     protected String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
     private ApplicationContext applicationContext;
@@ -68,22 +68,22 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException, ApplicationSecurityException {
-        String key = String.valueOf(batchPersistencePackage.hashCode());
-        if (METADATA_CACHE.containsKey(key)) {
+        if (METADATA_CACHE.containsKey(batchPersistencePackage)) {
             for (PersistencePackage persistencePackage : batchPersistencePackage.getPersistencePackages()) {
                 exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
             }
-            return METADATA_CACHE.get(key);
+            return METADATA_CACHE.get(batchPersistencePackage);
         }
         DynamicResultSet[] results = new DynamicResultSet[batchPersistencePackage.getPersistencePackages().length];
         for (int j=0;j<batchPersistencePackage.getPersistencePackages().length;j++){
             results[j] = inspect(batchPersistencePackage.getPersistencePackages()[j]);
+            results[j].setBatchId(batchPersistencePackage.getPersistencePackages()[j].getBatchId());
         }
         BatchDynamicResultSet batchResults = new BatchDynamicResultSet();
         batchResults.setDynamicResultSets(results);
-        METADATA_CACHE.put(key, batchResults);
+        METADATA_CACHE.put(batchPersistencePackage, batchResults);
 
-        return METADATA_CACHE.get(key);
+        return METADATA_CACHE.get(batchPersistencePackage);
     }
 
     @Override

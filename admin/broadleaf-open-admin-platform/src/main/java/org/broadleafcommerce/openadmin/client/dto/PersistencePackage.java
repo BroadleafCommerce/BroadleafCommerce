@@ -31,6 +31,7 @@ public class PersistencePackage implements IsSerializable, Serializable {
 	protected String[] customCriteria;
 	protected Entity entity;
     protected String csrfToken;
+    protected Integer batchId;
 	
 	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
 		this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
@@ -99,6 +100,14 @@ public class PersistencePackage implements IsSerializable, Serializable {
         this.fetchTypeFullyQualifiedClassname = fetchTypeFullyQualifiedClassname;
     }
 
+    public Integer getBatchId() {
+        return batchId;
+    }
+
+    public void setBatchId(Integer batchId) {
+        this.batchId = batchId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -106,9 +115,9 @@ public class PersistencePackage implements IsSerializable, Serializable {
 
         PersistencePackage that = (PersistencePackage) o;
 
+        if (batchId != that.batchId) return false;
         if (ceilingEntityFullyQualifiedClassname != null ? !ceilingEntityFullyQualifiedClassname.equals(that.ceilingEntityFullyQualifiedClassname) : that.ceilingEntityFullyQualifiedClassname != null)
             return false;
-        //if (csrfToken != null ? !csrfToken.equals(that.csrfToken) : that.csrfToken != null) return false;
         if (!Arrays.equals(customCriteria, that.customCriteria)) return false;
         if (entity != null ? !entity.equals(that.entity) : that.entity != null) return false;
         if (fetchTypeFullyQualifiedClassname != null ? !fetchTypeFullyQualifiedClassname.equals(that.fetchTypeFullyQualifiedClassname) : that.fetchTypeFullyQualifiedClassname != null)
@@ -126,7 +135,7 @@ public class PersistencePackage implements IsSerializable, Serializable {
         result = 31 * result + (persistencePerspective != null ? persistencePerspective.hashCode() : 0);
         result = 31 * result + (customCriteria != null ? Arrays.hashCode(customCriteria) : 0);
         result = 31 * result + (entity != null ? entity.hashCode() : 0);
-        //result = 31 * result + (csrfToken != null ? csrfToken.hashCode() : 0);
+        result = 31 * result + batchId;
         return result;
     }
 }

@@ -58,17 +58,24 @@ public class PresenterSequenceSetupManager {
 	}
 	
 	public void addOrReplaceItem(PresenterSetupItem item) {
-		int pos = -1;
-        if (itemsIterator == null) {
+		addOrReplaceItem(item, null);
+	}
+	
+	public void addOrReplaceItem(PresenterSetupItem item, Integer destinationPos) {
+        int pos = -1;
+        if (itemsIterator == null && !stage1) {
             if (items.contains(item)) {
                 pos = items.indexOf(item);
                 items.remove(pos);
             }
         } else {
-            if (supplementalItems.contains(item)) {
+            if (supplementalItems.contains(item) && !stage2) {
                 pos = supplementalItems.indexOf(item);
                 supplementalItems.remove(pos);
             }
+        }
+        if (destinationPos != null) {
+            pos = destinationPos;
         }
         item.getAdapter().registerDataSourceSetupManager(this);
         if (itemsIterator == null) {
@@ -95,35 +102,6 @@ public class PresenterSequenceSetupManager {
         }
 	}
 	
-	public void addOrReplaceItem(PresenterSetupItem item, int destinationPos) {
-		int pos = -1;
-        if (itemsIterator == null) {
-            if (items.contains(item)) {
-                pos = items.indexOf(item);
-                items.remove(pos);
-            }
-        } else {
-            if (supplementalItems.contains(item)) {
-                pos = supplementalItems.indexOf(item);
-                supplementalItems.remove(pos);
-            }
-        }
-		item.getAdapter().registerDataSourceSetupManager(this);
-        if (itemsIterator == null) {
-            if (destinationPos >= 0) {
-                items.add(pos, item);
-            } else {
-                items.add(item);
-            }
-        } else {
-            if (destinationPos >= 0) {
-                supplementalItems.add(pos, item);
-            } else {
-                supplementalItems.add(item);
-            }
-        }
-	}
-	
 	public void moveItem(PresenterSetupItem item, int pos) {
 		Boolean removed = items.remove(item);
 		if (!removed) {
@@ -142,6 +120,7 @@ public class PresenterSequenceSetupManager {
 	
 	protected void launch() {
         if (!presenter.getLoaded()) {
+            stage1 = true;
             itemsIterator = items.iterator();
             next();
         }
@@ -156,10 +135,8 @@ public class PresenterSequenceSetupManager {
 
 	protected void next() {
 		if (itemsIterator.hasNext()) {
-            stage1 = true;
 			itemsIterator.next().invoke();
 		} else if (supplementalItemsIterator != null && supplementalItemsIterator.hasNext()) {
-            stage2 = true;
             supplementalItemsIterator.next().invoke();
         } else {
             BatchManager batchManager = BatchManager.getInstance();
@@ -168,6 +145,7 @@ public class PresenterSequenceSetupManager {
                     @Override
                     public void onSuccess() {
                         if (supplementalItemsIterator == null) {
+                            stage2 = true;
                             supplementalItemsIterator = supplementalItems.iterator();
                         }
                         if (supplementalItemsIterator.hasNext()) {

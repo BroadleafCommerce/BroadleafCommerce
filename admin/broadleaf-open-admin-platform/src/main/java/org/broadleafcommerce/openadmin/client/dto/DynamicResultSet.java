@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import java.io.Serializable;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 
 
 /**
@@ -33,6 +33,7 @@ public class DynamicResultSet implements IsSerializable, Serializable {
 	private ClassMetadata classMetaData;
 	private Entity[] records;
     private Integer totalRecords;
+    private Integer batchId;
     
     public DynamicResultSet() {
     	//do nothing
@@ -76,5 +77,12 @@ public class DynamicResultSet implements IsSerializable, Serializable {
 	public void setRecords(Entity[] records) {
 		this.records = records;
 	}
-    
+
+    public Integer getBatchId() {
+        return batchId;
+    }
+
+    public void setBatchId(Integer batchId) {
+        this.batchId = batchId;
+    }
 }
