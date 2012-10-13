@@ -886,7 +886,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	) {
 		int j = 0;
 		for (String propertyName : propertyNames) {
-			Type type = propertyTypes.get(j);
+			final Type type = propertyTypes.get(j);
 			boolean isPropertyForeignKey = testForeignProperty(foreignField, prefix, propertyName);
 			int additionalForeignKeyIndexPosition = findAdditionalForeignKeyIndex(additionalForeignFields, prefix, propertyName);
 			j++;
@@ -902,18 +902,18 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                         myField.getAnnotation(AdminPresentationAdornedTargetCollection.class) != null ||
                         myField.getAnnotation(AdminPresentationMap.class) != null)
                 ) {
-                    CollectionMetadata fieldMetadata = (CollectionMetadata) presentationAttributes.get(propertyName);
-                    if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
-                        fieldMetadata.setCollectionCeilingEntity(type.getReturnedClass().getName());
-                    }
+                    final CollectionMetadata fieldMetadata = (CollectionMetadata) presentationAttributes.get(propertyName);
                     fieldMetadata.setInheritedFromType(targetClass.getName());
                     fieldMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
                     fields.put(propertyName, fieldMetadata);
                     fieldMetadata.accept(new MetadataVisitorAdapter() {
                         @Override
                         public void visit(AdornedTargetCollectionMetadata metadata) {
-                            AdornedTargetList targetList = ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST));
-                            targetList.setAdornedTargetEntityClassname(metadata.getCollectionCeilingEntity());
+                            if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
+                                fieldMetadata.setCollectionCeilingEntity(type.getReturnedClass().getName());
+                                AdornedTargetList targetList = ((AdornedTargetList) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST));
+                                targetList.setAdornedTargetEntityClassname(metadata.getCollectionCeilingEntity());
+                            }
                         }
 
                         @Override
