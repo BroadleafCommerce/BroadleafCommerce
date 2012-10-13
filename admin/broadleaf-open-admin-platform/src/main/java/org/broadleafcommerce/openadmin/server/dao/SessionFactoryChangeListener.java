@@ -16,8 +16,12 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.SessionFactory;
 import org.hibernate.SessionFactoryObserver;
+
+import java.lang.reflect.Field;
+import java.util.Map;
 
 /**
  * Clear the static entity metadata caches from {@code DynamicEntityDao}
@@ -37,6 +41,13 @@ public class SessionFactoryChangeListener implements SessionFactoryObserver {
         synchronized (DynamicEntityDaoImpl.LOCK_OBJECT) {
             DynamicEntityDaoImpl.METADATA_CACHE.clear();
             DynamicEntityDaoImpl.POLYMORPHIC_ENTITY_CACHE.clear();
+            try {
+                Field fieldCache = IdOverrideTableGenerator.class.getDeclaredField("FIELD_CACHE");
+                fieldCache.setAccessible(true);
+                ((Map) fieldCache.get(null)).clear();
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
