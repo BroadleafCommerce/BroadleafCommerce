@@ -19,14 +19,13 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.admin.client.datasource.catalog.inventory.FulfillmentLocationDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.inventory.InventoryDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.inventory.SkuListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.inventory.InventorySkuDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.catalog.inventory.FulfillmentLocationDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
@@ -34,7 +33,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDi
 
 public class FulfillmentLocationPresenter extends DynamicEntityPresenter implements Instantiable {
 
-    protected CreateBasedListStructurePresenter inventoryPresenter;
+    protected InventoryPresenter inventoryPresenter;
 
     @Override
     protected void changeSelection(final Record selectedRecord) {
@@ -66,20 +65,20 @@ public class FulfillmentLocationPresenter extends DynamicEntityPresenter impleme
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("inventoryDS", new InventoryDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                inventoryPresenter = new CreateBasedListStructurePresenter(getDisplay().getInventoryDisplay(), BLCMain.getMessageManager().getString("newInventory"));
-                inventoryPresenter.setDataSource((CustomCriteriaListGridDataSource) result, new String[]{}, new Boolean[]{});
+                inventoryPresenter = new InventoryPresenter(getDisplay().getInventoryDisplay(), BLCMain.getMessageManager().getString("newInventory"));
+                inventoryPresenter.setDataSource((CustomCriteriaListGridDataSource) result, new String[]{"sku.id", "sku.name", "quantityAvailable", "quantityOnHand"}, new Boolean[]{false, false, false, false});
             }
         }));
 
         //setup sku lookup
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuDS", new SkuListDataSourceFactory(), new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuDS", new InventorySkuDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                ListGridDataSource listGridDataSource = (ListGridDataSource) result;
-                listGridDataSource.resetPermanentFieldVisibility("id", "name", "productOptionList");
-                final EntitySearchDialog skuSearch = new EntitySearchDialog(listGridDataSource, true);
+                ListGridDataSource ds = (ListGridDataSource) result;
+                ds.resetPermanentFieldVisibility("id", "name", "productOptionList");
+                ds.getField("id").setAttribute("order", 1);
                 DynamicEntityDataSource dataSource = getPresenterSequenceSetupManager().getDataSource("inventoryDS");
-                dataSource.getFormItemCallbackHandlerManager().addSearchFormItemCallback("sku", skuSearch, "Sku", null, null, null, dataSource);
+                dataSource.getFormItemCallbackHandlerManager().addSearchFormItemCallback("sku", new EntitySearchDialog(ds), "Sku", null, null, null, dataSource);
             }
         }));
 
