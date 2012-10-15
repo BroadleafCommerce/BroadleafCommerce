@@ -99,7 +99,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	}
 @Override
 public void postSetup(Canvas container) {
-    gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+    
     gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),userRolePresenter,userPermissionPresenter );
     
     super.postSetup(container);

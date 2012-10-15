@@ -159,7 +159,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         topTabSet.addTab(categoriesTab);
         topTabSet.addTab(productOptionsTab);
         topTabSet.addTab(skusTab);
-        
+        leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(topTabSet);
 	}

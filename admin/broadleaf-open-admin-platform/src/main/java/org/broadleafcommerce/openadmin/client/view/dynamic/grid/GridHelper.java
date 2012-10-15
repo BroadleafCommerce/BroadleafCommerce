@@ -1,13 +1,16 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.grid;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.BLCRichTextItem;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitEvent;
@@ -19,6 +22,7 @@ import com.smartgwt.client.widgets.tab.TabSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class GridHelper {
 
@@ -47,6 +51,11 @@ public class GridHelper {
 
         if (pane instanceof DynamicForm) {
             ((DynamicForm) pane).clearValues();
+            for (FormItem item:((DynamicForm) pane).getFields()) {
+                if(item instanceof BLCRichTextItem) {
+                   ((BLCRichTextItem) item).hideIt();
+                }
+            }
         }
     }
 
@@ -122,6 +131,9 @@ public class GridHelper {
             // make sure the parent id is there or it wont know how to treverse down the right tree.
             // (must set canvas.setParentElement() to the parent in the view.)
             parent = parent.getParentElement();
+        } else {
+            java.util.logging.Logger.getLogger(BLCMain.class.getName()).log(Level.WARNING,"Parent element not set, please use setParentElement() so that the grid can enable/disable elements on the right hand side.");
+            return;
         }
         addUpdateHandlers(grid, parent);
     }

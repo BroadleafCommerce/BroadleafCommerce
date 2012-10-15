@@ -142,7 +142,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         offerCodeDisplay = new SubItemView(BLCMain.getMessageManager().getString("offerCodeListTitle"), false, false);
         offerCodesTab.setPane(offerCodeDisplay);
         topTabSet.addTab(offerCodesTab);
-        
+        leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(topTabSet);
 	}
