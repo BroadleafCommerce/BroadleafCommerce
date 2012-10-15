@@ -16,6 +16,24 @@
 
 package org.broadleafcommerce.common.extensibility.jpa.convert.inheritance;
 
+import javassist.ClassPool;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.EnumMemberValue;
+import javassist.bytecode.annotation.IntegerMemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -26,27 +44,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
-import javassist.ClassPool;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.EnumMemberValue;
-import javassist.bytecode.annotation.IntegerMemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
-
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -117,7 +114,7 @@ public class SingleTableInheritanceClassTransformer implements BroadleafClassTra
 						Annotation[] items = attr.getAnnotations();
 						for (Annotation annotation : items) {
 							String typeName = annotation.getTypeName();
-							if (!typeName.equals(Inheritance.class.getName()) && ((myInfo.getDiscriminatorName() == null && !typeName.equals(Table.class.getName())) || myInfo.getDiscriminatorName() != null)) {
+							if (!typeName.equals(Inheritance.class.getName())) {
 								annotationsAttribute.addAnnotation(annotation);
 							}
 						}
