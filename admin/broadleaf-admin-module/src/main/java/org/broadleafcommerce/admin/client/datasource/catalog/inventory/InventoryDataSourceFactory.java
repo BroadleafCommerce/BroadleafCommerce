@@ -42,8 +42,8 @@ public class InventoryDataSourceFactory implements DataSourceFactory {
             DataSourceModule[] modules = new DataSourceModule[]{
                     new BasicClientEntityModule(CeilingEntities.INVENTORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
             };
-            dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, false, false, false, false, false);
-            dataSource.setCustomCriteria(new String[]{"inventoryList"});
+            dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, false, true, false, false, true);
+            dataSource.setCustomCriteria(new String[]{"inventoryUpdate"});
             dataSource.buildFields(null, false, cb);
         } else {
             if (cb != null) {
