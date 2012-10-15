@@ -59,12 +59,13 @@ public class InventoryImpl implements Inventory {
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", nullable = false)
-    @AdminPresentation(friendlyName="Sku", order = 1)
+    @AdminPresentation(friendlyName="Sku", group = "Sku", groupOrder = 1, order = 1)
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
     @Column(name = "QUANTITY_AVAILABLE", nullable = false)
-    @AdminPresentation(friendlyName = "InventoryImpl_quantityAvailable", prominent = true, order = 3, fieldType = SupportedFieldType.INTEGER,
+    @AdminPresentation(friendlyName = "InventoryImpl_quantityAvailable", prominent = true, group = "Quantities",
+            groupOrder = 2, order = 1, fieldType = SupportedFieldType.INTEGER,
             validationConfigurations = {
                     @ValidationConfiguration(
                             validationImplementation="com.smartgwt.client.widgets.form.validator.IntegerRangeValidator",
@@ -76,7 +77,8 @@ public class InventoryImpl implements Inventory {
     protected Integer quantityAvailable;
 
     @Column(name = "QUANTITY_ON_HAND", nullable = false)
-    @AdminPresentation(friendlyName = "InventoryImpl_quantityOnHand", prominent = true, order = 4,
+    @AdminPresentation(friendlyName = "InventoryImpl_quantityOnHand", prominent = true, group = "Quantities",
+            groupOrder = 2, order = 2,
             validationConfigurations = {
                     @ValidationConfiguration(
                             validationImplementation="com.smartgwt.client.widgets.form.validator.IntegerRangeValidator",
