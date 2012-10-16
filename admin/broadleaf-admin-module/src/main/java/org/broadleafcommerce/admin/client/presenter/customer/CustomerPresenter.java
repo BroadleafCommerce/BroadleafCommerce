@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerAddressDataSourceFactory;
@@ -48,6 +41,14 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 
 import java.util.HashMap;
 
@@ -193,15 +194,14 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
                 );
             }
         }));
-    }
-
-    @Override
-    public void postSetup(Canvas container) {
-        //gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
-        //gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(), customerAddressPresenter);
-
-        super.postSetup(container);
-    }
+	}
+@Override
+public void postSetup(Canvas container) {
+   
+    gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),customerAddressPresenter );
+    
+    super.postSetup(container);
+}
 
     @Override
     public CustomerDisplay getDisplay() {

@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.openadmin.client.view.user;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
 
 /**
  * 
@@ -55,7 +56,7 @@ public abstract class BasicListDetailView extends HLayout implements Instantiabl
 		listDisplay = new DynamicEntityListView(getListTitle(), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
         dynamicFormDisplay = new DynamicFormView(getFormTitle(), entityDataSource);
-        
+        leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(dynamicFormDisplay);
 	}

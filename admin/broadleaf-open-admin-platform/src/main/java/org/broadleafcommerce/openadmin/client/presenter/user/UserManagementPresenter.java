@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -33,6 +30,10 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 
 /**
  * @author jfischer
@@ -93,19 +94,20 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
                 userPermissionPresenter.bind();
             }
         }));
-    }
+	}
+@Override
+ public void postSetup(Canvas container) {
+    
+    gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),userRolePresenter,userPermissionPresenter );
+    
+    super.postSetup(container);
+   }
 
-    @Override
-    public void postSetup(Canvas container) {
-        //gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
-        //gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(), userRolePresenter, userPermissionPresenter);
 
-        super.postSetup(container);
-    }
+@Override
+public UserManagementDisplay getDisplay() {
+    return (UserManagementDisplay) display;
+}
 
-    @Override
-    public UserManagementDisplay getDisplay() {
-        return (UserManagementDisplay) display;
-    }
 
 }
