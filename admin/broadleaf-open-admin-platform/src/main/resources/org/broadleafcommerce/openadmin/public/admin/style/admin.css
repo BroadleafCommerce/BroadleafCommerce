@@ -211,3 +211,6 @@ label {
 .blcPromoItemFilterBuilder input[type="text"] {
     margin: 0;
 }
+.gwt-PopupPanel {
+z-index: 2147483649;
+}
