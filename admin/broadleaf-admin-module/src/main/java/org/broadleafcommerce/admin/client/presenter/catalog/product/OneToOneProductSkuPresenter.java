@@ -321,7 +321,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 });
             }
         });
-        gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+        
         gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),parentCategoriesPresenter,productOptionsPresenter,skusPresenter,bundleItemsPresenter,defaultSkuMediaMapStructurePresenter );
         
         super.postSetup(container);

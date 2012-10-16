@@ -78,7 +78,7 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
     }
     @Override
     public void postSetup(Canvas container) {
-        gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+        
         gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),productOptionValuesPresenter );
         
         super.postSetup(container);

@@ -199,7 +199,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	}
 @Override
 public void postSetup(Canvas container) {
-    gridHelper.traverseTreeAndAddHandlers(display.getListDisplay().getGrid());
+   
     gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),customerAddressPresenter );
     
     super.postSetup(container);

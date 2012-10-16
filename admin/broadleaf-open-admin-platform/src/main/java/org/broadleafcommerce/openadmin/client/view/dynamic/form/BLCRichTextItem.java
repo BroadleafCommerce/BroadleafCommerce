@@ -67,6 +67,7 @@ public class BLCRichTextItem extends CanvasItem {
         addShowValueHandler(new ShowValueHandler() {
             @Override
             public void onShowValue(ShowValueEvent event) {
+                htmlPane.setVisible(true);
                 htmlPane.setContents((String)event.getDataValue());
             }
         });
@@ -74,6 +75,7 @@ public class BLCRichTextItem extends CanvasItem {
         addChangedHandler(new ChangedHandler() {
             @Override
             public void onChanged(ChangedEvent event) {
+                htmlPane.setVisible(true);
                 htmlPane.setContents((String)event.getValue());
             }
         });
@@ -81,5 +83,12 @@ public class BLCRichTextItem extends CanvasItem {
         canvas.addChild(layout);
         setCanvas(canvas);
     }
+
+
+    public void hideIt() {
+     //hide the html pane for now , since the dynamicForm does not clear the contents of a CanvasItem on a form reset.
+      htmlPane.setVisible(false);
+ 
+   }
 
 }

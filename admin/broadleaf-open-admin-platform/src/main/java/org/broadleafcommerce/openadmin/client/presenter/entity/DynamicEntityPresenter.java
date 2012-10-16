@@ -16,17 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.logging.Level;
-
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
@@ -87,6 +76,17 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.logging.Level;
 
 /**
  * @author jfischer
@@ -375,6 +375,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     protected void setupDisplayItems(final DataSource entityDataSource, DataSource... additionalDataSources) {
         getDisplay().build(entityDataSource, additionalDataSources);
+        gridHelper.traverseTreeAndAddHandlers(getDisplay().getListDisplay().getGrid());
         formPresenter = new DynamicFormPresenter(display.getDynamicFormDisplay());
         ((PresentationLayerAssociatedDataSource) entityDataSource).setAssociatedGrid(display.getListDisplay().getGrid());
 
