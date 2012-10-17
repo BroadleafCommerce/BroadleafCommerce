@@ -22,14 +22,14 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationOverr
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+//import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "BLC_INVENTORY", uniqueConstraints = {@UniqueConstraint(columnNames = {"FULFILLMENT_LOCATION_ID", "SKU_ID"})})
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blInventoryElements")
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blInventoryElements")
 @Inheritance(strategy = InheritanceType.JOINED)
 @AdminPresentationOverrides(
     {
