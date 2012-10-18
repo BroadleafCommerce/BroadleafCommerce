@@ -62,6 +62,9 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     protected static String forgotUsernameView = "login/forgotUsername";
     protected static String resetPasswordView  = "login/resetPassword";
     protected static String changePasswordView  = "login/changePassword";
+    protected static String loginRedirect = "login";
+    protected static String resetPasswordRedirect = "resetPassword";
+
 
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getLoginView();
@@ -144,12 +147,12 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     }
 
     protected String redirectToLoginWithMessage(String message) {
-        StringBuffer url = new StringBuffer("redirect:").append(getLoginView()).append("?messageCode=").append(message);
+        StringBuffer url = new StringBuffer("redirect:").append(loginRedirect).append("?messageCode=").append(message);
         return url.toString();
     }
 
     protected String redirectToResetPasswordWithMessage(String message) {
-        StringBuffer url = new StringBuffer("redirect:").append(getResetPasswordView()).append("?messageCode=").append(message);
+        StringBuffer url = new StringBuffer("redirect:").append(resetPasswordRedirect).append("?messageCode=").append(message);
         return url.toString();
     }
 
@@ -216,7 +219,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
 	public static void setChangePasswordView(String changePasswordView) {
 		BroadleafAdminLoginController.changePasswordView = changePasswordView;
 	}
-
+	
     protected AdminUser getPersistentAdminUser() {
         SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
@@ -230,5 +233,29 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
 
         return null;
     }
-	
+
+    public AdminSecurityService getAdminSecurityService() {
+        return adminSecurityService;
+    }
+
+    public void setAdminSecurityService(AdminSecurityService adminSecurityService) {
+        this.adminSecurityService = adminSecurityService;
+    }
+
+    public static String getLoginRedirect() {
+        return loginRedirect;
+    }
+
+    public static void setLoginRedirect(String loginRedirect) {
+        BroadleafAdminLoginController.loginRedirect = loginRedirect;
+    }
+
+    public static String getResetPasswordRedirect() {
+        return resetPasswordRedirect;
+    }
+
+    public static void setResetPasswordRedirect(String resetPasswordRedirect) {
+        BroadleafAdminLoginController.resetPasswordRedirect = resetPasswordRedirect;
+    }
+
 }

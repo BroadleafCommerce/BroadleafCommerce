@@ -30,22 +30,22 @@ public class AppServices {
     public static final AdminSecurityServiceAsync SECURITY = GWT.create(AdminSecurityService.class);
     public static final DynamicEntityServiceAsync DYNAMIC_ENTITY = GWT.create(DynamicEntityService.class);
     public static final UtilityServiceAsync UTILITY = GWT.create(UtilityService.class);
-    public static final AppConfigurationServiceAsync APP_CONFIGURATION = GWT.create(AppConfigurationService.class);;
+    public static final AppConfigurationServiceAsync APP_CONFIGURATION = GWT.create(AppConfigurationService.class);
     static {
     	ServiceDefTarget endpoint = (ServiceDefTarget) DYNAMIC_ENTITY;
-        endpoint.setServiceEntryPoint("dynamic.entity.service");
+        endpoint.setServiceEntryPoint("admin/dynamic.entity.service");
         
         ServiceDefTarget endpoint2 = (ServiceDefTarget) SECURITY;
-        endpoint2.setServiceEntryPoint("security.service");
+        endpoint2.setServiceEntryPoint("admin/security.service");
 
         ServiceDefTarget endpoint3 = (ServiceDefTarget) UPLOAD;
-        endpoint3.setServiceEntryPoint("upload.progress.service");
+        endpoint3.setServiceEntryPoint("admin/upload.progress.service");
 
         ServiceDefTarget endpoint4 = (ServiceDefTarget) UTILITY;
-        endpoint4.setServiceEntryPoint("utility.service");
-        
-        ServiceDefTarget endpoint5 = (ServiceDefTarget) APP_CONFIGURATION;
-        endpoint5.setServiceEntryPoint("app.configuration.service");
+        endpoint4.setServiceEntryPoint("admin/utility.service");
+
+	ServiceDefTarget endpoint5 = (ServiceDefTarget) APP_CONFIGURATION;
+        endpoint5.setServiceEntryPoint("admin/app.configuration.service");
     }
     
 }

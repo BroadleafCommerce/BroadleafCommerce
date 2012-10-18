@@ -152,7 +152,7 @@ public class AppController implements ValueChangeHandler<String> {
             public void onSuccess(AdminUser result) {
                 if (result == null) {
                     UrlBuilder builder = Window.Location.createUrlBuilder();
-                    builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
+                    builder.setPath(BLCMain.webAppContext + "/admin/adminLogout.htm");
                     builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
                     Window.open(builder.buildString(), "_self", null);
                 } else {

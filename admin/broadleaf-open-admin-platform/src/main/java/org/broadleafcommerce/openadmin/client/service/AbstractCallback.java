@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.logging.Level;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.Window;
@@ -33,6 +28,11 @@ import com.smartgwt.client.util.SC;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.security.AdminUser;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.logging.Level;
 
 /**
  * @author jfischer
@@ -140,7 +140,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
         java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user not found. Logging out (AbstractCallback.onSecurityException)...");;
         reportException(msg, exception);
         UrlBuilder builder = Window.Location.createUrlBuilder();
-        builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
+        builder.setPath(BLCMain.webAppContext + "/admin/adminLogout.htm");
         builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
         Window.open(builder.buildString(), "_self", null);
     }

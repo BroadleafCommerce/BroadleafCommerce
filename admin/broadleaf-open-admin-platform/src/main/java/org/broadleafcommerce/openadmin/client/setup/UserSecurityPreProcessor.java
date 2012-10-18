@@ -47,7 +47,7 @@ public class UserSecurityPreProcessor implements PreProcessor {
                 if (result == null) {
                     java.util.logging.Logger.getLogger(UserSecurityPreProcessor.class.getName()).info("Admin user not found. Logging out...");
                     UrlBuilder builder = Window.Location.createUrlBuilder();
-                    builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
+                    builder.setPath(BLCMain.webAppContext + "/admin/adminLogout.htm");
                     builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
                     Window.open(builder.buildString(), "_self", null);
                 } else {
