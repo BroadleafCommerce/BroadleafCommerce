@@ -99,18 +99,20 @@ public class BroadleafRequestContext {
     }
 
     public String getRequestURIWithoutContext() {
-    	String requestURIWithoutContext; 
-    	
-    	if (request.getContextPath() != null) {
-    		requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
-    	} else {
-    		requestURIWithoutContext = request.getRequestURI();
-    	}
-    	
-        // Remove JSESSION-ID or other modifiers
-        int pos = requestURIWithoutContext.indexOf(";");
-        if (pos >= 0) {
-        	requestURIWithoutContext = requestURIWithoutContext.substring(0,pos);
+    	String requestURIWithoutContext = null;
+
+        if (request.getRequestURI() != null) {
+            if (request.getContextPath() != null) {
+                requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
+            } else {
+                requestURIWithoutContext = request.getRequestURI();
+            }
+
+            // Remove JSESSION-ID or other modifiers
+            int pos = requestURIWithoutContext.indexOf(";");
+            if (pos >= 0) {
+                requestURIWithoutContext = requestURIWithoutContext.substring(0,pos);
+            }
         }
         
         return requestURIWithoutContext;

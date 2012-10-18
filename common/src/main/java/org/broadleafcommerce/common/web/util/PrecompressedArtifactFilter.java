@@ -21,11 +21,14 @@ import org.springframework.web.filter.GenericFilterBean;
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Enumeration;
@@ -44,16 +47,43 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        if (!configurer.determineEnvironment().equals(configurer.getDefaultEnvironment()) || useWhileInDefaultEnvironment) {
-            String path = getResourcePath(request);
-            String gzipPath = path + ".gz";
-            if (useGzipCompression(request, response, path, gzipPath)) {
-                response.addHeader("Content-Encoding", "gzip");
-                request = new PrecompressedHttpServletRequest(request, path, gzipPath);
-                response = new PrecompressedHttpServletResponse(response, path);
+        checkOutput: {
+            if (!configurer.determineEnvironment().equals(configurer.getDefaultEnvironment()) || useWhileInDefaultEnvironment) {
+                String path = getResourcePath(request);
+                String gzipPath = path + ".gz";
+                if (useGzipCompression(request, response, path, gzipPath)) {
+                    File output = new File(getServletContext().getRealPath(gzipPath));
+                    if (output.exists()) {
+                        response.addHeader("Content-Encoding", "gzip");
+                        ServletOutputStream sos = servletResponse.getOutputStream();
+                        BufferedInputStream bis = null;
+                        try {
+                            bis = new BufferedInputStream(new FileInputStream(output));
+                            boolean eof = false;
+                            while (!eof) {
+                                int temp = bis.read();
+                                if (temp < 0) {
+                                    eof = true;
+                                } else {
+                                    sos.write(temp);
+                                }
+                            }
+                        } finally {
+                            sos.flush();
+                            try {
+                                if (bis != null) {
+                                    bis.close();
+                                }
+                            } catch (Exception e) {
+                                //do nothing
+                            }
+                        }
+                        break checkOutput;
+                    }
+                }
             }
+            chain.doFilter(request, response);
         }
-        chain.doFilter(request, response);
     }
 
     /**
@@ -134,12 +164,12 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
         while (e.hasMoreElements()) {
             String name = (String) e.nextElement();
-            if (name.indexOf("gzip") != -1) {
+            if (name.contains("gzip")) {
                 return true;
             }
         }
 
-        return false;
+        return true;
     }
 
     public boolean isUseWhileInDefaultEnvironment() {

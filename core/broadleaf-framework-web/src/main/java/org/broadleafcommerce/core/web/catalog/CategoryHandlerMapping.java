@@ -49,13 +49,14 @@ public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
 	protected Object getHandlerInternal(HttpServletRequest request)
 			throws Exception {		
 		BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-		Category category = catalogService.findCategoryByURI(context.getRequestURIWithoutContext());
- 
-        if (category != null) {
-            context.getRequest().setAttribute(CURRENT_CATEGORY_ATTRIBUTE_NAME, category);
-        	return controllerName;
-        } else {
-        	return null;
+        if (context != null && context.getRequestURIWithoutContext() != null) {
+            Category category = catalogService.findCategoryByURI(context.getRequestURIWithoutContext());
+
+            if (category != null) {
+                context.getRequest().setAttribute(CURRENT_CATEGORY_ATTRIBUTE_NAME, category);
+                return controllerName;
+            }
         }
+        return null;
 	}
 }
