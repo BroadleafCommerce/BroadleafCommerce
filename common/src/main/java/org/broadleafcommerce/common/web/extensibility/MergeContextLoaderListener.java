@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.common.web.extensibility;
 
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -29,18 +32,7 @@ import javax.servlet.ServletContextListener;
  *
  * @author Jeff Fischer
  */
-public class MergeContextLoaderListener implements ServletContextListener {
-
-	private MergeContextLoader contextLoader;
-
-
-	/**
-	 * Initialize the rootId web application context.
-	 */
-	public void contextInitialized(ServletContextEvent event) {
-		this.contextLoader = createContextLoader();
-		this.contextLoader.initWebApplicationContext(event.getServletContext());
-	}
+public class MergeContextLoaderListener extends ContextLoaderListener {
 
 	/**
 	 * Create the ContextLoader to use. Can be overridden in subclasses.
@@ -48,24 +40,6 @@ public class MergeContextLoaderListener implements ServletContextListener {
 	 */
 	protected MergeContextLoader createContextLoader() {
 		return new MergeContextLoader();
-	}
-
-	/**
-	 * Return the ContextLoader used by this listener.
-	 * @return the current ContextLoader
-	 */
-	public MergeContextLoader getContextLoader() {
-		return this.contextLoader;
-	}
-
-
-	/**
-	 * Close the rootId web application context.
-	 */
-	public void contextDestroyed(ServletContextEvent event) {
-		if (this.contextLoader != null) {
-			this.contextLoader.closeWebApplicationContext(event.getServletContext());
-		}
 	}
 
 }

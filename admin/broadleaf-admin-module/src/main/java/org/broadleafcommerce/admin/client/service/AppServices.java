@@ -31,10 +31,10 @@ public class AppServices {
 
     static {
         ServiceDefTarget endpoint = (ServiceDefTarget) CATALOG;
-        endpoint.setServiceEntryPoint("admin.catalog.service");
+        endpoint.setServiceEntryPoint("admin/admin.catalog.service");
         
         ServiceDefTarget endpoint2 = (ServiceDefTarget) EXPORT;
-        endpoint2.setServiceEntryPoint("admin.export.service");
+        endpoint2.setServiceEntryPoint("admin/admin.export.service");
     }
     
 }

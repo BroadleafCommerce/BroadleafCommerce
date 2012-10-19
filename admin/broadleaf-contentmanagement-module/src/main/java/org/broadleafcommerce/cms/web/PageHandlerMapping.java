@@ -59,17 +59,17 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
     public static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";        
 
 	@Override
-	protected Object getHandlerInternal(HttpServletRequest request)
-			throws Exception {		
+	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
 		BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        PageDTO page = pageService.findPageByURI(context.getSandbox(), context.getLocale(), context.getRequestURIWithoutContext(), buildMvelParameters(request), context.isSecure());
-        
-        if (page != null && ! (page instanceof NullPageDTO)) {
-            context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);
-        	return controllerName;
-        } else {
-        	return null;
+        if (context != null && context.getRequestURIWithoutContext() != null) {
+            PageDTO page = pageService.findPageByURI(context.getSandbox(), context.getLocale(), context.getRequestURIWithoutContext(), buildMvelParameters(request), context.isSecure());
+
+            if (page != null && ! (page instanceof NullPageDTO)) {
+                context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);
+                return controllerName;
+            }
         }
+        return null;
 	}
 	
 	 /**
