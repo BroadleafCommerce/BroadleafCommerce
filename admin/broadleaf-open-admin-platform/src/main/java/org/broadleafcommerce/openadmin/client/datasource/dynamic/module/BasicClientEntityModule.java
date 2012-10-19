@@ -16,39 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.data.SortSpecifier;
-import com.smartgwt.client.data.fields.DataSourceBooleanField;
-import com.smartgwt.client.data.fields.DataSourceDateTimeField;
-import com.smartgwt.client.data.fields.DataSourceEnumField;
-import com.smartgwt.client.data.fields.DataSourceFloatField;
-import com.smartgwt.client.data.fields.DataSourceImageField;
-import com.smartgwt.client.data.fields.DataSourceIntegerField;
-import com.smartgwt.client.data.fields.DataSourcePasswordField;
-import com.smartgwt.client.data.fields.DataSourceTextField;
-import com.smartgwt.client.types.FieldType;
-import com.smartgwt.client.types.SortDirection;
-import com.smartgwt.client.util.JSON;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.validator.Validator;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -83,6 +50,40 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.SortSpecifier;
+import com.smartgwt.client.data.fields.DataSourceBooleanField;
+import com.smartgwt.client.data.fields.DataSourceDateTimeField;
+import com.smartgwt.client.data.fields.DataSourceEnumField;
+import com.smartgwt.client.data.fields.DataSourceFloatField;
+import com.smartgwt.client.data.fields.DataSourceImageField;
+import com.smartgwt.client.data.fields.DataSourceIntegerField;
+import com.smartgwt.client.data.fields.DataSourcePasswordField;
+import com.smartgwt.client.data.fields.DataSourceTextField;
+import com.smartgwt.client.types.FieldType;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.JSON;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.validator.Validator;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.tree.TreeNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -951,6 +952,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                             field = new DataSourceFloatField(propertyName, friendlyName);
                             field.setCanEdit(mutable);
                             field.setRequired(required);
+                            field.setAttribute("currencyCodeField", metadata.getCurrencyCodeField()==null||metadata.getCurrencyCodeField().equals("")?null:metadata.getCurrencyCodeField());
                             //field.setValidOperators(getBasicNumericOperators());
                             break;
                         case FOREIGN_KEY:{
@@ -1157,6 +1159,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                         field.setAttribute("inheritedFromType", inheritedFromType);
                         field.setAttribute("availableToTypes", availableToTypes);
                         field.setAttribute("fieldType", fieldType);
+                       
                         field.setAttribute("secondaryFieldType", secondaryFieldType);
                         field.setAttribute("mergedPropertyType", mergedPropertyType);
                         field.setAttribute("rawName", rawName);

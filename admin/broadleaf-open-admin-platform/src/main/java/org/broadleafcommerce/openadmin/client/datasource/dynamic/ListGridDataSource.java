@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.types.FieldType;
@@ -25,10 +31,6 @@ import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -180,13 +182,22 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         return fieldNames;
 	}
 
-    protected void setupDecimalFormatters(ListGridField gridField, DataSourceField field) {
+    protected void setupDecimalFormatters(ListGridField gridField, DataSourceField field) {    
         String fieldType = field.getAttribute("fieldType");
         if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
+            final String currencyCodeField;
+            GWT.log("listgrid currencyCodeField="+field.getAttribute("currencyCodeField"));
+            if(field.getAttribute("currencyCodeField")==null || field.getAttribute("currencyCodeField").equals("")) {
+                currencyCodeField=getAttribute("blcCurrencyCode");
+            } else {
+                currencyCodeField=field.getAttribute("currencyCodeField");
+            }
             gridField.setCellFormatter(new CellFormatter() {
-                public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                
+                @Override
+                public String format( Object value, ListGridRecord record, int rowNum, int colNum) {
                     try {
-                        return value == null ? "" : NumberFormat.getCurrencyFormat(getAttribute("blcCurrencyCode")).format((Number) value);
+                        return value == null ? "" : NumberFormat.getCurrencyFormat(record.getAttributeAsString(currencyCodeField)).format((Number) value);
                     } catch (Exception e) {
                         return String.valueOf(value);
                     }

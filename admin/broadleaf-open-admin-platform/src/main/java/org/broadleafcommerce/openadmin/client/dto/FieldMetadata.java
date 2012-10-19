@@ -45,6 +45,8 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     private String showIfProperty;
 
+    private String currencyCodeField;
+
 	public String[] getAvailableToTypes() {
 		return availableToTypes;
 	}
@@ -83,6 +85,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         metadata.targetClass = targetClass;
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
+        metadata.currencyCodeField = currencyCodeField;
         return metadata;
     }
 
@@ -95,7 +98,13 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     public void setShowIfProperty(String showIfProperty) {
         this.showIfProperty = showIfProperty;
     }
+    public String getCurrencyCodeField() {
+        return currencyCodeField;
+    }
 
+    public void setCurrencyCodeField(String currencyCodeField) {
+        this.currencyCodeField = currencyCodeField;
+    }
     public String getFriendlyName() {
         return friendlyName;
     }
@@ -178,6 +187,9 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         if (showIfProperty != null ? !showIfProperty.equals(that.showIfProperty) : that.showIfProperty != null) {
             return false;
         }
+        if (currencyCodeField != null ? !currencyCodeField.equals(that.currencyCodeField) : that.currencyCodeField != null) {
+            return false;
+        }
         return true;
     }
 
@@ -192,6 +204,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         result = 31 * result + (targetClass != null ? targetClass.hashCode() : 0);
         result = 31 * result + (fieldName != null ? fieldName.hashCode() : 0);
         result = 31 * result + (showIfProperty != null ? showIfProperty.hashCode() : 0);
+        result = 31 * result + (currencyCodeField != null ? currencyCodeField.hashCode() : 0);
         return result;
     }
 }

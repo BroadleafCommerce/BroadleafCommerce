@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
+import org.broadleafcommerce.admin.client.AdminExporterType;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.order.BundledOrderItemListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.CountryListDataSourceFactory;
@@ -32,14 +33,13 @@ import org.broadleafcommerce.admin.client.datasource.order.PaymentInfoListDataSo
 import org.broadleafcommerce.admin.client.datasource.order.PaymentLogListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.PaymentResponseItemListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.StateListDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
-import org.broadleafcommerce.admin.client.AdminExporterType;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.dialog.ExportListSelectionDialog;
 import org.broadleafcommerce.admin.client.view.order.OrderDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
@@ -241,7 +241,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 			@Override
             public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "name", "orderNumber", "status", "submitDate"});
+				((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "total","subTotal","name", "orderNumber", "status", "submitDate"});
                 getDisplay().getListDisplay().getGrid().sort("submitDate", SortDirection.DESCENDING);
 			}
 		}));

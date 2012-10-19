@@ -139,11 +139,11 @@ public class OrderImpl implements Order {
     protected BigDecimal totalShipping;
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = "OrderImpl_Order", order=3, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = "OrderImpl_Order", order=3, fieldType=SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode")
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = "OrderImpl_Order", order=11, fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = "OrderImpl_Order", order=1, fieldType= SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode")
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")

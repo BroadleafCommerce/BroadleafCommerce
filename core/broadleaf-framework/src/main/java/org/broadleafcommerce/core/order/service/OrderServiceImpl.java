@@ -140,6 +140,7 @@ public class OrderServiceImpl implements OrderService {
         Order namedOrder = createNamedOrderForCustomer(name, customer);
         namedOrder.setPriceList(priceList);
         namedOrder.setLocale(locale);
+        namedOrder.setCurrency(priceList.getCurrencyCode());
         return orderDao.save(namedOrder);
     }
 

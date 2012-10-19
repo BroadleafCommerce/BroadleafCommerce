@@ -429,6 +429,7 @@ public class Metadata {
             override.setProminent(annot.prominent());
             override.setReadOnly(annot.readOnly());
             override.setShowIfProperty(annot.showIfProperty());
+            override.setCurrencyCodeField(annot.currencyCodeField());
             if (annot.validationConfigurations().length != 0) {
                 ValidationConfiguration[] configurations = annot.validationConfigurations();
                 for (ValidationConfiguration configuration : configurations) {
@@ -560,6 +561,9 @@ public class Metadata {
         }
         if (basicFieldMetadata.getShowIfProperty()!=null) {
             metadata.setShowIfProperty(basicFieldMetadata.getShowIfProperty());
+        }
+        if (basicFieldMetadata.getCurrencyCodeField()!=null) {
+            metadata.setCurrencyCodeField(basicFieldMetadata.getCurrencyCodeField());
         }
         if (basicFieldMetadata.getLookupDisplayProperty()!=null) {
             metadata.setLookupDisplayProperty(basicFieldMetadata.getLookupDisplayProperty());

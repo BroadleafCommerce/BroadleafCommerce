@@ -606,6 +606,7 @@ public class FieldMetadataOverride {
     private String mapKeyOptionEntityClass;
     private String mapKeyOptionEntityDisplayField;
     private String mapKeyOptionEntityValueField;
+    private String currencyCodeField;
 
     public Boolean isDeleteEntityUponRemove() {
         return deleteEntityUponRemove;
@@ -701,5 +702,13 @@ public class FieldMetadataOverride {
 
     public void setShowIfProperty(String showIfProperty) {
         this.showIfProperty = showIfProperty;
+    }
+
+    public String getCurrencyCodeField() {
+        return currencyCodeField;
+    }
+
+    public void setCurrencyCodeField(String currencyCodeField) {
+        this.currencyCodeField = currencyCodeField;
     }
 }
