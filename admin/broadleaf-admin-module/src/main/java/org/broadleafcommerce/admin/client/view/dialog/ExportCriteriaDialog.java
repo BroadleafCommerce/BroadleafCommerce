@@ -63,7 +63,7 @@ public class ExportCriteriaDialog extends Window {
         form.setWidth100();
         form.setCanSubmit(true);
         form.setMethod(FormMethod.POST);
-        form.setAction(BLCMain.webAppContext + "/export");
+        form.setAction(BLCMain.webAppContext + "/admin/export");
         
         //add the hidden input for the exporter
         exporterNameField = new HiddenItem("exporter");
