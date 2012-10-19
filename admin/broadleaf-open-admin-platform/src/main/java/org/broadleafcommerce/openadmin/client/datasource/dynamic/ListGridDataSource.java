@@ -21,7 +21,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSour
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.types.FieldType;
@@ -186,7 +185,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         String fieldType = field.getAttribute("fieldType");
         if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
             final String currencyCodeField;
-            GWT.log("listgrid currencyCodeField="+field.getAttribute("currencyCodeField"));
+            
             if(field.getAttribute("currencyCodeField")==null || field.getAttribute("currencyCodeField").equals("")) {
                 currencyCodeField=getAttribute("blcCurrencyCode");
             } else {
