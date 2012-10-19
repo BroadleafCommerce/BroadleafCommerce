@@ -309,6 +309,12 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             response.addErrorCode("passwordMismatch");
         }
     }
+    
+    protected void checkExistingPassword(String password, AdminUser user, GenericResponse response) {
+        if (!passwordEncoder.isPasswordValid(user.getPassword(), password, getSalt(user))) {
+            response.addErrorCode("invalidPassword");
+        }
+    }
 
     protected boolean isTokenExpired(ForgotPasswordSecurityToken fpst) {
         Date now = SystemTime.asDate();
@@ -388,7 +394,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 		}
 		checkUser(user, response);
 		checkPassword(password, confirmPassword, response);
-		checkPassword(oldPassword, user.getPassword(), response);
+		checkExistingPassword(oldPassword, user, response);
 
 		if (!response.getHasErrors()) {
 			user.setUnencodedPassword(password);
