@@ -44,7 +44,7 @@ public class BroadleafCurrencyUtils {
 
     public static Money getMoney(BroadleafCurrency currency) {
         if (currency != null) {
-            return new Money(currency.getCurrencyCode());
+            return new Money(0,currency.getCurrencyCode());
         } else {
             return new Money();
         }
