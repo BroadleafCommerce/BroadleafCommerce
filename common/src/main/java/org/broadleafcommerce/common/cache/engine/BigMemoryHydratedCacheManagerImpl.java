@@ -49,17 +49,24 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
 
     private Map<String, List<String>> cacheMemberNamesByEntity = Collections.synchronizedMap(new HashMap<String, List<String>>(100));
     private List<String> removeKeys = Collections.synchronizedList(new ArrayList<String>(100));
-    private Cache offHeap;
+    private Cache offHeap = null;
 
     private BigMemoryHydratedCacheManagerImpl()  {
-        if (CacheManager.getInstance().cacheExists("hydrated-offheap-cache")) {
-            offHeap = CacheManager.getInstance().getCache("hydrated-offheap-cache");
-        } else {
-            CacheConfiguration config = new CacheConfiguration("hydrated-offheap-cache", 500).eternal(true).overflowToOffHeap(true).maxMemoryOffHeap("1400M");
-            Cache cache = new Cache(config);
-            CacheManager.create().addCache(cache);
-            offHeap = cache;
-        }
+    	//CacheManager.getInstance() and CacheManager.create() cannot be called in this constructor because it will create two cache manager instances
+    }
+    
+    private Cache getHeap() {
+    	if (offHeap == null) {
+	        if (CacheManager.getInstance().cacheExists("hydrated-offheap-cache")) {
+	            offHeap = CacheManager.getInstance().getCache("hydrated-offheap-cache");
+	        } else {
+	            CacheConfiguration config = new CacheConfiguration("hydrated-offheap-cache", 500).eternal(true).overflowToOffHeap(true).maxMemoryOffHeap("1400M");
+	            Cache cache = new Cache(config);
+	            CacheManager.create().addCache(cache);
+	            offHeap = cache;
+	        }
+    	}
+    	return offHeap;
     }
 
     @Override
@@ -70,7 +77,7 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
             return null;
         }
     	Object response = null;
-    	element = offHeap.get(myKey);
+    	element = getHeap().get(myKey);
     	if (element != null) {
     		response = element.getObjectValue();
     	}
@@ -91,7 +98,7 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
     		List<String> myMembers = cacheMemberNamesByEntity.get(nameKey);
     		myMembers.add(elementItemName);
     	}
-    	offHeap.put(element);
+    	getHeap().put(element);
     }
 
     protected void removeCache(String cacheRegion, Serializable key) {
