@@ -32,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository("blOrderDao")
@@ -124,8 +125,8 @@ public class OrderDaoImpl implements OrderDao {
         order.setPriceList(priceList);
         order.setLocale(locale);
         order.setCurrency(priceList.getCurrencyCode());
-        order.setSubTotal(new Money(0.0d,priceList.getCurrencyCode().getCurrencyCode()));
-        order.setTotal(new Money(0.0d,priceList.getCurrencyCode().getCurrencyCode()));
+        order.setSubTotal(new Money(BigDecimal.ZERO,priceList.getCurrencyCode().getCurrencyCode()));
+        order.setTotal(new Money(BigDecimal.ZERO,priceList.getCurrencyCode().getCurrencyCode()));
         order = save(order);
 
         return order;
