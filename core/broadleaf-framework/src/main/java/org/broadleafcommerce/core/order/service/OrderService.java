@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -370,7 +371,7 @@ public interface OrderService {
      * @throws UpdateCartException
      * @throws RemoveFromCartException 
      */
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException;
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException, InventoryUnavailableException;
 	
     /**
      * Initiates the removeItem workflow that will attempt to remove the specified OrderItem from 

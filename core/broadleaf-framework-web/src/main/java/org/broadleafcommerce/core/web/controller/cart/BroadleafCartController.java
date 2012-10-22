@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.web.controller.cart;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
@@ -120,10 +121,11 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @throws RemoveFromCartException 
 	 */
 	public String updateQuantity(HttpServletRequest request, HttpServletResponse response, Model model,
-			AddToCartItem itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
+			AddToCartItem itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException,
+            InventoryUnavailableException {
 		Order cart = CartState.getCart();
-		
-		cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
+
+        cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
 		cart = orderService.save(cart, false);
 		CartState.setCart(cart);
 		
