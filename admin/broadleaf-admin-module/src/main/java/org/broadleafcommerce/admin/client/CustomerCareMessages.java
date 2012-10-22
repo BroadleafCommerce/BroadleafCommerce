@@ -27,5 +27,5 @@ import org.broadleafcommerce.openadmin.client.i18nConstants;
  *
  */
 public interface CustomerCareMessages extends i18nConstants {
-
+ 
 }

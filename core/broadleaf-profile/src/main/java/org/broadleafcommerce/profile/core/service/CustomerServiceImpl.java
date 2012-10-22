@@ -229,6 +229,7 @@ public class CustomerServiceImpl implements CustomerService {
      * Allow customers to call from subclassed service.
      * @return
      */
+    @Override
     public Long findNextCustomerId() {
         return idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer");
     }
