@@ -195,7 +195,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @Override
     public Money getRetailPriceValue() {
         if (retailValue == null) {
-            return  BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrderItem().getOrder().getCurrency());
+            return BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrderItem().getOrder().getCurrency());
         }
         return this.retailValue;
     }
@@ -208,7 +208,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @Override
     public Money getSalesPriceValue() {
         if (salesValue == null) {
-            return  BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrderItem().getOrder().getCurrency());
+            return BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrderItem().getOrder().getCurrency());
         }
         return salesValue;
     }
