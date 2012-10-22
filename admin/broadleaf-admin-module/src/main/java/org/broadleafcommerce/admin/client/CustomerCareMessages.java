@@ -90,5 +90,6 @@ public interface CustomerCareMessages extends ConstantsWithLookup {
     public String exportOrdersButtonTitle();
     public String noOrderExporters();
     public String selectExporterTitle();
-
+    public String nonUniqueUsernameError();
+ 
 }

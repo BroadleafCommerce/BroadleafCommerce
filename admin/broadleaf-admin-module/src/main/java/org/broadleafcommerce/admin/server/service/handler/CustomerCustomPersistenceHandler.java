@@ -58,7 +58,15 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             adminInstance.setId(customerService.findNextCustomerId());
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Customer.class.getName(), persistencePerspective);
 			adminInstance = (Customer) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            adminInstance = (Customer) dynamicEntityDao.persist(adminInstance);
+			
+			if (customerService.readCustomerByUsername(adminInstance.getUsername()) != null) {
+			    Entity error = new Entity();
+			    error.setValidationFailure(true);
+			    error.addValidationError("username", "nonUniqueUsernameError");
+			    return error;
+			}
+			
+            adminInstance = (Customer) dynamicEntityDao.merge(adminInstance);
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
 			return adminEntity;
