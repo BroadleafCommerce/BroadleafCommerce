@@ -44,7 +44,7 @@ General
 /* default text */
 .normal {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
 }
@@ -64,7 +64,7 @@ General
 .gridHover,
 .formHover {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   max-width: 200px;
   padding: 3px 8px;
@@ -84,7 +84,7 @@ General
 /* group label */
 .groupLabel {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   padding-left: 5px;
@@ -114,7 +114,7 @@ Button (also used as MenuButton base style)
   *zoom: 1;
   padding: 4px 10px 4px;
   margin-bottom: 0;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   *line-height: 20px;
   color: #333333;
@@ -345,7 +345,7 @@ Button (also used as MenuButton base style)
 .headerButtonSelectedOver,
 .headerButtonSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   padding: 2px;
 }
@@ -405,7 +405,7 @@ Button (also used as MenuButton base style)
 }
 .headerButtonSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #666666;
 }
@@ -416,18 +416,18 @@ Button (also used as MenuButton base style)
 .imgButtonSelectedDisabled,
 .imgButtonSelectedOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .imgButtonDown,
 .imgButtonSelectedDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .imgButtonDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #666666;
 }
@@ -441,7 +441,7 @@ Button (also used as MenuButton base style)
 .stretchImgButtonSelectedDisabled,
 .stretchImgButtonDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .stretchImgButtonSelectedDisabled,
@@ -469,7 +469,7 @@ Button (also used as MenuButton base style)
 .treeMenuSelected,
 .treeMenuSelectedOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: white;
 }
@@ -520,7 +520,7 @@ Button (also used as MenuButton base style)
 .windowHeaderText,
 .dialogHeaderText {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: normal;
   color: #4C4C4C;
@@ -530,7 +530,7 @@ Button (also used as MenuButton base style)
 }
 .windowStatusBar {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: normal;
   border-top: 1px solid #999999;
@@ -562,7 +562,7 @@ Button (also used as MenuButton base style)
 ============================================================*/
 .tabSetContainer {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: transparent;
   color: #333333;
@@ -592,7 +592,7 @@ Button (also used as MenuButton base style)
 .tabSelectedDisabled,
 .tabDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .tabSelectedDisabled,
@@ -617,7 +617,7 @@ Button (also used as MenuButton base style)
 .vtabTitleSelectedDisabled {
   color: #29333c;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   padding-bottom: 4px;
 }
@@ -656,7 +656,7 @@ Button (also used as MenuButton base style)
 .sectionHeaderDisabledopened,
 .sectionHeaderDisabledclosed {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   padding-left: 3px;
   border-bottom: 1px solid white;
@@ -680,7 +680,7 @@ Button (also used as MenuButton base style)
 .nestedFormContainerFocused,
 .nestedFormContainerDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .formTitle,
@@ -728,7 +728,7 @@ Button (also used as MenuButton base style)
 .labelAnchorError,
 .labelAnchorFocused {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .formTitle,
@@ -738,7 +738,7 @@ Button (also used as MenuButton base style)
 .formCellError,
 .formTitleError {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .formHint {
@@ -915,7 +915,7 @@ Button (also used as MenuButton base style)
 .dateChooserWeekendSelectedDisabled,
 .dateChooserWeekendDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #FFFFFF;
   color: #868686;
@@ -1062,7 +1062,7 @@ Button (also used as MenuButton base style)
 .rangebarRange,
 .rangebarValue {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .sliderTitle,
@@ -1090,7 +1090,7 @@ Button (also used as MenuButton base style)
 .detailLabel,
 .detailHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: white;
 }
@@ -1101,7 +1101,7 @@ Button (also used as MenuButton base style)
 }
 .detailHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   background-color: #BBDAFA;
@@ -1122,13 +1122,13 @@ Button (also used as MenuButton base style)
 .offlineMessage,
 .emptyMessage {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   padding: 10px;
 }
 .gridDragTracker {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: white;
   padding: 1px;
@@ -1140,7 +1140,7 @@ Button (also used as MenuButton base style)
 /* for filterEditor */
 .recordEditorCell {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: black;
   background-color: #f4f4f4;
@@ -1204,7 +1204,7 @@ Button (also used as MenuButton base style)
 .specialColDisabled,
 .groupNode {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   text-overflow: ellipsis;
   color: black;
@@ -1214,7 +1214,7 @@ Button (also used as MenuButton base style)
 }
 .specialCol {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   text-overflow: ellipsis;
   color: black;
@@ -1299,7 +1299,7 @@ Button (also used as MenuButton base style)
 .groupNode {
   font-weight: bold;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #3764a3;
   border-bottom: 2px solid #8299b8;
@@ -1329,7 +1329,7 @@ Button (also used as MenuButton base style)
 .treeTallCellDisabled,
 .treeTallCellDisabledDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   text-overflow: ellipsis;
   color: black;
@@ -1413,7 +1413,7 @@ Button (also used as MenuButton base style)
 .toolbarButtonFocusedOver,
 .toolbarButtonFocusedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   padding: 10px 15px 10px;
   color: #555;
@@ -1434,14 +1434,14 @@ Button (also used as MenuButton base style)
 .toolbarButtonSelectedOver,
 .toolbarButtonSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #0060BF;
 }
 .toolbarButtonSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #666666;
 }
@@ -1464,7 +1464,7 @@ Button (also used as MenuButton base style)
 .tileValueSelectedOver,
 .tileValueSelectedDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   text-overflow: ellipsis;
 }
@@ -1519,27 +1519,27 @@ Button (also used as MenuButton base style)
 }
 .disabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #CCCCCC;
 }
 .pageHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #00008b;
 }
 .printPageHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #00008b;
 }
 .printCell {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 /*IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
@@ -1634,7 +1634,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .tabButtonTopSelectedDisabled,
 .tabButtonTopDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   padding-top: 8px;
   padding-bottom: 8px;
   line-height: 20px;
@@ -1659,7 +1659,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   border-bottom: none;
   background: #ffffff;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .tabButtonTopSelected {
@@ -1727,7 +1727,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 ============================================================*/
 .cubeCell {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: black;
   text-overflow: ellipsis;
@@ -1739,7 +1739,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .cubeCellDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: black;
   text-overflow: ellipsis;
@@ -1751,7 +1751,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .cubeCellDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #666666;
   text-overflow: ellipsis;
@@ -1783,7 +1783,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 /* row headers */
 .rowHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #6682A0;
@@ -1795,7 +1795,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #6682A0;
@@ -1807,7 +1807,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #6682A0;
@@ -1819,7 +1819,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #808080;
   background-color: #6682A0;
@@ -1831,7 +1831,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .rowHeaderSelected,
 .rowHeaderSelectedDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #3E74B3;
@@ -1843,7 +1843,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderSelectedOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #3E74B3;
@@ -1855,7 +1855,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #808080;
   background-color: #3E74B3;
@@ -1867,7 +1867,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 /* row label */
 .rowHeaderLabel {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -1880,7 +1880,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderLabelOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -1893,7 +1893,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderLabelDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -1906,7 +1906,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderLabelDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #808080;
@@ -1919,7 +1919,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .rowHeaderLabelSelected,
 .rowHeaderLabelSelectedDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -1932,7 +1932,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderLabelSelectedOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -1945,7 +1945,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .rowHeaderLabelSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #808080;
@@ -1958,7 +1958,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 /* column headers */
 .colHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #6682A0;
@@ -1970,7 +1970,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #6682A0;
@@ -1982,7 +1982,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #6682A0;
@@ -1994,7 +1994,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #808080;
   background-color: #6682A0;
@@ -2006,7 +2006,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .colHeaderSelected,
 .colHeaderSelectedDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2019,7 +2019,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderSelectedOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2032,7 +2032,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #808080;
@@ -2045,7 +2045,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 /* column label */
 .colHeaderLabel {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2058,7 +2058,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderLabelOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2071,7 +2071,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderLabelDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2084,7 +2084,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderLabelDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #808080;
@@ -2097,7 +2097,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .colHeaderLabelSelected,
 .colHeaderLabelSelectedDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2110,7 +2110,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderLabelSelectedOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2123,7 +2123,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .colHeaderLabelSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #808080;
@@ -2136,7 +2136,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 /* inner header */
 .innerHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   background-color: #CCCCCC;
@@ -2148,7 +2148,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .innerHeaderOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   background-color: #CCCCCC;
@@ -2160,7 +2160,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .innerHeaderDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   background-color: #CCCCCC;
@@ -2172,7 +2172,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .innerHeaderDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #808080;
   background-color: #CCCCCC;
@@ -2184,7 +2184,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .innerHeaderSelected,
 .innerHeaderSelectedDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2197,7 +2197,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .innerHeaderSelectedOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: white;
@@ -2210,7 +2210,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .innerHeaderSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-size: 11px;
   color: #808080;
@@ -2233,7 +2233,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .chartTitle {
   color: #333333;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   text-align: center;
@@ -2241,7 +2241,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .chartAxisTitle {
   color: green;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   font-size: 12px;
@@ -2249,13 +2249,13 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .chartValueTitle {
   color: #333333;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .chartTotal {
   color: #333333;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: linen;
 }
@@ -2285,7 +2285,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 ============================================================*/
 .printHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   border: 1px solid #333333;
   font-weight: bold;
@@ -2299,7 +2299,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calendarWorkday,
 .calendarDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2315,7 +2315,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calendarOver,
 .calendarOverDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2324,7 +2324,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .calendarCellSelected {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2333,7 +2333,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .labelColumn {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2345,7 +2345,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthDayHeader,
 .calMonthDayHeaderDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2355,7 +2355,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthDayHeaderOver,
 .calMonthDayHeaderOverDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2365,7 +2365,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthDayBody,
 .calMonthDayBodyDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2375,7 +2375,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthDayBodyOver,
 .calMonthDayBodyOverDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2385,7 +2385,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthDayBodyDisabled,
 .calMonthDayBodyDisabledOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2396,7 +2396,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthOtherDayHeader,
 .calMonthOtherDayHeaderDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #444444;
   border-bottom: 1px solid #a0a0a0;
@@ -2406,7 +2406,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthOtherDayHeaderOver,
 .calMonthOtherDayHeaderOverDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #444444;
   border-bottom: 1px solid #a0a0a0;
@@ -2418,7 +2418,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthOtherDayBodyDisabled,
 .calMonthOtherDayBodyDisabledOver {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2428,7 +2428,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthOtherDayBodyOver,
 .calMonthOtherDayBodyOverDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   border-bottom: 1px solid #a0a0a0;
@@ -2441,7 +2441,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .calMonthOtherDayBlankOver,
 .calMonthOtherDayBlankOverDark {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #444444;
   border-bottom: 1px solid #a0a0a0;
@@ -2468,21 +2468,21 @@ a.calMonthEventLink:active {
 /* ----event window---- */
 .eventWindow {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #EBF4FF;
   border: 1px solid #d0dff6;
 }
 .eventWindowHeader {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #4C4C4C;
   background-color: #d0dff6;
 }
 .eventWindowBody {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #333333;
   background-color: #EBF4FF;
@@ -2507,7 +2507,7 @@ a.calMonthEventLink:active {
 .propSheetValueFocused,
 .propSheetDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   border-bottom: 1px solid #AAAAAA;
   border-right: 1px solid #AAAAAA;
@@ -2518,7 +2518,7 @@ a.calMonthEventLink:active {
 .propSheetTitleFocused,
 .propSheetTitleDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   border-bottom: 1px solid #AAAAAA;
   border-right: 1px solid #AAAAAA;
@@ -2529,7 +2529,7 @@ a.calMonthEventLink:active {
 .propSheetTitleError,
 .propSheetValueError {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #204268;
   background-color: #cfd9f2;
@@ -2537,7 +2537,7 @@ a.calMonthEventLink:active {
 .propSheetField,
 .propSheetFieldDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #FFFFFF;
   border: 0px;
@@ -2549,7 +2549,7 @@ a.calMonthEventLink:active {
 .propSheetHeading,
 .propSheetHeadingDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   font-weight: bold;
   color: #333333;
@@ -2567,7 +2567,7 @@ a.calMonthEventLink:active {
 .finder,
 .finderSelected {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #F0F0F0;
   border-bottom: 1px solid white;
@@ -2575,14 +2575,14 @@ a.calMonthEventLink:active {
 .finderSort,
 .finderSelectedSort {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #DDDDDD;
   border-bottom: 1px solid white;
 }
 .finderDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #666666;
   background-color: #FFFFFF;
@@ -2596,7 +2596,7 @@ a.calMonthEventLink:active {
 /* header buttons */
 .finderButton {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #DDDDDD;
   border-left: 1px solid white;
@@ -2607,7 +2607,7 @@ a.calMonthEventLink:active {
 .finderButtonDown,
 .finderButtonSelectedDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: white;
   background-color: #999999;
@@ -2619,7 +2619,7 @@ a.calMonthEventLink:active {
 .finderButtonSelectedDisabled,
 .finderButtonSelected {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #999999;
   border-left: 1px solid #666666;
@@ -2629,7 +2629,7 @@ a.calMonthEventLink:active {
 }
 .finderButtonDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #666666;
   background-color: #999999;
@@ -2649,7 +2649,7 @@ a.calMonthEventLink:active {
 .explorerSelectedDark,
 .explorerDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 .explorerSelectedText {
@@ -2662,7 +2662,7 @@ a.calMonthEventLink:active {
 .explorerButtonSelectedOver,
 .explorerButton {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #CCCCCC;
   border-left: 2px solid white;
@@ -2673,7 +2673,7 @@ a.calMonthEventLink:active {
 .explorerButtonSelectedDown,
 .explorerButtonDown {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   background-color: #CCCCCC;
   border-left: 2px solid #999999;
@@ -2684,7 +2684,7 @@ a.calMonthEventLink:active {
 .explorerButtonSelectedDisabled,
 .explorerButtonDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
   color: #666666;
   background-color: #CCCCCC;
@@ -2692,6 +2692,31 @@ a.calMonthEventLink:active {
   border-top: 1px solid #CCCCCC;
   border-right: 1px solid #CCCCCC;
   border-bottom: 1px solid #CCCCCC;
+}
+label {
+  font-size: 11px;
+  display: inline-block;
+}
+input,
+button,
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+  font-size: 11px;
 }
 .pull-right {
   float: right;
