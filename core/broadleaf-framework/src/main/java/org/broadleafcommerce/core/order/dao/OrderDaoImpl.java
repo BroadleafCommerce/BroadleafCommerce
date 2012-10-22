@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -123,6 +124,8 @@ public class OrderDaoImpl implements OrderDao {
         order.setPriceList(priceList);
         order.setLocale(locale);
         order.setCurrency(priceList.getCurrencyCode());
+        order.setSubTotal(new Money(0.0d,priceList.getCurrencyCode().getCurrencyCode()));
+        order.setTotal(new Money(0.0d,priceList.getCurrencyCode().getCurrencyCode()));
         order = save(order);
 
         return order;
