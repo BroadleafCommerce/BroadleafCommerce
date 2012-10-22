@@ -195,7 +195,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @Override
     public Money getRetailPriceValue() {
         if (retailValue == null) {
-            return new Money(0,getOrderItem().getOrder().getCurrency().getCurrencyCode());
+            return new Money(0, getOrderItem().getOrder().getCurrency().getCurrencyCode());
         }
         return this.retailValue;
     }
@@ -208,7 +208,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @Override
     public Money getSalesPriceValue() {
         if (salesValue == null) {
-            return new Money(0,getOrderItem().getOrder().getCurrency().getCurrencyCode());
+            return new Money(0, getOrderItem().getOrder().getCurrency().getCurrencyCode());
         }
         return salesValue;
     }
