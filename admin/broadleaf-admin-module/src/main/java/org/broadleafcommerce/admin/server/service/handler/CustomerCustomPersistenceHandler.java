@@ -31,6 +31,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 
 import javax.annotation.Resource;
+
 import java.util.Map;
 
 /**
@@ -43,6 +44,7 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
     @Resource(name="blCustomerService")
 	protected CustomerService customerService;
 
+    @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
 		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Customer.class.getName());
 	}
@@ -52,10 +54,11 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
         Entity entity  = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Customer adminInstance = customerService.createCustomer();
+            Customer adminInstance = (Customer) Class.forName(entity.getType()[0]).newInstance();
+            adminInstance.setId(customerService.findNextCustomerId());
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Customer.class.getName(), persistencePerspective);
 			adminInstance = (Customer) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            adminInstance = (Customer) dynamicEntityDao.merge(adminInstance);
+            adminInstance = (Customer) dynamicEntityDao.persist(adminInstance);
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
 			return adminEntity;
