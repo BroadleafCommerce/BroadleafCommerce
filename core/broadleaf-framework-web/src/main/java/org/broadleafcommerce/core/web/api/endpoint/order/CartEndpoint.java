@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.api.endpoint.order;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
@@ -283,6 +284,8 @@ public class CartEndpoint implements ApplicationContextAware {
                     wrapper.wrap(order, request);
 
                     return wrapper;
+                } catch (InventoryUnavailableException e) {
+                    throw new WebApplicationException((Response.Status.INTERNAL_SERVER_ERROR));
                 } catch (UpdateCartException e) {
                 	if (e.getCause() instanceof ItemNotFoundException) {
                 		throw new WebApplicationException(Response.Status.NOT_FOUND);
