@@ -65,7 +65,6 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     protected static String loginRedirect = "login";
     protected static String resetPasswordRedirect = "resetPassword";
 
-
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getLoginView();
     }

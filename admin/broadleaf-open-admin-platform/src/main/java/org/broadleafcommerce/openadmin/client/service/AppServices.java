@@ -46,6 +46,7 @@ public class AppServices {
 
 	ServiceDefTarget endpoint5 = (ServiceDefTarget) APP_CONFIGURATION;
         endpoint5.setServiceEntryPoint("admin/app.configuration.service");
+
     }
     
 }
