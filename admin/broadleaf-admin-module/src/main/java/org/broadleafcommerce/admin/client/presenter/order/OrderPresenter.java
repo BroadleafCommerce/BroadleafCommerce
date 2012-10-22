@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
-import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.order.BundledOrderItemListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.CountryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.DiscreteOrderItemFeePriceDataSourceFactory;
@@ -249,7 +248,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleOrderItemDS", new BundledOrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				orderItemPresenter = new OrderItemPresenter(getDisplay().getOrderItemsDisplay(), new String[] {EntityImplementations.ORDER});
+				orderItemPresenter = new OrderItemPresenter(getDisplay().getOrderItemsDisplay(), null);
 				orderItemPresenter.setDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("orderItemDS"), new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
 				orderItemPresenter.setExpansionDataSource((ListGridDataSource) result, new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
 				orderItemPresenter.setReadOnly(true);
@@ -294,7 +293,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupDS", new FulfillmentGroupListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				fulfillmentGroupPresenter = new SubPresenter(getDisplay().getFulfillmentGroupDisplay(), new String[] {EntityImplementations.ORDER});
+				fulfillmentGroupPresenter = new SubPresenter(getDisplay().getFulfillmentGroupDisplay());
 				fulfillmentGroupPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "method", "service", "shippingPrice", "status", "address.postalCode"}, new Boolean[]{false, false, false, false, false, false});
 				fulfillmentGroupPresenter.setReadOnly(true);
 			}
@@ -302,7 +301,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentInfoDS", new PaymentInfoListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				paymentInfoPresenter = new SubPresenter(getDisplay().getPaymentInfoDisplay(), new String[] {EntityImplementations.ORDER});
+				paymentInfoPresenter = new SubPresenter(getDisplay().getPaymentInfoDisplay());
 				paymentInfoPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "type", "amount"}, new Boolean[]{false, false, false});
 				paymentInfoPresenter.setReadOnly(true);
 				
@@ -328,7 +327,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				Map<String, Object> initialValues = new HashMap<String, Object>(2);
 				initialValues.put("key", BLCMain.getMessageManager().getString("paymentAttributeKeyDefault"));
 				initialValues.put("value", BLCMain.getMessageManager().getString("paymentAttributeValueDefault"));
-				additionalPaymentAttributesPresenter = new SimpleMapStructurePresenter(getDisplay().getAdditionalAttributesDisplay(), new String[] {EntityImplementations.PAYMENT_INFO}, initialValues);
+				additionalPaymentAttributesPresenter = new SimpleMapStructurePresenter(getDisplay().getAdditionalAttributesDisplay(), initialValues);
 				additionalPaymentAttributesPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "value"}, new Boolean[]{true, true});
 				additionalPaymentAttributesPresenter.setReadOnly(true);
 			}
@@ -336,7 +335,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCodeDS", new OfferCodeListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				offerCodePresenter = new SubPresenter(getDisplay().getOfferCodeDisplay(), new String[] {EntityImplementations.ORDER});
+				offerCodePresenter = new SubPresenter(getDisplay().getOfferCodeDisplay());
 				offerCodePresenter.setDataSource((ListGridDataSource) result, new String[]{"offerCode", "startDate", "endDate", "offer.name", "offer.type", "offer.value"}, new Boolean[]{false, false, false, false, false, false});
 				offerCodePresenter.setReadOnly(true);
 			}
@@ -344,7 +343,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderAdjustmentDS", new OrderAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				orderAdjustmentPresenter = new CreateBasedListStructurePresenter(getDisplay().getOrderAdjustmentDisplay(), new String[] {EntityImplementations.ORDER}, BLCMain.getMessageManager().getString("newOrderAdjustmentTitle"));
+				orderAdjustmentPresenter = new CreateBasedListStructurePresenter(getDisplay().getOrderAdjustmentDisplay(), BLCMain.getMessageManager().getString("newOrderAdjustmentTitle"));
 				orderAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.name", "offer.type"}, new Boolean[]{false, false, false, false});
 				orderAdjustmentPresenter.setReadOnly(true);
 			}
@@ -352,7 +351,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemAdjustmentDS", new OrderItemAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter(getDisplay().getOrderItemAdjustmentDisplay(), new String[] {EntityImplementations.ORDER_ITEM}, BLCMain.getMessageManager().getString("newOrderItemAdjustmentTitle"));
+				orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter(getDisplay().getOrderItemAdjustmentDisplay(), BLCMain.getMessageManager().getString("newOrderItemAdjustmentTitle"));
 				orderItemAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
 				orderItemAdjustmentPresenter.setReadOnly(true);
 			}
@@ -360,7 +359,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupAdjustmentDS", new FulfillmentGroupAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter(getDisplay().getFulfillmentGroupAdjustmentDisplay(), new String[] {EntityImplementations.FULFILLMENT_GROUP}, BLCMain.getMessageManager().getString("newFGAdjustmentTitle"));
+				fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter(getDisplay().getFulfillmentGroupAdjustmentDisplay(), BLCMain.getMessageManager().getString("newFGAdjustmentTitle"));
 				fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
 				fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
 			}
@@ -368,7 +367,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("discreteOrderItemFeePriceDS", new DiscreteOrderItemFeePriceDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				feesPresenter = new CreateBasedListStructurePresenter(getDisplay().getOrderItemFeeDisplay(), new String[] {EntityImplementations.ORDER_ITEM}, BLCMain.getMessageManager().getString("newOrderItemFeeTitle"));
+				feesPresenter = new CreateBasedListStructurePresenter(getDisplay().getOrderItemFeeDisplay(), BLCMain.getMessageManager().getString("newOrderItemFeeTitle"));
 				feesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "amount", "reportingCode"}, new Boolean[]{false, false, false});
 				feesPresenter.setReadOnly(true);
 			}
