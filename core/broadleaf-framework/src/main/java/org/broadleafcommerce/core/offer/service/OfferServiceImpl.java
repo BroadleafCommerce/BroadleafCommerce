@@ -16,12 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
@@ -29,6 +25,7 @@ import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferRestrictedPriceList;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -42,6 +39,12 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class OfferServiceImpl.
@@ -146,7 +149,45 @@ public class OfferServiceImpl implements OfferService {
                 offers.add(globalOffer);
             }
         }
+        
+        // TODO:  Remove offers who have a mismatch on the currency/pricelist
+        removeNonRestrictedOffers(offers); 
+            
         return offers;
+    }
+    /**
+     * Removes offers who have a mismatch on the currency/pricelist. If the restrictedPriceLists is empty, then the offer is considered valid.
+     * In short, it keeps the offer if the current pricelist is in the offer's restrictedPriceLists. 
+     * @param offerCodes
+     * @return a List of valid offers
+     */
+    protected void removeNonRestrictedOffers(List<Offer> offers){
+        // Check the BLC Thread 
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+
+        if (offers==null||brc == null && brc.getPriceList() == null) {
+            return;
+        }
+        
+        for(Offer f :new ArrayList<Offer>(offers)) {
+            if(f.getRestrictedPriceLists().isEmpty()) {
+                continue ;
+            } 
+            boolean found=false;
+            for(OfferRestrictedPriceList l: f.getRestrictedPriceLists()) {
+               if(l.getPriceList().equals(brc.getPriceList())) {
+                   //offer is valid
+                   found=true;
+                   break;
+                } else {
+                   //offer is of different currency or pricelist. So will need to remove it.
+                   found=false;
+                }
+            }
+            if(!found) {
+                offers.remove(f);
+            }
+        }
     }
 
     /**
