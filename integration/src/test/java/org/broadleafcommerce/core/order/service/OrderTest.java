@@ -318,7 +318,7 @@ public class OrderTest extends OrderBaseTest {
     
     @Test(groups = { "testManyToOneFGItemToOrderItem" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
-    public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException {
+    public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException, InventoryUnavailableException {
     	// Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
@@ -412,7 +412,7 @@ public class OrderTest extends OrderBaseTest {
 
     @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
-    public void updateItemsInOrder() throws UpdateCartException, RemoveFromCartException {
+    public void updateItemsInOrder() throws UpdateCartException, RemoveFromCartException, InventoryUnavailableException {
     	// Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
