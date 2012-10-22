@@ -161,30 +161,30 @@ public class OfferServiceImpl implements OfferService {
      * @param offerCodes
      * @return a List of valid offers
      */
-    protected void removeNonRestrictedOffers(List<Offer> offers){
-        // Check the BLC Thread 
+    protected void removeNonRestrictedOffers(List<Offer> offers) {
+        // Check the BLC Thread
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
 
-        if (offers==null||brc == null && brc.getPriceList() == null) {
+        if (offers == null || brc == null || brc.getPriceList() == null) {
             return;
         }
-        
-        for(Offer f :new ArrayList<Offer>(offers)) {
-            if(f.getRestrictedPriceLists().isEmpty()) {
-                continue ;
-            } 
-            boolean found=false;
-            for(OfferRestrictedPriceList l: f.getRestrictedPriceLists()) {
-               if(l.getPriceList().equals(brc.getPriceList())) {
-                   //offer is valid
-                   found=true;
-                   break;
+
+        for (Offer f : new ArrayList<Offer>(offers)) {
+            if (f.getRestrictedPriceLists().isEmpty()) {
+                continue;
+            }
+            boolean found = false;
+            for (OfferRestrictedPriceList l : f.getRestrictedPriceLists()) {
+                if (l.getPriceList().equals(brc.getPriceList())) {
+                    // offer is valid
+                    found = true;
+                    break;
                 } else {
-                   //offer is of different currency or pricelist. So will need to remove it.
-                   found=false;
+                    // offer is of different currency or pricelist. So will need to remove it.
+                    found = false;
                 }
             }
-            if(!found) {
+            if (!found) {
                 offers.remove(f);
             }
         }
