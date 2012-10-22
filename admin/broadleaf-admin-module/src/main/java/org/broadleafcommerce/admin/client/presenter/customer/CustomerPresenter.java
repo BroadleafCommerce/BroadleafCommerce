@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
-import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerAddressDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
@@ -177,7 +176,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerAddressDS", new CustomerAddressDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                customerAddressPresenter = new CreateBasedListStructurePresenter(getDisplay().getCustomerAddressDisplay(), new String[] {EntityImplementations.CUSTOMER}, BLCMain.getMessageManager().getString("newCustomerAddressTitle"));
+                customerAddressPresenter = new CreateBasedListStructurePresenter(getDisplay().getCustomerAddressDisplay(), BLCMain.getMessageManager().getString("newCustomerAddressTitle"));
                 customerAddressPresenter.setDataSource((ListGridDataSource) result, new String[]{"addressName", "address.addressLine1", "address.city", "address.state.name", "address.postalCode"}, new Boolean[]{true, true, true, true, true});
 
                 ((DynamicEntityDataSource) result).
@@ -197,13 +196,13 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
             }
         }));
 	}
-@Override
-public void postSetup(Canvas container) {
-   
-    gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),customerAddressPresenter );
     
-    super.postSetup(container);
-}
+	@Override
+    public void postSetup(Canvas container) {
+        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(), customerAddressPresenter );
+        super.postSetup(container);
+    }
+    
 	@Override
 	public CustomerDisplay getDisplay() {
 		return (CustomerDisplay) display;
