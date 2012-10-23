@@ -22,8 +22,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.common.BroadleafEnumerationType;
-
 /**
  * An extendible enumeration of payment info types.
  * 
@@ -40,6 +38,9 @@ public class PaymentInfoType implements Serializable, BroadleafEnumerationType {
     public static final PaymentInfoType CREDIT_CARD = new PaymentInfoType("CREDIT_CARD", "Credit Card");
     public static final PaymentInfoType BANK_ACCOUNT = new PaymentInfoType("BANK_ACCOUNT", "Bank Account");
     public static final PaymentInfoType PAYPAL = new PaymentInfoType("PAYPAL", "PayPal");
+    public static final PaymentInfoType CHECK = new PaymentInfoType("CHECK", "Check");
+    public static final PaymentInfoType WIRE = new PaymentInfoType("WIRE", "Wire Transfer");
+    public static final PaymentInfoType EXISTING_CREDIT = new PaymentInfoType("EXISTING_CREDIT", "Existing Credit");
 
     public static PaymentInfoType getInstance(final String type) {
         return TYPES.get(type);
