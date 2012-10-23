@@ -109,8 +109,8 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     @Override
     public Money getValue() {
         if (delegate.getValue() == null || delegate.getValue().isZero()) {
-			computeAdjustmentValue();
-		}
-		return delegate.getValue();
-	}
+            computeAdjustmentValue();
+        }
+        return delegate.getValue();
+    }
 }
