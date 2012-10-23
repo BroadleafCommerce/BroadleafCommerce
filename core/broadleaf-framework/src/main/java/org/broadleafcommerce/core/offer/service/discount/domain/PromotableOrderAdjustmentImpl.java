@@ -35,11 +35,13 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
 		this.order = order;
 	}
 	
-	public void reset() {
+	@Override
+    public void reset() {
 		delegate = null;
 	}
 	
-	public OrderAdjustment getDelegate() {
+	@Override
+    public OrderAdjustment getDelegate() {
 		return delegate;
 	}
 	
@@ -77,6 +79,7 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
 	/*
      * Calculates the value of the adjustment
      */
+    @Override
     public void computeAdjustmentValue() {
         if (delegate.getOffer() != null && order != null) {
             Money adjustmentPrice = order.getAdjustmentPrice(); // get the current price of the item with all adjustments
@@ -103,8 +106,9 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
         }
     }
     
+    @Override
     public Money getValue() {
-		if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
+        if (delegate.getValue() == null || delegate.getValue().isZero()) {
 			computeAdjustmentValue();
 		}
 		return delegate.getValue();
