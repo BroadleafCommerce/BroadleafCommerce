@@ -34,6 +34,12 @@
 	<bean id="blGiftCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
 	<bean id="blBankAccountModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    
+	<bean id="blCheckPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    
+	<bean id="blWirePaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    
+	<bean id="blExistingCreditPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
 	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.NullCreditCardPaymentModule"/>
 	
@@ -60,6 +66,18 @@
 	<bean id="blBankAccountService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
 		<property name="paymentModule" ref="blBankAccountModule"/>
 	</bean>
+    
+	<bean id="blCheckPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+		<property name="paymentModule" ref="blCheckPaymentModule"/>
+	</bean>
+    
+	<bean id="blWirePaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+		<property name="paymentModule" ref="blWirePaymentModule"/>
+	</bean>
+    
+	<bean id="blExistingCreditPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+		<property name="paymentModule" ref="blExistingCreditPaymentModule"/>
+	</bean>
 
 	<bean id="blAuthorizeAndDebitWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
 		<property name="processContextFactory">
@@ -70,6 +88,10 @@
 		<property name="activities">
 			<list>
 				<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+					<property name="paymentService" ref="blExistingCreditPaymentService"/>
+					<property name="userName" value="web"/>
+				</bean>
+				<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
 					<property name="paymentService" ref="blGiftCardService"/>
 					<property name="userName" value="web"/>
 				</bean>
@@ -79,6 +101,14 @@
 				</bean>
 				<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
 					<property name="paymentService" ref="blCreditCardService"/>
+					<property name="userName" value="web"/>
+				</bean>
+				<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+					<property name="paymentService" ref="blCheckPaymentService"/>
+					<property name="userName" value="web"/>
+				</bean>
+				<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+					<property name="paymentService" ref="blWirePaymentService"/>
 					<property name="userName" value="web"/>
 				</bean>
 			</list>
