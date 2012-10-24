@@ -16,8 +16,7 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import javax.annotation.Resource;
-
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
@@ -27,7 +26,8 @@ import org.broadleafcommerce.core.payment.service.module.PaymentModule;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
-import org.broadleafcommerce.common.time.SystemTime;
+
+import javax.annotation.Resource;
 
 public class PaymentServiceImpl implements PaymentService {
 
@@ -44,6 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
         this.paymentModule = paymentModule;
     }
 
+    @Override
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, TransactionType.AUTHORIZE);
         PaymentResponseItem response = null;
@@ -64,6 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
         return response;
     }
 
+    @Override
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, TransactionType.AUTHORIZEANDDEBIT);
         PaymentResponseItem response = null;
@@ -84,6 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
         return response;
     }
 
+    @Override
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, TransactionType.BALANCE);
         PaymentResponseItem response = null;
@@ -104,6 +107,7 @@ public class PaymentServiceImpl implements PaymentService {
         return response;
     }
 
+    @Override
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, TransactionType.CREDIT);
         PaymentResponseItem response = null;
@@ -124,6 +128,7 @@ public class PaymentServiceImpl implements PaymentService {
         return response;
     }
 
+    @Override
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, TransactionType.DEBIT);
         PaymentResponseItem response = null;
@@ -144,6 +149,7 @@ public class PaymentServiceImpl implements PaymentService {
         return response;
     }
 
+    @Override
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, TransactionType.VOIDPAYMENT);
         PaymentResponseItem response = null;
@@ -164,6 +170,7 @@ public class PaymentServiceImpl implements PaymentService {
         return response;
     }
     
+    @Override
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, TransactionType.REVERSEAUTHORIZE);
         PaymentResponseItem response = null;
@@ -184,6 +191,7 @@ public class PaymentServiceImpl implements PaymentService {
         return response;
     }
 
+    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return paymentModule.isValidCandidate(paymentType);
     }
@@ -218,6 +226,7 @@ public class PaymentServiceImpl implements PaymentService {
             log.setCustomer(info.getOrder().getCustomer());
             log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
             log.setAmountPaid(info.getAmount());
+            log.setCurrency(info.getOrder().getCurrency());
             log.setPaymentInfoId(info.getId());
         }
         paymentInfoService.save(log);
@@ -250,6 +259,7 @@ public class PaymentServiceImpl implements PaymentService {
             log.setCustomer(info.getOrder().getCustomer());
             log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
             log.setAmountPaid(info.getAmount());
+            log.setCurrency(info.getOrder().getCurrency());
             log.setPaymentInfoId(info.getId());
         }
         paymentInfoService.save(log);

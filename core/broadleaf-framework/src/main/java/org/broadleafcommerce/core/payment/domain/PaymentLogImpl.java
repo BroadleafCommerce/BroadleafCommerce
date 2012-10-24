@@ -221,6 +221,16 @@ public class PaymentLogImpl implements PaymentLog {
     }
 
     @Override
+    public BroadleafCurrency getCurrency() {
+        return currency;
+    }
+
+    @Override
+    public void setCurrency(BroadleafCurrency currency) {
+        this.currency = currency;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.payment.service.type.TransactionType;
+import org.broadleafcommerce.profile.core.domain.Customer;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
-
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface PaymentResponseItem extends Serializable {
 
@@ -109,5 +110,9 @@ public interface PaymentResponseItem extends Serializable {
     public String getPaymentInfoReferenceNumber();
 
     public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber);
+
+    void setCurrency(BroadleafCurrency currency);
+
+    BroadleafCurrency getCurrency();
 
 }

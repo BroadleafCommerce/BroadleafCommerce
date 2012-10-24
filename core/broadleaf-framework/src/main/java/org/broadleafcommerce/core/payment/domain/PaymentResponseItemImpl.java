@@ -365,11 +365,13 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-
+    
+    @Override
     public BroadleafCurrency getCurrency() {
         return currency;
     }
 
+    @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
     }

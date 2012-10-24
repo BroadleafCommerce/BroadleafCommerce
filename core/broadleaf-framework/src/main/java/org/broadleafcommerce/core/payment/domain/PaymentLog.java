@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.io.Serializable;
+import java.util.Date;
 
 public interface PaymentLog extends Serializable {
 
@@ -69,5 +70,9 @@ public interface PaymentLog extends Serializable {
     public Money getAmountPaid();
 
     public void setAmountPaid(Money amountPaid);
+
+    void setCurrency(BroadleafCurrency currency);
+
+    BroadleafCurrency getCurrency();
 
 }

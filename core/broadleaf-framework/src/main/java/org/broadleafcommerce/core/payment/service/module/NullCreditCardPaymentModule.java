@@ -34,10 +34,12 @@ import java.util.Map;
 
 public class NullCreditCardPaymentModule extends AbstractModule {
 
+    @Override
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("authorize not implemented.");
     }
 
+    @Override
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("reverse authorize not implemented.");
     }
@@ -57,6 +59,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
      * @param paymentContext - the payment context injected from the workflow (see: blAuthorizeAndDebitWorkflow in bl-framework-applicationContext-workflow.xml)
      * @return PaymentResponseItem - the response item
      */
+    @Override
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
         //Note that you cannot perform operations on paymentContext.getPaymentInfo() directly because that is a copy of the actual payment on the order.
         //In order to persist custom attributes to the credit card payment info on the order we must look it up first.
@@ -108,6 +111,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
         responseItem.setTransactionTimestamp(SystemTime.asDate());
         responseItem.setTransactionSuccess(validDate && validCard && validCVV);
         responseItem.setAmountPaid(paymentInfo.getAmount());
+        responseItem.setCurrency(paymentInfo.getOrder().getCurrency());
         if (responseItem.getTransactionSuccess()) {
             Map<String, String> additionalFields = new HashMap<String, String>();
             additionalFields.put(PaymentInfoAdditionalFieldType.NAME_ON_CARD.getType(), nameOnCard);
@@ -121,22 +125,27 @@ public class NullCreditCardPaymentModule extends AbstractModule {
         return responseItem;
     }
 
+    @Override
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("debit not implemented.");
     }
 
+    @Override
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("credit not implemented.");
     }
 
+    @Override
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("voidPayment not implemented.");
     }
 
+    @Override
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("balance not implemented.");
     }
 
+    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return PaymentInfoType.CREDIT_CARD.equals(paymentType);
     }

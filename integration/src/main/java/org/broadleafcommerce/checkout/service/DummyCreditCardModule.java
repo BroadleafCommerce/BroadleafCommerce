@@ -30,30 +30,37 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
  */
 public class DummyCreditCardModule extends AbstractModule {
 
-	public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
+	@Override
+    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         return createResponse(paymentContext);
     }
 
+    @Override
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
     	return createResponse(paymentContext);
     }
 
+    @Override
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
     	return createResponse(paymentContext);
     }
 
+    @Override
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
     	return createResponse(paymentContext);
     }
 
+    @Override
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
     	return createResponse(paymentContext);
     }
 
+    @Override
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
     	return createResponse(paymentContext);
     }
     
+    @Override
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
     	return createResponse(paymentContext);
 	}
@@ -66,10 +73,11 @@ public class DummyCreditCardModule extends AbstractModule {
 		responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
 		responseItem.setTransactionSuccess(true);
 		responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
-
+		responseItem.setCurrency(paymentContext.getPaymentInfo().getOrder().getCurrency());
         return responseItem;
     }
 
+    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return PaymentInfoType.CREDIT_CARD.equals(paymentType);
     }
