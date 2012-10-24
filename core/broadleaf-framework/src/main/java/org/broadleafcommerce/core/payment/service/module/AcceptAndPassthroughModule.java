@@ -22,15 +22,39 @@ import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.springframework.beans.factory.annotation.Required;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This payment module can be utilized when you wish to accept an order's payment without acting on it.
  * For example, if the customer is going to pay by check and mail it to you, you will want to accept 
  * the order and not perform any actual payment transaction.
+ *
+ * In order to instantiate this module, you must inject a valid PaymentInfoType for which this module will be executed.
+ * If you are associating this module with several payment types, you should declare this bean as <code>prototype</code>
+ * For example:
+ *
+ * <code>
+ * 	<bean id="blCheckPaymentModule" class="org.broadleafcommerce.core.payment.service.module.AcceptAndPassthroughModule" scope="prototype">
+ *      <property name="validPaymentInfoType" value="CHECK"/>
+ *  </bean>
+ *  <bean id="blWirePaymentModule" class="org.broadleafcommerce.core.payment.service.module.AcceptAndPassthroughModule" scope="prototype">
+ *      <property name="validPaymentInfoType" value="WIRE"/>
+ *  </bean>
+ * </code>
  * 
  * @author Andre Azzolini (apazzolini)
  */
 public class AcceptAndPassthroughModule extends AbstractModule {
+
+    private PaymentInfoType validPaymentInfoType = null;
+
+    @Required
+    public void setValidPaymentInfoType(String validType) {
+        validPaymentInfoType = PaymentInfoType.getInstance(validType);
+    }
 
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("authorize not implemented.");
@@ -65,6 +89,6 @@ public class AcceptAndPassthroughModule extends AbstractModule {
     }
 
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
-        return true;
+        return validPaymentInfoType.equals(paymentType);
     }
 }
