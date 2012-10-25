@@ -118,40 +118,56 @@ public class CategoryImpl implements Category, Status {
     protected String name;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=2, group = "CategoryImpl_Description")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=5, group = "CategoryImpl_SEO")
     protected String url;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=3, group = "CategoryImpl_Description")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, group = "CategoryImpl_SEO")
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order=5, group = "CategoryImpl_Description", largeEntry=true)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order=2, group = "CategoryImpl_Description", largeEntry=true)
     protected String description;
 
+    @Column(name = "META_DESCRIPTION")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Description", order=7, group = "CategoryImpl_SEO")
+    protected String metaDescription;
+
+    @Column(name = "META_KEYWORDS")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Keywords", order=8, group = "CategoryImpl_SEO")
+    protected String metaKeywords;
+
+    @Column(name = "META_ROBOT")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Robot", order=9, group = "CategoryImpl_SEO")
+    protected String metaRobot;
+
+    @Column(name = "TITLE_FRAGMENT")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Title_Fragment", order=10, group = "CategoryImpl_SEO")
+    protected String titleFragment;
+
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=7, group = "CategoryImpl_Active_Date_Range")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range")
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order=8, group = "CategoryImpl_Active_Date_Range")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order=12, group = "CategoryImpl_Active_Date_Range")
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order=4, group = "CategoryImpl_Description")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order=3, group = "CategoryImpl_Description")
     protected String displayTemplate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=6, group = "CategoryImpl_Description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=4, group = "CategoryImpl_Description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent", order=7, group = "CategoryImpl_Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent", order=13, group = "CategoryImpl_Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Category defaultParentCategory;
 
     @ManyToMany(targetEntity = CategoryImpl.class)
@@ -316,6 +332,46 @@ public class CategoryImpl implements Category, Status {
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    @Override
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
+    }
+
+    @Override
+    public String getMetaKeywords() {
+        return metaKeywords;
+    }
+
+    @Override
+    public void setMetaKeywords(String metaKeywords) {
+        this.metaKeywords = metaKeywords;
+    }
+
+    @Override
+    public String getMetaRobot() {
+        return metaRobot;
+    }
+
+    @Override
+    public void setMetaRobot(String metaRobot) {
+        this.metaRobot = metaRobot;
+    }
+
+    @Override
+    public String getTitleFragment() {
+        return titleFragment;
+    }
+
+    @Override
+    public void setTitleFragment(String titleFragment) {
+        this.titleFragment = titleFragment;
     }
 
     @Override
@@ -839,5 +895,14 @@ public class CategoryImpl implements Category, Status {
         }
     }
 
+    public String getCalculatedMetaDescription(){
+        if(metaDescription == null){
+            if(description == null){
+                return name;
+            }
+            return description;
+        }
+        return null;
+    }
 
 }

@@ -34,6 +34,10 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
     public String CategoryImpl_Category_Url();
     public String CategoryImpl_Category_Url_Key();
     public String CategoryImpl_Category_Description();
+    public String CategoryImpl_Category_Meta_Description();
+    public String CategoryImpl_Category_Meta_Keywords();
+    public String CategoryImpl_Category_Meta_Robot();
+    public String CategoryImpl_Category_Title_Fragment();
     public String CategoryImpl_Category_Active_Start_Date();
     public String CategoryImpl_Category_Active_End_Date();
     public String CategoryImpl_Category_Display_Template();
@@ -230,6 +234,7 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
 
     public String CategoryImpl_Active_Date_Range();
     public String CategoryImpl_Description();
+    public String CategoryImpl_SEO();
     public String CategoryImpl_Primary_Key();
     public String ProductAttributeImpl_Description();
     public String ProductDimension_Dimension();
