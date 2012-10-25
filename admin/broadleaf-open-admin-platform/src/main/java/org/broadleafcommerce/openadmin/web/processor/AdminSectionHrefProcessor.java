@@ -55,11 +55,13 @@ public class AdminSectionHrefProcessor extends AbstractAttributeModifierAttrProc
 		AdminSection section = (AdminSection) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
         if (section != null) {
             HttpServletRequest request = ((SpringWebContext) arguments.getContext()).getHttpServletRequest();
-            
-            // The url is based on the current context
-            String context = request.getContextPath();
-            href = context + section.getUrl();
-            
+
+            //remove the preceding forward slash to make the redirect relative
+            href = section.getUrl();
+            if (href.startsWith("/")) {
+                href = href.substring(1, href.length());
+            }
+
             // If we're using the default handler, we're loading a GWT module
             if (section.getUseDefaultHandler()) {
                 

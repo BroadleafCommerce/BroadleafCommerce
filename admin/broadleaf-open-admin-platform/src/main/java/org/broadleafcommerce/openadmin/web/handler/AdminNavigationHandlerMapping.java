@@ -17,14 +17,11 @@
 package org.broadleafcommerce.openadmin.web.handler;
 
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This handler mapping works with the AdminSection entity to determine if a section has been configured for
@@ -49,7 +46,7 @@ public class AdminNavigationHandlerMapping extends BLCAbstractHandlerMapping {
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         //TODO: BLCRequestContext should be refactored to be used in the admin as well
-        AdminSection adminSection = adminNavigationService.findAdminSectionByURI(getRequestURIWithoutContext(request));
+        AdminSection adminSection = adminNavigationService.findAdminSectionByURI(getRequestURIWithoutPreamble(request));
         if (adminSection != null && adminSection.getUseDefaultHandler()) {
             request.setAttribute(CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, adminSection);
             request.setAttribute(CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, adminSection.getModule());
@@ -64,11 +61,12 @@ public class AdminNavigationHandlerMapping extends BLCAbstractHandlerMapping {
 
     }
 
-    public String getRequestURIWithoutContext(HttpServletRequest request) {
+    public String getRequestURIWithoutPreamble(HttpServletRequest request) {
+        int lastPos = request.getRequestURI().lastIndexOf("/");
         String requestURIWithoutContext;
 
-        if (request.getContextPath() != null) {
-            requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
+        if (lastPos >= 0) {
+            requestURIWithoutContext = request.getRequestURI().substring(lastPos, request.getRequestURI().length());
         } else {
             requestURIWithoutContext = request.getRequestURI();
         }

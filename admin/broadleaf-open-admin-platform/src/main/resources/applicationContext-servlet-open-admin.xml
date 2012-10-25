@@ -35,6 +35,7 @@
                 <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService"/>
                 <entry key="/**/utility.service" value-ref="blUtilityRemoteService"/>
                 <entry key="/**/app.configuration.service" value-ref="blAppConfigurationRemoteService"/>
+                <entry key="/**/blc_gwt_logging" value-ref="blLog4JRemoteGwtLoggingService"/>
             </map>
         </property>
         <property name="serviceExporterFactory">

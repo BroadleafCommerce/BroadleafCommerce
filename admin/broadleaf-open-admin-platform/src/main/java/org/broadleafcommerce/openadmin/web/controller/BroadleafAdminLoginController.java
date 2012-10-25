@@ -77,6 +77,10 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
                 AdminSection adminSection = first.getSections().get(0);
 
                 String redirectUrl = adminSection.getUrl();
+                //remove the preceding forward slash to make the redirect relative
+                if (redirectUrl.startsWith("/")) {
+                    redirectUrl = redirectUrl.substring(1, redirectUrl.length());
+                }
                 if (adminSection.getSectionKey() != null) {
                     redirectUrl = redirectUrl + "#moduleKey=" + first.getModuleKey() + "&pageKey=" + adminSection.getSectionKey();
                 }

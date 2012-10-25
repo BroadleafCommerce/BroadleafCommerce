@@ -36,7 +36,7 @@ public interface UtilityService extends RemoteService {
     /**
      * Retrieve the current web application context (if any) in use for this admin application. When
      * a web app context is in use, it appears as the first part of the url. For example, in the url
-     * http://localhost:8080/broadleafdemo/admin.html, the web app context is 'broadleafdemo'. Null
+     * http://localhost:8080/broadleafdemo/admin, the web app context is 'broadleafdemo'. Null
      * may be returned if there is no app context.
      *
      * @return The first part of the app url that constitutes the web application context (if any).
