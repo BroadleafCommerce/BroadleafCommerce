@@ -72,4 +72,27 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency {
         this.defaultFlag = new Boolean(defaultFlag);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BroadleafCurrency)) {
+            return false;
+        }
+
+        BroadleafCurrencyImpl currency = (BroadleafCurrencyImpl) o;
+
+        if (currencyCode != null ? !currencyCode.equals(currency.currencyCode) : currency.currencyCode != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = currencyCode != null ? currencyCode.hashCode() : 0;
+        return result;
+    }
 }
