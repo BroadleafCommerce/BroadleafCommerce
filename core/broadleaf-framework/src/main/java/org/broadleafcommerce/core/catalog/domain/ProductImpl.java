@@ -796,4 +796,14 @@ public class ProductImpl implements Product, Status {
 		return null;
 	}
 
+    public String getCalculatedMetaDescription(){
+        if(metaDescription == null){
+            if(getDefaultSku().getDescription() == null){
+                return getDefaultSku().getName();
+            }
+            return getDefaultSku().getDescription();
+        }
+        return null;
+    }
+
 }
