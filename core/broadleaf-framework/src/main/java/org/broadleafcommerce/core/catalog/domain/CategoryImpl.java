@@ -895,6 +895,7 @@ public class CategoryImpl implements Category, Status {
         }
     }
 
+    @Override
     public String getCalculatedMetaDescription(){
         if(metaDescription == null){
             if(description == null){

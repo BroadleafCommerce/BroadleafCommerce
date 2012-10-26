@@ -623,5 +623,13 @@ public interface Category extends Serializable {
      */
     public Map<String, CategoryAttribute> getMappedCategoryAttributes();
 
+    /**
+     * Convenience method to return the calculated meta-description. Will return description if meta-description is null,
+     * will return name if description is null.
+     *
+     * @return metaDescription
+     */
+    public String getCalculatedMetaDescription();
+
     
 }

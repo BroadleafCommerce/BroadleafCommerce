@@ -769,4 +769,12 @@ public interface Product extends Serializable {
 	 */
 	public List<RelatedProduct> getCumulativeUpSaleProducts();
 
+    /**
+     * Convenience method to return the calculated meta-description. Will return default sku description if meta-description is null,
+     * will return default sku name if description is null.
+     *
+     * @return metaDescription
+     */
+    public String getCalculatedMetaDescription();
+
 }

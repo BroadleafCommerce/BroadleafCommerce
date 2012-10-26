@@ -796,6 +796,7 @@ public class ProductImpl implements Product, Status {
 		return null;
 	}
 
+    @Override
     public String getCalculatedMetaDescription(){
         if(metaDescription == null){
             if(getDefaultSku().getDescription() == null){
