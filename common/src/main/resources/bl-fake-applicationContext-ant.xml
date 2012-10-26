@@ -21,5 +21,11 @@
 	<bean id="webSecureDS" class="org.apache.commons.dbcp.BasicDataSource"/>
 
     <bean id="webStorageDS" class="org.apache.commons.dbcp.BasicDataSource"/>
+    
+    <!-- This is used to override the component that checks the sequences.  It won't work 
+         unless you can connect to a real database. Since, for the ant task that generates DDL, 
+         we don't require a database, this needs to be deactivated. The way to do this is to define 
+         the bean as something that does not implement Spring's ApplicationListener interface. -->
+    <bean id="blSequenceGeneratorCorruptionDetection" class="java.lang.Object"/>
 	
 </beans>
