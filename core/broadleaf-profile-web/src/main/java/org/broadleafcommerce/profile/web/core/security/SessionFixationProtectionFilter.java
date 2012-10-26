@@ -19,6 +19,7 @@ package org.broadleafcommerce.profile.web.core.security;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.security.RandomGenerator;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -53,8 +54,9 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 
 	@Override
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest) sRequest;
-		HttpServletResponse response = (HttpServletResponse) sResponse;
+		BroadleafRequestContext blcRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
+		HttpServletRequest request = (blcRequestContext != null) ? blcRequestContext.getRequest() : (HttpServletRequest) sRequest;
+		HttpServletResponse response = (blcRequestContext != null) ? blcRequestContext.getResponse() :(HttpServletResponse) sResponse;
 		HttpSession session = request.getSession(false);
 		
 		if (SecurityContextHolder.getContext() == null) {
