@@ -34,6 +34,9 @@ import java.util.Map;
  * <ul>
  * 	<li><b>pageTitle</b> - The title of the page</li>
  * 	<li><b>additionalCss</b> - An additional, page specific CSS file to include</li>
+ * 	<li><b>metaDescription</b> - Optional, Content for the Meta-Description tag</li>
+ * 	<li><b>metaKeywords</b> - Optional, Content for the Meta-Keywords tag</li>
+ * 	<li><b>metaRobot</b> - Optional, Content for the Meta-Robots tag</li>
  * </ul>
  * 
  * @author apazzolini
@@ -70,13 +73,28 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 		// pageTitle="${'Hello this is a ' + product.name}"
 		
 		String pageTitle = element.getAttributeValue("pageTitle");
+		String metaDescription = element.getAttributeValue("metaDescription");
+		String metaKeywords = element.getAttributeValue("metaKeywords");
+		String metaRobot = element.getAttributeValue("metaRobot");
 		try {
 			pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
+            if(metaDescription != null){
+                metaDescription = (String) StandardExpressionProcessor.processExpression(arguments, metaDescription);
+            }
+            if(metaKeywords != null){
+                metaKeywords = (String) StandardExpressionProcessor.processExpression(arguments, metaKeywords);
+            }
+            if(metaRobot != null){
+                metaRobot = (String) StandardExpressionProcessor.processExpression(arguments, metaRobot);
+            }
 		} catch (TemplateProcessingException e) {
 			// Do nothing.
 		}
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
+		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaDescription", metaDescription);
+		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaKeywords", metaKeywords);
+		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaRobot", metaRobot);
 		return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
     }
 
