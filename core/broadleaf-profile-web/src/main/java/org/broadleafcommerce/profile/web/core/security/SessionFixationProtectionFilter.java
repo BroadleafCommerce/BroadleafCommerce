@@ -72,6 +72,7 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 	        
 	        if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
 	        	abortUser(request, response);
+	        	return;
 	        }
 		} else if (request.isSecure()) {
 			// The request is secure, but we haven't set a session fixation protection cookie yet
