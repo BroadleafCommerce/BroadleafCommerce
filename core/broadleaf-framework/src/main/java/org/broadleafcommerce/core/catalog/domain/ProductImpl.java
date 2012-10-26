@@ -804,7 +804,7 @@ public class ProductImpl implements Product, Status {
             }
             return getDefaultSku().getDescription();
         }
-        return null;
+        return metaDescription;
     }
 
 }

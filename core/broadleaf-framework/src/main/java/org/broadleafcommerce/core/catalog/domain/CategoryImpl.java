@@ -903,7 +903,7 @@ public class CategoryImpl implements Category, Status {
             }
             return description;
         }
-        return null;
+        return metaDescription;
     }
 
 }
