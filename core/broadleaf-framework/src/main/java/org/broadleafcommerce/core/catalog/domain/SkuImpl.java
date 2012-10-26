@@ -166,13 +166,13 @@ public class SkuImpl implements Sku {
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "ProductImpl_Product_Description", tooltip="skuStartDateTooltip", groupOrder=1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "ProductImpl_Product_Active_Date_Range", tooltip="skuStartDateTooltip")
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "ProductImpl_Product_Description", tooltip="skuEndDateTooltip", groupOrder=1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "ProductImpl_Product_Active_Date_Range", tooltip="skuEndDateTooltip")
     protected Date activeEndDate;
     
     /** The product dimensions **/
@@ -187,7 +187,7 @@ public class SkuImpl implements Sku {
     protected DynamicSkuPrices dynamicPrices = null;
 
     @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=15, group = "ProductImpl_Product_Description", prominent=false)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=19, group = "ProductWeight_Shipping", prominent=false)
     protected Boolean isMachineSortable = true;
 
     /** The sku media. */

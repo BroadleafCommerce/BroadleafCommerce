@@ -124,6 +124,10 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String ProductWeight_Shipping();
     public String ProductImpl_Product_Url();
     public String ProductImpl_Product_UrlKey();
+    public String ProductImpl_Product_Meta_Description();
+    public String ProductImpl_Product_Meta_Keywords();
+    public String ProductImpl_Product_Meta_Robot();
+    public String ProductImpl_Product_Title_Fragment();
     public String ProductImpl_Product_Display_Template();
     public String ProductImpl_SEO();
     public String BundleOrderItemImpl_bundleOrderItem();

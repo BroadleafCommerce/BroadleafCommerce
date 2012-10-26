@@ -127,22 +127,38 @@ public class ProductImpl implements Product, Status {
     @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "ProductImpl_SEO",groupOrder=2)
     protected String urlKey;
 
+    @Column(name = "META_DESCRIPTION")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Meta_Description", order=7, group = "ProductImpl_SEO",groupOrder=2)
+    protected String metaDescription;
+
+    @Column(name = "META_KEYWORDS")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Meta_Keywords", order=8, group = "ProductImpl_SEO",groupOrder=2)
+    protected String metaKeywords;
+
+    @Column(name = "META_ROBOT")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Meta_Robot", order=9, group = "ProductImpl_SEO",groupOrder=2)
+    protected String metaRobot;
+
+    @Column(name = "TITLE_FRAGMENT")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Title_Fragment", order=10, group = "ProductImpl_SEO",groupOrder=2)
+    protected String titleFragment;
+
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=5, group = "ProductImpl_SEO",groupOrder=2)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=9, group = "ProductImpl_Product_Description",groupOrder=2)
     protected String displayTemplate;
 
     /** The product model number */
     @Column(name = "MODEL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order=10, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order=12, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=9, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=11, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String manufacturer;
     
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=11, group = "ProductImpl_Product_Description", prominent=false)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=10, group = "ProductImpl_Product_Description", prominent=false)
     protected Boolean isFeaturedProduct = false;
     
     @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL}, mappedBy = "defaultProduct")
@@ -150,7 +166,7 @@ public class ProductImpl implements Product, Status {
     protected Sku defaultSku;
     
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
-    @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options", order=12, group = "ProductImpl_Product_Description", prominent=false)
+    @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options", order=13, group = "ProductImpl_Product_Description", prominent=false)
     protected Boolean canSellWithoutOptions = false;
     
     /** The skus. */
@@ -727,7 +743,47 @@ public class ProductImpl implements Product, Status {
 		this.urlKey = urlKey;
 	}
 
-	@Override
+    @Override
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    @Override
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
+    }
+
+    @Override
+    public String getMetaKeywords() {
+        return metaKeywords;
+    }
+
+    @Override
+    public void setMetaKeywords(String metaKeywords) {
+        this.metaKeywords = metaKeywords;
+    }
+
+    @Override
+    public String getMetaRobot() {
+        return metaRobot;
+    }
+
+    @Override
+    public void setMetaRobot(String metaRobot) {
+        this.metaRobot = metaRobot;
+    }
+
+    @Override
+    public String getTitleFragment() {
+        return titleFragment;
+    }
+
+    @Override
+    public void setTitleFragment(String titleFragment) {
+        this.titleFragment = titleFragment;
+    }
+
+    @Override
 	public String getGeneratedUrl() {		
 		if (getDefaultCategory() != null && getDefaultCategory().getGeneratedUrl() != null) {
 			String generatedUrl = getDefaultCategory().getGeneratedUrl();

@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -657,6 +658,66 @@ public interface Product extends Serializable {
 	 * dashes with spaces.
 	 */
 	public void setUrlKey(String url);
+
+    /**
+     * Gets the meta-description
+     *
+     * @return the metaDescription
+     */
+    @Nullable
+    public String getMetaDescription();
+
+    /**
+     * Sets the metaDescription
+     *
+     * @param metaDescription
+     */
+    public void setMetaDescription(@Nullable String metaDescription);
+
+    /**
+     * Gets the meta-keywords
+     *
+     * @return the metaKeywords
+     */
+    @Nullable
+    public String getMetaKeywords();
+
+    /**
+     * Sets the metaKeywords
+     *
+     * @param metaKeywords
+     */
+    public void setMetaKeywords(@Nullable String metaKeywords);
+
+    /**
+     * Gets the meta-Robot
+     *
+     * @return the metaRobot
+     */
+    @Nullable
+    public String getMetaRobot();
+
+    /**
+     * Sets the metaRobot
+     *
+     * @param metaRobot
+     */
+    public void setMetaRobot(@Nullable String metaRobot);
+
+    /**
+     * Gets the title fragment
+     *
+     * @return the titleFragment
+     */
+    @Nullable
+    public String getTitleFragment();
+
+    /**
+     * Sets the titleFragment
+     *
+     * @param titleFragment
+     */
+    public void setTitleFragment(@Nullable String titleFragment);
 
 	/**
 	 * Returns the name of a display template that is used to render this product.   Most implementations have a default

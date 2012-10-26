@@ -63,6 +63,7 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
     public String ProductImpl_Product_Long_Description();
     public String ProductImpl_Product_Active_Start_Date();
     public String ProductImpl_Product_Active_End_Date();
+    public String ProductImpl_Product_Active_Date_Range();
     public String ProductImpl_Product_Model();
     public String ProductImpl_Product_Manufacturer();
     public String ProductImpl_Is_Featured_Product();
