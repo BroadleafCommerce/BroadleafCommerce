@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.translation;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONObject;
@@ -29,7 +31,6 @@ import com.smartgwt.client.util.EnumUtil;
 import com.smartgwt.client.util.JSOHelper;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.form.fields.RelativeDateItem;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -371,7 +372,7 @@ public class AdvancedCriteriaToMVELTranslator {
 			response.append(entityKey);
 			response.append(".");
 			response.append(field);
-			response.append(".toString()");
+			response.append(".getType()");
 			break;
 		case MONEY:
 			response.append(entityKey);
