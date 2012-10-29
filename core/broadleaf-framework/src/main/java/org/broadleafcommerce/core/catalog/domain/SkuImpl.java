@@ -143,19 +143,19 @@ public class SkuImpl implements Sku {
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=5, group = "ProductImpl_Product_Description", largeEntry=true, groupOrder=1,fieldType=SupportedFieldType.HTML_BASIC)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=3, group = "ProductImpl_Product_Description", largeEntry=true, groupOrder=1, fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
     /** The taxable. */
     @Column(name = "TAXABLE_FLAG")
     @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order=3, group = "SkuImpl_Price", groupOrder=3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order=3, group = "SkuImpl_Price", groupOrder=4)
     protected Character taxable;
 
     /** The discountable. */
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order=4, group = "SkuImpl_Price", groupOrder=3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order=4, group = "SkuImpl_Price", groupOrder=4)
     protected Character discountable;
 
     /** The available. */
@@ -166,13 +166,13 @@ public class SkuImpl implements Sku {
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "ProductImpl_Product_Active_Date_Range", tooltip="skuStartDateTooltip")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "ProductImpl_Product_Active_Date_Range", tooltip="skuStartDateTooltip", groupOrder = 3)
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "ProductImpl_Product_Active_Date_Range", tooltip="skuEndDateTooltip")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "ProductImpl_Product_Active_Date_Range", tooltip="skuEndDateTooltip", groupOrder = 3)
     protected Date activeEndDate;
     
     /** The product dimensions **/
