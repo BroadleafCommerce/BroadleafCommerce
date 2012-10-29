@@ -29,6 +29,7 @@
 			<bean class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.FormProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.ImgProcessor" />
             <bean class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
             <bean class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
