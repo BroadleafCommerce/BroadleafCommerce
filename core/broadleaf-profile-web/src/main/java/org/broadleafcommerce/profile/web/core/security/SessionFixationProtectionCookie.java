@@ -18,6 +18,7 @@ package org.broadleafcommerce.profile.web.core.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +36,8 @@ public class SessionFixationProtectionCookie {
 
 	public static final String COOKIE_NAME = "ActiveID";
 	
-	public static String readActiveID(HttpServletRequest request) {
+	public static String readActiveID() {
+	    HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 		String cookieData = null;
 		
 		try {
@@ -55,7 +57,7 @@ public class SessionFixationProtectionCookie {
 		return cookieData;
 	}
 
-	public static void writeActiveID(HttpServletRequest request, HttpServletResponse response, String data) {
+	public static void writeActiveID(HttpServletResponse response, String data) {
 		if (data != null) {
 			Cookie cookie = new Cookie(COOKIE_NAME, data);
 			cookie.setMaxAge(-1);
@@ -65,7 +67,8 @@ public class SessionFixationProtectionCookie {
 		}
 	}
 
-	public static void remove(HttpServletRequest request, HttpServletResponse response) {
+	public static void remove(HttpServletResponse response) {
+	    HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 		if (request != null && request.getCookies() != null) {
 			for (Cookie cookie : request.getCookies()) {
 				if (cookie.getName().equals(COOKIE_NAME)) {
@@ -79,7 +82,7 @@ public class SessionFixationProtectionCookie {
 		}
 	}
 	
-	public static void forceRemove(HttpServletRequest request, HttpServletResponse response) {
+	public static void forceRemove(HttpServletResponse response) {
 		Cookie cookie = new Cookie(COOKIE_NAME, "");
 		cookie.setMaxAge(0);
 		cookie.setPath("/");
