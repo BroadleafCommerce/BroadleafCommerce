@@ -752,6 +752,7 @@ public class FormBuilder {
 		default:
 			if (!largeEntry) {
 				formItem = new TextItem();
+                formItem.setWidth(220);
 				((TextItem)formItem).setLength(field.getLength());
 			} else {
 				formItem = new TextAreaItem();
