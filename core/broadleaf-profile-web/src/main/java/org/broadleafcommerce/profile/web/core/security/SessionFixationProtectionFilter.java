@@ -19,7 +19,6 @@ package org.broadleafcommerce.profile.web.core.security;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.security.RandomGenerator;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -54,9 +53,8 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 
 	@Override
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException, ServletException {
-		BroadleafRequestContext blcRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
-		HttpServletRequest request = (blcRequestContext != null) ? blcRequestContext.getRequest() : (HttpServletRequest) sRequest;
-		HttpServletResponse response = (blcRequestContext != null) ? blcRequestContext.getResponse() :(HttpServletResponse) sResponse;
+		HttpServletRequest request = (HttpServletRequest) sRequest;
+		HttpServletResponse response = (HttpServletResponse) sResponse;
 		HttpSession session = request.getSession(false);
 		
 		if (SecurityContextHolder.getContext() == null) {
@@ -67,7 +65,7 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 		
 		if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
 			// The request is secure and and we've set a session fixation protection cookie
-	        String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID(request);
+	        String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID();
 	        String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
 	        
 	        if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
@@ -86,7 +84,7 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
             String encryptedActiveIdValue = encryptionModule.encrypt(token);
             
             session.setAttribute(SESSION_ATTR, token);
-            SessionFixationProtectionCookie.writeActiveID(request, response, encryptedActiveIdValue);
+            SessionFixationProtectionCookie.writeActiveID(response, encryptedActiveIdValue);
 		}
 				
         chain.doFilter(request, response);
@@ -94,7 +92,7 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 
     protected void abortUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SecurityContextHolder.clearContext();
-    	SessionFixationProtectionCookie.remove(request, response);
+    	SessionFixationProtectionCookie.remove(response);
     	
 		Cookie cookie = new Cookie("JSESSIONID", "");
 		cookie.setMaxAge(0);
