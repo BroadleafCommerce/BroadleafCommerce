@@ -29,29 +29,23 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 public class SectionView extends VLayout {
 	
 	protected VStack contentLayout;
-	protected ToolStrip toolbar;
-	
+
 	public SectionView(String title) {
-		//setLayoutBottomMargin(10);
-		toolbar = new ToolStrip();
-		toolbar.setWidth100();
-		Label label = new Label(title);
-        label.setStyleName("blcPromoHeader");
-		label.setWrap(false);
-		//toolbar.addSpacer(6);
-		toolbar.addMember(label);
-		addMember(toolbar);
-		contentLayout = new VStack();
-        contentLayout.setStyleName("blcPromoSection");
+
+        Label label = new Label();
+        label.setContents(title);
+        label.setStyleName("bl-promo-header");
+        label.setHeight(40);
+        addMember(label);
+
+        contentLayout = new VStack();
+        contentLayout.setStyleName("bl-promo-section");
         addMember(contentLayout);
+
 	}
 
 	public VStack getContentLayout() {
 		return contentLayout;
-	}
-
-	public ToolStrip getToolbar() {
-		return toolbar;
 	}
 
 }
