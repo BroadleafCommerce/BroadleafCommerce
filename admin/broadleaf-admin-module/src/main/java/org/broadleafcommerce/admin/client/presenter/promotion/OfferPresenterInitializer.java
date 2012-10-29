@@ -434,9 +434,11 @@ public class OfferPresenterInitializer {
 	public void initDeliveryType(String deliveryType, Record selectedRecord) {
 		if (deliveryType.equals("CODE")) {
 			getDisplay().getCodeField().enable();
+			getDisplay().getCodeField().show();
 			getDisplay().getCodeField().setValue(selectedRecord.getAttribute("offerCode.offerCode"));
 		} else {
 			getDisplay().getCodeField().disable();
+			getDisplay().getCodeField().hide();
 			getDisplay().getCodeField().setValue("");
 		}
 		
