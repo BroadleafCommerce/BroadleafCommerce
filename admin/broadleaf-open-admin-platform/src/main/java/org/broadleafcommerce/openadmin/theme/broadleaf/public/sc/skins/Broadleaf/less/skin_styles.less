@@ -292,13 +292,24 @@ Button (also used as MenuButton base style)
 ============================================================*/
 
 .menuTable {
-    border-top:1px solid #93A9C0;
-    border-bottom:1px solid #93A9C0;
-    border-left:1px solid #93A9C0;
-    border-right:1px solid #93A9C0;
+    border:1px solid #C0C3C7;
 }
+
+.menuTitleField,
+.menuTitleFieldDark,
+.menuTitleFieldSelected,
+.menuTitleFieldSelectedDark,
+.menuTitleFieldOver,
+.menuTitleFieldOverDark,
+.menuTitleFieldSelectedOver,
+.menuTitleFieldSelectedOverDark,
+.menuTitleFieldDisabled {
+    padding: 5px;
+}
+
 .menu,
 .menuDark,
+.menuIconField,
 .menuSelected,
 .menuSelectedDark,
 .menuOver,
@@ -311,15 +322,15 @@ Button (also used as MenuButton base style)
     font-family: @baseFontFamily;
     font-size: @baseFontSize;
     line-height: @baseLineHeight;
-    background-color:white;
+    background:#fff;
 }
 .menuOver,
 .menuOverDark,
 .menuSelectedOver,
-.menuSelectedOverDark {
-    color:white; background-color:#3E74B3;
-    border-top:1px solid #5E94D3;
-    border-bottom:1px solid #1E5493;
+.menuSelectedOverDark,
+.menuTitleFieldOver,
+.menuIconFieldOver {
+    background:#ddd;
 }
 .treeMenuSelected {
     background-color:#fff1a8;
@@ -603,7 +614,7 @@ Button (also used as MenuButton base style)
 .labelAnchorError,
 .labelAnchorFocused {
     font-family: @baseFontFamily;
-    font-size: @baseFontSize;
+    font-size: @labelFontSize;
     line-height: @baseLineHeight;
 }
 
@@ -2572,7 +2583,7 @@ a.calMonthEventLink:active {color:blue; text-decoration:none}
 }
 
 label {
-	font-size: @baseFontSize;
+	font-size: @labelFontSize;
 	display: inline-block;
 }
 
