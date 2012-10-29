@@ -41,17 +41,20 @@ public class JPAConfigurationTask extends ConfigurationTask {
 
 	private String persistenceUnit;
 	private String dialect;
+	private String url;
+	private String userName;
+	private String password;
+	private String driverClassName;
 	
 	public JPAConfigurationTask() {
 		setDescription("JPA Configuration");
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected Configuration createConfiguration(MergeFileSystemAndClassPathXMLApplicationContext mergeContext) {
 		try {
 			PersistenceUnitInfo unitInfo = ((MergePersistenceUnitManager) mergeContext.getBean("blPersistenceUnitManager")).obtainPersistenceUnitInfo(persistenceUnit);
 			
-			Map overrides = new HashMap();
+			Map<Object, Object> overrides = new HashMap<Object, Object>();
 			Properties p = getProperties();
 			
 			if(p!=null) {
@@ -60,11 +63,30 @@ public class JPAConfigurationTask extends ConfigurationTask {
 			
 			overrides.put("hibernate.dialect",dialect);
 			
-			Class clazz = ReflectHelper.classForName("org.hibernate.ejb.Ejb3Configuration", JPAConfigurationTask.class);
+			if (this.url != null && ! "null".equalsIgnoreCase(this.url)) {
+				overrides.put("hibernate.connection.url", this.url);
+			}
+			
+			if (this.userName != null && ! "null".equalsIgnoreCase(this.userName)) {
+				overrides.put("hibernate.connection.username", this.userName);
+				if (this.password == null) {
+					//This is for situations like HSQLDB that, by default, use no password
+					overrides.put("hibernate.connection.password", "");
+				} else if (! "null".equalsIgnoreCase(this.password)) {
+					//This allows you to specify a password or the word "null" to not set this property at all 
+					overrides.put("hibernate.connection.password", this.password);
+				}
+			}
+			
+			if (this.driverClassName != null && ! "null".equalsIgnoreCase(this.driverClassName)) {
+				overrides.put("hibernate.connection.driver_class", this.driverClassName);
+			}
+			
+			Class<?> clazz = ReflectHelper.classForName("org.hibernate.ejb.Ejb3Configuration", JPAConfigurationTask.class);
 			Object ejb3cfg = clazz.newInstance();
 			
 			if(entityResolver!=null) {
-				Class resolver = ReflectHelper.classForName(entityResolver, this.getClass());
+				Class<?> resolver = ReflectHelper.classForName(entityResolver, this.getClass());
 				Object object = resolver.newInstance();
 				Method method = clazz.getMethod("setEntityResolver", new Class[] { EntityResolver.class });
 				method.invoke(ejb3cfg, new Object[] { object } );
@@ -110,5 +132,38 @@ public class JPAConfigurationTask extends ConfigurationTask {
 	public void setDialect(String dialect) {
 		this.dialect = dialect;
 	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getDriverClassName() {
+		return driverClassName;
+	}
+
+	public void setDriverClassName(String driverClassName) {
+		this.driverClassName = driverClassName;
+	}
+	
 	
 }
