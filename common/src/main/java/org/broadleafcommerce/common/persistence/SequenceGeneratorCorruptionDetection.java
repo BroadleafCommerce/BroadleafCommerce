@@ -34,8 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TableGenerator;
+
 import java.lang.reflect.Field;
-import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -124,7 +124,7 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
 
                     List results2 = em.createNativeQuery(sb2.toString()).getResultList();
                     if (results2 != null && !results2.isEmpty() && results2.get(0) != null) {
-                        Long maxSequenceId = ((BigInteger) results2.get(0)).longValue();
+                        Long maxSequenceId = ((Number) results2.get(0)).longValue();
 
                         LOG.info("Detecting id sequence state between " + mappedClass.getName() + " and " + segmentValue + " in " + tableName);
 
