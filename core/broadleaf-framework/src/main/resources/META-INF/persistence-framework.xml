@@ -30,6 +30,7 @@
 		<mapping-file>config/bc/jpa/domain/SearchRedirect.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Inventory.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/FulfillmentLocation.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/PaymentRequest.orm.xml</mapping-file>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
         <class>org.broadleafcommerce.core.media.domain.MediaImpl</class>
@@ -122,6 +123,7 @@
         <class>org.broadleafcommerce.core.inventory.domain.InventoryImpl</class>
         <class>org.broadleafcommerce.core.inventory.domain.FulfillmentLocationImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.PaymentRequestImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>
@@ -144,6 +146,7 @@
 		<class>org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl</class>
 		<class>org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl</class>
 		<class>org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl</class>
+	
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.show_sql" value="false"/>

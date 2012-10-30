@@ -36,7 +36,8 @@
 	<bean id="org.broadleafcommerce.core.catalog.domain.SkuFee" class="org.broadleafcommerce.core.catalog.domain.SkuFeeImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.payment.domain.PaymentRequest" class="org.broadleafcommerce.core.payment.domain.PaymentRequestImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.marketing.domain.TargetContent" class="org.broadleafcommerce.core.marketing.domain.TargetContentImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.offer.domain.Offer" class="org.broadleafcommerce.core.offer.domain.OfferImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.offer.domain.OfferRestrictedPriceList" class="org.broadleafcommerce.core.offer.domain.OfferRestrictedPriceListImpl" scope="prototype"/>
