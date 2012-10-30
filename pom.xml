@@ -987,12 +987,6 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>com.smartgwt</groupId>
-                <artifactId>smartgwt-skins</artifactId>
-                <version>${smartgwt.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.anasoft.os</groupId>
                 <artifactId>daofusion-core</artifactId>
                 <version>1.2.0</version>

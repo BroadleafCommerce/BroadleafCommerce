@@ -181,10 +181,6 @@
             <artifactId>smartgwt</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.smartgwt</groupId>
-            <artifactId>smartgwt-skins</artifactId>
-        </dependency>
-        <dependency>
 			<groupId>com.anasoft.os</groupId>
 			<artifactId>daofusion-core</artifactId>
 		</dependency>

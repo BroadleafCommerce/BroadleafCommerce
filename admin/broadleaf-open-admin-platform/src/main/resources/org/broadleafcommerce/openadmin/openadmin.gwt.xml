@@ -2,7 +2,7 @@
 <module>
 	<!-- http://code.google.com/webtoolkit/doc/latest/DevGuideOrganizingProjects.html#DevGuideModuleXml -->
 	<inherits name="com.google.gwt.user.User" />
-	<inherits name="com.smartgwt.SmartGwt" />
+	<inherits name="com.smartgwt.SmartGwtNoTheme" />
 	<inherits name="com.smartgwt.tools.SmartGwtTools" />
 	<super-source path="override" />
 	<inherits name="com.anasoft.os.daofusion.cto.daofusion" />
