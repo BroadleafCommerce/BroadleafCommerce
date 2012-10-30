@@ -100,11 +100,11 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 
         toolBar.addFill();
         refreshButton = new ToolStripButton();
-        refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/refresh.png");
         refreshButton.setTitle(BLCMain.getMessageManager().getString("refreshTitle"));
         toolBar.addButton(refreshButton);
         previewButton = new ToolStripButton();
-        previewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
+        previewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/zoom.png");
         previewButton.setTitle(BLCMain.getMessageManager().getString("previewTitle"));
         toolBar.addButton(previewButton);
         toolBar.addSpacer(6);

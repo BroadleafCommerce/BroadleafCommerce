@@ -61,12 +61,12 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
 		toolBar.addSpacer(6);
         addButton = new ToolStripButton();
         addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
-        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
+        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/actions/add.png");
         toolBar.addButton(addButton);
         toolBar.addSpacer(6);
         removeButton = new ToolStripButton();
         removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle"));
-        removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
+        removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
 
@@ -75,7 +75,7 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         showArchivedButton = new ToolStripButton();
         String archivedButtonTitle = ((AbstractDynamicDataSource) dataSource).isShowArchived()?BLCMain.getMessageManager().getString("hideArchivedRecords"):BLCMain.getMessageManager().getString("showArchivedRecords");
         showArchivedButton.setTitle(archivedButtonTitle);
-        showArchivedButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/find.png");
+        showArchivedButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/headerIcons/find.png");
         showArchivedButton.setVisibility(Visibility.HIDDEN);
        // toolBar.addButton(showArchivedButton);
 

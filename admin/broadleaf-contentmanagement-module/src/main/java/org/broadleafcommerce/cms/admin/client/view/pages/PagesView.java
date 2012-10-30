@@ -235,7 +235,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         buttonLayout.setAlign(Alignment.LEFT);
         buttonLayout.setHeight(30);
         addItemButton = new Button();
-        addItemButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
+        addItemButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/actions/add.png");
         addItemButton.setTitle(BLCMain.getMessageManager().getString("newItemRuleButtonTitle"));
         addItemButton.setWidth(136);
         addItemButton.setWrap(false);

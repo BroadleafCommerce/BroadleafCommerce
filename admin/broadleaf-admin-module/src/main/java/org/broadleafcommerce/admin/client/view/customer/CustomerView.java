@@ -75,7 +75,7 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(customerAddressDisplay);
         
         updateLoginButton = new ToolStripButton();  
-        updateLoginButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/settings.png");   
+        updateLoginButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/settings.png");
         updateLoginButton.setDisabled(true);
         toolbar.addButton(updateLoginButton);
         toolbar.addSpacer(6);

@@ -77,13 +77,13 @@ public class OrderItemView extends VLayout implements OrderItemDisplay {
         toolBar.addSpacer(6);
         addButton = new ToolStripButton();
         addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
-        addButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
+        addButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/actions/add.png");
         addButton.setDisabled(true);
         toolBar.addButton(addButton);
         toolBar.addSpacer(3);
         removeButton = new ToolStripButton();
         removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle"));
-        removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
+        removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
         toolBar.addSpacer(3);

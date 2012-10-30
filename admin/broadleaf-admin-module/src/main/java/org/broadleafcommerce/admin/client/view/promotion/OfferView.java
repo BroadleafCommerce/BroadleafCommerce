@@ -177,7 +177,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         //listDisplay.getToolBar().addFill();
         //cloneButton = new ToolStripButton();
         //cloneButton.setDisabled(true);
-        //cloneButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/double_arrow_right.png");
+        //cloneButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/headerIcons/double_arrow_right.png");
         //cloneButton.setPrompt(BLCMain.getMessageManager().getString("clonePromotionHelp"));
         //listDisplay.getToolBar().addButton(cloneButton);
         //listDisplay.getToolBar().addSpacer(6);
@@ -191,7 +191,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         dynamicFormDisplay.getToolbar().addFill();
         advancedButton = new ToolStripButton(BLCMain.getMessageManager().getString("advancedCriteriaButtonTitle"));
-        advancedButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/settings.png");
+        advancedButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/headerIcons/settings.png");
         advancedButton.setActionType(SelectionType.CHECKBOX);
         advancedButton.setDisabled(true);
         dynamicFormDisplay.getToolbar().addMember(advancedButton);
@@ -236,7 +236,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerObtainHStack.addMember(new PromotionQuestion("customerObtainLabel"));
 
         helpButtonType = new ImgButton();
-        helpButtonType.setSrc(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/help.png");
+        helpButtonType.setSrc(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/headerIcons/help.png");
         helpButtonType.setWidth(HELP_BUTTON_WIDTH);
         helpButtonType.setHeight(HELP_BUTTON_HEIGHT);
         customerObtainHStack.addMember(helpButtonType);
@@ -399,7 +399,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         helpButtonBogoStack.setID("offerHelpButtonBogoStack");
         helpButtonBogoStack.setAlign(VerticalAlignment.CENTER);
         helpButtonBogo = new ImgButton();
-        helpButtonBogo.setSrc(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/help.png");
+        helpButtonBogo.setSrc(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/headerIcons/help.png");
         helpButtonBogo.setWidth(16);
         helpButtonBogo.setHeight(16);
         helpButtonBogoStack.addMember(helpButtonBogo);
@@ -448,7 +448,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         buttonLayout.setHeight(LABEL_HEIGHT);
         buttonLayout.setLayoutTopMargin(LAYOUT_MARGIN);
         addItemButton = new Button();
-        addItemButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
+        addItemButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/actions/add.png");
         addItemButton.setTitle(BLCMain.getMessageManager().getString("newItemRuleButtonTitle"));
         addItemButton.setWidth(ADD_ITEM_BUTTON_WIDTH);
         addItemButton.setWrap(false);
@@ -545,7 +545,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         targetButtonLayout.setHeight(LABEL_HEIGHT);
         targetButtonLayout.setLayoutTopMargin(LAYOUT_MARGIN);
         targetAddItemButton = new Button();
-        targetAddItemButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
+        targetAddItemButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/actions/add.png");
         targetAddItemButton.setTitle(BLCMain.getMessageManager().getString("newItemRuleButtonTitle"));
         targetAddItemButton.setWidth(ADD_ITEM_BUTTON_WIDTH);
         targetAddItemButton.setWrap(false);

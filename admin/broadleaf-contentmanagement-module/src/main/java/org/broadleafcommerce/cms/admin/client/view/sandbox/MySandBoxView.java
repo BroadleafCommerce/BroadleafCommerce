@@ -112,12 +112,12 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 
         toolBar.addFill();
         refreshButton = new ToolStripButton();
-        refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/refresh.png");
         refreshButton.setTitle(BLCMain.getMessageManager().getString("refreshTitle"));
         toolBar.addButton(refreshButton);
         toolBar.addSpacer(3);
         previewButton = new ToolStripButton();
-        previewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
+        previewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/zoom.png");
         previewButton.setTitle(BLCMain.getMessageManager().getString("previewTitle"));
         toolBar.addButton(previewButton);
         toolBar.addSpacer(6);
@@ -194,12 +194,12 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 
         pendingToolBar.addFill();
         pendingRefreshButton = new ToolStripButton();
-        pendingRefreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        pendingRefreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/refresh.png");
         pendingRefreshButton.setTitle(BLCMain.getMessageManager().getString("refreshTitle"));
         pendingToolBar.addButton(pendingRefreshButton);
         pendingToolBar.addSpacer(3);
         pendingPreviewButton = new ToolStripButton();
-        pendingPreviewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
+        pendingPreviewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/zoom.png");
         pendingPreviewButton.setTitle(BLCMain.getMessageManager().getString("previewTitle"));
         pendingToolBar.addButton(pendingPreviewButton);
         pendingToolBar.addSpacer(6);

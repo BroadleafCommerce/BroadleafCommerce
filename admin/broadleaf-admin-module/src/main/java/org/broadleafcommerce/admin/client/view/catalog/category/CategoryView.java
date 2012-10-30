@@ -86,11 +86,11 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         abandonedCategoryTopBar.setWidth100();
         abandonedCategoryTopBar.addSpacer(6);
         insertOrphanButton = new ToolStripButton();  
-        insertOrphanButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_up.png");  
+        insertOrphanButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/double_arrow_up.png");
         insertOrphanButton.setDisabled(true);
         abandonedCategoryTopBar.addButton(insertOrphanButton);
         removeOrphanedButton = new ToolStripButton(); 
-        removeOrphanedButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+        removeOrphanedButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/minus.png");
         removeOrphanedButton.setDisabled(true);
         abandonedCategoryTopBar.addButton(removeOrphanedButton);
         abandonedCategoryTopBar.addSpacer(6);

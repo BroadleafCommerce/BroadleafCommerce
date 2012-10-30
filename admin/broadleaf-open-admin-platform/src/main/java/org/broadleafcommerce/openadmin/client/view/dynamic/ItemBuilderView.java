@@ -66,7 +66,7 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 			innerRemoveLayout.setWidth(BTN_WIDTH_HEIGHT);
 
 			removeButton = new ImgButton();
-			removeButton.setSrc(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/remove.png");
+			removeButton.setSrc(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/actions/remove.png");
 			removeButton.setShowRollOver(false);
 			removeButton.setShowDownIcon(false);
 			removeButton.setShowDown(false);
