@@ -182,6 +182,66 @@ public interface Category extends Serializable {
     public void setDescription(@Nullable String description);
 
     /**
+     * Gets the meta-description
+     *
+     * @return the metaDescription
+     */
+    @Nullable
+    public String getMetaDescription();
+
+    /**
+     * Sets the metaDescription
+     *
+     * @param metaDescription
+     */
+    public void setMetaDescription(@Nullable String metaDescription);
+
+    /**
+     * Gets the meta-keywords
+     *
+     * @return the metaKeywords
+     */
+    @Nullable
+    public String getMetaKeywords();
+
+    /**
+     * Sets the metaKeywords
+     *
+     * @param metaKeywords
+     */
+    public void setMetaKeywords(@Nullable String metaKeywords);
+
+    /**
+     * Gets the meta-Robot
+     *
+     * @return the metaRobot
+     */
+    @Nullable
+    public String getMetaRobot();
+
+    /**
+     * Sets the metaRobot
+     *
+     * @param metaRobot
+     */
+    public void setMetaRobot(@Nullable String metaRobot);
+
+    /**
+     * Gets the title fragment
+     *
+     * @return the titleFragment
+     */
+    @Nullable
+    public String getTitleFragment();
+
+    /**
+     * Sets the titleFragment
+     *
+     * @param titleFragment
+     */
+    public void setTitleFragment(@Nullable String titleFragment);
+
+    /**
      * Gets the active start date. If the current date is before activeStartDate,
      * then this category will not be visible on the site.
      * 
@@ -572,6 +632,14 @@ public interface Category extends Serializable {
      * @return
      */
     public Map<String, CategoryAttribute> getMappedCategoryAttributes();
+
+    /**
+     * Convenience method to return the calculated meta-description. Will return description if meta-description is null,
+     * will return name if description is null.
+     *
+     * @return metaDescription
+     */
+    public String getCalculatedMetaDescription();
 
     /**
      * Returns the type of inventory for this category

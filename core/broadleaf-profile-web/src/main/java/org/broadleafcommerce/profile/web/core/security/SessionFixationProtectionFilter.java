@@ -65,11 +65,12 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 		
 		if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
 			// The request is secure and and we've set a session fixation protection cookie
-	        String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID(request);
+	        String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID();
 	        String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
 	        
 	        if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
 	        	abortUser(request, response);
+	        	return;
 	        }
 		} else if (request.isSecure()) {
 			// The request is secure, but we haven't set a session fixation protection cookie yet
@@ -83,7 +84,7 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
             String encryptedActiveIdValue = encryptionModule.encrypt(token);
             
             session.setAttribute(SESSION_ATTR, token);
-            SessionFixationProtectionCookie.writeActiveID(request, response, encryptedActiveIdValue);
+            SessionFixationProtectionCookie.writeActiveID(response, encryptedActiveIdValue);
 		}
 				
         chain.doFilter(request, response);
@@ -91,7 +92,7 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 
     protected void abortUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SecurityContextHolder.clearContext();
-    	SessionFixationProtectionCookie.remove(request, response);
+    	SessionFixationProtectionCookie.remove(response);
     	
 		Cookie cookie = new Cookie("JSESSIONID", "");
 		cookie.setMaxAge(0);
