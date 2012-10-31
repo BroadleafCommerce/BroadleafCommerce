@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
@@ -36,6 +37,7 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
+@Component("blPaginationPageLinkProcessor")
 public class PaginationPageLinkProcessor extends AbstractAttributeModifierAttrProcessor {
 
 	/**
@@ -62,7 +64,11 @@ public class PaginationPageLinkProcessor extends AbstractAttributeModifierAttrPr
 		Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
 		
 		Integer page = (Integer) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] { page.toString() });
+		if (page != null && page > 1) {
+			params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] { page.toString() });
+		} else {
+			params.remove(ProductSearchCriteria.PAGE_NUMBER);
+		}
 		
 		String url = ProcessorUtils.getUrl(baseUrl, params);
 		
