@@ -64,7 +64,11 @@ public class PaginationPageLinkProcessor extends AbstractAttributeModifierAttrPr
 		Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
 		
 		Integer page = (Integer) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] { page.toString() });
+		if (page != null && page > 1) {
+			params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] { page.toString() });
+		} else {
+			params.remove(ProductSearchCriteria.PAGE_NUMBER);
+		}
 		
 		String url = ProcessorUtils.getUrl(baseUrl, params);
 		

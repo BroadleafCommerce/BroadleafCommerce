@@ -79,7 +79,7 @@ public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProce
 			paramValues = (String[]) ArrayUtils.add(paramValues, value);
 		}
 		
-		params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
+		params.remove(ProductSearchCriteria.PAGE_NUMBER);
 		params.put(key, paramValues);
 		
 		String url = ProcessorUtils.getUrl(baseUrl, params);
