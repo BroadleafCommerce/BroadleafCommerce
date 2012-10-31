@@ -634,6 +634,7 @@ public class FormBuilder {
 			break;
 		case EMAIL:
 			formItem = new TextItem();
+            formItem.setWidth(220);
 			((TextItem)formItem).setLength(field.getLength());
 			break;
 		case INTEGER:
@@ -679,6 +680,8 @@ public class FormBuilder {
             } else {
                 formItem = new SelectItem();
             }
+            formItem.setHeight(22);
+            formItem.setWidth(220);
             LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
             String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
             for (String[] enumerationValue : enumerationValues) {
@@ -692,6 +695,8 @@ public class FormBuilder {
             } else {
                 formItem = new SelectItem();
             }
+            formItem.setHeight(22);
+            formItem.setWidth(220);
             LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
             String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
             for (String[] enumerationValue : enumerationValues) {
@@ -705,6 +710,8 @@ public class FormBuilder {
             } else {
                 formItem = new SelectItem();
             }
+            formItem.setHeight(22);
+            formItem.setWidth(220);
             LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
             String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
             for (String[] enumerationValue : enumerationValues) {
@@ -727,6 +734,7 @@ public class FormBuilder {
 			break;
 		case PASSWORD:
 			formItem = new PasswordItem();
+            formItem.setWidth(220);
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
         case HTML:
@@ -758,7 +766,7 @@ public class FormBuilder {
 				formItem = new TextAreaItem();
 				((TextAreaItem)formItem).setLength(field.getLength());
 				formItem.setHeight(70);
-				formItem.setWidth("440");
+				formItem.setWidth(440);
 			}
 			break;
 		}
