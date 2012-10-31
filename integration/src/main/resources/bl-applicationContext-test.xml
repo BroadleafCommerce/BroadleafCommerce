@@ -75,6 +75,8 @@
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 	
+	<bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>
+	
 	<bean id="baseEmailInfo" abstract="true">
         <property name="sendEmailReliableAsync" value="false"/>
         <property name="fromAddress" value="test@broadleafcommerce.org"/>
