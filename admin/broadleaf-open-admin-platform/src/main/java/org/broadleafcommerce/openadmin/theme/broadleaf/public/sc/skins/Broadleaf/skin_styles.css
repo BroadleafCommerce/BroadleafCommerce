@@ -452,13 +452,22 @@ Button (also used as MenuButton base style)
   Menus
 ============================================================*/
 .menuTable {
-  border-top: 1px solid #93A9C0;
-  border-bottom: 1px solid #93A9C0;
-  border-left: 1px solid #93A9C0;
-  border-right: 1px solid #93A9C0;
+  border: 1px solid #C0C3C7;
+}
+.menuTitleField,
+.menuTitleFieldDark,
+.menuTitleFieldSelected,
+.menuTitleFieldSelectedDark,
+.menuTitleFieldOver,
+.menuTitleFieldOverDark,
+.menuTitleFieldSelectedOver,
+.menuTitleFieldSelectedOverDark,
+.menuTitleFieldDisabled {
+  padding: 5px;
 }
 .menu,
 .menuDark,
+.menuIconField,
 .menuSelected,
 .menuSelectedDark,
 .menuOver,
@@ -471,16 +480,15 @@ Button (also used as MenuButton base style)
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 11px;
   line-height: 18px;
-  background-color: white;
+  background: #fff;
 }
 .menuOver,
 .menuOverDark,
 .menuSelectedOver,
-.menuSelectedOverDark {
-  color: white;
-  background-color: #3E74B3;
-  border-top: 1px solid #5E94D3;
-  border-bottom: 1px solid #1E5493;
+.menuSelectedOverDark,
+.menuTitleFieldOver,
+.menuIconFieldOver {
+  background: #ddd;
 }
 .treeMenuSelected {
   background-color: #fff1a8;
@@ -728,7 +736,7 @@ Button (also used as MenuButton base style)
 .labelAnchorError,
 .labelAnchorFocused {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 18px;
 }
 .formTitle,
@@ -750,11 +758,15 @@ Button (also used as MenuButton base style)
 .headerItemDisabled,
 .headerItemError {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 18px;
-  color: #333333;
-  font-weight: normal;
-  padding-bottom: 8px;
+  background-color: #333333;
+  border: 1px solid #000000;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 4px 8px;
+  text-shadow: 1px 1px 1px #000000;
+  margin: 15px 0;
 }
 /* text items */
 .textItem,
@@ -2210,7 +2222,6 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 }
 .innerHeaderSelectedDisabled {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 11px;
   line-height: 18px;
   font-size: 11px;
   color: #808080;
@@ -2694,7 +2705,7 @@ a.calMonthEventLink:active {
   border-bottom: 1px solid #CCCCCC;
 }
 label {
-  font-size: 11px;
+  font-size: 12px;
   display: inline-block;
 }
 input,
