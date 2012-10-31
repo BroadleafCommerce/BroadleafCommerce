@@ -17,6 +17,8 @@
 package org.broadleafcommerce.cms.web.processor;
 
 import com.google.common.primitives.Ints;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
@@ -65,7 +67,8 @@ import java.util.Map;
  */
 @Component("blContentProcessor")
 public class ContentProcessor extends AbstractModelVariableModifierProcessor {
-	
+
+    protected final Log LOG = LogFactory.getLog(getClass());
     public static final String REQUEST_DTO = "blRequestDTO";
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
     
@@ -154,8 +157,10 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 	    	addToModel(arguments, contentListVar, contentItemFields);
 	    	addToModel(arguments, numResultsVar, contentItems.size());
 	    } else {
-            System.out.println("**************************The contentItems is null*************************");
-	    	addToModel(arguments, contentItemVar, null);
+	    	if (LOG.isInfoEnabled()) {
+	    	    LOG.info("**************************The contentItems is null*************************");
+	    	}
+            addToModel(arguments, contentItemVar, null);
 	    	addToModel(arguments, contentListVar, null);
 	    	addToModel(arguments, numResultsVar, 0);
 	    }    	
