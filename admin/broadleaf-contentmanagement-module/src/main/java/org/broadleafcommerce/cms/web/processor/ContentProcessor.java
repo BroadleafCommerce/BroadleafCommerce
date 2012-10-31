@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
@@ -62,6 +63,7 @@ import java.util.Map;
  *                          defaults to "numResults".</li>
  * </ul>
  */
+@Component("blContentProcessor")
 public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 	
     public static final String REQUEST_DTO = "blRequestDTO";

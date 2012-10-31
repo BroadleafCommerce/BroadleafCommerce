@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
@@ -39,6 +40,7 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
+@Component("blToggleFacetLinkProcessor")
 public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProcessor {
 
 	/**
