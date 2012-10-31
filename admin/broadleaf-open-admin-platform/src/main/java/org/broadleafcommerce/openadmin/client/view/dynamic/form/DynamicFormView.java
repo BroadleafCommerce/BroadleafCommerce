@@ -44,6 +44,7 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
 		super();
 		
         setLayoutMargin(0);
+
         toolbar = new ToolStrip();
         toolbar.setHeight(30);
         toolbar.setWidth100();
@@ -65,6 +66,7 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
         addMember(toolbar);
         
         formOnlyView = new FormOnlyView(dataSource);
+        formOnlyView.setStyleName("bl-dynamic-form");
         addMember(formOnlyView);
         
         setOverflow(Overflow.HIDDEN);
