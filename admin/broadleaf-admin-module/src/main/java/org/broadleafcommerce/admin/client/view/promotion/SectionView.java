@@ -35,11 +35,13 @@ public class SectionView extends VLayout {
         Label label = new Label();
         label.setContents(title);
         label.setStyleName("bl-promo-header");
-        label.setHeight(40);
+        label.setAutoHeight();
+        label.setWidth100();
         addMember(label);
 
         contentLayout = new VStack();
         contentLayout.setStyleName("bl-promo-section");
+        contentLayout.setWidth100();
         addMember(contentLayout);
 
 	}
