@@ -44,25 +44,30 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
     }
 	
 	public FormOnlyView(DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId) {
-		super();
+
+        super();
 		
         setWidth100();
-        setStyleName("blcFormBg");
+        setStyleName("bl-form");
+
         form = new DynamicForm();
         form.setHeight(175);
         form.setWidth100();
-        form.setPadding(10);
-        form.setCellPadding(8);
-        form.setTitleOrientation(TitleOrientation.TOP);
-        form.setNumCols(1);
+        form.setTitleOrientation(TitleOrientation.LEFT);
         form.setWrapItemTitles(false);
+        form.setTitleSuffix("");
+        form.setRequiredTitleSuffix("");
+        form.setCellPadding(8);
         form.disable();
-        form.setStyleName("blcFormView");
+
         if (dataSource != null) {
         	buildFields(dataSource, showDisabedState==null?true:showDisabedState, canEdit==null?false:canEdit, showId==null?false:showId, null);
         }
+
         addMember(form);
+
         setOverflow(Overflow.AUTO);
+
         addVisibilityChangedHandler(new VisibilityChangedHandler() {
             @Override
             public void onVisibilityChanged(VisibilityChangedEvent event) {
