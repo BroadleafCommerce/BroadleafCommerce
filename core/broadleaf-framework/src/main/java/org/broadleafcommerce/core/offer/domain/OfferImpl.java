@@ -102,16 +102,16 @@ public class OfferImpl implements Offer, Status {
 
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order=1, group = "OfferImpl_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 2, group = "OfferImpl_Description", prominent=true, groupOrder = 1)
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order=2, group = "OfferImpl_Description", largeEntry=true, prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 3, group = "OfferImpl_Description", largeEntry=true, prominent=true, groupOrder = 1)
     protected String description;
 
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order=3, group = "OfferImpl_Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 1, group = "OfferImpl_Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType", groupOrder = 1)
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
