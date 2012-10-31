@@ -34,7 +34,7 @@ import javax.persistence.*;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentLocationImpl_baseFulfillmentLocation")
 @AdminPresentationOverrides(
         {
-                @AdminPresentationOverride(name="address.addressLine1", value = @AdminPresentation(friendlyName="AddressImpl_Address_1", prominent = true))
+                @AdminPresentationOverride(name="address.addressLine1", value = @AdminPresentation(friendlyName="AddressImpl_Address_1", prominent = true, order = 7, group = "AddressImpl_Address", groupOrder = 2))
         }
 )
 public class FulfillmentLocationImpl implements FulfillmentLocation {
