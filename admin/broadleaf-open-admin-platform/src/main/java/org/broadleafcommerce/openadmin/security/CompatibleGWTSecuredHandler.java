@@ -133,9 +133,11 @@ public class CompatibleGWTSecuredHandler extends GWTHandler {
         Map<String, Object> map = (Map<String, Object>) mapping.get(this);
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             RPCServiceExporter exporter = factory.create();
-            registerHandler(entry.getKey(), initServiceInstance.invoke(this, exporter, entry
+            if (getHandlerMap().get(entry.getKey()) == null) {
+                registerHandler(entry.getKey(), initServiceInstance.invoke(this, exporter, entry
                     .getValue(), ReflectionUtils.getExposedInterfaces(entry
                     .getValue().getClass())));
+            }
         }
     }
 
