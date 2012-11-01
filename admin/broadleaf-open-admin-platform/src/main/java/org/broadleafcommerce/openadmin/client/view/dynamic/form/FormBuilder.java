@@ -26,20 +26,7 @@ import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemValueFormatter;
-import com.smartgwt.client.widgets.form.fields.BooleanItem;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.DateTimeItem;
-import com.smartgwt.client.widgets.form.fields.FloatItem;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
-import com.smartgwt.client.widgets.form.fields.HeaderItem;
-import com.smartgwt.client.widgets.form.fields.HiddenItem;
-import com.smartgwt.client.widgets.form.fields.IntegerItem;
-import com.smartgwt.client.widgets.form.fields.PasswordItem;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
-import com.smartgwt.client.widgets.form.fields.TextAreaItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.form.fields.UploadItem;
+import com.smartgwt.client.widgets.form.fields.*;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
@@ -646,6 +633,7 @@ public class FormBuilder {
 			break;
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
+            formItem.setWidth(235);
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				@Override
                 public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
@@ -661,6 +649,7 @@ public class FormBuilder {
 			break;
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
+            formItem.setWidth(235);
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				@Override
                 public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
@@ -739,11 +728,9 @@ public class FormBuilder {
 			break;
         case HTML:
             formItem = new BLCRichTextItem();
-            formItem.setHeight(500);         
            break;
         case HTML_BASIC:
             formItem = new BLCRichTextItem();
-            formItem.setHeight(150);         
            break;
         case UPLOAD:
             formItem = new UploadItem();

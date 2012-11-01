@@ -1,16 +1,11 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.grid;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.BLCRichTextItem;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitEvent;
@@ -19,6 +14,8 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +48,6 @@ public class GridHelper {
 
         if (pane instanceof DynamicForm) {
             ((DynamicForm) pane).clearValues();
-            for (FormItem item:((DynamicForm) pane).getFields()) {
-                if(item instanceof BLCRichTextItem) {
-                   ((BLCRichTextItem) item).hideIt();
-                }
-            }
         }
     }
 

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.presenter.entity.HtmlEditingPresenter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
@@ -121,7 +122,8 @@ public class RichTextEditorDialog extends Window {
             @Override
             public void onClick(ClickEvent event) {
                 if (richTextItem != null) {
-                    richTextItem.storeValue(toolBar.getHTML());
+                    richTextItem.setValue(toolBar.getHTML());
+                    richTextItem.getForm().fireEvent(new ItemChangedEvent(richTextItem.getJsObj()));
                 }
                 hide();
             }
