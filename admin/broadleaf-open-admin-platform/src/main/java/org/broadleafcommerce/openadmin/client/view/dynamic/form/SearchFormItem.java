@@ -16,8 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.form.fields.FormItemIcon;
-import com.smartgwt.client.widgets.form.fields.StaticTextItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -29,12 +30,18 @@ import java.util.logging.Level;
  * @author jfischer
  *
  */
-public class SearchFormItem extends StaticTextItem {
+public class SearchFormItem extends TextItem {
 
-	public SearchFormItem() {  
-        //use default trigger icon here. User can customize.  
-        //[SKIN]/DynamicForm/default_formItem_icon.gif  
+	public SearchFormItem() {
+
+        super();
+        setAttribute("readOnly", true);
+
         FormItemIcon formItemIcon = new FormItemIcon();
+        formItemIcon.setSrc(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/glyphicons/edit.png");
+        formItemIcon.setWidth(16);
+        formItemIcon.setHeight(16);
+        formItemIcon.setNeverDisable(true);
         setIcons(formItemIcon);
         
         addIconClickHandler(new IconClickHandler() {  
@@ -48,5 +55,7 @@ public class SearchFormItem extends StaticTextItem {
             }  
         });
 	}
+
+
     
 }
