@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
@@ -168,7 +169,8 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         
         customerFilterBuilder = new BLCFilterBuilder();
         customerFilterBuilder.setDataSource(customerDataSource);
-        customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
+        //customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
+        customerFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         customerFilterBuilder.setLayoutBottomMargin(20);
         customerFilterBuilder.setAllowEmpty(true);
         customerFilterBuilder.setValidateOnChange(false);
@@ -183,7 +185,8 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 
         timeFilterBuilder = new BLCFilterBuilder();
         timeFilterBuilder.setDataSource(timeDataSource);
-        timeFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(timeDataSource));
+        //timeFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(timeDataSource));
+        timeFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         timeFilterBuilder.setLayoutBottomMargin(20);
         timeFilterBuilder.setAllowEmpty(true);
         timeFilterBuilder.setValidateOnChange(false);
@@ -198,7 +201,8 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 
         requestFilterBuilder = new BLCFilterBuilder();
         requestFilterBuilder.setDataSource(requestDataSource);
-        requestFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(requestDataSource));
+        //requestFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(requestDataSource));
+        requestFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         requestFilterBuilder.setLayoutBottomMargin(20);
         requestFilterBuilder.setAllowEmpty(true);
         requestFilterBuilder.setValidateOnChange(false);
@@ -213,7 +217,8 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 
         productFilterBuilder = new BLCFilterBuilder();
         productFilterBuilder.setDataSource(productDataSource);
-        productFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(productDataSource));
+        //productFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(productDataSource));
+        productFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         productFilterBuilder.setLayoutBottomMargin(20);
         productFilterBuilder.setAllowEmpty(true);
         productFilterBuilder.setValidateOnChange(false);

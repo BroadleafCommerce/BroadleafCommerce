@@ -25,6 +25,7 @@ import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.FloatItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
@@ -276,6 +277,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerLayout.addMember(whichCustomerForm);
 
         rawCustomerForm = new DynamicForm();
+        rawCustomerForm.setStyleName("blcPromoRawItemForm");
         rawCustomerForm.setVisible(false);
         rawCustomerTextArea = new TextAreaItem();
         rawCustomerTextArea.setHeight(70);
@@ -288,7 +290,9 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         customerFilterBuilder = new BLCFilterBuilder();
         customerFilterBuilder.setDataSource(customerDataSource);
-        customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
+        customerFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
+        //customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
+        customerFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         customerFilterBuilder.setVisible(false);
         customerFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);
         customerFilterBuilder.setAllowEmpty(true);
@@ -323,6 +327,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderSectionLayout.addMember(orderForm);
 
         rawOrderForm = new DynamicForm();
+        rawOrderForm.setStyleName("blcPromoRawItemForm");
         rawOrderForm.setVisible(false);
         rawOrderTextArea = new TextAreaItem();
         rawOrderTextArea.setHeight(70);
@@ -335,7 +340,9 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         orderFilterBuilder = new BLCFilterBuilder();
         orderFilterBuilder.setDataSource(orderDataSource);
-        orderFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(orderDataSource));
+        orderFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
+        //orderFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(orderDataSource));
+        orderFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         orderFilterBuilder.setVisible(false);
         orderFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);
         orderFilterBuilder.setAllowEmpty(true);
@@ -637,7 +644,9 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fgQuestionLayout.addMember(stepFGForm);
         fulfillmentGroupFilterBuilder = new BLCFilterBuilder();
         fulfillmentGroupFilterBuilder.setDataSource(fulfillmentGroupDataSource);
-        fulfillmentGroupFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(fulfillmentGroupDataSource));
+        fulfillmentGroupFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
+        //fulfillmentGroupFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(fulfillmentGroupDataSource));
+        fulfillmentGroupFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         fulfillmentGroupFilterBuilder.setVisible(false);
         fulfillmentGroupFilterBuilder.setAllowEmpty(true);
         fulfillmentGroupFilterBuilder.setValidateOnChange(false);
@@ -645,6 +654,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fgQuestionLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
 
         rawFGForm = new DynamicForm();
+        rawFGForm.setStyleName("blcPromoRawItemForm");
         rawFGForm.setVisible(false);
         rawFGTextArea = new TextAreaItem();
         rawFGTextArea.setHeight(70);

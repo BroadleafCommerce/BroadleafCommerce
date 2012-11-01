@@ -30,6 +30,7 @@ import com.smartgwt.client.widgets.form.fields.IntegerItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 
 /**
  * 
@@ -128,7 +129,7 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		itemFilterBuilder = new BLCFilterBuilder();
         itemFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
         itemFilterBuilder.setDataSource(itemDataSource);
-		//itemFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(itemDataSource));
+		//itemFilterBuilder.setFieldDataSource(itemDataSource);
         itemFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
 		//itemFilterBuilder.setLayoutBottomMargin(10);
 		itemFilterBuilder.setAllowEmpty(true);
