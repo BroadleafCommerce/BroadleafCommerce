@@ -24,22 +24,22 @@
 	<bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
 	    <property name="processors">
 		  <set>
-			<bean class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.FormProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.ImgProcessor" />
-            <bean class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
-            <bean class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.ProductOptionValueProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.ProductOptionsProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.RemoveFacetValuesLinkProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
-			<bean class="org.broadleafcommerce.core.web.processor.UrlRewriteProcessor" />
+			<ref bean="blContentProcessor"/>
+			<ref bean="blAddSortLinkProcessor" />
+			<ref bean="blCategoriesProcessor" />
+			<ref bean="blFormProcessor" />
+			<ref bean="blHeadProcessor" />
+			<ref bean="blImgProcessor" />
+		    <ref bean="blNamedOrderProcessor" />
+		    <ref bean="blPaginationPageLinkProcessor" />
+			<ref bean="blPriceTextDisplayProcessor" />
+			<ref bean="blProductOptionValueProcessor" />
+			<ref bean="blProductOptionsProcessor" />
+			<ref bean="blRatingsProcessor" />
+			<ref bean="blRelatedProductProcessor" />
+			<ref bean="blRemoveFacetValuesLinkProcessor" />
+			<ref bean="blToggleFacetLinkProcessor" />
+			<ref bean="blUrlRewriteProcessor" />
 		  </set>
 		</property>  	
 	</bean> 

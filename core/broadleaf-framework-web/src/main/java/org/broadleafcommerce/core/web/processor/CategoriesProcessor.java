@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierPro
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -33,6 +34,7 @@ import java.util.List;
  * 
  * @author apazzolini
  */
+@Component("blCategoriesProcessor")
 public class CategoriesProcessor extends AbstractModelVariableModifierProcessor {
 
 	/**

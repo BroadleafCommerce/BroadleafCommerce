@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
@@ -36,6 +37,7 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
+@Component("blAddSortLinkProcessor")
 public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor {
 	
 	protected boolean allowMultipleSorts = false;
@@ -105,7 +107,7 @@ public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor
 		} else {
 			sortString += " asc";
 			classString += "asc ";
-			params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
+			params.remove(ProductSearchCriteria.PAGE_NUMBER);
 		}
 		
 		if (allowMultipleSorts) {

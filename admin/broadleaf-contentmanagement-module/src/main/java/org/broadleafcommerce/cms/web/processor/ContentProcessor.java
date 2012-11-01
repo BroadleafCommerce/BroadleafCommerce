@@ -17,6 +17,8 @@
 package org.broadleafcommerce.cms.web.processor;
 
 import com.google.common.primitives.Ints;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
@@ -29,6 +31,7 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
@@ -62,8 +65,10 @@ import java.util.Map;
  *                          defaults to "numResults".</li>
  * </ul>
  */
+@Component("blContentProcessor")
 public class ContentProcessor extends AbstractModelVariableModifierProcessor {
-	
+
+    protected final Log LOG = LogFactory.getLog(getClass());
     public static final String REQUEST_DTO = "blRequestDTO";
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
     
@@ -152,8 +157,10 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 	    	addToModel(arguments, contentListVar, contentItemFields);
 	    	addToModel(arguments, numResultsVar, contentItems.size());
 	    } else {
-            System.out.println("**************************The contentItems is null*************************");
-	    	addToModel(arguments, contentItemVar, null);
+	    	if (LOG.isInfoEnabled()) {
+	    	    LOG.info("**************************The contentItems is null*************************");
+	    	}
+            addToModel(arguments, contentItemVar, null);
 	    	addToModel(arguments, contentListVar, null);
 	    	addToModel(arguments, numResultsVar, 0);
 	    }    	

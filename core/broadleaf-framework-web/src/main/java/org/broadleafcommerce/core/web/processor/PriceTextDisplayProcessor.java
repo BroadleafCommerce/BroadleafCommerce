@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.money.Money;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor;
@@ -32,6 +33,7 @@ import java.math.BigDecimal;
  * 
  * @author apazzolini
  */
+@Component("blPriceTextDisplayProcessor")
 public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProcessor {
 
 	/**
