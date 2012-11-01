@@ -53,15 +53,15 @@ public class FulfillmentLocationImpl implements FulfillmentLocation {
     protected Address address;
 
     @Column(name = "PICKUP_LOCATION", nullable = false)
-    @AdminPresentation(friendlyName = "FulfillmentLocationImpl_pickupLocation", prominent = true)
+    @AdminPresentation(friendlyName = "FulfillmentLocationImpl_pickupLocation", prominent = true, group = "FulfillmentLocationImpl_generalGroupName", groupOrder = 1)
     protected Boolean pickupLocation = Boolean.FALSE;
 
     @Column(name = "SHIPPING_LOCATION", nullable = false)
-    @AdminPresentation(friendlyName = "FulfillmentLocationImpl_shippingLocation", prominent = true)
+    @AdminPresentation(friendlyName = "FulfillmentLocationImpl_shippingLocation", prominent = true, group = "FulfillmentLocationImpl_generalGroupName", groupOrder = 1)
     protected Boolean shippingLocation = Boolean.TRUE;
 
     @Column(name = "DEFAULT_LOCATION", nullable = false)
-    @AdminPresentation(friendlyName = "FulfillmentLocationImpl_defaultLocation", prominent = true)
+    @AdminPresentation(friendlyName = "FulfillmentLocationImpl_defaultLocation", prominent = true, group = "FulfillmentLocationImpl_generalGroupName", groupOrder = 1)
     protected Boolean defaultLocation = Boolean.FALSE;
 
     public Long getId() {
