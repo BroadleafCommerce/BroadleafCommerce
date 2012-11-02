@@ -124,9 +124,15 @@ public class OrderDaoImpl implements OrderDao {
         Order order = createNewCartForCustomer(customer);
         order.setPriceList(priceList);
         order.setLocale(locale);
-        order.setCurrency(priceList.getCurrencyCode());
-        order.setSubTotal(new Money(BigDecimal.ZERO, priceList.getCurrencyCode().getCurrencyCode()));
-        order.setTotal(new Money(BigDecimal.ZERO, priceList.getCurrencyCode().getCurrencyCode()));
+        
+        if (priceList!=null) { 
+            order.setCurrency(priceList.getCurrencyCode());
+            order.setSubTotal(new Money(BigDecimal.ZERO, priceList.getCurrencyCode().getCurrencyCode()));
+            order.setTotal(new Money(BigDecimal.ZERO, priceList.getCurrencyCode().getCurrencyCode()));
+        } else {
+            order.setSubTotal(new Money(BigDecimal.ZERO));
+            order.setTotal(new Money(BigDecimal.ZERO));
+        }
         order = save(order);
 
         return order;

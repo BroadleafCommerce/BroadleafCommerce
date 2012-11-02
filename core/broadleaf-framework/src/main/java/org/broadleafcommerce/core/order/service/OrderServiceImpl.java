@@ -225,7 +225,11 @@ public class OrderServiceImpl implements OrderService {
 	public void cancelOrder(Order order) {
         orderDao.delete(order);
 	}
-
+    @Override
+    @Transactional("blTransactionManager")
+    public void deleteOrder(Order order) {
+        orderDao.delete(order);
+    }
 	@Override
     @Transactional("blTransactionManager")
 	public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {

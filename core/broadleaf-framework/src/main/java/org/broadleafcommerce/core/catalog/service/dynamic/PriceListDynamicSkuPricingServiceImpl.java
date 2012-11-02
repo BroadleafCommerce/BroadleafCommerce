@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
-import java.util.HashMap;
-
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
@@ -30,6 +28,8 @@ import org.broadleafcommerce.core.pricing.domain.PriceAdjustment;
 import org.broadleafcommerce.core.pricing.domain.PriceData;
 import org.broadleafcommerce.core.pricing.domain.SkuBundleItemPriceData;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 /**
  * 
@@ -50,9 +50,13 @@ public class PriceListDynamicSkuPricingServiceImpl implements DynamicSkuPricingS
         DynamicSkuPrices prices = new DynamicSkuPrices();;
 
         PriceList priceList = brc.getPriceList();
-  
+        boolean showDefaultSkuPrice=false;
+        if(priceList != null && brc.getLocale().getDefaultCurrency().getCurrencyCode().equals("USD")) {
+            //show default pricing.
+            showDefaultSkuPrice=true;
+        }
         
-        if (priceList != null) {
+        if (priceList != null && !showDefaultSkuPrice ) {
             if (sku.getPriceDataMap() != null) {               
                 PriceData priceData = sku
                         .getPriceDataMap().get(priceList.getPriceKey());
@@ -107,9 +111,13 @@ public class PriceListDynamicSkuPricingServiceImpl implements DynamicSkuPricingS
         DynamicSkuPrices prices = new DynamicSkuPrices();;
 
         PriceList priceList = brc.getPriceList();
-  
+        boolean showDefaultSkuPrice=false;
+        if(priceList != null && brc.getLocale().getDefaultCurrency().getCurrencyCode().equals("USD")) {
+            //show default pricing.
+            showDefaultSkuPrice=true;
+        }
         
-        if ((priceList != null)) {
+        if ((priceList != null) && !showDefaultSkuPrice) {
             if( skuBundleItem.getPriceDataMap() != null )
               {
                
@@ -150,9 +158,14 @@ public class PriceListDynamicSkuPricingServiceImpl implements DynamicSkuPricingS
         DynamicSkuPrices prices = new DynamicSkuPrices();;
 
         PriceList priceList = brc.getPriceList();
-  
+        boolean showDefaultSkuPrice=false;
+        if(priceList != null && brc.getLocale().getDefaultCurrency().getCurrencyCode().equals("USD")) {
+            //show default pricing.
+            showDefaultSkuPrice=true;
+        }
         
-        if ((priceList != null)) {
+        
+        if ((priceList != null) && !showDefaultSkuPrice) {
             if( skuBundleItem.getPriceAdjustmentMap() != null) {
                
             PriceAdjustment priceData = skuBundleItem

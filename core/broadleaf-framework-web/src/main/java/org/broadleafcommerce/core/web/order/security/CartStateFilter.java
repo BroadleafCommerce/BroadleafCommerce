@@ -66,7 +66,8 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
     private static String cartRequestAttributeName = "cart";
 
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {		
 		Customer customer = (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
 		
@@ -88,7 +89,7 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
                     } else {
                         // Delete old cart and create new blank cart
                         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-                        orderService.cancelOrder(cart);
+                        orderService.deleteOrder(cart);
                         cart = orderService.createNewCartForCustomer(customer, brc.getPriceList(), brc.getLocale());
                     }
                 }
@@ -108,6 +109,7 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
         chain.doFilter(request, response);
     }
 
+    @Override
     public int getOrder() {
     	//FilterChainOrder has been dropped from Spring Security 3
         //return FilterChainOrder.REMEMBER_ME_FILTER+1;

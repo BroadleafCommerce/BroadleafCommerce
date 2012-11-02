@@ -488,4 +488,6 @@ public interface OrderService {
      */
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
 
+    public void deleteOrder(Order cart);
+
 }

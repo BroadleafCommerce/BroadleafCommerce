@@ -35,6 +35,7 @@ import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,7 +96,9 @@ public class BroadleafCartController extends AbstractCartController {
             }
         }
 
-        updateCartService.validateCart(cart);
+       if(cart.getPriceList()!=null) {
+            updateCartService.validateCart(cart);
+        }
 
 		cart = orderService.addItem(cart.getId(), itemRequest, false);
 		cart = orderService.save(cart,  true);

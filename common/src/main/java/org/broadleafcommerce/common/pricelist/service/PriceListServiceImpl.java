@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.pricelist.dao.PriceListDao;
-import org.broadleafcommerce.common.pricelist.domain.NullPriceList;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +30,6 @@ import java.util.List;
 @Service("blPriceListService")
 public class PriceListServiceImpl implements PriceListService {
     private static final Log LOG = LogFactory.getLog(PriceListServiceImpl.class);
-
-    private final NullPriceList NULL_PRICE_LIST = new NullPriceList();
 
     @Resource(name="blPriceListDao")
     protected PriceListDao priceListDao;
@@ -48,7 +45,7 @@ public class PriceListServiceImpl implements PriceListService {
         if (priceList != null) {
                 return priceList;
         } else {
-                return NULL_PRICE_LIST;
+                return null;
         }
     }
 
@@ -64,7 +61,7 @@ public class PriceListServiceImpl implements PriceListService {
         if (priceList != null) {
             return priceList;
         } else {
-            return NULL_PRICE_LIST;
+            return null;
         }
     }
 

@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.web.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.pricelist.domain.NullPriceList;
 import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -35,6 +34,7 @@ import org.broadleafcommerce.core.web.order.model.AddToCartItem;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,16 +140,16 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     @Override
     public void validateCart(Order cart) {
-        if(BroadleafRequestContext.hasLocale()){
+        if(BroadleafRequestContext.hasLocale() ){
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             String validationMsg;
+          
             if(brc.getPriceList() != cart.getPriceList()){
-                validationMsg = "The cart price list [" + cart.getPriceList().getFriendlyName() +
-                        "] does not match the current price list [" + brc.getPriceList().getFriendlyName() + "]";
-                LOG.error(validationMsg);
+                    validationMsg = "The cart price list [" + cart.getPriceList() +
+                            "] does not match the current price list [" + brc.getPriceList()+ "]";
                 throw new IllegalArgumentException(validationMsg);
             }
-            if(!brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())){
+            if( !brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())){
                 validationMsg = "The cart Locale [" + cart.getLocale().getLocaleCode() +
                         "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]";
                 LOG.error(validationMsg);
@@ -169,7 +169,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         if(BroadleafRequestContext.hasLocale()){
             return BroadleafRequestContext.getBroadleafRequestContext().getPriceList();
         }
-        return new NullPriceList();
+        return null;
     }
 
     protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency){
