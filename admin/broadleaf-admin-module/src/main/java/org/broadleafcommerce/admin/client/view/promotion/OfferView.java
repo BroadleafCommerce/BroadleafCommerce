@@ -292,7 +292,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerFilterBuilder.setDataSource(customerDataSource);
         customerFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
         //customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
-        customerFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         customerFilterBuilder.setVisible(false);
         customerFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);
         customerFilterBuilder.setAllowEmpty(true);
@@ -341,7 +340,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderFilterBuilder = new BLCFilterBuilder();
         orderFilterBuilder.setDataSource(orderDataSource);
         orderFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
-        orderFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         orderFilterBuilder.setVisible(false);
         orderFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);
         orderFilterBuilder.setAllowEmpty(true);
@@ -645,7 +643,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fulfillmentGroupFilterBuilder.setDataSource(fulfillmentGroupDataSource);
         fulfillmentGroupFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
         //fulfillmentGroupFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(fulfillmentGroupDataSource));
-        fulfillmentGroupFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         fulfillmentGroupFilterBuilder.setVisible(false);
         fulfillmentGroupFilterBuilder.setAllowEmpty(true);
         fulfillmentGroupFilterBuilder.setValidateOnChange(false);

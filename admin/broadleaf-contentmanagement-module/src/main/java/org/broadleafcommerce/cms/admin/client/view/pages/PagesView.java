@@ -171,7 +171,6 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         customerFilterBuilder = new BLCFilterBuilder();
         customerFilterBuilder.setDataSource(customerDataSource);
         //customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
-        customerFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         customerFilterBuilder.setLayoutBottomMargin(20);
         customerFilterBuilder.setAllowEmpty(true);
         customerFilterBuilder.setValidateOnChange(false);
@@ -187,7 +186,6 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         timeFilterBuilder = new BLCFilterBuilder();
         timeFilterBuilder.setDataSource(timeDataSource);
         //timeFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(timeDataSource));
-        timeFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         timeFilterBuilder.setLayoutBottomMargin(20);
         timeFilterBuilder.setAllowEmpty(true);
         timeFilterBuilder.setValidateOnChange(false);
@@ -203,7 +201,6 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         requestFilterBuilder = new BLCFilterBuilder();
         requestFilterBuilder.setDataSource(requestDataSource);
         //requestFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(requestDataSource));
-        requestFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         requestFilterBuilder.setLayoutBottomMargin(20);
         requestFilterBuilder.setAllowEmpty(true);
         requestFilterBuilder.setValidateOnChange(false);
@@ -219,7 +216,6 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         productFilterBuilder = new BLCFilterBuilder();
         productFilterBuilder.setDataSource(productDataSource);
         //productFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(productDataSource));
-        productFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         productFilterBuilder.setLayoutBottomMargin(20);
         productFilterBuilder.setAllowEmpty(true);
         productFilterBuilder.setValidateOnChange(false);
