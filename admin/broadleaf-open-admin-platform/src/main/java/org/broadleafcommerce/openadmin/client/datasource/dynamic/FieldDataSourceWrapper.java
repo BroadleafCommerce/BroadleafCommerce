@@ -16,67 +16,44 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import com.smartgwt.client.data.*;
-import com.smartgwt.client.types.DSDataFormat;
-import com.smartgwt.client.types.DSProtocol;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.fields.DataSourceTextField;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
 public class FieldDataSourceWrapper extends DataSource {
-	
-	protected DataSource delegate;
 
 	public FieldDataSourceWrapper(DataSource delegate) {
-		this.delegate = delegate;
-		setDataProtocol (DSProtocol.CLIENTCUSTOM);
-        setDataFormat (DSDataFormat.CUSTOM);
-        setClientOnly (false);
-	}
+        setClientOnly(true);
+        DataSourceField[] legacyFields = delegate.getFields();
+        DataSourceField[] fields = new DataSourceField[legacyFields.length];
+        Record[] records = new Record[fields.length];
+        for (int j=0;j<legacyFields.length;j++){
+            if (legacyFields[j].getAttribute("fieldType") != null && SupportedFieldType.ID == SupportedFieldType.valueOf(legacyFields[j].getAttribute("fieldType"))) {
+                DataSourceTextField idField = new DataSourceTextField();
+                idField.setName(legacyFields[j].getName());
+                idField.setTitle(legacyFields[j].getTitle());
+                idField.setAttribute("fieldType", legacyFields[j].getAttribute("fieldType"));
+                idField.setAttribute("secondaryFieldType", legacyFields[j].getAttribute("secondaryFieldType"));
 
-	@Override
-	protected Object transformRequest(DSRequest dsRequest) {
-		Criteria criteria = dsRequest.getCriteria();
-		String entered = (String) criteria.getValues().get("title");
-        
-		dsRequest.setUseSimpleHttp(true);
-        String requestId = dsRequest.getRequestId ();
-        DSResponse response = new DSResponse();
-        response.setAttribute ("clientContext", dsRequest.getAttributeAsObject ("clientContext"));
-        response.setStatus(0);
-        HashMap<String,String>duplicateCheck=new HashMap<String, String>();
-        List<Record> records = new ArrayList<Record>();
-        for (DataSourceField field : delegate.getFields()) {
-        	String title = field.getTitle();
-        	if (title == null) {
-        		title = field.getName();
-        	}
-        	if (!field.getHidden() && (entered == null || entered.equals("") || (title != null && title.toLowerCase().startsWith(entered.toLowerCase())))) {
-	        	//do not allow duplicate attributes in the pulldown menu
-        		if(duplicateCheck.get(title)!=null) continue;
-        		duplicateCheck.put(title, title);
-
-        		Record record = new Record();
-	        	for (String attribute : field.getAttributes()) {
-	        		record.setAttribute(attribute, field.getAttribute(attribute));
-	        	}
-	        	records.add(record);
-        	}
+                fields[j] = idField;
+            } else {
+                fields[j] = legacyFields[j];
+            }
+            Record record = new Record();
+            for (String attribute : fields[j].getAttributes()) {
+                record.setAttribute(attribute, fields[j].getAttribute(attribute));
+            }
+            records[j] = record;
         }
-        Record[] recordArray = new Record[]{};
-        recordArray = records.toArray(recordArray);
-        response.setData(recordArray);
-        response.setTotalRows(recordArray.length);
-        
-        processResponse(requestId, response);
-        
-        return dsRequest.getData();
+        setFields(fields);
+        setCacheData(records);
 	}
-	
+
 }

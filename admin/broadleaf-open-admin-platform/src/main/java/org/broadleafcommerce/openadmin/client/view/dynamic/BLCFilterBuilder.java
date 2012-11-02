@@ -22,6 +22,7 @@ import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.DateItem;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,8 @@ public class BLCFilterBuilder extends FilterBuilder {
     }
 
     @Override
-    public void setDataSource(DataSource dataSource) {
+    public void setDataSource(DataSource legacy) {
+        DataSource dataSource = new FieldDataSourceWrapper(legacy);
         Map<FieldType, OperatorId[]> map = new HashMap<FieldType, OperatorId[]>();
 
         for (FieldType fieldType : new FieldType[] { FieldType.TEXT, FieldType.ANY,
@@ -50,8 +52,8 @@ public class BLCFilterBuilder extends FilterBuilder {
             // we have to save the values, then reapply, since the operators
             // are cleared on write.
             map.put(fieldType, dataSource.getTypeOperators(fieldType));
-
         }
+
         dataSource.setTypeOperators(FieldType.BOOLEAN, getBasicBooleanOperators());
         dataSource.setTypeOperators(FieldType.DATE, getBasicDateOperators());
         dataSource.setTypeOperators(FieldType.DATETIME, getBasicDateOperators());
@@ -71,6 +73,7 @@ public class BLCFilterBuilder extends FilterBuilder {
         }
 
         super.setDataSource(dataSource);
+        //super.setFieldDataSource(dataSource);
     }
 
     protected OperatorId[] getBasicBooleanOperators() {

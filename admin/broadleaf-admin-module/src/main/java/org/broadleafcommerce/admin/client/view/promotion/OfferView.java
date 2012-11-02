@@ -341,7 +341,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderFilterBuilder = new BLCFilterBuilder();
         orderFilterBuilder.setDataSource(orderDataSource);
         orderFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
-        //orderFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(orderDataSource));
         orderFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         orderFilterBuilder.setVisible(false);
         orderFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);

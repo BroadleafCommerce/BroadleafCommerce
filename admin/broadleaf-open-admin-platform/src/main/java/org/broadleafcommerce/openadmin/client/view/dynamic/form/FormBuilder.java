@@ -712,7 +712,7 @@ public class FormBuilder {
 			formItem = new SelectItem();
 			break;
 		case ID:
-			formItem = new TextItem();
+			formItem = new StaticTextItem();
 			((TextItem)formItem).setLength(field.getLength());
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				@Override
