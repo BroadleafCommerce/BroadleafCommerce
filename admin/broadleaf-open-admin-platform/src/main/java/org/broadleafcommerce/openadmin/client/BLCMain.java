@@ -251,7 +251,8 @@ public class BLCMain implements EntryPoint {
 
         modules.get(currentModuleKey).preDraw();
         MASTERVIEW = new MasterView(orderedModules);
-        //MASTERVIEW.draw();
+        //Expose GWT functions to external JS
+        MasterView.exportEditUserInfo();
 
         RootPanel.get("gwt-component").add(MASTERVIEW);
 
