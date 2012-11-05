@@ -208,11 +208,12 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         restrictLayout.addMember(new PromotionQuestion("restrictOnlyPromotionLabel"));
 
         restrictForm = new DynamicForm();
+        restrictForm.setStyleName(BL_PROMO_QUESTION_ANSWERS);
 
         LinkedHashMap<String, String> restrictMap = new LinkedHashMap<String, String>();
         restrictMap.put("YES", BLCMain.getMessageManager().getString("yesRadioChoice"));
         restrictMap.put("NO", BLCMain.getMessageManager().getString("noRadioChoice"));
-        restrictRuleRadio = new PromotionAnswerGroup(restrictMap, "NO", true);
+        restrictRuleRadio = new PromotionAnswerGroup(restrictMap, "NO", false);
 
         restrictForm.setFields(restrictRuleRadio);
         restrictLayout.addMember(restrictForm);

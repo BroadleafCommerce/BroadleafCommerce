@@ -136,15 +136,15 @@ public class OfferImpl implements Offer, Status {
     protected Date endDate;
 
     @Column(name = "STACKABLE")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable", group = "OfferImpl_Application", groupOrder=4)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable", group = "OfferImpl_Advanced", groupOrder=4)
     protected boolean stackable;
 
     @Column(name = "TARGET_SYSTEM")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System", group = "OfferImpl_Description", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System", group = "OfferImpl_Advanced", groupOrder=1)
     protected String targetSystem;
 
     @Column(name = "APPLY_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", group = "OfferImpl_Application", groupOrder=4)
+    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", group = "OfferImpl_Advanced", groupOrder=4)
     protected boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
@@ -165,7 +165,7 @@ public class OfferImpl implements Offer, Status {
     protected boolean applyDiscountToMarkedItems;
     
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable", group = "OfferImpl_Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable", group = "OfferImpl_Advanced", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     protected boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
 
     @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
@@ -174,11 +174,11 @@ public class OfferImpl implements Offer, Status {
     protected String deliveryType;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order=7, group = "OfferImpl_Description", groupOrder=2)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order=7, group = "OfferImpl_Advanced", groupOrder=2)
     protected int maxUsesPerOrder;
 
     @Column(name = "MAX_USES_PER_CUSTOMER")
-    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer", order=7, group = "OfferImpl_Description", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer", order=7, group = "OfferImpl_Advanced", groupOrder=1)
     protected Long maxUsesPerCustomer;
 
     @Column(name = "USES")
@@ -187,11 +187,11 @@ public class OfferImpl implements Offer, Status {
     protected int uses;
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
-    @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule", group = "OfferImpl_Application", groupOrder=4, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
+    @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule", group = "OfferImpl_Advanced", groupOrder=4, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemQualifierRuleType;
     
     @Column(name = "OFFER_ITEM_TARGET_RULE")
-    @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule", group = "OfferImpl_Application", groupOrder=4, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
+    @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule", group = "OfferImpl_Advanced", groupOrder=4, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemTargetRuleType;
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
@@ -207,7 +207,7 @@ public class OfferImpl implements Offer, Status {
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
-    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer", group = "OfferImpl_Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer", group = "OfferImpl_Advanced", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     protected Boolean totalitarianOffer;
     
     @ManyToMany(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
@@ -218,11 +218,11 @@ public class OfferImpl implements Offer, Status {
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
-    @AdminPresentation(friendlyName = "OfferImpl_Treat_As_New_Format", group = "OfferImpl_Application", groupOrder=4, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Treat_As_New_Format", group = "OfferImpl_Advanced", groupOrder=4, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean treatAsNewFormat;
     
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)
+    @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="OfferImpl_Advanced", groupOrder=5)
     protected BigDecimal qualifyingItemSubTotal;
 
     @OneToMany(mappedBy = "offer", targetEntity = OfferRestrictedPriceListImpl.class, cascade = {CascadeType.ALL})

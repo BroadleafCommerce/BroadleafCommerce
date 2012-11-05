@@ -241,6 +241,14 @@
     </profiles>
     <dependencyManagement>
         <dependencies>
+            <!--MySQL Connector -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.21</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
             <!--Broadleaf libraries -->
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>

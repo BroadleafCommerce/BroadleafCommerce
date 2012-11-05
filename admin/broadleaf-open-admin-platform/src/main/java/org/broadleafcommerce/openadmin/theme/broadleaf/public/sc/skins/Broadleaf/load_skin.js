@@ -354,8 +354,6 @@ isc.loadSkin = function (theWindow) {
                 textBoxStyle:"selectItemText",
                 showFocusedPickerIcon:false,
                 pickerIconSrc:"[SKIN]/pickers/comboBoxPicker.gif",
-                height:22,
-                pickerIconWidth:18
             });
         }
 
@@ -365,8 +363,6 @@ isc.loadSkin = function (theWindow) {
                 pendingTextBoxStyle:"comboBoxItemPendingText",
                 showFocusedPickerIcon:false,
                 pickerIconSrc:"[SKIN]/pickers/comboBoxPicker.gif",
-                height:22,
-                pickerIconWidth:18
             });
         }
 

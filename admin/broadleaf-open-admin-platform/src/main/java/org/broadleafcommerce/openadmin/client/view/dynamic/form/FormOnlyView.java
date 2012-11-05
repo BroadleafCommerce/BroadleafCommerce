@@ -57,7 +57,7 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form.setWrapItemTitles(false);
         form.setTitleSuffix("");
         form.setRequiredTitleSuffix("");
-        form.setCellPadding(8);
+        form.setCellPadding(6);
         form.disable();
 
         if (dataSource != null) {

@@ -30,6 +30,9 @@ import com.smartgwt.client.widgets.form.fields.*;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
@@ -39,33 +42,17 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleMapStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.*;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
+import java.util.*;
 
 /**
  * 
@@ -663,51 +650,32 @@ public class FormBuilder {
 				}
 			});
 			break;
-		case BROADLEAF_ENUMERATION:{
-            if (field.getAttributeAsBoolean("canEditEnumeration")) {
-                formItem = new ComboBoxItem();
-            } else {
-                formItem = new SelectItem();
-            }
-            formItem.setHeight(22);
-            formItem.setWidth(220);
+		case BROADLEAF_ENUMERATION:
+        case EXPLICIT_ENUMERATION:
+        case DATA_DRIVEN_ENUMERATION:
+            formItem = new ComboBoxItem();
+            ComboBoxItem comboBoxItem = (ComboBoxItem) formItem;
+            comboBoxItem.setAddUnknownValues(field.getAttributeAsBoolean("canEditEnumeration"));
+            comboBoxItem.setPickListHeaderHeight(22);
+            comboBoxItem.setPickerIconHeight(26);
+            comboBoxItem.setPickerIconWidth(22);
+
             LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
             String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
             for (String[] enumerationValue : enumerationValues) {
                 valueMap.put(enumerationValue[0], enumerationValue[1]);
             }
             formItem.setValueMap(valueMap);
-			break;}
-        case EXPLICIT_ENUMERATION:{
-            if (field.getAttributeAsBoolean("canEditEnumeration")) {
-                formItem = new ComboBoxItem();
-            } else {
-                formItem = new SelectItem();
-            }
-            formItem.setHeight(22);
-            formItem.setWidth(220);
-            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-            String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
-            for (String[] enumerationValue : enumerationValues) {
-                valueMap.put(enumerationValue[0], enumerationValue[1]);
-            }
-            formItem.setValueMap(valueMap);
-            break;}
-        case DATA_DRIVEN_ENUMERATION:{
-            if (field.getAttributeAsBoolean("canEditEnumeration")) {
-                formItem = new ComboBoxItem();
-            } else {
-                formItem = new SelectItem();
-            }
-            formItem.setHeight(22);
-            formItem.setWidth(220);
-            LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-            String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
-            for (String[] enumerationValue : enumerationValues) {
-                valueMap.put(enumerationValue[0], enumerationValue[1]);
-            }
-            formItem.setValueMap(valueMap);
-            break;}
+
+            ListGrid pickListProperties = new ListGrid();
+            pickListProperties.setCellFormatter(new CellFormatter() {
+                @Override
+                public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                    return "<div style='padding: 2px 4px'>" + value + "</div>";
+                }
+            });
+            comboBoxItem.setPickListProperties(pickListProperties);
+			break;
 		case EMPTY_ENUMERATION:
 			formItem = new SelectItem();
 			break;
