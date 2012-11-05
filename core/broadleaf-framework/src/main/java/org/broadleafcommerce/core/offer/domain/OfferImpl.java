@@ -140,7 +140,7 @@ public class OfferImpl implements Offer, Status {
     protected boolean stackable;
 
     @Column(name = "TARGET_SYSTEM")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System", group = "OfferImpl_Advanced", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System", group = "OfferImpl_Advanced", groupOrder = 4)
     protected String targetSystem;
 
     @Column(name = "APPLY_TO_SALE_PRICE")
