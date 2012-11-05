@@ -660,64 +660,18 @@ public interface Product extends Serializable {
 	public void setUrlKey(String url);
 
     /**
-     * Gets the meta-description
+     * Gets the embeddable SEO object
      *
-     * @return the metaDescription
+     * @return
      */
-    @Nullable
-    public String getMetaDescription();
+    public Seo getSeo();
+
 
     /**
-     * Sets the metaDescription
-     *
-     * @param metaDescription
+     * Sets the embeddable SEO object.
+     * @param seo
      */
-    public void setMetaDescription(@Nullable String metaDescription);
-
-    /**
-     * Gets the meta-keywords
-     *
-     * @return the metaKeywords
-     */
-    @Nullable
-    public String getMetaKeywords();
-
-    /**
-     * Sets the metaKeywords
-     *
-     * @param metaKeywords
-     */
-    public void setMetaKeywords(@Nullable String metaKeywords);
-
-    /**
-     * Gets the meta-Robot
-     *
-     * @return the metaRobot
-     */
-    @Nullable
-    public String getMetaRobot();
-
-    /**
-     * Sets the metaRobot
-     *
-     * @param metaRobot
-     */
-    public void setMetaRobot(@Nullable String metaRobot);
-
-    /**
-     * Gets the title fragment
-     *
-     * @return the titleFragment
-     */
-    @Nullable
-    public String getTitleFragment();
-
-    /**
-     * Sets the titleFragment
-     *
-     * @param titleFragment
-     */
-    public void setTitleFragment(@Nullable String titleFragment);
+    public void setSeo(Seo seo);
 
 	/**
 	 * Returns the name of a display template that is used to render this product.   Most implementations have a default

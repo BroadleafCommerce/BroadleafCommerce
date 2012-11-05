@@ -124,12 +124,7 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String ProductWeight_Shipping();
     public String ProductImpl_Product_Url();
     public String ProductImpl_Product_UrlKey();
-    public String ProductImpl_Product_Meta_Description();
-    public String ProductImpl_Product_Meta_Keywords();
-    public String ProductImpl_Product_Meta_Robot();
-    public String ProductImpl_Product_Title_Fragment();
     public String ProductImpl_Product_Display_Template();
-    public String ProductImpl_SEO();
     public String BundleOrderItemImpl_bundleOrderItem();
     public String ProductImpl_bundleProduct();
     public String OrderItemImpl_baseOrderItem();
@@ -154,4 +149,10 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String SkuImpl_Sku_Media();
     public String SkuImpl_Sku_Media_Key();
     public String skuGenerationInvalid();
+
+    public String Seo_Meta_Description();
+    public String Seo_Meta_Keywords();
+    public String Seo_Meta_Robot();
+    public String Seo_Title_Fragment();
+    public String Seo_Group();
 }
