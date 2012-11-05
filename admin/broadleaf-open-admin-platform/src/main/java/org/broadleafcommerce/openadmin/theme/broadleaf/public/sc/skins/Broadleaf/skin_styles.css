@@ -744,7 +744,8 @@ Button (also used as MenuButton base style)
   color: #333333;
 }
 .formTitle,
-.formTitleDisabled {
+.formTitleDisabled,
+.formTitleFocused {
   padding-left: 25px;
 }
 .formCellError,
