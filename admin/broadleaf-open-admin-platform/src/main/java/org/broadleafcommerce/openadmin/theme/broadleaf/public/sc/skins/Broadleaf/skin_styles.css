@@ -841,7 +841,8 @@ Button (also used as MenuButton base style)
   height: 26px;
 }
 .pickListMenuBody {
-  border: 1px solid black;
+  border: 1px solid #444;
+  -moz-box-sizing: inherit !important;
 }
 .pickListCell,
 .pickListCellDark,
