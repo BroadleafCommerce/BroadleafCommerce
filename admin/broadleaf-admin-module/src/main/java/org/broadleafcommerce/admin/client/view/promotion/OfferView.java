@@ -256,7 +256,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         codeField.setWrapTitle(false);
         codeField.setVisible(false);
         codeField.setWidth(240);
-        codeField.setTitleOrientation(TitleOrientation.TOP);
+        codeField.setTitleOrientation(TitleOrientation.LEFT);
 
         customerObtainForm = new DynamicForm();
         customerObtainForm.setNumCols(1);
