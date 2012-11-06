@@ -1423,7 +1423,6 @@ Button (also used as MenuButton base style)
   background-image: linear-gradient(top, #ffffff, #f2f2f2);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f2f2f2', GradientType=0);
-  box-shadow: 0 1px 3px #444;
   border: 1px solid #ccc;
 }
 .toolStripLayoutDropLine {
