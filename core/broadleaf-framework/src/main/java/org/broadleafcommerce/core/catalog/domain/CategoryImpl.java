@@ -130,9 +130,6 @@ public class CategoryImpl implements Category, Status {
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order=2, group = "CategoryImpl_Description", largeEntry=true, groupOrder = 1)
     protected String description;
 
-    @Embedded
-    protected Seo seo = new Seo();
-
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range", groupOrder = 3)
     protected Date activeStartDate;
@@ -319,16 +316,6 @@ public class CategoryImpl implements Category, Status {
     @Override
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public Seo getSeo() {
-        return seo;
-    }
-
-    @Override
-    public void setSeo(Seo seo) {
-        this.seo = seo;
     }
 
     @Override
@@ -850,17 +837,6 @@ public class CategoryImpl implements Category, Status {
         for (Category currentCategory : category.getChildCategories()) {
             fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
         }
-    }
-
-    @Override
-    public String getCalculatedMetaDescription(){
-        if(getSeo().getMetaDescription() == null){
-            if(description == null){
-                return name;
-            }
-            return description;
-        }
-        return getSeo().getMetaDescription();
     }
 
 }

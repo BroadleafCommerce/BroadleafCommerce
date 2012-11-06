@@ -173,20 +173,6 @@ public interface Category extends Serializable {
     public void setDescription(@Nullable String description);
 
     /**
-     * Gets the embeddable SEO object
-     *
-     * @return
-     */
-    public Seo getSeo();
-
-
-    /**
-     * Sets the embeddable SEO object.
-     * @param seo
-     */
-    public void setSeo(Seo seo);
-
-    /**
      * Gets the active start date. If the current date is before activeStartDate,
      * then this category will not be visible on the site.
      * 
@@ -577,13 +563,4 @@ public interface Category extends Serializable {
      */
     public Map<String, CategoryAttribute> getMappedCategoryAttributes();
 
-    /**
-     * Convenience method to return the calculated meta-description. Will return description if meta-description is null,
-     * will return name if description is null.
-     *
-     * @return metaDescription
-     */
-    public String getCalculatedMetaDescription();
-
-    
 }

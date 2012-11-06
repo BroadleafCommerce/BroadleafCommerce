@@ -150,9 +150,5 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String SkuImpl_Sku_Media_Key();
     public String skuGenerationInvalid();
 
-    public String Seo_Meta_Description();
-    public String Seo_Meta_Keywords();
-    public String Seo_Meta_Robot();
-    public String Seo_Title_Fragment();
     public String Seo_Group();
 }

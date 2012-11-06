@@ -127,9 +127,6 @@ public class ProductImpl implements Product, Status {
     @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "Seo_Group",groupOrder=2)
     protected String urlKey;
 
-    @Embedded
-    protected Seo seo = new Seo();
-
     @Column(name = "DISPLAY_TEMPLATE")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=9, group = "ProductImpl_Product_Description",groupOrder=1)
     protected String displayTemplate;
@@ -731,16 +728,6 @@ public class ProductImpl implements Product, Status {
 	}
 
     @Override
-    public Seo getSeo() {
-        return seo;
-    }
-
-    @Override
-    public void setSeo(Seo seo) {
-        this.seo = seo;
-    }
-
-    @Override
 	public String getGeneratedUrl() {		
 		if (getDefaultCategory() != null && getDefaultCategory().getGeneratedUrl() != null) {
 			String generatedUrl = getDefaultCategory().getGeneratedUrl();
@@ -752,16 +739,5 @@ public class ProductImpl implements Product, Status {
 		}
 		return null;
 	}
-
-    @Override
-    public String getCalculatedMetaDescription(){
-        if(getSeo().getMetaDescription() == null){
-            if(getDefaultSku().getDescription() == null){
-                return getDefaultSku().getName();
-            }
-            return getDefaultSku().getDescription();
-        }
-        return getSeo().getMetaDescription();
-    }
 
 }

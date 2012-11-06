@@ -659,20 +659,6 @@ public interface Product extends Serializable {
 	 */
 	public void setUrlKey(String url);
 
-    /**
-     * Gets the embeddable SEO object
-     *
-     * @return
-     */
-    public Seo getSeo();
-
-
-    /**
-     * Sets the embeddable SEO object.
-     * @param seo
-     */
-    public void setSeo(Seo seo);
-
 	/**
 	 * Returns the name of a display template that is used to render this product.   Most implementations have a default
 	 * template for all products.    This allows for the user to define a specific template to be used by this product.
@@ -722,13 +708,5 @@ public interface Product extends Serializable {
 	 * @return the cumulative upsale products
 	 */
 	public List<RelatedProduct> getCumulativeUpSaleProducts();
-
-    /**
-     * Convenience method to return the calculated meta-description. Will return default sku description if meta-description is null,
-     * will return default sku name if description is null.
-     *
-     * @return metaDescription
-     */
-    public String getCalculatedMetaDescription();
 
 }
