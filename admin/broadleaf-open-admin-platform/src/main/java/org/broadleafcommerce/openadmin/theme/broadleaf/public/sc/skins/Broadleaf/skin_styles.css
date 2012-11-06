@@ -691,6 +691,12 @@ Button (also used as MenuButton base style)
   font-size: 11px;
   line-height: 18px;
 }
+.formCell,
+.formCellFocused,
+.formCellDisabled,
+.formCellError {
+  width: 100%;
+}
 .formTitle,
 .formTitleFocused,
 .formTitleDisabled,
