@@ -16,10 +16,16 @@
 
 package org.broadleafcommerce.core.inventory.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 
+import java.util.List;
+
+/**
+ * 
+ * @deprecated This is no longer required and is instead implemented as a third-party inventory module
+ * 
+ */
+@Deprecated
 public interface AvailabilityDao {
 
 	/**

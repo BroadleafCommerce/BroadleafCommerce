@@ -20,7 +20,6 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -318,7 +317,7 @@ public class OrderTest extends OrderBaseTest {
     
     @Test(groups = { "testManyToOneFGItemToOrderItem" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
-    public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException, InventoryUnavailableException {
+    public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException {
     	// Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
@@ -412,7 +411,7 @@ public class OrderTest extends OrderBaseTest {
 
     @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
-    public void updateItemsInOrder() throws UpdateCartException, RemoveFromCartException, InventoryUnavailableException {
+    public void updateItemsInOrder() throws UpdateCartException, RemoveFromCartException {
     	// Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();

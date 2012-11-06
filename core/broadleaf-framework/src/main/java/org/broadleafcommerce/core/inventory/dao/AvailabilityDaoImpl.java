@@ -24,14 +24,22 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.List;
 
+/**
+ * 
+ * @deprecated This is no longer required and is instead implemented as a third-party inventory module
+ * 
+ */
+@Deprecated
 @Repository("blAvailabilityDao")
 public class AvailabilityDaoImpl extends BatchRetrieveDao implements AvailabilityDao {
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
+    @Override
     public List<SkuAvailability> readSKUAvailability(List<Long> skuIds, boolean realTime) {
         Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_SKU_IDS");
         if (! realTime) {
@@ -40,6 +48,7 @@ public class AvailabilityDaoImpl extends BatchRetrieveDao implements Availabilit
         return batchExecuteReadQuery(query, skuIds, "skuIds");
     }
 
+    @Override
     public List<SkuAvailability> readSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime) {
         Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_LOCATION_ID_AND_SKU_IDS");
         if (! realTime) {
@@ -49,6 +58,7 @@ public class AvailabilityDaoImpl extends BatchRetrieveDao implements Availabilit
         return batchExecuteReadQuery(query, skuIds, "skuIds");
     }
 
+    @Override
     public void save(SkuAvailability skuAvailability) {
         em.merge(skuAvailability);
     }

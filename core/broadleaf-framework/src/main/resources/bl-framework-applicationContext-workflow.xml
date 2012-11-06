@@ -144,7 +144,6 @@
 		<property name="activities">
 			<list>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
-				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
@@ -161,7 +160,6 @@
 		<property name="activities">
 			<list>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.ValidateUpdateRequestActivity"/>
-				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderMultishipOptionActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
@@ -210,13 +208,12 @@
 		<property name="activities">
 			<list>
                 <bean class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
-                <bean class="org.broadleafcommerce.core.inventory.service.workflow.DecrementInventoryActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
                 <bean class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blInventoryCompensatingCheckoutErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
 	</bean>
 
     <aop:config>
