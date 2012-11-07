@@ -16,9 +16,14 @@
 
 package org.broadleafcommerce.openadmin.client.reflection;
 
+import org.broadleafcommerce.openadmin.client.presenter.entity.PresenterModifier;
+
 import com.google.gwt.core.client.GWT;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -27,9 +32,10 @@ import java.util.HashMap;
  */
 public class ModuleFactory extends HashMap<String, String> {
 
-	private static final long serialVersionUID = 1L;
 
-	private static ModuleFactory viewList = null;
+
+    private static final long serialVersionUID = 1L;
+    protected static ModuleFactory viewList = null;
 
 	public static ModuleFactory getInstance() {
 		if (viewList == null) {
@@ -38,13 +44,14 @@ public class ModuleFactory extends HashMap<String, String> {
 		return ModuleFactory.viewList;
 	}
 	
-	private Factory factory = GWT.create(ReflectiveFactory.class);
-	
+	protected Factory factory = GWT.create(ReflectiveFactory.class);
+	protected Map<String, List<PresenterModifier>> modifierMap=new HashMap<String, List<PresenterModifier>>();
 	private ModuleFactory() {
 		//do nothing
 	}
 	
-	public String put(String key, String fullyQualifiedClassName) {
+	@Override
+    public String put(String key, String fullyQualifiedClassName) {
 		return super.put(key, fullyQualifiedClassName);
 	}
 
@@ -69,4 +76,15 @@ public class ModuleFactory extends HashMap<String, String> {
 		}
 		return response;*/
 	}
+
+    public List<PresenterModifier> getModifiers(String name) {
+        return modifierMap.get(name);
+    }
+    public List<PresenterModifier> put(String name,PresenterModifier modifier) {
+        if(getModifiers(name)==null) {
+           modifierMap.put(name, new ArrayList<PresenterModifier>());
+        }
+         modifierMap.get(name).add(modifier);
+         return getModifiers(name);
+    }
 }
