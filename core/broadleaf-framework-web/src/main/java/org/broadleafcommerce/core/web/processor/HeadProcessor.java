@@ -75,28 +75,13 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 		// pageTitle="${'Hello this is a ' + product.name}"
 		
 		String pageTitle = element.getAttributeValue("pageTitle");
-		String metaDescription = element.getAttributeValue("metaDescription");
-		String metaKeywords = element.getAttributeValue("metaKeywords");
-		String metaRobot = element.getAttributeValue("metaRobot");
 		try {
 			pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
-            if(metaDescription != null){
-                metaDescription = (String) StandardExpressionProcessor.processExpression(arguments, metaDescription);
-            }
-            if(metaKeywords != null){
-                metaKeywords = (String) StandardExpressionProcessor.processExpression(arguments, metaKeywords);
-            }
-            if(metaRobot != null){
-                metaRobot = (String) StandardExpressionProcessor.processExpression(arguments, metaRobot);
-            }
 		} catch (TemplateProcessingException e) {
 			// Do nothing.
 		}
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaDescription", metaDescription);
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaKeywords", metaKeywords);
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaRobot", metaRobot);
 		return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
     }
 
