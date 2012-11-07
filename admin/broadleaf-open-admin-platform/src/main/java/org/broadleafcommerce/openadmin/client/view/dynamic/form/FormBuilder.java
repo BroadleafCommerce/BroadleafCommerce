@@ -414,6 +414,8 @@ public class FormBuilder {
         	for (String group : groups) {
                 HeaderItem headerItem = new HeaderItem();
                 headerItem.setDefaultValue(group);
+                headerItem.setShowTitle(false);
+                headerItem.setColSpan(2);
                 List<FormItem> formItems = sections.get(group);
                 String[] ids = new String[formItems.size()];
                 int x=0;
