@@ -152,14 +152,20 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     }
     
     protected boolean isIFrameRequest() {
-        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-    	String iFrameParameter = request.getParameter("blcIFrame");
-    	return  (iFrameParameter != null && "true".equals(iFrameParameter));
+    	if (BroadleafRequestContext.getBroadleafRequestContext() != null && BroadleafRequestContext.getBroadleafRequestContext().getRequest() != null) {
+	        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+	    	String iFrameParameter = request.getParameter("blcIFrame");
+	    	return  (iFrameParameter != null && "true".equals(iFrameParameter));
+    	}
+    	return false;
     }
     
     protected boolean isAjaxRequest() {
-        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-        return BroadleafControllerUtility.isAjaxRequest(request);
+    	if (BroadleafRequestContext.getBroadleafRequestContext() != null && BroadleafRequestContext.getBroadleafRequestContext().getRequest() != null) {
+    		HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+    		return BroadleafControllerUtility.isAjaxRequest(request);
+    	}
+    	return false;
     }
 
     /**
