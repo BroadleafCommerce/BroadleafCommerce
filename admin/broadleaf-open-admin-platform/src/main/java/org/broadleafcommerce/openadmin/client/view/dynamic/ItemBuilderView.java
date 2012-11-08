@@ -130,7 +130,6 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
         itemFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
         itemFilterBuilder.setDataSource(itemDataSource);
 		//itemFilterBuilder.setFieldDataSource(itemDataSource);
-        itemFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
 		//itemFilterBuilder.setLayoutBottomMargin(10);
 		itemFilterBuilder.setAllowEmpty(true);
 		itemFilterBuilder.setValidateOnChange(false);

@@ -16,13 +16,15 @@
 
 package org.broadleafcommerce.openadmin.client.view;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import org.broadleafcommerce.openadmin.client.BLCLaunch;
@@ -39,11 +41,7 @@ import org.broadleafcommerce.openadmin.client.setup.AppController;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 
 /**
@@ -53,7 +51,9 @@ import java.util.Map;
  */
 public class MasterView extends VLayout implements ValueChangeHandler<String> {
 	
-	protected Canvas canvas;
+	protected HLayout canvas;
+    protected static IButton editButton;
+    protected static Record userRecord;
     protected LinkedHashMap<String, Module> modules;
 
     public MasterView(LinkedHashMap<String, Module> modules) {
@@ -65,6 +65,45 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         setZIndex(1);
 
         canvas = new HLayout();
+
+        final DynamicEntityDataSource userDS = new DynamicEntityDataSource(CeilingEntities.ADMIN_USER);
+        userDS.buildFields(null, false, new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource ds) {
+                AdminUser currentUser = SecurityManager.USER;
+                userRecord = new Record();
+                userRecord.setAttribute("id", currentUser.getId());
+                userRecord.setAttribute("name", currentUser.getName());
+                userRecord.setAttribute("email", currentUser.getEmail());
+                userRecord.setAttribute("phoneNumber", currentUser.getPhoneNumber());
+                userRecord.setAttribute("login", currentUser.getUserName());
+                userRecord.setAttribute("_type", new String[]{EntityImplementations.ADMIN_USER});
+
+            }
+        });
+
+        editButton = new IButton("Hidden Edit Button");
+        editButton.setID("hidden_edit_button");
+        editButton.setVisible(false);
+        editButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                EntityEditDialog editDialog = new EntityEditDialog();
+                editDialog.editRecord("Edit User Information", userDS, userRecord, new ItemEditedHandler() {
+                    public void onItemEdited(ItemEdited event) {
+                        SecurityManager.USER.setPhoneNumber(event.getRecord().getAttribute("phoneNumber"));
+                        SecurityManager.USER.setName(event.getRecord().getAttribute("name"));
+                        SecurityManager.USER.setEmail(event.getRecord().getAttribute("email"));
+                        String currentPage = BLCLaunch.getSelectedPage(History.getToken());
+                        // If we are on the user module, reload the page with the specifically edited item.
+                        if ("User Management".equals(currentPage)) {
+                            buildHistoryNewItem(currentPage, BLCLaunch.getSelectedModule(History.getToken()), event.getRecord().getAttribute("id"));
+                        }
+                    }
+                }, null, new String[]{"login", "activeStatusFlag", "password"}, false);
+            }
+        });
+
+        canvas.addMember(editButton);
         addMember(canvas);
 
         bind();
@@ -94,7 +133,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         }
     }
     
-    private void buildHistoryNewItem(String pageKey, String moduleKey, String itemId) {
+    private static void buildHistoryNewItem(String pageKey, String moduleKey, String itemId) {
         String destinationPage = "moduleKey=" + moduleKey +"&pageKey="+pageKey;
 
         if (itemId != null) {
@@ -108,34 +147,13 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 	}
 
     public static void editUserInfoDialog() {
-        final DynamicEntityDataSource userDS = new DynamicEntityDataSource(CeilingEntities.ADMIN_USER);
-        userDS.buildFields(null, false, new AsyncCallbackAdapter() {
-            public void onSetupSuccess(DataSource ds) {
-                AdminUser currentUser = SecurityManager.USER;
-                Record userRecord = new Record();
-                userRecord.setAttribute("id", currentUser.getId());
-                userRecord.setAttribute("name", currentUser.getName());
-                userRecord.setAttribute("email", currentUser.getEmail());
-                userRecord.setAttribute("phoneNumber", currentUser.getPhoneNumber());
-                userRecord.setAttribute("login", currentUser.getUserName());
-                userRecord.setAttribute("_type", new String[]{EntityImplementations.ADMIN_USER});
-
-                EntityEditDialog ed = new EntityEditDialog();
-
-                ed.editRecord("Edit User Information", userDS, userRecord, new ItemEditedHandler() {
-                    public void onItemEdited(ItemEdited event) {
-                        SecurityManager.USER.setPhoneNumber(event.getRecord().getAttribute("phoneNumber"));
-                        SecurityManager.USER.setName(event.getRecord().getAttribute("name"));
-                        SecurityManager.USER.setEmail(event.getRecord().getAttribute("email"));
-
-                    }
-                }, null, new String[]{"login", "activeStatusFlag", "password"}, false);
-            }
-        });
+        editButton.fireEvent(new ClickEvent(editButton.getJsObj()));
     }
 
-    protected static native void exportEditUserInfo()/*-{
-        $wnd.blShowEditUserInfo = $entry(@org.broadleafcommerce.openadmin.client.view.MasterView::editUserInfoDialog());
+    public static native void exportEditUserInfo()/*-{
+        $wnd.blShowEditUserInfo = function() {
+            $entry(@org.broadleafcommerce.openadmin.client.view.MasterView::editUserInfoDialog()());
+        }
     }-*/;
 
     protected static native void redirect(String url)/*-{ 

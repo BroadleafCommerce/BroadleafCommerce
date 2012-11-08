@@ -162,12 +162,12 @@ public class CategoryImpl implements Category, Status {
     protected String name;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=5, group = "CategoryImpl_SEO", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=5, group = "CategoryImpl_SEO", groupOrder = 3)
     protected String url;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, group = "CategoryImpl_SEO", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, group = "CategoryImpl_SEO", groupOrder = 3)
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
@@ -175,43 +175,43 @@ public class CategoryImpl implements Category, Status {
     protected String description;
 
     @Column(name = "META_DESCRIPTION")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Description", order=7, group = "CategoryImpl_SEO", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Description", order=7, group = "CategoryImpl_SEO", groupOrder = 3)
     protected String metaDescription;
 
     @Column(name = "META_KEYWORDS")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Keywords", order=8, group = "CategoryImpl_SEO", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Keywords", order=8, group = "CategoryImpl_SEO", groupOrder = 3)
     protected String metaKeywords;
 
     @Column(name = "META_ROBOT")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Robot", order=9, group = "CategoryImpl_SEO", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Robot", order=9, group = "CategoryImpl_SEO", groupOrder = 3)
     protected String metaRobot;
 
     @Column(name = "TITLE_FRAGMENT")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Title_Fragment", order=10, group = "CategoryImpl_SEO", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Title_Fragment", order=10, group = "CategoryImpl_SEO", groupOrder = 3)
     protected String titleFragment;
 
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range", groupOrder = 3)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range", groupOrder = 4)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order=12, group = "CategoryImpl_Active_Date_Range", groupOrder = 3)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order=12, group = "CategoryImpl_Active_Date_Range", groupOrder = 4)
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order=3, group = "CategoryImpl_Description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order=3, group = "CategoryImpl_Description", groupOrder = 2)
     protected String displayTemplate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=4, group = "CategoryImpl_Description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC, groupOrder = 1)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=4, group = "CategoryImpl_Description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC, groupOrder = 2)
     protected String longDescription;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent", order=13, group = "CategoryImpl_Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL, groupOrder = 1)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent", order=13, group = "CategoryImpl_Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL, groupOrder = 2)
     protected Category defaultParentCategory;
 
     @ManyToMany(targetEntity = CategoryImpl.class)
@@ -287,7 +287,7 @@ public class CategoryImpl implements Category, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS", order = 87)
     protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
 
     @Column(name = "INVENTORY_TYPE")
@@ -313,7 +313,8 @@ public class CategoryImpl implements Category, Status {
             deleteEntityUponRemove = true,
             mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "localeCode"
+            mapKeyOptionEntityValueField = "localeCode",
+            order = 88
     )
     protected Map<String, CategoryTranslation> translations = new HashMap<String,CategoryTranslation>();
     @Embedded

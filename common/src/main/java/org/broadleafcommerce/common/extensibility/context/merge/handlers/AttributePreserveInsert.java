@@ -16,15 +16,15 @@
 
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Merge the attributes of a source and patch node, only adding attributes from

@@ -90,7 +90,6 @@ Button (also used as MenuButton base style)
 .buttonSelectedFocusedOver,
 .buttonSelectedFocusedDown
 {
-  display: inline-block;
   .ie7-inline-block();
   padding: 4px 10px 4px;
   margin-bottom: 0; // For input.btn
@@ -106,7 +105,7 @@ Button (also used as MenuButton base style)
   border: 1px solid @btnBorder;
   *border: 0; // Remove the border to prevent IE7's black border on input:focus
   border-bottom-color: darken(@btnBorder, 10%);
-  .border-radius(4px);
+  .border-radius(0);
   .ie7-restore-left-whitespace(); // Give IE7 some love
   .box-shadow(~"inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05)");
 
@@ -569,6 +568,14 @@ Button (also used as MenuButton base style)
     font-size: @baseFontSize;
     line-height: @baseLineHeight;
 }
+
+.formCell,
+.formCellFocused,
+.formCellDisabled,
+.formCellError {
+    width: 100%;
+}
+
 .formTitle,
 .formTitleFocused,
 .formTitleDisabled,
@@ -623,6 +630,12 @@ Button (also used as MenuButton base style)
     color:@grayDark;
 }
 
+.formTitle,
+.formTitleDisabled,
+.formTitleFocused {
+    padding-left: 25px;
+}
+
 .formCellError,
 .formTitleError {
     font-family: @baseFontFamily;
@@ -646,7 +659,7 @@ Button (also used as MenuButton base style)
     font-weight: 700;
     padding: 4px 8px;
     text-shadow: 1px 1px 1px @black;
-    margin: 10px 0 5px;
+    margin: 6px 0 2px;
 }	
 
 /* text items */
@@ -704,8 +717,15 @@ Button (also used as MenuButton base style)
 .selectItemText,
 .selectItemTextError,
 .selectItemTextFocused,
-.selectItemTextDisabled {
+.selectItemTextDisabled,
+.comboBoxItem,
+.comboBoxItemFocused,
+.comboBoxItemError,
+.comboBoxItemDisabled ,
+.comboBoxItemPendingText,{
     border-right:0px none;
+    padding: 4px 6px;
+    font-size: 11px;
 }
 
 .selectItemPickerIcon,
@@ -713,10 +733,13 @@ Button (also used as MenuButton base style)
 .selectItemPickerIconDisabled,
 .selectItemPickerIconError {
     padding:0px;
+    width: 22px;
+    height: 26px;
 }
 
 .pickListMenuBody {
-    border:1px solid black;
+    border:1px solid #444;
+    -moz-box-sizing: inherit !important;
 }
 
 .pickListCell,
@@ -728,8 +751,13 @@ Button (also used as MenuButton base style)
 .pickListCellSelected,
 .pickListCellSelectedDark {
     color:black;
-    background-color:#316AC5;
+    background-color:#FFEB90;
 }
+
+.pickListCellSelected > div, .pickListCell > div {
+    padding: 2px 4px;
+}
+
 .tallPickListCellSelected,
 .tallPickListCellSelectedDark {
     color:black;
@@ -1364,7 +1392,7 @@ Button (also used as MenuButton base style)
 .toolStrip {
     color: @navbarText;
     #gradient > .vertical(@white, #f2f2f2);
-    box-shadow: 0 1px 3px #444;
+    border: 1px solid #ccc;
 }
 
 .toolStripLayoutDropLine {
@@ -1635,15 +1663,11 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 .tabButtonTopDisabled {
     font-family: @baseFontFamily;
     font-size: @baseFontSize;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding: 6px;
     line-height: 20px;
     border: 1px solid #C0C3C7;
     border-bottom:none;
     background: #e7e7e7;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;

@@ -19,6 +19,8 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.LayoutPolicy;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.widgets.events.VisibilityChangedEvent;
@@ -47,8 +49,11 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
 
         super();
 		
+        setStyleName("bl-dynamic-form");
+        setLayoutMargin(0);
+        setMembersMargin(0);
         setWidth100();
-        setStyleName("bl-form");
+        setOverflow(Overflow.AUTO);
 
         form = new DynamicForm();
         form.setHeight(175);
@@ -57,16 +62,15 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form.setWrapItemTitles(false);
         form.setTitleSuffix("");
         form.setRequiredTitleSuffix("");
-        form.setCellPadding(8);
+        form.setCellPadding(6);
+        form.setNumCols(1);
         form.disable();
 
         if (dataSource != null) {
-        	buildFields(dataSource, showDisabedState==null?true:showDisabedState, canEdit==null?false:canEdit, showId==null?false:showId, null);
+        	buildFields(dataSource, showDisabedState == null ? true : showDisabedState, canEdit == null ? false : canEdit, showId == null ? false : showId, null);
         }
 
         addMember(form);
-
-        setOverflow(Overflow.AUTO);
 
         addVisibilityChangedHandler(new VisibilityChangedHandler() {
             @Override

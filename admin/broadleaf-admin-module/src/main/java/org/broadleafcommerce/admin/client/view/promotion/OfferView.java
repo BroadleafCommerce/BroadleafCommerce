@@ -208,11 +208,12 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         restrictLayout.addMember(new PromotionQuestion("restrictOnlyPromotionLabel"));
 
         restrictForm = new DynamicForm();
+        restrictForm.setStyleName(BL_PROMO_QUESTION_ANSWERS);
 
         LinkedHashMap<String, String> restrictMap = new LinkedHashMap<String, String>();
         restrictMap.put("YES", BLCMain.getMessageManager().getString("yesRadioChoice"));
         restrictMap.put("NO", BLCMain.getMessageManager().getString("noRadioChoice"));
-        restrictRuleRadio = new PromotionAnswerGroup(restrictMap, "NO", true);
+        restrictRuleRadio = new PromotionAnswerGroup(restrictMap, "NO", false);
 
         restrictForm.setFields(restrictRuleRadio);
         restrictLayout.addMember(restrictForm);
@@ -255,7 +256,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         codeField.setWrapTitle(false);
         codeField.setVisible(false);
         codeField.setWidth(240);
-        codeField.setTitleOrientation(TitleOrientation.TOP);
+        codeField.setTitleOrientation(TitleOrientation.LEFT);
 
         customerObtainForm = new DynamicForm();
         customerObtainForm.setNumCols(1);
@@ -292,7 +293,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerFilterBuilder.setDataSource(customerDataSource);
         customerFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
         //customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
-        customerFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         customerFilterBuilder.setVisible(false);
         customerFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);
         customerFilterBuilder.setAllowEmpty(true);
@@ -341,7 +341,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderFilterBuilder = new BLCFilterBuilder();
         orderFilterBuilder.setDataSource(orderDataSource);
         orderFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
-        orderFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         orderFilterBuilder.setVisible(false);
         orderFilterBuilder.setLayoutBottomMargin(LAYOUT_MARGIN);
         orderFilterBuilder.setAllowEmpty(true);
@@ -645,7 +644,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fulfillmentGroupFilterBuilder.setDataSource(fulfillmentGroupDataSource);
         fulfillmentGroupFilterBuilder.setStyleName("blcPromoItemFilterBuilder");
         //fulfillmentGroupFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(fulfillmentGroupDataSource));
-        fulfillmentGroupFilterBuilder.setFieldPickerProperties(new ComboBoxItem());
         fulfillmentGroupFilterBuilder.setVisible(false);
         fulfillmentGroupFilterBuilder.setAllowEmpty(true);
         fulfillmentGroupFilterBuilder.setValidateOnChange(false);
