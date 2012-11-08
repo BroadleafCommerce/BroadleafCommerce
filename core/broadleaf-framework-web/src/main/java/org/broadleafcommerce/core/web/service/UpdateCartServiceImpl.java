@@ -153,7 +153,9 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             }
         }
         
-        extensionManager.validateCart(cart);
+        if (extensionManager != null) {
+            extensionManager.validateCart(cart);
+        }
     }
 
     protected BroadleafCurrency findActiveCurrency(){
@@ -164,10 +166,10 @@ public class UpdateCartServiceImpl implements UpdateCartService {
     }
 
     protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency) {
-        
-        if (doi.getSku() != null) {
+        if (doi.getSku() != null && extensionManager != null) {
             return extensionManager.isAvailable(doi, currency);
         }
+        
         return false;
     }
 

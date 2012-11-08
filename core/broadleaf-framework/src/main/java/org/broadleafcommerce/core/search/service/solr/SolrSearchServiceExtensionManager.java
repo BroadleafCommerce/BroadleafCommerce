@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 public class SolrSearchServiceExtensionManager implements SolrSearchServiceExtensionListener {
     
-    protected List<SolrSearchServiceExtensionListener> listeners;
+    protected List<SolrSearchServiceExtensionListener> listeners = new ArrayList<SolrSearchServiceExtensionListener>();
 
     @Override
     public String getPrefix() {

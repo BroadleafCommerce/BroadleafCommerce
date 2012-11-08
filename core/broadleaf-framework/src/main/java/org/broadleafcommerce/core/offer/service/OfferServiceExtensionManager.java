@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,7 +27,7 @@ import java.util.List;
  */
 public class OfferServiceExtensionManager implements OfferServiceExtensionListener {
     
-    protected List<OfferServiceExtensionListener> listeners;
+    protected List<OfferServiceExtensionListener> listeners = new ArrayList<OfferServiceExtensionListener>();
 
     @Override
     public void applyAdditionalFilters(List<Offer> offers) {

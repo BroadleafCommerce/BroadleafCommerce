@@ -130,7 +130,9 @@ public class OrderServiceImpl implements OrderService {
         namedOrder.setName(name);
         namedOrder.setStatus(OrderStatus.NAMED);
         
-        extensionManager.attachAdditionalDataToNewNamedCart(customer, namedOrder);
+        if (extensionManager != null) {
+            extensionManager.attachAdditionalDataToNewNamedCart(customer, namedOrder);
+        }
         
                         //FIXME: apa fix this
                         //namedOrder.setLocale(locale);

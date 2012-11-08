@@ -118,7 +118,9 @@ public class OrderDaoImpl implements OrderDao {
         //order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
         //order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         
-        extensionManager.attachAdditionalDataToNewCart(customer, order);
+        if (extensionManager != null) {
+            extensionManager.attachAdditionalDataToNewCart(customer, order);
+        }
         
         order = save(order);
         return order;
@@ -146,7 +148,7 @@ public class OrderDaoImpl implements OrderDao {
         List<Order> orders = query.getResultList();
         
         //FIXME:apa if((order.getPriceList() == priceList) && (order.getLocale().getLocaleCode().equalsIgnoreCase(locale.getLocaleCode()))){
-        if (orders != null && !orders.isEmpty()) {
+        if (orders != null && !orders.isEmpty() && extensionManager != null) {
             extensionManager.applyAdditionalOrderLookupFilter(customer, name, orders);
         }
         

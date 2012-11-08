@@ -343,7 +343,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             Object propertyValue = PropertyUtils.getProperty(product, propertyName);
             values.put("", propertyValue);
             
-            extensionManager.addPriceFieldPropertyValues(product, field, values, propertyName);
+            if (extensionManager != null) {
+                extensionManager.addPriceFieldPropertyValues(product, field, values, propertyName);
+            }   
         } else {
             for (Locale locale : locales) {
                 String localeCode = locale.getLocaleCode();
@@ -579,7 +581,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 			
 			List<SearchFacetRange> searchFacetRanges = dto.getFacet().getSearchFacetRanges();
 			
-			extensionManager.filterSearchFacetRanges(dto, searchFacetRanges);
+            if (extensionManager != null) {
+    			extensionManager.filterSearchFacetRanges(dto, searchFacetRanges);
+            }
 			
 			if (searchFacetRanges != null && searchFacetRanges.size() > 0) {
 				for (SearchFacetRange range : searchFacetRanges) {
@@ -1001,9 +1005,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	 * @return the property name for the field and fieldtype
 	 */
 	protected String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType) {
-	    String prefix;
+	    String prefix = "";
 	    if (searchableFieldType.equals(FieldType.PRICE)) {
-	        prefix = extensionManager.getPrefixForPriceField();
+	        if (extensionManager != null) {
+	            prefix = extensionManager.getPrefixForPriceField();
+	        }
 	    } else {
 	        if (field.getTranslatable()) {
 	            prefix = getLocalePrefix();
@@ -1029,9 +1035,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	        return null;
 	    }
 	    
-	    String prefix;
+	    String prefix = "";
 	    if (fieldType.equals(FieldType.PRICE)) {
-	        prefix = extensionManager.getPrefixForPriceField();
+            if (extensionManager != null) {
+    	        prefix = extensionManager.getPrefixForPriceField();
+            }
 	    } else {
 	        if (field.getTranslatable()) {
 	            prefix = getLocalePrefix();

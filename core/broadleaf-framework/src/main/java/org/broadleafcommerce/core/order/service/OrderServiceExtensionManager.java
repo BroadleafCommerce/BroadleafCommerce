@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class OrderServiceExtensionManager implements OrderServiceExtensionListener {
     
-    protected List<OrderServiceExtensionListener> listeners;
+    protected List<OrderServiceExtensionListener> listeners = new ArrayList<OrderServiceExtensionListener>();
 
     @Override
     public void attachAdditionalDataToNewNamedCart(Customer customer, Order cart) {

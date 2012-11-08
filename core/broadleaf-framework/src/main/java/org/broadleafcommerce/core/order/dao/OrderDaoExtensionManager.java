@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.dao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class OrderDaoExtensionManager implements OrderDaoExtensionListener {
     
-    protected List<OrderDaoExtensionListener> listeners;
+    protected List<OrderDaoExtensionListener> listeners = new ArrayList<OrderDaoExtensionListener>();
 
     @Override
     public void attachAdditionalDataToNewCart(Customer customer, Order cart) {

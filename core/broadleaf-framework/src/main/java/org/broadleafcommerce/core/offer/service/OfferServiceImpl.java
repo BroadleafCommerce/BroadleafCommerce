@@ -151,7 +151,9 @@ public class OfferServiceImpl implements OfferService {
             }
         }
         
-        extensionManager.applyAdditionalFilters(offers);
+        if (extensionManager != null) {
+            extensionManager.applyAdditionalFilters(offers);
+        }
         
         return offers;
     }

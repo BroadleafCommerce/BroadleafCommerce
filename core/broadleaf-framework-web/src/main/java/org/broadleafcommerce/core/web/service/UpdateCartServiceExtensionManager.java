@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,7 +29,7 @@ import java.util.List;
  */
 public class UpdateCartServiceExtensionManager implements UpdateCartServiceExtensionListener {
     
-    protected List<UpdateCartServiceExtensionListener> listeners;
+    protected List<UpdateCartServiceExtensionListener> listeners = new ArrayList<UpdateCartServiceExtensionListener>();
 
     @Override
     public void validateCart(Order cart) {
