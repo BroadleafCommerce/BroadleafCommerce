@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -114,9 +115,9 @@ public class OrderDaoImpl implements OrderDao {
         order.setEmailAddress(customer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS);
 
-        // extract these to i18n module
-        //order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
-        //order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+        //FIXME: apa extract these to i18n module
+        order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
+        order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         
         if (extensionManager != null) {
             extensionManager.attachAdditionalDataToNewCart(customer, order);

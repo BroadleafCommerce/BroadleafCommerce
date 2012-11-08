@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -134,9 +135,8 @@ public class OrderServiceImpl implements OrderService {
             extensionManager.attachAdditionalDataToNewNamedCart(customer, namedOrder);
         }
         
-                        //FIXME: apa fix this
-                        //namedOrder.setLocale(locale);
-                        //namedOrder.setCurrency(priceList.getCurrencyCode());
+        //FIXME: apa fix this
+        namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         
         
         return orderDao.save(namedOrder); // No need to price here
