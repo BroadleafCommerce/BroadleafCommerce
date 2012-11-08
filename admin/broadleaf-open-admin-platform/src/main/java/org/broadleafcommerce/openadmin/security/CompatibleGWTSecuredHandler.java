@@ -47,7 +47,7 @@ public class CompatibleGWTSecuredHandler extends GWTHandler {
     @Override
 	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         Object handlerWrapper;
-        if (useJRebelCompatibilityMode.equalsIgnoreCase("true")) {
+        if ("true".equalsIgnoreCase(useJRebelCompatibilityMode)) {
 		    handlerWrapper = getMyHandlerInternal(request);
         } else {
             handlerWrapper = super.getHandlerInternal(request);
