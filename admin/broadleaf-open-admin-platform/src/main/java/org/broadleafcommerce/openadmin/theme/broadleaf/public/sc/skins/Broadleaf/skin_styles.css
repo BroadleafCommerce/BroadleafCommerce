@@ -861,10 +861,6 @@ Button (also used as MenuButton base style)
   color: black;
   background-color: #FFEB90;
 }
-.pickListCellSelected > div,
-.pickListCell > div {
-  padding: 2px 4px;
-}
 .tallPickListCellSelected,
 .tallPickListCellSelectedDark {
   color: black;
