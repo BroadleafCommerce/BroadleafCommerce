@@ -11,6 +11,8 @@
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
+    <bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>
+
     <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
         <constructor-arg ref="blMailSender"/>
     </bean>

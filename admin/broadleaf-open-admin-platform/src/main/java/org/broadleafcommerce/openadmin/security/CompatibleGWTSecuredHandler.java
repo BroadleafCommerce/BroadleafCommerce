@@ -25,9 +25,9 @@ import org.gwtwidgets.server.spring.GWTHandler;
 import org.gwtwidgets.server.spring.GWTRPCServiceExporter;
 import org.gwtwidgets.server.spring.RPCServiceExporter;
 import org.gwtwidgets.server.spring.ReflectionUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.HandlerExecutionChain;
-import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -41,9 +41,17 @@ import java.util.Map;
  */
 public class CompatibleGWTSecuredHandler extends GWTHandler {
 
+    @Value("${use.jrebel.compatibility.mode}")
+    protected String useJRebelCompatibilityMode;
+
     @Override
 	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-		Object handlerWrapper = getMyHandlerInternal(request);
+        Object handlerWrapper;
+        if (useJRebelCompatibilityMode.equalsIgnoreCase("true")) {
+		    handlerWrapper = getMyHandlerInternal(request);
+        } else {
+            handlerWrapper = super.getHandlerInternal(request);
+        }
 		if (handlerWrapper instanceof HandlerExecutionChain) {
 			final Object handler = ((HandlerExecutionChain) handlerWrapper).getHandler();
 			if (handler instanceof GWTRPCServiceExporter) {
@@ -76,13 +84,13 @@ public class CompatibleGWTSecuredHandler extends GWTHandler {
      */
     protected Object getMyHandlerInternal(HttpServletRequest request) throws Exception {
         String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
-        Field mapField = AbstractUrlHandlerMapping.class.getDeclaredField("handlerMap");
-        mapField.setAccessible(true);
-        Map<String, Object> handlerMap = (Map<String, Object>) mapField.get(this);
-        if (MapUtils.isEmpty(handlerMap)) {
-            afterPropertiesSet();
+        Object handler;
+        synchronized (this) {
+            if (MapUtils.isEmpty(getHandlerMap())) {
+                afterPropertiesSet();
+            }
+            handler = lookupHandler(lookupPath, request);
         }
-        Object handler = lookupHandler(lookupPath, request);
         if (handler == null) {
             // We need to care for the default handler directly, since we need to
             // expose the PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE for it as well.
@@ -141,4 +149,11 @@ public class CompatibleGWTSecuredHandler extends GWTHandler {
         }
     }
 
+    public String getUseJRebelCompatibilityMode() {
+        return useJRebelCompatibilityMode;
+    }
+
+    public void setUseJRebelCompatibilityMode(String useJRebelCompatibilityMode) {
+        this.useJRebelCompatibilityMode = useJRebelCompatibilityMode;
+    }
 }
