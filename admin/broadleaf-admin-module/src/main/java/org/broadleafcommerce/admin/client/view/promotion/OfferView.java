@@ -25,7 +25,6 @@ import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.FloatItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
@@ -37,7 +36,6 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.*;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
@@ -200,49 +198,35 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).setLayoutLeftMargin(10);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).setLayoutTopMargin(10);
 
+        //=====================================Advanced Restrictions=====================================//
 
-        //====================Advanced Restrictions====================//
-        VLayout restrictLayout = new VLayout();
-        restrictLayout.setID("offerRestrictLayout");
-        restrictLayout.setLayoutLeftMargin(LAYOUT_MARGIN);
+        VLayout restrictLayout = new PromotionQuestionVLayout("offerRestrictLayout");
         restrictLayout.addMember(new PromotionQuestion("restrictOnlyPromotionLabel"));
 
         restrictForm = new DynamicForm();
         restrictForm.setStyleName(BL_PROMO_QUESTION_ANSWERS);
 
-        LinkedHashMap<String, String> restrictMap = new LinkedHashMap<String, String>();
-        restrictMap.put("YES", BLCMain.getMessageManager().getString("yesRadioChoice"));
-        restrictMap.put("NO", BLCMain.getMessageManager().getString("noRadioChoice"));
-        restrictRuleRadio = new PromotionAnswerGroup(restrictMap, "NO", false);
+        LinkedHashMap<String, String> advancedRestrictionsOptions = new LinkedHashMap<String, String>();
+        advancedRestrictionsOptions.put("YES", BLCMain.getMessageManager().getString("yesRadioChoice"));
+        advancedRestrictionsOptions.put("NO", BLCMain.getMessageManager().getString("noRadioChoice"));
+        restrictRuleRadio = new PromotionAnswerGroup(advancedRestrictionsOptions, "NO", false);
 
         restrictForm.setFields(restrictRuleRadio);
+
         restrictLayout.addMember(restrictForm);
 
-        restrictionSectionView = new SectionView(BLCMain.getMessageManager().getString("advancedRestrictionsViewTitle"));
-        restrictionSectionView.setVisible(false);
-        restrictionSectionView.setWidth("98%");
+        restrictionSectionView = new SectionView(null, "advancedRestrictionsViewTitle");
         restrictionSectionView.getContentLayout().addMember(restrictLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(restrictionSectionView);
 
-        //====================Customer Qualification====================//
-        customerLayout = new VLayout();
-        customerLayout.setID("offerCustomerLayout");
-        customerLayout.setVisible(false);
-        customerLayout.setLayoutMargin(10);
-        customerLayout.setLayoutLeftMargin(20);
+        //=====================================Customer Qualification=====================================//
 
-        HStack customerObtainHStack = new HStack();
-        customerObtainHStack.setID("offerCustomerObtainHStack");
-        customerObtainHStack.setMembersMargin(10);
-        customerObtainHStack.setWidth100();
-        customerObtainHStack.addMember(new PromotionQuestion("customerObtainLabel"));
+        customerLayout = new PromotionQuestionVLayout("offerCustomerLayout");
 
         helpButtonType = new ImgButton();
-        helpButtonType.setSrc(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/headerIcons/help.png");
-        helpButtonType.setWidth(HELP_BUTTON_WIDTH);
-        helpButtonType.setHeight(HELP_BUTTON_HEIGHT);
-        customerObtainHStack.addMember(helpButtonType);
-        customerLayout.addMember(customerObtainHStack);
+        PromotionQuestionWithHelp questionWithHelp = new PromotionQuestionWithHelp("offerCustomerObtainHStack", new PromotionQuestion("customerObtainLabel"), helpButtonType);
+
+        customerLayout.addMember(questionWithHelp);
 
         LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
         valueMap.put("AUTOMATIC", BLCMain.getMessageManager().getString("deliveryTypeEnumAutomatic"));
@@ -256,12 +240,16 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         codeField.setWrapTitle(false);
         codeField.setVisible(false);
         codeField.setWidth(240);
+        codeField.setShowTitle(false);
+        codeField.setHint(BLCMain.getMessageManager().getString("offerCodeFieldTitle"));
+        codeField.setShowHintInField(true);
         codeField.setTitleOrientation(TitleOrientation.LEFT);
 
         customerObtainForm = new DynamicForm();
         customerObtainForm.setNumCols(1);
         customerObtainForm.setStyleName(BL_PROMO_QUESTION_ANSWERS);
         customerObtainForm.setFields(deliveryTypeRadio, codeField);
+        customerObtainForm.setTitleSuffix("");
         customerLayout.addMember(customerObtainForm);
 
         whichCustomerForm = new DynamicForm();
@@ -300,19 +288,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerLayout.addMember(customerFilterBuilder);
         customerLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
 
-        customerSection = new SectionView(BLCMain.getMessageManager().getString("customerSectionViewTitle"));
-        customerSection.setVisible(false);
-        customerSection.setID("offerSectionStack");
-        customerSection.setWidth("98%");
+        customerSection = new SectionView("offerSectionStack", "customerSectionViewTitle");
         customerSection.getContentLayout().addMember(customerLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(customerSection);
 
-        //===============Order Qualification===============//
-        orderSectionLayout = new VLayout();
-        orderSectionLayout.setID("offerOrderSectionLayout");
-        orderSectionLayout.setLayoutMargin(10);
-        orderSectionLayout.setLayoutLeftMargin(20);
-        orderSectionLayout.setVisible(false);
+        //=====================================Order Qualification=====================================//
+
+        orderSectionLayout = new PromotionQuestionVLayout("offerOrderSectionLayout");
         orderSectionLayout.addMember(new PromotionQuestion("orderSectionLabel"));
 
         orderForm = new DynamicForm();
@@ -363,18 +345,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderCombineForm.setFields(orderCombineRuleRadio);
         orderSectionLayout.addMember(orderCombineForm);
 
-        orderSection = new SectionView(BLCMain.getMessageManager().getString("orderQualificationSectionViewTitle"));
-        orderSection.setVisible(false);
-        orderSection.setID("offerSectionStack2");
-        orderSection.setWidth("98%");
+        orderSection = new SectionView("offerSectionStack2", "orderQualificationSectionViewTitle");
         orderSection.getContentLayout().addMember(orderSectionLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(orderSection);
 
-        //===============Item Qualification===============//
-        VStack itemSectionLayout = new VStack();
-        itemSectionLayout.setLayoutMargin(10);
-        itemSectionLayout.setLayoutLeftMargin(20);
-        itemSectionLayout.setID("offerItemSectionLayout");
+        //=====================================Item Qualification=====================================//
+
+        VLayout itemSectionLayout = new PromotionQuestionVLayout("offerItemSectionLayout");
 
         orderItemCombineLabel = new PromotionQuestion("orderItemCombineLabel");
         orderItemCombineLabel.setVisible(false);
@@ -525,17 +502,15 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         itemSectionLayout.addMember(requiredItemsLayout);
         itemSectionLayout.setLayoutBottomMargin(LAYOUT_MARGIN);
 
-        itemQualificationSectionView = new SectionView(BLCMain.getMessageManager().getString("itemQualificationSectionTitle"));
-        itemQualificationSectionView.setWidth("98%");
+        itemQualificationSectionView = new SectionView(null, "itemQualificationSectionTitle");
         itemQualificationSectionView.getContentLayout().addMember(itemSectionLayout);
-        itemQualificationSectionView.setVisible(false);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(itemQualificationSectionView);
 
 
-        //---- Item Discount Target ---
-        targetItemsLayout = new VLayout();
-        targetItemsLayout.setLayoutMargin(10);
-        targetItemsLayout.setLayoutLeftMargin(20);
+        //=====================================Item Discount Target=====================================//
+
+        targetItemsLayout = new PromotionQuestionVLayout(null);
+
         targetItemsLabel = new PromotionQuestion("targetItemsLabel");
         targetItemsLayout.addMember(targetItemsLabel);
 
@@ -599,9 +574,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         qualifyForAnotherPromoTargetForm.setFields(qualifyForAnotherPromoTargetRadio);
         advancedItemCriteriaTarget.addMember(qualifyForAnotherPromoTargetForm);
 
-        itemTargetSectionView = new SectionView(BLCMain.getMessageManager().getString("itemTargetSectionTitle"));
-        itemTargetSectionView.setVisible(false);
-        itemTargetSectionView.setWidth("98%");
+        itemTargetSectionView = new SectionView(null, "itemTargetSectionTitle");
         itemTargetSectionView.getContentLayout().addMember(targetItemsLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(itemTargetSectionView);
 
@@ -662,9 +635,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         fgQuestionLayout.addMember(rawFGForm);
 
-        fgSectionView = new SectionView(BLCMain.getMessageManager().getString("fgSectionViewTitle"));
-        fgSectionView.setVisible(false);
-        fgSectionView.setWidth("98%");
+        fgSectionView = new SectionView(null, "fgSectionViewTitle");
         fgSectionView.getContentLayout().addMember(fgQuestionLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(fgSectionView);
 
@@ -1109,6 +1080,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
     class PromotionQuestion extends Label {
 
         public PromotionQuestion(String questionTextKey) {
+            super();
             setContents(BLCMain.getMessageManager().getString(questionTextKey));
             setStyleName(BL_PROMO_QUESTION);
             setHeight(BL_PROMO_QUESTION_HEIGHT);
@@ -1121,6 +1093,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         public PromotionAnswerGroup(LinkedHashMap<String, String> options, String defaultValue, boolean disabled) {
 
+            super();
             setTextBoxStyle(BL_PROMO_QUESTION_RADIO_LABELS);
             setDefaultValue(defaultValue);
             setDisabled(disabled);
@@ -1128,6 +1101,48 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
             setWidth(RADIO_GROUP_WIDTH);
             setShowTitle(false);
             setWrap(false);
+
+        }
+
+    }
+
+    class PromotionQuestionVLayout extends VLayout {
+
+        public PromotionQuestionVLayout(String id) {
+            super();
+            if (id != null) {
+                setID(id);
+            }
+            setLayoutLeftMargin(8);
+            setLayoutMargin(10);
+        }
+
+    }
+
+    class PromotionQuestionWithHelp extends HStack {
+
+        public PromotionQuestionWithHelp(String id, PromotionQuestion question, ImgButton helpImg) {
+
+            super();
+            if (id != null) {
+                setID(id);
+            }
+            setMembersMargin(10);
+            setWidth100();
+            setHeight(BL_PROMO_QUESTION_HEIGHT);
+
+            addMember(question);
+
+            VStack vStack = new VStack();
+            vStack.setAlign(VerticalAlignment.CENTER);
+
+            helpImg.setSrc(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/headerIcons/help.png");
+            helpImg.setWidth(16);
+            helpImg.setHeight(16);
+
+            vStack.addMember(helpImg);
+
+            addMember(vStack);
 
         }
 
