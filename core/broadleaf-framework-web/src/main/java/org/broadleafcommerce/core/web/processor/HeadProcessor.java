@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -26,6 +27,7 @@ import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -44,6 +46,9 @@ import java.util.Map;
  */
 @Component("blHeadProcessor")
 public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
+
+    @Resource(name = "blHeadProcessorExtensionManager")
+    protected HeadProcessorExtensionListener extensionManager;
 
     public static final String FRAGMENT_ATTR_NAME = StandardFragmentAttrProcessor.ATTR_NAME;
     protected String HEAD_PARTIAL_PATH = "layout/partials/head";
@@ -82,6 +87,9 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 		}
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
+
+        extensionManager.processAttributeValues(arguments, element);
+
 		return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
     }
 
