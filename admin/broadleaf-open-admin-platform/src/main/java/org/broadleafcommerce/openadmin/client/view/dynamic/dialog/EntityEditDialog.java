@@ -83,6 +83,9 @@ public class EntityEditDialog extends Window {
         dynamicForm.setTitleOrientation(TitleOrientation.TOP);
         dynamicForm.setNumCols(1);
         dynamicForm.setWrapItemTitles(false);
+        dynamicForm.setTitleSuffix("");
+        dynamicForm.setRequiredTitleSuffix("");
+
         //dynamicForm.setPadding(10);
         stack.addMember(dynamicForm);
 
