@@ -687,7 +687,7 @@ public class FormBuilder {
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
             formItem.setWidth(235);
-			formItem.setValueFormatter(new FormItemValueFormatter() {
+			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				@Override
                 public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
@@ -703,7 +703,7 @@ public class FormBuilder {
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
             formItem.setWidth(235);
-			formItem.setValueFormatter(new FormItemValueFormatter() {
+			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				@Override
                 public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;

@@ -35,6 +35,7 @@ public class BatchPackage {
     protected PersistencePackage persistencePackage;
     protected AsyncCallback<DynamicResultSet> asyncCallback;
     protected BatchOperationType batchOperationType;
+    protected String dataSourceUrl;
 
     public AsyncCallback<DynamicResultSet> getAsyncCallback() {
         return asyncCallback;
@@ -62,6 +63,14 @@ public class BatchPackage {
 
     public Integer getBatchPackageId() {
         return batchPackageId;
+    }
+
+    public String getDataSourceUrl() {
+        return dataSourceUrl;
+    }
+
+    public void setDataSourceUrl(String dataSourceUrl) {
+        this.dataSourceUrl = dataSourceUrl;
     }
 
     @Override

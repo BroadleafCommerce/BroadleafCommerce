@@ -403,7 +403,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     }
 
     public void initializeLookup(final String propertyName, final LookupMetadata metadata) {
-        final String dataSourceName = propertyName + "Lookup";
+        final String dataSourceName = metadata.getDefaultDataSource().getDataURL() + "_" + propertyName + "Lookup";
         if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
             java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
             return;
