@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client;
 
+import org.broadleafcommerce.openadmin.client.dto.Section;
 import org.broadleafcommerce.openadmin.client.reflection.ModuleFactory;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,7 +37,8 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	protected String moduleTitle;
 	protected String moduleKey;
     protected Integer order = Integer.MAX_VALUE;
-	protected List<ModuleSectionPojo> sections=new ArrayList<ModuleSectionPojo>();
+	protected List<Section> sections = new ArrayList<Section>();
+	
 	public void registerModule() {
 		BLCMain.addModule(this);
 	}
@@ -59,6 +60,13 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		return moduleKey;
 	}
 
+	/**
+	 * If 2 modules have the same key, the sections in that module are merged together. For instance, if you wanted to add
+	 * a new section to the merchandising module, you would create a new AbstractModule subclass and call this method
+	 * with the same key as the Merchandising module
+	 * 
+	 * @param moduleKey
+	 */
 	public void setModuleKey(String moduleKey) {
 		this.moduleKey = moduleKey;
 	}
@@ -75,7 +83,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		String sectionPresenterClass,
 		List<String> sectionPermissions
 	) {
-	    sections.add(new ModuleSectionPojo(sectionTitle,sectionViewKey,sectionViewClass,sectionPresenterKey,sectionPresenterClass,sectionPermissions));
+	    sections.add(new Section(sectionTitle,sectionViewKey,sectionViewClass,sectionPresenterKey,sectionPresenterClass,sectionPermissions));
 		pages.put(sectionTitle, new String[]{sectionViewKey, sectionPresenterKey});
 		ModuleFactory moduleFactory = ModuleFactory.getInstance();
 		moduleFactory.put(sectionViewKey, sectionViewClass);
@@ -125,12 +133,12 @@ public abstract class AbstractModule implements EntryPoint, Module {
     }
 
     
-    protected List<ModuleSectionPojo> getSections() {
+    protected List<Section> getSections() {
         return sections;
     }
 
     
-    protected void setSections(List<ModuleSectionPojo> sections) {
+    protected void setSections(List<Section> sections) {
         this.sections = sections;
     }
 

@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.callback.PostLaunch;
+import org.broadleafcommerce.openadmin.client.dto.Section;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.setup.AppController;
 import org.broadleafcommerce.openadmin.client.setup.EJB3ConfigurationPreProcessor;
@@ -87,21 +88,25 @@ public class BLCMain implements EntryPoint {
 	public static final boolean DEBUG = true;
 	
 	public static void addModule(Module module) {
-	   Module existing=modules.get(module.getModuleKey());
-	    if(existing ==null || existing==module) {
-	        modules.put(module.getModuleKey(), module);
-	        return;
-	    } 
-	    //Merge the two modules named same.
-	   for(ModuleSectionPojo section : new ArrayList<ModuleSectionPojo>(((AbstractModule)module).getSections())) {
-	       //remove section from the new module that is already in our list
-	       ((AbstractModule)module).removeSection(section.getSectionTitle());
-	       //add the removed section back into the existing module that is already in the map.
-	       ((AbstractModule)existing).setSection(section.getSectionTitle(),section.sectionViewKey,section.sectionViewClass,section.sectionPresenterKey,section.sectionPresenterClass,
-	               section.sectionPermissions);
-	      
-	   }
-	  
+	    Module existingModule = modules.get(module.getModuleKey());
+        if (existingModule == null) {
+            modules.put(module.getModuleKey(), module);
+            return;
+        }
+        
+        //Merge the two modules with the same key
+        for (Section section : new ArrayList<Section>(((AbstractModule)module).getSections())) {
+            //remove section from the new module
+            ((AbstractModule)module).removeSection(section.getSectionTitle());
+            
+            //add the removed section back into the existing module that is already in the map
+            ((AbstractModule)existingModule).setSection(section.getSectionTitle(),
+                                                        section.getSectionViewKey(),
+                                                        section.getSectionViewClass(),
+                                                        section.getSectionPresenterKey(),
+                                                        section.getSectionPresenterClass(),
+                                                        section.getSectionPermissions());
+        }
 	}
 
     public static void removeModule(String moduleKey) {
