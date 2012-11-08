@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
@@ -51,6 +52,7 @@ import java.util.Map;
  * @author jfridye
  *
  */
+@Component("blProductOptionsProcessor")
 public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
 
 	private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
