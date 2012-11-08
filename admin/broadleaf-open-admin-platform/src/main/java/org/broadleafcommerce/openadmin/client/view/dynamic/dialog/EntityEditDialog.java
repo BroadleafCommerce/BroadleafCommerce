@@ -73,7 +73,7 @@ public class EntityEditDialog extends Window {
         hStack = new HStack();
         
 		VStack stack = new VStack();
-        //stack.setWidth("80%");
+        stack.setWidth100();
 		stack.setLayoutRightMargin(20);
 		dynamicForm = new DynamicForm();
         dynamicForm.setHeight(175);
