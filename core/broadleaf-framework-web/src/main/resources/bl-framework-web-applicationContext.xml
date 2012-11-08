@@ -33,6 +33,7 @@
 			<ref bean="blCategoriesProcessor" />
 			<ref bean="blFormProcessor" />
 			<ref bean="blHeadProcessor" />
+			<ref bean="blImageProcessor" />
 		    <ref bean="blNamedOrderProcessor" />
 		    <ref bean="blPaginationPageLinkProcessor" />
 			<ref bean="blPriceTextDisplayProcessor" />
