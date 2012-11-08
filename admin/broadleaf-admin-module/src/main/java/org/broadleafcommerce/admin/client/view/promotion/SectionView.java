@@ -31,6 +31,7 @@ public class SectionView extends VLayout {
 	protected VStack contentLayout;
 
 	public SectionView(String title) {
+        setWidth("98%");
 
         Label label = new Label();
         label.setContents(title);
