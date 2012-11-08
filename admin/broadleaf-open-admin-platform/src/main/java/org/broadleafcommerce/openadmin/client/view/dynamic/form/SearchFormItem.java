@@ -38,7 +38,7 @@ public class SearchFormItem extends TextItem {
         setAttribute("readOnly", true);
 
         FormItemIcon formItemIcon = new FormItemIcon();
-        formItemIcon.setSrc(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/glyphicons/edit.png");
+        formItemIcon.setSrc(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/glyphicons/binoculars.png");
         formItemIcon.setWidth(16);
         formItemIcon.setHeight(16);
         formItemIcon.setNeverDisable(true);
