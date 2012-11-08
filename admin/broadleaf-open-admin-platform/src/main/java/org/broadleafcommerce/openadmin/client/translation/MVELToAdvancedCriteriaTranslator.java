@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.translation;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.translation.grouping.Group;
 import org.broadleafcommerce.openadmin.client.translation.grouping.GroupingTranslator;
@@ -34,6 +30,10 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.util.JSOHelper;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -112,6 +112,9 @@ public class MVELToAdvancedCriteriaTranslator {
 			Date parsedDate = formatter.parse(expression.getValue());
 			criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), parsedDate);
 			break;
+		case BOOLEAN:
+		    criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), Boolean.valueOf((expression.getValue())));
+		    break;
 		default:
 			criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), expression.getValue());
 			break;
