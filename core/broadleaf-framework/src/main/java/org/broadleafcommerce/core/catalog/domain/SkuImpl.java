@@ -29,7 +29,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
@@ -41,8 +40,6 @@ import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.pricing.domain.PriceData;
-import org.broadleafcommerce.core.pricing.domain.PriceDataImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -75,6 +72,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -329,27 +327,6 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
-
-    /**
-     * The pricelist/pricedata.
-     */
-    @ManyToMany(targetEntity = PriceDataImpl.class)
-    @JoinTable(name = "BLC_SKU_PRICE_DATA", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRICE_DATA_ID", referencedColumnName = "PRICE_DATA_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-    @BatchSize(size = 20)
-    @AdminPresentationMap(
-            friendlyName = "SkuImpl_PriceData",
-            //targetUIElementId = "productSkuDetailsTab",
-            //dataSourceName = "skuPriceDataMapDS",
-            keyPropertyFriendlyName = "PriceListImpl_Key",
-            deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = PriceListImpl.class,
-            mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "priceKey"
-    )
-    protected Map<String, PriceData> priceDataMap = new HashMap<String, PriceData>();
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", group = "SkuImpl_Sku_Inventory", order = 10, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
@@ -891,16 +868,6 @@ public class SkuImpl implements Sku {
     @Override
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions) {
         this.excludedFulfillmentOptions = excludedFulfillmentOptions;
-    }
-
-    @Override
-    public Map<String, PriceData> getPriceDataMap() {
-        return priceDataMap;
-    }
-
-    @Override
-    public void setPriceDataMap(Map<String, PriceData> priceDataMap) {
-        this.priceDataMap = priceDataMap;
     }
 
     @Override

@@ -53,7 +53,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
     
-    @Resource(name="blPriceListDynamicSkuPricingService" )
+    @Resource(name="blDynamicSkuPricingService" )
     protected DynamicSkuPricingService dynamicSkuPricingService;
 
     @Override

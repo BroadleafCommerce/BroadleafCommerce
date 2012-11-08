@@ -54,7 +54,7 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
     public void createDefaultFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         Customer customer = createCustomerWithBasicOrderAndAddresses();
         Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
-        Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
+        Order salesOrder = orderDao.readOrdersForCustomer(customer.getId()).get(0);
 
         FulfillmentGroup newFG = fulfillmentGroupDao.createDefault();
         newFG.setAddress(address);
@@ -97,7 +97,7 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
     public void createFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         Customer customer = createCustomerWithBasicOrderAndAddresses();
         Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
-        Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
+        Order salesOrder = orderDao.readOrdersForCustomer(customer.getId()).get(0);
 
         FulfillmentGroup newFG = fulfillmentGroupDao.create();
         newFG.setAddress(address);

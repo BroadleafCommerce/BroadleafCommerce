@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
-
 import java.math.BigDecimal;
 
 /**
@@ -84,17 +82,5 @@ public interface SearchFacetRange {
 	 * @param searchFacet
 	 */
 	public void setSearchFacet(SearchFacet searchFacet);
-
-	/**
-	 * @return the price list that this search facet range is associated with, if any
-	 */
-    public PriceList getPriceList();
-
-    /**
-     * Sets the price list that this search facet range is associated with
-     * 
-     * @param priceList
-     */
-    public void setPriceList(PriceList priceList);
 
 }

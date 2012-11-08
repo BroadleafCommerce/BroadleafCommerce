@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,20 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.pricelist.domain;
-
-import java.io.Serializable;
+package org.broadleafcommerce.core.web.service;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.Order;
+
 
 /**
- * 
+ * @author Andre Azzolini (apazzolini)
  */
-public interface PriceList extends Serializable {
+public interface UpdateCartServiceExtensionListener {
+    
+    public void validateCart(Order cart);
+    
+    public Boolean isAvailable(DiscreteOrderItem doi, BroadleafCurrency currency);
 
-    BroadleafCurrency getCurrencyCode();
-
-    void setCurrencyCode(BroadleafCurrency currencyCode);
-
-    public String getFriendlyName();
-
-    public void setFriendlyName(String friendlyName);
-
-    public Boolean getDefaultFlag();
-
-    public void setDefaultFlag(Boolean defaultFlag);
-
-    public String getPriceKey();
-
-    public void setPriceKey(String priceKey);
-
-    void setId(Long id);
-
-    Long getId();
 }

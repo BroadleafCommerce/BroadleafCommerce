@@ -16,10 +16,7 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -32,7 +29,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Repository("blOrderDao")
@@ -46,6 +42,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blCustomerDao")
     protected CustomerDao customerDao;
+    
+    @Resource(name = "blOrderDaoExtensionManager")
+    protected OrderDaoExtensionListener extensionManager;
 
     @Override
     public Order readOrderById(final Long orderId) {
@@ -101,6 +100,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    //public Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale) {
     public Order createNewCartForCustomer(Customer customer) {
         Order order = create();
         if (customer.getUsername() == null) {
@@ -114,21 +114,13 @@ public class OrderDaoImpl implements OrderDao {
         order.setEmailAddress(customer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS);
 
+        // extract these to i18n module
+        //order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
+        //order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+        
+        extensionManager.attachAdditionalDataToNewCart(customer, order);
+        
         order = save(order);
-
-        return order;
-    }
-
-    @Override
-    public Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale) {
-        Order order = createNewCartForCustomer(customer);
-        order.setPriceList(priceList);
-        order.setLocale(locale);
-        order.setCurrency(priceList.getCurrencyCode());
-        order.setSubTotal(new Money(BigDecimal.ZERO, priceList.getCurrencyCode().getCurrencyCode()));
-        order.setTotal(new Money(BigDecimal.ZERO, priceList.getCurrencyCode().getCurrencyCode()));
-        order = save(order);
-
         return order;
     }
 
@@ -152,31 +144,13 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
         List<Order> orders = query.getResultList();
-        return orders == null || orders.isEmpty() ? null : orders.get(0);
-    }
-
-    @Override
-    public Order readNamedOrderForCustomerByPricelistAndLocale(final Customer customer, final String name, final PriceList priceList, final Locale locale) {
-        final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
-        query.setParameter("customerId", customer.getId());
-        query.setParameter("orderStatus", OrderStatus.NAMED.getType());
-        query.setParameter("orderName", name);
-        List<Order> orders = query.getResultList();
-
-        if (orders == null || orders.isEmpty()) { return null; }
-
-        for(Order order: orders){
-            if(locale != null){
-                if((order.getPriceList() == priceList) && (order.getLocale().getLocaleCode().equalsIgnoreCase(locale.getLocaleCode()))){
-                    return order;
-                }
-            }  else {
-                if(order.getPriceList() == priceList){
-                    return order;
-                }
-            }
+        
+        //FIXME:apa if((order.getPriceList() == priceList) && (order.getLocale().getLocaleCode().equalsIgnoreCase(locale.getLocaleCode()))){
+        if (orders != null && !orders.isEmpty()) {
+            extensionManager.applyAdditionalOrderLookupFilter(customer, name, orders);
         }
-        return null;
+        
+        return orders == null || orders.isEmpty() ? null : orders.get(0);
     }
 
     @Override

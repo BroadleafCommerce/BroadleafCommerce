@@ -39,7 +39,6 @@
     <bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.marketing.domain.TargetContent" class="org.broadleafcommerce.core.marketing.domain.TargetContentImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.offer.domain.Offer" class="org.broadleafcommerce.core.offer.domain.OfferImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.OfferRestrictedPriceList" class="org.broadleafcommerce.core.offer.domain.OfferRestrictedPriceListImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.offer.domain.OfferRule" class="org.broadleafcommerce.core.offer.domain.OfferRuleImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.offer.domain.CustomerOffer" class="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.offer.domain.OfferCode" class="org.broadleafcommerce.core.offer.domain.OfferCodeImpl" scope="prototype"/>

@@ -55,7 +55,7 @@ public interface UpdateCartService {
      *
      * @return
      */
-    public UpdateCartResponse copyCartToNewLocaleAndPricelist(Order order);
+    public UpdateCartResponse copyCartToCurrentContext(Order currentCart);
 
     /**
      * Validates the cart against the active price list and locale.
@@ -64,4 +64,5 @@ public interface UpdateCartService {
      * @throws IllegalArgumentException
      */
     public void validateCart (Order cart) throws IllegalArgumentException;
+
 }

@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionTranslation;
 
 import java.util.List;
@@ -125,23 +124,9 @@ public interface SearchFacet {
 	 * would depend on the manufacturers that are in the result list), but a facet on "Price"
 	 * might have predefined ranges (such as 0-5, 5-10, 10-20).
 	 * 
-	 * <b>Note: This method will only return search facet ranges that have no pricelist associated</b>
-	 * 
-	 * @see #getSearchFacetRanges(PriceList)
-	 * 
 	 * @return the associated search facet ranges, if any
 	 */
 	public List<SearchFacetRange> getSearchFacetRanges();
-	
-	/**
-	 * This method will return search facet ranges that are applicable to the given PriceList
-	 * 
-	 * @see #getSearchFacetRanges()
-	 * 
-	 * @param priceList
-	 * @return
-	 */
-	public List<SearchFacetRange> getSearchFacetRanges(PriceList priceList);
 	
 	/**
 	 * Sets the SearchFacetRanges

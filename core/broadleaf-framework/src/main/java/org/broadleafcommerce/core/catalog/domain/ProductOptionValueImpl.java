@@ -24,12 +24,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.pricing.domain.PriceAdjustment;
-import org.broadleafcommerce.core.pricing.domain.PriceAdjustmentImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -91,24 +88,6 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @ManyToOne(targetEntity = ProductOptionImpl.class)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption;
-    
-    /** The pricelist/pricedata. */
-    @ManyToMany(targetEntity = PriceAdjustmentImpl.class)
-    @JoinTable(name = "BLC_ADJ_PRICE_MAP", joinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID", referencedColumnName = "PRODUCT_OPTION_VALUE_ID"), inverseJoinColumns = @JoinColumn(name = "PRICE_ADJUSTMENT_ID", referencedColumnName = "PRICE_ADJUSTMENT_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 20)
-    @AdminPresentationMap(
-            friendlyName = "SkuImpl_PriceData",
-            keyPropertyFriendlyName = "PriceListImpl_Key",
-            targetUIElementId="productOptionValueTab",
-            deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = PriceListImpl.class,
-            mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "priceKey"
-        )
-    protected Map<String, PriceAdjustment> priceAdjustmentMap = new HashMap<String , PriceAdjustment>();
 
     @ManyToMany(targetEntity = ProductOptionValueTranslationImpl.class)
     @JoinTable(name = "BLC_PRODUCT_OPTION_VALUE_TRANSLATION_XREF",
@@ -216,15 +195,6 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @Override
     public void setProductOption(ProductOption productOption) {
         this.productOption = productOption;
-    }
-    @Override
-    public Map<String, PriceAdjustment> getPriceAdjustmentMap() {
-        return priceAdjustmentMap;
-    }
-
-    @Override
-    public void setPriceAdjustmentMap(Map<String, PriceAdjustment> priceDataMap) {
-        this.priceAdjustmentMap = priceDataMap;
     }
 
     @Override

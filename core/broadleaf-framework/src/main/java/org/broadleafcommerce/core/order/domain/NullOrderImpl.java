@@ -20,9 +20,12 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.offer.domain.*;
+import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferInfo;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -323,14 +326,6 @@ public class NullOrderImpl implements Order {
             throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
         }
 
-    @Override
-    public PriceList getPriceList() {
-        return null;
-    }
-
-    @Override
-    public void setPriceList(PriceList priceList) {
-    }
 
     @Override
     public Locale getLocale() {

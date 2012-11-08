@@ -61,7 +61,6 @@
 		<class>org.broadleafcommerce.core.offer.domain.OfferAuditImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferCodeImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferImpl</class>
-		<class>org.broadleafcommerce.core.offer.domain.OfferRestrictedPriceListImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferRuleImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferInfoImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl</class>

@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -61,11 +60,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -224,12 +221,6 @@ public class OfferImpl implements Offer, Status {
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="Application", groupOrder=5)
     protected BigDecimal qualifyingItemSubTotal;
-
-    @OneToMany(mappedBy = "offer", targetEntity = OfferRestrictedPriceListImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "priceList", friendlyName = "offerRestrictedPriceListTitle", dataSourceName = "offerRestrictedPriceListDS")
-    protected List<OfferRestrictedPriceList> restrictedPriceLists = new ArrayList<OfferRestrictedPriceList>();
     
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -595,17 +586,6 @@ public class OfferImpl implements Offer, Status {
     @Override
     public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
         this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
-    }
-
-
-    @Override 
-    public List<OfferRestrictedPriceList> getRestrictedPriceLists() {
-        return restrictedPriceLists;
-    }
-
-    @Override
-    public void setRestrictedPriceLists(List<OfferRestrictedPriceList> restrictedPriceLists) {
-        this.restrictedPriceLists = restrictedPriceLists;
     }
 
     @Override

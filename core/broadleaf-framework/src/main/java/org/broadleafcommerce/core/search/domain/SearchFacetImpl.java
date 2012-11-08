@@ -16,28 +16,25 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
-import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.MapKey;
 
 import javax.persistence.CascadeType;
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -45,10 +42,13 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -238,28 +238,8 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 
     @Override
 	public List<SearchFacetRange> getSearchFacetRanges() {
-        List<SearchFacetRange> ranges = new ArrayList<SearchFacetRange>(searchFacetRanges);
-		CollectionUtils.filter(ranges, new Predicate() {
-            @Override
-            public boolean evaluate(Object arg) {
-                return ((SearchFacetRange) arg).getPriceList() == null;
-            }
-        });    		
-		return ranges;
+        return searchFacetRanges;
 	}
-	
-    @Override
-    public List<SearchFacetRange> getSearchFacetRanges(final PriceList priceList) {
-        List<SearchFacetRange> ranges = new ArrayList<SearchFacetRange>(searchFacetRanges);
-		CollectionUtils.filter(ranges, new Predicate() {
-            @Override
-            public boolean evaluate(Object arg) {
-                PriceList pl = ((SearchFacetRange) arg).getPriceList();
-                return pl != null && pl.getPriceKey().equals(priceList.getPriceKey());
-            }
-        });    		
-		return ranges;
-    }
 
 	@Override
 	public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {

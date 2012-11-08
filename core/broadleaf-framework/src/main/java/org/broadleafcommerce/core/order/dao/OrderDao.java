@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -46,8 +44,6 @@ public interface OrderDao {
 
     Order createNewCartForCustomer(Customer customer);
 
-    Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale);
-
     Order readOrderByOrderNumber(String orderNumber);
     
     Order updatePrices(Order order);
@@ -60,5 +56,4 @@ public interface OrderDao {
     //    List<Order> readSubmittedOrdersForCustomer(Customer customer);
     //
 
-    Order readNamedOrderForCustomerByPricelistAndLocale(Customer customer, String name, PriceList priceList, Locale locale);
 }

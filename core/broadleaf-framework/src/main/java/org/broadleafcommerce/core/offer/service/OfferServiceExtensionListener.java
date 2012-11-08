@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web;
+package org.broadleafcommerce.core.offer.service;
 
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.core.offer.domain.Offer;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 
 /**
- * Responsible for returning the price list to use for the current request.
- *
- * Author: jerryocanas
- * Date: 9/7/12
+ * @author Andre Azzolini (apazzolini)
  */
-public interface BroadleafPricelistResolver {
-    public PriceList resolvePricelist(HttpServletRequest request);
+public interface OfferServiceExtensionListener {
+    
+    public void applyAdditionalFilters(List<Offer> offers);
+
 }

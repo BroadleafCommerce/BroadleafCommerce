@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.cart;
 
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
@@ -35,6 +34,7 @@ import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,12 +87,7 @@ public class BroadleafCartController extends AbstractCartController {
 		// If the cart is currently empty, it will be the shared, "null" cart. We must detect this
 		// and provision a fresh cart for the current customer upon the first cart add
 		if (cart == null || cart instanceof NullOrderImpl) {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            if (BroadleafRequestContext.hasLocale() && (brc.getPriceList() != null)){
-                cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request), brc.getPriceList(), brc.getLocale());
-            } else {
-                cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
-            }
+            cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
         updateCartService.validateCart(cart);

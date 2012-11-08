@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
@@ -56,14 +55,14 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    protected static boolean copyCartToNewLocaleAndPricelist = false;
+    protected static boolean copyCartWhenSpecifiedStateChanges = false;
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
 
     @Resource(name="blUpdateCartService")
     protected UpdateCartService updateCartService;
-
+    
     private static String cartRequestAttributeName = "cart";
 
 	@SuppressWarnings("unchecked")
@@ -82,14 +81,13 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
                 try {
                     updateCartService.validateCart(cart);
                 } catch (IllegalArgumentException e){
-                    if (copyCartToNewLocaleAndPricelist) {
-                        UpdateCartResponse updateCartResponse = updateCartService.copyCartToNewLocaleAndPricelist(cart);
+                    if (copyCartWhenSpecifiedStateChanges) {
+                        UpdateCartResponse updateCartResponse = updateCartService.copyCartToCurrentContext(cart);
                         request.setAttribute("updateCartResponse", updateCartResponse);
                     } else {
-                        // Delete old cart and create new blank cart
-                        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
                         orderService.cancelOrder(cart);
-                        cart = orderService.createNewCartForCustomer(customer, brc.getPriceList(), brc.getLocale());
+                        //FIXME: APA Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+                        cart = orderService.createNewCartForCustomer(customer);
                     }
                 }
             }
