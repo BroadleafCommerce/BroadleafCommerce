@@ -51,7 +51,7 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
 		
         setStyleName("bl-dynamic-form");
         setLayoutMargin(0);
-        setMembersMargin(0);
+        setMembersMargin(10);
         setWidth100();
         setOverflow(Overflow.AUTO);
 
