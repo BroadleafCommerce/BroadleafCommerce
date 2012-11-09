@@ -204,7 +204,6 @@ public class OrderTest extends OrderBaseTest {
         	order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
         	addSuccessful = false;
-        	assert e.getCause() instanceof InventoryUnavailableException;
         }
         assert !addSuccessful;
         
@@ -215,7 +214,6 @@ public class OrderTest extends OrderBaseTest {
         	order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
         	addSuccessful = false;
-        	assert e.getCause() instanceof InventoryUnavailableException;
         }
         assert !addSuccessful;
         
