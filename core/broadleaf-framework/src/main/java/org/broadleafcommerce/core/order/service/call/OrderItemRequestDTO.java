@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +29,9 @@ import java.util.Map;
  *
  * The sku can be inferred from either the passed in attributes as they are compared to the product's options or
  * the sku can be determined from the product's default sku.
+ * 
+ * When adding a bundle using this DTO, you MUST have the {@link ProductBundle} included in the productId for it to
+ * properly instantiate the {@link BundleOrderItem}
  *
  */
 public class OrderItemRequestDTO {
