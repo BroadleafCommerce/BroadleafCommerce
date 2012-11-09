@@ -20,6 +20,7 @@ import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 
 /**
  * 
@@ -30,10 +31,16 @@ public class SectionView extends VLayout {
 	
 	protected VStack contentLayout;
 
-	public SectionView(String title) {
+	public SectionView(String id, String titleKey) {
+
+        if (id != null) {
+            setID(id);
+        }
+        setVisible(false);
+        setWidth("98%");
 
         Label label = new Label();
-        label.setContents(title);
+        label.setContents(BLCMain.getMessageManager().getString(titleKey));
         label.setStyleName("bl-promo-header");
         label.setAutoHeight();
         label.setWidth100();

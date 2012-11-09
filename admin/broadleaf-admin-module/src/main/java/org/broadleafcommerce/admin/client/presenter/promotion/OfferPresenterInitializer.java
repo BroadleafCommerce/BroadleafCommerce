@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -292,6 +293,14 @@ public class OfferPresenterInitializer {
                 if (cb != null) {
                     cb.processComplete();
                 }
+                Timer timer = new Timer() {
+                    @Override
+                    public void run() {
+                        getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                        getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
+                    }
+                };
+                timer.schedule(500);
             }
         });
 
@@ -380,6 +389,14 @@ public class OfferPresenterInitializer {
                 if (cb != null) {
                     cb.processComplete();
                 }
+                Timer timer = new Timer() {
+                    @Override
+                    public void run() {
+                        getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                        getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
+                    }
+                };
+                timer.schedule(500);
 			}
 		});
 		String offerItemQualifierRuleType = selectedRecord.getAttribute("offerItemQualifierRuleType");

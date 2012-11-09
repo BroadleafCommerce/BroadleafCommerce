@@ -75,7 +75,10 @@ public class BLCFilterBuilder extends FilterBuilder {
         }
 
         super.setDataSource(dataSource);
-        super.setFieldDataSource(dataSource);
+        /*
+        Had to revert the usage of this API, as it was causing problems showing the picker for broadleaf enumeration types
+         */
+        //super.setFieldDataSource(dataSource);
     }
 
     protected OperatorId[] getBasicBooleanOperators() {

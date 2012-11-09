@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic;
 
+import com.google.gwt.user.client.Timer;
+import com.smartgwt.client.widgets.form.FilterBuilder;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.gwt.user.client.Timer;
-import com.smartgwt.client.widgets.form.FilterBuilder;
 
 /**
  * Because of a deficit in the current FilterBuilder from SmartGWT, the filter changed event does not fire when

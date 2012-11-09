@@ -110,7 +110,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         
         leftVerticalLayout.addMember(abandonedCategoryVerticalLayout);
         
-         topTabSet = new TabSet(); 
+        topTabSet = new TabSet();
         topTabSet.setID("categoryTopTabSet");
         topTabSet.setTabBarPosition(Side.TOP);  
         topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);

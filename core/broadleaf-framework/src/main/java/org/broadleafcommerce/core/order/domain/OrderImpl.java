@@ -198,7 +198,7 @@ public class OrderImpl implements Order {
     @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    @MapKey(name="value")
+    @MapKey(name="name")
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
     
 	@ManyToOne(targetEntity = BroadleafCurrencyImpl.class)

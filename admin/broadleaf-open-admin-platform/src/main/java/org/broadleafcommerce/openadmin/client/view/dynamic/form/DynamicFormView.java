@@ -41,35 +41,41 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
     }
 	
 	public DynamicFormView(String title, DataSource dataSource) {
-		super();
-		
+
+        super();
+
         setLayoutMargin(0);
+        setOverflow(Overflow.HIDDEN);
+		setWidth100();
 
         toolbar = new ToolStrip();
         toolbar.setHeight(30);
         toolbar.setWidth100();
         toolbar.addSpacer(6);
-        saveButton = new ToolStripButton();  
-        saveButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/save.png");
+
+        saveButton = new ToolStripButton();
+        saveButton.setDisabled(true);
+        saveButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/save.png");
         saveButton.setTitle(BLCMain.getMessageManager().getString("saveTitle"));
         toolbar.addButton(saveButton);
-        saveButton.setDisabled(true);
+
         toolbar.addSpacer(3);
-        refreshButton = new ToolStripButton();  
-        refreshButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/refresh.png");
+
+        refreshButton = new ToolStripButton();
+        refreshButton.setDisabled(true);
+        refreshButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/refresh.png");
         refreshButton.setTitle(BLCMain.getMessageManager().getString("restoreTitle"));
         refreshButton.setTooltip(BLCMain.getMessageManager().getString("restoreTooltip"));
-        refreshButton.setDisabled(true);
         toolbar.addButton(refreshButton);
+
         toolbar.addSpacer(6);
 
         addMember(toolbar);
-        
+
         formOnlyView = new FormOnlyView(dataSource);
-        formOnlyView.setStyleName("bl-dynamic-form");
+
         addMember(formOnlyView);
-        
-        setOverflow(Overflow.HIDDEN);
+
 	}
 
 	public ToolStrip getToolbar() {

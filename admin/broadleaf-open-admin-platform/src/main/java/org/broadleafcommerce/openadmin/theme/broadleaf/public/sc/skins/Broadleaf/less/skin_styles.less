@@ -90,7 +90,6 @@ Button (also used as MenuButton base style)
 .buttonSelectedFocusedOver,
 .buttonSelectedFocusedDown
 {
-  display: inline-block;
   .ie7-inline-block();
   padding: 4px 10px 4px;
   margin-bottom: 0; // For input.btn
@@ -106,7 +105,7 @@ Button (also used as MenuButton base style)
   border: 1px solid @btnBorder;
   *border: 0; // Remove the border to prevent IE7's black border on input:focus
   border-bottom-color: darken(@btnBorder, 10%);
-  .border-radius(4px);
+  .border-radius(0);
   .ie7-restore-left-whitespace(); // Give IE7 some love
   .box-shadow(~"inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05)");
 
@@ -569,6 +568,14 @@ Button (also used as MenuButton base style)
     font-size: @baseFontSize;
     line-height: @baseLineHeight;
 }
+
+.formCell,
+.formCellFocused,
+.formCellDisabled,
+.formCellError {
+    width: 100%;
+}
+
 .formTitle,
 .formTitleFocused,
 .formTitleDisabled,
@@ -745,10 +752,6 @@ Button (also used as MenuButton base style)
 .pickListCellSelectedDark {
     color:black;
     background-color:#FFEB90;
-}
-
-.pickListCellSelected > div, .pickListCell > div {
-    padding: 2px 4px;
 }
 
 .tallPickListCellSelected,
@@ -1385,7 +1388,6 @@ Button (also used as MenuButton base style)
 .toolStrip {
     color: @navbarText;
     #gradient > .vertical(@white, #f2f2f2);
-    box-shadow: 0 1px 3px #444;
     border: 1px solid #ccc;
 }
 

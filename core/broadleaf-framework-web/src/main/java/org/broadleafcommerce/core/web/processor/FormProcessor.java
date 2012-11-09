@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
@@ -30,6 +31,7 @@ import org.thymeleaf.processor.element.AbstractElementProcessor;
  * 
  * @author apazzolini
  */
+@Component("blFormProcessor")
 public class FormProcessor extends AbstractElementProcessor {
 	
 	/**

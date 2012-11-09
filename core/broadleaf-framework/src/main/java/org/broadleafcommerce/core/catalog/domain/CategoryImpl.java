@@ -162,33 +162,17 @@ public class CategoryImpl implements Category, Status {
     protected String name;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=5, group = "CategoryImpl_SEO", groupOrder = 3)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=5, group = "Seo_Group", groupOrder = 2)
     protected String url;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, group = "CategoryImpl_SEO", groupOrder = 3)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, group = "Seo_Group", groupOrder = 2)
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order=2, group = "CategoryImpl_Description", largeEntry=true, groupOrder = 1)
     protected String description;
-
-    @Column(name = "META_DESCRIPTION")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Description", order=7, group = "CategoryImpl_SEO", groupOrder = 3)
-    protected String metaDescription;
-
-    @Column(name = "META_KEYWORDS")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Keywords", order=8, group = "CategoryImpl_SEO", groupOrder = 3)
-    protected String metaKeywords;
-
-    @Column(name = "META_ROBOT")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Meta_Robot", order=9, group = "CategoryImpl_SEO", groupOrder = 3)
-    protected String metaRobot;
-
-    @Column(name = "TITLE_FRAGMENT")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Title_Fragment", order=10, group = "CategoryImpl_SEO", groupOrder = 3)
-    protected String titleFragment;
 
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range", groupOrder = 4)
@@ -446,46 +430,6 @@ public class CategoryImpl implements Category, Status {
     @Override
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public String getMetaDescription() {
-        return metaDescription;
-    }
-
-    @Override
-    public void setMetaDescription(String metaDescription) {
-        this.metaDescription = metaDescription;
-    }
-
-    @Override
-    public String getMetaKeywords() {
-        return metaKeywords;
-    }
-
-    @Override
-    public void setMetaKeywords(String metaKeywords) {
-        this.metaKeywords = metaKeywords;
-    }
-
-    @Override
-    public String getMetaRobot() {
-        return metaRobot;
-    }
-
-    @Override
-    public void setMetaRobot(String metaRobot) {
-        this.metaRobot = metaRobot;
-    }
-
-    @Override
-    public String getTitleFragment() {
-        return titleFragment;
-    }
-
-    @Override
-    public void setTitleFragment(String titleFragment) {
-        this.titleFragment = titleFragment;
     }
 
     @Override
@@ -1001,16 +945,5 @@ public class CategoryImpl implements Category, Status {
 			return o1.getSequence().compareTo(o2.getSequence());
 		}
 	};
-    
-    @Override
-    public String getCalculatedMetaDescription(){
-        if(metaDescription == null){
-            if(description == null){
-                return name;
-            }
-            return description;
-        }
-        return metaDescription;
-    }
 
 }

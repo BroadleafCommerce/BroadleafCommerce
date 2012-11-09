@@ -70,7 +70,7 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 
 
         Label header = new Label(BLCMain.getMessageManager().getString("userSandBoxTitle"));
-        header.setBaseStyle("blcHeader");
+        header.setBaseStyle("bl-header");
         header.setHeight(15);
 
         insideLayout.addMember(header);
@@ -148,7 +148,7 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         Label pendingApprovalLabel = new Label();
         pendingApprovalLabel.setContents(BLCMain.getMessageManager().getString("pendingApprovalTitle"));
         pendingApprovalLabel.setWrap(false);
-        pendingApprovalLabel.setBaseStyle("blcHeader");
+        pendingApprovalLabel.setBaseStyle("bl-header");
         pendingApprovalLabel.setHeight(15);
         insideLayout2.addMember(pendingApprovalLabel);
 

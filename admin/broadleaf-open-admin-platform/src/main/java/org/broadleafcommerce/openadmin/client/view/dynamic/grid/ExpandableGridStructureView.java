@@ -70,7 +70,7 @@ public class ExpandableGridStructureView extends HLayout implements ExpandableGr
         stack.setLayoutMargin(12);
 
         Label header = new Label(title);
-        header.setBaseStyle("blcHeader");
+        header.setBaseStyle("bl-header");
         header.setHeight(15);
 
         stack.addMember(header);

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.exceptions.TemplateProcessingException;
@@ -25,6 +27,7 @@ import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -41,7 +44,11 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
+@Component("blHeadProcessor")
 public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
+
+    @Resource(name = "blHeadProcessorExtensionManager")
+    protected HeadProcessorExtensionListener extensionManager;
 
     public static final String FRAGMENT_ATTR_NAME = StandardFragmentAttrProcessor.ATTR_NAME;
     protected String HEAD_PARTIAL_PATH = "layout/partials/head";
@@ -73,28 +80,16 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 		// pageTitle="${'Hello this is a ' + product.name}"
 		
 		String pageTitle = element.getAttributeValue("pageTitle");
-		String metaDescription = element.getAttributeValue("metaDescription");
-		String metaKeywords = element.getAttributeValue("metaKeywords");
-		String metaRobot = element.getAttributeValue("metaRobot");
 		try {
 			pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
-            if(metaDescription != null){
-                metaDescription = (String) StandardExpressionProcessor.processExpression(arguments, metaDescription);
-            }
-            if(metaKeywords != null){
-                metaKeywords = (String) StandardExpressionProcessor.processExpression(arguments, metaKeywords);
-            }
-            if(metaRobot != null){
-                metaRobot = (String) StandardExpressionProcessor.processExpression(arguments, metaRobot);
-            }
 		} catch (TemplateProcessingException e) {
 			// Do nothing.
 		}
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaDescription", metaDescription);
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaKeywords", metaKeywords);
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("metaRobot", metaRobot);
+
+        extensionManager.processAttributeValues(arguments, element);
+
 		return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
     }
 

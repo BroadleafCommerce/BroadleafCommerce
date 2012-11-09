@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
@@ -28,12 +29,13 @@ import org.thymeleaf.standard.expression.StandardExpressionProcessor;
  *
  * @author jocanas (Jerry Ocanas)
  */
-public class ImgProcessor extends AbstractElementProcessor {
+@Component("blImageProcessor")
+public class ImageProcessor extends AbstractElementProcessor {
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
-    public ImgProcessor() {
+    public ImageProcessor() {
         super("img");
     }
 

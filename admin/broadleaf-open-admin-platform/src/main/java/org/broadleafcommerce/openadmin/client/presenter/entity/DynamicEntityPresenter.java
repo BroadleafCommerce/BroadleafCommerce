@@ -77,6 +77,7 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -109,7 +110,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected HandlerRegistration showArchivedButtonHandlerRegistration;
     protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
     protected Map<String, SubPresentable> subPresentables = new HashMap<String, SubPresentable>();
-
+    protected List<PresenterModifier> modifierList=new ArrayList<PresenterModifier>();
+    protected Map<String,List<DataSource>> viewModifierDataSourceMap=new HashMap<String,List<DataSource>>();
     protected Boolean disabled = false;
 
     protected String[] gridFields;
@@ -179,6 +181,10 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     public void bind() {
         formPresenter.bind();
+       
+        for(PresenterModifier modifier:modifierList) {
+              modifier.bind();
+        }
         formPresenter.getSaveButtonHandlerRegistration().removeHandler();
         saveButtonHandlerRegistration = display.getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
             @Override
@@ -241,7 +247,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                             display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
                             display.getListDisplay().getRemoveButton().enable();
                         }
-                        changeSelection(selectedRecord);
+                        changeSelectionWrapper(selectedRecord);
                         for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
                             //this is only suitable when no callback is required for the load - which is most cases
                             subPresentable.getValue().setStartState();
@@ -282,7 +288,11 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     protected void saveClicked() {
         DSRequest requestProperties = new DSRequest();
-
+      
+        for(PresenterModifier modifier:modifierList) {
+          modifier.saveClicked();
+        }
+        
         //try {
             //requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
         //} catch (Exception e) {
@@ -302,6 +312,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     }
 
     protected void itemSaved(DSResponse response, Object rawData, DSRequest request) {
+        for(PresenterModifier modifier:modifierList) {
+            modifier.itemSaved();
+        }
         getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(lastSelectedRecord));
     }
 
@@ -336,6 +349,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         if (BLCMain.SPLASH_PROGRESS.isActive()) {
             BLCMain.SPLASH_PROGRESS.stopProgress();
         }
+        for(PresenterModifier m:modifierList) {
+            m.postSetup(container);
+         }
     }
 
     protected void loadInitialItem() {
@@ -368,11 +384,18 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     @Override
     public void setDisplay(Display display) {
+        for(PresenterModifier m:modifierList) {
+            m.getDisplay().setParentView(display);
+        }
         this.display = (DynamicEditDisplay) display;
     }
 
     protected void setupDisplayItems(final DataSource entityDataSource, DataSource... additionalDataSources) {
         getDisplay().build(entityDataSource, additionalDataSources);
+        for(PresenterModifier m:modifierList) {
+           m.getDisplay().build(viewModifierDataSourceMap.get(m));
+        }
+        
         gridHelper.traverseTreeAndAddHandlers(getDisplay().getListDisplay().getGrid());
         formPresenter = new DynamicFormPresenter(display.getDynamicFormDisplay());
         ((PresentationLayerAssociatedDataSource) entityDataSource).setAssociatedGrid(display.getListDisplay().getGrid());
@@ -380,7 +403,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     }
 
     public void initializeLookup(final String propertyName, final LookupMetadata metadata) {
-        final String dataSourceName = propertyName + "Lookup";
+        final String dataSourceName = metadata.getDefaultDataSource().getDataURL() + "_" + propertyName + "Lookup";
         if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
             java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
             return;
@@ -528,15 +551,29 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         }
     }
 
+    protected void changeSelectionWrapper(Record selectedRecord) {
+        changeSelection(selectedRecord);
+        if(modifierList!=null ) {
+            for(PresenterModifier modifier:modifierList) {
+              modifier.changeSelection(selectedRecord);
+            }
+        }
+   
+    }
     protected void changeSelection(Record selectedRecord) {
+      
         // place holder
     }
-
     protected void addClicked() {
         addClicked(BLCMain.getMessageManager().getString("newItemTitle"));
     }
 
     protected void addClicked(final String newItemTitle) {
+        if(modifierList!=null ) {
+            for(PresenterModifier modifier:modifierList) {
+              modifier.addClicked();
+            }
+        }
         initialValues.remove("_type");
         LinkedHashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getPolymorphicEntities();
         if (polymorphicEntities.size() > 1) {
@@ -553,6 +590,11 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     }
 
     protected void addNewItem(String newItemTitle) {
+        if(modifierList!=null ) {
+            for(PresenterModifier modifier:modifierList) {
+              modifier.addNewItem();
+            }
+        }
         initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         compileDefaultValuesFromCurrentFilter(initialValues);
         BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
@@ -648,4 +690,11 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     public void setGridFields(String[] gridFields) {
         this.gridFields = gridFields;
     }
+
+    
+    public List<PresenterModifier> getModifierList() {
+        return modifierList;
+    }
+
+    
 }

@@ -107,7 +107,6 @@ Button (also used as MenuButton base style)
 .buttonSelectedFocused,
 .buttonSelectedFocusedOver,
 .buttonSelectedFocusedDown {
-  display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
 
@@ -140,9 +139,9 @@ Button (also used as MenuButton base style)
   border: 1px solid #cccccc;
   *border: 0;
   border-bottom-color: #b3b3b3;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
   *margin-left: .3em;
   -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
   -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
@@ -691,6 +690,12 @@ Button (also used as MenuButton base style)
   font-size: 11px;
   line-height: 18px;
 }
+.formCell,
+.formCellFocused,
+.formCellDisabled,
+.formCellError {
+  width: 100%;
+}
 .formTitle,
 .formTitleFocused,
 .formTitleDisabled,
@@ -855,10 +860,6 @@ Button (also used as MenuButton base style)
 .pickListCellSelectedDark {
   color: black;
   background-color: #FFEB90;
-}
-.pickListCellSelected > div,
-.pickListCell > div {
-  padding: 2px 4px;
 }
 .tallPickListCellSelected,
 .tallPickListCellSelectedDark {
@@ -1423,7 +1424,6 @@ Button (also used as MenuButton base style)
   background-image: linear-gradient(top, #ffffff, #f2f2f2);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f2f2f2', GradientType=0);
-  box-shadow: 0 1px 3px #444;
   border: 1px solid #ccc;
 }
 .toolStripLayoutDropLine {

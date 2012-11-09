@@ -16,6 +16,31 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleMapStructurePresenter;
+import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
@@ -26,7 +51,21 @@ import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemValueFormatter;
-import com.smartgwt.client.widgets.form.fields.*;
+import com.smartgwt.client.widgets.form.fields.BooleanItem;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.DateTimeItem;
+import com.smartgwt.client.widgets.form.fields.FloatItem;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.FormItemIcon;
+import com.smartgwt.client.widgets.form.fields.HeaderItem;
+import com.smartgwt.client.widgets.form.fields.HiddenItem;
+import com.smartgwt.client.widgets.form.fields.IntegerItem;
+import com.smartgwt.client.widgets.form.fields.PasswordItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.StaticTextItem;
+import com.smartgwt.client.widgets.form.fields.TextAreaItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.UploadItem;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
@@ -36,23 +75,15 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.*;
-import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.structure.*;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * 
@@ -89,6 +120,39 @@ public class FormBuilder {
         }
 
         return result;
+    }
+    public static TabSet findTabSetById(Layout parent, String id) {
+        TabSet retLayout = (TabSet) parent.getMember(id);
+        Layout result;
+        if (retLayout == null) {
+            check: {
+                for (Canvas member : parent.getMembers()) {
+                    if (member instanceof Layout) {
+                        result = findMemberById((Layout) member, id);
+                        if (result != null) {
+                            break check;
+                        }
+                    }
+                    if (member instanceof TabSet) {
+                        if(member.getID().equals(id)) {
+                            return (TabSet) member;
+                        }
+                        for (Tab tab : ((TabSet) member).getTabs()) {
+                            if (tab.getPane().getID().equals(id)) {
+                                result = (Layout) tab.getPane();
+                                break check;
+                            }
+                            result = findMemberById((Layout) tab.getPane(), id);
+                            if (result != null) {
+                                break check;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return retLayout;
     }
 
     public static void buildAdvancedCollectionForm(final DataSource dataSource, final DataSource lookupDataSource, CollectionMetadata metadata, String propertyName, final DynamicEntityPresenter presenter) {
@@ -414,6 +478,8 @@ public class FormBuilder {
         	for (String group : groups) {
                 HeaderItem headerItem = new HeaderItem();
                 headerItem.setDefaultValue(group);
+                headerItem.setShowTitle(false);
+                headerItem.setColSpan(2);
                 List<FormItem> formItems = sections.get(group);
                 String[] ids = new String[formItems.size()];
                 int x=0;
@@ -621,7 +687,7 @@ public class FormBuilder {
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
             formItem.setWidth(235);
-			formItem.setValueFormatter(new FormItemValueFormatter() {
+			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				@Override
                 public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
@@ -637,7 +703,7 @@ public class FormBuilder {
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
             formItem.setWidth(235);
-			formItem.setValueFormatter(new FormItemValueFormatter() {
+			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				@Override
                 public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
@@ -656,7 +722,8 @@ public class FormBuilder {
             formItem = new ComboBoxItem();
             ComboBoxItem comboBoxItem = (ComboBoxItem) formItem;
             comboBoxItem.setAddUnknownValues(field.getAttributeAsBoolean("canEditEnumeration"));
-            comboBoxItem.setPickListHeaderHeight(22);
+            comboBoxItem.setHeight(25);
+            comboBoxItem.setWidth(280);
             comboBoxItem.setPickerIconHeight(26);
             comboBoxItem.setPickerIconWidth(22);
 
@@ -671,7 +738,7 @@ public class FormBuilder {
             pickListProperties.setCellFormatter(new CellFormatter() {
                 @Override
                 public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                    return "<div style='padding: 2px 4px'>" + value + "</div>";
+                    return "<div style='padding: 2px 4px; font-size: 11px;'>" + value + "</div>";
                 }
             });
             comboBoxItem.setPickListProperties(pickListProperties);
