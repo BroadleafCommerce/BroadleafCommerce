@@ -687,7 +687,7 @@ public class FormBuilder {
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
             formItem.setWidth(235);
-			formItem.setValueFormatter(new FormItemValueFormatter() {
+			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				@Override
                 public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
@@ -703,7 +703,7 @@ public class FormBuilder {
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
             formItem.setWidth(235);
-			formItem.setValueFormatter(new FormItemValueFormatter() {
+			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				@Override
                 public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
@@ -722,7 +722,8 @@ public class FormBuilder {
             formItem = new ComboBoxItem();
             ComboBoxItem comboBoxItem = (ComboBoxItem) formItem;
             comboBoxItem.setAddUnknownValues(field.getAttributeAsBoolean("canEditEnumeration"));
-            comboBoxItem.setPickListHeaderHeight(22);
+            comboBoxItem.setHeight(25);
+            comboBoxItem.setWidth(280);
             comboBoxItem.setPickerIconHeight(26);
             comboBoxItem.setPickerIconWidth(22);
 
@@ -737,7 +738,7 @@ public class FormBuilder {
             pickListProperties.setCellFormatter(new CellFormatter() {
                 @Override
                 public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                    return "<div style='padding: 2px 4px'>" + value + "</div>";
+                    return "<div style='padding: 2px 4px; font-size: 11px;'>" + value + "</div>";
                 }
             });
             comboBoxItem.setPickListProperties(pickListProperties);

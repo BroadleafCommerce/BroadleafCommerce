@@ -19,8 +19,6 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.LayoutPolicy;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.widgets.events.VisibilityChangedEvent;
@@ -51,7 +49,7 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
 		
         setStyleName("bl-dynamic-form");
         setLayoutMargin(0);
-        setMembersMargin(0);
+        setMembersMargin(10);
         setWidth100();
         setOverflow(Overflow.AUTO);
 
@@ -63,7 +61,6 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form.setTitleSuffix("");
         form.setRequiredTitleSuffix("");
         form.setCellPadding(6);
-        form.setNumCols(1);
         form.disable();
 
         if (dataSource != null) {

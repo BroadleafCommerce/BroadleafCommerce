@@ -111,14 +111,6 @@
     height: 15px;
 }
 
-.blcHeader, .blcHeaderDisabled {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 18px;
-    line-height: 18px;
-    color: #333;
-    font-weight: normal;
-}
-
 .adminModalMask {
     background-color: #000000;
     bottom: 0;

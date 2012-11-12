@@ -739,6 +739,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
         BatchManager batchManager = BatchManager.getInstance();
         BatchPackage batchPackage = new BatchPackage();
+        batchPackage.setDataSourceUrl(dataSource.getDataURL());
         batchPackage.setPersistencePackage(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken));
         batchPackage.setAsyncCallback(new AbstractCallback<DynamicResultSet>() {
 

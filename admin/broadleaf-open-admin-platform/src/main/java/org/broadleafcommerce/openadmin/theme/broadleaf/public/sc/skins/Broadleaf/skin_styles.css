@@ -690,12 +690,6 @@ Button (also used as MenuButton base style)
   font-size: 11px;
   line-height: 18px;
 }
-.formCell,
-.formCellFocused,
-.formCellDisabled,
-.formCellError {
-  width: 100%;
-}
 .formTitle,
 .formTitleFocused,
 .formTitleDisabled,
@@ -748,11 +742,6 @@ Button (also used as MenuButton base style)
 .formTitleFocused {
   color: #333333;
 }
-.formTitle,
-.formTitleDisabled,
-.formTitleFocused {
-  padding-left: 25px;
-}
 .formCellError,
 .formTitleError {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -777,6 +766,7 @@ Button (also used as MenuButton base style)
   padding: 4px 8px;
   text-shadow: 1px 1px 1px #000000;
   margin: 6px 0 2px;
+  height: 18px !important;
 }
 /* text items */
 .textItem,
@@ -860,10 +850,6 @@ Button (also used as MenuButton base style)
 .pickListCellSelectedDark {
   color: black;
   background-color: #FFEB90;
-}
-.pickListCellSelected > div,
-.pickListCell > div {
-  padding: 2px 4px;
 }
 .tallPickListCellSelected,
 .tallPickListCellSelectedDark {

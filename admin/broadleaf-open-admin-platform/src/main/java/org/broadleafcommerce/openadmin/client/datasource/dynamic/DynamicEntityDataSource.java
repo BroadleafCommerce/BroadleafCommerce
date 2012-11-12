@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -305,7 +306,7 @@ public class DynamicEntityDataSource extends AbstractDynamicDataSource {
 		DataSourceField[] fields = getFields();
 		for (DataSourceField field : fields) {
 			Boolean foundType = false;
-			if (field.getAttribute("permanentlyHidden") == null || field.getAttributeAsBoolean("permanentlyHidden") == false) {
+			if (field.getAttribute("permanentlyHidden") == null || !field.getAttributeAsBoolean("permanentlyHidden") || (field.getAttribute("formHidden") != null && FormHiddenEnum.VISIBLE==field.getAttributeAsObject("formHidden"))) {
 				String[] availableTypes = field.getAttributeAsStringArray("availableToTypes");
 				if (availableTypes != null) {
 					for (String singleType : type) {
@@ -319,8 +320,10 @@ public class DynamicEntityDataSource extends AbstractDynamicDataSource {
 			}
 			if (foundType) {
 				field.setHidden(false);
+                field.setAttribute("tempFormHidden", false);
 			} else {
 				field.setHidden(true);
+                field.setAttribute("tempFormHidden", true);
 			}
 		}
 	}

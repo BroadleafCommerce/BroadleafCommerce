@@ -659,66 +659,6 @@ public interface Product extends Serializable {
 	 */
 	public void setUrlKey(String url);
 
-    /**
-     * Gets the meta-description
-     *
-     * @return the metaDescription
-     */
-    @Nullable
-    public String getMetaDescription();
-
-    /**
-     * Sets the metaDescription
-     *
-     * @param metaDescription
-     */
-    public void setMetaDescription(@Nullable String metaDescription);
-
-    /**
-     * Gets the meta-keywords
-     *
-     * @return the metaKeywords
-     */
-    @Nullable
-    public String getMetaKeywords();
-
-    /**
-     * Sets the metaKeywords
-     *
-     * @param metaKeywords
-     */
-    public void setMetaKeywords(@Nullable String metaKeywords);
-
-    /**
-     * Gets the meta-Robot
-     *
-     * @return the metaRobot
-     */
-    @Nullable
-    public String getMetaRobot();
-
-    /**
-     * Sets the metaRobot
-     *
-     * @param metaRobot
-     */
-    public void setMetaRobot(@Nullable String metaRobot);
-
-    /**
-     * Gets the title fragment
-     *
-     * @return the titleFragment
-     */
-    @Nullable
-    public String getTitleFragment();
-
-    /**
-     * Sets the titleFragment
-     *
-     * @param titleFragment
-     */
-    public void setTitleFragment(@Nullable String titleFragment);
-
 	/**
 	 * Returns the name of a display template that is used to render this product.   Most implementations have a default
 	 * template for all products.    This allows for the user to define a specific template to be used by this product.
@@ -768,14 +708,6 @@ public interface Product extends Serializable {
 	 * @return the cumulative upsale products
 	 */
 	public List<RelatedProduct> getCumulativeUpSaleProducts();
-
-    /**
-     * Convenience method to return the calculated meta-description. Will return default sku description if meta-description is null,
-     * will return default sku name if description is null.
-     *
-     * @return metaDescription
-     */
-    public String getCalculatedMetaDescription();
 
 	/**
 	 * Removes any currently stored dynamic pricing

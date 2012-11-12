@@ -122,28 +122,12 @@ public class ProductImpl implements Product, Status {
     protected Long id;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO",groupOrder=2, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "Seo_Group",groupOrder=2, requiredOverride = RequiredOverride.REQUIRED)
     protected String url;
 
     @Column(name = "URL_KEY")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "ProductImpl_SEO",groupOrder=2)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "Seo_Group",groupOrder=2)
     protected String urlKey;
-
-    @Column(name = "META_DESCRIPTION")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Meta_Description", order=3, group = "ProductImpl_SEO",groupOrder=2)
-    protected String metaDescription;
-
-    @Column(name = "META_KEYWORDS")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Meta_Keywords", order=4, group = "ProductImpl_SEO",groupOrder=2)
-    protected String metaKeywords;
-
-    @Column(name = "META_ROBOT")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Meta_Robot", order=5, group = "ProductImpl_SEO",groupOrder=2)
-    protected String metaRobot;
-
-    @Column(name = "TITLE_FRAGMENT")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Title_Fragment", order=6, group = "ProductImpl_SEO",groupOrder=2)
-    protected String titleFragment;
 
     @Column(name = "DISPLAY_TEMPLATE")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=9, group = "ProductImpl_Product_Description",groupOrder=1)
@@ -747,46 +731,6 @@ public class ProductImpl implements Product, Status {
 	}
 
     @Override
-    public String getMetaDescription() {
-        return metaDescription;
-    }
-
-    @Override
-    public void setMetaDescription(String metaDescription) {
-        this.metaDescription = metaDescription;
-    }
-
-    @Override
-    public String getMetaKeywords() {
-        return metaKeywords;
-    }
-
-    @Override
-    public void setMetaKeywords(String metaKeywords) {
-        this.metaKeywords = metaKeywords;
-    }
-
-    @Override
-    public String getMetaRobot() {
-        return metaRobot;
-    }
-
-    @Override
-    public void setMetaRobot(String metaRobot) {
-        this.metaRobot = metaRobot;
-    }
-
-    @Override
-    public String getTitleFragment() {
-        return titleFragment;
-    }
-
-    @Override
-    public void setTitleFragment(String titleFragment) {
-        this.titleFragment = titleFragment;
-    }
-
-    @Override
 	public String getGeneratedUrl() {		
 		if (getDefaultCategory() != null && getDefaultCategory().getGeneratedUrl() != null) {
 			String generatedUrl = getDefaultCategory().getGeneratedUrl();
@@ -804,17 +748,6 @@ public class ProductImpl implements Product, Status {
         for (Sku sku : getAllSkus()) {
             sku.clearDynamicPrices();
         }
-    }
-    
-    @Override
-    public String getCalculatedMetaDescription(){
-        if(metaDescription == null){
-            if(getDefaultSku().getDescription() == null){
-                return getDefaultSku().getName();
-            }
-            return getDefaultSku().getDescription();
-        }
-        return metaDescription;
     }
 
 }

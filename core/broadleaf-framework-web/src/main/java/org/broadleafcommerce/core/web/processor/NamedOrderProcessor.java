@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -31,6 +32,7 @@ import org.thymeleaf.dom.Element;
  *
  * @author elbertbautista
  */
+@Component("blNamedOrderProcessor")
 public class NamedOrderProcessor extends AbstractModelVariableModifierProcessor {
 
     /**

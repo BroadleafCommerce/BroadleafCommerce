@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.web.processor;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
@@ -34,6 +35,7 @@ import java.util.Map;
  *
  * @author elbertbautista
  */
+@Component("blAdminSectionHrefProcessor")
 public class AdminSectionHrefProcessor extends AbstractAttributeModifierAttrProcessor {
 
     /**

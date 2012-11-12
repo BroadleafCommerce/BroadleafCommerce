@@ -26,14 +26,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.servlet.support.RequestContext;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
-import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.spring3.context.SpringWebContext;
-import org.thymeleaf.spring3.naming.SpringContextVariableNames;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -45,6 +42,7 @@ import java.util.List;
  *
  * @author elbertbautista
  */
+@Component("blAdminModuleProcessor")
 public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";

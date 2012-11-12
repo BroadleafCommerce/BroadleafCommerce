@@ -55,7 +55,7 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         VLayout insideLayout = new VLayout();
 
         Label header = new Label(BLCMain.getMessageManager().getString("approverSandBoxTitle"));
-        header.setBaseStyle("blcHeader");
+        header.setBaseStyle("bl-header");
         header.setHeight(15);
 
         insideLayout.addMember(header);

@@ -73,16 +73,19 @@ public class EntityEditDialog extends Window {
         hStack = new HStack();
         
 		VStack stack = new VStack();
-        //stack.setWidth("80%");
+        stack.setWidth100();
 		stack.setLayoutRightMargin(20);
 		dynamicForm = new DynamicForm();
         dynamicForm.setHeight(175);
         dynamicForm.setWidth100();
         dynamicForm.setPadding(10);
         dynamicForm.setCellPadding(8);
-        dynamicForm.setTitleOrientation(TitleOrientation.TOP);
+        dynamicForm.setTitleOrientation(TitleOrientation.LEFT);
         dynamicForm.setNumCols(1);
         dynamicForm.setWrapItemTitles(false);
+        dynamicForm.setTitleSuffix("");
+        dynamicForm.setRequiredTitleSuffix("");
+
         //dynamicForm.setPadding(10);
         stack.addMember(dynamicForm);
 

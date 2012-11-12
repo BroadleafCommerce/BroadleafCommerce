@@ -22,6 +22,9 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  *
  * @author jfischer
@@ -52,6 +55,16 @@ public class FieldDataSourceWrapper extends DataSource {
             }
             records[j] = record;
         }
+        Arrays.sort(fields, new Comparator<DataSourceField>() {
+            @Override
+            public int compare(DataSourceField o1, DataSourceField o2) {
+                if (o1.getTitle() != null &&  o2.getTitle() != null) {
+                    return o1.getTitle().compareTo(o2.getTitle());
+                } else {
+                    return o1.getName().compareTo(o2.getTitle());
+                }
+            }
+        });
         setFields(fields);
         setCacheData(records);
 	}

@@ -59,8 +59,8 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
         stack.setLayoutMargin(12);
 
         Label header = new Label(title);
-        header.setBaseStyle("blcHeader");
-        header.setHeight(15);
+        header.setBaseStyle("bl-header");
+        header.setHeight(20);
 
         stack.addMember(header);
         
