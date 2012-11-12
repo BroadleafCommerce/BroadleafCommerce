@@ -18,6 +18,8 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
@@ -89,6 +91,8 @@ import java.util.TreeMap;
 @Component("blMetadata")
 @Scope("prototype")
 public class Metadata {
+
+    private static final Log LOG = LogFactory.getLog(Metadata.class);
 
     protected Map<String, Map<String, FieldMetadataOverride>> metadataOverrides;
 
@@ -1233,6 +1237,8 @@ public class Metadata {
                                     serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
+                                        //TODO add debug logging for key metadata setup events, such as when a field is excluded
+                                        //LOG.debug();
                                         serverMetadata.setExcluded(true);
                                     }
                                 }
