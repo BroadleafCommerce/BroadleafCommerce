@@ -190,34 +190,28 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Override
     public BigDecimal getPotentialSavings() {
+
         if (skuBundleItems != null) {
+
             Money totalNormalPrice = new Money(BankersRounding.zeroAmount());
             Money totalBundlePrice = new Money(BankersRounding.zeroAmount());
 
             for (SkuBundleItem skuBundleItem : skuBundleItems) {
-                if(totalNormalPrice.isZero()) {
-                    //make sure that the currency is updated;
-                    totalNormalPrice= skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity());
-                  } else {
-                    totalNormalPrice = totalNormalPrice.add(skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity()));
-                  }
+
+                Sku sku = skuBundleItem.getSku();
+
+                if (sku != null && sku.getRetailPrice() != null) {
+                    totalNormalPrice = totalNormalPrice.add(sku.getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                }
+
                 if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
                     if (skuBundleItem.getSalePrice() != null) {
-                        if(totalBundlePrice.isZero()) {
-                            //make sure that the currency is updated;
-                            totalBundlePrice = skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity());
-                          } else {
-                             totalBundlePrice = totalBundlePrice.add(skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity()));
-                          }
+                        totalBundlePrice = totalBundlePrice.add(skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity()));
                     } else {
-                        if(totalBundlePrice.isZero()) {
-                            //make sure that the currency is updated;
-                            totalBundlePrice = skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity());
-                          } else {
-                            totalBundlePrice = totalBundlePrice.add(skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity()));
-                          }
+                        totalBundlePrice = totalBundlePrice.add(skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity()));
                     }
                 }
+
             }
 
             if (ProductBundlePricingModelType.BUNDLE.equals(getPricingModel())) {
@@ -227,9 +221,13 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
                     totalBundlePrice = getRetailPrice();
                 }
             }
+
             return totalNormalPrice.subtract(totalBundlePrice).getAmount();
+
         }
 
         return BigDecimal.ZERO;
+
     }
+
 }
