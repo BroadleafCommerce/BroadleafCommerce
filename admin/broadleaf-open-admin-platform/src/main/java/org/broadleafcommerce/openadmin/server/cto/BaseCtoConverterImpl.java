@@ -43,7 +43,11 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
         	if (stringValue == null || stringValue.equals("null")) {
         		return null;
         	}
-            return Long.valueOf(stringValue);
+            try {
+                return Long.valueOf(stringValue);
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
     };
     
@@ -52,7 +56,11 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
         	if (stringValue == null || stringValue.equals("null")) {
         		return null;
         	}
-            return Integer.valueOf(stringValue);
+            try {
+                return Integer.valueOf(stringValue);
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
     };
     
@@ -61,7 +69,11 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
         	if (stringValue == null) {
         		return null;
         	}
-            return new BigDecimal(stringValue);
+            try {
+                return new BigDecimal(stringValue);
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
     };
 

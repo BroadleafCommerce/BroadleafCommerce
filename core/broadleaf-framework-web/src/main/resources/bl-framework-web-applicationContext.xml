@@ -28,15 +28,11 @@
 	<bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
 	    <property name="processors">
 		  <set>
-            <ref bean="blAdminUserProcessor"/>
-            <ref bean="blAdminModuleProcessor"/>
-            <ref bean="blAdminSectionHrefProcessor"/>
 			<ref bean="blContentProcessor"/>
 			<ref bean="blAddSortLinkProcessor" />
 			<ref bean="blCategoriesProcessor" />
 			<ref bean="blFormProcessor" />
 			<ref bean="blHeadProcessor" />
-			<ref bean="blImageProcessor" />
 		    <ref bean="blNamedOrderProcessor" />
 		    <ref bean="blPaginationPageLinkProcessor" />
 			<ref bean="blPriceTextDisplayProcessor" />

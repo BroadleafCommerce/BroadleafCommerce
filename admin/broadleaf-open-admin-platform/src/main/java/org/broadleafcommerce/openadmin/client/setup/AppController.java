@@ -16,6 +16,14 @@
 
 package org.broadleafcommerce.openadmin.client.setup;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.http.client.UrlBuilder;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.BLCLaunch;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.Module;
@@ -31,16 +39,6 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.UIFactory;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.http.client.UrlBuilder;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
-import com.smartgwt.client.widgets.Canvas;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -197,13 +195,17 @@ public class AppController implements ValueChangeHandler<String> {
                                             presenter.getPresenterSequenceSetupManager().setCanvas(container);
                                          
                                             presenter.setup();
-                                            for(PresenterModifier modifier:presenterModifierList) {
-                                                modifier.setup();
+                                            if (presenterModifierList != null) {
+                                                for(PresenterModifier modifier:presenterModifierList) {
+                                                    modifier.setup();
+                                                }
                                             }
                                             presenter.getPresenterSequenceSetupManager().launch();
                                         } else {
-                                            for(PresenterModifier modifier:presenterModifierList) {
-                                                modifier.setup();
+                                            if (presenterModifierList != null) {
+                                                for(PresenterModifier modifier:presenterModifierList) {
+                                                    modifier.setup();
+                                                }
                                             }
                                             presenter.setup();
                                         }
@@ -228,21 +230,14 @@ public class AppController implements ValueChangeHandler<String> {
     }
 
     protected List<PresenterModifier> findPresenterModifiers(Class<?> presenter) {
-      
-        if(presenter.getName().equals(DynamicEntityPresenter.class.getName())) {
-            return new ArrayList<PresenterModifier>();
-        }
-     
-        if(ModuleFactory.getInstance().getModifiers(presenter.getName())==null) { 
-            if(presenter.getClass().getName().equals(presenter.getClass().getSuperclass().getName())) {
-                return new ArrayList<PresenterModifier>(); 
+        List<PresenterModifier> presenterModifiers = ModuleFactory.getInstance().getModifiers(presenter.getName());
+        if (presenterModifiers == null) {
+            Class<?> superClass = presenter.getSuperclass();
+            if (superClass != null && !superClass.getName().equals(DynamicEntityPresenter.class.getName())) {
+                presenterModifiers = findPresenterModifiers(superClass);
             }
-            //TODO need to get superclass info, as it doesn't work currently
-            return new ArrayList<PresenterModifier>();
-  //          return findPresenterModifiers(presenter.getClass().getSuperclass());    
-           
-        } else {
-           return ModuleFactory.getInstance().getModifiers(presenter.getName());
         }
+
+        return presenterModifiers;
     }
 }
