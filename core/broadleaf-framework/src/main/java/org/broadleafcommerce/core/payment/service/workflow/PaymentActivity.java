@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.payment.service.workflow;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.Referenced;
@@ -24,7 +25,6 @@ import org.broadleafcommerce.core.payment.service.PaymentService;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.common.money.Money;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +38,7 @@ public class PaymentActivity extends BaseActivity {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
      */
+    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CombinedPaymentContextSeed seed = ((WorkflowPaymentContext) context).getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
