@@ -517,12 +517,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     String testKey = prefix + key;
                     if (!(testKey.startsWith(include + ".") || testKey.equals(include))) {
                         FieldMetadata metadata = mergedProperties.get(key);
-                        LOG.debug("Excluding " + key + " because this field did not appear in the explicit includeFields list");
+                        LOG.debug("applyIncludesAndExcludes:Excluding " + key + " because this field did not appear in the explicit includeFields list");
                         metadata.setExcluded(true);
                     } else {
                         FieldMetadata metadata = mergedProperties.get(key);
                         if (!isParentExcluded) {
-                            LOG.debug("Showing " + key + " because this field appears in the explicit includeFields list");
+                            LOG.debug("applyIncludesAndExcludes:Showing " + key + " because this field appears in the explicit includeFields list");
                             metadata.setExcluded(false);
                         }
                     }
@@ -535,12 +535,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     String testKey = prefix + key;
                     if (testKey.startsWith(exclude + ".") || testKey.equals(exclude)) {
                         FieldMetadata metadata = mergedProperties.get(key);
-                        LOG.debug("Excluding " + key + " because this field appears in the explicit excludeFields list");
+                        LOG.debug("applyIncludesAndExcludes:Excluding " + key + " because this field appears in the explicit excludeFields list");
                         metadata.setExcluded(true);
                     } else {
                         FieldMetadata metadata = mergedProperties.get(key);
                         if (!isParentExcluded) {
-                            LOG.debug("Showing " + key + " because this field did not appear in the explicit excludeFields list");
+                            LOG.debug("applyIncludesAndExcludes:Showing " + key + " because this field did not appear in the explicit excludeFields list");
                             metadata.setExcluded(false);
                         }
                     }
@@ -779,7 +779,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		Map<String, FieldMetadata> presentationAttributes = metadata.getFieldPresentationAttributes(targetClass, this);
         if (isParentExcluded) {
             for (String key : presentationAttributes.keySet()) {
-                LOG.debug("Excluding " + key + " because parent is excluded.");
+                LOG.debug("getPropertiesForEntityClass:Excluding " + key + " because parent is excluded.");
                 presentationAttributes.get(key).setExcluded(true);
             }
         }
@@ -1327,7 +1327,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldPresentationAttributes(returnedClass, this);
         if (isParentExcluded) {
             for (String key : componentPresentationAttributes.keySet()) {
-                LOG.debug("Excluding " + key + " because the parent was excluded");
+                LOG.debug("buildComponentProperties:Excluding " + key + " because the parent was excluded");
                 componentPresentationAttributes.get(key).setExcluded(true);
             }
         }
