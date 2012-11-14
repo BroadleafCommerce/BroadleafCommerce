@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+s * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,24 @@
  */
 
 package org.broadleafcommerce.core.search.service.solr;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +52,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -52,24 +71,8 @@ import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.util.StopWatch;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.xml.sax.SAXException;
-
-import javax.annotation.Resource;
-import javax.xml.parsers.ParserConfigurationException;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * An implementation of SearchService that uses Solr
@@ -581,16 +584,63 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 	 */
 	protected List<SearchFacetDTO> buildSearchFacetDTOs(List<SearchFacet> searchFacets) {
 		List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
+		HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 		
 		for (SearchFacet facet : searchFacets) {
-			SearchFacetDTO dto = new SearchFacetDTO();
-			dto.setFacet(facet);
-			dto.setShowQuantity(true);
-			facets.add(dto);
+		    if (facetIsAvailable(facet, request)) {
+    			SearchFacetDTO dto = new SearchFacetDTO();
+    			dto.setFacet(facet);
+    			dto.setShowQuantity(true);
+    			facets.add(dto);
+		    }
 		}
 		
 		return facets;
 	}
+	
+	/**
+	 * Checks to see if the requiredFacets condition for a given facet is met.
+	 * 
+	 * @param facet
+	 * @param request
+	 * @return whether or not the facet parameter is available 
+	 */
+    protected boolean facetIsAvailable(SearchFacet facet, HttpServletRequest request) {
+	    // Facets are available by default if they have no requiredFacets
+	    if (CollectionUtils.isEmpty(facet.getRequiredFacets())) {
+            return true;
+        }
+	    
+	    // This is the valid type for this map according to the JavaDocs, but the getter does not return a typed map
+	    @SuppressWarnings("unchecked")
+        Map<String, String[]> params = request.getParameterMap();
+        
+        // If we have at least one required facet but no active facets, it's impossible for this facet to be available
+        if (CollectionUtils.isEmpty(params)) {
+            return false;
+        }
+        
+        // We must either match all or just one of the required facets depending on the requiresAllDependentFacets flag
+        int requiredMatches = facet.getRequiresAllDependentFacets() ? facet.getRequiredFacets().size() : 1;
+        int matchesSoFar = 0;
+        
+        for (SearchFacet requiredFacet : facet.getRequiredFacets()) {
+            if (requiredMatches == matchesSoFar) {
+                return true;
+            }
+            
+            // Check to see if the required facet has a value in the current request parameters
+            for (Entry<String, String[]> entry : params.entrySet()) {
+                String key = entry.getKey();
+                if (key.equals(requiredFacet.getField().getAbbreviation())) {
+                    matchesSoFar++;
+                    break;
+                }
+            }
+        }
+        
+        return requiredMatches == matchesSoFar;
+    }
 	
 	/**
 	 * Converts a propertyName to one that is able to reference inside a map. For example, consider the property

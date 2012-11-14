@@ -133,4 +133,35 @@ public interface SearchFacet {
 	 */
 	public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges);
 
+	/**
+	 * @see #getRequiresAllDependentFacets()
+	 * 
+	 * @return a list of SearchFacets that must have an active value set for this SearchFacet to be applicable.
+	 */
+    public List<SearchFacet> getRequiredFacets();
+
+    /**
+     * Sets the list of facets which this facet depends on.
+     * 
+     * @param dependentFacets
+     */
+    public void setRequiredFacets(List<SearchFacet> requiredFacets);
+
+    /**
+     * This boolean controls whether or not this particular facet requires one of the dependent facets to be active, or if
+     * it requires all of the dependent facets to be active.
+     * 
+     * @see #getRequiredFacets()
+     * 
+     * @return whether the dependent facet list should be AND'ed together
+     */
+    public Boolean getRequiresAllDependentFacets();
+    
+    /**
+     * Sets whether or not all dependent facets must be active, or if only one is necessary
+     * 
+     * @param requiresAllDependentFacets
+     */
+    public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets);
+
 }
