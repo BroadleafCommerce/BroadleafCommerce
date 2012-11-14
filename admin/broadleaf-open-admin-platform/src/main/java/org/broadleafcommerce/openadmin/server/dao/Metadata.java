@@ -18,6 +18,8 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
@@ -89,6 +91,8 @@ import java.util.TreeMap;
 @Component("blMetadata")
 @Scope("prototype")
 public class Metadata {
+
+    private static final Log LOG = LogFactory.getLog(Metadata.class);
 
     protected Map<String, Map<String, FieldMetadataOverride>> metadataOverrides;
 
@@ -510,6 +514,13 @@ public class Metadata {
             metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
         } else {
             if (basicFieldMetadata.getExcluded()!=null) {
+                if (LOG.isDebugEnabled()) {
+                    if (basicFieldMetadata.getExcluded()) {
+                        LOG.debug("buildBasicMetadata:Excluding " + field.getName() + " because it was explicitly declared in config");
+                    } else {
+                        LOG.debug("buildBasicMetadata:Showing " + field.getName() + " because it was explicitly declared in config");
+                    }
+                }
                 metadata.setExcluded(basicFieldMetadata.getExcluded());
             }
         }
@@ -809,6 +820,13 @@ public class Metadata {
         }
 
         if (map.getExcluded() != null) {
+            if (LOG.isDebugEnabled()) {
+                if (map.getExcluded()) {
+                    LOG.debug("buildMapMetadata:Excluding " + field.getName() + " because it was explicitly declared in config");
+                } else {
+                    LOG.debug("buildMapMetadata:Showing " + field.getName() + " because it was explicitly declared in config");
+                }
+            }
             metadata.setExcluded(map.getExcluded());
         }
         if (map.getFriendlyName() != null) {
@@ -988,6 +1006,13 @@ public class Metadata {
         }
 
         if (adornedTargetCollectionMetadata.getExcluded() != null) {
+            if (LOG.isDebugEnabled()) {
+                if (adornedTargetCollectionMetadata.getExcluded()) {
+                    LOG.debug("buildAdornedTargetCollectionMetadata:Excluding " + field.getName() + " because it was explicitly declared in config");
+                } else {
+                    LOG.debug("buildAdornedTargetCollectionMetadata:Showing " + field.getName() + " because it was explicitly declared in config");
+                }
+            }
             metadata.setExcluded(adornedTargetCollectionMetadata.getExcluded());
         }
         if (adornedTargetCollectionMetadata.getFriendlyName() != null) {
@@ -1113,6 +1138,13 @@ public class Metadata {
         }
 
         if (collectionMetadata.getExcluded() != null) {
+            if (LOG.isDebugEnabled()) {
+                if (collectionMetadata.getExcluded()) {
+                    LOG.debug("buildCollectionMetadata:Excluding " + field.getName() + " because it was explicitly declared in config");
+                } else {
+                    LOG.debug("buildCollectionMetadata:Showing " + field.getName() + " because it was explicitly declared in config");
+                }
+            }
             metadata.setExcluded(collectionMetadata.getExcluded());
         }
         if (collectionMetadata.getFriendlyName() != null) {
@@ -1167,6 +1199,9 @@ public class Metadata {
                                     serverMetadata = (MapMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
+                                        if (LOG.isDebugEnabled()) {
+                                            LOG.debug("applyMapMetadataOverrides:Excluding " + key + "because parent is marked as excluded.");
+                                        }
                                         serverMetadata.setExcluded(true);
                                     }
                                 }
@@ -1200,6 +1235,9 @@ public class Metadata {
                                     serverMetadata = (AdornedTargetCollectionMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
+                                        if (LOG.isDebugEnabled()) {
+                                            LOG.debug("applyAdornedTargetCollectionMetadataOverrides:Excluding " + key + "because parent is marked as excluded.");
+                                        }
                                         serverMetadata.setExcluded(true);
                                     }
                                 }
@@ -1233,6 +1271,9 @@ public class Metadata {
                                     serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
+                                        if (LOG.isDebugEnabled()) {
+                                            LOG.debug("applyCollectionMetadataOverrides:Excluding " + key + "because parent is marked as excluded.");
+                                        }
                                         serverMetadata.setExcluded(true);
                                     }
                                 }
@@ -1266,6 +1307,9 @@ public class Metadata {
                                     serverMetadata = (BasicFieldMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
+                                        if (LOG.isDebugEnabled()) {
+                                            LOG.debug("applyMetadataOverrides:Excluding " + key + "because the parent was excluded");
+                                        }
                                         serverMetadata.setExcluded(true);
                                     }
                                 }
@@ -1289,12 +1333,18 @@ public class Metadata {
                     String testKey = prefix + key;
                     if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded != null && excluded) {
                         FieldMetadata metadata = mergedProperties.get(key);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("setExclusionsBasedOnParents:Excluding " + key + "because an override annotation declared "+ testKey + " to be excluded");
+                        }
                         metadata.setExcluded(true);
                         continue;
                     }
                     if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded != null && !excluded) {
                         FieldMetadata metadata = mergedProperties.get(key);
                         if (!isParentExcluded) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("setExclusionsBasedOnParents:Showing " + key + "because an override annotation declared " + testKey + " to not be excluded");
+                            }
                             metadata.setExcluded(false);
                         }
                     }
@@ -1411,12 +1461,18 @@ public class Metadata {
                 String testKey = prefix + key;
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("buildAdminPresentationOverride:Excluding " + key + "because an override annotation declared "+ testKey + " to be excluded");
+                    }
                     metadata.setExcluded(true);
                     return;
                 }
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
                     if (!isParentExcluded) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("buildAdminPresentationOverride:Showing " + key + "because an override annotation declared " + testKey + " to not be excluded");
+                        }
                         metadata.setExcluded(false);
                     }
                 }
@@ -1449,6 +1505,9 @@ public class Metadata {
                         result.setMergedPropertyType(serverMetadata.getMergedPropertyType());
                         mergedProperties.put(key, result);
                         if (isParentExcluded) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("buildAdminPresentationOverride:Excluding " + key + "because the parent was excluded");
+                            }
                             serverMetadata.setExcluded(true);
                         }
                     } catch (Exception e) {
@@ -1467,12 +1526,18 @@ public class Metadata {
                 String testKey = prefix + key;
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("buildAdminPresentationMapOverride:Excluding " + key + "because an override annotation declared " + testKey + "to be excluded");
+                    }
                     metadata.setExcluded(true);
                     return;
                 }
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
                     if (!isParentExcluded) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("buildAdminPresentationMapOverride:Showing " + key + "because an override annotation declared " + testKey + " to not be excluded");
+                        }
                         metadata.setExcluded(false);
                     }
                 }
@@ -1494,6 +1559,9 @@ public class Metadata {
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
                         mergedProperties.put(key, result);
                         if (isParentExcluded) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("buildAdminPresentationMapOverride:Excluding " + key + "because the parent was excluded");
+                            }
                             serverMetadata.setExcluded(true);
                         }
                     } catch (Exception e) {
@@ -1512,12 +1580,18 @@ public class Metadata {
                 String testKey = prefix + key;
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("buildAdminPresentationAdornedTargetCollectionOverride:Excluding " + key + "because an override annotation declared " + testKey + "to be excluded");
+                    }
                     metadata.setExcluded(true);
                     return;
                 }
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
                     if (!isParentExcluded) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("buildAdminPresentationAdornedTargetCollectionOverride:Showing " + key + "because an override annotation declared " + testKey + " to not be excluded");
+                        }
                         metadata.setExcluded(false);
                     }
                 }
@@ -1539,6 +1613,9 @@ public class Metadata {
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
                         mergedProperties.put(key, result);
                         if (isParentExcluded) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("buildAdminPresentationAdornedTargetCollectionOverride:Excluding " + key + "because the parent was excluded");
+                            }
                             serverMetadata.setExcluded(true);
                         }
                     } catch (Exception e) {
@@ -1557,12 +1634,18 @@ public class Metadata {
                 String testKey = prefix + key;
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("buildAdminPresentationCollectionOverride:Excluding " + key + "because an override annotation declared " + testKey + "to be excluded");
+                    }
                     metadata.setExcluded(true);
                     return;
                 }
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
                     if (!isParentExcluded) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("buildAdminPresentationCollectionOverride:Showing " + key + "because an override annotation declared " + testKey + " to not be excluded");
+                        }
                         metadata.setExcluded(false);
                     }
                 }
@@ -1584,6 +1667,9 @@ public class Metadata {
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
                         mergedProperties.put(key, result);
                         if (isParentExcluded) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("buildAdminPresentationCollectionOverride:Excluding " + key + "because the parent was excluded");
+                            }
                             serverMetadata.setExcluded(true);
                         }
                     } catch (Exception e) {
