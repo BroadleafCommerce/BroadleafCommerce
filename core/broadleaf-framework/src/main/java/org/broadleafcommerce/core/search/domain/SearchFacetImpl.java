@@ -28,6 +28,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -35,6 +37,7 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -82,7 +85,17 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected List<SearchFacetRange> searchFacetRanges  = new ArrayList<SearchFacetRange>();
-
+    
+    @OneToMany(mappedBy = "searchFacet", targetEntity = RequiredFacetImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
+    
+    @Column(name = "REQUIRES_ALL_DEPENDENT")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
+    protected Boolean requiresAllDependentFacets = false;
+    
 	@Override
 	public Long getId() {
 		return id;
@@ -142,8 +155,28 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	public void setCanMultiselect(Boolean canMultiselect) {
 		this.canMultiselect = canMultiselect;
 	}
+	
+	@Override
+    public List<RequiredFacet> getRequiredFacets() {
+        return requiredFacets;
+    }
 
 	@Override
+    public void setRequiredFacets(List<RequiredFacet> requiredFacets) {
+        this.requiredFacets = requiredFacets;
+    }
+
+	@Override
+    public Boolean getRequiresAllDependentFacets() {
+        return requiresAllDependentFacets == null ? false : requiresAllDependentFacets;
+    }
+
+	@Override
+    public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets) {
+        this.requiresAllDependentFacets = requiresAllDependentFacets;
+    }
+
+    @Override
 	public List<SearchFacetRange> getSearchFacetRanges() {
 		return searchFacetRanges;
 	}
