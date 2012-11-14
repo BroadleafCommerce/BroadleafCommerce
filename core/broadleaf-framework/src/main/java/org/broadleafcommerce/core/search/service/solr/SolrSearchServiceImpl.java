@@ -62,6 +62,7 @@ import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.RequiredFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
@@ -624,7 +625,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         int requiredMatches = facet.getRequiresAllDependentFacets() ? facet.getRequiredFacets().size() : 1;
         int matchesSoFar = 0;
         
-        for (SearchFacet requiredFacet : facet.getRequiredFacets()) {
+        for (RequiredFacet requiredFacet : facet.getRequiredFacets()) {
             if (requiredMatches == matchesSoFar) {
                 return true;
             }
@@ -632,7 +633,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             // Check to see if the required facet has a value in the current request parameters
             for (Entry<String, String[]> entry : params.entrySet()) {
                 String key = entry.getKey();
-                if (key.equals(requiredFacet.getField().getAbbreviation())) {
+                if (key.equals(requiredFacet.getRequiredFacet().getField().getAbbreviation())) {
                     matchesSoFar++;
                     break;
                 }

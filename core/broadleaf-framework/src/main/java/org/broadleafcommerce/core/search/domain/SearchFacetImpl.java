@@ -86,12 +86,11 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected List<SearchFacetRange> searchFacetRanges  = new ArrayList<SearchFacetRange>();
     
-    @ManyToMany(targetEntity = SearchFacetImpl.class)
-    @JoinTable(name = "BLC_SEARCH_FACET_XREF", joinColumns = @JoinColumn(name = "SEARCH_FACET_ID"), inverseJoinColumns = @JoinColumn(name = "REQUIRED_FACET_ID", referencedColumnName = "SEARCH_FACET_ID"))
+    @OneToMany(mappedBy = "searchFacet", targetEntity = RequiredFacetImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<SearchFacet> requiredFacets = new ArrayList<SearchFacet>();
+    protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
     
     @Column(name = "REQUIRES_ALL_DEPENDENT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
@@ -158,12 +157,12 @@ public class SearchFacetImpl implements SearchFacet,java.io.Serializable {
 	}
 	
 	@Override
-    public List<SearchFacet> getRequiredFacets() {
+    public List<RequiredFacet> getRequiredFacets() {
         return requiredFacets;
     }
 
 	@Override
-    public void setRequiredFacets(List<SearchFacet> requiredFacets) {
+    public void setRequiredFacets(List<RequiredFacet> requiredFacets) {
         this.requiredFacets = requiredFacets;
     }
 
