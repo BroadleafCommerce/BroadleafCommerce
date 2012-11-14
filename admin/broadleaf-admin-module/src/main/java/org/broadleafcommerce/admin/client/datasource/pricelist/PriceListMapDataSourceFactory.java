@@ -41,7 +41,7 @@ import com.smartgwt.client.data.DataSource;
  */
 public class PriceListMapDataSourceFactory implements DataSourceFactory {
         
-        public static final MapStructure MAPSTRUCTURE = new MapStructure(String.class.getName(), "key", "Key", EntityImplementations.PRICE_DATA, "priceDataMap", true);
+        public static final MapStructure MAPSTRUCTURE = new MapStructure(String.class.getName(), "key", "Key", EntityImplementations.PRICE_DATA, "embeddablePriceList.priceDataMap", true);
         public static ComplexValueMapStructureDataSource dataSource = null;
         private final DynamicEntityPresenter presenter;
        
