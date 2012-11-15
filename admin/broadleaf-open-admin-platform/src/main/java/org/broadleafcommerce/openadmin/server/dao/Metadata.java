@@ -129,7 +129,7 @@ public class Metadata {
                 buildAdornedTargetCollectionMetadata(targetClass, attributes, field, override, dynamicEntityDao);
             } else if (map != null) {
                 FieldMetadataOverride override = constructMapMetadataOverride(map);
-                buildMapMetadata(targetClass, attributes, field, override, dynamicEntityDao);
+                buildMapMetadata(targetClass, attributes, field, override, dynamicEntityDao,parentClass);
             } else {
                 BasicFieldMetadata metadata = new BasicFieldMetadata();
                 metadata.setName(field.getName());
@@ -644,7 +644,7 @@ public class Metadata {
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildMapMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride map, DynamicEntityDao dynamicEntityDao) {
+    protected void buildMapMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride map, DynamicEntityDao dynamicEntityDao,Class<?> parentClass) {
         MapMetadata serverMetadata = (MapMetadata) attributes.get(field.getName());
 
         MapMetadata metadata;
@@ -698,7 +698,12 @@ public class Metadata {
         }
 
         String parentObjectClass = targetClass.getName();
-        Map idMetadata = dynamicEntityDao.getIdMetadata(targetClass);
+        Map idMetadata;
+        if(parentClass!=null) {
+            idMetadata=dynamicEntityDao.getIdMetadata(parentClass);
+        } else {
+             idMetadata=dynamicEntityDao.getIdMetadata(targetClass);
+        }
         String parentObjectIdField = (String) idMetadata.get("name");
 
         String keyClassName = null;
@@ -1267,7 +1272,7 @@ public class Metadata {
                                     Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
-                                    buildMapMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao);
+                                    buildMapMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao,null);
                                     serverMetadata = (MapMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
@@ -1633,7 +1638,7 @@ public class Metadata {
                         FieldMetadataOverride localMetadata = constructMapMetadataOverride(annot);
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
                         Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                        buildMapMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao);
+                        buildMapMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao,null);
                         MapMetadata result = (MapMetadata) temp.get(field.getName());
                         result.setInheritedFromType(serverMetadata.getInheritedFromType());
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
