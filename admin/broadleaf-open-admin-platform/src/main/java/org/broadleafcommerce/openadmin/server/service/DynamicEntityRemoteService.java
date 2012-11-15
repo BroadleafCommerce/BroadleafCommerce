@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.openadmin.client.dto.BatchDynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.BatchPersistencePackage;
@@ -144,12 +145,27 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     protected void cleanEntity(Entity entity) throws ServiceException {
+        Property currentProperty = null;
         try {
             for (Property property : entity.getProperties()) {
+                currentProperty = property;
                 property.setRawValue(property.getValue());
-                property.setValue(exploitProtectionService.cleanString(property.getValue()));
+                property.setValue(exploitProtectionService.cleanStringWithResults(property.getValue()));
                 property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
             }
+        } catch (CleanStringException e) {
+            entity.setValidationFailure(true);
+            StringBuilder sb = new StringBuilder();
+            for (int j=0;j<e.getCleanResults().getNumberOfErrors();j++){
+                sb.append(j+1);
+                sb.append(") ");
+                sb.append((String) e.getCleanResults().getErrorMessages().get(j));
+                sb.append("\n");
+            }
+            sb.append("\nNote - ");
+            sb.append(exploitProtectionService.getAntiSamyPolicyFileLocation());
+            sb.append(" policy in effect. Set a new policy file to modify validation behavior/strictness.");
+            entity.addValidationError(currentProperty.getName(), sb.toString());
         } catch (Exception e) {
             LOG.error("Unable to clean the passed in entity values", e);
             throw new ServiceException("Unable to clean the passed in entity values", e);
@@ -161,6 +177,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         cleanEntity(persistencePackage.getEntity());
+        if (persistencePackage.getEntity().isValidationFailure()) {
+            return persistencePackage.getEntity();
+        }
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
@@ -180,6 +199,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         cleanEntity(persistencePackage.getEntity());
+        if (persistencePackage.getEntity().isValidationFailure()) {
+            return persistencePackage.getEntity();
+        }
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
