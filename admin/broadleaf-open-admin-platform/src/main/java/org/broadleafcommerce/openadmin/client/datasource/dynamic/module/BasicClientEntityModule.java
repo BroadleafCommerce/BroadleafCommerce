@@ -16,6 +16,39 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.SortSpecifier;
+import com.smartgwt.client.data.fields.DataSourceBooleanField;
+import com.smartgwt.client.data.fields.DataSourceDateTimeField;
+import com.smartgwt.client.data.fields.DataSourceEnumField;
+import com.smartgwt.client.data.fields.DataSourceFloatField;
+import com.smartgwt.client.data.fields.DataSourceImageField;
+import com.smartgwt.client.data.fields.DataSourceIntegerField;
+import com.smartgwt.client.data.fields.DataSourcePasswordField;
+import com.smartgwt.client.data.fields.DataSourceTextField;
+import com.smartgwt.client.types.FieldType;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.JSON;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.validator.Validator;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -51,40 +84,6 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManage
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.data.SortSpecifier;
-import com.smartgwt.client.data.fields.DataSourceBooleanField;
-import com.smartgwt.client.data.fields.DataSourceDateTimeField;
-import com.smartgwt.client.data.fields.DataSourceEnumField;
-import com.smartgwt.client.data.fields.DataSourceFloatField;
-import com.smartgwt.client.data.fields.DataSourceImageField;
-import com.smartgwt.client.data.fields.DataSourceIntegerField;
-import com.smartgwt.client.data.fields.DataSourcePasswordField;
-import com.smartgwt.client.data.fields.DataSourceTextField;
-import com.smartgwt.client.types.FieldType;
-import com.smartgwt.client.types.SortDirection;
-import com.smartgwt.client.util.JSON;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.validator.Validator;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -93,7 +92,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.Set;
 
 /**
@@ -846,6 +844,12 @@ public class BasicClientEntityModule implements DataSourceModule {
                         }
                         Boolean mutable = metadata.getMutable();
                         String inheritedFromType = metadata.getInheritedFromType();
+                        String owningClassFriendlyName = metadata.getOwningClassFriendlyName();
+                        if (owningClassFriendlyName == null) {
+                            owningClassFriendlyName = "";
+                        } else {
+                            owningClassFriendlyName = getLocalizedString(owningClassFriendlyName);
+                        }
                         String[] availableToTypes = metadata.getAvailableToTypes();
                         String foreignKeyClass = metadata.getForeignKeyClass();
                         String foreignKeyProperty = metadata.getForeignKeyProperty();
@@ -1164,6 +1168,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                         field.setAttribute("secondaryFieldType", secondaryFieldType);
                         field.setAttribute("mergedPropertyType", mergedPropertyType);
                         field.setAttribute("rawName", rawName);
+                        field.setAttribute("owningClassFriendlyName", owningClassFriendlyName);
                         dataSource.addField(field);
                     }
                 }
@@ -1204,15 +1209,10 @@ public class BasicClientEntityModule implements DataSourceModule {
 	 * or <b>value</b> if it does not
 	 */
 	public String getLocalizedString(String value) {
-	    String result = value;
-	    try {
-            //check if the value name is an i18N key
-            String val = BLCMain.getMessageManager().getString(result);
-            if (val != null) {
-                result = val;
-            }
-	    } catch (MissingResourceException e) {
-            //do nothing
+        //check if the value name is an i18N key
+        String result = BLCMain.getMessageManager().getString(value);
+        if (result == null) {
+            result = value;
         }
         return result;
     }

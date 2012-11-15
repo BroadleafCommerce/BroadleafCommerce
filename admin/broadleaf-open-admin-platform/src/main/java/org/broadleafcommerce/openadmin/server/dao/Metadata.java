@@ -110,7 +110,7 @@ public class Metadata {
         }
     }
 
-    public Map<String, FieldMetadata> getFieldPresentationAttributes(Class<?> targetClass, DynamicEntityDao dynamicEntityDao) {
+    public Map<String, FieldMetadata> getFieldPresentationAttributes(Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao) {
         Map<String, FieldMetadata> attributes = new HashMap<String, FieldMetadata>();
         Field[] fields = dynamicEntityDao.getAllFields(targetClass);
         for (Field field : fields) {
@@ -120,7 +120,7 @@ public class Metadata {
             AdminPresentationMap map = field.getAnnotation(AdminPresentationMap.class);
             if (annot != null) {
                 FieldMetadataOverride override = constructBasicMetadataOverride(annot, field.getAnnotation(AdminPresentationToOneLookup.class), field.getAnnotation(AdminPresentationDataDrivenEnumeration.class));
-                buildBasicMetadata(targetClass, attributes, field, override, dynamicEntityDao);
+                buildBasicMetadata(parentClass, targetClass, attributes, field, override, dynamicEntityDao);
             } else if (annotColl != null) {
                 FieldMetadataOverride override = constructBasicCollectionMetadataOverride(annotColl);
                 buildCollectionMetadata(targetClass, attributes, field, override);
@@ -485,7 +485,7 @@ public class Metadata {
         throw new IllegalArgumentException("AdminPresentation annotation not found on field");
     }
 
-    protected void buildBasicMetadata(Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride basicFieldMetadata, DynamicEntityDao dynamicEntityDao) {
+    protected void buildBasicMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride basicFieldMetadata, DynamicEntityDao dynamicEntityDao) {
         BasicFieldMetadata serverMetadata = (BasicFieldMetadata) attributes.get(field.getName());
 
         BasicFieldMetadata metadata;
@@ -497,6 +497,20 @@ public class Metadata {
 
         metadata.setName(field.getName());
         metadata.setTargetClass(targetClass.getName());
+        AdminPresentationClass adminPresentationClass;
+        if (parentClass != null) {
+            metadata.setOwningClass(parentClass.getName());
+            adminPresentationClass = parentClass.getAnnotation(AdminPresentationClass.class);
+        } else {
+            adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
+        }
+        if (adminPresentationClass != null) {
+            String friendlyName = adminPresentationClass.friendlyName();
+            if (!StringUtils.isEmpty(friendlyName)) {
+                metadata.setOwningClassFriendlyName(friendlyName);
+            }
+        }
+
         metadata.setFieldName(field.getName());
 
         if (basicFieldMetadata.getFriendlyName() != null) {
@@ -516,7 +530,8 @@ public class Metadata {
         }
         if (metadata.getExplicitFieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
-            metadata.setExcluded(true);
+            //metadata.setExcluded(true);
+            metadata.setChildrenExcluded(true);
             metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
         } else {
             if (basicFieldMetadata.getExcluded()!=null) {
@@ -643,6 +658,14 @@ public class Metadata {
         }
         
         metadata.setTargetClass(targetClass.getName());
+        AdminPresentationClass adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
+        if (adminPresentationClass != null) {
+            String friendlyName = adminPresentationClass.friendlyName();
+            if (!StringUtils.isEmpty(friendlyName)) {
+                metadata.setOwningClassFriendlyName(friendlyName);
+            }
+        }
+
         metadata.setFieldName(field.getName());
         org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
         if (map.getAddType() != null) {
@@ -879,6 +902,14 @@ public class Metadata {
             metadata = new AdornedTargetCollectionMetadata();
         }
         metadata.setTargetClass(targetClass.getName());
+        AdminPresentationClass adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
+        if (adminPresentationClass != null) {
+            String friendlyName = adminPresentationClass.friendlyName();
+            if (!StringUtils.isEmpty(friendlyName)) {
+                metadata.setOwningClassFriendlyName(friendlyName);
+            }
+        }
+
         metadata.setFieldName(field.getName());
 
         if (adornedTargetCollectionMetadata.getReadOnly() != null) {
@@ -1072,6 +1103,14 @@ public class Metadata {
             metadata = new BasicCollectionMetadata();
         }
         metadata.setTargetClass(targetClass.getName());
+        AdminPresentationClass adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
+        if (adminPresentationClass != null) {
+            String friendlyName = adminPresentationClass.friendlyName();
+            if (!StringUtils.isEmpty(friendlyName)) {
+                metadata.setOwningClassFriendlyName(friendlyName);
+            }
+        }
+
         metadata.setFieldName(field.getName());
         if (collectionMetadata.getReadOnly() != null) {
             metadata.setMutable(!collectionMetadata.getReadOnly());
@@ -1320,11 +1359,15 @@ public class Metadata {
                                 BasicFieldMetadata serverMetadata = (BasicFieldMetadata) mergedProperties.get(key);
                                 if (serverMetadata.getTargetClass() != null) {
                                     Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
+                                    Class<?> parentClass = null;
+                                    if (serverMetadata.getOwningClass() != null) {
+                                        parentClass = Class.forName(serverMetadata.getOwningClass());
+                                    }
                                     String fieldName = serverMetadata.getFieldName();
                                     Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
-                                    buildBasicMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao);
+                                    buildBasicMetadata(parentClass, targetClass, temp, field, localMetadata, dynamicEntityDao);
                                     serverMetadata = (BasicFieldMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
@@ -1504,12 +1547,16 @@ public class Metadata {
                 if (serverMetadata.getTargetClass() != null) {
                     try {
                         Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
+                        Class<?> parentClass = null;
+                        if (serverMetadata.getOwningClass() != null) {
+                            parentClass = Class.forName(serverMetadata.getOwningClass());
+                        }
                         String fieldName = serverMetadata.getFieldName();
                         Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                         FieldMetadataOverride localMetadata = constructBasicMetadataOverride(annot, null, null);
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
                         Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                        buildBasicMetadata(targetClass, temp, field, localMetadata, dynamicEntityDao);
+                        buildBasicMetadata(parentClass, targetClass, temp, field, localMetadata, dynamicEntityDao);
                         BasicFieldMetadata result = (BasicFieldMetadata) temp.get(field.getName());
                         result.setInheritedFromType(serverMetadata.getInheritedFromType());
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());

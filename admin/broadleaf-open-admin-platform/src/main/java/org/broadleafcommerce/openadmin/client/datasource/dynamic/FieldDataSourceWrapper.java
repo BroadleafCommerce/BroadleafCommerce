@@ -44,11 +44,40 @@ public class FieldDataSourceWrapper extends DataSource {
                 idField.setTitle(legacyFields[j].getTitle());
                 idField.setAttribute("fieldType", legacyFields[j].getAttribute("fieldType"));
                 idField.setAttribute("secondaryFieldType", legacyFields[j].getAttribute("secondaryFieldType"));
+                idField.setAttribute("inheritedFromType", legacyFields[j].getAttribute("inheritedFromType"));
+                idField.setAttribute("owningClassFriendlyName", legacyFields[j].getAttribute("owningClassFriendlyName"));
+                idField.setHidden(legacyFields[j].getHidden());
 
                 fields[j] = idField;
             } else {
-                fields[j] = legacyFields[j];
+                DataSourceField field = new DataSourceField();
+                field.setName(legacyFields[j].getName());
+                field.setTitle(legacyFields[j].getTitle());
+                field.setAttribute("fieldType", legacyFields[j].getAttribute("fieldType"));
+                field.setAttribute("secondaryFieldType", legacyFields[j].getAttribute("secondaryFieldType"));
+                field.setAttribute("type", legacyFields[j].getAttribute("type"));
+                field.setAttribute("inheritedFromType", legacyFields[j].getAttribute("inheritedFromType"));
+                field.setAttribute("owningClassFriendlyName", legacyFields[j].getAttribute("owningClassFriendlyName"));
+                field.setHidden(legacyFields[j].getHidden());
+                fields[j] = field;
             }
+
+            //make field names in the rule builder more specific to their owning entity
+            String friendlyName = fields[j].getAttribute("owningClassFriendlyName");
+            if (friendlyName == null || friendlyName.equals("")) {
+                String fqcn = fields[j].getAttribute("inheritedFromType");
+                if (fqcn != null) {
+                    friendlyName = ((DynamicEntityDataSource) delegate).getPolymorphicEntities().get(fqcn);
+                }
+                if (friendlyName == null) {
+                    fqcn = ((DynamicEntityDataSource) delegate).getDefaultNewEntityFullyQualifiedClassname();
+                    friendlyName = ((DynamicEntityDataSource) delegate).getPolymorphicEntities().get(fqcn);
+                }
+            }
+            if (!fields[j].getTitle().startsWith(friendlyName) && !friendlyName.contains("DTO")) {
+                fields[j].setTitle(friendlyName + " " + fields[j].getTitle());
+            }
+
             Record record = new Record();
             for (String attribute : fields[j].getAttributes()) {
                 record.setAttribute(attribute, fields[j].getAttribute(attribute));
