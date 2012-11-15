@@ -25,7 +25,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import com.smartgwt.client.data.DataSource;
@@ -46,7 +45,7 @@ public class ProductOptionView extends HLayout implements Instantiable, ProductO
     protected DynamicFormView dynamicFormDisplay;
     protected DynamicEntityListView listDisplay;
     protected SubItemView productOptionValueDisplay;
-    protected GridStructureView priceAdjustmentDisplay;
+    //protected GridStructureView priceAdjustmentDisplay;
     protected GridStructureView translationsDisplay;
     
     public ProductOptionView() {
@@ -79,19 +78,14 @@ public class ProductOptionView extends HLayout implements Instantiable, ProductO
         detailsTab.setID("productOptionDetailsTab");
         
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("productOptionDetailsTitle"), entityDataSource);
-       // productOptionValuesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionValuesTitle"), false, true);
-      //  ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(productOptionValuesDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         
         Tab productOptionValueTab = new Tab(BLCMain.getMessageManager().getString("productOptionDetailsTitle")); 
         productOptionValueTab.setID("productOptionValueTab");
         productOptionValueDisplay = new SubItemView(BLCMain.getMessageManager().getString("productOptionValuesTitle"), true, true);
-        
-        priceAdjustmentDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionPriceAdjMainTitle"), false, true);
-     //   ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(skuPriceListDisplay);
-        ((FormOnlyView) productOptionValueDisplay.getFormOnlyDisplay()).addMember(priceAdjustmentDisplay);
+        productOptionValueDisplay.setID("productOptionValueTabSubView");
         translationsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionImpl_Translations"), false, true);
-        //   ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(skuPriceListDisplay);
+        
            ((FormOnlyView) productOptionValueDisplay.getFormOnlyDisplay()).addMember(translationsDisplay);
         productOptionValueTab.setPane(productOptionValueDisplay);
         
@@ -126,10 +120,6 @@ public class ProductOptionView extends HLayout implements Instantiable, ProductO
        return productOptionValueDisplay;
     }
 
-    @Override
-    public GridStructureDisplay getPriceAdjustmentDisplay() {
-       return priceAdjustmentDisplay;
-    }
     @Override
     public GridStructureView getTranslationsDisplay() {
         return translationsDisplay;

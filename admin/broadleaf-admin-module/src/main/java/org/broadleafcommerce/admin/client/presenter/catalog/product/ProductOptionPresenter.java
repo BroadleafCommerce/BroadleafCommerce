@@ -22,7 +22,6 @@ package org.broadleafcommerce.admin.client.presenter.catalog.product;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionValueDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.pricelist.PriceListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.catalog.product.ProductOptionDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
@@ -35,7 +34,6 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
-import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.Canvas;
@@ -51,7 +49,6 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
     
  
     protected SubPresentable productOptionValuePresenter;
-    protected MapStructurePresenter priceListPresenter;
     protected SubPresentable translationsPresenter;
     @Override
     protected void changeSelection(final Record selectedRecord) {
@@ -64,14 +61,12 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
         super.bind();
         productOptionValuePresenter.bind();
         translationsPresenter.bind();
-        priceListPresenter.bind(); 
         getDisplay().getProductOptionValueDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
             @Override
             public void onSelectionChanged(SelectionEvent event) {
                 ListGridRecord selectedRecord = event.getSelectedRecord();
                 if (event.getState()) {
                     translationsPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("productOptionValueDS"), null);
-                    priceListPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("productOptionValueDS"), null);
               }
             }
         });
@@ -86,33 +81,7 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
                 ((ListGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{});
             }
         }));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionPriceListDS", new PriceListDataSourceFactory(), new AsyncCallbackAdapter() {
-            @Override
-public void onSetupSuccess(DataSource top) {
-            GWT.log("created datasource");   
-            
-            }
-    }));
-          getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionPriceListMapDS", new ProductOptionPriceListMapDataSourceFactory(this), null, null, new AsyncCallbackAdapter() {
-              
 
-          @Override
-  public void onSetupSuccess(DataSource result) {
-                      priceListPresenter = new MapStructurePresenter(getDisplay().getPriceAdjustmentDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newPriceAdjustment"));
-                      priceListPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
-                      
-          }
-      
-          protected MapStructureEntityEditDialog getMediaEntityView() {
-              
-                  mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE,getPresenterSequenceSetupManager().getDataSource("productOptionPriceListDS"),"friendlyName","priceKey");
-                       mapEntityAdd.setShowMedia(false);
-                      
-             
-          return mapEntityAdd;
-           }
-            
-      }));
           getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionLocaleDS", new LocaleDataSourceFactory(org.broadleafcommerce.openadmin.client.datasource.CeilingEntities.LOCALE), new AsyncCallbackAdapter() {
               @Override
   public void onSetupSuccess(DataSource top) {
