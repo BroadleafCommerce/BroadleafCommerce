@@ -102,7 +102,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct2")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseSku")
 public class SkuImpl implements Sku {
 
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);

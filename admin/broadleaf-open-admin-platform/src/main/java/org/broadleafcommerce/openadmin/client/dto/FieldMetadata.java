@@ -38,13 +38,14 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     private String friendlyName;
     private String securityLevel;
     private Integer order;
+    private String owningClassFriendlyName;
 
     //temporary fields
+    private Boolean childrenExcluded;
     private String targetClass;
+    private String owningClass;
     private String fieldName;
-
     private String showIfProperty;
-
     private String currencyCodeField;
 
 	public String[] getAvailableToTypes() {
@@ -80,24 +81,26 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         }
         metadata.excluded = excluded;
         metadata.friendlyName = friendlyName;
+        metadata.owningClassFriendlyName = owningClassFriendlyName;
         metadata.securityLevel = securityLevel;
         metadata.order = order;
         metadata.targetClass = targetClass;
+        metadata.owningClass = owningClass;
+        metadata.childrenExcluded = childrenExcluded;
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
         metadata.currencyCodeField = currencyCodeField;
         return metadata;
     }
 
-    
     public String getShowIfProperty() {
         return showIfProperty;
     }
 
-    
     public void setShowIfProperty(String showIfProperty) {
         this.showIfProperty = showIfProperty;
     }
+
     public String getCurrencyCodeField() {
         return currencyCodeField;
     }
@@ -105,6 +108,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     public void setCurrencyCodeField(String currencyCodeField) {
         this.currencyCodeField = currencyCodeField;
     }
+
     public String getFriendlyName() {
         return friendlyName;
     }
@@ -143,6 +147,30 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
+    }
+
+    public String getOwningClassFriendlyName() {
+        return owningClassFriendlyName;
+    }
+
+    public void setOwningClassFriendlyName(String owningClassFriendlyName) {
+        this.owningClassFriendlyName = owningClassFriendlyName;
+    }
+
+    public String getOwningClass() {
+        return owningClass;
+    }
+
+    public void setOwningClass(String owningClass) {
+        this.owningClass = owningClass;
+    }
+
+    public Boolean getChildrenExcluded() {
+        return childrenExcluded;
+    }
+
+    public void setChildrenExcluded(Boolean childrenExcluded) {
+        this.childrenExcluded = childrenExcluded;
     }
 
     public abstract FieldMetadata cloneFieldMetadata();

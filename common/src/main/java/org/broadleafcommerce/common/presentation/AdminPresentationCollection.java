@@ -170,4 +170,13 @@ public @interface AdminPresentationCollection {
      */
     String showIfProperty() default "";
 
+    /**
+     * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
+     * then you can specify a money currency property field.
+     *
+     *
+     * @return the currency property field
+     */
+    String currencyCodeField() default "";
+
 }

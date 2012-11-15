@@ -95,7 +95,8 @@ import java.util.Map;
         @AdminPresentationOverride(name="customer.challengeAnswer", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="customer.passwordChangeRequired", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="customer.receiveEmail", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="customer.registered", value=@AdminPresentation(excluded = true))
+        @AdminPresentationOverride(name="customer.registered", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="locale.defaultCurrency", value=@AdminPresentation(excluded = true))
     },
     collections = @AdminPresentationCollectionOverride(name="customer.customerAttributes", value=@AdminPresentationCollection(excluded = true, addType = AddMethodType.PERSIST))
 )

@@ -347,7 +347,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            Map<String, FieldMetadata> attributesMap = metadata.getFieldPresentationAttributes(targetClass, this);
+            Map<String, FieldMetadata> attributesMap = metadata.getFieldPresentationAttributes(null, targetClass, this);
 
             for (String property : attributesMap.keySet()) {
                 FieldMetadata presentationAttributes = attributesMap.get(property);
@@ -410,9 +410,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 mergedProperties.get(key).accept(new MetadataVisitorAdapter() {
                     @Override
                     public void visit(BasicFieldMetadata metadata) {
-                        if (metadata.getExplicitFieldType() == null || metadata.getExplicitFieldType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY || key.contains(".")) {
-                            removeKeys.add(key);
-                        }
+                        removeKeys.add(key);
                     }
 
                     @Override
@@ -523,10 +521,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     String testKey = prefix + key;
                     if (!(testKey.startsWith(include + ".") || testKey.equals(include))) {
                         FieldMetadata metadata = mergedProperties.get(key);
+                        LOG.debug("applyIncludesAndExcludes:Excluding " + key + " because this field did not appear in the explicit includeFields list");
                         metadata.setExcluded(true);
                     } else {
                         FieldMetadata metadata = mergedProperties.get(key);
                         if (!isParentExcluded) {
+                            LOG.debug("applyIncludesAndExcludes:Showing " + key + " because this field appears in the explicit includeFields list");
                             metadata.setExcluded(false);
                         }
                     }
@@ -539,10 +539,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     String testKey = prefix + key;
                     if (testKey.startsWith(exclude + ".") || testKey.equals(exclude)) {
                         FieldMetadata metadata = mergedProperties.get(key);
+                        LOG.debug("applyIncludesAndExcludes:Excluding " + key + " because this field appears in the explicit excludeFields list");
                         metadata.setExcluded(true);
                     } else {
                         FieldMetadata metadata = mergedProperties.get(key);
                         if (!isParentExcluded) {
+                            LOG.debug("applyIncludesAndExcludes:Showing " + key + " because this field did not appear in the explicit excludeFields list");
                             metadata.setExcluded(false);
                         }
                     }
@@ -778,9 +780,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String prefix,
         Boolean isParentExcluded
 	) {
-		Map<String, FieldMetadata> presentationAttributes = metadata.getFieldPresentationAttributes(targetClass, this);
+		Map<String, FieldMetadata> presentationAttributes = metadata.getFieldPresentationAttributes(null, targetClass, this);
         if (isParentExcluded) {
             for (String key : presentationAttributes.keySet()) {
+                LOG.debug("getPropertiesForEntityClass:Excluding " + key + " because parent is excluded.");
                 presentationAttributes.get(key).setExcluded(true);
             }
         }
@@ -1243,7 +1246,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     public Boolean testPropertyInclusion(FieldMetadata presentationAttribute) {
         setExcludedBasedOnShowIfProperty(presentationAttribute);
          
-        return !(presentationAttribute != null && presentationAttribute.getExcluded());
+        return !(presentationAttribute != null && ((presentationAttribute.getExcluded() != null && presentationAttribute.getExcluded()) || (presentationAttribute.getChildrenExcluded() != null && presentationAttribute.getChildrenExcluded())));
     
     }
 
@@ -1341,9 +1344,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		List<String> componentPropertyNames = Arrays.asList(componentProperties);
 		Type[] componentTypes = ((ComponentType) type).getSubtypes();
 		List<Type> componentPropertyTypes = Arrays.asList(componentTypes);
-		Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldPresentationAttributes(returnedClass, this);
+		Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldPresentationAttributes(targetClass, returnedClass, this);
         if (isParentExcluded) {
             for (String key : componentPresentationAttributes.keySet()) {
+                LOG.debug("buildComponentProperties:Excluding " + key + " because the parent was excluded");
                 componentPresentationAttributes.get(key).setExcluded(true);
             }
         }

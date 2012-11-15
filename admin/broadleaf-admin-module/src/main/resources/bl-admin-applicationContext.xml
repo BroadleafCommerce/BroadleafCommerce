@@ -75,6 +75,15 @@
             <mo:field name="personalMessage">
                 <mo:property name="excluded" value="true"/>
             </mo:field>
+            <mo:field name="address.country">
+                <mo:property name="excluded" value="false"/>
+            </mo:field>
+            <mo:field name="address.state">
+                <mo:property name="excluded" value="false"/>
+            </mo:field>
+            <mo:field name="address.state.country">
+                <mo:property name="excluded" value="true"/>
+            </mo:field>
             <mo:field name="address.id">
                 <mo:property name="excluded" value="true"/>
             </mo:field>
