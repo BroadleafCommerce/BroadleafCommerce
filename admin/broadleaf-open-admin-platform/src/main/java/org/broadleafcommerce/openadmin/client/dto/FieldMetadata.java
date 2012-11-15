@@ -39,6 +39,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     private Integer order;
 
     //temporary fields
+    private Boolean childrenExcluded;
     private String targetClass;
     private String fieldName;
 
@@ -78,6 +79,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         metadata.securityLevel = securityLevel;
         metadata.order = order;
         metadata.targetClass = targetClass;
+        metadata.childrenExcluded = childrenExcluded;
         metadata.fieldName = fieldName;
 
         return metadata;
@@ -121,6 +123,14 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
+    }
+
+    public Boolean getChildrenExcluded() {
+        return childrenExcluded;
+    }
+
+    public void setChildrenExcluded(Boolean childrenExcluded) {
+        this.childrenExcluded = childrenExcluded;
     }
 
     public abstract FieldMetadata cloneFieldMetadata();

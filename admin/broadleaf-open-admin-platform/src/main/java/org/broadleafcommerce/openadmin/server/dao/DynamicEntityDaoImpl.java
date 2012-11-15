@@ -399,14 +399,13 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         );
 
         final List<String> removeKeys = new ArrayList<String>();
+
         for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {
                 mergedProperties.get(key).accept(new MetadataVisitorAdapter() {
                     @Override
                     public void visit(BasicFieldMetadata metadata) {
-                        if (metadata.getExplicitFieldType() == null || (key.contains(".") && metadata.getExplicitFieldType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) {
-                            removeKeys.add(key);
-                        }
+                        removeKeys.add(key);
                     }
 
                     @Override
@@ -1227,7 +1226,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	}
 
     public Boolean testPropertyInclusion(FieldMetadata presentationAttribute) {
-        return !(presentationAttribute != null && presentationAttribute.getExcluded());
+        return !(presentationAttribute != null && ((presentationAttribute.getExcluded() != null && presentationAttribute.getExcluded()) || (presentationAttribute.getChildrenExcluded() != null && presentationAttribute.getChildrenExcluded())));
     }
 
     protected boolean testForeignProperty(ForeignKey foreignField, String prefix, String propertyName) {
