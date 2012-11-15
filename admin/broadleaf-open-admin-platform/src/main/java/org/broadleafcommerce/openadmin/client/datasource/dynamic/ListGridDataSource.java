@@ -16,11 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-
+import com.google.gwt.i18n.client.CurrencyList;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.types.FieldType;
@@ -30,6 +26,10 @@ import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -211,6 +211,10 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
                         formatValue = Double.parseDouble((String) value);
                     } else {
                         formatValue = (Number) value;
+                    }
+                    if (CurrencyList.get().lookup(currencyCode) == null) {
+                        //This must not be a known currency code
+                        return String.valueOf(value);
                     }
                     try {
                         return NumberFormat.getCurrencyFormat(currencyCode).format(formatValue);
