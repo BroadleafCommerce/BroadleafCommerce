@@ -92,7 +92,7 @@ Content Management -- BroadleafCommerce includes a robus content management syst
 managing static pages and content. We also include a powerful content targeting feature that allows
 business users to dynamically drive the most appropriate content to users.
 
-2. RELEASE INFO
+2. RELEASE INFORMATION
 
 Broadleaf Commerce %%version%% requires JDK 1.5 (or above) to build and/or run.
 
