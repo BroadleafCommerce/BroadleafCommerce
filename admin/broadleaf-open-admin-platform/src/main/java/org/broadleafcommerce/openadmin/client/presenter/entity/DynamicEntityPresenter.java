@@ -501,6 +501,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                                 if (metadata.getAddMethodType() == AddMethodType.PERSIST) {
                                     FormBuilder.buildAdvancedCollectionForm(baseDS, metadata, entry.getKey(), DynamicEntityPresenter.this);
                                 }
+                                if (metadata.getCurrencyCodeField() != null) {
+                                    baseDS.setAttribute("currencyCodeField", metadata.getCurrencyCodeField(), true);
+                                }
                             }
                         }));
                         //check if the interaction requires a lookup datasource
@@ -518,7 +521,14 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                     @Override
                     public void visit(final AdornedTargetCollectionMetadata metadata) {
                         //These next two presenter setup item decalarations are tricky from a timing perspective.
-                        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(metadata, DynamicEntityPresenter.this), new NullAsyncCallbackAdapter()));
+                        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new AdvancedCollectionDataSourceFactory(metadata, DynamicEntityPresenter.this), new AsyncCallbackAdapter() {
+                            @Override
+                            public void onSetupSuccess(DataSource baseDS) {
+                                if (metadata.getCurrencyCodeField() != null) {
+                                    baseDS.setAttribute("currencyCodeField", metadata.getCurrencyCodeField(), true);
+                                }
+                            }
+                        }));
                         String lookupDSName = dataSourceName + "Lookup";
                         presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(lookupDSName, new AdvancedCollectionLookupDataSourceFactory(metadata), new AsyncCallbackAdapter() {
                             @Override
@@ -542,6 +552,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                                     FormBuilder.buildAdvancedCollectionForm(baseDS, metadata, entry.getKey(), DynamicEntityPresenter.this);
                                 } else {
                                     FormBuilder.buildAdvancedCollectionForm(baseDS, presenterSequenceSetupManager.getDataSource(lookupDSName), metadata, entry.getKey(), DynamicEntityPresenter.this);
+                                }
+                                if (metadata.getCurrencyCodeField() != null) {
+                                    baseDS.setAttribute("currencyCodeField", metadata.getCurrencyCodeField(), true);
                                 }
                             }
                         }));

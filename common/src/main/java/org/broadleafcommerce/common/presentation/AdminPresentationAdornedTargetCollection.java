@@ -245,4 +245,13 @@ public @interface AdminPresentationAdornedTargetCollection {
      * @return the operation type
      */
     AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(addType = OperationType.ADORNEDTARGETLIST, fetchType = OperationType.ADORNEDTARGETLIST, inspectType = OperationType.BASIC, removeType = OperationType.ADORNEDTARGETLIST, updateType = OperationType.ADORNEDTARGETLIST);
+
+    /**
+     * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
+     * then you can specify a money currency property field.
+     *
+     *
+     * @return the currency property field
+     */
+    String currencyCodeField() default "";
 }

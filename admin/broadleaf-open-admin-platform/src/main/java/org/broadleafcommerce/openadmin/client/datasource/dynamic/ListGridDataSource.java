@@ -184,19 +184,36 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
     protected void setupDecimalFormatters(ListGridField gridField, DataSourceField field) {    
         String fieldType = field.getAttribute("fieldType");
         if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
-            final String currencyCodeField;
-            
-            if(field.getAttribute("currencyCodeField")==null || field.getAttribute("currencyCodeField").equals("")) {
-                currencyCodeField=getAttribute("blcCurrencyCode");
-            } else {
-                currencyCodeField=field.getAttribute("currencyCodeField");
+            String currencyCodeField = null;
+            if(field.getAttribute("currencyCodeField")!=null && !field.getAttribute("currencyCodeField").equals("")) {
+                currencyCodeField = field.getAttribute("currencyCodeField");
             }
+            final String formatCodeField = currencyCodeField;
             gridField.setCellFormatter(new CellFormatter() {
-                
                 @Override
                 public String format( Object value, ListGridRecord record, int rowNum, int colNum) {
+                    if (value == null) {
+                        return "";
+                    }
+                    String formatCodeFieldTemp = formatCodeField;
+                    if (formatCodeFieldTemp == null) {
+                        formatCodeFieldTemp = getAttribute("currencyCodeField");
+                    }
+                    String currencyCode = null;
+                    if (formatCodeFieldTemp != null) {
+                        currencyCode = record.getAttribute(formatCodeFieldTemp);
+                    }
+                    if (currencyCode == null) {
+                        currencyCode = getAttribute("blcCurrencyCode");
+                    }
+                    Number formatValue;
+                    if (value.getClass().getName().equals(String.class.getName())) {
+                        formatValue = Double.parseDouble((String) value);
+                    } else {
+                        formatValue = (Number) value;
+                    }
                     try {
-                        return value == null ? "" : NumberFormat.getCurrencyFormat(record.getAttributeAsString(currencyCodeField)).format((Number) value);
+                        return NumberFormat.getCurrencyFormat(currencyCode).format(formatValue);
                     } catch (Exception e) {
                         return String.valueOf(value);
                     }

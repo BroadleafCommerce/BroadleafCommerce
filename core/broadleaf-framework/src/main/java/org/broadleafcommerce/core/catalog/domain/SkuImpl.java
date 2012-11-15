@@ -347,7 +347,8 @@ public class SkuImpl implements Sku {
             deleteEntityUponRemove = true,
             mapKeyOptionEntityClass = PriceListImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "priceKey"
+            mapKeyOptionEntityValueField = "priceKey",
+            currencyCodeField = "key"
     )
     protected Map<String, PriceData> priceDataMap = new HashMap<String, PriceData>();
 

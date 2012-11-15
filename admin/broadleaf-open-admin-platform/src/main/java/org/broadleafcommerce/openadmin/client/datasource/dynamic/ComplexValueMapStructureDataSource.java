@@ -122,6 +122,7 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         	if (pos >= 0) {
         		gridFields[j].setCanEdit(canEdit[pos]);
         	}
+            setupDecimalFormatters(gridFields[j], field);
         	j++;
         	availableSlots--;
         }
@@ -154,6 +155,7 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
 	            	}
 	        		availableSlots--;
 	        	}
+                setupDecimalFormatters(gridFields[j], field);
         		j++;
         	}
         }

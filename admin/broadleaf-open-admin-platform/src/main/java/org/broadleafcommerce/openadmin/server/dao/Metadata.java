@@ -353,6 +353,7 @@ public class Metadata {
             override.setUpdateType(map.operationTypes().updateType());
             override.setInspectType(map.operationTypes().inspectType());
             override.setShowIfProperty(map.showIfProperty());
+            override.setCurrencyCodeField(map.currencyCodeField());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationMap annotation not found on field");
@@ -384,6 +385,7 @@ public class Metadata {
             override.setUpdateType(adornedTargetCollection.operationTypes().updateType());
             override.setInspectType(adornedTargetCollection.operationTypes().inspectType());
             override.setShowIfProperty(adornedTargetCollection.showIfProperty());
+            override.setCurrencyCodeField(adornedTargetCollection.currencyCodeField());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationAdornedTargetCollection annotation not found on field.");
@@ -408,6 +410,7 @@ public class Metadata {
             override.setUpdateType(annotColl.operationTypes().updateType());
             override.setInspectType(annotColl.operationTypes().inspectType());
             override.setShowIfProperty(annotColl.showIfProperty());
+            override.setCurrencyCodeField(annotColl.currencyCodeField());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationCollection annotation not found on Field");
@@ -888,6 +891,9 @@ public class Metadata {
         if (map.getCustomCriteria() != null) {
             metadata.setCustomCriteria(map.getCustomCriteria());
         }
+        if (map.getCurrencyCodeField()!=null) {
+            metadata.setCurrencyCodeField(map.getCurrencyCodeField());
+        }
 
         attributes.put(field.getName(), metadata);
     }
@@ -1089,6 +1095,9 @@ public class Metadata {
         if (adornedTargetCollectionMetadata.isIgnoreAdornedProperties() != null) {
             metadata.setIgnoreAdornedProperties(adornedTargetCollectionMetadata.isIgnoreAdornedProperties());
         }
+        if (adornedTargetCollectionMetadata.getCurrencyCodeField()!=null) {
+            metadata.setCurrencyCodeField(adornedTargetCollectionMetadata.getCurrencyCodeField());
+        }
 
         attributes.put(field.getName(), metadata);
     }
@@ -1227,6 +1236,9 @@ public class Metadata {
 
         if (collectionMetadata.getCustomCriteria() != null) {
             metadata.setCustomCriteria(collectionMetadata.getCustomCriteria());
+        }
+        if (collectionMetadata.getCurrencyCodeField()!=null) {
+            metadata.setCurrencyCodeField(collectionMetadata.getCurrencyCodeField());
         }
 
         attributes.put(field.getName(), metadata);
