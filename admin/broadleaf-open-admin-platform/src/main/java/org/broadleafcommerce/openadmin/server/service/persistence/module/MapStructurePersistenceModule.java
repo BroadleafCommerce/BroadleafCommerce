@@ -23,6 +23,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -30,10 +33,8 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
@@ -49,6 +50,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,12 +69,12 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 		return OperationType.MAP.equals(operationType);
 	}
 	
-	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
+	public void extractProperties(Class<?>[] inheritanceLine, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
 		if (mergedProperties.get(MergedPropertyType.MAPSTRUCTUREKEY) != null) {
-			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.MAPSTRUCTUREKEY), properties, false);
+			extractPropertiesFromMetadata(inheritanceLine, mergedProperties.get(MergedPropertyType.MAPSTRUCTUREKEY), properties, false);
 		}
 		if (mergedProperties.get(MergedPropertyType.MAPSTRUCTUREVALUE) != null) {
-			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.MAPSTRUCTUREVALUE), properties, false);
+			extractPropertiesFromMetadata(inheritanceLine, mergedProperties.get(MergedPropertyType.MAPSTRUCTUREVALUE), properties, false);
 		}
 	}
 
@@ -193,6 +195,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					);
 				}
 				allMergedProperties.put(MergedPropertyType.MAPSTRUCTUREVALUE, valueMergedProperties);
+                //clear out all but the primary key field from the owning entity
+                Iterator<Map.Entry<String, FieldMetadata>> itr = allMergedProperties.get(MergedPropertyType.PRIMARY).entrySet().iterator();
+                while (itr.hasNext()) {
+                    Map.Entry<String, FieldMetadata> entry = itr.next();
+                    if (!(entry.getValue() instanceof BasicFieldMetadata) || !SupportedFieldType.ID.equals(((BasicFieldMetadata) entry.getValue()).getFieldType())) {
+                        itr.remove();
+                    }
+                }
 			}
 		} catch (Exception e) {
 			LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
