@@ -836,6 +836,12 @@ public class BasicClientEntityModule implements DataSourceModule {
                         }
                         Boolean mutable = metadata.getMutable();
                         String inheritedFromType = metadata.getInheritedFromType();
+                        String owningClassFriendlyName = metadata.getOwningClassFriendlyName();
+                        if (owningClassFriendlyName == null) {
+                            owningClassFriendlyName = "";
+                        } else {
+                            owningClassFriendlyName = getLocalizedString(owningClassFriendlyName);
+                        }
                         String[] availableToTypes = metadata.getAvailableToTypes();
                         String foreignKeyClass = metadata.getForeignKeyClass();
                         String foreignKeyProperty = metadata.getForeignKeyProperty();
@@ -1151,6 +1157,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                         field.setAttribute("secondaryFieldType", secondaryFieldType);
                         field.setAttribute("mergedPropertyType", mergedPropertyType);
                         field.setAttribute("rawName", rawName);
+                        field.setAttribute("owningClassFriendlyName", owningClassFriendlyName);
                         dataSource.addField(field);
                     }
                 }
