@@ -23,8 +23,8 @@ import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.domain.ImageStaticAsset;
@@ -405,7 +405,8 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             ""
         );
 
-        mergedProperties = (HashMap<String, FieldMetadata>) SerializationUtils.clone(originalProps);
+        //Use SerializationUtils from org.apache.commons.lang3 to fix a ClassLoader problem when run in WebLogic
+        mergedProperties = SerializationUtils.clone(originalProps);
         BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
         fieldMetadata.setFieldType(SupportedFieldType.UPLOAD);
         fieldMetadata.setMutable(true);
