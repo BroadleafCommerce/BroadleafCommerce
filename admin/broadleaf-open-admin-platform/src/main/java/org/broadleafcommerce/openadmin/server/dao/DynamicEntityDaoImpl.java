@@ -342,7 +342,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            Map<String, FieldMetadata> attributesMap = metadata.getFieldPresentationAttributes(targetClass, this);
+            Map<String, FieldMetadata> attributesMap = metadata.getFieldPresentationAttributes(null,targetClass, this);
 
             for (String property : attributesMap.keySet()) {
                 FieldMetadata presentationAttributes = attributesMap.get(property);
@@ -775,7 +775,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String prefix,
         Boolean isParentExcluded
 	) {
-		Map<String, FieldMetadata> presentationAttributes = metadata.getFieldPresentationAttributes(targetClass, this);
+		Map<String, FieldMetadata> presentationAttributes = metadata.getFieldPresentationAttributes(null,targetClass, this);
         if (isParentExcluded) {
             for (String key : presentationAttributes.keySet()) {
                 LOG.debug("getPropertiesForEntityClass:Excluding " + key + " because parent is excluded.");
@@ -1323,7 +1323,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		List<String> componentPropertyNames = Arrays.asList(componentProperties);
 		Type[] componentTypes = ((ComponentType) type).getSubtypes();
 		List<Type> componentPropertyTypes = Arrays.asList(componentTypes);
-		Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldPresentationAttributes(returnedClass, this);
+		Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldPresentationAttributes(targetClass,returnedClass,this);
         if (isParentExcluded) {
             for (String key : componentPresentationAttributes.keySet()) {
                 LOG.debug("buildComponentProperties:Excluding " + key + " because the parent was excluded");
