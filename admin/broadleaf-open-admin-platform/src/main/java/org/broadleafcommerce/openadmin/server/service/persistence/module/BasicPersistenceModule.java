@@ -719,10 +719,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     public void extractProperties(Class<?>[] inheritanceLine, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
-        extractPropertiesFromMetadata(inheritanceLine, mergedProperties.get(MergedPropertyType.PRIMARY), properties, false);
+        extractPropertiesFromMetadata(inheritanceLine, mergedProperties.get(MergedPropertyType.PRIMARY), properties, false, MergedPropertyType.PRIMARY);
     }
 
-    protected void extractPropertiesFromMetadata(Class<?>[] inheritanceLine, Map<String, FieldMetadata> mergedProperties, List<Property> properties, Boolean isHiddenOverride) throws NumberFormatException {
+    protected void extractPropertiesFromMetadata(Class<?>[] inheritanceLine, Map<String, FieldMetadata> mergedProperties, List<Property> properties, Boolean isHiddenOverride, MergedPropertyType type) throws NumberFormatException {
         for (Map.Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
             String property = entry.getKey();
             Property prop = new Property();
@@ -734,7 +734,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     return o1.getName().compareTo(o2.getName());
                 }
             });
-            if (pos >= 0) {
+            if (pos >= 0 && MergedPropertyType.MAPSTRUCTUREKEY != type && MergedPropertyType.MAPSTRUCTUREVALUE != type) {
                 logWarn: {
                     if ((metadata instanceof BasicFieldMetadata) && SupportedFieldType.ID.equals(((BasicFieldMetadata) metadata).getFieldType())) {
                         //don't warn for id field collisions, but still ignore the colliding fields
