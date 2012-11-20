@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
-import com.smartgwt.client.data.Record;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
@@ -31,7 +29,7 @@ public class PaymentInfoPresenter extends SubPresenter {
     protected SubPresentable paymentLogPresenter;
     
     public PaymentInfoPresenter(SubItemDisplay display, String[] availableToTypes, Boolean showDisabledState, Boolean canEdit, Boolean showId, SubPresentable paymentResponseItemPresenter, SubPresentable paymentLogPresenter) {
-        super(display, availableToTypes, showDisabledState, canEdit, showId);
+        super("", display, availableToTypes, showDisabledState, canEdit, showId);
         this.paymentLogPresenter = paymentLogPresenter;
         this.paymentResponseItemPresenter = paymentResponseItemPresenter;
     }
