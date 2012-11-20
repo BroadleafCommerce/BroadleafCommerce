@@ -25,7 +25,6 @@ import org.broadleafcommerce.openadmin.client.reflection.Factory;
 import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
 
 import java.util.Map;
-import java.util.MissingResourceException;
 
 /**
  * 
@@ -52,12 +51,7 @@ public class BroadleafDefaultValidationFactory implements ValidationFactory {
 			((RegExpValidator) valid).setExpression(configurationItems.get("regularExpression"));
 		}
 		if (configurationItems.containsKey("errorMessageKey")) {
-			String message = null;
-            try {
-                message = BLCMain.getMessageManager().getString(configurationItems.get("errorMessageKey"));
-            } catch (MissingResourceException e) {
-                //do nothing
-            }
+			String message = BLCMain.getMessageManager().getString(configurationItems.get("errorMessageKey"));
 			if (message != null) {
 				valid.setErrorMessage(message);
 			}
