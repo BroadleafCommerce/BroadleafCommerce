@@ -138,7 +138,7 @@ public void onSetupSuccess(DataSource top) {
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValueDS", new ProductOptionValueDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                productOptionValuePresenter = new ProductOptionValueSubPresenter(getDisplay().getProductOptionValueDisplay(), "newProductOptionValue", null, false, true, false);
+                productOptionValuePresenter = new ProductOptionValueSubPresenter(getDisplay().getProductOptionValueDisplay(), BLCMain.getMessageManager().getString("newProductOptionValue"), null, false, true, false);
                 productOptionValuePresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
             }
         }));
