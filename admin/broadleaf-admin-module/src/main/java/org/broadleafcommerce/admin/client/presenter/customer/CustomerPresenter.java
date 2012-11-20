@@ -176,7 +176,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerAddressDS", new CustomerAddressDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                customerAddressPresenter = new CreateBasedListStructurePresenter(getDisplay().getCustomerAddressDisplay(), BLCMain.getMessageManager().getString("newCustomerAddressTitle"));
+                customerAddressPresenter = new CreateBasedListStructurePresenter("", getDisplay().getCustomerAddressDisplay(), BLCMain.getMessageManager().getString("newCustomerAddressTitle"));
                 customerAddressPresenter.setDataSource((ListGridDataSource) result, new String[]{"addressName", "address.addressLine1", "address.city", "address.state.name", "address.postalCode"}, new Boolean[]{true, true, true, true, true});
 
                 ((DynamicEntityDataSource) result).

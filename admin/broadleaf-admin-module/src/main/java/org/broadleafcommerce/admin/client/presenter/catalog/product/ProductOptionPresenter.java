@@ -71,7 +71,7 @@ public class ProductOptionPresenter extends DynamicEntityPresenter implements In
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValuesDS", new ProductOptionValueDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                productOptionValuesPresenter = new CreateBasedListStructurePresenter(getDisplay().getProductOptionValuesDisplay(), BLCMain.getMessageManager().getString("newProductOptionValue"));
+                productOptionValuesPresenter = new CreateBasedListStructurePresenter("",getDisplay().getProductOptionValuesDisplay(), BLCMain.getMessageManager().getString("newProductOptionValue"));
                 productOptionValuesPresenter.setDataSource((ListGridDataSource)result, new String[]{}, new Boolean[]{});
             }
         }));

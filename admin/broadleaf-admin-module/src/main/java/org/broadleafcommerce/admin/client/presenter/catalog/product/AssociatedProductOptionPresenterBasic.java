@@ -30,7 +30,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.ExpandableGridSt
 public class AssociatedProductOptionPresenterBasic extends SimpleSearchListPresenter {
     
     public AssociatedProductOptionPresenterBasic(ExpandableGridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
-        super(display, searchDialog, searchDialogTitle);
+        super("", display, searchDialog, searchDialogTitle);
     }
     
     public void setExpansionDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {

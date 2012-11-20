@@ -54,8 +54,8 @@ public class MapStructurePresenter extends AbstractSubPresentable {
     protected HandlerRegistration addClickedHandlerRegistration;
     protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 
-    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle, Map<String, Object> initialValues) {
-		super(display, availableToTypes);
+    public MapStructurePresenter(String prefix, GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle, Map<String, Object> initialValues) {
+		super(prefix, display, availableToTypes);
 		this.entityEditDialog = entityEditDialog;
 		this.entityEditDialogTitle = entityEditDialogTitle;
         if (initialValues != null) {
@@ -63,20 +63,20 @@ public class MapStructurePresenter extends AbstractSubPresentable {
         }
 	}
 
-    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle, Map<String, Object> initialValues) {
-		this(display, entityEditDialog, null, entityEditDialogTitle, initialValues);
+    public MapStructurePresenter(String prefix, GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle, Map<String, Object> initialValues) {
+		this(prefix, display, entityEditDialog, null, entityEditDialogTitle, initialValues);
 	}
 
-    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle) {
-		this(display, entityEditDialog, availableToTypes, entityEditDialogTitle, null);
+    public MapStructurePresenter(String prefix, GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle) {
+		this(prefix, display, entityEditDialog, availableToTypes, entityEditDialogTitle, null);
 	}
 
-    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle) {
-		this(display, entityEditDialog, null, entityEditDialogTitle, null);
+    public MapStructurePresenter(String prefix, GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle) {
+		this(prefix, display, entityEditDialog, null, entityEditDialogTitle, null);
 	}
 
     public MapStructurePresenter(MapStructurePresenter template) {
-        this(template.display, template.entityEditDialog, template.availableToTypes, template.entityEditDialogTitle, template.initialValues);
+        this(template.prefix, template.display, template.entityEditDialog, template.availableToTypes, template.entityEditDialogTitle, template.initialValues);
         this.abstractDynamicDataSource = template.abstractDynamicDataSource;
         this.readOnly = template.readOnly;
         this.gridFields = template.gridFields;

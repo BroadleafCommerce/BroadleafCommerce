@@ -69,20 +69,20 @@ public class EditableAdornedTargetListPresenter extends AbstractSubPresentable {
     protected HandlerRegistration removedClickedHandlerRegistration;
     protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 	
-	public EditableAdornedTargetListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle, String adornedTargetEditTitle, String... adornedTargetFields) {
-		super(display, availableToTypes);
+	public EditableAdornedTargetListPresenter(String prefix, GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle, String adornedTargetEditTitle, String... adornedTargetFields) {
+		super(prefix, display, availableToTypes);
 		this.searchDialog = searchDialog;
 		this.searchDialogTitle = searchDialogTitle;
 		this.adornedTargetEditTitle = adornedTargetEditTitle;
 		this.adornedTargetFields = adornedTargetFields;
 	}
 
-    public EditableAdornedTargetListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle, String adornedTargetEditTitle, String... adornedTargetFields) {
-		this(display, searchDialog, null, searchDialogTitle, adornedTargetEditTitle, adornedTargetFields);
+    public EditableAdornedTargetListPresenter(String prefix, GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle, String adornedTargetEditTitle, String... adornedTargetFields) {
+		this(prefix, display, searchDialog, null, searchDialogTitle, adornedTargetEditTitle, adornedTargetFields);
 	}
 
     public EditableAdornedTargetListPresenter(EditableAdornedTargetListPresenter template) {
-        this(template.display, template.searchDialog, template.availableToTypes, template.searchDialogTitle, template.adornedTargetEditTitle, template.adornedTargetFields);
+        this(template.prefix, template.display, template.searchDialog, template.availableToTypes, template.searchDialogTitle, template.adornedTargetEditTitle, template.adornedTargetFields);
         this.abstractDynamicDataSource = template.abstractDynamicDataSource;
         this.readOnly = template.readOnly;
     }

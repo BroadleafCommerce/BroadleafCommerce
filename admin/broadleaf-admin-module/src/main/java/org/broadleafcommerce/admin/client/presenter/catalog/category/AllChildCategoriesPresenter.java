@@ -51,7 +51,7 @@ public class AllChildCategoriesPresenter extends AbstractSubPresentable {
 	protected CategoryPresenter categoryPresenter;
 	
 	public AllChildCategoriesPresenter(CategoryPresenter categoryPresenter, GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
-		super(display, availableToTypes);
+		super("", display, availableToTypes);
 		this.searchDialog = searchDialog;
 		this.searchDialogTitle = searchDialogTitle;
 		this.categoryPresenter = categoryPresenter;
