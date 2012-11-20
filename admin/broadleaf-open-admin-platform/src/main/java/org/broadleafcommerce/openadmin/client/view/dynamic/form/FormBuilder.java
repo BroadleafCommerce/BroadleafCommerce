@@ -78,7 +78,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
 
 /**
  * 
@@ -129,10 +128,8 @@ public class FormBuilder {
         if (metadata.getFriendlyName() == null || metadata.getFriendlyName().length() == 0) {
             viewTitle = propertyName;
         } else {
-            String temp;
-            try {
-                temp = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
-            } catch (MissingResourceException e) {
+            String temp = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
+            if (temp == null) {
                 temp = metadata.getFriendlyName();
             }
             viewTitle = temp;
@@ -147,6 +144,13 @@ public class FormBuilder {
             }
         }
 
+        final String prefix;
+        if (propertyName.contains(".")) {
+            prefix = propertyName.substring(0, propertyName.lastIndexOf("."));
+        } else {
+            prefix = "";
+        }
+
         metadata.accept(new MetadataVisitorAdapter() {
             @Override
             public void visit(BasicCollectionMetadata metadata) {
@@ -154,9 +158,9 @@ public class FormBuilder {
                 destination.addMember(advancedCollectionView);
                 SubPresentable subPresentable;
                 if (metadata.getAddMethodType() == AddMethodType.PERSIST) {
-                    subPresentable = new CreateBasedListStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
+                    subPresentable = new CreateBasedListStructurePresenter(prefix, advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
                 } else {
-                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, new EntitySearchDialog((ListGridDataSource)lookupDataSource, true), metadata.getAvailableToTypes(), viewTitle);
+                    subPresentable = new SimpleSearchListPresenter(prefix, advancedCollectionView, new EntitySearchDialog((ListGridDataSource)lookupDataSource, true), metadata.getAvailableToTypes(), viewTitle);
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
@@ -179,9 +183,9 @@ public class FormBuilder {
                 EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDataSource, true);
                 SubPresentable subPresentable;
                 if (metadata.isIgnoreAdornedProperties() || metadata.getMaintainedAdornedTargetFields().length == 0) {
-                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
+                    subPresentable = new SimpleSearchListPresenter(prefix, advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
                 } else {
-                    subPresentable = new EditableAdornedTargetListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle, metadata.getMaintainedAdornedTargetFields());
+                    subPresentable = new EditableAdornedTargetListPresenter(prefix, advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle, metadata.getMaintainedAdornedTargetFields());
                 }
                 Boolean[] edits = new Boolean[metadata.getGridVisibleFields().length];
                 for (int j=0;j<edits.length;j++) {
@@ -199,7 +203,7 @@ public class FormBuilder {
                 destination.addMember(advancedCollectionView);
                 SubPresentable subPresentable;
                 if (metadata.isSimpleValue()) {
-                    subPresentable = new SimpleMapStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), null);
+                    subPresentable = new SimpleMapStructurePresenter(prefix, advancedCollectionView, metadata.getAvailableToTypes(), null);
                 } else {
                     MapStructureEntityEditDialog mapEntityAdd;
                     if (lookupDataSource != null) {
@@ -207,10 +211,8 @@ public class FormBuilder {
                     } else {
                         LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
                         for (String[] key : metadata.getKeys()) {
-                            String temp;
-                            try {
-                                temp = BLCMain.getMessageManager().getString(key[1]);
-                            } catch (MissingResourceException e) {
+                            String temp = BLCMain.getMessageManager().getString(key[1]);
+                            if (temp == null) {
                                 temp = key[1];
                             }
                             keys.put(key[0], temp);
@@ -223,7 +225,7 @@ public class FormBuilder {
                     } else {
                         mapEntityAdd.setShowMedia(false);
                     }
-                    subPresentable = new MapStructurePresenter(advancedCollectionView, mapEntityAdd, viewTitle, null);
+                    subPresentable = new MapStructurePresenter(prefix, advancedCollectionView, mapEntityAdd, viewTitle, null);
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
@@ -549,14 +551,9 @@ public class FormBuilder {
 						otherItem.setName(otherFieldName);
 						String title = field.getAttribute("friendlyName") +" Repeat";
 						//check to see if we have an i18N version of the new title
-                        try {
-                            String val = BLCMain.getMessageManager().getString(title);
-                            if (val != null) {
-                                title = val;
-                                break;
-                            }
-                        } catch (MissingResourceException e) {
-                            //do nothing
+                        String val = BLCMain.getMessageManager().getString(title);
+                        if (val != null) {
+                            title = val;
                         }
 						otherItem.setTitle(title);
 						otherItem.setRequired(field.getRequired());

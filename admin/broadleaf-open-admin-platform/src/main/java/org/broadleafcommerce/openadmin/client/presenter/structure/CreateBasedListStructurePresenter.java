@@ -58,26 +58,26 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
     protected HandlerRegistration addClickedHandlerRegistration;
     protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 
-    public CreateBasedListStructurePresenter(GridStructureDisplay display, String editDialogTitle) {
-		this(display, null, editDialogTitle, new HashMap<String, Object>());
+    public CreateBasedListStructurePresenter(String prefix, GridStructureDisplay display, String editDialogTitle) {
+		this(prefix, display, null, editDialogTitle, new HashMap<String, Object>());
 	}
 
-	public CreateBasedListStructurePresenter(GridStructureDisplay display, String[] availableToTypes, String editDialogTitle) {
-		this(display, availableToTypes, editDialogTitle, new HashMap<String, Object>());
+	public CreateBasedListStructurePresenter(String prefix, GridStructureDisplay display, String[] availableToTypes, String editDialogTitle) {
+		this(prefix, display, availableToTypes, editDialogTitle, new HashMap<String, Object>());
 	}
 
-    public CreateBasedListStructurePresenter(GridStructureDisplay display, String editDialogTitle, Map<String, Object> initialValues) {
-		this(display, null, editDialogTitle, initialValues);
+    public CreateBasedListStructurePresenter(String prefix, GridStructureDisplay display, String editDialogTitle, Map<String, Object> initialValues) {
+		this(prefix, display, null, editDialogTitle, initialValues);
 	}
 	
-	public CreateBasedListStructurePresenter(GridStructureDisplay display, String[] availableToTypes, String editDialogTitle, Map<String, Object> initialValues) {
-		super(display, availableToTypes);
+	public CreateBasedListStructurePresenter(String prefix, GridStructureDisplay display, String[] availableToTypes, String editDialogTitle, Map<String, Object> initialValues) {
+		super(prefix, display, availableToTypes);
 		this.editDialogTitle = editDialogTitle;
 		this.initialValues = initialValues;
 	}
 
     public CreateBasedListStructurePresenter(CreateBasedListStructurePresenter template) {
-        this(template.display, template.availableToTypes, template.editDialogTitle, template.initialValues);
+        this(template.prefix, template.display, template.availableToTypes, template.editDialogTitle, template.initialValues);
         this.abstractDynamicDataSource = template.abstractDynamicDataSource;
         this.readOnly = template.readOnly;
         this.gridFields = template.gridFields;

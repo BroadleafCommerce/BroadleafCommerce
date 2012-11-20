@@ -236,7 +236,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				parentCategoriesPresenter = new SimpleSearchListPresenter(getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), BLCMain.getMessageManager().getString("categorySearchPrompt"));
+				parentCategoriesPresenter = new SimpleSearchListPresenter("",getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), BLCMain.getMessageManager().getString("categorySearchPrompt"));
 				parentCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
@@ -281,7 +281,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleSkusDS", new SkuBundleItemsDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                bundleItemsPresenter = new EditableAdornedTargetListPresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "itemSalePrice"});
+                bundleItemsPresenter = new EditableAdornedTargetListPresenter("",getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "itemSalePrice"});
                 bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "quantity", "itemSalePrice"}, new Boolean[]{false, false, false});
             }
         }));
@@ -304,10 +304,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
     @Override
     public void postSetup(Canvas container) {
-        MapStructurePresenter simplePresenter = (MapStructurePresenter) subPresentables.get("productMediaMapDS");
-        DefaultSkuMediaMapStructurePresenter defaultSkuMediaMapStructurePresenter = new DefaultSkuMediaMapStructurePresenter(simplePresenter);
-        subPresentables.put("productMediaMapDS", defaultSkuMediaMapStructurePresenter);
-
         getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
             @Override
             public void execute(final FormItem formItem) {
@@ -322,7 +318,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             }
         });
         
-        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),parentCategoriesPresenter,productOptionsPresenter,skusPresenter,bundleItemsPresenter,defaultSkuMediaMapStructurePresenter );
+        gridHelper.addSubPresentableHandlers(display.getListDisplay().getGrid(),parentCategoriesPresenter,productOptionsPresenter,skusPresenter,bundleItemsPresenter,subPresentables.get("productMediaMapDS") );
         
         super.postSetup(container);
     }

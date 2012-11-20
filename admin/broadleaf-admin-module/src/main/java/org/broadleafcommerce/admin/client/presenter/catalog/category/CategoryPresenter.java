@@ -304,14 +304,14 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("featuredProductsDS", new FeaturedProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				featuredPresenter = new EditableAdornedTargetListPresenter(getDisplay().getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				featuredPresenter = new EditableAdornedTargetListPresenter("", getDisplay().getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				featuredPresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildProductsDS", new AllProductsDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				childProductsPresenter = new SimpleSearchListPresenter(getDisplay().getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchPrompt"));
+				childProductsPresenter = new SimpleSearchListPresenter("", getDisplay().getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchPrompt"));
 				childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"defaultSku.name", "model", "manufacturer"}, new Boolean[]{false, false, false});
 			}
 		}));
@@ -321,7 +321,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
                 Map<String, Object> initialValues = new HashMap<String, Object>(2);
                 initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
                 initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
-				mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
+				mediaPresenter = new MapStructurePresenter("", getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
                 mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "url", "title", "altText", "tags"}, new Boolean[]{true, true, true, true, true});
 			}
 		}));
@@ -359,14 +359,14 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
     	getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categoryCrossSaleProductsDS", new CategoryCrossSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				crossSalePresenter = new EditableAdornedTargetListPresenter(getDisplay().getCrossSaleDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				crossSalePresenter = new EditableAdornedTargetListPresenter("", getDisplay().getCrossSaleDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				crossSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categoryUpSaleProductsDS", new CategoryUpSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				upSalePresenter = new EditableAdornedTargetListPresenter(getDisplay().getUpSaleDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				upSalePresenter = new EditableAdornedTargetListPresenter("", getDisplay().getUpSaleDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				upSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
