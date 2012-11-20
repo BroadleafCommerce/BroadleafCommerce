@@ -59,6 +59,7 @@ public class FieldDataSourceWrapper extends DataSource {
                 field.setAttribute("inheritedFromType", legacyFields[j].getAttribute("inheritedFromType"));
                 field.setAttribute("owningClassFriendlyName", legacyFields[j].getAttribute("owningClassFriendlyName"));
                 field.setHidden(legacyFields[j].getHidden());
+                field.setValueMap(legacyFields[j].getValueMap());
                 fields[j] = field;
             }
 
