@@ -27,6 +27,10 @@ header {height: 55px; }
     text-align: left;
 }
 
+#gwt-component b label {
+    font-weight: bold;
+}
+
 #nongwt-component, #gwt-component { margin: 20px 20px 0 20px; }
 
 .navbar-inverse .navbar-inner {
