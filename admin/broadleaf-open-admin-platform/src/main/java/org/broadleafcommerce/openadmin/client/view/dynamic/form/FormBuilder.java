@@ -456,9 +456,9 @@ public class FormBuilder {
                 public int compare(String o1, String o2) {
 					if (o1.equals(o2)) {
 						return 0;
-					} else if (o1.equals("General")) {
-						return 1;
-					} else if (o2.equals("General")) {
+					} else if (o1.equals("General") && (sectionNames.get(o1) == null || sectionNames.get(o1) == 99999)) {
+                        return 1;
+					} else if (o2.equals("General") && (sectionNames.get(o2) == null || sectionNames.get(o2) == 99999)) {
 						return -1;
 					} else {
 						Integer groupOrder1 = sectionNames.get(o1);
