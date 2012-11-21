@@ -78,6 +78,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * 
@@ -128,8 +129,10 @@ public class FormBuilder {
         if (metadata.getFriendlyName() == null || metadata.getFriendlyName().length() == 0) {
             viewTitle = propertyName;
         } else {
-            String temp = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
-            if (temp == null) {
+            String temp;
+            try {
+                temp = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
+            } catch (MissingResourceException e) {
                 temp = metadata.getFriendlyName();
             }
             viewTitle = temp;
@@ -211,8 +214,10 @@ public class FormBuilder {
                     } else {
                         LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
                         for (String[] key : metadata.getKeys()) {
-                            String temp = BLCMain.getMessageManager().getString(key[1]);
-                            if (temp == null) {
+                            String temp;
+                            try {
+                                temp = BLCMain.getMessageManager().getString(key[1]);
+                            } catch (MissingResourceException e) {
                                 temp = key[1];
                             }
                             keys.put(key[0], temp);
@@ -551,9 +556,14 @@ public class FormBuilder {
 						otherItem.setName(otherFieldName);
 						String title = field.getAttribute("friendlyName") +" Repeat";
 						//check to see if we have an i18N version of the new title
-                        String val = BLCMain.getMessageManager().getString(title);
-                        if (val != null) {
-                            title = val;
+                        try {
+                            String val = BLCMain.getMessageManager().getString(title);
+                            if (val != null) {
+                                title = val;
+                                break;
+                            }
+                        } catch (MissingResourceException e) {
+                            //do nothing
                         }
 						otherItem.setTitle(title);
 						otherItem.setRequired(field.getRequired());
