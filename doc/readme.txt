@@ -2,7 +2,7 @@ Broadleaf Commerce, release %%version%%
 --------------------------------------------------
 http://www.broadleafcommerce.org
 
-1. INTRODUCTION
+1. INTRODUCTION-
 
 BroadleafCommerce is an open-source, e-commerce framework written entirely in Java. 
 It is targeted at facilitating the development of enterprise-class, commerce-driven 
