@@ -116,21 +116,21 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             public void onChanged(ChangedEvent event) {
                 String eventValue = event.getValue().toString();
                 //FIX_PRICE promotions cannot combine with other promotions of the same type
-                if (eventValue.equals("FIX_PRICE")) {
-                    getDisplay().getOrderCombineForm().disable();
-                    getDisplay().getFGCombineForm().disable();
-                    getDisplay().getOrderItemCombineForm().disable();
-                    getDisplay().getOrderCombineRuleRadio().setValue("NO");
-                    getDisplay().getFgCombineRuleRadio().setValue("NO");
-                    getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
-                } else {
+//                if (eventValue.equals("FIX_PRICE")) {
+//                    getDisplay().getOrderCombineForm().disable();
+//                    getDisplay().getFGCombineForm().disable();
+//                    getDisplay().getOrderItemCombineForm().disable();
+//                    getDisplay().getOrderCombineRuleRadio().setValue("NO");
+//                    getDisplay().getFgCombineRuleRadio().setValue("NO");
+//                    getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
+//                } else {
                     getDisplay().getOrderCombineForm().enable();
                     getDisplay().getFGCombineForm().enable();
                     getDisplay().getOrderItemCombineForm().enable();
                     getDisplay().getOrderCombineRuleRadio().setValue("YES");
                     getDisplay().getFgCombineRuleRadio().setValue("YES");
                     getDisplay().getOrderItemCombineRuleRadio().setValue("YES");
-                }
+                //}
             }
         });
         FormItem endDate = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("endDate");

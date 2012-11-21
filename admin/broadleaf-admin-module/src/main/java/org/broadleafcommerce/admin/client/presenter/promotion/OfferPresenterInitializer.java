@@ -195,14 +195,14 @@ public class OfferPresenterInitializer {
 		}
 		getDisplay().getFgCombineRuleRadio().setValue(combinable?"YES":"NO");
 		
-		if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
-			getDisplay().getOrderCombineForm().disable();
-			getDisplay().getFGCombineForm().disable();
-			getDisplay().getOrderItemCombineForm().disable();
-			getDisplay().getOrderCombineRuleRadio().setValue("NO");
-			getDisplay().getFgCombineRuleRadio().setValue("NO");
-			getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
-		}
+//		if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
+//			getDisplay().getOrderCombineForm().disable();
+//			getDisplay().getFGCombineForm().disable();
+//			getDisplay().getOrderItemCombineForm().disable();
+//			getDisplay().getOrderCombineRuleRadio().setValue("NO");
+//			getDisplay().getFgCombineRuleRadio().setValue("NO");
+//			getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
+//		}
 		
 		initFGRule(fgRule, selectedRecord);
 	}
@@ -401,14 +401,14 @@ public class OfferPresenterInitializer {
 		}
 		getDisplay().getOrderItemCombineRuleRadio().setValue(combinable?"YES":"NO");
 		
-		if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
-			getDisplay().getOrderCombineForm().disable();
-			getDisplay().getFGCombineForm().disable();
-			getDisplay().getOrderItemCombineForm().disable();
-			getDisplay().getOrderCombineRuleRadio().setValue("NO");
-			getDisplay().getFgCombineRuleRadio().setValue("NO");
-			getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
-		}
+//		if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
+//			getDisplay().getOrderCombineForm().disable();
+//			getDisplay().getFGCombineForm().disable();
+//			getDisplay().getOrderItemCombineForm().disable();
+//			getDisplay().getOrderCombineRuleRadio().setValue("NO");
+//			getDisplay().getFgCombineRuleRadio().setValue("NO");
+//			getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
+//		}
 	}
 	
 	public void disable() {
