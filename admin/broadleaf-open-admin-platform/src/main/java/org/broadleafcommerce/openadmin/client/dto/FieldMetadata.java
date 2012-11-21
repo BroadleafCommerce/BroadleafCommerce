@@ -44,6 +44,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     private Boolean childrenExcluded;
     private String targetClass;
     private String owningClass;
+    private String prefix;
     private String fieldName;
     private String showIfProperty;
     private String currencyCodeField;
@@ -86,6 +87,7 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         metadata.order = order;
         metadata.targetClass = targetClass;
         metadata.owningClass = owningClass;
+        metadata.prefix = prefix;
         metadata.childrenExcluded = childrenExcluded;
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
@@ -163,6 +165,14 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     public void setOwningClass(String owningClass) {
         this.owningClass = owningClass;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
     public Boolean getChildrenExcluded() {

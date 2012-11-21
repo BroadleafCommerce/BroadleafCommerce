@@ -347,7 +347,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            Map<String, FieldMetadata> attributesMap = metadata.getFieldPresentationAttributes(null, targetClass, this);
+            Map<String, FieldMetadata> attributesMap = metadata.getFieldPresentationAttributes(null, targetClass, this, "");
 
             for (String property : attributesMap.keySet()) {
                 FieldMetadata presentationAttributes = attributesMap.get(property);
@@ -780,7 +780,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String prefix,
         Boolean isParentExcluded
 	) {
-		Map<String, FieldMetadata> presentationAttributes = metadata.getFieldPresentationAttributes(null, targetClass, this);
+		Map<String, FieldMetadata> presentationAttributes = metadata.getFieldPresentationAttributes(null, targetClass, this, "");
         if (isParentExcluded) {
             for (String key : presentationAttributes.keySet()) {
                 LOG.debug("getPropertiesForEntityClass:Excluding " + key + " because parent is excluded.");
@@ -899,7 +899,11 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			boolean isPropertyForeignKey = testForeignProperty(foreignField, prefix, propertyName);
 			int additionalForeignKeyIndexPosition = findAdditionalForeignKeyIndex(additionalForeignFields, prefix, propertyName);
 			j++;
-            Field myField = FieldManager.getSingleField(targetClass, propertyName);
+            Field myField = getFieldManager().getField(targetClass, propertyName);
+            if (myField == null) {
+                //try to get the field with the prefix - needed for advanced collections that appear in @Embedded classes
+                myField = getFieldManager().getField(targetClass, prefix + propertyName);
+            }
 			if (
 					!type.isAnyType() && !type.isCollectionType() ||
 					isPropertyForeignKey ||
@@ -1344,7 +1348,13 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		List<String> componentPropertyNames = Arrays.asList(componentProperties);
 		Type[] componentTypes = ((ComponentType) type).getSubtypes();
 		List<Type> componentPropertyTypes = Arrays.asList(componentTypes);
-		Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldPresentationAttributes(targetClass, returnedClass, this);
+        String tempPrefix = "";
+        int pos = prefix.indexOf(".");
+        if (pos > 0 && pos < prefix.length()-1) {
+            //only use part of the prefix if it's more than one layer deep
+            tempPrefix = prefix.substring(pos + 1, prefix.length());
+        }
+		Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldPresentationAttributes(targetClass, returnedClass, this, tempPrefix + propertyName + ".");
         if (isParentExcluded) {
             for (String key : componentPresentationAttributes.keySet()) {
                 LOG.debug("buildComponentProperties:Excluding " + key + " because the parent was excluded");
