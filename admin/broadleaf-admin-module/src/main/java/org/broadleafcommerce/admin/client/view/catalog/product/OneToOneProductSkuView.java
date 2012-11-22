@@ -155,7 +155,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         skusDisplay.setID("productSkuTabSubItemView");
         
         translationsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionImpl_Translations"), false, true);
-        //   ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(skuPriceListDisplay);
            ((FormOnlyView) skusDisplay.getFormOnlyDisplay()).addMember(translationsDisplay);
         skusTab.setPane(skusDisplay);
         

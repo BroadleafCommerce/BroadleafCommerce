@@ -51,6 +51,5 @@ public class CeilingEntities {
     public static final String PAYMENT_LOG = "org.broadleafcommerce.core.payment.domain.PaymentLog";
     public static final String FULFILLMENT_LOCATION = "org.broadleafcommerce.core.inventory.domain.FulfillmentLocation";
     public static final String INVENTORY = "org.broadleafcommerce.core.inventory.domain.Inventory";
-    public static final String PRICELIST = "org.broadleafcommerce.pricelist.domain.PriceList";
 
 }

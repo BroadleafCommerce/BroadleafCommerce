@@ -101,7 +101,6 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    //public Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale) {
     public Order createNewCartForCustomer(Customer customer) {
         Order order = create();
         if (customer.getUsername() == null) {
