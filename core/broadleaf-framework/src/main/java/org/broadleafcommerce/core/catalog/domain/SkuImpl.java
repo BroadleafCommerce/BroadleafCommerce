@@ -419,7 +419,7 @@ public class SkuImpl implements Sku {
         if (optionValueAdjustments == null) {
             //return returnPrice;
         } else {
-            returnPrice = salePrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
+            returnPrice = returnPrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
         }
 
         return returnPrice;
@@ -467,7 +467,7 @@ public class SkuImpl implements Sku {
         if (optionValueAdjustments == null) {
             //return returnPrice;
         } else {
-            returnPrice = retailPrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
+            returnPrice = returnPrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
         }
 
         return returnPrice;
