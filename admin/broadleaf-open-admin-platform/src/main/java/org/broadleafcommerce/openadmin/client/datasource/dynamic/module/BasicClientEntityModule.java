@@ -912,7 +912,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                         switch(SupportedFieldType.valueOf(fieldType)){
                         case ID:
                             field = new DataSourceTextField(propertyName, friendlyName);
-                            if (propertyName.indexOf(".") < 0) {
+                            if (!propertyName.contains(".")) {
                                 field.setPrimaryKey(true);
                             }
                             field.setCanEdit(false);
