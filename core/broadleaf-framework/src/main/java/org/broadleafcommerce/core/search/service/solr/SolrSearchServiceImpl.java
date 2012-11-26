@@ -90,6 +90,7 @@ import java.util.Set;
 public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
     
+    // The value of these two fields has no special significance, but they must be non-blank
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
     protected static final String DEFAULT_NAMESPACE = "d";
     
