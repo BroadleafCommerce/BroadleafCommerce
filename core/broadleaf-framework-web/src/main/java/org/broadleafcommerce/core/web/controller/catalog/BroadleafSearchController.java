@@ -101,7 +101,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
 				}
 			}
 			
-			parameters.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
+			parameters.remove(ProductSearchCriteria.PAGE_NUMBER);
 			parameters.put(fieldName, activeFieldFilters.toArray(new String[activeFieldFilters.size()]));
 			parameters.remove("facetField");
 			
