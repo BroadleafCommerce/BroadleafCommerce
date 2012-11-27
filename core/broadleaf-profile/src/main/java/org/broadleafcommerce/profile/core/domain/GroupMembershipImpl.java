@@ -48,7 +48,7 @@ public class GroupMembershipImpl implements GroupMembership {
     @AdminPresentation(friendlyName = "GroupMembershipImpl_Customer", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @OneToMany(mappedBy = "groupMembership", targetEntity = RoleImpl.class)
+    @OneToMany(targetEntity = RoleImpl.class)
     @AdminPresentation(friendlyName = "GroupMembershipImpl_Roles")
     protected List<Role> roles = new ArrayList<Role>();
 
