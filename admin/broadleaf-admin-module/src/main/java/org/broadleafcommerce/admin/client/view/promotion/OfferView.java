@@ -640,7 +640,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(fgSectionView);
 
         rightVerticalLayout.addMember(dynamicFormDisplay);
-
+        leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(rightVerticalLayout);
     }
