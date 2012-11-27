@@ -44,6 +44,7 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 	protected String[] includeFields = new String[]{};
     protected String configurationKey;
     protected Boolean showArchivedFields = false;
+    protected Boolean useServerSideInspectionCache = true;
 	
 	public PersistencePerspective() {
 	}
@@ -194,6 +195,14 @@ public class PersistencePerspective implements IsSerializable, Serializable {
         this.showArchivedFields = showArchivedFields;
     }
 
+    public Boolean getUseServerSideInspectionCache() {
+        return useServerSideInspectionCache;
+    }
+
+    public void setUseServerSideInspectionCache(Boolean useServerSideInspectionCache) {
+        this.useServerSideInspectionCache = useServerSideInspectionCache;
+    }
+
     public PersistencePerspective clonePersistencePerspective() {
         PersistencePerspective persistencePerspective = new PersistencePerspective();
         persistencePerspective.operationTypes = operationTypes.cloneOperationTypes();
@@ -221,6 +230,7 @@ public class PersistencePerspective implements IsSerializable, Serializable {
         persistencePerspective.populateToOneFields = populateToOneFields;
         persistencePerspective.configurationKey = configurationKey;
         persistencePerspective.showArchivedFields = showArchivedFields;
+        persistencePerspective.useServerSideInspectionCache = useServerSideInspectionCache;
 
         if (excludeFields != null) {
             persistencePerspective.excludeFields = new String[excludeFields.length];
@@ -257,6 +267,8 @@ public class PersistencePerspective implements IsSerializable, Serializable {
             return false;
         if (showArchivedFields != null ? !showArchivedFields.equals(that.showArchivedFields) : that.showArchivedFields != null)
             return false;
+        if (useServerSideInspectionCache != null ? !useServerSideInspectionCache.equals(that.useServerSideInspectionCache) : that.useServerSideInspectionCache != null)
+                    return false;
 
         return true;
     }
@@ -272,6 +284,7 @@ public class PersistencePerspective implements IsSerializable, Serializable {
         result = 31 * result + (includeFields != null ? Arrays.hashCode(includeFields) : 0);
         result = 31 * result + (configurationKey != null ? configurationKey.hashCode() : 0);
         result = 31 * result + (showArchivedFields != null ? showArchivedFields.hashCode() : 0);
+        result = 31 * result + (useServerSideInspectionCache != null ? useServerSideInspectionCache.hashCode() : 0);
         return result;
     }
 }

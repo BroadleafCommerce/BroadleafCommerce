@@ -90,6 +90,16 @@ public @interface AdminPresentationAdornedTargetCollection {
     boolean readOnly() default false;
 
     /**
+     * <p>Optional - only required if you want to make the field ignore caching</p>
+     *
+     * <p>Explicitly specify whether or not this field will use server-side
+     * caching during inspection</p>
+     *
+     * @return whether or not this field uses caching
+     */
+    boolean useServerSideInspectionCache() default true;
+
+    /**
      * <p>Optional - only required in the absence of a "mappedBy" property
      * on the JPA annotation</p>
      *

@@ -340,6 +340,7 @@ public class Metadata {
             override.setValueClass(map.valueClass().getName());
             override.setValuePropertyFriendlyName(map.valuePropertyFriendlyName());
             override.setCustomCriteria(map.customCriteria());
+            override.setUseServerSideInspectionCache(map.useServerSideInspectionCache());
             override.setDataSourceName(map.dataSourceName());
             override.setExcluded(map.excluded());
             override.setFriendlyName(map.friendlyName());
@@ -372,6 +373,7 @@ public class Metadata {
             override.setTargetObjectIdProperty(adornedTargetCollection.targetObjectIdProperty());
             override.setTargetObjectProperty(adornedTargetCollection.targetObjectProperty());
             override.setCustomCriteria(adornedTargetCollection.customCriteria());
+            override.setUseServerSideInspectionCache(adornedTargetCollection.useServerSideInspectionCache());
             override.setDataSourceName(adornedTargetCollection.dataSourceName());
             override.setExcluded(adornedTargetCollection.excluded());
             override.setFriendlyName(adornedTargetCollection.friendlyName());
@@ -397,6 +399,7 @@ public class Metadata {
             override.setAddMethodType(annotColl.addType());
             override.setManyToField(annotColl.manyToField());
             override.setCustomCriteria(annotColl.customCriteria());
+            override.setUseServerSideInspectionCache(annotColl.useServerSideInspectionCache());
             override.setDataSourceName(annotColl.dataSourceName());
             override.setExcluded(annotColl.excluded());
             override.setFriendlyName(annotColl.friendlyName());
@@ -904,6 +907,11 @@ public class Metadata {
         if (map.getCustomCriteria() != null) {
             metadata.setCustomCriteria(map.getCustomCriteria());
         }
+
+        if (map.getUseServerSideInspectionCache() != null) {
+            persistencePerspective.setUseServerSideInspectionCache(map.getUseServerSideInspectionCache());
+        }
+
         if (map.getCurrencyCodeField()!=null) {
             metadata.setCurrencyCodeField(map.getCurrencyCodeField());
         }
@@ -1112,6 +1120,10 @@ public class Metadata {
             metadata.setCustomCriteria(adornedTargetCollectionMetadata.getCustomCriteria());
         }
 
+        if (adornedTargetCollectionMetadata.getUseServerSideInspectionCache() != null) {
+            persistencePerspective.setUseServerSideInspectionCache(adornedTargetCollectionMetadata.getUseServerSideInspectionCache());
+        }
+
         if (adornedTargetCollectionMetadata.isIgnoreAdornedProperties() != null) {
             metadata.setIgnoreAdornedProperties(adornedTargetCollectionMetadata.isIgnoreAdornedProperties());
         }
@@ -1264,6 +1276,11 @@ public class Metadata {
         if (collectionMetadata.getCustomCriteria() != null) {
             metadata.setCustomCriteria(collectionMetadata.getCustomCriteria());
         }
+
+        if (collectionMetadata.getUseServerSideInspectionCache() != null) {
+            persistencePerspective.setUseServerSideInspectionCache(collectionMetadata.getUseServerSideInspectionCache());
+        }
+
         if (collectionMetadata.getCurrencyCodeField()!=null) {
             metadata.setCurrencyCodeField(collectionMetadata.getCurrencyCodeField());
         }

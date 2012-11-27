@@ -43,6 +43,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,22 +74,55 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException, ApplicationSecurityException {
-        if (METADATA_CACHE.containsKey(batchPersistencePackage)) {
-            for (PersistencePackage persistencePackage : batchPersistencePackage.getPersistencePackages()) {
-                exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
+        try {
+            List<DynamicResultSet> dynamicResultSetList = new ArrayList<DynamicResultSet>(15);
+            List<PersistencePackage> persistencePackageList;
+            boolean containsCache = false;
+            if (METADATA_CACHE.containsKey(batchPersistencePackage)) {
+                containsCache = true;
+                persistencePackageList = new ArrayList<PersistencePackage>();
+                for (PersistencePackage persistencePackage : batchPersistencePackage.getPersistencePackages()) {
+                    exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
+                    if (persistencePackage.getPersistencePerspective().getUseServerSideInspectionCache()) {
+                        checkResultSetList: {
+                            for (DynamicResultSet dynamicResultSet : METADATA_CACHE.get(batchPersistencePackage).getDynamicResultSets()) {
+                                if (dynamicResultSet.getBatchId().equals(persistencePackage.getBatchId())) {
+                                    dynamicResultSetList.add(dynamicResultSet);
+                                    break checkResultSetList;
+                                }
+                            }
+                            throw new IllegalArgumentException("Unable to find a result for batchId(" + persistencePackage.getBatchId() + ") in cached batch result set.");
+                        }
+                    } else {
+                        persistencePackageList.add(persistencePackage);
+                    }
+                }
+            } else {
+                persistencePackageList = Arrays.asList(batchPersistencePackage.getPersistencePackages());
             }
-            return METADATA_CACHE.get(batchPersistencePackage);
+            for (PersistencePackage persistencePackage : persistencePackageList) {
+                DynamicResultSet resultSet = inspect(persistencePackage);
+                resultSet.setBatchId(persistencePackage.getBatchId());
+                dynamicResultSetList.add(resultSet);
+            }
+            Collections.sort(dynamicResultSetList, new Comparator<DynamicResultSet>() {
+                @Override
+                public int compare(DynamicResultSet o1, DynamicResultSet o2) {
+                    return o1.getBatchId().compareTo(o2.getBatchId());
+                }
+            });
+            BatchDynamicResultSet batchResults = new BatchDynamicResultSet();
+            batchResults.setDynamicResultSets(dynamicResultSetList.toArray(new DynamicResultSet[dynamicResultSetList.size()]));
+            if (!containsCache) {
+                METADATA_CACHE.put(batchPersistencePackage, batchResults);
+                return METADATA_CACHE.get(batchPersistencePackage);
+            } else {
+                return batchResults;
+            }
+        } catch (IllegalArgumentException e) {
+            LOG.error("Problem performing batch inspect", e);
+            throw new ServiceException("Problem performing batch inspect", e);
         }
-        DynamicResultSet[] results = new DynamicResultSet[batchPersistencePackage.getPersistencePackages().length];
-        for (int j=0;j<batchPersistencePackage.getPersistencePackages().length;j++){
-            results[j] = inspect(batchPersistencePackage.getPersistencePackages()[j]);
-            results[j].setBatchId(batchPersistencePackage.getPersistencePackages()[j].getBatchId());
-        }
-        BatchDynamicResultSet batchResults = new BatchDynamicResultSet();
-        batchResults.setDynamicResultSets(results);
-        METADATA_CACHE.put(batchPersistencePackage, batchResults);
-
-        return METADATA_CACHE.get(batchPersistencePackage);
     }
 
     @Override
