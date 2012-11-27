@@ -83,6 +83,8 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		String sectionPresenterClass,
 		List<String> sectionPermissions
 	) {
+        //remove spaces from sectionTitle
+        sectionTitle = sectionTitle.replaceAll("\\s", "");
 	    sections.add(new Section(sectionTitle,sectionViewKey,sectionViewClass,sectionPresenterKey,sectionPresenterClass,sectionPermissions));
 		pages.put(sectionTitle, new String[]{sectionViewKey, sectionPresenterKey});
 		ModuleFactory moduleFactory = ModuleFactory.getInstance();
@@ -101,6 +103,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	public void removeSection(
 		String sectionTitle
 	) {
+        sectionTitle = sectionTitle.replaceAll("\\s", "");
 		String[] items = pages.remove(sectionTitle);
 		ModuleFactory.getInstance().remove(items[0]);
 		ModuleFactory.getInstance().remove(items[1]);

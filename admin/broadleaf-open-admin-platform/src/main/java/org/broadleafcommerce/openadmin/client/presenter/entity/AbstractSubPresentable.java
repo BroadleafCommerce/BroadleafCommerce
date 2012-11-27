@@ -19,8 +19,10 @@ package org.broadleafcommerce.openadmin.client.presenter.entity;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.Canvas;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
@@ -41,14 +43,52 @@ public abstract class AbstractSubPresentable implements SubPresentable {
     protected Record associatedRecord;
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
     protected boolean readOnly = false;
+    protected String prefix;
 
+    /**
+     * Create a new instance.
+     *
+     * @deprecated use the constructor that specifies the prefix value
+     * @param display The display component that visually represents this SubPresentable.
+     * @param availableToTypes The display component that visually represents this SubPresentable.
+     */
+    @Deprecated
     public AbstractSubPresentable(GridStructureDisplay display, String[] availableToTypes) {
-        this.display = display;
-        this.availableToTypes = availableToTypes;
+        this(null,display,availableToTypes);
     }
 
+    /**
+     * Create a new instance.
+     *
+     * @deprecated use the constructor that specifies the prefix value
+     * @param display The display component that visually represents this SubPresentable.
+     */
+    @Deprecated
     public AbstractSubPresentable(GridStructureDisplay display) {
-        this(display, null);
+        this(null, display);
+    }
+
+    /**
+     * Create new instance.
+     *
+     * @param prefix The list of "." delimited properties from the parent record that lead to this property. For example, if this SubPresenter referenced a property on Sku and the owning record was a Product, the prefix would likely be defaultSku. Can be null or an empty String for properties directly on the parent record.
+     * @param display The display component that visually represents this SubPresentable.
+     * @param availableToTypes The display component that visually represents this SubPresentable.
+     */
+    public AbstractSubPresentable(String prefix, GridStructureDisplay display, String[] availableToTypes) {
+        this.display = display;
+        this.availableToTypes = availableToTypes;
+        this.prefix = prefix==null?"":prefix;
+    }
+
+    /**
+     * Create new instance.
+     *
+     * @param prefix The list of "." delimited properties from the parent record that lead to this property. For example, if this SubPresenter referenced a property on Sku and the owning record was a Product, the prefix would likely be defaultSku. Can be null or an empty String for properties directly on the parent record.
+     * @param display The display component that visually represents this SubPresentable.
+     */
+    public AbstractSubPresentable(String prefix, GridStructureDisplay display) {
+        this(prefix, display, null);
     }
 
     @Override
@@ -135,7 +175,33 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 	}
     
     public String getRelationshipValue(final Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource) {
-        return abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
+        if (prefix.equals("")) {
+            return abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
+        } else {
+            //we need to check all the parts of the prefix. For example, the prefix could include an @Embedded class like
+            //defaultSku.dimension. In this case, we want the id from the defaultSku property, since the @Embedded does
+            //not have an id property - nor should it.
+            String[] prefixParts = prefix.split("\\.");
+            for (int j=0;j<prefixParts.length;j++) {
+                StringBuilder sb = new StringBuilder();
+                for (int x=0;x<prefixParts.length-j;x++) {
+                    sb.append(prefixParts[x]);
+                    if (x < prefixParts.length-j-1) {
+                        sb.append(".");
+                    }
+                }
+                String tempPrefix = sb.toString();
+                for (String fieldName : abstractDynamicDataSource.getFieldNames()) {
+                    if (fieldName.startsWith(tempPrefix)) {
+                        DataSourceField field = abstractDynamicDataSource.getField(fieldName);
+                        if (SupportedFieldType.ID == SupportedFieldType.valueOf(field.getAttribute("fieldType"))) {
+                            return abstractDynamicDataSource.stripDuplicateAllowSpecialCharacters(associatedRecord.getAttribute(fieldName));
+                        }
+                    }
+                }
+            }
+        }
+        throw new RuntimeException("Unable to establish a relationship value for the datasource: " + abstractDynamicDataSource.getDataURL());
     }
 
     @Override

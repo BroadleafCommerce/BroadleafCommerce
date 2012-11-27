@@ -150,7 +150,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
 		List<Property> propertiesList = new ArrayList<Property>();
 		for (PersistenceModule module : modules) {
-			module.extractProperties(mergedProperties, propertiesList);
+			module.extractProperties(entities, mergedProperties, propertiesList);
 		}
 		/*
 		 * Insert inherited fields whose order has been specified

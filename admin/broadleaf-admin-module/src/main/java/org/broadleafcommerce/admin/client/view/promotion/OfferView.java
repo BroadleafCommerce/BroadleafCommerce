@@ -200,7 +200,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         //=====================================Advanced Restrictions=====================================//
 
-        VLayout restrictLayout = new PromotionQuestionVLayout("offerRestrictLayout");
+        VLayout restrictLayout = new PromotionQuestionVLayout("offerRestrictLayout", null);
         restrictLayout.addMember(new PromotionQuestion("restrictOnlyPromotionLabel"));
 
         restrictForm = new DynamicForm();
@@ -221,7 +221,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         //=====================================Customer Qualification=====================================//
 
-        customerLayout = new PromotionQuestionVLayout("offerCustomerLayout");
+        customerLayout = new PromotionQuestionVLayout("offerCustomerLayout", false);
 
         helpButtonType = new ImgButton();
         PromotionQuestionWithHelp questionWithHelp = new PromotionQuestionWithHelp("offerCustomerObtainHStack", new PromotionQuestion("customerObtainLabel"), helpButtonType);
@@ -294,7 +294,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         //=====================================Order Qualification=====================================//
 
-        orderSectionLayout = new PromotionQuestionVLayout("offerOrderSectionLayout");
+        orderSectionLayout = new PromotionQuestionVLayout("offerOrderSectionLayout", false);
         orderSectionLayout.addMember(new PromotionQuestion("orderSectionLabel"));
 
         orderForm = new DynamicForm();
@@ -351,7 +351,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         //=====================================Item Qualification=====================================//
 
-        VLayout itemSectionLayout = new PromotionQuestionVLayout("offerItemSectionLayout");
+        VLayout itemSectionLayout = new PromotionQuestionVLayout("offerItemSectionLayout", null);
 
         orderItemCombineLabel = new PromotionQuestion("orderItemCombineLabel");
         orderItemCombineLabel.setVisible(false);
@@ -509,7 +509,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
         //=====================================Item Discount Target=====================================//
 
-        targetItemsLayout = new PromotionQuestionVLayout(null);
+        targetItemsLayout = new PromotionQuestionVLayout(null, null);
 
         targetItemsLabel = new PromotionQuestion("targetItemsLabel");
         targetItemsLayout.addMember(targetItemsLabel);
@@ -1108,10 +1108,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
     class PromotionQuestionVLayout extends VLayout {
 
-        public PromotionQuestionVLayout(String id) {
+        public PromotionQuestionVLayout(String id, Boolean visible) {
             super();
             if (id != null) {
                 setID(id);
+            }
+            if (visible != null) {
+                setVisible(visible);
             }
             setLayoutLeftMargin(8);
             setLayoutMargin(10);

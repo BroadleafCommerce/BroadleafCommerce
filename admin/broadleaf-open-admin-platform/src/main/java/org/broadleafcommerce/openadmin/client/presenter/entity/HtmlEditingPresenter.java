@@ -26,25 +26,27 @@ import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.openadmin.client.datasource.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 
 import java.util.HashMap;
 
 /**
- * 
+ *
  */
 public class HtmlEditingPresenter extends DynamicEntityPresenter {
 
     private AssetSearchDialog assetSearchDialogView;
     private static HtmlEditingPresenter instance = new HtmlEditingPresenter();
-    private DataSource staticAssetsDataSouce=null;
+    private DataSource staticAssetsDataSouce = null;
+
     public String getTemplatePath() {
         return null;
     }
 
-    private  HtmlEditingPresenter() {
-       setup();
+    private HtmlEditingPresenter() {
+        setup();
     }
 
     public void displayAssetSearchDialog(final RichTextToolbar item) {
@@ -57,7 +59,7 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
         // display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         initialValues.put("_type", CeilingEntities.STATICASSETS);
         initialValues.put("csrfToken", BLCMain.csrfToken);
-       // compileDefaultValuesFromCurrentFilter(initialValues);
+        // compileDefaultValuesFromCurrentFilter(initialValues);
         getAssetSearchDialogView().setInitialValues(initialValues);
         getAssetSearchDialogView().search("Asset Search",
                 new TileGridItemSelectedHandler() {
@@ -102,19 +104,17 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
 
     @Override
     public void setup() {
-      if(staticAssetsDataSouce==null) {
-            StaticAssetsTileGridDataSourceFactory factory=new StaticAssetsTileGridDataSourceFactory();
-            factory.createDataSource("staticAssetTreeDS", null,null, new  AsyncCallbackAdapter() {
-                
+        if (staticAssetsDataSouce == null) {
+            getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTileDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
                 @Override
                 public void onSetupSuccess(DataSource dataSource) {
                     TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-                    setAssetSearchDialogView(new AssetSearchDialog(
-                            staticAssetTreeDS));
-                    staticAssetsDataSouce=dataSource;
+                    setAssetSearchDialogView(new AssetSearchDialog(staticAssetTreeDS));
+                    staticAssetsDataSouce = dataSource;
                 }
-            });
-      }
+            }));
+            getPresenterSequenceSetupManager().getStandAlonePresenterSequenceSetupManager().launch();
+        }
     }
 
     @Override
@@ -133,20 +133,18 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
             @Override
             public void execute() {
                 displayAssetSearchDialog(formItem);
-            };
+            }
+
+            ;
         });
 
     }
 
     protected AssetSearchDialog getAssetSearchDialogView() {
-        if (assetSearchDialogView == null) {
-            setup();
-        }
         return assetSearchDialogView;
     }
 
-    protected void setAssetSearchDialogView(
-            AssetSearchDialog assetSearchDialogView) {
+    protected void setAssetSearchDialogView(AssetSearchDialog assetSearchDialogView) {
         this.assetSearchDialogView = assetSearchDialogView;
     }
 

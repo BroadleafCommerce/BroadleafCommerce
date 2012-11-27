@@ -44,7 +44,7 @@ public class ProductOptionValueSubPresenter extends SubPresenter {
         protected Map<String, Object> initialValues = new HashMap<String, Object>();
     
         public ProductOptionValueSubPresenter(SubItemDisplay display, String newEntityDialogTitle, String[] availableToTypes, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
-            super(display, availableToTypes, showDisabledState, canEdit, showId);
+            super("",display, availableToTypes, showDisabledState, canEdit, showId);
             this.newEntityDialogTitle = newEntityDialogTitle;
           
         }

@@ -27,8 +27,6 @@ public class BLCRichTextItem extends BlurbItem {
 
     public BLCRichTextItem() {
 
-        super();
-
         setShouldSaveValue(true);
         setShowTitle(true);
         setTextBoxStyle("bl-rich-text-item");

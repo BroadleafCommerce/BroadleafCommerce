@@ -32,7 +32,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDis
 public class InventoryPresenter extends CreateBasedListStructurePresenter {
 
     public InventoryPresenter(GridStructureDisplay display, String editDialogTitle) {
-        super(display, editDialogTitle);
+        super("", display, editDialogTitle);
     }
 
     @Override

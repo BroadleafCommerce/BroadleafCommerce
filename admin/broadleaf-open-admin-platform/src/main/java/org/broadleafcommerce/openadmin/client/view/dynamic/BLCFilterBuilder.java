@@ -22,16 +22,15 @@ import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.DateItem;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class BLCFilterBuilder extends FilterBuilder {
+
     public BLCFilterBuilder() {
         super();
-        setFieldPickerProperties(new SelectItem());
     }
 
     @Override
