@@ -22,6 +22,8 @@
         <class>org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl</class>        
         <class>org.broadleafcommerce.profile.core.domain.CustomerImpl</class>
+        <class>org.broadleafcommerce.profile.core.domain.CustomerGroupImpl</class>
+        <class>org.broadleafcommerce.profile.core.domain.GroupMembershipImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerRoleImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityTokenImpl</class>
