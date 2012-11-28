@@ -72,7 +72,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 	
 	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
 		if (mergedProperties.get(MergedPropertyType.ADORNEDTARGETLIST) != null) {
-			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.ADORNEDTARGETLIST), properties, true, MergedPropertyType.ADORNEDTARGETLIST);
+			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.ADORNEDTARGETLIST), properties, true);
 		}
 	}
 

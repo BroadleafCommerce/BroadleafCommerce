@@ -69,10 +69,10 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	
 	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
 		if (mergedProperties.get(MergedPropertyType.MAPSTRUCTUREKEY) != null) {
-			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.MAPSTRUCTUREKEY), properties, false, MergedPropertyType.MAPSTRUCTUREKEY);
+			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.MAPSTRUCTUREKEY), properties, false);
 		}
 		if (mergedProperties.get(MergedPropertyType.MAPSTRUCTUREVALUE) != null) {
-			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.MAPSTRUCTUREVALUE), properties, false, MergedPropertyType.MAPSTRUCTUREVALUE);
+			extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.MAPSTRUCTUREVALUE), properties, false);
 		}
 	}
 
