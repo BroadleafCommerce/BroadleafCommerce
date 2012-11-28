@@ -728,12 +728,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             Property prop = new Property();
             FieldMetadata metadata = mergedProperties.get(property);
             prop.setName(property);
-            int pos = Collections.binarySearch(properties, prop, new Comparator<Property>() {
+            Comparator<Property> comparator = new Comparator<Property>() {
                 @Override
                 public int compare(Property o1, Property o2) {
                     return o1.getName().compareTo(o2.getName());
                 }
-            });
+            };
+            Collections.sort(properties, comparator);
+            int pos = Collections.binarySearch(properties, prop, comparator);
             if (pos >= 0 && MergedPropertyType.MAPSTRUCTUREKEY != type && MergedPropertyType.MAPSTRUCTUREVALUE != type) {
                 logWarn: {
                     if ((metadata instanceof BasicFieldMetadata) && SupportedFieldType.ID.equals(((BasicFieldMetadata) metadata).getFieldType())) {

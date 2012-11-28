@@ -20,6 +20,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -134,7 +135,9 @@ public class SimpleSearchListPresenter extends AbstractSubPresentable {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
+                            if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
+							    display.getRemoveButton().disable();
+                            }
 						}
 					});
 				}

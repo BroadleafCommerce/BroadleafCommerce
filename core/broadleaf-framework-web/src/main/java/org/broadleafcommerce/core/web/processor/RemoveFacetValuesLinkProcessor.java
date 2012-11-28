@@ -68,7 +68,7 @@ public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAtt
 		
 		String key = facet.getFacet().getField().getAbbreviation();
 		params.remove(key);
-		params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] {"1"});
+		params.remove(ProductSearchCriteria.PAGE_NUMBER);
 
 		
 		String url = ProcessorUtils.getUrl(baseUrl, params);

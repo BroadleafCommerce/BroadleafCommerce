@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -55,7 +54,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -217,7 +215,11 @@ public class OrderServiceImpl implements OrderService {
 	public void cancelOrder(Order order) {
         orderDao.delete(order);
 	}
-
+    @Override
+    @Transactional("blTransactionManager")
+    public void deleteOrder(Order order) {
+        orderDao.delete(order);
+    }
 	@Override
     @Transactional("blTransactionManager")
 	public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
@@ -355,11 +357,7 @@ public class OrderServiceImpl implements OrderService {
 	        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
 	        orderItemRequestDTO.setOrderItemId(item.getId());
 	        orderItemRequestDTO.setQuantity(item.getQuantity() - quantity);
-	        try {
-                updateItemQuantity(namedOrder.getId(), orderItemRequestDTO, false);
-            } catch (InventoryUnavailableException e) {
-                throw new UpdateCartException("Could not update cart quantity", e.getCause());
-            }
+            updateItemQuantity(namedOrder.getId(), orderItemRequestDTO, false);
     	}
         	
     	OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
@@ -396,7 +394,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException, InventoryUnavailableException {
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
 		if (orderItemRequestDTO.getQuantity() == 0) {
 			return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
 		}
@@ -406,9 +404,6 @@ public class OrderServiceImpl implements OrderService {
     		CartOperationContext context = (CartOperationContext) updateItemWorkflow.doActivities(cartOpRequest);
     		return context.getSeedData().getOrder();
     	} catch (WorkflowException e) {
-            if (e.getCause() instanceof InventoryUnavailableException) {
-                throw new InventoryUnavailableException(e.getCause());
-            }
     		throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
     	}
 	}

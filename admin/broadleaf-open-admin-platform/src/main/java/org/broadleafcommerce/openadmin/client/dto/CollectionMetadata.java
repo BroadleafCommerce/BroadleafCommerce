@@ -87,7 +87,6 @@ public abstract class CollectionMetadata extends FieldMetadata {
         ((CollectionMetadata) metadata).setDataSourceName(dataSourceName);
         ((CollectionMetadata) metadata).setMutable(mutable);
         ((CollectionMetadata) metadata).setCustomCriteria(customCriteria);
-
         return metadata;
     }
 

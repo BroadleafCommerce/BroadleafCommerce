@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -55,7 +54,7 @@ public interface OrderService {
 	 * database and set the current customer as the owner of the order. If the customer has an
 	 * email address associated with their profile, that will be copied as well. If the customer
 	 * is a new, anonymous customer, his username will be set to his database id.
-     *
+	 * 
 	 * @see org.broadleafcommerce.profile.web.core.CustomerState#getCustomer()
 	 * 
 	 * @param customer
@@ -319,7 +318,7 @@ public interface OrderService {
      * @throws UpdateCartException
      * @throws RemoveFromCartException 
      */
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException, InventoryUnavailableException;
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException;
 	
     /**
      * Initiates the removeItem workflow that will attempt to remove the specified OrderItem from 
@@ -435,5 +434,7 @@ public interface OrderService {
      * @param paymentInfoType
      */
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
+
+    public void deleteOrder(Order cart);
 
 }

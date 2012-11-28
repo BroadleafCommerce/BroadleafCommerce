@@ -54,7 +54,5 @@ public class EntityImplementations {
     public static final String CUSTOMER = "org.broadleafcommerce.profile.core.domain.CustomerImpl";
     public static final String PRODUCT_OPTION_VALUE_TRANSLATION = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueTranslationImpl";
     public static final String SKU_TRANSLATION = "org.broadleafcommerce.core.catalog.domain.SkuTranslationImpl";
-    public static final String FULFILLMENT_LOCATION = "org.broadleafcommerce.core.inventory.domain.FulfillmentLocationImpl";
-    public static final String INVENTORY = "org.broadleafcommerce.core.inventory.domain.InventoryImpl";
 
 }

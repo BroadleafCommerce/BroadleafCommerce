@@ -426,6 +426,7 @@ public class FieldMetadataOverride {
     private OperationType updateType;
     private OperationType fetchType;
     private OperationType inspectType;
+    private Boolean useServerSideInspectionCache;
 
     public String getTargetElementId() {
         return targetElementId;
@@ -449,6 +450,14 @@ public class FieldMetadataOverride {
 
     public void setCustomCriteria(String[] customCriteria) {
         this.customCriteria = customCriteria;
+    }
+
+    public Boolean getUseServerSideInspectionCache() {
+        return useServerSideInspectionCache;
+    }
+
+    public void setUseServerSideInspectionCache(Boolean useServerSideInspectionCache) {
+        this.useServerSideInspectionCache = useServerSideInspectionCache;
     }
 
     public OperationType getAddType() {

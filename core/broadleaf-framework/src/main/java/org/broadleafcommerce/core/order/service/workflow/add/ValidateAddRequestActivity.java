@@ -43,6 +43,7 @@ public class ValidateAddRequestActivity extends BaseActivity {
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
+    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
@@ -77,16 +78,18 @@ public class ValidateAddRequestActivity extends BaseActivity {
         
         // If we couldn't find a sku, then we're unable to add to cart.
         if (sku == null) {
+
         	StringBuilder sb = new StringBuilder();
         	for (Entry<String, String> entry : orderItemRequestDTO.getItemAttributes().entrySet()) {
         		sb.append(entry.toString());
         	}
-        	
         	throw new IllegalArgumentException("Could not find SKU for :" +
         			" productId: " + (product == null ? "null" : product.getId()) + 
         			" skuId: " + orderItemRequestDTO.getSkuId() + 
         			" attributes: " + sb.toString());
-        } else { 
+        } else if (!sku.isActive()) {
+            throw new IllegalArgumentException("The requested skuId of " + sku.getId() + " is no longer active");
+        } else {
         	// We know definitively which sku we're going to add, so we can set this
         	// value with certainty
         	request.getItemRequest().setSkuId(sku.getId());

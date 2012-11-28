@@ -44,6 +44,7 @@ public class BundleSkuSearchDataSourceFactory implements DataSourceFactory {
     public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
         operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
         PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+        persistencePerspective.setUseServerSideInspectionCache(false);
         persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("product", EntityImplementations.PRODUCT, null));
         DataSourceModule[] modules = new DataSourceModule[]{
             new SkuBasicClientEntityModule(CeilingEntities.SKU, persistencePerspective, AppServices.DYNAMIC_ENTITY),
