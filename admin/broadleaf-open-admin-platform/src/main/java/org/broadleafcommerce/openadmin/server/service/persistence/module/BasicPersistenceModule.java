@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -718,16 +719,31 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
-        extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.PRIMARY), properties, false);
+        extractPropertiesFromMetadata(mergedProperties.get(MergedPropertyType.PRIMARY), properties, false, MergedPropertyType.PRIMARY);
     }
 
-    protected void extractPropertiesFromMetadata(Map<String, FieldMetadata> mergedProperties, List<Property> properties, Boolean isHiddenOverride) throws NumberFormatException {
+    protected void extractPropertiesFromMetadata(Map<String, FieldMetadata> mergedProperties, List<Property> properties, Boolean isHiddenOverride, MergedPropertyType type) throws NumberFormatException {
         for (Map.Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
             String property = entry.getKey();
             Property prop = new Property();
             FieldMetadata metadata = mergedProperties.get(property);
             prop.setName(property);
-            if (properties.contains(prop)) {
+            Comparator<Property> comparator = new Comparator<Property>() {
+                @Override
+                public int compare(Property o1, Property o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            };
+            Collections.sort(properties, comparator);
+            int pos = Collections.binarySearch(properties, prop, comparator);
+            if (pos >= 0 && MergedPropertyType.MAPSTRUCTUREKEY != type && MergedPropertyType.MAPSTRUCTUREVALUE != type) {
+                logWarn: {
+                    if ((metadata instanceof BasicFieldMetadata) && SupportedFieldType.ID.equals(((BasicFieldMetadata) metadata).getFieldType())) {
+                        //don't warn for id field collisions, but still ignore the colliding fields
+                        break logWarn;
+                    }
+                    LOG.warn("Detected a field name collision (" + metadata.getTargetClass() + "." + property + ") during inspection for the inheritance line. Ignoring the additional field. This can occur most commonly when using the @AdminPresentationAdornedTargetCollection and the collection type and target class have field names in common. This situation should be avoided, as the system will strip the repeated fields, which can cause unpredictable behavior.");
+                }
                 continue;
             }
             properties.add(prop);
