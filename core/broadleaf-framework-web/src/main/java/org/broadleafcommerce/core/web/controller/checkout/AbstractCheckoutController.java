@@ -25,10 +25,7 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.PaymentInfoFactory;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
-import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.OrderInfoFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.*;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -98,5 +95,8 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     
     @Resource(name = "blOrderInfoFormValidator")
     protected OrderInfoFormValidator orderInfoFormValidator;
+
+    @Resource(name = "blGiftCardInfoFormValidator")
+    protected GiftCardInfoFormValidator giftCardInfoFormValidator;
 
 }
