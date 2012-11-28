@@ -40,7 +40,6 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.MissingResourceException;
 
 /**
  * This factory is responsible for generating a datasource from CollectionMetadata.
@@ -117,10 +116,8 @@ public class AdvancedCollectionDataSourceFactory implements DataSourceFactory {
                     if (metadata.getMapKeyOptionEntityClass() == null || metadata.getMapKeyOptionEntityClass().length() == 0) {
                         LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
                         for (String[] key : metadata.getKeys()) {
-                            String temp;
-                            try {
-                                temp = BLCMain.getMessageManager().getString(key[1]);
-                            } catch (MissingResourceException e) {
+                            String temp = BLCMain.getMessageManager().getString(key[1]);
+                            if (temp == null) {
                                 temp = key[1];
                             }
                             keys.put(key[0], temp);

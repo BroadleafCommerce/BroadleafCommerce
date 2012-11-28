@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.openadmin.client.dto.BatchDynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.BatchPersistencePackage;
@@ -42,6 +43,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,22 +74,55 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException, ApplicationSecurityException {
-        if (METADATA_CACHE.containsKey(batchPersistencePackage)) {
-            for (PersistencePackage persistencePackage : batchPersistencePackage.getPersistencePackages()) {
-                exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
+        try {
+            List<DynamicResultSet> dynamicResultSetList = new ArrayList<DynamicResultSet>(15);
+            List<PersistencePackage> persistencePackageList;
+            boolean containsCache = false;
+            if (METADATA_CACHE.containsKey(batchPersistencePackage)) {
+                containsCache = true;
+                persistencePackageList = new ArrayList<PersistencePackage>();
+                for (PersistencePackage persistencePackage : batchPersistencePackage.getPersistencePackages()) {
+                    exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
+                    if (persistencePackage.getPersistencePerspective().getUseServerSideInspectionCache()) {
+                        checkResultSetList: {
+                            for (DynamicResultSet dynamicResultSet : METADATA_CACHE.get(batchPersistencePackage).getDynamicResultSets()) {
+                                if (dynamicResultSet.getBatchId().equals(persistencePackage.getBatchId())) {
+                                    dynamicResultSetList.add(dynamicResultSet);
+                                    break checkResultSetList;
+                                }
+                            }
+                            throw new IllegalArgumentException("Unable to find a result for batchId(" + persistencePackage.getBatchId() + ") in cached batch result set.");
+                        }
+                    } else {
+                        persistencePackageList.add(persistencePackage);
+                    }
+                }
+            } else {
+                persistencePackageList = Arrays.asList(batchPersistencePackage.getPersistencePackages());
             }
-            return METADATA_CACHE.get(batchPersistencePackage);
+            for (PersistencePackage persistencePackage : persistencePackageList) {
+                DynamicResultSet resultSet = inspect(persistencePackage);
+                resultSet.setBatchId(persistencePackage.getBatchId());
+                dynamicResultSetList.add(resultSet);
+            }
+            Collections.sort(dynamicResultSetList, new Comparator<DynamicResultSet>() {
+                @Override
+                public int compare(DynamicResultSet o1, DynamicResultSet o2) {
+                    return o1.getBatchId().compareTo(o2.getBatchId());
+                }
+            });
+            BatchDynamicResultSet batchResults = new BatchDynamicResultSet();
+            batchResults.setDynamicResultSets(dynamicResultSetList.toArray(new DynamicResultSet[dynamicResultSetList.size()]));
+            if (!containsCache) {
+                METADATA_CACHE.put(batchPersistencePackage, batchResults);
+                return METADATA_CACHE.get(batchPersistencePackage);
+            } else {
+                return batchResults;
+            }
+        } catch (IllegalArgumentException e) {
+            LOG.error("Problem performing batch inspect", e);
+            throw new ServiceException("Problem performing batch inspect", e);
         }
-        DynamicResultSet[] results = new DynamicResultSet[batchPersistencePackage.getPersistencePackages().length];
-        for (int j=0;j<batchPersistencePackage.getPersistencePackages().length;j++){
-            results[j] = inspect(batchPersistencePackage.getPersistencePackages()[j]);
-            results[j].setBatchId(batchPersistencePackage.getPersistencePackages()[j].getBatchId());
-        }
-        BatchDynamicResultSet batchResults = new BatchDynamicResultSet();
-        batchResults.setDynamicResultSets(results);
-        METADATA_CACHE.put(batchPersistencePackage, batchResults);
-
-        return METADATA_CACHE.get(batchPersistencePackage);
     }
 
     @Override
@@ -144,12 +183,27 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     protected void cleanEntity(Entity entity) throws ServiceException {
+        Property currentProperty = null;
         try {
             for (Property property : entity.getProperties()) {
+                currentProperty = property;
                 property.setRawValue(property.getValue());
-                property.setValue(exploitProtectionService.cleanString(property.getValue()));
+                property.setValue(exploitProtectionService.cleanStringWithResults(property.getValue()));
                 property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
             }
+        } catch (CleanStringException e) {
+            entity.setValidationFailure(true);
+            StringBuilder sb = new StringBuilder();
+            for (int j=0;j<e.getCleanResults().getNumberOfErrors();j++){
+                sb.append(j+1);
+                sb.append(") ");
+                sb.append((String) e.getCleanResults().getErrorMessages().get(j));
+                sb.append("\n");
+            }
+            sb.append("\nNote - ");
+            sb.append(exploitProtectionService.getAntiSamyPolicyFileLocation());
+            sb.append(" policy in effect. Set a new policy file to modify validation behavior/strictness.");
+            entity.addValidationError(currentProperty.getName(), sb.toString());
         } catch (Exception e) {
             LOG.error("Unable to clean the passed in entity values", e);
             throw new ServiceException("Unable to clean the passed in entity values", e);
@@ -161,6 +215,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         cleanEntity(persistencePackage.getEntity());
+        if (persistencePackage.getEntity().isValidationFailure()) {
+            return persistencePackage.getEntity();
+        }
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
@@ -180,6 +237,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         cleanEntity(persistencePackage.getEntity());
+        if (persistencePackage.getEntity().isValidationFailure()) {
+            return persistencePackage.getEntity();
+        }
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);

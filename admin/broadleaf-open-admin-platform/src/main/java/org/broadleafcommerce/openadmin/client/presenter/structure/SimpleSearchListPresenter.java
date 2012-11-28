@@ -20,6 +20,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -58,18 +59,18 @@ public class SimpleSearchListPresenter extends AbstractSubPresentable {
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickedHandlerRegistration;
 	
-	public SimpleSearchListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
-		super(display, availableToTypes);
+	public SimpleSearchListPresenter(String prefix, GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
+		super(prefix, display, availableToTypes);
 		this.searchDialog = searchDialog;
 		this.searchDialogTitle = searchDialogTitle;
 	}
 
-    public SimpleSearchListPresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
-		this(display, searchDialog, null, searchDialogTitle);
+    public SimpleSearchListPresenter(String prefix, GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
+		this(prefix, display, searchDialog, null, searchDialogTitle);
 	}
 
     public SimpleSearchListPresenter(SimpleSearchListPresenter template) {
-        this(template.display, template.searchDialog, template.availableToTypes, template.searchDialogTitle);
+        this(template.prefix, template.display, template.searchDialog, template.availableToTypes, template.searchDialogTitle);
         this.abstractDynamicDataSource = template.abstractDynamicDataSource;
         this.readOnly = template.readOnly;
     }
@@ -134,7 +135,9 @@ public class SimpleSearchListPresenter extends AbstractSubPresentable {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
+                            if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
+							    display.getRemoveButton().disable();
+                            }
 						}
 					});
 				}

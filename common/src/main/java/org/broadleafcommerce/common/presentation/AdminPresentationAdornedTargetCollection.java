@@ -90,6 +90,16 @@ public @interface AdminPresentationAdornedTargetCollection {
     boolean readOnly() default false;
 
     /**
+     * <p>Optional - only required if you want to make the field ignore caching</p>
+     *
+     * <p>Explicitly specify whether or not this field will use server-side
+     * caching during inspection</p>
+     *
+     * @return whether or not this field uses caching
+     */
+    boolean useServerSideInspectionCache() default true;
+
+    /**
      * <p>Optional - only required in the absence of a "mappedBy" property
      * on the JPA annotation</p>
      *
@@ -245,4 +255,13 @@ public @interface AdminPresentationAdornedTargetCollection {
      * @return the operation type
      */
     AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(addType = OperationType.ADORNEDTARGETLIST, fetchType = OperationType.ADORNEDTARGETLIST, inspectType = OperationType.BASIC, removeType = OperationType.ADORNEDTARGETLIST, updateType = OperationType.ADORNEDTARGETLIST);
+
+    /**
+     * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
+     * then you can specify a money currency property field.
+     *
+     *
+     * @return the currency property field
+     */
+    String currencyCodeField() default "";
 }

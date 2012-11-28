@@ -172,4 +172,15 @@ public class PresenterSequenceSetupManager {
     public EntityPresenter getPresenter() {
         return presenter;
     }
+
+    /**
+     * Obtain a version of the PresenterSequenceSetupManager with open access to control methods.
+     * This is an advanced feature, as the system generally takes care of all PresenterSequenceSetupManager
+     * lifecycle events.
+     *
+     * @return an openly accessible PresenterSequenceSetupManager instance
+     */
+    public StandAlonePresenterSequenceSetupManager getStandAlonePresenterSequenceSetupManager() {
+        return new StandAlonePresenterSequenceSetupManager(this);
+    }
 }

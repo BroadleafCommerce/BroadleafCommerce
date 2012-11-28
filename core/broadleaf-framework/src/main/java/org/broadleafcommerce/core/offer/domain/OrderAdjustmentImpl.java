@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -40,7 +41,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import java.math.BigDecimal;
 
 @Entity
@@ -111,7 +111,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Order_Adjustment_Value", order=2, group = "OrderAdjustmentImpl_Description")
+    @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Order_Adjustment_Value", order=2, group = "OrderAdjustmentImpl_Description", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Override

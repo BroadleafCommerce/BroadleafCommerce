@@ -25,11 +25,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 9/15/11
- * Time: 10:54 AM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class CustomCriteriaListGridDataSource extends ListGridDataSource {
 

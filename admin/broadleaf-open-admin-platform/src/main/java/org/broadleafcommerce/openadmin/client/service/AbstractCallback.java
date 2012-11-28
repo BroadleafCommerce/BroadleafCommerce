@@ -31,7 +31,6 @@ import org.broadleafcommerce.openadmin.client.security.AdminUser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.logging.Level;
 
 /**
@@ -55,12 +54,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
             Map<String, String> errors = new HashMap<String, String>();
             if (result.getValidationErrors() != null) {
                 for (String[] error : result.getValidationErrors()) {
-                    String message = null;
-                    try {
-                        message = BLCMain.getMessageManager().getString(error[1]);
-                    } catch (MissingResourceException e) {
-                        //do nothing
-                    }
+                    String message = BLCMain.getMessageManager().getString(error[1]);
                     errors.put(error[0], message==null?error[1]:message);
                 }
             }

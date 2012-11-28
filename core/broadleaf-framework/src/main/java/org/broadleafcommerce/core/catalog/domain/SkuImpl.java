@@ -104,7 +104,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct2")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseSku")
 public class SkuImpl implements Sku {
 
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
@@ -347,7 +347,8 @@ public class SkuImpl implements Sku {
             deleteEntityUponRemove = true,
             mapKeyOptionEntityClass = PriceListImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "priceKey"
+            mapKeyOptionEntityValueField = "priceKey",
+            currencyCodeField = "key"
     )
     protected Map<String, PriceData> priceDataMap = new HashMap<String, PriceData>();
 

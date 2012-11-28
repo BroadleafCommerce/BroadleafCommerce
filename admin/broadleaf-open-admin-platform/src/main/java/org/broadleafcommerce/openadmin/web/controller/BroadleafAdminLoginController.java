@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -81,8 +82,20 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
                 if (redirectUrl.startsWith("/")) {
                     redirectUrl = redirectUrl.substring(1, redirectUrl.length());
                 }
+                Enumeration parameterNames = request.getParameterNames();
+                if (parameterNames.hasMoreElements()) {
+                    redirectUrl += "?";
+                }
+                while(parameterNames.hasMoreElements()) {
+                    String name = (String) parameterNames.nextElement();
+                    String value = request.getParameter(name);
+                    redirectUrl += name + "=" + value;
+                    if (parameterNames.hasMoreElements()) {
+                        redirectUrl += "&";
+                    }
+                }
                 if (adminSection.getSectionKey() != null) {
-                    redirectUrl = redirectUrl + "#moduleKey=" + first.getModuleKey() + "&pageKey=" + adminSection.getSectionKey();
+                    redirectUrl += "#moduleKey=" + first.getModuleKey() + "&pageKey=" + adminSection.getSectionKey();
                 }
 
                 return "redirect:" + redirectUrl;

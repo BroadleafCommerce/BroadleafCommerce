@@ -98,7 +98,7 @@ public void onSetupSuccess(DataSource top) {
 
           @Override
   public void onSetupSuccess(DataSource result) {
-                      priceListPresenter = new MapStructurePresenter(getDisplay().getPriceAdjustmentDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newPriceAdjustment"));
+                      priceListPresenter = new MapStructurePresenter("",getDisplay().getPriceAdjustmentDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newPriceAdjustment"));
                       priceListPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
                       
           }
@@ -123,7 +123,7 @@ public void onSetupSuccess(DataSource top) {
           getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValueTranslationMapDS", new ProductOptionTranslationMapDataSourceFactory(this), new AsyncCallbackAdapter() {
               @Override
               public void onSetupSuccess(DataSource result) {
-                  translationsPresenter = new MapStructurePresenter(getDisplay().getTranslationsDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
+                  translationsPresenter = new MapStructurePresenter("",getDisplay().getTranslationsDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
                   translationsPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
               }
               protected MapStructureEntityEditDialog getMediaEntityView() {
@@ -138,7 +138,7 @@ public void onSetupSuccess(DataSource top) {
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValueDS", new ProductOptionValueDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                productOptionValuePresenter = new ProductOptionValueSubPresenter(getDisplay().getProductOptionValueDisplay(), "newProductOptionValue", null, false, true, false);
+                productOptionValuePresenter = new ProductOptionValueSubPresenter(getDisplay().getProductOptionValueDisplay(), BLCMain.getMessageManager().getString("newProductOptionValue"), null, false, true, false);
                 productOptionValuePresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
             }
         }));

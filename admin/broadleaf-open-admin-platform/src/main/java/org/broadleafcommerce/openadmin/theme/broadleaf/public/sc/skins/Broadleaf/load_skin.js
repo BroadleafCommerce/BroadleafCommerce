@@ -351,6 +351,7 @@ isc.loadSkin = function (theWindow) {
 
         if (isc.SelectItem) {
             isc.SelectItem.addProperties({
+                pickListTallBaseStyle:"tallPickListCell",
                 textBoxStyle:"selectItemText",
                 showFocusedPickerIcon:false,
                 pickerIconSrc:"[SKIN]/pickers/comboBoxPicker.gif",
@@ -361,6 +362,7 @@ isc.loadSkin = function (theWindow) {
 
         if (isc.ComboBoxItem) {
             isc.ComboBoxItem.addProperties({
+                pickListTallBaseStyle:"tallPickListCell",
                 textBoxStyle:"selectItemText",
                 pendingTextBoxStyle:"comboBoxItemPendingText",
                 showFocusedPickerIcon:false,
@@ -564,6 +566,15 @@ isc.loadSkin = function (theWindow) {
                 valuesShowRollOver: true,
                 styleName:null,
                 showEdges:false
+            });
+        }
+
+        if (isc.FilterBuilder) {
+            isc.FilterBuilder.changeDefaults("addButtonDefaults", {
+                showFocused: false
+            });
+            isc.FilterBuilder.changeDefaults("removeButtonDefaults", {
+                showFocused: false
             });
         }
 

@@ -76,6 +76,16 @@ public @interface AdminPresentationCollection {
     boolean readOnly() default false;
 
     /**
+     * <p>Optional - only required if you want to make the field ignore caching</p>
+     *
+     * <p>Explicitly specify whether or not this field will use server-side
+     * caching during inspection</p>
+     *
+     * @return whether or not this field uses caching
+     */
+    boolean useServerSideInspectionCache() default true;
+
+    /**
      * <p>Optional - only required if you want to lookup an item
      * for this association, rather than creating a new instance of the
      * target item. Note - if the type is changed to LOOKUP, this has
@@ -169,5 +179,14 @@ public @interface AdminPresentationCollection {
      * @return name of the property 
      */
     String showIfProperty() default "";
+
+    /**
+     * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
+     * then you can specify a money currency property field.
+     *
+     *
+     * @return the currency property field
+     */
+    String currencyCodeField() default "";
 
 }

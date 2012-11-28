@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
 
 /**
  * 
@@ -150,13 +149,9 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
         String friendlyName = entity.getFriendlyName();
         if (friendlyName != null && !friendlyName.equals("")) {
             //check if the friendly name is an i18N key
-            try {
-                String val = BLCMain.getMessageManager().getString(friendlyName);
-                if (val != null) {
-                    friendlyName = val;
-                }
-            } catch (MissingResourceException e) {
-                //do nothing
+            String val = BLCMain.getMessageManager().getString(friendlyName);
+            if (val != null) {
+                friendlyName = val;
             }
         }
         map.put(entity.getFullyQualifiedClassname(), friendlyName!=null?friendlyName:entity.getName());

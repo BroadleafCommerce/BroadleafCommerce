@@ -16,31 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.EditableAdornedTargetListPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleMapStructurePresenter;
-import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchListPresenter;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
@@ -51,39 +26,30 @@ import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemValueFormatter;
-import com.smartgwt.client.widgets.form.fields.BooleanItem;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.DateTimeItem;
-import com.smartgwt.client.widgets.form.fields.FloatItem;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
-import com.smartgwt.client.widgets.form.fields.HeaderItem;
-import com.smartgwt.client.widgets.form.fields.HiddenItem;
-import com.smartgwt.client.widgets.form.fields.IntegerItem;
-import com.smartgwt.client.widgets.form.fields.PasswordItem;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
-import com.smartgwt.client.widgets.form.fields.StaticTextItem;
-import com.smartgwt.client.widgets.form.fields.TextAreaItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.form.fields.UploadItem;
+import com.smartgwt.client.widgets.form.fields.*;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
-import com.smartgwt.client.widgets.grid.CellFormatter;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.structure.*;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
+import java.util.*;
 
 /**
  * 
@@ -167,10 +133,8 @@ public class FormBuilder {
         if (metadata.getFriendlyName() == null || metadata.getFriendlyName().length() == 0) {
             viewTitle = propertyName;
         } else {
-            String temp;
-            try {
-                temp = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
-            } catch (MissingResourceException e) {
+            String temp = BLCMain.getMessageManager().getString(metadata.getFriendlyName());
+            if (temp == null) {
                 temp = metadata.getFriendlyName();
             }
             viewTitle = temp;
@@ -185,6 +149,13 @@ public class FormBuilder {
             }
         }
 
+        final String prefix;
+        if (propertyName.contains(".")) {
+            prefix = propertyName.substring(0, propertyName.lastIndexOf("."));
+        } else {
+            prefix = "";
+        }
+
         metadata.accept(new MetadataVisitorAdapter() {
             @Override
             public void visit(BasicCollectionMetadata metadata) {
@@ -192,9 +163,9 @@ public class FormBuilder {
                 destination.addMember(advancedCollectionView);
                 SubPresentable subPresentable;
                 if (metadata.getAddMethodType() == AddMethodType.PERSIST) {
-                    subPresentable = new CreateBasedListStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
+                    subPresentable = new CreateBasedListStructurePresenter(prefix, advancedCollectionView, metadata.getAvailableToTypes(), viewTitle, new HashMap<String, Object>());
                 } else {
-                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, new EntitySearchDialog((ListGridDataSource)lookupDataSource, true), metadata.getAvailableToTypes(), viewTitle);
+                    subPresentable = new SimpleSearchListPresenter(prefix, advancedCollectionView, new EntitySearchDialog((ListGridDataSource)lookupDataSource, true), metadata.getAvailableToTypes(), viewTitle);
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
@@ -217,9 +188,9 @@ public class FormBuilder {
                 EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDataSource, true);
                 SubPresentable subPresentable;
                 if (metadata.isIgnoreAdornedProperties() || metadata.getMaintainedAdornedTargetFields().length == 0) {
-                    subPresentable = new SimpleSearchListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
+                    subPresentable = new SimpleSearchListPresenter(prefix, advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle);
                 } else {
-                    subPresentable = new EditableAdornedTargetListPresenter(advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle, metadata.getMaintainedAdornedTargetFields());
+                    subPresentable = new EditableAdornedTargetListPresenter(prefix, advancedCollectionView, searchView, metadata.getAvailableToTypes(), viewTitle, viewTitle, metadata.getMaintainedAdornedTargetFields());
                 }
                 Boolean[] edits = new Boolean[metadata.getGridVisibleFields().length];
                 for (int j=0;j<edits.length;j++) {
@@ -237,7 +208,7 @@ public class FormBuilder {
                 destination.addMember(advancedCollectionView);
                 SubPresentable subPresentable;
                 if (metadata.isSimpleValue()) {
-                    subPresentable = new SimpleMapStructurePresenter(advancedCollectionView, metadata.getAvailableToTypes(), null);
+                    subPresentable = new SimpleMapStructurePresenter(prefix, advancedCollectionView, metadata.getAvailableToTypes(), null);
                 } else {
                     MapStructureEntityEditDialog mapEntityAdd;
                     if (lookupDataSource != null) {
@@ -245,10 +216,8 @@ public class FormBuilder {
                     } else {
                         LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
                         for (String[] key : metadata.getKeys()) {
-                            String temp;
-                            try {
-                                temp = BLCMain.getMessageManager().getString(key[1]);
-                            } catch (MissingResourceException e) {
+                            String temp = BLCMain.getMessageManager().getString(key[1]);
+                            if (temp == null) {
                                 temp = key[1];
                             }
                             keys.put(key[0], temp);
@@ -261,7 +230,7 @@ public class FormBuilder {
                     } else {
                         mapEntityAdd.setShowMedia(false);
                     }
-                    subPresentable = new MapStructurePresenter(advancedCollectionView, mapEntityAdd, viewTitle, null);
+                    subPresentable = new MapStructurePresenter(prefix, advancedCollectionView, mapEntityAdd, viewTitle, null);
                 }
                 subPresentable.setDataSource((ListGridDataSource) dataSource, new String[]{}, new Boolean[]{});
                 subPresentable.setReadOnly(!metadata.isMutable());
@@ -455,9 +424,9 @@ public class FormBuilder {
                 public int compare(String o1, String o2) {
 					if (o1.equals(o2)) {
 						return 0;
-					} else if (o1.equals("General")) {
-						return 1;
-					} else if (o2.equals("General")) {
+					} else if (o1.equals("General") && (sectionNames.get(o1) == null || sectionNames.get(o1) == 99999)) {
+                        return 1;
+					} else if (o2.equals("General") && (sectionNames.get(o2) == null || sectionNames.get(o2) == 99999)) {
 						return -1;
 					} else {
 						Integer groupOrder1 = sectionNames.get(o1);
@@ -589,14 +558,9 @@ public class FormBuilder {
 						otherItem.setName(otherFieldName);
 						String title = field.getAttribute("friendlyName") +" Repeat";
 						//check to see if we have an i18N version of the new title
-                        try {
-                            String val = BLCMain.getMessageManager().getString(title);
-                            if (val != null) {
-                                title = val;
-                                break;
-                            }
-                        } catch (MissingResourceException e) {
-                            //do nothing
+                        String val = BLCMain.getMessageManager().getString(title);
+                        if (val != null) {
+                            title = val;
                         }
 						otherItem.setTitle(title);
 						otherItem.setRequired(field.getRequired());
@@ -719,13 +683,17 @@ public class FormBuilder {
 		case BROADLEAF_ENUMERATION:
         case EXPLICIT_ENUMERATION:
         case DATA_DRIVEN_ENUMERATION:
-            formItem = new ComboBoxItem();
-            ComboBoxItem comboBoxItem = (ComboBoxItem) formItem;
-            comboBoxItem.setAddUnknownValues(field.getAttributeAsBoolean("canEditEnumeration"));
-            comboBoxItem.setHeight(25);
-            comboBoxItem.setWidth(280);
-            comboBoxItem.setPickerIconHeight(26);
-            comboBoxItem.setPickerIconWidth(22);
+
+            if (field.getAttributeAsBoolean("canEditEnumeration")) {
+                formItem = new ComboBoxItem();
+                ((ComboBoxItem)formItem).setAddUnknownValues(true);
+            } else {
+                formItem = new SelectItem();
+            }
+
+            formItem.setHeight(25);
+            formItem.setWidth(280);
+            formItem.setPickerIconWidth(22);
 
             LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
             String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
@@ -734,14 +702,6 @@ public class FormBuilder {
             }
             formItem.setValueMap(valueMap);
 
-            ListGrid pickListProperties = new ListGrid();
-            pickListProperties.setCellFormatter(new CellFormatter() {
-                @Override
-                public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                    return "<div style='padding: 2px 4px; font-size: 11px;'>" + value + "</div>";
-                }
-            });
-            comboBoxItem.setPickListProperties(pickListProperties);
 			break;
 		case EMPTY_ENUMERATION:
 			formItem = new SelectItem();
