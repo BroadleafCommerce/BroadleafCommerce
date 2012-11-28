@@ -383,7 +383,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             if (entry.getKey().startsWith(getClass().getName())) {
                 final String key = entry.getKey().substring(entry.getKey().indexOf("_") + 1, entry.getKey().length());
                 final String dataSourceName = key + "Lookup";
-                if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
+                if (presenterSequenceSetupManager.containsDataSource(dataSourceName)) {
                     java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
                     continue;
                 }
@@ -467,7 +467,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 } else {
                     dataSourceName = entry.getKey() + "AdvancedCollectionDS";
                 }
-                if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
+                if (presenterSequenceSetupManager.containsDataSource(dataSourceName)) {
                     java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
                     continue;
                 }

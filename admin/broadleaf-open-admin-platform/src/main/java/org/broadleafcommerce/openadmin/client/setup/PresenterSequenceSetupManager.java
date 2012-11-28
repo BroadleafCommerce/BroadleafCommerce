@@ -161,6 +161,19 @@ public class PresenterSequenceSetupManager {
         return dataSourceLibrary.get(dataURL);
     }
 
+    public boolean containsDataSource(String dataURL) {
+        for (String key : dataSourceLibrary.keySet()) {
+            if (dataURL.equals(key)) {
+                return true;
+            }
+            if (dataURL.startsWith(key) && dataURL.length() != key.length() && dataURL.substring(key.length(), key.length() + 1).equals("_")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public EntityPresenter getPresenter() {
         return presenter;
     }
