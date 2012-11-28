@@ -67,7 +67,5 @@
 	<bean id="org.broadleafcommerce.core.content.domain.ContentDetails" class="org.broadleafcommerce.core.content.domain.ContentDetailsImpl" scope="prototype" />
 	<bean id="org.broadleafcommerce.core.offer.domain.OfferItemCriteria" class="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.offer.domain.OfferAudit" class="org.broadleafcommerce.core.offer.domain.OfferAuditImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.inventory.domain.Inventory" class="org.broadleafcommerce.core.inventory.domain.InventoryImpl" scope="prototype" />
-    <bean id="org.broadleafcommerce.core.inventory.domain.FulfillmentLocation" class="org.broadleafcommerce.core.inventory.domain.FulfillmentLocationImpl" scope="prototype" />
 
 </beans>
