@@ -73,6 +73,8 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
     private String[][] optionFilterParams;
+    private String[] customCriteria;
+    private Boolean useServerSideInspectionCache;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -386,6 +388,22 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.optionFilterParams = optionFilterParams;
     }
 
+    public String[] getCustomCriteria() {
+        return customCriteria;
+    }
+
+    public void setCustomCriteria(String[] customCriteria) {
+        this.customCriteria = customCriteria;
+    }
+
+    public Boolean getUseServerSideInspectionCache() {
+        return useServerSideInspectionCache;
+    }
+
+    public void setUseServerSideInspectionCache(Boolean useServerSideInspectionCache) {
+        this.useServerSideInspectionCache = useServerSideInspectionCache;
+    }
+
     @Override
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -447,6 +465,8 @@ public class BasicFieldMetadata extends FieldMetadata {
                 System.arraycopy(optionFilterParams[j], 0, metadata.optionFilterParams[j], 0, optionFilterParams[j].length);
             }
         }
+        metadata.customCriteria = customCriteria;
+        metadata.useServerSideInspectionCache = useServerSideInspectionCache;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

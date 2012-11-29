@@ -58,4 +58,28 @@ public @interface AdminPresentationToOneLookup {
      */
     String targetDynamicFormDisplayId() default "";
 
+    /**
+     * <p>Optional - only required if you need to specially handle crud operations for this
+     * specific collection on the server</p>
+     *
+     * <p>Custom string values that will be passed to the server during Read and Inspect operations on the
+     * entity lookup. This allows for the creation of a custom persistence handler to handle both
+     * inspect and fetch phase operations. Presumably, one could use this to
+     * somehow filter the list of records shown when the user interacts with the lookup widget in the
+     * admin UI.</p>
+     *
+     * @return the custom string array to pass to the server during CRUD operations
+     */
+    String[] customCriteria() default {};
+
+    /**
+     * <p>Optional - only required if you want to make the field ignore caching</p>
+     *
+     * <p>Explicitly specify whether or not this field will use server-side
+     * caching during inspection</p>
+     *
+     * @return whether or not this field uses caching
+     */
+    boolean useServerSideInspectionCache() default true;
+
 }

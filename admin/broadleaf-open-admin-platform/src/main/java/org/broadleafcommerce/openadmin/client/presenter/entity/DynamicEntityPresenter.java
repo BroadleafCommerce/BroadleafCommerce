@@ -408,7 +408,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
             return;
         }
-        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new ForeignKeyLookupDataSourceFactory(metadata.getLookupForeignKey()), new AsyncCallbackAdapter() {
+        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new ForeignKeyLookupDataSourceFactory(metadata.getLookupForeignKey(), metadata.getCustomCriteria(), metadata.getUseServerSideInspectionCache()), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource lookupDS) {
                 EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDS, true);

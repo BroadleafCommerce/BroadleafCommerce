@@ -996,6 +996,8 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 lookupMetadata.setFriendlyName(friendlyName);
                                 lookupMetadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                                 lookupMetadata.setDefaultDataSource(dataSource);
+                                lookupMetadata.setCustomCriteria(metadata.getCustomCriteria());
+                                lookupMetadata.setUseServerSideInspectionCache(metadata.getUseServerSideInspectionCache());
                                 ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).initializeLookup(property.getName(), lookupMetadata);
                             }
                             //field.setValidOperators(getBasicNumericOperators());
