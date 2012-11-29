@@ -131,11 +131,17 @@ isc.loadSkin = function (theWindow) {
                 normalCellHeight:28,
                 filterEditorHeight: 30,
 
+//                These header menu setting don't seem to work - reverting to old style
+
+//                showHeaderMenuButton:true,
+//                headerMenuButtonConstructor:"HeaderImgButton",
+//                headerMenuButtonWidth:17,
+//                headerMenuButtonSrc:"[SKIN]/ListGrid/header_menu.png",
+//                headerMenuButtonIcon:null,
+
                 showHeaderMenuButton:true,
-                headerMenuButtonConstructor:"HeaderImgButton",
+                headerMenuButtonConstructor:"HeaderMenuButton",
                 headerMenuButtonWidth:17,
-                headerMenuButtonSrc:"[SKIN]/ListGrid/header_menu.png",
-                headerMenuButtonIcon:null,
 
                 groupLeadingIndent : 1,
                 groupIconPadding : 3,
