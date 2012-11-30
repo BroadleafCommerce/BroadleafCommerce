@@ -156,15 +156,16 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                 currentStructuredContentRecord = selectedRecord;
                 currentStructuredContentId = getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(currentStructuredContentRecord);
                 currentStructuredContentPos = getDisplay().getListDisplay().getGrid().getRecordIndex(currentStructuredContentRecord);
-                loadContentTypeForm(selectedRecord, null, cb);
+                loadContentTypeForm(selectedRecord, cb);
             }
         });
     }
 
-    protected void loadContentTypeForm(final Record selectedRecord, final String structuredContentTypeId, final FilterRestartCallback cb) {
+    protected void loadContentTypeForm(final Record selectedRecord, final FilterRestartCallback cb) {
+        String structuredContentTypeId = (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("structuredContentType");
         //load the page template form
         BLCMain.NON_MODAL_PROGRESS.startProgress();
-        StructuredContentTypeFormListDataSourceFactory.createDataSource("contentTypeFormDS", new String[]{"constructForm", structuredContentTypeId!=null?structuredContentTypeId:selectedRecord.getAttribute("structuredContentType")}, new AsyncCallbackAdapter() {
+        StructuredContentTypeFormListDataSourceFactory.createDataSource("contentTypeFormDS", new String[]{"constructForm", structuredContentTypeId}, new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 destroyContentTypeForm();
@@ -423,7 +424,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                             public void execute(FormItem formItem) {
                                 if (currentStructuredContentRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
                                     destroyContentTypeForm();
-                                    loadContentTypeForm(currentStructuredContentRecord, (String) formItem.getValue(), null);
+                                    loadContentTypeForm(currentStructuredContentRecord, null);
                                 }
                             }
                         }
