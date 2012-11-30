@@ -75,6 +75,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String[][] optionFilterParams;
     private String[] customCriteria;
     private Boolean useServerSideInspectionCache;
+    private Boolean toOneLookupCreatedViaAnnotation;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -404,6 +405,14 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.useServerSideInspectionCache = useServerSideInspectionCache;
     }
 
+    public Boolean getToOneLookupCreatedViaAnnotation() {
+        return toOneLookupCreatedViaAnnotation;
+    }
+
+    public void setToOneLookupCreatedViaAnnotation(Boolean toOneLookupCreatedViaAnnotation) {
+        this.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
+    }
+
     @Override
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -467,6 +476,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         }
         metadata.customCriteria = customCriteria;
         metadata.useServerSideInspectionCache = useServerSideInspectionCache;
+        metadata.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

@@ -986,7 +986,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 hidden = true;
                             }
                             field.setRequired(required);
-                            if (metadata.getForeignKeyDisplayValueProperty() != null) {
+                            if (metadata.getForeignKeyDisplayValueProperty() != null && metadata.getToOneLookupCreatedViaAnnotation() != null && metadata.getToOneLookupCreatedViaAnnotation()) {
                                 ForeignKey foreignKey = new ForeignKey(foreignKeyProperty, foreignKeyClass);
                                 foreignKey.setDisplayValueProperty(metadata.getForeignKeyDisplayValueProperty());
                                 LookupMetadata lookupMetadata = new LookupMetadata();

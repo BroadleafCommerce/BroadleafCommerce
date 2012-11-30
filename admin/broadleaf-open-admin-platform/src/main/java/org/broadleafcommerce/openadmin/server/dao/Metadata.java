@@ -469,6 +469,7 @@ public class Metadata {
                 override.setTargetDynamicFormDisplayId(toOneLookup.targetDynamicFormDisplayId());
                 override.setCustomCriteria(toOneLookup.customCriteria());
                 override.setUseServerSideInspectionCache(toOneLookup.useServerSideInspectionCache());
+                override.setToOneLookupCreatedViaAnnotation(true);
             }
 
             if (dataDrivenEnumeration != null) {
@@ -614,6 +615,9 @@ public class Metadata {
         }
         if (basicFieldMetadata.getUseServerSideInspectionCache() != null) {
             metadata.setUseServerSideInspectionCache(basicFieldMetadata.getUseServerSideInspectionCache());
+        }
+        if (basicFieldMetadata.getToOneLookupCreatedViaAnnotation()!=null) {
+            metadata.setToOneLookupCreatedViaAnnotation(basicFieldMetadata.getToOneLookupCreatedViaAnnotation());
         }
         if (basicFieldMetadata.getOptionListEntity()!=null) {
             metadata.setOptionListEntity(basicFieldMetadata.getOptionListEntity());

@@ -112,7 +112,18 @@ public class FieldMetadataOverride {
     private Boolean optionCanEditValues;
     private Serializable[][] optionFilterValues;
     private String showIfProperty;
-    
+
+    //Not a user definable field
+    private Boolean toOneLookupCreatedViaAnnotation;
+
+    public Boolean getToOneLookupCreatedViaAnnotation() {
+        return toOneLookupCreatedViaAnnotation;
+    }
+
+    public void setToOneLookupCreatedViaAnnotation(Boolean toOneLookupCreatedViaAnnotation) {
+        this.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
+    }
+
     public SupportedFieldType getFieldType() {
         return fieldType;
     }
