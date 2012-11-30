@@ -321,26 +321,31 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     @Override
     public void postSetup(Canvas container) {
         BLCMain.ISNEW = false;
-        if (containsDisplay(container)) {
-            display.show();
-        } else {
-            bind();
-            for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
-                subPresentable.getValue().bind();
+        if (container != null && display != null) {
+            if (containsDisplay(container)) {
+                display.show();
+            } else {
+                bind();
+                for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
+                    subPresentable.getValue().bind();
+                }
+                container.addChild(display.asCanvas());
+                loaded = true;
             }
-            container.addChild(display.asCanvas());
-            loaded = true;
-        }
 
-        if (getDefaultItemId() != null) {
-            loadInitialItem();
-        }
+            if (getDefaultItemId() != null) {
+                loadInitialItem();
+            }
 
-        if (display.getListDisplay().getGrid().getDataSource().getField("archiveStatus.archived") != null) {
-            //this must be an archived enabled entity
-            display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.VISIBLE);
-        } else {
-            display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.HIDDEN);
+            if (display.getListDisplay().getGrid().getDataSource().getField("archiveStatus.archived") != null) {
+                //this must be an archived enabled entity
+                display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.VISIBLE);
+            } else {
+                display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.HIDDEN);
+            }
+            for(PresenterModifier m:modifierList) {
+                m.postSetup(container);
+             }
         }
 
         if (BLCMain.MODAL_PROGRESS.isActive()) {
@@ -349,9 +354,6 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         if (BLCMain.SPLASH_PROGRESS.isActive()) {
             BLCMain.SPLASH_PROGRESS.stopProgress();
         }
-        for(PresenterModifier m:modifierList) {
-            m.postSetup(container);
-         }
     }
 
     protected void loadInitialItem() {
