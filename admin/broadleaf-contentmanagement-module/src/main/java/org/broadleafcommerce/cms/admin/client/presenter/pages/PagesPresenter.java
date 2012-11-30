@@ -135,15 +135,16 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 currentPageRecord = selectedRecord;
                 currentPageId = getPresenterSequenceSetupManager().getDataSource("pageDS").getPrimaryKeyValue(currentPageRecord);
                 currentPagePos = getDisplay().getListDisplay().getGrid().getRecordIndex(currentPageRecord);
-                loadTemplateForm(selectedRecord, null, cb);
+                loadTemplateForm(selectedRecord, cb);
             }
         });
     }
 
-    protected void loadTemplateForm(final Record selectedRecord, final String pageTemplateId, final FilterRestartCallback cb) {
+    protected void loadTemplateForm(final Record selectedRecord, final FilterRestartCallback cb) {
+        String pageTemplateId = (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate");
         //load the page template form
         BLCMain.NON_MODAL_PROGRESS.startProgress();
-        PageTemplateFormListDataSourceFactory.createDataSource("pageTemplateFormDS", new String[]{"constructForm", pageTemplateId!=null?pageTemplateId:selectedRecord.getAttribute("pageTemplate")}, new AsyncCallbackAdapter() {
+        PageTemplateFormListDataSourceFactory.createDataSource("pageTemplateFormDS", new String[]{"constructForm", pageTemplateId}, new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 destroyTemplateForm();
@@ -363,7 +364,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                             public void execute(FormItem formItem) {
                                 if (currentPageRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
                                     destroyTemplateForm();
-                                    loadTemplateForm(currentPageRecord, (String) formItem.getValue(), null);
+                                    loadTemplateForm(currentPageRecord, null);
                                 }
                             }
                         }
