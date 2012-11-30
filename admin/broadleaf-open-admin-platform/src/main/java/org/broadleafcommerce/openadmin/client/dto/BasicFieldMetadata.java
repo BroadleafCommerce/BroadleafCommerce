@@ -28,6 +28,10 @@ import java.util.Map;
  */
 public class BasicFieldMetadata extends FieldMetadata {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private SupportedFieldType fieldType;
     private SupportedFieldType secondaryType = SupportedFieldType.INTEGER;
     private Integer length;
@@ -69,6 +73,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String optionDisplayFieldName;
     private Boolean optionCanEditValues;
     private String[][] optionFilterParams;
+    private Boolean toOneLookupCreatedViaAnnotation;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -382,6 +387,15 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.optionFilterParams = optionFilterParams;
     }
 
+    public Boolean getToOneLookupCreatedViaAnnotation() {
+        return toOneLookupCreatedViaAnnotation;
+    }
+
+    public void setToOneLookupCreatedViaAnnotation(Boolean toOneLookupCreatedViaAnnotation) {
+        this.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
+    }
+
+    @Override
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
         metadata.fieldType = fieldType;
@@ -442,6 +456,7 @@ public class BasicFieldMetadata extends FieldMetadata {
                 System.arraycopy(optionFilterParams[j], 0, metadata.optionFilterParams[j], 0, optionFilterParams[j].length);
             }
         }
+        metadata.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 
@@ -455,66 +470,129 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BasicFieldMetadata)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BasicFieldMetadata)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         BasicFieldMetadata metadata = (BasicFieldMetadata) o;
 
-        if (broadleafEnumeration != null ? !broadleafEnumeration.equals(metadata.broadleafEnumeration) : metadata.broadleafEnumeration != null)
+        if (broadleafEnumeration != null ? !broadleafEnumeration.equals(metadata.broadleafEnumeration) : metadata.broadleafEnumeration != null) {
             return false;
-        if (columnWidth != null ? !columnWidth.equals(metadata.columnWidth) : metadata.columnWidth != null)
+        }
+        if (columnWidth != null ? !columnWidth.equals(metadata.columnWidth) : metadata.columnWidth != null) {
             return false;
-        if (enumerationClass != null ? !enumerationClass.equals(metadata.enumerationClass) : metadata.enumerationClass != null)
+        }
+        if (enumerationClass != null ? !enumerationClass.equals(metadata.enumerationClass) : metadata.enumerationClass != null) {
             return false;
-        if (explicitFieldType != metadata.explicitFieldType) return false;
-        if (fieldType != metadata.fieldType) return false;
-        if (foreignKeyClass != null ? !foreignKeyClass.equals(metadata.foreignKeyClass) : metadata.foreignKeyClass != null)
+        }
+        if (explicitFieldType != metadata.explicitFieldType) {
             return false;
-        if (foreignKeyCollection != null ? !foreignKeyCollection.equals(metadata.foreignKeyCollection) : metadata.foreignKeyCollection != null)
+        }
+        if (fieldType != metadata.fieldType) {
             return false;
-        if (foreignKeyDisplayValueProperty != null ? !foreignKeyDisplayValueProperty.equals(metadata.foreignKeyDisplayValueProperty) : metadata.foreignKeyDisplayValueProperty != null)
+        }
+        if (foreignKeyClass != null ? !foreignKeyClass.equals(metadata.foreignKeyClass) : metadata.foreignKeyClass != null) {
             return false;
-        if (foreignKeyProperty != null ? !foreignKeyProperty.equals(metadata.foreignKeyProperty) : metadata.foreignKeyProperty != null)
+        }
+        if (foreignKeyCollection != null ? !foreignKeyCollection.equals(metadata.foreignKeyCollection) : metadata.foreignKeyCollection != null) {
             return false;
-        if (group != null ? !group.equals(metadata.group) : metadata.group != null) return false;
-        if (groupCollapsed != null ? !groupCollapsed.equals(metadata.groupCollapsed) : metadata.groupCollapsed != null)
+        }
+        if (foreignKeyDisplayValueProperty != null ? !foreignKeyDisplayValueProperty.equals(metadata.foreignKeyDisplayValueProperty) : metadata.foreignKeyDisplayValueProperty != null) {
             return false;
-        if (groupOrder != null ? !groupOrder.equals(metadata.groupOrder) : metadata.groupOrder != null) return false;
-        if (helpText != null ? !helpText.equals(metadata.helpText) : metadata.helpText != null) return false;
-        if (hint != null ? !hint.equals(metadata.hint) : metadata.hint != null) return false;
-        if (largeEntry != null ? !largeEntry.equals(metadata.largeEntry) : metadata.largeEntry != null) return false;
-        if (length != null ? !length.equals(metadata.length) : metadata.length != null) return false;
-        if (lookupDisplayProperty != null ? !lookupDisplayProperty.equals(metadata.lookupDisplayProperty) : metadata.lookupDisplayProperty != null)
+        }
+        if (foreignKeyProperty != null ? !foreignKeyProperty.equals(metadata.foreignKeyProperty) : metadata.foreignKeyProperty != null) {
             return false;
-        if (lookupParentDataSourceName != null ? !lookupParentDataSourceName.equals(metadata.lookupParentDataSourceName) : metadata.lookupParentDataSourceName != null)
+        }
+        if (group != null ? !group.equals(metadata.group) : metadata.group != null) {
             return false;
-        if (mergedPropertyType != metadata.mergedPropertyType) return false;
-        if (mutable != null ? !mutable.equals(metadata.mutable) : metadata.mutable != null) return false;
-        if (name != null ? !name.equals(metadata.name) : metadata.name != null) return false;
-        if (optionCanEditValues != null ? !optionCanEditValues.equals(metadata.optionCanEditValues) : metadata.optionCanEditValues != null)
+        }
+        if (groupCollapsed != null ? !groupCollapsed.equals(metadata.groupCollapsed) : metadata.groupCollapsed != null) {
             return false;
-        if (optionDisplayFieldName != null ? !optionDisplayFieldName.equals(metadata.optionDisplayFieldName) : metadata.optionDisplayFieldName != null)
+        }
+        if (groupOrder != null ? !groupOrder.equals(metadata.groupOrder) : metadata.groupOrder != null) {
             return false;
-        if (optionListEntity != null ? !optionListEntity.equals(metadata.optionListEntity) : metadata.optionListEntity != null)
+        }
+        if (helpText != null ? !helpText.equals(metadata.helpText) : metadata.helpText != null) {
             return false;
-        if (optionValueFieldName != null ? !optionValueFieldName.equals(metadata.optionValueFieldName) : metadata.optionValueFieldName != null)
+        }
+        if (hint != null ? !hint.equals(metadata.hint) : metadata.hint != null) {
             return false;
-        if (precision != null ? !precision.equals(metadata.precision) : metadata.precision != null) return false;
-        if (prominent != null ? !prominent.equals(metadata.prominent) : metadata.prominent != null) return false;
-        if (readOnly != null ? !readOnly.equals(metadata.readOnly) : metadata.readOnly != null) return false;
-        if (required != null ? !required.equals(metadata.required) : metadata.required != null) return false;
-        if (requiredOverride != null ? !requiredOverride.equals(metadata.requiredOverride) : metadata.requiredOverride != null)
+        }
+        if (largeEntry != null ? !largeEntry.equals(metadata.largeEntry) : metadata.largeEntry != null) {
             return false;
-        if (scale != null ? !scale.equals(metadata.scale) : metadata.scale != null) return false;
-        if (secondaryType != metadata.secondaryType) return false;
-        if (targetDynamicFormDisplayId != null ? !targetDynamicFormDisplayId.equals(metadata.targetDynamicFormDisplayId) : metadata.targetDynamicFormDisplayId != null)
+        }
+        if (length != null ? !length.equals(metadata.length) : metadata.length != null) {
             return false;
-        if (tooltip != null ? !tooltip.equals(metadata.tooltip) : metadata.tooltip != null) return false;
-        if (unique != null ? !unique.equals(metadata.unique) : metadata.unique != null) return false;
-        if (validationConfigurations != null ? !validationConfigurations.equals(metadata.validationConfigurations) : metadata.validationConfigurations != null)
+        }
+        if (lookupDisplayProperty != null ? !lookupDisplayProperty.equals(metadata.lookupDisplayProperty) : metadata.lookupDisplayProperty != null) {
             return false;
-        if (visibility != metadata.visibility) return false;
+        }
+        if (lookupParentDataSourceName != null ? !lookupParentDataSourceName.equals(metadata.lookupParentDataSourceName) : metadata.lookupParentDataSourceName != null) {
+            return false;
+        }
+        if (mergedPropertyType != metadata.mergedPropertyType) {
+            return false;
+        }
+        if (mutable != null ? !mutable.equals(metadata.mutable) : metadata.mutable != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(metadata.name) : metadata.name != null) {
+            return false;
+        }
+        if (optionCanEditValues != null ? !optionCanEditValues.equals(metadata.optionCanEditValues) : metadata.optionCanEditValues != null) {
+            return false;
+        }
+        if (optionDisplayFieldName != null ? !optionDisplayFieldName.equals(metadata.optionDisplayFieldName) : metadata.optionDisplayFieldName != null) {
+            return false;
+        }
+        if (optionListEntity != null ? !optionListEntity.equals(metadata.optionListEntity) : metadata.optionListEntity != null) {
+            return false;
+        }
+        if (optionValueFieldName != null ? !optionValueFieldName.equals(metadata.optionValueFieldName) : metadata.optionValueFieldName != null) {
+            return false;
+        }
+        if (precision != null ? !precision.equals(metadata.precision) : metadata.precision != null) {
+            return false;
+        }
+        if (prominent != null ? !prominent.equals(metadata.prominent) : metadata.prominent != null) {
+            return false;
+        }
+        if (readOnly != null ? !readOnly.equals(metadata.readOnly) : metadata.readOnly != null) {
+            return false;
+        }
+        if (required != null ? !required.equals(metadata.required) : metadata.required != null) {
+            return false;
+        }
+        if (requiredOverride != null ? !requiredOverride.equals(metadata.requiredOverride) : metadata.requiredOverride != null) {
+            return false;
+        }
+        if (scale != null ? !scale.equals(metadata.scale) : metadata.scale != null) {
+            return false;
+        }
+        if (secondaryType != metadata.secondaryType) {
+            return false;
+        }
+        if (targetDynamicFormDisplayId != null ? !targetDynamicFormDisplayId.equals(metadata.targetDynamicFormDisplayId) : metadata.targetDynamicFormDisplayId != null) {
+            return false;
+        }
+        if (tooltip != null ? !tooltip.equals(metadata.tooltip) : metadata.tooltip != null) {
+            return false;
+        }
+        if (unique != null ? !unique.equals(metadata.unique) : metadata.unique != null) {
+            return false;
+        }
+        if (validationConfigurations != null ? !validationConfigurations.equals(metadata.validationConfigurations) : metadata.validationConfigurations != null) {
+            return false;
+        }
+        if (visibility != metadata.visibility) {
+            return false;
+        }
 
         return true;
     }
@@ -561,4 +639,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (optionCanEditValues != null ? optionCanEditValues.hashCode() : 0);
         return result;
     }
+
+
 }

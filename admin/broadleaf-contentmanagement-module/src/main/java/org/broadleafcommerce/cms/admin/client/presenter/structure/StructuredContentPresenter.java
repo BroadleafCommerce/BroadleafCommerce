@@ -16,6 +16,24 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+import com.smartgwt.client.widgets.form.events.FilterChangedEvent;
+import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
+import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.CustomerListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
@@ -46,29 +64,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.FetchDataEvent;
-import com.smartgwt.client.widgets.events.FetchDataHandler;
-import com.smartgwt.client.widgets.form.events.FilterChangedEvent;
-import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
-import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
-import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-
 /**
- * 
  * @author jfischer
- *
  */
 public class StructuredContentPresenter extends DynamicEntityPresenter implements Instantiable {
 
@@ -84,20 +81,20 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
     protected StructuredContentPresenterExtractor extractor;
     protected AdditionalFilterEventManager additionalFilterEventManager = new AdditionalFilterEventManager();
 
-	@Override
-	protected void removeClicked() {
+    @Override
+    protected void removeClicked() {
         display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
-            if (getDisplay().getListDisplay().getGrid().getResultSet() == null) {
-                getDisplay().getListDisplay().getGrid().setData(new Record[]{});
-            }
-            destroyContentTypeForm();
-            formPresenter.disable();
-            display.getListDisplay().getRemoveButton().disable();
+                if (getDisplay().getListDisplay().getGrid().getResultSet() == null) {
+                    getDisplay().getListDisplay().getGrid().setData(new Record[]{});
+                }
+                destroyContentTypeForm();
+                formPresenter.disable();
+                display.getListDisplay().getRemoveButton().disable();
             }
         }, null);
-	}
+    }
 
     protected void destroyContentTypeForm() {
         Canvas legacyForm = ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
@@ -136,111 +133,113 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
     protected void addClicked() {
         initialValues.put("priority", 5);
         super.addClicked();
-	}
+    }
 
     @Override
-	protected void changeSelection(final Record selectedRecord) {
+    protected void changeSelection(final Record selectedRecord) {
         additionalFilterEventManager.resetFilterState(new FilterStateRunnable() {
             @Override
             public void run(FilterRestartCallback cb) {
-            extractor.getRemovedItemQualifiers().clear();
-            extractor.resetButtonState();
-            if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
-                getDisplay().getListDisplay().getRemoveButton().enable();
-                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
-                enableRules();
-                initializer.initSection(selectedRecord, false);
-            } else {
-                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
-                getDisplay().getListDisplay().getRemoveButton().disable();
-                disableRules();
-                initializer.initSection(selectedRecord, true);
-            }
-            currentStructuredContentRecord = selectedRecord;
-            currentStructuredContentId = getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(currentStructuredContentRecord);
-            currentStructuredContentPos = getDisplay().getListDisplay().getGrid().getRecordIndex(currentStructuredContentRecord);
-            loadContentTypeForm(selectedRecord, cb);
+                extractor.getRemovedItemQualifiers().clear();
+                extractor.resetButtonState();
+                if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
+                    getDisplay().getListDisplay().getRemoveButton().enable();
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
+                    enableRules();
+                    initializer.initSection(selectedRecord, false);
+                } else {
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
+                    getDisplay().getListDisplay().getRemoveButton().disable();
+                    disableRules();
+                    initializer.initSection(selectedRecord, true);
+                }
+                currentStructuredContentRecord = selectedRecord;
+                currentStructuredContentId = getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(currentStructuredContentRecord);
+                currentStructuredContentPos = getDisplay().getListDisplay().getGrid().getRecordIndex(currentStructuredContentRecord);
+                loadContentTypeForm(selectedRecord, null, cb);
             }
         });
-	}
+    }
 
-    protected void loadContentTypeForm(final Record selectedRecord, final FilterRestartCallback cb) {
+    protected void loadContentTypeForm(final Record selectedRecord, final String structuredContentTypeId, final FilterRestartCallback cb) {
         //load the page template form
         BLCMain.NON_MODAL_PROGRESS.startProgress();
-        StructuredContentTypeFormListDataSourceFactory.createDataSource("contentTypeFormDS", new String[]{"constructForm", selectedRecord.getAttribute("structuredContentType")}, new AsyncCallbackAdapter() {
+        StructuredContentTypeFormListDataSourceFactory.createDataSource("contentTypeFormDS", new String[]{"constructForm", structuredContentTypeId!=null?structuredContentTypeId:selectedRecord.getAttribute("structuredContentType")}, new AsyncCallbackAdapter() {
             @Override
-            public void onSetupSuccess(final DataSource dataSource) {
-            destroyContentTypeForm();
-            final FormOnlyView formOnlyView = new FormOnlyView(dataSource, true, true, false);
-            formOnlyView.getForm().addItemChangedHandler(new ItemChangedHandler() {
-                @Override
-                public void onItemChanged(ItemChangedEvent event) {
-                resetButtons();
-                }
-            });
-            formOnlyView.setID("contentTypeForm");
-            formOnlyView.setOverflow(Overflow.VISIBLE);
-            ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).addMember(formOnlyView);
-            ((StructuredContentTypeFormListDataSource) dataSource).setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
-            BLCMain.NON_MODAL_PROGRESS.startProgress();
-            formOnlyView.getForm().fetchData(new Criteria(), new DSCallback() {
-                @Override
-                public void execute(DSResponse response, Object rawData, DSRequest request) {
-                if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
-                    formOnlyView.getForm().enable();
-                }
+            public void onSetupSuccess(DataSource dataSource) {
+                destroyContentTypeForm();
+                final FormOnlyView formOnlyView = new FormOnlyView(dataSource, true, true, false);
+                formOnlyView.getForm().addItemChangedHandler(new ItemChangedHandler() {
+                    @Override
+                    public void onItemChanged(ItemChangedEvent event) {
+                        resetButtons();
+                    }
+                });
+                formOnlyView.setID("contentTypeForm");
+                formOnlyView.setOverflow(Overflow.VISIBLE);
+                ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).addMember(formOnlyView);
+                ((StructuredContentTypeFormListDataSource) dataSource).setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
+                BLCMain.NON_MODAL_PROGRESS.startProgress();
+                formOnlyView.getForm().fetchData(new Criteria(), new DSCallback() {
+                    @Override
+                    public void execute(DSResponse response, Object rawData, DSRequest request) {
+                        if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
+                            formOnlyView.getForm().enable();
+                        }
 
-                if (cb != null) {
-                    cb.processComplete();
-                }
-                }
-            });
+                        if (cb != null) {
+                            cb.processComplete();
+                        }
+                    }
+                });
             }
         });
     }
 
     @Override
-	public void bind() {
-		super.bind();
+    public void bind() {
+        super.bind();
         getSaveButtonHandlerRegistration().removeHandler();
         formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
-			@Override
+            @Override
             public void onClick(ClickEvent event) {
-				  if (event.isLeftButtonDown()) {
-		                extractor.getRemovedItemQualifiers().clear();
-		                changeSelection(currentStructuredContentRecord);
-		            }
-        }
+                if (event.isLeftButtonDown()) {
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
+                    extractor.getRemovedItemQualifiers().clear();
+                    changeSelection(currentStructuredContentRecord);
+                }
+            }
         });
         ruleRefreshButtonHandlerRegistration = getDisplay().getRulesRefreshButton().addClickHandler(new ClickHandler() {
-			@Override
+            @Override
             public void onClick(ClickEvent event) {
-            if (event.isLeftButtonDown()) {
-                extractor.getRemovedItemQualifiers().clear();
-                changeSelection(currentStructuredContentRecord);
+                if (event.isLeftButtonDown()) {
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
+                    extractor.getRemovedItemQualifiers().clear();
+                    changeSelection(currentStructuredContentRecord);
+                }
             }
-        }
         });
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-            //save the regular entity form and the page template form
-            if (event.isLeftButtonDown()) {
-                save();
-            }
+                //save the regular entity form and the page template form
+                if (event.isLeftButtonDown()) {
+                    save();
+                }
             }
         });
         ruleSaveButtonHandlerRegistration = getDisplay().getRulesSaveButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-            //save the regular entity form and the page template form
-            if (event.isLeftButtonDown()) {
-                save();
-            }
+                //save the regular entity form and the page template form
+                if (event.isLeftButtonDown()) {
+                    save();
+                }
             }
         });
-        
+
         extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
@@ -252,16 +251,16 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                 getDisplay().getRulesRefreshButton().disable();
             }
         });
-        
+
         getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-            if (event.isLeftButtonDown()) {
-                final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
-                bindItemBuilderEvents(display);
-                display.setDirty(true);
-                resetButtons();
-            }
+                if (event.isLeftButtonDown()) {
+                    final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+                    bindItemBuilderEvents(display);
+                    display.setDirty(true);
+                    resetButtons();
+                }
             }
         });
         for (ItemBuilderDisplay itemBuilder : getDisplay().getItemBuilderViews()) {
@@ -315,7 +314,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                 resetButtons();
             }
         });
-	}
+    }
 
     protected void save() {
         extractor.applyData(currentStructuredContentRecord);
@@ -381,7 +380,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
 
     @Override
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
@@ -398,52 +397,52 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentTypeSearchDS", new StructuredContentTypeSearchListDataSourceFactory(), new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
-			@Override
+            @Override
             public void onSetupSuccess(DataSource result) {
-            ListGridDataSource structuredContentTypeDataSource = (ListGridDataSource) result;
-            structuredContentTypeDataSource.resetPermanentFieldVisibility(
-                "name","description"
-            );
-            EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource, true);
-            setupDisplayItems(
-                getPresenterSequenceSetupManager().getDataSource("structuredContentDS"),
-                getPresenterSequenceSetupManager().getDataSource("scCustomerDS"),
-                getPresenterSequenceSetupManager().getDataSource("timeDTODS"),
-                getPresenterSequenceSetupManager().getDataSource("requestDTODS"),
-                getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"),
-                getPresenterSequenceSetupManager().getDataSource("scProductDS")
-            );
-            getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
-            getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-                    "structuredContentType",
-                    structuredContentTypeSearchView,
-                    "Structured Content Type Search",
-                    getDisplay().getDynamicFormDisplay(),
-                    new FormItemCallback() {
-                        @Override
-                        public void execute(FormItem formItem) {
-                            if (currentStructuredContentRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
-                                destroyContentTypeForm();
-                                loadContentTypeForm(currentStructuredContentRecord, null);
+                ListGridDataSource structuredContentTypeDataSource = (ListGridDataSource) result;
+                structuredContentTypeDataSource.resetPermanentFieldVisibility(
+                        "name", "description"
+                );
+                EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource, true);
+                setupDisplayItems(
+                        getPresenterSequenceSetupManager().getDataSource("structuredContentDS"),
+                        getPresenterSequenceSetupManager().getDataSource("scCustomerDS"),
+                        getPresenterSequenceSetupManager().getDataSource("timeDTODS"),
+                        getPresenterSequenceSetupManager().getDataSource("requestDTODS"),
+                        getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"),
+                        getPresenterSequenceSetupManager().getDataSource("scProductDS")
+                );
+                getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
+                        getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                        "structuredContentType",
+                        structuredContentTypeSearchView,
+                        "Structured Content Type Search",
+                        getDisplay().getDynamicFormDisplay(),
+                        new FormItemCallback() {
+                            @Override
+                            public void execute(FormItem formItem) {
+                                if (currentStructuredContentRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
+                                    destroyContentTypeForm();
+                                    loadContentTypeForm(currentStructuredContentRecord, (String) formItem.getValue(), null);
+                                }
                             }
                         }
-                    }
-            );
-            ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"locked", "structuredContentType_Grid", "contentName", "locale", "offlineFlag"});
-			}
-		}));
+                );
+                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"locked", "structuredContentType_Grid", "contentName", "locale", "offlineFlag"});
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scItemCriteriaDS", new StructuredContentItemCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-            initializer = new StructuredContentRuleBasedPresenterInitializer(StructuredContentPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
-            extractor = new StructuredContentPresenterExtractor(StructuredContentPresenter.this);
+                initializer = new StructuredContentRuleBasedPresenterInitializer(StructuredContentPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+                extractor = new StructuredContentPresenterExtractor(StructuredContentPresenter.this);
             }
         }));
-	}
+    }
 
-	@Override
-	public StructuredContentDisplay getDisplay() {
-		return (StructuredContentDisplay) display;
-	}
-	
+    @Override
+    public StructuredContentDisplay getDisplay() {
+        return (StructuredContentDisplay) display;
+    }
+
 }
