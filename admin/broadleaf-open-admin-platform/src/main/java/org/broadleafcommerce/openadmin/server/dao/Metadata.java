@@ -456,6 +456,7 @@ public class Metadata {
                 override.setLookupDisplayProperty(toOneLookup.lookupDisplayProperty());
                 override.setLookupParentDataSourceName(toOneLookup.lookupParentDataSourceName());
                 override.setTargetDynamicFormDisplayId(toOneLookup.targetDynamicFormDisplayId());
+                override.setToOneLookupCreatedViaAnnotation(true);
             }
 
             if (dataDrivenEnumeration != null) {
@@ -590,6 +591,9 @@ public class Metadata {
         if (basicFieldMetadata.getTargetDynamicFormDisplayId()!=null) {
             metadata.setTargetDynamicFormDisplayId(basicFieldMetadata.getTargetDynamicFormDisplayId());
         }
+        if (basicFieldMetadata.getToOneLookupCreatedViaAnnotation()!=null) {
+            metadata.setToOneLookupCreatedViaAnnotation(basicFieldMetadata.getToOneLookupCreatedViaAnnotation());
+        }
         if (basicFieldMetadata.getOptionListEntity()!=null) {
             metadata.setOptionListEntity(basicFieldMetadata.getOptionListEntity());
         }
@@ -677,7 +681,7 @@ public class Metadata {
         if (map.getUpdateType() != null) {
             dtoOperationTypes.setUpdateType(map.getUpdateType());
         }
-
+        
         //don't allow additional non-persistent properties or additional foreign keys for an advanced collection datasource - they don't make sense in this context
         PersistencePerspective persistencePerspective;
         if (serverMetadata != null) {
@@ -1145,7 +1149,7 @@ public class Metadata {
         if (collectionMetadata.getUpdateType() != null) {
             dtoOperationTypes.setUpdateType(collectionMetadata.getUpdateType());
         }
-
+        
         if (AddMethodType.LOOKUP == metadata.getAddMethodType()) {
             dtoOperationTypes.setRemoveType(OperationType.NONDESTRUCTIVEREMOVE);
         }
