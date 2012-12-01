@@ -44,8 +44,6 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemList
 import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.RequestDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenterExtractor;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentRuleBasedPresenterInitializer;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -141,16 +139,17 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 currentPageRecord = selectedRecord;
                 currentPageId = getPresenterSequenceSetupManager().getDataSource("pageDS").getPrimaryKeyValue(currentPageRecord);
                 currentPagePos = getDisplay().getListDisplay().getGrid().getRecordIndex(currentPageRecord);
-                loadTemplateForm(selectedRecord, null, cb);
+                loadTemplateForm(selectedRecord, cb);
             }
         });
     }
 
-    protected void loadTemplateForm(final Record selectedRecord, final String pageTemplateId, final FilterRestartCallback cb) {
+    protected void loadTemplateForm(final Record selectedRecord, final FilterRestartCallback cb) {
+        String pageTemplateId = (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate");
         //load the page template form
         BLCMain.NON_MODAL_PROGRESS.startProgress();
 
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateFormDS", new PageTemplateFormListDataSourceFactory(), null, new String[]{"constructForm", pageTemplateId!=null?pageTemplateId:selectedRecord.getAttribute("pageTemplate")}, new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateFormDS", new PageTemplateFormListDataSourceFactory(), null, new String[]{"constructForm", pageTemplateId}, new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 destroyTemplateForm();
@@ -370,7 +369,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                             public void execute(FormItem formItem) {
                                 if (currentPageRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
                                     destroyTemplateForm();
-                                    loadTemplateForm(currentPageRecord, (String) formItem.getValue(), null);
+                                    loadTemplateForm(currentPageRecord, null);
                                 }
                             }
                         }
