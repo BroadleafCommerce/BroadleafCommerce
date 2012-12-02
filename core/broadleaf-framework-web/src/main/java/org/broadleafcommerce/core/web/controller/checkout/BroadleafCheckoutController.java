@@ -412,13 +412,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         return getCartPageRedirect();
     }
 
-    public String extensionsCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
-            BasicPaymentInfoForm basicPaymentInfoForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
-        String processResponse = checkoutControllerExtensionManager.processCheckout(request, response, model, basicPaymentInfoForm, result);
-        populateModelWithShippingReferenceData(request, model);
-        return processResponse;
-    }
-
     /**
      * This method will copy the shipping address of the first fulfillment group on the order
      * to the billing address on the BillingInfoForm that is passed in.

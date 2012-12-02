@@ -26,8 +26,6 @@ import org.broadleafcommerce.core.payment.service.PaymentInfoFactory;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.web.checkout.validator.*;
-import org.broadleafcommerce.core.web.controller.checkout.extension.BroadleafCheckoutControllerExtensionListener;
-import org.broadleafcommerce.core.web.controller.checkout.extension.BroadleafCheckoutControllerExtensionManager;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -80,9 +78,6 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
-
-    @Resource(name = "blCheckoutControllerExtensionManager")
-    protected BroadleafCheckoutControllerExtensionListener checkoutControllerExtensionManager;
 
     /* Factories */
     @Resource(name = "blCreditCardPaymentInfoFactory")
