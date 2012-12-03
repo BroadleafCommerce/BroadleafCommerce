@@ -689,12 +689,13 @@ public class RichTextToolbar extends Composite {
         String richContent;
         if (fileExtension.equals("gif") || fileExtension.equals("jpg")
                 || fileExtension.equals("png") || fileExtension.equals("jpeg")) {
-            richContent = staticAssetFullUrl;
+            richContent = "<img title='" + name + "' src='"
+                    + staticAssetFullUrl + "' alt='" + name
+                    + "'/>";;
             if (isHTMLMode()) {
-                changeHtmlStyle("<img title='" + name + "' src='"
-                        + staticAssetFullUrl + "' alt='" + name, "</img>");
+                changeHtmlStyle(richContent, "");
             } else {
-                styleTextFormatter.insertImage(richContent);
+                styleTextFormatter.insertHTML(richContent);
             }
         } else {
             richContent = "<a href='" + staticAssetFullUrl + "'>" + name
