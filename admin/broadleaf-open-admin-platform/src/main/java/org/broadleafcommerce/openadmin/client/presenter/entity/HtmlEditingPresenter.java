@@ -64,7 +64,7 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
                     @Override
                     public void onSearchItemSelected(TileGridItemSelected event) {
 
-                        String staticAssetFullUrl = BLCMain.assetServerUrlPrefix
+                        String staticAssetFullUrl = "/" + BLCMain.assetServerUrlPrefix
                                 + event.getRecord().getAttribute("fullUrl");
                         String name = event.getRecord().getAttribute("name");
                         String fileExtension = event.getRecord().getAttribute(
