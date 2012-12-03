@@ -118,16 +118,15 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         if (token != null) {
             String page = BLCLaunch.getSelectedPage(token);
             String moduleName = BLCLaunch.getSelectedModule(token);
-
-            LinkedHashMap<String, String[]> pages = modules.get(moduleName).getPages();
-            if (SecurityManager.getInstance().isUserAuthorizedToViewModule(moduleName) &&
-                    SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(page)[0])) {
-
-                if (moduleName != null && ! moduleName.equals(BLCMain.currentModuleKey)) {
-                    BLCMain.setCurrentModuleKey(moduleName);
-                    AppController.getInstance().clearCurrentView();
-                } else {
-                    AppController.getInstance().clearCurrentView();
+            if (moduleName != null) {
+                LinkedHashMap<String, String[]> pages = modules.get(moduleName).getPages();
+                if (SecurityManager.getInstance().isUserAuthorizedToViewModule(moduleName) && SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(page)[0])) {
+                    if (!moduleName.equals(BLCMain.currentModuleKey)) {
+                        BLCMain.setCurrentModuleKey(moduleName);
+                        AppController.getInstance().clearCurrentView();
+                    } else {
+                        AppController.getInstance().clearCurrentView();
+                    }
                 }
             }
         }

@@ -537,6 +537,7 @@ public class FormBuilder {
 		}
 		temp.add(formItem);
 		if (displayFormItem != null) {
+            displayFormItem.setTitle(field.getTitle());
 			temp.add(displayFormItem);
 		}
 	}
@@ -595,21 +596,13 @@ public class FormBuilder {
 	protected static FormItem buildDisplayField(DataSourceField field, String fieldType) {
 		FormItem displayFormItem = null;
 		switch(SupportedFieldType.valueOf(fieldType)){
-		case FOREIGN_KEY:
-			displayFormItem = new HiddenItem();
+        case FOREIGN_KEY:
+        case ADDITIONAL_FOREIGN_KEY:
+            displayFormItem = new SearchFormItem();
+            displayFormItem.setWidth(235);
 			displayFormItem.setName("__display_"+field.getName());
 			break;
-		case ADDITIONAL_FOREIGN_KEY:
-			displayFormItem = new HiddenItem();
-			displayFormItem.setName("__display_"+field.getName());
-			break;
-        /*case UPLOAD:
-            displayFormItem = new CanvasItem();
-            ((CanvasItem) displayFormItem).setCanvas(new UploadStatusProgress(100, 20));
-            displayFormItem.setName("__display_"+field.getName());
-            displayFormItem.setShowTitle(false);
-            break;*/
-		}
+        }
 		return displayFormItem;
 	}
 
@@ -649,41 +642,12 @@ public class FormBuilder {
             formItem.setAttribute("type", "localMoneyDecimal");
 			break;
 		case FOREIGN_KEY:
-			formItem = new SearchFormItem();
-            formItem.setWidth(235);
-			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
-				@Override
-                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
-					String response;
-					if (value == null) {
-						response = "";
-					} else {
-						response = (String) form.getField("__display_"+item.getName()).getValue();
-					}
-					return response;
-				}
-			});
-			break;
 		case ADDITIONAL_FOREIGN_KEY:
-			formItem = new SearchFormItem();
-            formItem.setWidth(235);
-			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
-				@Override
-                public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
-					String response;
-					if (value == null) {
-						response = "";
-					} else {
-						response = (String) form.getField("__display_"+item.getName()).getValue();
-					}
-					return response;
-				}
-			});
+			formItem = new HiddenItem();
 			break;
 		case BROADLEAF_ENUMERATION:
         case EXPLICIT_ENUMERATION:
         case DATA_DRIVEN_ENUMERATION:
-
             if (field.getAttributeAsBoolean("canEditEnumeration")) {
                 formItem = new ComboBoxItem();
                 ((ComboBoxItem)formItem).setAddUnknownValues(true);

@@ -26,6 +26,7 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
@@ -117,13 +118,9 @@ public class PagesPresenterExtractor {
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     if (response.getStatus() != RPCResponse.STATUS_FAILURE) {
                         final String newId = response.getAttribute("newId");
-                       
                         FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
-
                         final DynamicForm form = legacyForm.getForm();
 
-
-               
                         PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
                         dataSource.setCustomCriteria(new String[]{"constructForm", newId});
                         form.saveData(new DSCallback() {
@@ -131,7 +128,7 @@ public class PagesPresenterExtractor {
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 if (response.getStatus() != RPCResponse.STATUS_FAILURE) {
                                     try {
-                                        //extractQualifierData(newId, false, dirtyValues);
+                                        extractQualifierData(newId, false, dirtyValues);
                                         if (!presenter.currentPageId.equals(newId)) {
                                             Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentPageId);
                                             if (myRecord != null) {
@@ -172,8 +169,6 @@ public class PagesPresenterExtractor {
         }
     }
 
-
-
     protected void resetButtonState() {
         getDisplay().getDynamicFormDisplay().getSaveButton().disable();
         getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
@@ -182,7 +177,6 @@ public class PagesPresenterExtractor {
     }
 
     protected void extractQualifierData(final String id, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
-
         for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
             if (builder.getDirty()) {
                 String temper = builder.getItemQuantity().getValue().toString();
@@ -192,7 +186,7 @@ public class PagesPresenterExtractor {
                     if (builder.getRecord() != null) {
                         setData(builder.getRecord(), "quantity", quantity, dirtyValues);
                         setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
-                        presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
+                        presenter.getPresenterSequenceSetupManager().getDataSource("pagesItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
                             @Override
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
@@ -203,11 +197,11 @@ public class PagesPresenterExtractor {
                         final Record temp = new Record();
                         temp.setAttribute("quantity", quantity);
                         temp.setAttribute("orderItemMatchRule", mvel);
-                        temp.setAttribute("_type", new String[]{presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").getDefaultNewEntityFullyQualifiedClassname()});
-                        temp.setAttribute(StructuredContentItemCriteriaListDataSourceFactory.foreignKeyName, id);
+                        temp.setAttribute("_type", new String[]{presenter.getPresenterSequenceSetupManager().getDataSource("pagesItemCriteriaDS").getDefaultNewEntityFullyQualifiedClassname()});
+                        temp.setAttribute(PagesItemCriteriaListDataSourceFactory.foreignKeyName, id);
                         temp.setAttribute("id", "");
-                        presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").setLinkedValue(id);
-                        presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").addData(temp, new DSCallback() {
+                        presenter.getPresenterSequenceSetupManager().getDataSource("pagesItemCriteriaDS").setLinkedValue(id);
+                        presenter.getPresenterSequenceSetupManager().getDataSource("pagesItemCriteriaDS").addData(temp, new DSCallback() {
                             @Override
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);

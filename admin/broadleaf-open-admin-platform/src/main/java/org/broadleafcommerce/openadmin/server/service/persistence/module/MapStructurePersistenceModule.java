@@ -170,6 +170,9 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 				persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
 				Map<String, FieldMetadata> valueMergedProperties;
 				if (persistentClass == null) {
+                    if (!SimpleValueMapStructure.class.isAssignableFrom(mapStructure.getClass())) {
+                        throw new IllegalStateException("The map structure was determined to not be a simple value, but the system was unable to identify the entity designated for the map structure value(" + mapStructure.getValueClassName() + ")");
+                    }
 					valueMergedProperties = persistenceManager.getDynamicEntityDao().getPropertiesForPrimitiveClass(
 						((SimpleValueMapStructure) mapStructure).getValuePropertyName(), 
 						((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),

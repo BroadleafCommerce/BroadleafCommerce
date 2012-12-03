@@ -467,6 +467,9 @@ public class Metadata {
                 override.setLookupDisplayProperty(toOneLookup.lookupDisplayProperty());
                 override.setLookupParentDataSourceName(toOneLookup.lookupParentDataSourceName());
                 override.setTargetDynamicFormDisplayId(toOneLookup.targetDynamicFormDisplayId());
+                override.setCustomCriteria(toOneLookup.customCriteria());
+                override.setUseServerSideInspectionCache(toOneLookup.useServerSideInspectionCache());
+                override.setToOneLookupCreatedViaAnnotation(true);
             }
 
             if (dataDrivenEnumeration != null) {
@@ -606,6 +609,15 @@ public class Metadata {
         }
         if (basicFieldMetadata.getTargetDynamicFormDisplayId()!=null) {
             metadata.setTargetDynamicFormDisplayId(basicFieldMetadata.getTargetDynamicFormDisplayId());
+        }
+        if (basicFieldMetadata.getCustomCriteria() != null) {
+            metadata.setCustomCriteria(basicFieldMetadata.getCustomCriteria());
+        }
+        if (basicFieldMetadata.getUseServerSideInspectionCache() != null) {
+            metadata.setUseServerSideInspectionCache(basicFieldMetadata.getUseServerSideInspectionCache());
+        }
+        if (basicFieldMetadata.getToOneLookupCreatedViaAnnotation()!=null) {
+            metadata.setToOneLookupCreatedViaAnnotation(basicFieldMetadata.getToOneLookupCreatedViaAnnotation());
         }
         if (basicFieldMetadata.getOptionListEntity()!=null) {
             metadata.setOptionListEntity(basicFieldMetadata.getOptionListEntity());
@@ -1843,6 +1855,8 @@ public class Metadata {
                 metadata.setForeignKeyDisplayValueProperty(annot.lookupDisplayProperty());
                 metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
                 metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
+                metadata.setCustomCriteria(annot.customCriteria());
+                metadata.setUseServerSideInspectionCache(annot.useServerSideInspectionCache());
             }
         }
     }

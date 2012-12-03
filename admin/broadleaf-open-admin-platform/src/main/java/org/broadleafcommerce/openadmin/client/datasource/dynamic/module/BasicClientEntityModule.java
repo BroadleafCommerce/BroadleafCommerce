@@ -986,7 +986,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 hidden = true;
                             }
                             field.setRequired(required);
-                            if (metadata.getForeignKeyDisplayValueProperty() != null) {
+                            if (metadata.getForeignKeyDisplayValueProperty() != null && metadata.getToOneLookupCreatedViaAnnotation() != null && metadata.getToOneLookupCreatedViaAnnotation()) {
                                 ForeignKey foreignKey = new ForeignKey(foreignKeyProperty, foreignKeyClass);
                                 foreignKey.setDisplayValueProperty(metadata.getForeignKeyDisplayValueProperty());
                                 LookupMetadata lookupMetadata = new LookupMetadata();
@@ -996,6 +996,8 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 lookupMetadata.setFriendlyName(friendlyName);
                                 lookupMetadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                                 lookupMetadata.setDefaultDataSource(dataSource);
+                                lookupMetadata.setCustomCriteria(metadata.getCustomCriteria());
+                                lookupMetadata.setUseServerSideInspectionCache(metadata.getUseServerSideInspectionCache());
                                 ((DynamicEntityPresenter) presenterSequenceSetupManager.getPresenter()).initializeLookup(property.getName(), lookupMetadata);
                             }
                             //field.setValidOperators(getBasicNumericOperators());

@@ -38,6 +38,7 @@ import org.broadleafcommerce.cms.admin.client.datasource.pages.PageDataSourceFac
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.CustomerListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
@@ -63,10 +64,14 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
+import java.util.logging.Logger;
+
 /**
  * @author jfischer
  */
 public class PagesPresenter extends DynamicEntityPresenter implements Instantiable {
+
+    private static final Logger LOG = Logger.getLogger(PagesPresenter.class.getName());
 
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
@@ -140,10 +145,11 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
     }
 
     protected void loadTemplateForm(final Record selectedRecord, final FilterRestartCallback cb) {
+        String pageTemplateId = (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate");
         //load the page template form
         BLCMain.NON_MODAL_PROGRESS.startProgress();
 
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateFormDS", new PageTemplateFormListDataSourceFactory(), null, new String[]{"constructForm", selectedRecord.getAttribute("pageTemplate")}, new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateFormDS", new PageTemplateFormListDataSourceFactory(), null, new String[]{"constructForm", pageTemplateId}, new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 destroyTemplateForm();
@@ -197,10 +203,9 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
-                //refresh();
                 if (event.isLeftButtonDown()) {
-                    //    extractor.getRemovedItemQualifiers().clear();
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
+                    extractor.getRemovedItemQualifiers().clear();
                     changeSelection(currentPageRecord);
                 }
             }
@@ -209,8 +214,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    //	refresh();
-                    //  extractor.getRemovedItemQualifiers().clear();
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
+                    extractor.getRemovedItemQualifiers().clear();
                     changeSelection(currentPageRecord);
                 }
             }
@@ -219,74 +224,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    extractor.applyData(currentPageRecord);
-                }
-//                //save the regular entity form and the page template form
-//                if (event.isLeftButtonDown()) { 
-//                    DSRequest requestProperties = new DSRequest();
-//                    try {
-//             		       requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
-//             		} catch (Exception e) {
-//             				Logger.getLogger(this.getClass().toString()).log(Level.WARNING,"ignore, usually thown in gwt-run mode",e);
-//             		}
-//                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
-//                        @Override
-//                        public void execute(DSResponse response, Object rawData, DSRequest request) {
-//                            if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
-//                                final String newId = response.getAttribute("newId");
-//                                FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
-//                                final DynamicForm form = legacyForm.getForm();
-//                                for (FormItem formItem : form.getFields()) {
-//
-//                                	 if (formItem instanceof HTMLTextItem) { 
-//                                		 form.setValue(formItem.getFieldName(), ((HTMLTextItem) formItem).getHTMLValue());
-//                                	 }
-//                                }
-//                                PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
-//                                dataSource.setCustomCriteria(new String[]{"constructForm", newId});
-//                                form.saveData(new DSCallback() {
-//                                    @Override
-//                                    public void execute(DSResponse response, Object rawData, DSRequest request) {
-//                                        if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
-//                                            getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-//                                            getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
-//                                            if (!currentPageId.equals(newId)) {
-//                                                Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", currentPageId);
-//                                                if (myRecord != null) {
-//                                                    myRecord.setAttribute("id", newId);
-//                                                    currentPageRecord = myRecord;
-//                                                    currentPageId = newId;
-//                                                }  else {
-//                                                    String primaryKey = getDisplay().getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
-//                                                    getDisplay().getListDisplay().getGrid().getDataSource().
-//                                                        fetchData(new Criteria(primaryKey, newId), new DSCallback() {
-//                                                            @Override
-//                                                            public void execute(DSResponse response, Object rawData, DSRequest request) {
-//                                                                getDisplay().getListDisplay().getGrid().clearCriteria();
-//                                                                getDisplay().getListDisplay().getGrid().setData(response.getData());
-//                                                                getDisplay().getListDisplay().getGrid().selectRecord(0);
-//                                                            }
-//                                                        });
-//                                                    SC.say(BLCMain.getMessageManager().getString("criteriaDoesNotMatch"));
-//                                                }
-//                                            }
-//
-//
-//                                            getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(currentPageRecord));
-//                                        }
-//                                    }
-//                                });
-//							}
-//                        }
-//                    }, requestProperties);
-//                }
-            }
-        });
-        ruleRefreshButtonHandlerRegistration = getDisplay().getRulesRefreshButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (event.isLeftButtonDown()) {
-                    extractor.getRemovedItemQualifiers().clear();
+                    save();
                 }
             }
         });
@@ -294,7 +232,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    extractor.applyData(currentPageRecord);
+                    save();
                 }
             }
         });
@@ -375,11 +313,13 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         });
     }
 
+    protected void save() {
+        extractor.applyData(currentPageRecord);
+    }
+
 
     @Override
     public void setup() {
-//        super.setup();
-
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
@@ -405,8 +345,6 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                         getPresenterSequenceSetupManager().getDataSource("pageRequestDTODS"),
                         getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"),
                         getPresenterSequenceSetupManager().getDataSource("pageProductDS"));
-                initializer = new PagesRuleBasedPresenterInitializer(PagesPresenter.this, getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"), getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
-                extractor = new PagesPresenterExtractor(PagesPresenter.this);
                 ((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
             }
         }));
@@ -436,6 +374,13 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                             }
                         }
                 );
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pagesItemCriteriaDS", new PagesItemCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
+            public void onSetupSuccess(DataSource result) {
+                initializer = new PagesRuleBasedPresenterInitializer(PagesPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("pageOrderItemDS"));
+                extractor = new PagesPresenterExtractor(PagesPresenter.this);
             }
         }));
     }
