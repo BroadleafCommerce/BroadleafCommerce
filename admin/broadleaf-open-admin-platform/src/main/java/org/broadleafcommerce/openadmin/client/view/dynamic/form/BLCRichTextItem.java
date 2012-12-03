@@ -29,8 +29,8 @@ public class BLCRichTextItem extends BlurbItem {
 
         setShouldSaveValue(true);
         setShowTitle(true);
-        setTextBoxStyle("bl-rich-text-item");
         setWidth(480);
+        set
 
         FormItemIcon editIcon = new FormItemIcon();
         editIcon.setSrc(GWT.getModuleBaseURL() + "sc/skins/Broadleaf/images/glyphicons/edit.png");
