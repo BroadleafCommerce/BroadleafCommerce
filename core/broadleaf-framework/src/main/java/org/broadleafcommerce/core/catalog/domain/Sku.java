@@ -455,20 +455,6 @@ public interface Sku extends Serializable {
     public void setFulfillmentType(FulfillmentType fulfillmentType);
 
     /**
-     * Gets the {@link SkuTranslation}s that this {@link Sku} is attached to.
-     *
-     * @return
-     */
-    public Map<String, SkuTranslation> getTranslations() ;
-
-    /**
-     * Sets the {@link SkuTranslation}s that this {@link Sku} should be attached to.
-     *
-     * @return
-     */
-    public void setTranslations(Map<String, SkuTranslation> translations);
-
-    /**
      * Clears any currently stored dynamic pricing
      */
     public void clearDynamicPrices();

@@ -16,23 +16,15 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -42,14 +34,10 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -89,27 +77,6 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption;
 
-    @ManyToMany(targetEntity = ProductOptionValueTranslationImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_OPTION_VALUE_TRANSLATION_XREF",
-            joinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID", referencedColumnName = "PRODUCT_OPTION_VALUE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "TRANSLATION_ID", referencedColumnName = "TRANSLATION_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @MapKey(columns = { @Column(name = "MAP_KEY", nullable = false) })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 10)
-    @AdminPresentationMap(
-            friendlyName = "ProductOptionValueImpl_Translations",
-            dataSourceName = "productOptionValueTranslationDS",
-            keyPropertyFriendlyName = "TranslationsImpl_Key",
-            deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = LocaleImpl.class,
-            mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "localeCode"
-
-    )
-    protected Map<String, ProductOptionValueTranslation> translations = new HashMap<String,ProductOptionValueTranslation>();
-   
-    
     @Override
     public Long getId() {
         return id;
@@ -122,28 +89,6 @@ public class ProductOptionValueImpl implements ProductOptionValue {
 
     @Override
     public String getAttributeValue() {
-        if (translations != null && BroadleafRequestContext.hasLocale())  {
-            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-
-            // Search for translation based on locale
-            String localeCode = locale.getLocaleCode();
-            if (localeCode != null) {
-                ProductOptionValueTranslation translation = translations.get(localeCode);
-                if (translation != null && translation.getAttributeValue() != null) {
-                    return translation.getAttributeValue();
-                }
-            }
-
-            // try just the language
-            String languageCode = LocaleUtil.findLanguageCode(locale);
-            if (languageCode != null && ! localeCode.equals(languageCode)) {
-                ProductOptionValueTranslation translation = translations.get(languageCode);
-                if (translation != null && translation.getAttributeValue() != null) {
-                    return translation.getAttributeValue();
-                }
-            }
-        }
-
         return attributeValue;
     }
 
@@ -195,15 +140,6 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @Override
     public void setProductOption(ProductOption productOption) {
         this.productOption = productOption;
-    }
-
-    @Override
-    public Map<String, ProductOptionValueTranslation> getTranslations() {
-        return null;
-    }
-
-    @Override
-    public void setTranslations(Map<String, ProductOptionValueTranslation> translations) {
     }
 
 	@Override

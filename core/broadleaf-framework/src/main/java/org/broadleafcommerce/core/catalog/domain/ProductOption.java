@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>A product option represents a value that is entered to specify more information about
@@ -169,17 +168,4 @@ public interface ProductOption extends Serializable {
      */
     public void setAllowedValues(List<ProductOptionValue> allowedValues);
 
-    /**
-     * Gets the {@link ProductOptionTranslation}s that this {@link ProductOption} is attached to.
-     *
-     * @return
-     */
-    public Map<String, ProductOptionTranslation> getTranslations();
-
-    /**
-     * Sets the {@link ProductOptionTranslation}s that this {@link ProductOption} should be attached to.
-     *
-     * @return
-     */
-    public void setTranslations(Map<String, ProductOptionTranslation> translations);
 }
