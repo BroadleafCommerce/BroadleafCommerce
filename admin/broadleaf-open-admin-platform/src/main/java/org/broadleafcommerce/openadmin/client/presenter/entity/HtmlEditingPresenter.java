@@ -64,23 +64,11 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
                     @Override
                     public void onSearchItemSelected(TileGridItemSelected event) {
 
-                        String staticAssetFullUrl = BLCMain.assetServerUrlPrefix
+                        String staticAssetFullUrl = "/" + BLCMain.assetServerUrlPrefix
                                 + event.getRecord().getAttribute("fullUrl");
                         String name = event.getRecord().getAttribute("name");
                         String fileExtension = event.getRecord().getAttribute(
                                 "fileExtension");
-                        String richContent;
-
-                        if (fileExtension.equals("gif")
-                                || fileExtension.equals("jpg")
-                                || fileExtension.equals("png")) {
-                            richContent = "<img title='" + name + "' src='"
-                                    + staticAssetFullUrl + "' alt='" + name
-                                    + "'/>";
-                        } else {
-                            richContent = "<a href='" + staticAssetFullUrl
-                                    + "'>" + name + "</a>";
-                        }
                         LogFactory.getLog(this.getClass())
                                 .debug("inserting from dialog...."
                                         + fileExtension + " " + name + " "
