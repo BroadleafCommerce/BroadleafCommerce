@@ -57,7 +57,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected ToolStripButton cloneProductButton;
 	protected ToolStripButton exportProductsButton;
 
-	protected GridStructureView translationsDisplay;
 	public OneToOneProductSkuView() {
 		setHeight100();
 		setWidth100();
@@ -154,8 +153,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         skusDisplay = new SubItemView(BLCMain.getMessageManager().getString("skusListTitle"), false, true);
         skusDisplay.setID("productSkuTabSubItemView");
         
-        translationsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionImpl_Translations"), false, true);
-           ((FormOnlyView) skusDisplay.getFormOnlyDisplay()).addMember(translationsDisplay);
         skusTab.setPane(skusDisplay);
         
         topTabSet.addTab(detailsTab);
@@ -217,11 +214,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	@Override
 	public ToolStripButton getExportProductsButton() {
 	    return exportProductsButton;
-	}
-
-	@Override
-    public GridStructureView getTranslationsDisplay() {
-	    return translationsDisplay;
 	}
 
 }
