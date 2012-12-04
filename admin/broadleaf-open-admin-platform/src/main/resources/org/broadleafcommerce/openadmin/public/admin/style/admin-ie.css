@@ -3,5 +3,5 @@
 }
 
 .bl-rich-text-item, .bl-rich-text-itemDisabled, .bl-rich-text-itemError {
-    overflow: visible;
+    overflow: hidden;
 }
