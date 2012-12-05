@@ -175,8 +175,8 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 	}
     
     public String getRelationshipValue(final Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource) {
-        if (prefix.equals("") || !prefix.contains(".")) {
-            //this is either a root entity, or an @Embedded class directly on the root entity
+        if (prefix.equals("")) {
+            //this is a root entity
             return abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
         } else {
             //we need to check all the parts of the prefix. For example, the prefix could include an @Embedded class like
@@ -201,6 +201,10 @@ public abstract class AbstractSubPresentable implements SubPresentable {
                     }
                 }
             }
+        }
+        if (!prefix.contains(".")) {
+            //this may be an embedded class directly on the root entity
+            return abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
         }
         throw new RuntimeException("Unable to establish a relationship value for the datasource: " + abstractDynamicDataSource.getDataURL());
     }
