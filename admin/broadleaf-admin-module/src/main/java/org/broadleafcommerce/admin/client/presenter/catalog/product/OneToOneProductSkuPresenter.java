@@ -103,7 +103,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
         getDisplay().getCloneProductButton().enable();
-
     }
 
     @Override
@@ -125,10 +124,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             @Override
             public void onSelectionChanged(SelectionEvent event) {
                 if (event.getState()) {
-
                     priceListPresenter.load(event.getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("skusDS"), null);
                     translationsPresenter.load(event.getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("skusDS"), null);
-
                 }
             }
         });
@@ -258,7 +255,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				parentCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
-		
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionSearchDS", new ProductOptionListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
@@ -266,7 +262,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 library.put("productOptionSearchView", productOptionSearchView);
             }
         }));
-
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValuesDS", new ProductOptionValueDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionsDS", new ProductOptionDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
@@ -276,28 +271,14 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"displayOrder", "attributeValue", "priceAdjustment"}, new Boolean[]{false, false, false});
             }
         }));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuPriceListDS", new PriceListDataSourceFactory(), new AsyncCallbackAdapter() {
-            @Override
-            public void onSetupSuccess(DataSource top) {
-
-
-            }
-        }));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuLocaleDS", new LocaleDataSourceFactory(org.broadleafcommerce.openadmin.client.datasource.CeilingEntities.LOCALE), new AsyncCallbackAdapter() {
-            @Override
-            public void onSetupSuccess(DataSource top) {
-
-
-            }
-        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuPriceListDS", new PriceListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuLocaleDS", new LocaleDataSourceFactory(org.broadleafcommerce.openadmin.client.datasource.CeilingEntities.LOCALE), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("priceListMapDS", new PriceListMapDataSourceFactory(this), null, null, new AsyncCallbackAdapter() {
 
             @Override
             public void onSetupSuccess(DataSource result) {
-
                 priceListPresenter = new MapStructurePresenter("", getDisplay().getSkuPriceListDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
                 priceListPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
-
             }
 
             protected MapStructureEntityEditDialog getMediaEntityView() {
@@ -308,9 +289,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
                 return mapEntityAdd;
             }
-
         }));
-
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuTranslationMapDS", new SkuTranslationsMapDataSourceFactory(this), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
@@ -326,20 +305,14 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 return mapEntityAdd;
             }
         }));
-
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skusDS", new ProductSkusDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-
-
                 skusPresenter = new SkusPresenter(getDisplay().getSkusDisplay(), "Add Sku", null, false, true, false);
                 //grid fields are managed by declared prominence on the entity itself
                 skusPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
-
             }
         }));
-
-
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuSearchDS", new BundleSkuSearchDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
@@ -349,7 +322,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 skuSearchView.setWidth(800);
             }
         }));
-
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleSkusDS", new SkuBundleItemsDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {

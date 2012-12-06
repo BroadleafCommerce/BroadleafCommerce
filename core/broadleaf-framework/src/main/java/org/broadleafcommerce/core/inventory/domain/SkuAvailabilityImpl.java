@@ -16,12 +16,11 @@
 
 package org.broadleafcommerce.core.inventory.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -35,6 +34,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
 import java.util.Date;
 
 /**
@@ -52,7 +52,7 @@ import java.util.Date;
  * @see {@link Sku}
  * @author bpolster
  * 
- * @deprecated This is no longer required. See {@link InventoryService}
+ * @deprecated This is no longer required and is instead implemented as a third-party inventory module
  */
 @Deprecated
 @Entity
@@ -105,50 +105,62 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Available_Date", group = "SkuAvailabilityImpl_Description")
     protected Date availabilityDate;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public Long getLocationId() {
         return locationId;
     }
 
+    @Override
     public Integer getQuantityOnHand() {
         return quantityOnHand;
     }
 
+    @Override
     public Long getSkuId() {
         return skuId;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public void setLocationId(Long locationId) {
         this.locationId = locationId;
     }
 
+    @Override
     public void setQuantityOnHand(Integer qoh) {
         this.quantityOnHand = qoh;
     }
 
+    @Override
     public void setSkuId(Long skuId) {
         this.skuId = skuId;
     }
 
+    @Override
     public Date getAvailabilityDate() {
         return availabilityDate;
     }
 
+    @Override
     public void setAvailabilityDate(Date availabilityDate) {
         this.availabilityDate = availabilityDate;
     }
     
+    @Override
     public AvailabilityStatusType getAvailabilityStatus() {
         return AvailabilityStatusType.getInstance(availabilityStatus);
     }
 
+    @Override
     public void setAvailabilityStatus(final AvailabilityStatusType availabilityStatus) {
     	if (availabilityStatus != null) {
     		this.availabilityStatus = availabilityStatus.getType();
@@ -160,6 +172,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
      * Implementations may want to manage a reserve quantity at each location so that the
      * available quantity for purchases is the quantityOnHand - reserveQuantity.
      */
+    @Override
     public Integer getReserveQuantity() {
         return reserveQuantity;
     }
@@ -169,6 +182,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
      * Implementations may want to manage a reserve quantity at each location so that the
      * available quantity for purchases is the quantityOnHand - reserveQuantity.
      */
+    @Override
     public void setReserveQuantity(Integer reserveQuantity) {
         this.reserveQuantity = reserveQuantity;
     }
@@ -178,6 +192,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
      * Preferred implementation is to return null if getQuantityOnHand() is null and to treat
      * a null in getReserveQuantity() as ZERO.
      */
+    @Override
     public Integer getAvailableQuantity() {
         if (getQuantityOnHand() == null || getReserveQuantity() == null) {
             return getQuantityOnHand();
@@ -186,6 +201,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
         }
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -194,6 +210,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
         return result;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

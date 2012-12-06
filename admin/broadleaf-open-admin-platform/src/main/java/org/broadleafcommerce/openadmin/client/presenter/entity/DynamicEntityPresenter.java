@@ -321,26 +321,31 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     @Override
     public void postSetup(Canvas container) {
         BLCMain.ISNEW = false;
-        if (containsDisplay(container)) {
-            display.show();
-        } else {
-            bind();
-            for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
-                subPresentable.getValue().bind();
+        if (container != null && display != null) {
+            if (containsDisplay(container)) {
+                display.show();
+            } else {
+                bind();
+                for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
+                    subPresentable.getValue().bind();
+                }
+                container.addChild(display.asCanvas());
+                loaded = true;
             }
-            container.addChild(display.asCanvas());
-            loaded = true;
-        }
 
-        if (getDefaultItemId() != null) {
-            loadInitialItem();
-        }
+            if (getDefaultItemId() != null) {
+                loadInitialItem();
+            }
 
-        if (display.getListDisplay().getGrid().getDataSource().getField("archiveStatus.archived") != null) {
-            //this must be an archived enabled entity
-            display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.VISIBLE);
-        } else {
-            display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.HIDDEN);
+            if (display.getListDisplay().getGrid().getDataSource().getField("archiveStatus.archived") != null) {
+                //this must be an archived enabled entity
+                display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.VISIBLE);
+            } else {
+                display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.HIDDEN);
+            }
+            for(PresenterModifier m:modifierList) {
+                m.postSetup(container);
+             }
         }
 
         if (BLCMain.MODAL_PROGRESS.isActive()) {
@@ -349,9 +354,6 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         if (BLCMain.SPLASH_PROGRESS.isActive()) {
             BLCMain.SPLASH_PROGRESS.stopProgress();
         }
-        for(PresenterModifier m:modifierList) {
-            m.postSetup(container);
-         }
     }
 
     protected void loadInitialItem() {
@@ -404,11 +406,11 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     public void initializeLookup(final String propertyName, final LookupMetadata metadata) {
         final String dataSourceName = metadata.getDefaultDataSource().getDataURL() + "_" + propertyName + "Lookup";
-        if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
+        if (presenterSequenceSetupManager.containsDataSource(dataSourceName)) {
             java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
             return;
         }
-        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new ForeignKeyLookupDataSourceFactory(metadata.getLookupForeignKey()), new AsyncCallbackAdapter() {
+        presenterSequenceSetupManager.addOrReplaceItem(new PresenterSetupItem(dataSourceName, new ForeignKeyLookupDataSourceFactory(metadata.getLookupForeignKey(), metadata.getCustomCriteria(), metadata.getUseServerSideInspectionCache()), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource lookupDS) {
                 EntitySearchDialog searchView = new EntitySearchDialog((ListGridDataSource) lookupDS, true);
@@ -486,7 +488,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 } else {
                     dataSourceName = entry.getKey() + "AdvancedCollectionDS";
                 }
-                if (presenterSequenceSetupManager.getDataSource(dataSourceName) != null) {
+                if (presenterSequenceSetupManager.containsDataSource(dataSourceName)) {
                     java.util.logging.Logger.getLogger(getClass().toString()).log(Level.FINE, "Detected collection metadata for a datasource that is already registered (" + dataSourceName + "). Ignoring this repeated definition.");
                     continue;
                 }

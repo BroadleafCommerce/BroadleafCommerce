@@ -20,7 +20,6 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.inventory.exception.InventoryUnavailableException;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -205,7 +204,6 @@ public class OrderTest extends OrderBaseTest {
         	order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
         	addSuccessful = false;
-        	assert e.getCause() instanceof InventoryUnavailableException;
         }
         assert !addSuccessful;
         
@@ -216,7 +214,6 @@ public class OrderTest extends OrderBaseTest {
         	order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
         	addSuccessful = false;
-        	assert e.getCause() instanceof InventoryUnavailableException;
         }
         assert !addSuccessful;
         
@@ -264,6 +261,61 @@ public class OrderTest extends OrderBaseTest {
         }
         assert !addSuccessful;
         
+    }
+    
+    @Test(groups = { "testIllegalUpdateScenarios" }, dependsOnGroups = { "addItemToOrder" })
+    @Transactional
+    public void testIllegalUpdateScenarios() throws UpdateCartException, AddToCartException, RemoveFromCartException {
+        Order order = orderService.findOrderById(orderId);
+        assert order != null;
+        
+        Product activeProduct = addTestProduct("mug", "cups", true);
+        Product inactiveProduct = addTestProduct("cup", "cups", false);
+        
+        // Inactive skus should not be added
+        OrderItemRequestDTO itemRequest = new OrderItemRequestDTO().setQuantity(1).setSkuId(activeProduct.getDefaultSku().getId());
+        boolean addSuccessful = true;
+        try {
+            order = orderService.addItem(orderId, itemRequest, true);
+        } catch (AddToCartException e) {
+            addSuccessful = false;
+        }
+        assert addSuccessful;
+        
+        // should not be able to update to negative quantity
+        OrderItem item = orderService.findLastMatchingItem(order, activeProduct.getDefaultSku().getId(), activeProduct.getId());
+        itemRequest = new OrderItemRequestDTO().setQuantity(-3).setOrderItemId(item.getId());
+        boolean updateSuccessful = true;
+        try {
+            orderService.updateItemQuantity(orderId, itemRequest, true);
+        } catch (UpdateCartException e) {
+            updateSuccessful = false;
+        }
+        assert !updateSuccessful;
+        
+        //shouldn't be able to update the quantity of a DOI inside of a bundle
+        ProductBundle bundle = addProductBundle();
+        itemRequest = new OrderItemRequestDTO().setQuantity(1).setProductId(bundle.getId()).setSkuId(bundle.getDefaultSku().getId());
+        addSuccessful = true;
+        try {
+            order = orderService.addItem(orderId, itemRequest, true);
+        } catch (AddToCartException e) {
+            addSuccessful = false;
+        }
+        assert addSuccessful;
+        
+        BundleOrderItem bundleItem = (BundleOrderItem) orderService.findLastMatchingItem(order,
+                                                                                         bundle.getDefaultSku().getId(),
+                                                                                         bundle.getId());
+        //should just be a single DOI inside the bundle
+        DiscreteOrderItem doi = bundleItem.getDiscreteOrderItems().get(0);
+        itemRequest = new OrderItemRequestDTO().setQuantity(4).setOrderItemId(doi.getId());
+        try {
+            orderService.updateItemQuantity(orderId, itemRequest, true);
+        } catch (UpdateCartException e) {
+            updateSuccessful = false;
+        }
+        assert !updateSuccessful;
     }
     
     @Test(groups = { "addBundleToOrder" }, dependsOnGroups = { "addAnotherItemToOrder" })
@@ -318,7 +370,7 @@ public class OrderTest extends OrderBaseTest {
     
     @Test(groups = { "testManyToOneFGItemToOrderItem" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
-    public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException, InventoryUnavailableException {
+    public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException {
     	// Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
@@ -412,7 +464,7 @@ public class OrderTest extends OrderBaseTest {
 
     @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
-    public void updateItemsInOrder() throws UpdateCartException, RemoveFromCartException, InventoryUnavailableException {
+    public void updateItemsInOrder() throws UpdateCartException, RemoveFromCartException {
     	// Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();

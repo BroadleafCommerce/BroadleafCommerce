@@ -11,7 +11,7 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
            http://schema.broadleafcommerce.org/mo
-           http://schema.broadleafcommerce.org/mo/mo-2.0.xsd">
+           http://schema.broadleafcommerce.org/mo/mo-2.2.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin"/>
 

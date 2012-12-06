@@ -18,7 +18,7 @@ package org.broadleafcommerce.openadmin.client.datasource;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
@@ -38,21 +38,36 @@ import java.util.List;
 public class ForeignKeyLookupDataSourceFactory implements DataSourceFactory {
 
     private ForeignKey foreignKey;
+    private String[] customCriteria;
+    private Boolean useServerSideInspectionCache;
 
-    public ForeignKeyLookupDataSourceFactory(ForeignKey foreignKey) {
+    public ForeignKeyLookupDataSourceFactory(ForeignKey foreignKey, String[] customCriteria, Boolean useServerSideInspectionCache) {
         this.foreignKey = foreignKey;
+        this.customCriteria = customCriteria;
+        this.useServerSideInspectionCache = useServerSideInspectionCache;
     }
 
     @Override
     public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
         final PersistencePerspective persistencePerspective = new PersistencePerspective();
+        if (useServerSideInspectionCache != null) {
+            persistencePerspective.setUseServerSideInspectionCache(useServerSideInspectionCache);
+        }
         final List<DataSourceModule> dataSourceModuleList = new ArrayList<DataSourceModule>();
         dataSourceModuleList.add(new BasicClientEntityModule(foreignKey.getForeignKeyClass(), persistencePerspective, AppServices.DYNAMIC_ENTITY));
 
         DataSourceModule[] modules = new DataSourceModule[dataSourceModuleList.size()];
         modules = dataSourceModuleList.toArray(modules);
 
-        ListGridDataSource dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+        CustomCriteriaListGridDataSource dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+        if (customCriteria != null && customCriteria.length > 0) {
+            dataSource.setUseForAdd(true);
+            dataSource.setUseForFetch(true);
+            dataSource.setUseForInspect(true);
+            dataSource.setUseForRemove(true);
+            dataSource.setUseForUpdate(true);
+            dataSource.setCustomCriteria(customCriteria);
+        }
         dataSource.buildFields(null, false, cb);
     }
 }

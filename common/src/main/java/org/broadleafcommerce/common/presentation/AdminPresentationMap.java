@@ -76,6 +76,16 @@ public @interface AdminPresentationMap {
     boolean readOnly() default false;
 
     /**
+     * <p>Optional - only required if you want to make the field ignore caching</p>
+     *
+     * <p>Explicitly specify whether or not this field will use server-side
+     * caching during inspection</p>
+     *
+     * @return whether or not this field uses caching
+     */
+    boolean useServerSideInspectionCache() default true;
+
+    /**
      * <p>Optional - only required if you want to specify ordering for this field</p>
      *
      * <p>The order in which this field will appear in a GUI relative to other collections from the same class</p>

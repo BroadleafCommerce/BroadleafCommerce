@@ -34,32 +34,38 @@ public class ProductBundleOrderItemRequest {
     protected ProductBundle productBundle;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
 
+    public ProductBundleOrderItemRequest() {}
+    
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public ProductBundleOrderItemRequest setName(String name) {
         this.name = name;
+        return this;
     }
 
     public Category getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public ProductBundleOrderItemRequest setCategory(Category category) {
         this.category = category;
+        return this;
     }
     
     public Sku getSku() {
 		return sku;
 	}
 
-	public void setSku(Sku sku) {
+	public ProductBundleOrderItemRequest setSku(Sku sku) {
 		this.sku = sku;
+        return this;
 	}
 	
-    public void setOrder(Order order) {
+    public ProductBundleOrderItemRequest setOrder(Order order) {
         this.order = order;
+        return this;
     }
     
     public Order getOrder() {
@@ -70,24 +76,27 @@ public class ProductBundleOrderItemRequest {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public ProductBundleOrderItemRequest setQuantity(int quantity) {
         this.quantity = quantity;
+        return this;
     }
 
 	public ProductBundle getProductBundle() {
 		return productBundle;
 	}
 
-	public void setProductBundle(ProductBundle productBundle) {
+	public ProductBundleOrderItemRequest setProductBundle(ProductBundle productBundle) {
 		this.productBundle = productBundle;
+        return this;
 	}
 
 	public Map<String, String> getItemAttributes() {
 		return itemAttributes;
 	}
 
-	public void setItemAttributes(Map<String, String> itemAttributes) {
+	public ProductBundleOrderItemRequest setItemAttributes(Map<String, String> itemAttributes) {
 		this.itemAttributes = itemAttributes;
+		return this;
 	}
 	
 }

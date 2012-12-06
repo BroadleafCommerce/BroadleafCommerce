@@ -16,19 +16,18 @@
 
 package org.broadleafcommerce.core.inventory.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
-import org.broadleafcommerce.core.inventory.service.InventoryService;
 
 /**
  * An extendible enumeration of availability status types.
  * 
  * @author jfischer
  * 
- * @deprecated This is no longer required. See {@link InventoryService}
+ * @deprecated This is no longer required and is instead implemented as a third-party inventory module
  */
 @Deprecated
 public class AvailabilityStatusType implements Serializable, BroadleafEnumerationType {
@@ -56,10 +55,12 @@ public class AvailabilityStatusType implements Serializable, BroadleafEnumeratio
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
 		return friendlyType;
 	}

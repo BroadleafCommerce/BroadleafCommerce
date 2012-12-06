@@ -28,8 +28,6 @@
 		<mapping-file>config/bc/jpa/domain/Content.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ContentDetails.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/SearchRedirect.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/Inventory.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/FulfillmentLocation.orm.xml</mapping-file>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
         <class>org.broadleafcommerce.core.media.domain.MediaImpl</class>
@@ -119,8 +117,6 @@
 		<class>org.broadleafcommerce.core.catalog.domain.ProductOptionTranslationImpl</class>
 		<class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueTranslationImpl</class>
 		<class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
-        <class>org.broadleafcommerce.core.inventory.domain.InventoryImpl</class>
-        <class>org.broadleafcommerce.core.inventory.domain.FulfillmentLocationImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
         <exclude-unlisted-classes/>
         <properties>

@@ -31,6 +31,8 @@ public class LookupMetadata {
     private String friendlyName;
     private SupportedFieldType fieldType;
     private DataSource defaultDataSource;
+    private String[] customCriteria;
+    private Boolean useServerSideInspectionCache;
 
     public ForeignKey getLookupForeignKey() {
         return lookupForeignKey;
@@ -78,6 +80,22 @@ public class LookupMetadata {
 
     public void setDefaultDataSource(DataSource defaultDataSource) {
         this.defaultDataSource = defaultDataSource;
+    }
+
+    public String[] getCustomCriteria() {
+        return customCriteria;
+    }
+
+    public void setCustomCriteria(String[] customCriteria) {
+        this.customCriteria = customCriteria;
+    }
+
+    public Boolean getUseServerSideInspectionCache() {
+        return useServerSideInspectionCache;
+    }
+
+    public void setUseServerSideInspectionCache(Boolean useServerSideInspectionCache) {
+        this.useServerSideInspectionCache = useServerSideInspectionCache;
     }
 
     @Override

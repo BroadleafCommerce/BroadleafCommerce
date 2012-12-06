@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.core.inventory.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
+
+import java.util.List;
 
 /**
  * 
- * @deprecated This is no longer required. See {@link InventoryService}
+ * @deprecated This is no longer required and is instead implemented as a third-party inventory module
  *
  */
 @Deprecated

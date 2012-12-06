@@ -51,7 +51,8 @@ public class SearchFormItem extends TextItem {
                     java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,"The name associated with this item is null. Have you chosen a display field for a @AdminPresentationToOneLookup that may contain a null value?");
                     throw new RuntimeException("The name associated with this item is null - cannot continue");
                 }
-            	((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName).execute(event.getItem());
+                String realFieldName = formItemName.substring("__display_".length(), formItemName.length());
+            	((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(realFieldName).execute(event.getItem());
             }  
         });
 	}

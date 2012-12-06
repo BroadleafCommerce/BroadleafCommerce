@@ -74,7 +74,7 @@
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>org.zeroturnaround</groupId>
-                                        <artifactId>javarebel-maven-plugin</artifactId>
+                                        <artifactId>jrebel-maven-plugin</artifactId>
                                         <versionRange>
                                             [1.0,)
                                         </versionRange>
@@ -114,8 +114,8 @@
                 </plugin>
                 <plugin>
                     <groupId>org.zeroturnaround</groupId>
-                    <artifactId>javarebel-maven-plugin</artifactId>
-                    <version>1.0.5</version>
+                    <artifactId>jrebel-maven-plugin</artifactId>
+                    <version>1.1.3</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.plexus</groupId>

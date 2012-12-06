@@ -25,7 +25,6 @@ import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityProfile;
 import org.broadleafcommerce.openadmin.client.i18nConstants;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,8 @@ import java.util.List;
  */
 public class MerchandisingModule extends AbstractModule {
 	
-	public void onModuleLoad() {
+	@Override
+    public void onModuleLoad() {
         addConstants(GWT.<i18nConstants>create(MerchandisingMessages.class));
         addConstants(GWT.<i18nConstants>create(PromotionMessages.class));
         addConstants(GWT.<i18nConstants>create(GeneratedMessagesEntityCommon.class));
@@ -103,20 +103,6 @@ public class MerchandisingModule extends AbstractModule {
 			"org.broadleafcommerce.admin.client.presenter.promotion.OfferPresenter",
 			offerPermissions
 		);
-
-        List<String> fulfillmentLocationPermissions = new ArrayList<String>();
-        fulfillmentLocationPermissions.add("PERMISSION_CREATE_FULFILLMENT_LOCATION");
-        fulfillmentLocationPermissions.add("PERMISSION_UPDATE_FULFILLMENT_LOCATION");
-        fulfillmentLocationPermissions.add("PERMISSION_DELETE_FULFILLMENT_LOCATION");
-        fulfillmentLocationPermissions.add("PERMISSION_READ_FULFILLMENT_LOCATION");
-        setSection(
-                BLCMain.getMessageManager().getString("fulfillmentLocationMainTitle"),
-                "fulfillmentLocations",
-                "org.broadleafcommerce.admin.client.view.catalog.inventory.FulfillmentLocationView",
-                "fulfillmentLocationPresenter",
-                "org.broadleafcommerce.admin.client.presenter.catalog.inventory.FulfillmentLocationPresenter",
-                fulfillmentLocationPermissions
-        );
 
         setOrder(50);
 

@@ -64,10 +64,14 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
+import java.util.logging.Logger;
+
 /**
  * @author jfischer
  */
 public class StructuredContentPresenter extends DynamicEntityPresenter implements Instantiable {
+
+    private static final Logger LOG = Logger.getLogger(StructuredContentPresenter.class.getName());
 
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
@@ -162,9 +166,10 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
     }
 
     protected void loadContentTypeForm(final Record selectedRecord, final FilterRestartCallback cb) {
+        String structuredContentTypeId = (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("structuredContentType");
         //load the page template form
         BLCMain.NON_MODAL_PROGRESS.startProgress();
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("contentTypeFormDS", new StructuredContentTypeFormListDataSourceFactory(), null, new String[]{"constructForm", selectedRecord.getAttribute("structuredContentType")}, new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("contentTypeFormDS", new StructuredContentTypeFormListDataSourceFactory(), null, new String[]{"constructForm", structuredContentTypeId}, new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 destroyContentTypeForm();
@@ -205,6 +210,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
                     extractor.getRemovedItemQualifiers().clear();
                     changeSelection(currentStructuredContentRecord);
                 }
@@ -214,6 +220,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
                     extractor.getRemovedItemQualifiers().clear();
                     changeSelection(currentStructuredContentRecord);
                 }
