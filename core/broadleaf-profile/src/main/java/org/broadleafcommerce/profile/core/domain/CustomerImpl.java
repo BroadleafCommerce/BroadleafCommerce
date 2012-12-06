@@ -92,7 +92,7 @@ public class CustomerImpl implements Customer {
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
-    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question", group = "CustomerImpl_Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question",order=5, group = "CustomerImpl_Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
@@ -104,20 +104,20 @@ public class CustomerImpl implements Customer {
     protected Boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email", group = "CustomerImpl_Customer")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email",order=6, group = "CustomerImpl_Customer")
     protected Boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered", group = "CustomerImpl_Customer")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered", order=7,group = "CustomerImpl_Customer")
     protected Boolean registered = false;
     
     @Column(name = "DEACTIVATED")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", group = "CustomerImpl_Customer")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order=8,group = "CustomerImpl_Customer")
     protected Boolean deactivated = false;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale", group = "CustomerImpl_Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",order=9, group = "CustomerImpl_Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
     
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = {CascadeType.ALL})
