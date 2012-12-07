@@ -28,6 +28,7 @@
 			<bean class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.FormProcessor" />
+			<bean class="org.broadleafcommerce.core.web.processor.GoogleAnalyticsProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
             <bean class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
             <bean class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
