@@ -36,8 +36,10 @@ public class FulfillmentGroupStatusType implements Serializable, BroadleafEnumer
 
     public static final FulfillmentGroupStatusType PROCESSING = new FulfillmentGroupStatusType("PROCESSING", "Processing");
     public static final FulfillmentGroupStatusType SHIPPED = new FulfillmentGroupStatusType("SHIPPED", "Shipped");
+    public static final FulfillmentGroupStatusType PARTIALLY_SHIPPED = new FulfillmentGroupStatusType("PARTIALLY_SHIPPED", "Partially Shipped");
     public static final FulfillmentGroupStatusType DELIVERED = new FulfillmentGroupStatusType("DELIVERED", "Delivered");
-
+    public static final FulfillmentGroupStatusType PARTIALLY_DELIVERED = new FulfillmentGroupStatusType("PARTIALLY_DELIVERED", "Partially Delivered");
+    
     public static FulfillmentGroupStatusType getInstance(final String type) {
         return TYPES.get(type);
     }
@@ -54,11 +56,13 @@ public class FulfillmentGroupStatusType implements Serializable, BroadleafEnumer
         setType(type);
     }
 
-    public String getType() {
+    @Override
+	public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
+    @Override
+	public String getFriendlyType() {
 		return friendlyType;
 	}
 

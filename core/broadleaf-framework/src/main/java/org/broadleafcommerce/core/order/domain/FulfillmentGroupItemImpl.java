@@ -16,16 +16,10 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,10 +38,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -148,13 +149,13 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     }
 
     @Override
-    public String getStatus() {
-        return status;
+    public FulfillmentGroupStatusType getStatus() {
+        return FulfillmentGroupStatusType.getInstance(this.status);
     }
 
     @Override
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(FulfillmentGroupStatusType status) {
+        this.status = status.getType();
     }
     
     @Override
@@ -209,7 +210,9 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
             clonedFulfillmentGroupItem.setFulfillmentGroup(getFulfillmentGroup());
             clonedFulfillmentGroupItem.setOrderItem(getOrderItem());
             clonedFulfillmentGroupItem.setQuantity(getQuantity());
-            clonedFulfillmentGroupItem.setStatus(getStatus());
+            if (getStatus() != null) {
+            	clonedFulfillmentGroupItem.setStatus(getStatus());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

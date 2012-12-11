@@ -16,10 +16,11 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import org.broadleafcommerce.common.money.Money;
-
 import java.io.Serializable;
 import java.util.List;
+
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 
 public interface FulfillmentGroupItem extends Serializable {
 
@@ -45,9 +46,9 @@ public interface FulfillmentGroupItem extends Serializable {
 
     public Money getPrice();
 
-    public String getStatus();
+    public FulfillmentGroupStatusType getStatus();
 
-    public void setStatus(String status);
+    public void setStatus(FulfillmentGroupStatusType status);
     
     public void removeAssociations();
 
