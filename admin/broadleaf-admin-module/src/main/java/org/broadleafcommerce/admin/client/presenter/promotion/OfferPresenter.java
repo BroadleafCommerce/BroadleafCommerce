@@ -64,8 +64,11 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,7 +80,14 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
     protected OfferPresenterInitializer initializer;
     protected OfferPresenterExtractor extractor;
     protected AdditionalFilterEventManager additionalFilterEventManager = new AdditionalFilterEventManager();
-
+    protected List<String> permanentlyHideFieldsList=new ArrayList<String>();
+    protected List<String> resetVisibilityOnlyList=new ArrayList<String>();
+    
+    
+    public OfferPresenter() {
+        resetVisibilityOnlyList.addAll(Arrays.asList(new String[]{"name", "description", "type", "discountType","maxUsesPerCustomer", "maxUsesPerOrder", "value", "priority", "startDate", "endDate"}));
+        permanentlyHideFieldsList.addAll(Arrays.asList(new String[]{"deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule"}));
+    }
     @Override
     public void changeSelection(final Record selectedRecord) {
         additionalFilterEventManager.resetFilterState(new FilterStateRunnable() {
@@ -290,16 +300,17 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
             }
         });
         getDisplay().getAdvancedButton().addClickHandler(new ClickHandler() {
+           
             @Override
             public void onClick(ClickEvent event) {
                 if (((ToolStripButton) event.getSource()).getSelected()) {
                     getPresenterSequenceSetupManager().getDataSource("offerDS").resetPermanentFieldVisibilityBasedOnType(lastSelectedRecord.getAttributeAsStringArray("_type"));
-                    getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields("deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule");
+                    getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields(getPermanentlyHideFieldsList().toArray(new String[getPermanentlyHideFieldsList().size()]));
                     getDisplay().getAdvancedItemCriteria().setVisible(true);
                     getDisplay().getAdvancedItemCriteriaTarget().setVisible(true);
                     getDisplay().getRestrictionSectionView().setVisible(true);
                 } else {
-                    getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType","maxUsesPerCustomer", "maxUsesPerOrder", "value", "priority", "startDate", "endDate");
+                    getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly(getResetVisibilityOnlyList().toArray(new String[getResetVisibilityOnlyList().size()]));
                     getDisplay().getAdvancedItemCriteria().setVisible(false);
                     getDisplay().getAdvancedItemCriteriaTarget().setVisible(false);
                     getDisplay().getRestrictionSectionView().setVisible(false);
@@ -330,12 +341,12 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                             getDisplay().getListDisplay().getRemoveButton().disable();
                         } else {
                             formPresenter.setStartState();
-                            getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType","maxUsesPerCustomer", "maxUsesPerOrder", "value", "priority", "startDate", "endDate");
+                            getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly(getResetVisibilityOnlyList().toArray(new String[getResetVisibilityOnlyList().size()]));
                             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getDisplay().getListDisplay().getGrid().getDataSource(), true, true, false, selectedRecord);
                             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
                             getDisplay().getListDisplay().getRemoveButton().enable();
                         }
-                        changeSelection(selectedRecord);
+                        changeSelectionWrapper(selectedRecord);
                         for (Map.Entry<String, SubPresentable> subPresentable : subPresentables.entrySet()) {
                             //this is only suitable when no callback is required for the load - which is most cases
                             subPresentable.getValue().setStartState();
@@ -606,7 +617,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                ((DynamicEntityDataSource) result).permanentlyShowFields("id");
+                ((DynamicEntityDataSource) result).permanentlyShowFields("id"); 
                 getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields("appliesToOrderRules", "appliesToCustomerRules", "appliesToFulfillmentGroupRules", "id");
                 getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("offerDS"), getPresenterSequenceSetupManager().getDataSource("offerOrderDS"), getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"), getPresenterSequenceSetupManager().getDataSource("offerFGDS"), result);
@@ -650,5 +661,11 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 
         return window;
     }
-
+    
+    public List<String> getResetVisibilityOnlyList() {
+        return resetVisibilityOnlyList;
+    }
+    public List<String> getPermanentlyHideFieldsList() {
+        return permanentlyHideFieldsList;
+    }
 }

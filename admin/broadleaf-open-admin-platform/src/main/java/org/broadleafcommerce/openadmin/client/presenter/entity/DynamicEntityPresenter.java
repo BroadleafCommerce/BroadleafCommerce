@@ -712,4 +712,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     }
 
     
+    public Map<String, SubPresentable> getSubPresentables() {
+        return subPresentables;
+    }
+
+    
 }
