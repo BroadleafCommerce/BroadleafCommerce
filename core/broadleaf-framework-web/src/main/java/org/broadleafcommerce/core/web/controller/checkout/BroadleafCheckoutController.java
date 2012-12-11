@@ -367,8 +367,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         Order cart = CartState.getCart();
         if (cart != null) {
-            Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-
             orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
 
             if (billingForm.isUseShippingAddress()){
@@ -384,6 +382,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             PaymentInfo ccInfo = creditCardPaymentInfoFactory.constructPaymentInfo(cart);
             ccInfo.setAddress(billingForm.getAddress());
             cart.getPaymentInfos().add(ccInfo);
+
+            Map<PaymentInfo, Referenced> payments = paymentInfoTypeService.getPaymentsMap(cart);
+
 
             CreditCardPaymentInfo ccReference = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
             ccReference.setNameOnCard(billingForm.getCreditCardName());
@@ -601,6 +602,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 			hasValidShipping = hasValidShippingAddresses(CartState.getCart());
 		}
         model.addAttribute("validShipping", hasValidShipping);
+        model.addAttribute("validPaymentOptions", true);
 
         putFulfillmentOptionsAndEstimationOnModel(model);
         
