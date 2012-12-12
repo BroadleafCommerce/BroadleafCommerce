@@ -134,8 +134,9 @@ public class OrderServiceImpl implements OrderService {
             extensionManager.attachAdditionalDataToNewNamedCart(customer, namedOrder);
         }
         
-        namedOrder.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
-        namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+        }
         
         return orderDao.save(namedOrder); // No need to price here
     }

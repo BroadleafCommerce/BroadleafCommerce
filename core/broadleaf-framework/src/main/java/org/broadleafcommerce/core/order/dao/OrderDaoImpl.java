@@ -116,9 +116,11 @@ public class OrderDaoImpl implements OrderDao {
         order.setEmailAddress(customer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS);
 
-        order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
-        order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
-        
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
+            order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+        }
+
         if (extensionManager != null) {
             extensionManager.attachAdditionalDataToNewCart(customer, order);
         }
