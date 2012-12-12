@@ -183,8 +183,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        // TODO Auto-generated method stub
-
+                        // Do nothing
                     }
                 });
             }

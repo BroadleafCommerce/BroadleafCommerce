@@ -86,7 +86,6 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
                         request.setAttribute("updateCartResponse", updateCartResponse);
                     } else {
                         orderService.cancelOrder(cart);
-                        //FIXME: APA Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
                         cart = orderService.createNewCartForCustomer(customer);
                     }
                 }
