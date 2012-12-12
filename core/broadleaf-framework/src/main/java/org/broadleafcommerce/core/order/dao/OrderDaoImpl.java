@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.dao;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -31,6 +32,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import java.util.List;
+import java.util.ListIterator;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -114,7 +116,6 @@ public class OrderDaoImpl implements OrderDao {
         order.setEmailAddress(customer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS);
 
-        //FIXME: apa extract these to i18n module
         order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
         order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         
@@ -140,6 +141,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Order readNamedOrderForCustomer(final Customer customer, final String name) {
         final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", customer.getId());
@@ -147,7 +149,17 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("orderName", name);
         List<Order> orders = query.getResultList();
         
-        //FIXME:apa if((order.getPriceList() == priceList) && (order.getLocale().getLocaleCode().equalsIgnoreCase(locale.getLocaleCode()))){
+        // Filter out orders that don't match the current locale (if one is set)
+        ListIterator<Order> iter = orders.listIterator();
+        while (iter.hasNext()) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+            Order order = iter.next();
+            if (locale != null && !locale.equals(order.getLocale())) {
+                iter.remove();
+            }
+        }
+        
+        // Apply any additional filters that extension modules have registered
         if (orders != null && !orders.isEmpty() && extensionManager != null) {
             extensionManager.applyAdditionalOrderLookupFilter(customer, name, orders);
         }
