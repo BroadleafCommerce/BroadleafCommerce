@@ -152,15 +152,17 @@ public class OrderDaoImpl implements OrderDao {
         List<Order> orders = query.getResultList();
         
         // Filter out orders that don't match the current locale (if one is set)
-        ListIterator<Order> iter = orders.listIterator();
-        while (iter.hasNext()) {
-            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-            Order order = iter.next();
-            if (locale != null && !locale.equals(order.getLocale())) {
-                iter.remove();
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            ListIterator<Order> iter = orders.listIterator();
+            while (iter.hasNext()) {
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+                Order order = iter.next();
+                if (locale != null && !locale.equals(order.getLocale())) {
+                    iter.remove();
+                }
             }
         }
-        
+            
         // Apply any additional filters that extension modules have registered
         if (orders != null && !orders.isEmpty() && extensionManager != null) {
             extensionManager.applyAdditionalOrderLookupFilter(customer, name, orders);
