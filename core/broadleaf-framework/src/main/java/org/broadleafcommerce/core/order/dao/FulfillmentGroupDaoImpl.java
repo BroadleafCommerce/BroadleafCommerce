@@ -89,7 +89,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
 	@Override
 	public List<FulfillmentGroup> readUnfulfilledFulfillmentGroups(int start,
 			int maxResults) {
-		Query query = em.createNamedQuery("BC_OMS_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC");
+		Query query = em.createNamedQuery("BC_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC");
 		query.setFirstResult(start);
 		query.setMaxResults(maxResults);
 		return query.getResultList();
@@ -99,7 +99,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
 	@Override
 	public List<FulfillmentGroup> readPartiallyFulfilledFulfillmentGroups(int start,
 			int maxResults) {
-		Query query = em.createNamedQuery("BC_OMS_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC");
+		Query query = em.createNamedQuery("BC_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC");
 		query.setFirstResult(start);
 		query.setMaxResults(maxResults);
 		
@@ -110,7 +110,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
 	@Override
 	public List<FulfillmentGroup> readUnprocessedFulfillmentGroups(int start,
 			int maxResults) {
-		Query query = em.createNamedQuery("BC_OMS_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC");
+		Query query = em.createNamedQuery("BC_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC");
 		query.setFirstResult(start);
 		query.setMaxResults(maxResults);
 		
@@ -123,9 +123,9 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
 			FulfillmentGroupStatusType status, int start, int maxResults, boolean ascending) {
 		Query query = null;
 		if (ascending) {
-			query =	em.createNamedQuery("BC_OMS_READ_FULFILLMENT_GROUP_BY_STATUS_ASC");
+			query =	em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC");
 		} else {
-			query =	em.createNamedQuery("BC_OMS_READ_FULFILLMENT_GROUP_BY_STATUS_DESC");
+			query =	em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_DESC");
 		}
 		query.setParameter("status", status.getType());
 		query.setFirstResult(start);
