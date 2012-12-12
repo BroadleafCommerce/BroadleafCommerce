@@ -16,19 +16,20 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
+import org.springframework.stereotype.Repository;
 
 @Repository("blFulfillmentGroupDao")
 public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
@@ -84,4 +85,58 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         return ((FulfillmentGroupFee) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroupFee"));
     }
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FulfillmentGroup> readUnfulfilledFulfillmentGroups(int start,
+			int maxResults) {
+		Query query = em.createNamedQuery("BC_OMS_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC");
+		query.setFirstResult(start);
+		query.setMaxResults(maxResults);
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FulfillmentGroup> readPartiallyFulfilledFulfillmentGroups(int start,
+			int maxResults) {
+		Query query = em.createNamedQuery("BC_OMS_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC");
+		query.setFirstResult(start);
+		query.setMaxResults(maxResults);
+		
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FulfillmentGroup> readUnprocessedFulfillmentGroups(int start,
+			int maxResults) {
+		Query query = em.createNamedQuery("BC_OMS_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC");
+		query.setFirstResult(start);
+		query.setMaxResults(maxResults);
+		
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
+			FulfillmentGroupStatusType status, int start, int maxResults, boolean ascending) {
+		Query query = null;
+		if (ascending) {
+			query =	em.createNamedQuery("BC_OMS_READ_FULFILLMENT_GROUP_BY_STATUS_ASC");
+		} else {
+			query =	em.createNamedQuery("BC_OMS_READ_FULFILLMENT_GROUP_BY_STATUS_DESC");
+		}
+		query.setParameter("status", status.getType());
+		query.setFirstResult(start);
+		query.setMaxResults(maxResults);
+		
+		return query.getResultList();
+	}
+
+	@Override
+	public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
+			FulfillmentGroupStatusType status, int start, int maxResults) {
+		return readFulfillmentGroupsByStatus(status, start, maxResults, true);
+	}
 }
