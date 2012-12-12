@@ -19,7 +19,6 @@ package org.broadleafcommerce.admin.client.presenter.catalog.product;
 import org.broadleafcommerce.admin.client.AdminExporterType;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
@@ -55,7 +54,6 @@ import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -71,8 +69,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -90,8 +86,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
     protected SubPresentable bundleItemsPresenter;
     protected HashMap<String, Object> library = new HashMap<String, Object>(10);
     protected HandlerRegistration extendedFetchDataHandlerRegistration;
-
-    protected SubPresentable translationsPresenter;
 
     @Override
     protected void changeSelection(final Record selectedRecord) {
@@ -116,16 +110,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         productOptionsPresenter.bind();
         skusPresenter.bind();
         bundleItemsPresenter.bind();
-        translationsPresenter.bind();
-        getDisplay().getSkusDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-            @Override
-            public void onSelectionChanged(SelectionEvent event) {
-                if (event.getState()) {
-
-                    translationsPresenter.load(event.getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("skusDS"), null);
-                }
-            }
-        });
         getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -277,21 +261,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         }));
 
 
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuTranslationMapDS", new SkuTranslationsMapDataSourceFactory(this), new AsyncCallbackAdapter() {
-            @Override
-            public void onSetupSuccess(DataSource result) {
-                translationsPresenter = new MapStructurePresenter("", getDisplay().getTranslationsDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"));
-                translationsPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
-            }
-
-            protected MapStructureEntityEditDialog getMediaEntityView() {
-                MapStructureEntityEditDialog mapEntityAdd;
-                mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE, getPresenterSequenceSetupManager().getDataSource("skuLocaleDS"), "friendlyName", "localeCode");
-                mapEntityAdd.setShowMedia(true);
-                mapEntityAdd.setMediaField("url");
-                return mapEntityAdd;
-            }
-        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skusDS", new ProductSkusDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
