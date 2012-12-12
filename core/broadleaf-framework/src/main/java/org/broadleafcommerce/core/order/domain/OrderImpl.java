@@ -147,6 +147,9 @@ public class OrderImpl implements Order {
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = "OrderImpl_Order", order=1, fieldType= SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode")
     protected BigDecimal total;
 
+    @Column(name = "ORDER_UNPAID_TOTAL", precision=19, scale=5)
+    protected BigDecimal unpaidTotal;
+
     @Column(name = "SUBMIT_DATE")
     @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = "OrderImpl_Order", order=12)
     protected Date submitDate;
@@ -284,6 +287,16 @@ public class OrderImpl implements Order {
     @Override
     public void setTotal(Money orderTotal) {
         this.total = Money.toAmount(orderTotal);
+    }
+
+    @Override
+    public Money getUnpaidTotal() {
+        return unpaidTotal == null ? null : BroadleafCurrencyUtils.getMoney(unpaidTotal, getCurrency());
+    }
+
+    @Override
+    public void setUnpaidTotal(Money unpaidTotal) {
+        this.unpaidTotal = Money.toAmount(unpaidTotal);
     }
 
     @Override

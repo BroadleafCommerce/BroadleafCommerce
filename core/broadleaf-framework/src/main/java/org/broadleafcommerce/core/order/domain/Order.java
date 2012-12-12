@@ -78,6 +78,10 @@ public interface Order extends Serializable {
 
     public void setTotal(Money orderTotal);
 
+    public Money getUnpaidTotal();
+
+    public void setUnpaidTotal(Money unpaidTotal);
+
     public Customer getCustomer();
 
     public void setCustomer(Customer customer);
