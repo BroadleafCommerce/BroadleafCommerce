@@ -115,9 +115,11 @@ public class OrderDaoImpl implements OrderDao {
         order.setStatus(OrderStatus.IN_PROCESS);
 
         //FIXME: apa extract these to i18n module
-        order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
-        order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
-        
+        if(BroadleafRequestContext.getBroadleafRequestContext()!=null) {
+            //for integration tests there is no context set.
+            order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
+            order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+        }
         if (extensionManager != null) {
             extensionManager.attachAdditionalDataToNewCart(customer, order);
         }
