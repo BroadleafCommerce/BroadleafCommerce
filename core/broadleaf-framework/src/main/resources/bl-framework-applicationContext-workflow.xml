@@ -37,6 +37,7 @@
 					<property name="taxModule" ref="blTaxModule"/>
 				</bean>
 				<bean class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
+				<bean class="org.broadleafcommerce.core.pricing.service.workflow.UnpaidTotalActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
