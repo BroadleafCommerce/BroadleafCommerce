@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.openadmin.server.service.type.ContextType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -201,5 +202,25 @@ public class AdminUserImpl implements AdminUser {
 
     public void setAllPermissions(Set<AdminPermission> allPermissions) {
         this.allPermissions = allPermissions;
+    }
+
+    @Override
+    public ContextType getContextType() {
+        return ContextType.GLOBAL;
+    }
+
+    @Override
+    public void setContextType(ContextType contextType) {
+        //do nothing
+    }
+
+    @Override
+    public String getContextKey() {
+        return null;
+    }
+
+    @Override
+    public void setContextKey(String contextKey) {
+        //do nothing
     }
 }
