@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.web.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -50,6 +49,9 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
+    
+    @Resource(name = "blUpdateCartServiceExtensionManager")
+    protected UpdateCartServiceExtensionListener extensionManager;
 
     @Override
     public boolean currencyHasChanged() {
@@ -63,7 +65,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
     }
 
     @Override
-    public UpdateCartResponse copyCartToNewLocaleAndPricelist(Order currentCart) {
+    public UpdateCartResponse copyCartToCurrentContext(Order currentCart) {
         if(currentCart.getOrderItems() == null){
             return null;
         }
@@ -140,21 +142,19 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     @Override
     public void validateCart(Order cart) {
-        if(BroadleafRequestContext.hasLocale() ){
+        if (BroadleafRequestContext.hasLocale()) {
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             String validationMsg;
-          
-            if(brc.getPriceList() != cart.getPriceList()){
-                    validationMsg = "The cart price list [" + cart.getPriceList() +
-                            "] does not match the current price list [" + brc.getPriceList()+ "]";
-                throw new IllegalArgumentException(validationMsg);
-            }
-            if( !brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())){
+            if (!brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())) {
                 validationMsg = "The cart Locale [" + cart.getLocale().getLocaleCode() +
                         "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]";
                 LOG.error(validationMsg);
                 throw new IllegalArgumentException(validationMsg);
             }
+        }
+        
+        if (extensionManager != null) {
+            extensionManager.validateCart(cart);
         }
     }
 
@@ -165,20 +165,12 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         return null;
     }
 
-    protected PriceList findActivePriceList(){
-        if(BroadleafRequestContext.hasLocale()){
-            return BroadleafRequestContext.getBroadleafRequestContext().getPriceList();
+    protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency) {
+        if (doi.getSku() != null && extensionManager != null) {
+            return extensionManager.isAvailable(doi, currency);
         }
-        return null;
-    }
-
-    protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency){
-       if(doi.getSku() != null){
-           if (doi.getSku().getPriceDataMap().containsKey(currency.getCurrencyCode()) ){
-               return true;
-           }
-       }
-       return false;
+        
+        return false;
     }
 
     @Override

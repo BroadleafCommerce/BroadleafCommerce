@@ -17,10 +17,8 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.pricing.domain.PriceAdjustment;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * 
@@ -109,23 +107,5 @@ public interface ProductOptionValue extends Serializable {
      * @param productOption
      */
     public void setProductOption(ProductOption productOption);
-
-    Map<String, PriceAdjustment> getPriceAdjustmentMap();
-
-    void setPriceAdjustmentMap(Map<String, PriceAdjustment> priceAdjustmentMap);
-
-    /**
-     * Gets the {@link ProductOptionValueTranslation}s that this {@link ProductOption} is attached to.
-     *
-     * @return
-     */
-    public Map<String, ProductOptionValueTranslation> getTranslations();
-
-    /**
-     * Sets the {@link ProductOptionValueTranslation}s that this {@link ProductOption} should be attached to.
-     *
-     * @return
-     */
-    public void setTranslations(Map<String, ProductOptionValueTranslation> translations);
     
 }

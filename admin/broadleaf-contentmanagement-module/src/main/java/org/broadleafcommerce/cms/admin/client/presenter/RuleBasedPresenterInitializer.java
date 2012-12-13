@@ -46,7 +46,7 @@ public abstract class RuleBasedPresenterInitializer<U extends DynamicEntityPrese
 		ATTRIBUTEMAP.put(FilterType.REQUEST, "requestRule");
 		ATTRIBUTEMAP.put(FilterType.CUSTOMER, "customerRule");
         ATTRIBUTEMAP.put(FilterType.TIME, "timeRule");
-	
+        ATTRIBUTEMAP.put(FilterType.LOCALE, "localeRule");
     }
 	
 	private static final MVELToAdvancedCriteriaTranslator TRANSLATOR = new MVELToAdvancedCriteriaTranslator();

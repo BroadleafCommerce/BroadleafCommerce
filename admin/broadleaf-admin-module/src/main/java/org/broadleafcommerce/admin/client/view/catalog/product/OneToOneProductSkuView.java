@@ -56,8 +56,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected GridStructureView bundleItemsDisplay;
 	protected ToolStripButton cloneProductButton;
 	protected ToolStripButton exportProductsButton;
-	protected GridStructureView skuPriceListDisplay;
-	protected GridStructureView translationsDisplay;
+
 	public OneToOneProductSkuView() {
 		setHeight100();
 		setWidth100();
@@ -150,15 +149,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         categoriesTab.setPane(categoriesLayout);
         
         Tab skusTab = new Tab(BLCMain.getMessageManager().getString("skusTabTitle"));
-        skusTab.setID("skusTab");
+        skusTab.setID("mySkuTab");
         skusDisplay = new SubItemView(BLCMain.getMessageManager().getString("skusListTitle"), false, true);
-        skuPriceListDisplay = new GridStructureView(BLCMain.getMessageManager().getString("priceListMainTitle"), false, true);
-     //   ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(skuPriceListDisplay);
-        ((FormOnlyView) skusDisplay.getFormOnlyDisplay()).addMember(skuPriceListDisplay);
+        skusDisplay.setID("productSkuTabSubItemView");
         
-        translationsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionImpl_Translations"), false, true);
-        //   ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(skuPriceListDisplay);
-           ((FormOnlyView) skusDisplay.getFormOnlyDisplay()).addMember(translationsDisplay);
         skusTab.setPane(skusDisplay);
         
         topTabSet.addTab(detailsTab);
@@ -220,15 +214,6 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	@Override
 	public ToolStripButton getExportProductsButton() {
 	    return exportProductsButton;
-	}
-	@Override
-    public GridStructureView getSkuPriceListDisplay() {
-        return skuPriceListDisplay;
-    }
-
-	@Override
-    public GridStructureView getTranslationsDisplay() {
-	    return translationsDisplay;
 	}
 
 }

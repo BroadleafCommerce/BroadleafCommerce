@@ -32,6 +32,7 @@
 			<ref bean="blAddSortLinkProcessor" />
 			<ref bean="blCategoriesProcessor" />
 			<ref bean="blFormProcessor" />
+			<ref bean="blGoogleAnalyticsProcessor" />
 			<ref bean="blHeadProcessor" />
 		    <ref bean="blNamedOrderProcessor" />
 		    <ref bean="blPaginationPageLinkProcessor" />
@@ -92,5 +93,7 @@
 			</set>
 		</property>
 	</bean>
+    
+    <bean id="blUpdateCartServiceExtensionManager" class="org.broadleafcommerce.core.web.service.UpdateCartServiceExtensionManager" />
 	
 </beans>

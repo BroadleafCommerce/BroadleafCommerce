@@ -17,7 +17,6 @@
 package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
@@ -25,7 +24,6 @@ import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
-import org.broadleafcommerce.core.offer.domain.OfferRestrictedPriceList;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -79,6 +77,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Resource(name = "blOrderItemMergeService")
     protected OrderItemMergeService orderItemMergeService;
+
+    @Resource(name = "blOfferServiceExtensionManager")
+    protected OfferServiceExtensionListener extensionManager;
 
     @Override
     public List<Offer> findAllOffers() {
@@ -150,44 +151,11 @@ public class OfferServiceImpl implements OfferService {
             }
         }
         
-        // TODO:  Remove offers who have a mismatch on the currency/pricelist
-        removeNonRestrictedOffers(offers); 
-            
+        if (extensionManager != null) {
+            extensionManager.applyAdditionalFilters(offers);
+        }
+        
         return offers;
-    }
-    /**
-     * Removes offers who have a mismatch on the currency/pricelist. If the restrictedPriceLists is empty, then the offer is considered valid.
-     * In short, it keeps the offer if the current pricelist is in the offer's restrictedPriceLists. 
-     * @param offerCodes
-     * @return a List of valid offers
-     */
-    protected void removeNonRestrictedOffers(List<Offer> offers) {
-        // Check the BLC Thread
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-
-        if (offers == null || brc == null || brc.getPriceList() == null) {
-            return;
-        }
-
-        for (Offer f : new ArrayList<Offer>(offers)) {
-            if (f.getRestrictedPriceLists().isEmpty()) {
-                continue;
-            }
-            boolean found = false;
-            for (OfferRestrictedPriceList l : f.getRestrictedPriceLists()) {
-                if (l.getPriceList().equals(brc.getPriceList())) {
-                    // offer is valid
-                    found = true;
-                    break;
-                } else {
-                    // offer is of different currency or pricelist. So will need to remove it.
-                    found = false;
-                }
-            }
-            if (!found) {
-                offers.remove(f);
-            }
-        }
     }
 
     /**

@@ -44,9 +44,6 @@
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
-        <class>org.broadleafcommerce.core.pricing.domain.PriceDataImpl</class>
-        <class>org.broadleafcommerce.core.pricing.domain.PriceAdjustmentImpl</class>
-        <class>org.broadleafcommerce.core.pricing.domain.SkuBundleItemPriceDataImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
 		<class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>
 		<class>org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl</class>
@@ -59,7 +56,6 @@
 		<class>org.broadleafcommerce.core.offer.domain.OfferAuditImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferCodeImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferImpl</class>
-		<class>org.broadleafcommerce.core.offer.domain.OfferRestrictedPriceListImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferRuleImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferInfoImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl</class>
@@ -71,7 +67,6 @@
 		<class>org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl</class>
 		<class>org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl</class>
 		<class>org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl</class>
-		<class>org.broadleafcommerce.core.order.domain.FulfillmentOptionTranslationImpl</class>
 		<class>org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl</class>
 		<class>org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl</class>
 		<class>org.broadleafcommerce.core.order.fulfillment.domain.BandedWeightFulfillmentOptionImpl</class>
@@ -101,7 +96,6 @@
 		<class>org.broadleafcommerce.core.search.domain.SearchInterceptImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>
-		<class>org.broadleafcommerce.core.search.domain.SearchFacetTranslationImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.RequiredFacetImpl</class>
 		<class>org.broadleafcommerce.core.rating.domain.RatingSummaryImpl</class>
@@ -112,10 +106,6 @@
 		<class>org.broadleafcommerce.core.content.domain.ContentDetailsImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.CriteriaOfferXref</class>
-		<class>org.broadleafcommerce.core.catalog.domain.CategoryTranslationImpl</class>
-		<class>org.broadleafcommerce.core.catalog.domain.SkuTranslationImpl</class>
-		<class>org.broadleafcommerce.core.catalog.domain.ProductOptionTranslationImpl</class>
-		<class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueTranslationImpl</class>
 		<class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
         <exclude-unlisted-classes/>

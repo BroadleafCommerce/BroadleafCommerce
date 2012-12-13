@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,20 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.search.domain;
+package org.broadleafcommerce.core.web.service;
+
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.Order;
+
 
 /**
- * Author: jerryocanas
- * Date: 9/25/12
+ * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacetTranslation {
-
-    /**
-     * Returns the id
-     *
-     * @return
-     */
-    public Long getId();
-
-    /**
-     * Sets the id
-     *
-     * @param id
-     */
-    public void setId(Long id);
-
-    /**
-     * Return the label
-     *
-     * @return
-     */
-    public String getLabel();
-
-    /**
-     * Sets the label
-     *
-     * @param label
-     */
-    public void setLabel(String label);
+public interface UpdateCartServiceExtensionListener {
+    
+    public void validateCart(Order cart);
+    
+    public Boolean isAvailable(DiscreteOrderItem doi, BroadleafCurrency currency);
 
 }

@@ -207,8 +207,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
                     
                     @Override
                     public void onFailure(Throwable caught) {
-                        // TODO Auto-generated method stub
-                        
+                        // Do nothing
                     }
                 });
             }

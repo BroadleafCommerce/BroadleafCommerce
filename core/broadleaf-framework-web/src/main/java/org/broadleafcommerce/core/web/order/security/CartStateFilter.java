@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
@@ -56,18 +55,17 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    protected static boolean copyCartToNewLocaleAndPricelist = false;
+    protected static boolean copyCartWhenSpecifiedStateChanges = false;
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
 
     @Resource(name="blUpdateCartService")
     protected UpdateCartService updateCartService;
-
+    
     private static String cartRequestAttributeName = "cart";
 
-	@Override
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {		
 		Customer customer = (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
 		
@@ -83,14 +81,12 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
                 try {
                     updateCartService.validateCart(cart);
                 } catch (IllegalArgumentException e){
-                    if (copyCartToNewLocaleAndPricelist) {
-                        UpdateCartResponse updateCartResponse = updateCartService.copyCartToNewLocaleAndPricelist(cart);
+                    if (copyCartWhenSpecifiedStateChanges) {
+                        UpdateCartResponse updateCartResponse = updateCartService.copyCartToCurrentContext(cart);
                         request.setAttribute("updateCartResponse", updateCartResponse);
                     } else {
-                        // Delete old cart and create new blank cart
-                        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-                        orderService.deleteOrder(cart);
-                        cart = orderService.createNewCartForCustomer(customer, brc.getPriceList(), brc.getLocale());
+                        orderService.cancelOrder(cart);
+                        cart = orderService.createNewCartForCustomer(customer);
                     }
                 }
             }
@@ -109,7 +105,6 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
         chain.doFilter(request, response);
     }
 
-    @Override
     public int getOrder() {
     	//FilterChainOrder has been dropped from Spring Security 3
         //return FilterChainOrder.REMEMBER_ME_FILTER+1;

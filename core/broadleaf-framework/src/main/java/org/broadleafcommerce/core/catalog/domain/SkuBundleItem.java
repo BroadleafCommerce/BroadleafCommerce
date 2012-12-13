@@ -17,10 +17,8 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.pricing.domain.SkuBundleItemPriceData;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * Represents the {@link org.broadleafcommerce.core.catalog.domain.Sku} being sold in a bundle along with metadata
@@ -65,10 +63,6 @@ public interface SkuBundleItem extends Serializable {
     public Sku getSku();
 
     public void setSku(Sku sku);
-
-    public void setPriceDataMap(Map<String, SkuBundleItemPriceData> priceDataMap);
-
-    public Map<String, SkuBundleItemPriceData> getPriceDataMap();
 
     /**
      * Removes any currently stored dynamic pricing

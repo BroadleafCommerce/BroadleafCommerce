@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -27,6 +26,7 @@ import org.broadleafcommerce.common.site.domain.Theme;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Currency;
 
 public class BroadleafRequestContext {
@@ -55,7 +55,6 @@ public class BroadleafRequestContext {
     private SandBox sandbox;
     private Locale locale;
     private BroadleafCurrency broadleafCurrency;
-    private PriceList priceList;
     private Site site;
     private Theme theme;
     public java.util.Locale javaLocale;
@@ -192,11 +191,4 @@ public class BroadleafRequestContext {
         this.broadleafCurrency = broadleafCurrency;
     }
 
-    public PriceList getPriceList() {
-        return priceList;
-    }
-
-    public void setPriceList(PriceList priceList) {
-        this.priceList = priceList;
-    }
 }

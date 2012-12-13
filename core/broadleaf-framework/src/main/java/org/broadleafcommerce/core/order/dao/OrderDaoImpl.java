@@ -17,9 +17,8 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -32,8 +31,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.ListIterator;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -46,6 +45,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blCustomerDao")
     protected CustomerDao customerDao;
+    
+    @Resource(name = "blOrderDaoExtensionManager")
+    protected OrderDaoExtensionListener extensionManager;
 
     @Override
     public Order readOrderById(final Long orderId) {
@@ -114,27 +116,16 @@ public class OrderDaoImpl implements OrderDao {
         order.setEmailAddress(customer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS);
 
-        order = save(order);
-
-        return order;
-    }
-
-    @Override
-    public Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale) {
-        Order order = createNewCartForCustomer(customer);
-        order.setPriceList(priceList);
-        order.setLocale(locale);
-        
-        if (priceList!=null) { 
-            order.setCurrency(priceList.getCurrencyCode());
-            order.setSubTotal(new Money(BigDecimal.ZERO, priceList.getCurrencyCode().getCurrencyCode()));
-            order.setTotal(new Money(BigDecimal.ZERO, priceList.getCurrencyCode().getCurrencyCode()));
-        } else {
-            order.setSubTotal(new Money(BigDecimal.ZERO));
-            order.setTotal(new Money(BigDecimal.ZERO));
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
+            order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         }
-        order = save(order);
 
+        if (extensionManager != null) {
+            extensionManager.attachAdditionalDataToNewCart(customer, order);
+        }
+        
+        order = save(order);
         return order;
     }
 
@@ -152,37 +143,32 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Order readNamedOrderForCustomer(final Customer customer, final String name) {
         final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
         List<Order> orders = query.getResultList();
-        return orders == null || orders.isEmpty() ? null : orders.get(0);
-    }
-
-    @Override
-    public Order readNamedOrderForCustomerByPricelistAndLocale(final Customer customer, final String name, final PriceList priceList, final Locale locale) {
-        final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
-        query.setParameter("customerId", customer.getId());
-        query.setParameter("orderStatus", OrderStatus.NAMED.getType());
-        query.setParameter("orderName", name);
-        List<Order> orders = query.getResultList();
-
-        if (orders == null || orders.isEmpty()) { return null; }
-
-        for(Order order: orders){
-            if(locale != null){
-                if((order.getPriceList() == priceList) && (order.getLocale().getLocaleCode().equalsIgnoreCase(locale.getLocaleCode()))){
-                    return order;
-                }
-            }  else {
-                if(order.getPriceList() == priceList){
-                    return order;
+        
+        // Filter out orders that don't match the current locale (if one is set)
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            ListIterator<Order> iter = orders.listIterator();
+            while (iter.hasNext()) {
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+                Order order = iter.next();
+                if (locale != null && !locale.equals(order.getLocale())) {
+                    iter.remove();
                 }
             }
         }
-        return null;
+            
+        // Apply any additional filters that extension modules have registered
+        if (orders != null && !orders.isEmpty() && extensionManager != null) {
+            extensionManager.applyAdditionalOrderLookupFilter(customer, name, orders);
+        }
+        
+        return orders == null || orders.isEmpty() ? null : orders.get(0);
     }
 
     @Override

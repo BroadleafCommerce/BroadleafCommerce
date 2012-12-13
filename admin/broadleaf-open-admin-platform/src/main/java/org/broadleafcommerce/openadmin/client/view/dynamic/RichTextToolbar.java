@@ -396,7 +396,6 @@ public class RichTextToolbar extends Composite {
 
                     @Override
                     public void onColorSelected(ColorSelectedEvent event) {
-                        // TODO Auto-generated method stub
                         if (isHTMLMode()) {
                             changeHtmlStyle(
                                     "<span style=\"color: " + event.getColor()
@@ -414,7 +413,6 @@ public class RichTextToolbar extends Composite {
 
                     @Override
                     public void onColorSelected(ColorSelectedEvent event) {
-                        // TODO Auto-generated method stub
                         if (isHTMLMode()) {
                             changeHtmlStyle("<span style=\"background: "
                                     + event.getColor() + ";\">",

@@ -18,13 +18,10 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
-import org.broadleafcommerce.common.pricelist.domain.PriceListImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -40,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -66,13 +64,6 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected SearchFacet searchFacet = new SearchFacetImpl();
-	
-	@ManyToOne(targetEntity = PriceListImpl.class)
-    @JoinColumn(name = "PRICE_LIST_ID")
-    @Index(name="PRICE_LIST_INDEX", columnNames={"PRICE_LIST_ID"})
-	@AdminPresentation(friendlyName = "SearchFacetRangeImpl_priceList", order=1, group = "SearchFacetRangeImpl_Description")
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
-	protected PriceList priceList;
     
     @Column(name = "MIN_VALUE", precision=19, scale=5, nullable = false) 
     @AdminPresentation(friendlyName = "SearchFacetRangeImpl_minValue", order=2, group = "SearchFacetRangeImpl_Description", prominent=true)
@@ -101,16 +92,6 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
 	public void setSearchFacet(SearchFacet searchFacet) {
 		this.searchFacet = searchFacet;
 	}
-
-	@Override
-    public PriceList getPriceList() {
-        return priceList;
-    }
-    
-	@Override
-    public void setPriceList(PriceList priceList) {
-        this.priceList = priceList;
-    }
 
     @Override
 	public BigDecimal getMinValue() {

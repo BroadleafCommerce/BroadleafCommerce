@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.domain;
+package org.broadleafcommerce.core.offer.service;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
+import org.broadleafcommerce.core.offer.domain.Offer;
+
+import java.util.List;
+
 
 /**
- * 
+ * @author Andre Azzolini (apazzolini)
  */
-public interface SkuBundleItemPriceData extends Serializable {
-
-    public Long getId();
-
-    public void setId(Long id);
-
-    public BigDecimal getSalePrice();
-
-    public void setSalePrice(BigDecimal salePrice);
-
+public interface OfferServiceExtensionListener {
+    
+    public void applyAdditionalFilters(List<Offer> offers);
 
 }

@@ -23,21 +23,16 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
@@ -282,25 +277,6 @@ public class CategoryImpl implements Category, Status {
     @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", group = "CategoryImpl_Sku_Inventory", order=11, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
-	@ManyToMany(targetEntity = CategoryTranslationImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_TRANSLATION_XREF",
-            joinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID"),
-            inverseJoinColumns = @JoinColumn(name = "TRANSLATION_ID", referencedColumnName = "TRANSLATION_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @MapKey(columns = { @Column(name = "MAP_KEY", nullable = false) })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 10)
-    @AdminPresentationMap(
-            friendlyName = "categoryImpl_Translations",
-            dataSourceName = "categoryTranslationDS",
-            keyPropertyFriendlyName = "TranslationsImpl_Key",
-            deleteEntityUponRemove = true,
-            mapKeyOptionEntityClass = LocaleImpl.class,
-            mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "localeCode",
-            order = 88
-    )
-    protected Map<String, CategoryTranslation> translations = new HashMap<String,CategoryTranslation>();
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
@@ -332,28 +308,6 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getName() {
-        if (translations != null && BroadleafRequestContext.hasLocale()) {
-            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-
-            // Search for translation based on locale
-            String localeCode = locale.getLocaleCode();
-            if (localeCode != null) {
-                CategoryTranslation translation = translations.get(localeCode);
-                if (translation != null && translation.getName() != null) {
-                    return translation.getName();
-                }
-            }
-
-            // try just the language
-            String languageCode = LocaleUtil.findLanguageCode(locale);
-            if (languageCode != null && ! localeCode.equals(languageCode)) {
-                CategoryTranslation translation = translations.get(languageCode);
-                if (translation != null && translation.getName() != null) {
-                    return translation.getName();
-                }
-            }
-        }
-
         return name;
     }
 
@@ -403,27 +357,6 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getDescription() {
-        if (translations != null && BroadleafRequestContext.hasLocale()) {
-            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-
-            // Search for translation based on locale
-            String localeCode = locale.getLocaleCode();
-            if (localeCode != null) {
-                CategoryTranslation translation = translations.get(localeCode);
-                if (translation != null && translation.getDescription() != null) {
-                    return translation.getDescription();
-                }
-            }
-
-            // try just the language
-            String languageCode = LocaleUtil.findLanguageCode(locale);
-            if (languageCode != null && ! localeCode.equals(languageCode)) {
-                CategoryTranslation translation = translations.get(languageCode);
-                if (translation != null && translation.getDescription() != null) {
-                    return translation.getDescription();
-                }
-            }
-        }
         return description;
     }
 
@@ -803,16 +736,6 @@ public class CategoryImpl implements Category, Status {
     	this.fulfillmentType = fulfillmentType.getType();
     }
 
-	@Override
-    public Map<String, CategoryTranslation> getTranslations() {
-        return translations;
-    }
-
-    @Override
-    public void setTranslations(Map<String, CategoryTranslation> translations) {
-        this.translations = translations;
-    }
-    
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
     	final List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();

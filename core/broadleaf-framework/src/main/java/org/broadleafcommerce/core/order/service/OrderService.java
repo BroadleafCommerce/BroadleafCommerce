@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -56,10 +54,6 @@ public interface OrderService {
 	 * database and set the current customer as the owner of the order. If the customer has an
 	 * email address associated with their profile, that will be copied as well. If the customer
 	 * is a new, anonymous customer, his username will be set to his database id.
-     *
-     * This method creates the cart with no Locale or PriceList.  For sites that are multi-language
-     * or multi-currency you probably want to call the parameterised version of this method that
-     * takes in the priceList and locale.
 	 * 
 	 * @see org.broadleafcommerce.profile.web.core.CustomerState#getCustomer()
 	 * 
@@ -69,48 +63,17 @@ public interface OrderService {
     public Order createNewCartForCustomer(Customer customer);
 
     /**
-     * Creates a new Cart for the given customer using a particular PriceList and Locale.
-     *
-     * Implementations that do not use Broadleaf Locale or PriceList concepts may leave either or
-     * both parameters null.
-     *
-     * A typical usage is demonstrated in the Broadleaf Commerce i18n version of the demo application
-     * which utilizes both the Locale and PriceList to provide a multi-language, multi-currency example.
-     *
-     * @param customer
-     * @return the newly created order
-     */
-    public Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale);
-    
-    /**
      * Creates a new Order for the given customer with the given name. Typically, this represents
      * a "wishlist" order that the customer can save but not check out with.
      *
-     * This method creates the cart with no Locale or PriceList.  For sites that are multi-language
-     * or multi-currency you probably want to call the parameterised version of this method that
-     * takes in the priceList and locale.
-     * 
+     * @param name the wishlist name
      * @param customer
+     * @param args additional arguments to be used by Broadleaf extensions
      * @return the newly created named order
      */
     public Order createNamedOrderForCustomer(String name, Customer customer);
 
     /**
-     * Creates a new Order for the given customer with the given name using the passed in
-     * Locale and PriceList.
-     *
-     * Typically, this represents "wishlist" order that the customer can save but not check out with.
-     *
-     * Implementations that do not use Broadleaf Locale or PriceList concepts may leave either or
-     * both parameters null.
-     *
-     * @param customer
-     * @return the newly created named order
-     */
-    public Order createNamedOrderForCustomer(String name, Customer customer, PriceList priceList, Locale locale);
-
-
-    /**
      * Looks up an Order by the given customer and a specified order name.
      * 
      * This is typically used to retrieve a "wishlist" order.
@@ -119,25 +82,10 @@ public interface OrderService {
      * 
      * @param name
      * @param customer
+     * @param args additional arguments to be used by Broadleaf extensions
      * @return the named order requested
      */
     public Order findNamedOrderForCustomer(String name, Customer customer);
-
-
-
-    /**
-     * Looks up an Order by the given customer and a specified order name.
-     *
-     * This is typically used to retrieve a "wishlist" order.
-     *
-     * @see #createNamedOrderForCustomer(String name, Customer customer)
-     *
-     * @param name
-     * @param customer
-     * @return the named order requested
-     */
-    public Order findNamedOrderForCustomerByPricelistAndLocale(String name, Customer customer, PriceList priceList, Locale locale);
-
     
     /**
      * Looks up an Order by its database id

@@ -16,16 +16,10 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -35,6 +29,11 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public interface Order extends Serializable {
 
@@ -228,10 +227,6 @@ public interface Order extends Serializable {
     BroadleafCurrency getCurrency();
 
     void setCurrency(BroadleafCurrency currency);
-
-    public PriceList getPriceList();
-
-    public void setPriceList(PriceList priceList);
 
     public Locale getLocale();
 

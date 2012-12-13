@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -196,12 +195,6 @@ public interface Offer extends Serializable {
 	 */
     public Money getQualifyingItemSubTotal();
     
-    
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
 
-    List<OfferRestrictedPriceList> getRestrictedPriceLists();
-
-
-    void setRestrictedPriceLists(List<OfferRestrictedPriceList> restrictedPriceLists);
-	
 }

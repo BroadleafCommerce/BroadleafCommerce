@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.domain;
+package org.broadleafcommerce.core.order.service;
 
-public interface CategoryTranslation {
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.profile.core.domain.Customer;
 
-    public Long getId();
 
-    public void setId(Long id);
-
-    public String getDescription();
-
-    public void setDescription(String description);
-
-    public String getName();
-
-    public void setName(String name);
-
-    public String getLongDescription();
-
-    public void setLongDescription(String longDescription);
-
+/**
+ * @author Andre Azzolini (apazzolini)
+ */
+public interface OrderServiceExtensionListener {
+    
+    public void attachAdditionalDataToNewNamedCart(Customer customer, Order cart);
+    
 }

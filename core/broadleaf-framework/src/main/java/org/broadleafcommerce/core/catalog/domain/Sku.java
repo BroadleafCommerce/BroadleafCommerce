@@ -23,7 +23,6 @@ import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.pricing.domain.PriceData;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -454,34 +453,6 @@ public interface Sku extends Serializable {
      * @param fulfillmentType
      */
     public void setFulfillmentType(FulfillmentType fulfillmentType);
-
-	/**
-     * Gets the {@link PriceData} that this {@link Sku} is attached to.
-     *
-     * @return
-     */
-    public Map<String, PriceData> getPriceDataMap();
-
-    /**
-     * Sets the {@link PriceData} that this {@link Sku} should be attached to.
-     *
-     * @return
-     */
-    public void setPriceDataMap(Map<String, PriceData> priceDataMap);
-
-    /**
-     * Gets the {@link SkuTranslation}s that this {@link Sku} is attached to.
-     *
-     * @return
-     */
-    public Map<String, SkuTranslation> getTranslations() ;
-
-    /**
-     * Sets the {@link SkuTranslation}s that this {@link Sku} should be attached to.
-     *
-     * @return
-     */
-    public void setTranslations(Map<String, SkuTranslation> translations);
 
     /**
      * Clears any currently stored dynamic pricing

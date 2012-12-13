@@ -24,6 +24,7 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
+import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 /**
  * A Thymeleaf processor that adds a CSRF token to forms that are not going to be submitted
@@ -56,13 +57,24 @@ public class FormProcessor extends AbstractElementProcessor {
 		// We do this instead of checking for a POST because post is default if nothing is specified
 		if (!"GET".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("method"))) {
 			try {
-				ExploitProtectionService eps = ProcessorUtils.getExploitProtectionService(arguments);
-				String csrfToken = eps.getCSRFToken();
-				Element csrfNode = new Element("input");
-				csrfNode.setAttribute("type", "hidden");
-				csrfNode.setAttribute("name", eps.getCsrfTokenParameter());
-				csrfNode.setAttribute("value", csrfToken);
-		        element.addChild(csrfNode);
+
+                ExploitProtectionService eps = ProcessorUtils.getExploitProtectionService(arguments);
+                String csrfToken = eps.getCSRFToken();
+
+                //detect multipart form
+                if ("multipart/form-data".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("enctype"))) {
+                    String action = (String) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValueFromNormalizedName("th:action"));
+                    String csrfQueryParameter = "?" + eps.getCsrfTokenParameter() + "=" + csrfToken;
+                    element.removeAttribute("th:action");
+                    element.setAttribute("action", action + csrfQueryParameter);
+                } else {
+                    Element csrfNode = new Element("input");
+                    csrfNode.setAttribute("type", "hidden");
+                    csrfNode.setAttribute("name", eps.getCsrfTokenParameter());
+                    csrfNode.setAttribute("value", csrfToken);
+                    element.addChild(csrfNode);
+                }
+
 			} catch (ServiceException e) {
 				throw new RuntimeException("Could not get a CSRF token for this session", e);
 			}

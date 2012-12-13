@@ -18,8 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.pricelist.domain.PriceList;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -100,6 +99,9 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blMergeCartService")
     protected MergeCartService mergeCartService;
     
+    @Resource(name = "blOrderServiceExtensionManager")
+    protected OrderServiceExtensionListener extensionManager;
+    
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
     protected SequenceProcessor addItemWorkflow;
@@ -121,37 +123,27 @@ public class OrderServiceImpl implements OrderService {
 	}
 
     @Override
-    public Order createNewCartForCustomer(Customer customer, PriceList priceList, Locale locale) {
-        return orderDao.createNewCartForCustomer(customer, priceList, locale);
-    }
-
-    @Override
     @Transactional("blTransactionManager")
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
         namedOrder.setCustomer(customer);
         namedOrder.setName(name);
         namedOrder.setStatus(OrderStatus.NAMED);
+        
+        if (extensionManager != null) {
+            extensionManager.attachAdditionalDataToNewNamedCart(customer, namedOrder);
+        }
+        
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+        }
+        
         return orderDao.save(namedOrder); // No need to price here
-    }
-
-    @Override
-    public Order createNamedOrderForCustomer(String name, Customer customer, PriceList priceList, Locale locale) {
-        Order namedOrder = createNamedOrderForCustomer(name, customer);
-        namedOrder.setPriceList(priceList);
-        namedOrder.setLocale(locale);
-        namedOrder.setCurrency(priceList.getCurrencyCode());
-        return orderDao.save(namedOrder);
     }
 
     @Override
     public Order findNamedOrderForCustomer(String name, Customer customer) {
         return orderDao.readNamedOrderForCustomer(customer, name);
-    }
-
-    @Override
-    public Order findNamedOrderForCustomerByPricelistAndLocale(String name, Customer customer, PriceList priceList, Locale locale) {
-        return orderDao.readNamedOrderForCustomerByPricelistAndLocale(customer, name, priceList, locale);
     }
 
     @Override
