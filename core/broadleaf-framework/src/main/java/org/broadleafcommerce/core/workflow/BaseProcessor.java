@@ -68,8 +68,8 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
     /**
      * Whether or not the ActivityStateManager should automatically attempt to rollback any RollbackHandlers registered.
-     * If false, rolling back will require an explicit call to ActivityStateManagerImpl.getStateManager().rollbackAllState() in
-     * an ErrorHandler. The default value is true.
+     * If false, rolling back will require an explicit call to ActivityStateManagerImpl.getStateManager().rollbackAllState().
+     * The default value is true.
      *
      * @return Whether or not the ActivityStateManager should automatically attempt to rollback
      */
@@ -79,8 +79,8 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
     /**
      * Set whether or not the ActivityStateManager should automatically attempt to rollback any RollbackHandlers registered.
-     * If false, rolling back will require an explicit call to ActivityStateManagerImpl.getStateManager().rollbackAllState() in
-     * an ErrorHandler. The default value is true.
+     * If false, rolling back will require an explicit call to ActivityStateManagerImpl.getStateManager().rollbackAllState().
+     * The default value is true.
      *
      * @param autoRollbackOnError Whether or not the ActivityStateManager should automatically attempt to rollback
      */
