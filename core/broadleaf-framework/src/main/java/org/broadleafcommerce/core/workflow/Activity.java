@@ -16,9 +16,13 @@
 
 package org.broadleafcommerce.core.workflow;
 
+import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.beans.factory.BeanNameAware;
 
+import java.util.Map;
+
 public interface Activity extends BeanNameAware{
+
     /**
      * Called by the encompassing processor to activate
      * the execution of the Activity
@@ -27,15 +31,73 @@ public interface Activity extends BeanNameAware{
      * @return resulting process context
      * @throws Exception
      */
-    ProcessContext execute(ProcessContext context) throws Exception;
-    
-    
+    public ProcessContext execute(ProcessContext context) throws Exception;
+
     /**
      * Get the fine-grained error handler wired up for this Activity
      * @return
      */
-    ErrorHandler getErrorHandler();
-    
-    String getBeanName();
+    public ErrorHandler getErrorHandler();
 
+    public void setErrorHandler(final ErrorHandler errorHandler);
+    
+    public String getBeanName();
+
+    /**
+     * Retrieve the RollbackHandler instance that should be called by the ActivityStateManager in the
+     * event of a workflow execution problem. This RollbackHandler will presumably perform some
+     * compensating operation to revert state for the activity.
+     *
+     * @return the handler responsible for reverting state for the activity
+     */
+    public RollbackHandler getRollbackHandler();
+
+    /**
+     * Set the RollbackHandler instance that should be called by the ActivityStateManager in the
+     * event of a workflow execution problem. This RollbackHandler will presumably perform some
+     * compensating operation to revert state for the activity.
+     *
+     * @param rollbackHandler the handler responsible for reverting state for the activity
+     */
+    public void setRollbackHandler(RollbackHandler rollbackHandler);
+
+    /**
+     * Retrieve the optional region label for the RollbackHandler. Setting a region allows
+     * partitioning of groups of RollbackHandlers for more fine grained control of rollback behavior.
+     * Explicit calls to the ActivityStateManager API in an ErrorHandler instance allows explicit rollback
+     * of specific rollback handler regions. Note, to disable automatic rollback behavior and enable explicit
+     * rollbacks via the API, the workflow.auto.rollback.on.error property should be set to false in your implementation's
+     * runtime property configuration.
+     *
+     * @return the rollback region label for the RollbackHandler instance
+     */
+    public String getRollbackRegion();
+
+    /**
+     * Set the optional region label for the RollbackHandler. Setting a region allows
+     * partitioning of groups of RollbackHandlers for more fine grained control of rollback behavior.
+     * Explicit calls to the ActivityStateManager API in an ErrorHandler instance allows explicit rollback
+     * of specific rollback handler regions. Note, to disable automatic rollback behavior and enable explicit
+     * rollbacks via the API, the workflow.auto.rollback.on.error property should be set to false in your implementation's
+     * runtime property configuration.
+     *
+     * @param rollbackRegion the rollback region label for the RollbackHandler instance
+     */
+    public void setRollbackRegion(String rollbackRegion);
+
+    /**
+     * Retrieve any user-defined state that should accompany the RollbackHandler. This configuration will be passed to
+     * the RollbackHandler implementation at runtime.
+     *
+     * @return any user-defined state configuratio necessary for the execution of the RollbackHandler
+     */
+    public Map<String, Object> getStateConfiguration();
+
+    /**
+     * Set any user-defined state that should accompany the RollbackHandler. This configuration will be passed to
+     * the RollbackHandler implementation at runtime.
+     *
+     * @param stateConfiguration any user-defined state configuratio necessary for the execution of the RollbackHandler
+     */
+    public void setStateConfiguration(Map<String, Object> stateConfiguration);
 }

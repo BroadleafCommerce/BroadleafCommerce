@@ -13,17 +13,31 @@
 
     <bean id="blDefaultErrorHandler" class="org.broadleafcommerce.core.workflow.SilentErrorHandler" />
 
+    <bean id="blTestRollbackHandler" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackHandler"/>
+
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
         </property>
         <property name="activities">
             <list>
-                <bean class="org.broadleafcommerce.core.checkout.service.workflow.PricingServiceActivity"/>
+                <bean class="org.broadleafcommerce.core.checkout.service.workflow.PricingServiceActivity">
+                    <property name="rollbackHandler" ref="blTestRollbackHandler"/>
+                    <property name="stateConfiguration">
+                        <map>
+                            <entry key="testProperty" value="testValue"/>
+                        </map>
+                    </property>
+                </bean>
                 <bean class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
                 <bean class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
+                <bean class="org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity">
+                    <property name="errorHandler">
+                        <bean class="org.broadleafcommerce.core.workflow.state.test.TestPassThroughRollbackErrorHandler"/>
+                    </property>
+                </bean>
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>

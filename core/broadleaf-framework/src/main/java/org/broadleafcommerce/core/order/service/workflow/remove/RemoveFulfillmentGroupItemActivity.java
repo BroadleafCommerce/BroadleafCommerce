@@ -34,7 +34,7 @@ public class RemoveFulfillmentGroupItemActivity extends BaseActivity {
         
         request = fgItemStrategy.onItemRemoved(request);
         
-        ((CartOperationContext) context).setSeedData(request);
+        context.setSeedData(request);
         return context;
     }
 

@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.core.workflow;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -27,7 +24,11 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Base class for all Workflow Processors.  Responsible of keeping track of an ordered collection
@@ -43,6 +44,9 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
     private String beanName;
     private List<Activity> activities;
     private ErrorHandler defaultErrorHandler;
+
+    @Value("${workflow.auto.rollback.on.error}")
+    private boolean autoRollbackOnError = true;
 
     /* Sets name of the spring bean in the application context that this
      * processor is configured under
@@ -60,21 +64,42 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
      */
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
+    }
 
+    /**
+     * Whether or not the ActivityStateManager should automatically attempt to rollback any RollbackHandlers registered.
+     * If false, rolling back will require an explicit call to ActivityStateManagerImpl.getStateManager().rollbackAllState() in
+     * an ErrorHandler. The default value is true.
+     *
+     * @return Whether or not the ActivityStateManager should automatically attempt to rollback
+     */
+    public boolean getAutoRollbackOnError() {
+        return autoRollbackOnError;
+    }
+
+    /**
+     * Set whether or not the ActivityStateManager should automatically attempt to rollback any RollbackHandlers registered.
+     * If false, rolling back will require an explicit call to ActivityStateManagerImpl.getStateManager().rollbackAllState() in
+     * an ErrorHandler. The default value is true.
+     *
+     * @param autoRollbackOnError Whether or not the ActivityStateManager should automatically attempt to rollback
+     */
+    public void setAutoRollbackOnError(boolean autoRollbackOnError) {
+        this.autoRollbackOnError = autoRollbackOnError;
     }
 
     /*
-     * Called after the properties have been set, Ensures the list of activities
-     *  is not empty and each activity is supported by this Workflow Processor
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
+         * Called after the properties have been set, Ensures the list of activities
+         *  is not empty and each activity is supported by this Workflow Processor
+         * (non-Javadoc)
+         *
+         * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+         */
     public void afterPropertiesSet() throws Exception {
 
         if(!(beanFactory instanceof ListableBeanFactory)) {
             throw new BeanInitializationException("The workflow processor ["+beanName+"] " +
-                    "is not managed by a ListableBeanFactory, please re-deploy using some dirivative of ListableBeanFactory such as" +
+                    "is not managed by a ListableBeanFactory, please re-deploy using some derivative of ListableBeanFactory such as" +
             "ClassPathXmlApplicationContext ");
         }
 

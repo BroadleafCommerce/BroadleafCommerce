@@ -38,6 +38,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import javax.annotation.Resource;
 
 public class AddOrderItemActivity extends BaseActivity {
+
     private static Log LOG = LogFactory.getLog(AddOrderItemActivity.class);
     
     @Resource(name = "blOrderService")
