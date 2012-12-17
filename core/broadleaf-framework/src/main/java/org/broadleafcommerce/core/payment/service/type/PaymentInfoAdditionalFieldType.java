@@ -34,6 +34,9 @@ public class PaymentInfoAdditionalFieldType implements Serializable, BroadleafEn
     public static final PaymentInfoAdditionalFieldType EXP_MONTH = new PaymentInfoAdditionalFieldType("EXP_MONTH", "Expiration Month");
     public static final PaymentInfoAdditionalFieldType EXP_YEAR = new PaymentInfoAdditionalFieldType("EXP_YEAR", "Expiration Year");
     public static final PaymentInfoAdditionalFieldType LAST_FOUR = new PaymentInfoAdditionalFieldType("LAST_FOUR", "Last Four Digits of CC");
+    public static final PaymentInfoAdditionalFieldType GIFT_CARD_NUM = new PaymentInfoAdditionalFieldType("GIFT_CARD_NUM", "Gift Card Number");
+    public static final PaymentInfoAdditionalFieldType EMAIL = new PaymentInfoAdditionalFieldType("EMAIL", "Email");
+    public static final PaymentInfoAdditionalFieldType ACCOUNT_CREDIT_NUM = new PaymentInfoAdditionalFieldType("ACCOUNT_CREDIT_NUM", "Account Credit Number");
 
     public static PaymentInfoAdditionalFieldType getInstance(final String type) {
         return TYPES.get(type);
