@@ -325,18 +325,17 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param request
      * @param response
      * @param model
-     * @param basicPaymentInfoForm
+     * @param billingInfoForm
      * @return the return path
      * @throws ServiceException 
      */
     public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
-            BasicPaymentInfoForm basicPaymentInfoForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
+            BillingInfoForm billingInfoForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
     	
-    	if (basicPaymentInfoForm.getPaymentMethod() == null || "credit_card".equals(basicPaymentInfoForm.getPaymentMethod())) {
-            BillingInfoForm billingInfoForm = (BillingInfoForm) basicPaymentInfoForm;
+    	if (billingInfoForm.getPaymentMethod() == null || "credit_card".equals(billingInfoForm.getPaymentMethod())) {
     		return completeSecureCreditCardCheckout(request, response, model, billingInfoForm, result);
     	} else {
-    		throw new IllegalArgumentException("Complete checkout called with payment Method " + basicPaymentInfoForm.getPaymentMethod() + " which has not been implemented.");
+    		throw new IllegalArgumentException("Complete checkout called with payment Method " + billingInfoForm.getPaymentMethod() + " which has not been implemented.");
     	}
     }
 

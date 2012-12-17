@@ -39,11 +39,12 @@ import java.io.Serializable;
  * @author Elbert Bautista (elbertbautista)
  * @author Brian Polster (bpolster)
  */
-public class BillingInfoForm extends BasicPaymentInfoForm {
+public class BillingInfoForm implements Serializable {
 	
 	private static final long serialVersionUID = 7408792703984771616L;
 	
 	private Address address = new AddressImpl();
+    private String paymentMethod;
     private String creditCardName;
     private String creditCardNumber;
     private String creditCardCvvCode;
@@ -51,6 +52,14 @@ public class BillingInfoForm extends BasicPaymentInfoForm {
     private String creditCardExpYear;
     private String selectedCreditCardType;
     private boolean useShippingAddress;
+
+    public String getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
 
 	public Address getAddress() {
         return address;
