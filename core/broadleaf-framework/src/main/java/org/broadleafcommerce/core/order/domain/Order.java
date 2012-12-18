@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -28,6 +29,8 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
+import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.io.Serializable;
@@ -41,17 +44,33 @@ public interface Order extends Serializable {
 
     public void setId(Long id);
 
+    /**
+     * Gets the name of the order, mainly in order to support wishlists.
+     * 
+     * @return the name of the order
+     */
     public String getName();
 
+    /**
+     * Sets the name of the order in the context of a wishlist. In this fashion, a {@link Customer} can have multiple
+     * wishlists like "Christmas" or "Gaming Computer" etc.
+     * 
+     * @param name
+     */
     public void setName(String name);
 
+    /**
+     * Gets the auditable associated with this Order instance which tracks changes made to this Order (creation/update)
+     * 
+     * @return
+     */
     public Auditable getAuditable();
 
     public void setAuditable(Auditable auditable);
 
     /**
      * Returns the subtotal price for the order.  The subtotal price is the price of all order items
-     * with item offers applied.  The subtotal does not take into account the order offers or any
+     * with item offers applied.  The subtotal does not take into account the order promotions, shipping costs or any
      * taxes that apply to this order.
      *
      * @return the total item price with offers applied
@@ -67,40 +86,131 @@ public interface Order extends Serializable {
      */
     public void setSubTotal(Money subTotal);
 
+    /**
+     * Assigns a final price to all the order items
+     */
     public void assignOrderItemsFinalPrice();
 
+    /**
+     * Gets the sum total of all of the {@link OrderItem}s included in this Order while taking into accoun their quantity.
+     * Note that this will include all fees and promotions for each {@link OrderItem}.
+     * 
+     * @param includeNonTaxableItems - whether or not to use {@link OrderItem#getTaxablePrice()} or {@link OrderItem#getPrice()
+     * @return
+     */
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems);
 
+    /**
+     * The grand total of this {@link Order} which includes all shipping costs and taxes, as well as any adjustments from
+     * promotions.
+     * 
+     * @return the grand total price of this {@link Order}
+     */
     public Money getTotal();
 
-    public Money getRemainingTotal();
-
+    /**
+     * Used in {@link TotalActivity} to set the grand total of this {@link Order}. This includes the prices of all of the
+     * {@link OrderItem}s as well as any taxes, fees, shipping and adjustments for all 3.
+     * 
+     * @param orderTotal the total cost of this {@link Order}
+     */
     public void setTotal(Money orderTotal);
 
+    /**
+     * Convenience method for determining how much is left on the Order based on the payments that have already been
+     * applied. This takes {@link #getTotal()} and subtracts the sum of all the {@link PaymentInfo}s associated with this
+     * Order.  Note that if an order has been fully paid for, this method will return zero.
+     * 
+     * @return {@link #getTotal()} minus the {@link PaymentInfo#getAmount()} for each {@link PaymentInfo} on this Order
+     */
+    public Money getRemainingTotal();
+
+    /**
+     * Gets the {@link Customer} for this {@link Order}.
+     * 
+     * @return
+     */
     public Customer getCustomer();
 
+    /**
+     * Sets the associated {@link Customer} for this Order.
+     * 
+     * @param customer
+     */
     public void setCustomer(Customer customer);
 
+    /**
+     * Gets the status of the Order.
+     * 
+     * @return
+     */
     public OrderStatus getStatus();
 
+    /**
+     * Sets the status of the Order
+     * 
+     * @param status
+     */
     public void setStatus(OrderStatus status);
 
+    /**
+     * Gets all the {@link OrderItem}s included in this {@link Order}
+     * 
+     * @return
+     */
     public List<OrderItem> getOrderItems();
 
     public void setOrderItems(List<OrderItem> orderItems);
 
+    /**
+     * Adds an {@link OrderItem} to the list of {@link OrderItem}s already associated with this {@link Order}
+     * 
+     * @param orderItem the {@link OrderItem} to add to this {@link Order}
+     */
     public void addOrderItem(OrderItem orderItem);
 
+    /**
+     * Gets the {@link FulfillmentGroup}s associated with this {@link Order}. An {@link Order} can have many
+     * {@link FulfillmentGroup}s associated with it in order to support multi-address (and multi-type) shipping.
+     * 
+     * @return the {@link FulfillmentGroup}s associated with this {@link Order}
+     */
     public List<FulfillmentGroup> getFulfillmentGroups();
 
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
+    /**
+     * Sets the {@link Offer}s that could potentially apply to this {@link Order}
+     * 
+     * @param candidateOrderOffers
+     */
     public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers);
 
+    /**
+     * Gets the {@link Offer}s that could potentially apply to this {@link Order}. Used in the promotion engine.
+     * 
+     * @return
+     */
     public List<CandidateOrderOffer> getCandidateOrderOffers();
 
+    /**
+     * Gets the date that this {@link Order} was submitted.  Note that if this date is non-null, then the following should
+     * also be true:
+     *  <ul>
+     *      <li>{@link #getStatus()} should return {@link OrderStatus#SUBMITTED}</li>
+     *      <li>{@link #getOrderNumber()} should return a non-null value</li>
+     *  </ul>
+     *  
+     * @return
+     */
     public Date getSubmitDate();
 
+    /**
+     * Set the date that this {@link Order} was submitted. Used in the blCheckoutWorkflow as the last step after everything
+     * else has been completed (payments charged, integration systems notified, etc).
+     * 
+     * @param submitDate the date that this {@link Order} was submitted.
+     */
     public void setSubmitDate(Date submitDate);
 
     /**
@@ -119,14 +229,45 @@ public interface Order extends Serializable {
      */
     public void setTotalTax(Money totalTax);
 
+    /**
+     * Gets the total shipping that should be charged for this {@link Order}. This value should be equivalent to the
+     * summation of {@link FulfillmentGroup#getTotal()} for each {@link FulfillmentGroup} associated with this {@link Order}
+     * 
+     * @return the total shipping cost of this {@link Order}
+     */
     public Money getTotalShipping();
 
+    /**
+     * Set the total shipping cost of this {@link Order}. Used in the {@link FulfillmentGroupPricingActivity} after the cost
+     * of each {@link FulfillmentGroup} has been calculated.
+     * 
+     * @param totalShipping
+     */
     public void setTotalShipping(Money totalShipping);
 
+    /**
+     * Gets all the {@link PaymentInfo}s associated with this {@link Order}. An {@link Order} can have many
+     * {@link PaymentInfo}s associated with it to support things like paying with multiple cards or perhaps paying some of
+     * this {@link Order} with a gift card and some with a credit card.
+     * 
+     * @return the {@link PaymentInfo}s associated with this {@link Order}.
+     */
     public List<PaymentInfo> getPaymentInfos();
 
+    /**
+     * Sets the various payment types associated with this {@link Order}
+     * 
+     * @param paymentInfos
+     */
     public void setPaymentInfos(List<PaymentInfo> paymentInfos);
 
+    /**
+     * Determines if this {@link Order} has an item in the given category.
+     * 
+     * @param categoryName the {@link Category#getName} to check
+     * @return <b>true</b> if at least one {@link OrderItem} is in the given category, <b>false</b> otherwise.
+     * @see {@link OrderItem#isInCategory(String)}
+     */
     public boolean hasCategoryItem(String categoryName);
 
     /**
@@ -137,11 +278,19 @@ public interface Order extends Serializable {
      */
     public List<OrderAdjustment> getOrderAdjustments();
 
+    /**
+     * Returns all of the {@link OrderItem}s in this {@link Order} that are an instanceof {@link DiscreteOrderItem}. This
+     * will also go into each {@link BundleOrderItem} (if there are any) and return all of the
+     * {@link BundleOrderItem#getDiscreteOrderItems()} from each of those as well.
+     * 
+     * @return
+     */
     public List<DiscreteOrderItem> getDiscreteOrderItems();
     
     /**
      * Checks the DiscreteOrderItems in the cart and returns whether or not the given SKU was found.
-     * The equality of the SKUs is based on the .equals() method in SkuImpl
+     * The equality of the SKUs is based on the .equals() method in SkuImpl. This includes checking the
+     * {@link DiscreteOrderItem}s from {link {@link BundleOrderItem#getDiscreteOrderItems()}
      * 
      * @param sku The sku to check for
      * @return whether or not the given SKU exists in the cart
@@ -152,8 +301,19 @@ public interface Order extends Serializable {
 
     public String getFulfillmentStatus();
 
+    /**
+     * The unique number associated with this {@link Order}. Generally preferred to use instead of just using {@link #getId()}
+     * since that exposes unwanted information about your database.
+     * 
+     * @return the unique order number for this {@link Order}
+     */
     public String getOrderNumber();
 
+    /**
+     * Set the unique order number for this {@link Order}
+     * 
+     * @param orderNumber
+     */
     public void setOrderNumber(String orderNumber);
 
     public String getEmailAddress();
@@ -190,6 +350,12 @@ public interface Order extends Serializable {
      */
     public Money getTotalAdjustmentsValue();
 
+    /**
+     * Updates all of the prices of the {@link OrderItem}s in this {@link Order}
+     * @return <b>true</b> if at least 1 {@link OrderItem} returned true from {@link OrderItem#updatePrices}, <b>false</b>
+     * otherwise.
+     * @see {@link OrderItem#updatePrices()}
+     */
 	public boolean updatePrices();
 	
 	public Money getFulfillmentGroupAdjustmentsValue();
@@ -220,13 +386,24 @@ public interface Order extends Serializable {
      */
     public int getItemCount();
 
-    BroadleafCurrency getCurrency();
+    /**
+     * The currency that the {@link Order} is priced in. Note that this is only on {@link Order} since all of the other
+     * entities that are related (like {@link FulfillmentGroup} and {@link OrderItem} have a link back to here. This also
+     * has the side effect that an {@link Order} can only be priced in a single currency.
+     * 
+     * @return
+     */
+    public BroadleafCurrency getCurrency();
 
-    void setCurrency(BroadleafCurrency currency);
+    /**
+     * Set the currency that the {@link Order} is priced in.
+     * 
+     * @param currency
+     */
+    public void setCurrency(BroadleafCurrency currency);
 
     public Locale getLocale();
 
     public void setLocale(Locale locale);
-
 
 }

@@ -38,20 +38,60 @@ public interface OrderItem extends Serializable {
 
     public void setOrder(Order order);
 
+    /**
+     * The retail price of the item that was added to the {@link Order} at the time that this was added. This is preferable
+     * to use as opposed to checking the price of the item that was added from the catalog domain (like in
+     * {@link DiscreteOrderItem}, using {@link DiscreteOrderItem#getSku()}'s retail price) since the price in the catalog
+     * domain could have changed since the item was added to the {@link Order}.
+     * 
+     * @return
+     */
     public Money getRetailPrice();
 
+    /**
+     * Sets the retail price of the item at the time that it is added to the {@link Order}
+     * 
+     * @param retailPrice
+     */
     public void setRetailPrice(Money retailPrice);
 
+    /**
+     * 
+     * @return
+     */
     public Money getSalePrice();
 
     public void setSalePrice(Money salePrice);
 
+    /**
+     * Summation of all of the adjustments associated with this {@link OrderItem}
+     * 
+     * @return
+     */
     public Money getAdjustmentValue();
 
+    /**
+     * The final price associated with this {@link OrderItem}. Note that this takes into account all of the taxes, fees and
+     * promotions that are applied on this {@link OrderItem}. This will also use {@link #getSalePrice()} as a base rather
+     * than {@link #getRetailPrice()} when {@link #getIsOnSale()} is true.
+     * 
+     * @return
+     */
     public Money getPrice();
 
+    /**
+     * Sets the price of this {@link OrderItem} while taking into account all taxes, fees, promotions and whether or not the
+     * item is on sale.
+     * 
+     * @param price
+     */
     public void setPrice(Money price);
 
+    /**
+     * The quantity of this {@link OrderItem}.
+     * 
+     * @return
+     */
     public int getQuantity();
 
     public void setQuantity(int quantity);
@@ -89,10 +129,24 @@ public interface OrderItem extends Serializable {
 
     public Money getTaxablePrice();
 
+    /**
+     * Default implementation uses {@link #getSalePrice()} &lt; {@link #getRetailPrice()}
+     * 
+     * @return
+     */
     public boolean getIsOnSale();
 
+    /**
+     * Whethe or not this 
+     * @return
+     */
     public boolean getIsDiscounted();
 
+    /**
+     * Post-condition should be that {@link #getPrice()} should be the most up-to-date.
+     * 
+     * @return
+     */
 	public boolean updatePrices();
 	
 	public String getName();
