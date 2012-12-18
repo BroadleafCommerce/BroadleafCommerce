@@ -27,6 +27,15 @@ public class DateUtilTest_ActiveDateRange extends TestCase {
     Assert.assertEquals(expected, actual);
   }
   
+  public void testDateRangeWithTodayStartDateAndCurrentTime_ExpectInactive(){
+    Date startDate = new Date();
+    Date endDate = null;
+    boolean includeTime = false;
+    boolean actual = DateUtil.isActive(startDate, endDate, includeTime);
+    boolean expected = false;
+    Assert.assertEquals(expected, actual);
+  }
+  
   public void testDateRangeWithFutureStartDate_ExpectInactive(){
     Date startDate = dateInGregorianCalendar(2012, 11, 31);
     Date endDate = null;
@@ -39,6 +48,24 @@ public class DateUtilTest_ActiveDateRange extends TestCase {
   public void testDateRangeWithNullEndDate_ExpectActive(){
     Date startDate = dateInGregorianCalendar(2012, 9, 31);
     Date endDate = null;
+    boolean includeTime = false;
+    boolean actual = DateUtil.isActive(startDate, endDate, includeTime);
+    boolean expected = true;
+    Assert.assertEquals(expected, actual);
+  }
+  
+  public void testDateRangeWithPastEndDate_ExpectInactive(){
+    Date startDate = dateInGregorianCalendar(2012, 8, 31);
+    Date endDate = dateInGregorianCalendar(2012, 9, 31);
+    boolean includeTime = false;
+    boolean actual = DateUtil.isActive(startDate, endDate, includeTime);
+    boolean expected = false;
+    Assert.assertEquals(expected, actual);
+  }
+  
+  public void testDateRangeWithTodayEndDateAndCurrentTime_ExpectActive(){
+    Date startDate = dateInGregorianCalendar(2012, 9, 31);
+    Date endDate = new Date();
     boolean includeTime = false;
     boolean actual = DateUtil.isActive(startDate, endDate, includeTime);
     boolean expected = true;
