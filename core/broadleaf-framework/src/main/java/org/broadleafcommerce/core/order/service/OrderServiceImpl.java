@@ -479,6 +479,28 @@ public class OrderServiceImpl implements OrderService {
             paymentInfoDao.delete(paymentInfo);
         }
     }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo){
+        PaymentInfo paymentInfoToRemove = null;
+        for(PaymentInfo info : order.getPaymentInfos()){
+            if(paymentInfo.equals(info)){
+                paymentInfoToRemove = info;
+            }
+        }
+        if(paymentInfoToRemove != null){
+            try {
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfoToRemove.getReferenceNumber(), paymentInfo.getType());
+            } catch (WorkflowException e) {
+                // do nothing--this is an acceptable condition
+                LOG.debug("No secure payment is associated with the PaymentInfo", e);
+            }
+            order.getPaymentInfos().remove(paymentInfoToRemove);
+            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfoToRemove.getId());
+            paymentInfoDao.delete(paymentInfo);
+        }
+    }
 	
 	/**
 	 * This method will return the exception that is immediately below the deepest 
