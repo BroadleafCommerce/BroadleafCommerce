@@ -31,6 +31,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -69,6 +70,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     @Resource(name="blMergedDataSources")
     protected Map<String, DataSource> mergedDataSources;
+    
+    @Resource(name="blMergedClassTransformers")
+    protected Set<String> mergedClassTransformers;
 
     @PostConstruct
     public void configureMergedItems() {
@@ -90,6 +94,14 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
         if (!mergedDataSources.isEmpty()) {
             setDataSources(mergedDataSources);
+        }
+    }
+    
+    @PostConstruct
+    public void configureClassTransformers() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        for (String transformerClass : mergedClassTransformers) {
+            BroadleafClassTransformer transformer = (BroadleafClassTransformer)Class.forName(transformerClass).newInstance();
+            classTransformers.add(transformer);
         }
     }
 
