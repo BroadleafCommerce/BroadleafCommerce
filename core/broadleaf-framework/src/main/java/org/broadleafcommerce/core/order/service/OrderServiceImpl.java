@@ -485,7 +485,7 @@ public class OrderServiceImpl implements OrderService {
     public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo){
         PaymentInfo paymentInfoToRemove = null;
         for(PaymentInfo info : order.getPaymentInfos()){
-            if(paymentInfo.equals(info)){
+            if(info.equals(paymentInfo)){
                 paymentInfoToRemove = info;
             }
         }
