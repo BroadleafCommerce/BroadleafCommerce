@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -75,13 +76,15 @@ public class AddressImpl implements Address {
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
-    @AdminPresentation(friendlyName = "AddressImpl_State", order=9, group = "AddressImpl_Address", excluded = true)
+    @AdminPresentation(friendlyName = "AddressImpl_State", order=9, group = "AddressImpl_Address")
+    @AdminPresentationToOneLookup()
     protected State state;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
-    @AdminPresentation(friendlyName = "AddressImpl_Country", order=12, group = "AddressImpl_Address", excluded = true)
+    @AdminPresentation(friendlyName = "AddressImpl_Country", order=12, group = "AddressImpl_Address")
+    @AdminPresentationToOneLookup()
     protected Country country;
     
     /**

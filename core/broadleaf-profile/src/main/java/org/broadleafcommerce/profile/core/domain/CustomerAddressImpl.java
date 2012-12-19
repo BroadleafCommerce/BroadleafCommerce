@@ -50,10 +50,6 @@ import org.hibernate.annotations.Index;
     value = {
         @AdminPresentationOverride(name="address.firstName", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="address.lastName", value=@AdminPresentation(excluded = true))
-    },
-    toOneLookups = {
-        @AdminPresentationToOneLookupOverride(name="address.state", value=@AdminPresentationToOneLookup(lookupParentDataSourceName = "customerAddressesDS")),
-        @AdminPresentationToOneLookupOverride(name="address.country", value=@AdminPresentationToOneLookup(lookupParentDataSourceName = "customerAddressesDS"))
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)

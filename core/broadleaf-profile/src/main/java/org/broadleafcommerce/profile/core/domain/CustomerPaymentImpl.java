@@ -38,12 +38,6 @@ import java.util.Map;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(columnNames = {"CUSTOMER_ID", "PAYMENT_TOKEN"}))
-@AdminPresentationOverrides(
-        toOneLookups = {
-                @AdminPresentationToOneLookupOverride(name="billingAddress.state", value=@AdminPresentationToOneLookup(lookupParentDataSourceName = "customerPaymentsDS")),
-                @AdminPresentationToOneLookupOverride(name="billingAddress.country", value=@AdminPresentationToOneLookup(lookupParentDataSourceName = "customerPaymentsDS"))
-        }
-)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerPaymentImpl implements CustomerPayment {
 
