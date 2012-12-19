@@ -25,12 +25,17 @@ import org.broadleafcommerce.core.payment.service.PaymentService;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class PaymentActivity extends BaseActivity {
+
+    public static final String ROLLBACK_PAYMENTCONTEXT = "rollback_paymentcontext";
+    public static final String ROLLBACK_RESPONSEITEM = "rollback_responseitem";
+    public static final String ROLLBACK_ACTIONTYPE = "rollback_actiontype";
 
     protected PaymentService paymentService;
     protected String userName;
@@ -108,6 +113,19 @@ public class PaymentActivity extends BaseActivity {
                         referenced.setReferenceNumber(info.getReferenceNumber());
                         replaceItems.put(info, referenced);
                         throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
+                    }
+                    if (getRollbackHandler() != null) {
+                        Map<String, Object> myState;
+                        if (getStateConfiguration() != null) {
+                            myState = getStateConfiguration();
+                        } else {
+                            myState = new HashMap<String, Object>();
+                        }
+                        myState.put(ROLLBACK_ACTIONTYPE, seed.getActionType());
+                        myState.put(ROLLBACK_PAYMENTCONTEXT, paymentContext);
+                        myState.put(ROLLBACK_RESPONSEITEM, paymentResponseItem);
+
+                        ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), myState);
                     }
                     if (paymentResponseItem != null) {
                         //validate payment response item
