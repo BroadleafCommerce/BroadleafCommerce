@@ -112,15 +112,6 @@ public class NullOrderImpl implements Order {
 	}
 
     @Override
-    public Money getUnpaidTotal() {
-        return null;
-    }
-
-    @Override
-    public void setUnpaidTotal(Money unpaidTotal) {
-    }
-
-    @Override
 	public Customer getCustomer() {
 		return null;
 	}
