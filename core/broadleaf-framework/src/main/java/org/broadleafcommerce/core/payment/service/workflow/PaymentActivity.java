@@ -165,7 +165,7 @@ public class PaymentActivity extends BaseActivity {
         this.userName = userName;
     }
 
-    public boolean isAutomaticallyRegisterRollbackHandlerForPayment() {
+    public boolean getAutomaticallyRegisterRollbackHandlerForPayment() {
         return automaticallyRegisterRollbackHandlerForPayment;
     }
 
