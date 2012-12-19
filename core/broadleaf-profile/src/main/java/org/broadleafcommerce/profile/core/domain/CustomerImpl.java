@@ -38,10 +38,7 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
@@ -133,6 +130,25 @@ public class CustomerImpl implements Customer {
     @BatchSize(size = 10)
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Group_Memberships", group = "CustomerImpl_Customer")
     protected List<GroupMembership> groupMemberships = new ArrayList<GroupMembership>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Addresses", dataSourceName = "customerAddressesDS")
+    protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Phones", dataSourceName = "customerPhonesDS")
+    protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Payments", dataSourceName = "customerPaymentsDS")
+    protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
 
     @Transient
     protected String unencodedPassword;
@@ -375,7 +391,47 @@ public class CustomerImpl implements Customer {
 		this.deactivated = Boolean.valueOf(deactivated);
 	}
 
-	@Override
+    @Override
+    public List<GroupMembership> getGroupMemberships() {
+        return groupMemberships;
+    }
+
+    @Override
+    public void setGroupMemberships(List<GroupMembership> groupMemberships) {
+        this.groupMemberships = groupMemberships;
+    }
+
+    @Override
+    public List<CustomerAddress> getCustomerAddresses() {
+        return customerAddresses;
+    }
+
+    @Override
+    public void setCustomerAddresses(List<CustomerAddress> customerAddresses) {
+        this.customerAddresses = customerAddresses;
+    }
+
+    @Override
+    public List<CustomerPhone> getCustomerPhones() {
+        return customerPhones;
+    }
+
+    @Override
+    public void setCustomerPhones(List<CustomerPhone> customerPhones) {
+        this.customerPhones = customerPhones;
+    }
+
+    @Override
+    public List<CustomerPayment> getCustomerPayments() {
+        return customerPayments;
+    }
+
+    @Override
+    public void setCustomerPayments(List<CustomerPayment> customerPayments) {
+        this.customerPayments = customerPayments;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -403,21 +459,10 @@ public class CustomerImpl implements Customer {
     }
 
     @Override
-    public List<GroupMembership> getGroupMemberships() {
-        return groupMemberships;
-    }
-
-    @Override
-    public void setGroupMemberships(List<GroupMembership> groupMemberships) {
-        this.groupMemberships = groupMemberships;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
-
 }

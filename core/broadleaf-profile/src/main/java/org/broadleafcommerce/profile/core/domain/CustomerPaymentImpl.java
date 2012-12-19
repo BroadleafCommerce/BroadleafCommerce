@@ -18,8 +18,12 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationToOneLookupOverride;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -34,6 +38,12 @@ import java.util.Map;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(columnNames = {"CUSTOMER_ID", "PAYMENT_TOKEN"}))
+@AdminPresentationOverrides(
+        toOneLookups = {
+                @AdminPresentationToOneLookupOverride(name="billingAddress.state", value=@AdminPresentationToOneLookup(lookupParentDataSourceName = "customerPaymentsDS")),
+                @AdminPresentationToOneLookupOverride(name="billingAddress.country", value=@AdminPresentationToOneLookup(lookupParentDataSourceName = "customerPaymentsDS"))
+        }
+)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerPaymentImpl implements CustomerPayment {
 
