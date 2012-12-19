@@ -97,7 +97,25 @@ public interface Activity extends BeanNameAware{
      * Set any user-defined state that should accompany the RollbackHandler. This configuration will be passed to
      * the RollbackHandler implementation at runtime.
      *
-     * @param stateConfiguration any user-defined state configuratio necessary for the execution of the RollbackHandler
+     * @param stateConfiguration any user-defined state configuration necessary for the execution of the RollbackHandler
      */
     public void setStateConfiguration(Map<String, Object> stateConfiguration);
+
+    /**
+     * Whether or not this activity should automatically register a configured RollbackHandler with the ActivityStateManager.
+     * It is useful to adjust this value if you plan on using the ActivityStateManager API to register RollbackHandlers
+     * explicitly in your code. The default value is true.
+     *
+     * @return Whether or not to automatically register a RollbackHandler with the ActivityStateManager
+     */
+    public boolean getAutomaticallyRegisterRollbackHandler();
+
+    /**
+     * Whether or not this activity should automatically register a configured RollbackHandler with the ActivityStateManager.
+     * It is useful to adjust this value if you plan on using the ActivityStateManager API to register RollbackHandlers
+     * explicitly in your code. The default value is true.
+     *
+     * @param automaticallyRegisterRollbackHandler Whether or not to automatically register a RollbackHandler with the ActivityStateManager
+     */
+    public void setAutomaticallyRegisterRollbackHandler(boolean automaticallyRegisterRollbackHandler);
 }

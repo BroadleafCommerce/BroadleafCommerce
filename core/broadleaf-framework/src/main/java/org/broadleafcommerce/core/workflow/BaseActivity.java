@@ -28,6 +28,7 @@ public abstract class BaseActivity implements Activity {
     private RollbackHandler rollbackHandler;
     private String rollbackRegion;
     private Map<String, Object> stateConfiguration;
+    private boolean automaticallyRegisterRollbackHandler = true;
 
     @Override
     public ErrorHandler getErrorHandler() {
@@ -77,5 +78,15 @@ public abstract class BaseActivity implements Activity {
     @Override
     public void setStateConfiguration(Map<String, Object> stateConfiguration) {
         this.stateConfiguration = stateConfiguration;
+    }
+
+    @Override
+    public boolean getAutomaticallyRegisterRollbackHandler() {
+        return automaticallyRegisterRollbackHandler;
+    }
+
+    @Override
+    public void setAutomaticallyRegisterRollbackHandler(boolean automaticallyRegisterRollbackHandler) {
+        this.automaticallyRegisterRollbackHandler = automaticallyRegisterRollbackHandler;
     }
 }

@@ -40,9 +40,13 @@ public class PaymentActivity extends BaseActivity {
     protected PaymentService paymentService;
     protected String userName;
 
+    public PaymentActivity() {
+        setAutomaticallyRegisterRollbackHandler(false);
+    }
+
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
-     */
+         * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
+         */
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CombinedPaymentContextSeed seed = ((WorkflowPaymentContext) context).getSeedData();

@@ -95,7 +95,7 @@ public class SequenceProcessor extends BaseProcessor {
                 }
 
                 //register the RollbackHandler
-                if (activity.getRollbackHandler() != null) {
+                if (activity.getRollbackHandler() != null && activity.getAutomaticallyRegisterRollbackHandler()) {
                     ActivityStateManagerImpl.getStateManager().registerState(activity, context, activity.getRollbackRegion(), activity.getRollbackHandler(), activity.getStateConfiguration());
                 }
             }
