@@ -39,6 +39,7 @@ public class PaymentActivity extends BaseActivity {
 
     protected PaymentService paymentService;
     protected String userName;
+    protected boolean automaticallyRegisterRollbackHandlerForPayment = true;
 
     public PaymentActivity() {
         setAutomaticallyRegisterRollbackHandler(false);
@@ -118,7 +119,7 @@ public class PaymentActivity extends BaseActivity {
                         replaceItems.put(info, referenced);
                         throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
                     }
-                    if (getRollbackHandler() != null) {
+                    if (getRollbackHandler() != null && automaticallyRegisterRollbackHandlerForPayment) {
                         Map<String, Object> myState;
                         if (getStateConfiguration() != null) {
                             myState = getStateConfiguration();
@@ -164,4 +165,11 @@ public class PaymentActivity extends BaseActivity {
         this.userName = userName;
     }
 
+    public boolean isAutomaticallyRegisterRollbackHandlerForPayment() {
+        return automaticallyRegisterRollbackHandlerForPayment;
+    }
+
+    public void setAutomaticallyRegisterRollbackHandlerForPayment(boolean automaticallyRegisterRollbackHandlerForPayment) {
+        this.automaticallyRegisterRollbackHandlerForPayment = automaticallyRegisterRollbackHandlerForPayment;
+    }
 }
