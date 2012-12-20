@@ -169,7 +169,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     public PersistentClass getPersistentClass(String targetClassName) {
 		return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
 	 */
@@ -187,48 +187,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                         entities.add(mappedClass);
                     }
                 }
-                /*
-                 * Sort entities with the most derived appearing first
-                 */
-                Class<?>[] sortedEntities = new Class<?>[entities.size()];
-                List<Class<?>> stageItems = new ArrayList<Class<?>>();
-                stageItems.add(ceilingClass);
-                int j = 0;
-                while (j < sortedEntities.length) {
-                    List<Class<?>> newStageItems = new ArrayList<Class<?>>();
-                    boolean topLevelClassFound = false;
-                    for (Class<?> stageItem : stageItems) {
-                        Iterator<Class<?>> itr = entities.iterator();
-                        while(itr.hasNext()) {
-                            Class<?> entity = itr.next();
-                            checkitem: {
-                                if (ArrayUtils.contains(entity.getInterfaces(), stageItem) || entity.equals(stageItem)) {
-                                    topLevelClassFound = true;
-                                    break checkitem;
-                                }
-                                
-                                if (topLevelClassFound) {
-                                    continue;
-                                }
-                                
-                                if (entity.getSuperclass().equals(stageItem)) {
-                                    break checkitem;
-                                }
-                                
-                                continue;
-                            }
-                            sortedEntities[j] = entity;
-                            itr.remove();
-                            j++;
-                            newStageItems.add(entity);
-                        }
-                    }
-                    if (newStageItems.isEmpty()) {
-                        throw new IllegalArgumentException("There was a gap in the inheritance hierarchy for (" + ceilingClass.getName() + ")");
-                    }
-                    stageItems = newStageItems;
-                }
-                ArrayUtils.reverse(sortedEntities);
+                Class<?>[] sortedEntities = sortEntities(ceilingClass, entities);
+
                 cache = sortedEntities;
                 POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, sortedEntities);
             }
@@ -236,6 +196,52 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
         return cache;
 	}
+
+    public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities) {
+        /*
+         * Sort entities with the most derived appearing first
+         */
+        Class<?>[] sortedEntities = new Class<?>[entities.size()];
+        List<Class<?>> stageItems = new ArrayList<Class<?>>();
+        stageItems.add(ceilingClass);
+        int j = 0;
+        while (j < sortedEntities.length) {
+            List<Class<?>> newStageItems = new ArrayList<Class<?>>();
+            boolean topLevelClassFound = false;
+            for (Class<?> stageItem : stageItems) {
+                Iterator<Class<?>> itr = entities.iterator();
+                while(itr.hasNext()) {
+                    Class<?> entity = itr.next();
+                    checkitem: {
+                        if (ArrayUtils.contains(entity.getInterfaces(), stageItem) || entity.equals(stageItem)) {
+                            topLevelClassFound = true;
+                            break checkitem;
+                        }
+
+                        if (topLevelClassFound) {
+                            continue;
+                        }
+
+                        if (entity.getSuperclass().equals(stageItem) && j > 0) {
+                            break checkitem;
+                        }
+
+                        continue;
+                    }
+                    sortedEntities[j] = entity;
+                    itr.remove();
+                    j++;
+                    newStageItems.add(entity);
+                }
+            }
+            if (newStageItems.isEmpty()) {
+                throw new IllegalArgumentException("There was a gap in the inheritance hierarchy for (" + ceilingClass.getName() + ")");
+            }
+            stageItems = newStageItems;
+        }
+        ArrayUtils.reverse(sortedEntities);
+        return sortedEntities;
+    }
 
     protected void addClassToTree(Class<?> clazz, ClassTree tree) {
         Class<?> testClass;

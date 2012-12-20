@@ -16,14 +16,22 @@
 
 package org.broadleafcommerce.core.order.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+import org.broadleafcommerce.core.order.domain.Order;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.common.BroadleafEnumerationType;
-
 /**
  * An extendible enumeration of order status types.
+ * 
+ * <ul>
+ *  <li><b>NAMED</b> - Represents a  wishlist</li>
+ *  <li><b>IN_PROCESS</b> - Represents a cart (non-submitted {@link Order}s)</li>
+ *  <li><b>SUBMITTED</b> - Used to represent a completed {@link Order}. Note that this also means that the {@link Order}
+ *  should have its {@link Order#getOrderNumber} set</li>
+ * </ul>
  * 
  * @author jfischer
  */
@@ -54,13 +62,11 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
-    @Override
-	public String getType() {
+    public String getType() {
         return type;
     }
 
-    @Override
-	public String getFriendlyType() {
+    public String getFriendlyType() {
 		return friendlyType;
 	}
 

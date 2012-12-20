@@ -259,9 +259,6 @@ public class OrderImpl implements Order {
         return calculatedSubTotal;
     }
 
-    /**
-     * Assigns a final price to all the order items
-     */
     @Override
     public void assignOrderItemsFinalPrice() {
         for (OrderItem orderItem : orderItems) {
