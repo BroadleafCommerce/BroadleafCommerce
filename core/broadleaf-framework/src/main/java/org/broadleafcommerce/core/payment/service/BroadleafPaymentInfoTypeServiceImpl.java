@@ -45,11 +45,6 @@ public class BroadleafPaymentInfoTypeServiceImpl implements BroadleafPaymentInfo
                 payments.put(paymentInfo, referenceInfo);
             }
 
-            if(PaymentInfoType.ACCOUNT_CREDIT.equals(paymentInfo.getType())){
-                Referenced referenceInfo = createAccountCreditReferenceInfo(paymentInfo);
-                payments.put(paymentInfo, referenceInfo);
-            }
-
             if(PaymentInfoType.BANK_ACCOUNT.equals(paymentInfo.getType())){
                 Referenced referenceInfo = createBankAccountReferenceInfo(paymentInfo);
                 payments.put(paymentInfo, referenceInfo);
@@ -100,12 +95,6 @@ public class BroadleafPaymentInfoTypeServiceImpl implements BroadleafPaymentInfo
     }
 
     public Referenced createAccountReferenceInfo(PaymentInfo paymentInfo){
-        Referenced blankReference = new EmptyReferenced();
-        blankReference.setReferenceNumber(paymentInfo.getReferenceNumber());
-        return blankReference;
-    }
-
-    public Referenced createAccountCreditReferenceInfo(PaymentInfo paymentInfo){
         Referenced blankReference = new EmptyReferenced();
         blankReference.setReferenceNumber(paymentInfo.getReferenceNumber());
         return blankReference;
