@@ -1,5 +1,6 @@
 package org.broadleafcommerce.common.logging;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,6 +30,14 @@ public class SupportLogger extends Logger {
             return;
         if (SupportLevel.SUPPORT.isGreaterOrEqual(this.getEffectiveLevel())) {
             forcedLog(FQCN, SupportLevel.SUPPORT, moduleName + " - " + message, t);
+        }
+    }
+
+    public void lifecycle(LifeCycleEvent lifeCycleEvent, Object message) {
+        if (repository.isDisabled(SupportLevel.SUPPORT_INT))
+            return;
+        if (SupportLevel.SUPPORT.isGreaterOrEqual(this.getEffectiveLevel())) {
+            forcedLog(FQCN, SupportLevel.SUPPORT, moduleName + " - " + lifeCycleEvent.toString() + (!StringUtils.isEmpty(message.toString())?" - " + message:""), null);
         }
     }
 }
