@@ -80,17 +80,59 @@ public interface Address extends Serializable {
 
     public void setLastName(String lastName);
 
+    /**
+     * @deprecated Should use {@link #getPhonePrimary()} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public String getPrimaryPhone();
 
+    /**
+     * @deprecated Should use {@link #setPhonePrimary(Phone)} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public void setPrimaryPhone(String primaryPhone);
 
+    /**
+     * @deprecated Should use {@link #getPhoneSecondary()} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public String getSecondaryPhone();
 
+    /**
+     * @deprecated Should use {@link #setPhoneSecondary(Phone)} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public void setSecondaryPhone(String secondaryPhone);
-    
+
+    /**
+     * @deprecated Should use {@link #getPhoneFax()} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public String getFax();
-    
+
+    /**
+     * @deprecated Should use {@link #setPhoneFax(Phone)} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public void setFax(String fax);
+
+    public Phone getPhonePrimary();
+
+    public void setPhonePrimary(Phone phonePrimary);
+
+    public Phone getPhoneSecondary();
+
+    public void setPhoneSecondary(Phone phoneSecondary);
+    
+    public Phone getPhoneFax();
+
+    public void setPhoneFax(Phone phone);
 
     public String getEmailAddress();
 
