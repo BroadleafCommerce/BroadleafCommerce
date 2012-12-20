@@ -397,7 +397,15 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             initializeOrderForCheckout(cart);
 
-            CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
+            CheckoutResponse checkoutResponse = null;
+            try {
+                checkoutResponse = checkoutService.performCheckout(cart, payments);
+            } catch (CheckoutException e) {
+                processFailedOrderCheckout(cart);
+                populateModelWithShippingReferenceData(request, model);
+                model.addAttribute("paymentOptionException", true);
+                return getCheckoutView();
+            }
 
             if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
                 processFailedOrderCheckout(cart);
@@ -411,6 +419,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         return getCartPageRedirect();
     }
+
 
     /**
      * This method will copy the shipping address of the first fulfillment group on the order
