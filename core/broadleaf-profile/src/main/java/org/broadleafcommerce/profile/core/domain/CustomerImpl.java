@@ -174,12 +174,16 @@ public class CustomerImpl implements Customer {
 
     @Override
     public boolean isPasswordChangeRequired() {
-        return passwordChangeRequired;
+        if (passwordChangeRequired == null) {
+            return false;
+        } else {
+            return passwordChangeRequired.booleanValue();
+        }
     }
 
     @Override
     public void setPasswordChangeRequired(boolean passwordChangeRequired) {
-        this.passwordChangeRequired = passwordChangeRequired;
+        this.passwordChangeRequired = Boolean.valueOf(passwordChangeRequired);
     }
 
     @Override
@@ -244,22 +248,30 @@ public class CustomerImpl implements Customer {
 
     @Override
     public boolean isReceiveEmail() {
-        return receiveEmail;
+        if (receiveEmail == null) {
+            return false;
+        } else {
+            return receiveEmail.booleanValue();
+        }
     }
 
     @Override
     public void setReceiveEmail(boolean receiveEmail) {
-        this.receiveEmail = receiveEmail;
+        this.receiveEmail = Boolean.valueOf(receiveEmail);
     }
 
     @Override
     public boolean isRegistered() {
-        return registered;
+        if (registered == null) {
+            return true;
+        } else {
+            return registered.booleanValue();
+        }
     }
 
     @Override
     public void setRegistered(boolean registered) {
-        this.registered = registered;
+        this.registered = Boolean.valueOf(registered);
     }
 
     @Override
