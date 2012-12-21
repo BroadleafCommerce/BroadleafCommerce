@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 
 import org.broadleafcommerce.common.util.DateUtil;
 
-public class DateUtilTest_ActiveDateRange extends TestCase {
+public class DateUtil_ActiveDateRangeTest extends TestCase {
     public void testDateRangeWithNullDates_ExpectInactive(){
         Date startDate = null;
         Date endDate = null;

@@ -9,7 +9,7 @@ import org.broadleafcommerce.common.util.DateUtil;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-public class DateUtilTest_ActiveDateTimeRange extends TestCase {
+public class DateUtil_ActiveDateTimeRangeTest extends TestCase {
     public void testDateRangeWithCurrentTime_ExpectActive(){
         Date startDate = new Date();
         Date endDate = null;
