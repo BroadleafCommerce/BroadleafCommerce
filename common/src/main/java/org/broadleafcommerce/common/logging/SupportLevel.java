@@ -3,6 +3,10 @@ package org.broadleafcommerce.common.logging;
 import org.apache.log4j.Level;
 
 /**
+ * Extend Log4J standard level implementation to add support
+ * for the SUPPORT log level. This level is used in support logging
+ * in modules.
+ *
  * @author Jeff Fischer
  */
 public class SupportLevel extends Level {
