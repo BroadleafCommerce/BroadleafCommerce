@@ -12,9 +12,39 @@ public class MoneyTest_DoubleAmountPrecisionWithRounding extends TestCase {
         Assert.assertEquals(expected, actual.getAmount());
     }
     
-    public void testCreateMoney_TwoDecimalsPrecision(){
+    public void testCreateMoney_TwoDecimalsPrecision_Case1(){
         Money actual = new Money(10.50);
         BigDecimal expected = new BigDecimal(10.50).setScale(2); 
+        Assert.assertEquals(expected, actual.getAmount());
+    }
+    
+    public void testCreateMoney_TwoDecimalsPrecision_Case2(){
+        Money actual = new Money(100.58);
+        BigDecimal expected = new BigDecimal(100.58).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+        Assert.assertEquals(expected, actual.getAmount());
+    }
+    
+    public void testCreateMoney_TwoDecimalsPrecision_Case3(){
+        Money actual = new Money(567.25);
+        BigDecimal expected = new BigDecimal(567.25).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+        Assert.assertEquals(expected, actual.getAmount());
+    }
+    
+    public void testCreateMoney_TwoDecimalsPrecision_Case4(){
+        Money actual = new Money(1200.88);
+        BigDecimal expected = new BigDecimal(1200.88).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+        Assert.assertEquals(expected, actual.getAmount());
+    }
+    
+    public void testCreateMoney_TwoDecimalsPrecision_Case5(){
+        Money actual = new Money(9980.28);
+        BigDecimal expected = new BigDecimal(9980.28).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+        Assert.assertEquals(expected, actual.getAmount());
+    }
+    
+    public void testCreateMoney_TwoDecimalsPrecision_Case6(){
+        Money actual = new Money(29980.22);
+        BigDecimal expected = new BigDecimal(29980.22).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
         Assert.assertEquals(expected, actual.getAmount());
     }
     
