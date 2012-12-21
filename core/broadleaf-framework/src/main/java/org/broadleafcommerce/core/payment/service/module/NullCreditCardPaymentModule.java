@@ -120,6 +120,8 @@ public class NullCreditCardPaymentModule extends AbstractModule {
             additionalFields.put(PaymentInfoAdditionalFieldType.EXP_YEAR.getType(), expYear+"");
             additionalFields.put(PaymentInfoAdditionalFieldType.LAST_FOUR.getType(), StringUtils.right(ccNumber, 4));
             paymentInfo.setAdditionalFields(additionalFields);
+        } else {
+            throw new PaymentException("Problem processing Credit Card.");
         }
 
         return responseItem;

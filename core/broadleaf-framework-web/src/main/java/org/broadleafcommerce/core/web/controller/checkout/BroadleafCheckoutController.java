@@ -1,3 +1,5 @@
+
+
 /*
  * Copyright 2008-2012 the original author or authors.
  *
@@ -403,20 +405,17 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             } catch (CheckoutException e) {
                 processFailedOrderCheckout(cart);
                 populateModelWithShippingReferenceData(request, model);
-                model.addAttribute("paymentOptionException", true);
+                String errorMsg = e.getRootCauseMessage();
+                if (errorMsg.contains("Credit")){
+                    result.rejectValue("creditCardNumber", "payment.exception", null, null);
+                    model.addAttribute("paymentException", true);
+                } else {
+                    model.addAttribute("paymentOptionException", true);
+                }
                 return getCheckoutView();
             }
-
-            if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
-                processFailedOrderCheckout(cart);
-                populateModelWithShippingReferenceData(request, model);
-                result.rejectValue("creditCardNumber", "payment.exception", null, null);
-                return getCheckoutView();
-            }
-
             return getConfirmationView(cart.getOrderNumber());
         }
-
         return getCartPageRedirect();
     }
 
