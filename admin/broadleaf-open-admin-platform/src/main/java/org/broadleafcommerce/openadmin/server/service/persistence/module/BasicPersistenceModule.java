@@ -823,7 +823,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (primaryKey == null) {
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
-                instance = persistenceManager.getDynamicEntityDao().persist(instance);
+                instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 List<Serializable> entityList = new ArrayList<Serializable>(1);
                 entityList.add(instance);
 
