@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * By default, this rule processor combines all of the rules from
- * {@link org.broadleafcommerce.cms.structure.domain.StructuredContent#getStructuredContentMatchRules()}
+ * {@link org.broadleafcommerce.cms.page.domain.Page#getPageMatchRules()}
  * into a single MVEL expression.
  *
  * @author bpolster.
@@ -36,7 +36,7 @@ public class PageDefaultRuleProcessor extends AbstractPageRuleProcessor {
     private static final Log LOG = LogFactory.getLog(PageDefaultRuleProcessor.class);
 
     /**
-     * Returns true if all of the rules associated with the passed in <code>StructuredContent</code>
+     * Returns true if all of the rules associated with the passed in <code>Page</code>
      * item match based on the passed in vars.
      *
      * Also returns true if no rules are present for the passed in item.
