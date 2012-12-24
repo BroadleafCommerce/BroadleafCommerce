@@ -22,11 +22,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class VelocityMessageCreator extends MessageCreator {
 
     private VelocityEngine velocityEngine;
-    private HashMap<String, Object> additionalConfigItems;
+    private Map<String, Object> additionalConfigItems;
     
     public VelocityMessageCreator(VelocityEngine velocityEngine, JavaMailSender mailSender, HashMap<String, Object> additionalConfigItems) {
     	super(mailSender);
@@ -52,12 +53,12 @@ public class VelocityMessageCreator extends MessageCreator {
 		this.velocityEngine = velocityEngine;
 	}
 
-	public HashMap<String, Object> getAdditionalConfigItems() {
+	public Map<String, Object> getAdditionalConfigItems() {
 		return additionalConfigItems;
 	}
 
 	public void setAdditionalConfigItems(
-			HashMap<String, Object> additionalConfigItems) {
+			Map<String, Object> additionalConfigItems) {
 		this.additionalConfigItems = additionalConfigItems;
 	}	
 }

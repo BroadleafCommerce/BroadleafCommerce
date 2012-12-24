@@ -524,6 +524,10 @@ Button (also used as MenuButton base style)
 .dialogBody {
   background-color: #FFFFFF;
 }
+.windowBody b label,
+.dialogBody b label {
+  font-weight: bold;
+}
 .windowHeaderText,
 .dialogHeaderText {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
