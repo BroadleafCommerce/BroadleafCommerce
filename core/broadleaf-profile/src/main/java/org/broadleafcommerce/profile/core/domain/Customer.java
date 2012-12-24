@@ -123,20 +123,6 @@ public interface Customer extends Serializable {
 	 */
 	public void setDeactivated(boolean deactivated);
 
-    /**
-     * Returns a list of the Group Memberships that the customer is a member of.
-     *
-     * @return
-     */
-    public List<GroupMembership> getGroupMemberships();
-
-    /**
-     * Set the list of the Group Memberships that the customer is a member of.
-     *
-     * @param groupMemberships
-     */
-    public void setGroupMemberships(List<GroupMembership> groupMemberships);
-
     public List<CustomerAddress> getCustomerAddresses();
 
     public void setCustomerAddresses(List<CustomerAddress> customerAddresses);

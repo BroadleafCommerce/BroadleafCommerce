@@ -124,13 +124,6 @@ public class CustomerImpl implements Customer {
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Attributes", dataSourceName = "customerAttributeDS")
     protected List<CustomerAttribute> customerAttributes  = new ArrayList<CustomerAttribute>();
 
-    @OneToMany(mappedBy = "customer", targetEntity = GroupMembershipImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 10)
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Group_Memberships", group = "CustomerImpl_Customer")
-    protected List<GroupMembership> groupMemberships = new ArrayList<GroupMembership>();
-
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
@@ -402,16 +395,6 @@ public class CustomerImpl implements Customer {
     public void setDeactivated(boolean deactivated) {
 		this.deactivated = Boolean.valueOf(deactivated);
 	}
-
-    @Override
-    public List<GroupMembership> getGroupMemberships() {
-        return groupMemberships;
-    }
-
-    @Override
-    public void setGroupMemberships(List<GroupMembership> groupMemberships) {
-        this.groupMemberships = groupMemberships;
-    }
 
     @Override
     public List<CustomerAddress> getCustomerAddresses() {
