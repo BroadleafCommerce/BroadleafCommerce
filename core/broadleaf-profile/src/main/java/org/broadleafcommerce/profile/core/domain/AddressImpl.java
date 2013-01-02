@@ -149,178 +149,222 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName = "AddressImpl_Verification_Level", order=21, group = "AddressImpl_Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected String verificationLevel;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getAddressLine1() {
         return addressLine1;
     }
 
+    @Override
     public void setAddressLine1(String addressLine1) {
         this.addressLine1 = addressLine1;
     }
 
+    @Override
     public String getAddressLine2() {
         return addressLine2;
     }
 
+    @Override
     public void setAddressLine2(String addressLine2) {
         this.addressLine2 = addressLine2;
     }
 
+    @Override
     public String getCity() {
         return city;
     }
 
+    @Override
     public void setCity(String city) {
         this.city = city;
     }
 
+    @Override
     public Country getCountry() {
         return country;
     }
 
+    @Override
     public void setCountry(Country country) {
         this.country = country;
     }
 
+    @Override
     public String getPostalCode() {
         return postalCode;
     }
 
+    @Override
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
 
+    @Override
     public String getCounty() {
         return county;
     }
 
+    @Override
     public void setCounty(String county) {
         this.county = county;
     }
 
+    @Override
     public State getState() {
         return state;
     }
 
+    @Override
     public void setState(State state) {
         this.state = state;
     }
 
+    @Override
     public String getTokenizedAddress() {
         return tokenizedAddress;
     }
 
+    @Override
     public void setTokenizedAddress(String tokenizedAddress) {
         this.tokenizedAddress = tokenizedAddress;
     }
 
+    @Override
     public Boolean getStandardized() {
         return standardized;
     }
 
+    @Override
     public void setStandardized(Boolean standardized) {
         this.standardized = standardized;
     }
 
+    @Override
     public String getZipFour() {
         return zipFour;
     }
 
+    @Override
     public void setZipFour(String zipFour) {
         this.zipFour = zipFour;
     }
 
+    @Override
     public String getCompanyName() {
         return companyName;
     }
 
+    @Override
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
     }
 
+    @Override
     public boolean isDefault() {
         return isDefault;
     }
 
+    @Override
     public void setDefault(boolean isDefault) {
         this.isDefault = isDefault;
     }
 
+    @Override
     public boolean isActive() {
         return isActive;
     }
 
+    @Override
     public void setActive(boolean isActive) {
         this.isActive = isActive;
     }
 
+    @Override
     public String getFirstName() {
         return firstName;
     }
 
+    @Override
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @Override
     public String getLastName() {
         return lastName;
     }
 
+    @Override
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    @Override
     public String getPrimaryPhone() {
         return primaryPhone;
     }
 
+    @Override
     public void setPrimaryPhone(String primaryPhone) {
         this.primaryPhone = primaryPhone;
     }
 
+    @Override
     public String getSecondaryPhone() {
         return secondaryPhone;
     }
 
+    @Override
     public void setSecondaryPhone(String secondaryPhone) {
         this.secondaryPhone = secondaryPhone;
     }
 
+    @Override
     public boolean isBusiness() {
         return isBusiness;
     }
 
+    @Override
     public void setBusiness(boolean isBusiness) {
         this.isBusiness = isBusiness;
     }
 
+    @Override
     public String getVerificationLevel() {
         return verificationLevel;
     }
 
+    @Override
     public void setVerificationLevel(String verificationLevel) {
         this.verificationLevel = verificationLevel;
     }
 
+    @Override
     public String getFax() {
         return this.fax;
     }
 
+    @Override
     public void setFax(String fax) {
         this.fax = fax;
     }
 
+    @Override
     public String getEmailAddress() {
         return this.emailAddress;
     }
 
+    @Override
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
