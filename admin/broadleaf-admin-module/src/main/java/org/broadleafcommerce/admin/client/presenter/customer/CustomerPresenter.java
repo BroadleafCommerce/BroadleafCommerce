@@ -19,7 +19,7 @@ package org.broadleafcommerce.admin.client.presenter.customer;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerAddressDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.customer.LocaleListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.locale.LocaleListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.CountryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.StateListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;

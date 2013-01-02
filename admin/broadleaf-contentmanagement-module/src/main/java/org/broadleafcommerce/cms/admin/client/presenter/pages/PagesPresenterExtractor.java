@@ -28,9 +28,9 @@ import com.smartgwt.client.widgets.form.FilterBuilder;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.presenter.structure.FilterType;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.common.presentation.client.RuleType;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
@@ -47,14 +47,14 @@ import java.util.logging.Level;
  */
 public class PagesPresenterExtractor {
 
-    private static Map<FilterType, String> MVELKEYWORDMAP = new HashMap<FilterType, String>();
+    private static Map<RuleType, String> MVELKEYWORDMAP = new HashMap<RuleType, String>();
 
     static {
-        MVELKEYWORDMAP.put(FilterType.PRODUCT, "product");
-        MVELKEYWORDMAP.put(FilterType.ORDER_ITEM, "discreteOrderItem");
-        MVELKEYWORDMAP.put(FilterType.REQUEST, "request");
-        MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
-        MVELKEYWORDMAP.put(FilterType.TIME, "time");
+        MVELKEYWORDMAP.put(RuleType.PRODUCT, "product");
+        MVELKEYWORDMAP.put(RuleType.ORDER_ITEM, "discreteOrderItem");
+        MVELKEYWORDMAP.put(RuleType.REQUEST, "request");
+        MVELKEYWORDMAP.put(RuleType.CUSTOMER, "customer");
+        MVELKEYWORDMAP.put(RuleType.TIME, "time");
     }
 
     private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
@@ -100,10 +100,10 @@ public class PagesPresenterExtractor {
         try {
             final Map<String, Object> dirtyValues = new HashMap<String, Object>();
 
-            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(FilterType.CUSTOMER));
-            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(FilterType.PRODUCT));
-            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.REQUEST), getDisplay().getRequestFilterBuilder(), MVELKEYWORDMAP.get(FilterType.REQUEST));
-            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.TIME), getDisplay().getTimeFilterBuilder(), MVELKEYWORDMAP.get(FilterType.TIME));
+            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(RuleType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(RuleType.CUSTOMER));
+            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(RuleType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(RuleType.PRODUCT));
+            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(RuleType.REQUEST), getDisplay().getRequestFilterBuilder(), MVELKEYWORDMAP.get(RuleType.REQUEST));
+            extractData(selectedRecord, dirtyValues, PagesRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(RuleType.TIME), getDisplay().getTimeFilterBuilder(), MVELKEYWORDMAP.get(RuleType.TIME));
 
             extractQualifierData(null, true, dirtyValues);
 
@@ -181,7 +181,7 @@ public class PagesPresenterExtractor {
             if (builder.getDirty()) {
                 String temper = builder.getItemQuantity().getValue().toString();
                 Integer quantity = Integer.parseInt(temper);
-                String mvel = TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(FilterType.ORDER_ITEM), builder.getItemFilterBuilder().getCriteria(), builder.getItemFilterBuilder().getDataSource());
+                String mvel = TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(RuleType.ORDER_ITEM), builder.getItemFilterBuilder().getCriteria(), builder.getItemFilterBuilder().getDataSource());
                 if (!isValidation) {
                     if (builder.getRecord() != null) {
                         setData(builder.getRecord(), "quantity", quantity, dirtyValues);

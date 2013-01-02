@@ -17,6 +17,8 @@
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
 
+
+import org.broadleafcommerce.openadmin.client.rules.RulesDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 
 import com.smartgwt.client.widgets.Button;
@@ -33,7 +35,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  * Time: 3:51 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface StructuredContentDisplay extends DynamicEditDisplay, RulesDisplayIf {
+public interface StructuredContentDisplay extends DynamicEditDisplay, RulesDisplay {
 
     public FilterBuilder getCustomerFilterBuilder();
 
