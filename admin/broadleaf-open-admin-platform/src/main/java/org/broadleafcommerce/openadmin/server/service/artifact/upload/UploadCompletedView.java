@@ -17,12 +17,12 @@
 package org.broadleafcommerce.openadmin.server.service.artifact.upload;
 
 
+import org.springframework.web.servlet.View;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStreamWriter;
 import java.util.Map;
-
-import org.springframework.web.servlet.View;
 
 /**
  * Created by jfischer
@@ -36,13 +36,13 @@ public class UploadCompletedView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
         sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">");
         sb.append("<head>");
         sb.append("<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">");
         sb.append("<META HTTP -EQUIV=\"Expires\" CONTENT=\"-1\">");
-        sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />");
+        sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
         sb.append("<meta http-equiv=\"Content- Language\" content=\"en-us\" />");
         sb.append("<meta http-equiv=\"Content-Author\" content=\"Broadleaf Commerce\" />");
         sb.append("<script type=\"text/javascript\">");
