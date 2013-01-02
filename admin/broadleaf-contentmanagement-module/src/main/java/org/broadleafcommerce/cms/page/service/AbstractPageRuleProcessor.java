@@ -87,7 +87,7 @@ public abstract class AbstractPageRuleProcessor implements PageRuleProcessor {
                 return Boolean.FALSE;
             }
 
-            exp = (Serializable) expressionCache.put(expression, exp);
+            expressionCache.put(expression, exp);
         }
         try {
             return (Boolean) MVEL.executeExpression(exp, vars);
