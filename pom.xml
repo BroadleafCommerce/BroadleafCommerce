@@ -244,13 +244,6 @@
             <!--Broadleaf libraries -->
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
-                <artifactId>broadleaf-instrument</artifactId>
-                <version>${project.version}</version>
-                <type>jar</type>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
