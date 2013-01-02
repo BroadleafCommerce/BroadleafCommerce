@@ -145,4 +145,8 @@ public interface Address extends Serializable {
     public String getVerificationLevel();
 
     public void setVerificationLevel(String verificationLevel);
+
+    public boolean isActive();
+
+    public void setActive(boolean isActive);
 }
