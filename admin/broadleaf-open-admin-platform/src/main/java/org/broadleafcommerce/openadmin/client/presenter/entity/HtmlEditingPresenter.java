@@ -59,7 +59,7 @@ public class HtmlEditingPresenter extends DynamicEntityPresenter {
         initialValues.put("csrfToken", BLCMain.csrfToken);
        // compileDefaultValuesFromCurrentFilter(initialValues);
         getAssetSearchDialogView().setInitialValues(initialValues);
-        getAssetSearchDialogView().search("Asset Search",
+        getAssetSearchDialogView().search(BLCMain.getMessageManager().getString("assetSearchTitle"),
                 new TileGridItemSelectedHandler() {
                     @Override
                     public void onSearchItemSelected(TileGridItemSelected event) {

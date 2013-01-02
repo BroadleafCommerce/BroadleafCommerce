@@ -150,5 +150,6 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String SkuImpl_Sku_Media_Key();
     public String skuGenerationInvalid();
 
-    public String Seo_Group();
+    public String cloneErrorMessage();
+    public String cloneSuccessMessage();
 }

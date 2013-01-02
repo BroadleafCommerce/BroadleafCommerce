@@ -343,7 +343,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
                 getPresenterSequenceSetupManager().getDataSource("mediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
                     @Override
                     public void execute(final FormItem formItem) {
-                        dialog.search("Asset Search", new TileGridItemSelectedHandler() {
+                        dialog.search(BLCMain.getMessageManager().getString("assetSearchTitle"), new TileGridItemSelectedHandler() {
                             @Override
                             public void onSearchItemSelected(TileGridItemSelected event) {
                                 String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");

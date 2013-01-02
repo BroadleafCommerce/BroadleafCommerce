@@ -155,16 +155,16 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 AppServices.CATALOG.cloneProduct(productId, new AsyncCallback<Boolean>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        SC.say("There was an error when cloning product " + productName);
+                        SC.say(BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("cloneErrorMessage"), new String[]{"productName"}, new String[]{productName}));
                     }
 
                     @Override
                     public void onSuccess(Boolean result) {
                         if (result) {
                             getDisplay().getListDisplay().getGrid().invalidateCache();
-                            SC.say(productName + " has been cloned successfully");
+                            SC.say(BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("cloneSuccessMessage"), new String[]{"productName"}, new String[]{productName}));
                         } else {
-                            SC.say("There was an error when cloning product " + productName);
+                            SC.say(BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("cloneErrorMessage"), new String[]{"productName"}, new String[]{productName}));
                         }
                     }
                 });
@@ -307,7 +307,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
             @Override
             public void execute(final FormItem formItem) {
-                ((AssetSearchDialog) library.get("staticAssetDialog")).search("Asset Search", new TileGridItemSelectedHandler() {
+                ((AssetSearchDialog) library.get("staticAssetDialog")).search(BLCMain.getMessageManager().getString("assetSearchTitle"), new TileGridItemSelectedHandler() {
                     @Override
                     public void onSearchItemSelected(TileGridItemSelected event) {
                         String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
