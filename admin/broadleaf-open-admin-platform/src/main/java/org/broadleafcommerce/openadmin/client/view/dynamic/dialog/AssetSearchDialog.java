@@ -16,20 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.security.SecureCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.TileGrid;
-
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -49,6 +35,19 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedEvent;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedHandler;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.security.SecureCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.TileGrid;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -139,15 +138,15 @@ public class AssetSearchDialog extends Window {
         filterForm.setDataSource(staticAssetDataSource);  
         filterForm.setAutoFocus(false);
         
-        TextItem nameFilterItem = new TextItem("name", "Name");
+        TextItem nameFilterItem = new TextItem("name", BLCMain.getMessageManager().getString("assetNameFieldTitle"));
         nameFilterItem.setWrapTitle(false);
 
-        TextItem urlFilterItem = new TextItem("fullUrl", "Url");
+        TextItem urlFilterItem = new TextItem("fullUrl", BLCMain.getMessageManager().getString("assetUrlFieldTitle"));
         nameFilterItem.setWrapTitle(false);
         
         filterForm.setFields(nameFilterItem, urlFilterItem);
 
-        IButton searchButton = new IButton("Search");
+        IButton searchButton = new IButton(BLCMain.getMessageManager().getString("assetSearchButtonTitle"));
         searchButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -156,11 +155,11 @@ public class AssetSearchDialog extends Window {
                 tileGrid.fetchData(valuesAsCriteria);
             }
         });
-        final IButton addAssetButton = new IButton("Upload Asset");
+        final IButton addAssetButton = new IButton(BLCMain.getMessageManager().getString("uploadArtifactTitle"));
         addAssetButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-            	addNewItem("Add a New Asset",staticAssetDataSource);
+            	addNewItem(staticAssetDataSource);
             }
         });
   
@@ -188,12 +187,11 @@ public class AssetSearchDialog extends Window {
 		
 	}
 	
-	protected void addNewItem(String newItemTitle,final DynamicEntityDataSource staticAssetDataSource) {
-	
+	protected void addNewItem(final DynamicEntityDataSource staticAssetDataSource) {
         Map<String, String> hints = new HashMap<String, String>();
         hints.put("name", BLCMain.getMessageManager().getString("assetUploadNameHint"));
         hints.put("fullUrl", BLCMain.getMessageManager().getString("assetUploadFullUrlHint"));
-		FILE_UPLOAD.editNewRecord("Upload Artifact", staticAssetDataSource, initialValues, hints, new ItemEditedHandler() {
+		FILE_UPLOAD.editNewRecord(BLCMain.getMessageManager().getString("uploadArtifactTitle"), staticAssetDataSource, initialValues, hints, new ItemEditedHandler() {
             @Override
             public void onItemEdited(ItemEdited event) {
                 ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
@@ -205,6 +203,7 @@ public class AssetSearchDialog extends Window {
             }
         }, null, new String[]{"file", "name", "fullUrl", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria", "csrfToken"}, null);
 	}
+
 	public void search(String title, TileGridItemSelectedHandler handler) {
 		this.setTitle(title);
         tileGrid.invalidateCache();

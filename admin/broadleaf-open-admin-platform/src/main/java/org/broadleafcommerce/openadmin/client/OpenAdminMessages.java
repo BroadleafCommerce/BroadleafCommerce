@@ -128,4 +128,10 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String hideArchivedRecords();
     
     public String editRichText();
+
+    public String assetSearchTitle();
+    public String uploadArtifactTitle();
+    public String assetSearchButtonTitle();
+    public String assetNameFieldTitle();
+    public String assetUrlFieldTitle();
 }

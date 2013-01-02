@@ -307,7 +307,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
             @Override
             public void execute(final FormItem formItem) {
-                ((AssetSearchDialog) library.get("staticAssetDialog")).search("Asset Search", new TileGridItemSelectedHandler() {
+                ((AssetSearchDialog) library.get("staticAssetDialog")).search(BLCMain.getMessageManager().getString("assetSearchTitle"), new TileGridItemSelectedHandler() {
                     @Override
                     public void onSearchItemSelected(TileGridItemSelected event) {
                         String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
