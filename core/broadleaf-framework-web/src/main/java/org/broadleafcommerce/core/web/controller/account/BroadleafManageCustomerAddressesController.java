@@ -16,12 +16,14 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
@@ -36,7 +38,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import java.beans.PropertyEditorSupport;
 import java.util.List;
 
@@ -113,6 +114,9 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     	}
     	CustomerAddressForm form = new CustomerAddressForm();
     	form.setAddress(customerAddress.getAddress());
+        if (customerAddress.getAddress().getPhonePrimary() != null) {
+            form.setPhonePrimary(customerAddress.getAddress().getPhonePrimary());
+        }
     	form.setAddressName(customerAddress.getAddressName());
     	form.setCustomerAddressId(customerAddress.getId());
     	model.addAttribute("customerAddressForm", form);
@@ -127,6 +131,11 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         Address address = addressService.saveAddress(form.getAddress());
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddress(address);
+        if (!StringUtils.isBlank(form.getPhonePrimary().getPhoneNumber())) {
+            customerAddress.getAddress().setPhonePrimary(form.getPhonePrimary());
+        } else {
+            customerAddress.getAddress().setPhonePrimary(null);
+        }
         customerAddress.setAddressName(form.getAddressName());
         customerAddress.setCustomer(CustomerState.getCustomer());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
@@ -151,6 +160,11 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     		throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
     	}
     	customerAddress.setAddress(form.getAddress());
+        if (!StringUtils.isBlank(form.getPhonePrimary().getPhoneNumber())) {
+            customerAddress.getAddress().setPhonePrimary(form.getPhonePrimary());
+        } else {
+            customerAddress.getAddress().setPhonePrimary(null);
+        }
     	customerAddress.setAddressName(form.getAddressName());
     	customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
     	if (form.getAddress().isDefault()) {

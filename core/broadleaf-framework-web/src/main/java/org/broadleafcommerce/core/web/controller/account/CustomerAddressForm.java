@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
 import java.io.Serializable;
 
@@ -26,6 +28,7 @@ public class CustomerAddressForm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected Address address = new AddressImpl();
+    protected Phone phonePrimary = new PhoneImpl();
 	protected String addressName;
 	protected Long customerAddressId;
 	
@@ -47,5 +50,10 @@ public class CustomerAddressForm implements Serializable {
 	public void setCustomerAddressId(Long customerAddressId) {
 		this.customerAddressId = customerAddressId;
 	}
-	
+    public Phone getPhonePrimary() {
+        return phonePrimary;
+    }
+    public void setPhonePrimary(Phone phonePrimary) {
+        this.phonePrimary = phonePrimary;
+    }
 }

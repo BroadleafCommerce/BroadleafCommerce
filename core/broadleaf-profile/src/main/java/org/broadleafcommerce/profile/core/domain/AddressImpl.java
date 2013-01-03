@@ -386,7 +386,7 @@ public class AddressImpl implements Address {
     public Phone getPhonePrimary() {
         Phone legacyPhone = new PhoneImpl();
         legacyPhone.setPhoneNumber(this.primaryPhone);
-        return (phonePrimary == null)? legacyPhone : phonePrimary;
+        return (phonePrimary == null && this.primaryPhone !=null)? legacyPhone : phonePrimary;
     }
 
     @Override
@@ -398,7 +398,7 @@ public class AddressImpl implements Address {
     public Phone getPhoneSecondary() {
         Phone legacyPhone = new PhoneImpl();
         legacyPhone.setPhoneNumber(this.secondaryPhone);
-        return (phoneSecondary == null)? legacyPhone : phoneSecondary;
+        return (phoneSecondary == null && this.secondaryPhone !=null)? legacyPhone : phoneSecondary;
     }
 
     @Override
@@ -410,7 +410,7 @@ public class AddressImpl implements Address {
     public Phone getPhoneFax() {
         Phone legacyPhone = new PhoneImpl();
         legacyPhone.setPhoneNumber(this.fax);
-        return (phoneFax == null)? legacyPhone : phoneFax;
+        return (phoneFax == null && this.fax != null)? legacyPhone : phoneFax;
     }
 
     @Override
