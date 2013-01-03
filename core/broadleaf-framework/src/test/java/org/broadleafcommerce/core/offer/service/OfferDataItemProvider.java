@@ -336,7 +336,10 @@ public class OfferDataItemProvider {
 		address2.setFirstName("John");
 		address2.setLastName("Tester");
 		address2.setPostalCode("75244");
-		address2.setPrimaryPhone("972-976-1234");
+
+        Phone primary2 = new PhoneImpl();
+        primary2.setPhoneNumber("972-976-1234");
+        address2.setPhonePrimary(primary2);
 		
 		State state2 = new StateImpl();
 		state2.setAbbreviation("TX");
