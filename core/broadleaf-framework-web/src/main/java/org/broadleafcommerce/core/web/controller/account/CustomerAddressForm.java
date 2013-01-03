@@ -28,10 +28,12 @@ public class CustomerAddressForm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected Address address = new AddressImpl();
-    protected Phone phonePrimary = new PhoneImpl();
 	protected String addressName;
 	protected Long customerAddressId;
-	
+
+    public CustomerAddressForm() {
+        address.setPhonePrimary(new PhoneImpl());
+    }
 	public Address getAddress() {
 		return address;
 	}
@@ -50,10 +52,4 @@ public class CustomerAddressForm implements Serializable {
 	public void setCustomerAddressId(Long customerAddressId) {
 		this.customerAddressId = customerAddressId;
 	}
-    public Phone getPhonePrimary() {
-        return phonePrimary;
-    }
-    public void setPhonePrimary(Phone phonePrimary) {
-        this.phonePrimary = phonePrimary;
-    }
 }
