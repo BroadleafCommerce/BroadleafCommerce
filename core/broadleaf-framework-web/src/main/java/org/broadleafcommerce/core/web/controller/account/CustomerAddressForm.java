@@ -38,6 +38,9 @@ public class CustomerAddressForm implements Serializable {
 		return address;
 	}
 	public void setAddress(Address address) {
+        if (address.getPhonePrimary() == null) {
+            address.setPhonePrimary(new PhoneImpl());
+        }
 		this.address = address;
 	}
 	public String getAddressName() {

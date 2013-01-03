@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.payment.CreditCardType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
 
 import java.io.Serializable;
@@ -43,6 +44,8 @@ public class CheckoutForm implements Serializable {
     public CheckoutForm() {
         shippingAddress = new AddressImpl();
         billingAddress = new AddressImpl();
+        shippingAddress.setPhonePrimary(new PhoneImpl());
+        billingAddress.setPhonePrimary(new PhoneImpl());
         shippingAddress.setCountry(new CountryImpl());
         billingAddress.setCountry(new CountryImpl());
         shippingAddress.setState(new StateImpl());
@@ -87,7 +90,7 @@ public class CheckoutForm implements Serializable {
     }
 
     public void setBillingAddress(Address billingAddress) {
-        this.billingAddress = billingAddress;
+       this.billingAddress = billingAddress;
     }
 
     public String getCreditCardNumber() {

@@ -129,9 +129,6 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     	}
     	CustomerAddressForm form = new CustomerAddressForm();
     	form.setAddress(customerAddress.getAddress());
-        if (customerAddress.getAddress().getPhonePrimary() == null) {
-            form.getAddress().setPhonePrimary(new PhoneImpl());
-        }
     	form.setAddressName(customerAddress.getAddressName());
     	form.setCustomerAddressId(customerAddress.getId());
     	model.addAttribute("customerAddressForm", form);

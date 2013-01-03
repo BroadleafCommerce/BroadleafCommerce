@@ -439,7 +439,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 billing.setState(shipping.getState());
                 billing.setPostalCode(shipping.getPostalCode());
                 billing.setCountry(shipping.getCountry());
-                billing.setPrimaryPhone(shipping.getPrimaryPhone());
+                billing.setPhonePrimary(shipping.getPhonePrimary());
                 billing.setEmailAddress(shipping.getEmailAddress());
                 billingInfoForm.setAddress(billing);
             }
@@ -587,6 +587,19 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             public void setAsText(String text) {
                 Country country = countryService.findCountryByAbbreviation(text);
                 setValue(country);
+            }
+        });
+
+        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (!StringUtils.isBlank(text)) {
+                    Phone phone = new PhoneImpl();
+                    phone.setPhoneNumber(text);
+                    setValue(phone);
+                } else {
+                    setValue(null);
+                }
             }
         });
     }
