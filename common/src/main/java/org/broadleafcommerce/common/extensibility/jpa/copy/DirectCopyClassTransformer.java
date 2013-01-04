@@ -16,9 +16,10 @@
 
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.broadleafcommerce.common.logging.LifeCycleEvent;
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -40,9 +41,15 @@ import java.util.Properties;
  * @author Andre Azzolini (apazzolini)
  */
 public class DirectCopyClassTransformer implements BroadleafClassTransformer {
-    private static final Log LOG = LogFactory.getLog(DirectCopyClassTransformer.class);
+    protected SupportLogger logger;
     
+    protected String moduleName;
     protected Map<String, String> xformTemplates = new HashMap<String, String>();
+    
+    public DirectCopyClassTransformer(String moduleName) {
+        this.moduleName = moduleName;
+        logger = SupportLogManager.getLogger(moduleName, this.getClass());
+    }
     
     @Override
     public void compileJPAProperties(Properties props, Object key) throws Exception {
@@ -57,7 +64,8 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
         if (xformTemplates.containsKey(convertedClassName)) {
             String xformKey = convertedClassName;
             String xformVal = xformTemplates.get(xformKey);
-            LOG.debug(String.format("Copying into [%s] from [%s]", xformKey, xformVal));
+            logger.lifecycle(LifeCycleEvent.START, "Transform");
+            logger.lifecycle(LifeCycleEvent.TRANSFORM, String.format("Copying into [%s] from [%s]", xformKey, xformVal));
             
             try {
                 // Load the destination class and defrost it so it is eligible for modifications
@@ -72,14 +80,14 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                 // Add in extra interfaces
                 CtClass[] interfacesToCopy = template.getInterfaces();
                 for (CtClass i : interfacesToCopy) {
-                    LOG.debug(String.format("...Attempting to copy interface [%s]", i.getName()));
+                    logger.lifecycle(LifeCycleEvent.TRANSFORM, String.format("Adding interface [%s]", i.getName()));
                     clazz.addInterface(i);
                 }
                 
                 // Copy over all declared fields from the template class
                 CtField[] fieldsToCopy = template.getDeclaredFields();
                 for (CtField field : fieldsToCopy) {
-                    LOG.debug(String.format("...Attempting to copy field [%s]", field.getName()));
+                    logger.lifecycle(LifeCycleEvent.TRANSFORM, String.format("Adding field [%s]", field.getName()));
                     CtField copiedField = new CtField(field, clazz);
                     clazz.addField(copiedField);
                 }
@@ -87,11 +95,12 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                 // Copy over all declared methods from the template class
                 CtMethod[] methodsToCopy = template.getDeclaredMethods();
                 for (CtMethod method : methodsToCopy) {
-                    LOG.debug(String.format("...Attempting to copy method [%s]", method.getName()));
+                    logger.lifecycle(LifeCycleEvent.TRANSFORM, String.format("Adding method [%s]", method.getName()));
                     CtMethod copiedMethod = new CtMethod(method, clazz, null);
                     clazz.addMethod(copiedMethod);
                 }
                 
+                logger.lifecycle(LifeCycleEvent.END, "Transform");
                 return clazz.toBytecode();
             } catch (Exception e) {
                 throw new RuntimeException("Unable to transform class", e);
