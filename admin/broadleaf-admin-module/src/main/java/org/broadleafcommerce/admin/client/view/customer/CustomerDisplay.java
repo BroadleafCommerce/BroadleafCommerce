@@ -16,8 +16,10 @@
 
 package org.broadleafcommerce.admin.client.view.customer;
 
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
+
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 /**
  * 
@@ -27,5 +29,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 public interface CustomerDisplay extends DynamicEditDisplay {
 	
 	public ToolStripButton getUpdateLoginButton();
+	
+	public GridStructureView getCustomerAddressDisplay();
 
 }
