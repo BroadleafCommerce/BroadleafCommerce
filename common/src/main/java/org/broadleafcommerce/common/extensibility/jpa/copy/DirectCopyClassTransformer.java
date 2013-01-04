@@ -53,7 +53,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     
     @Override
     public void compileJPAProperties(Properties props, Object key) throws Exception {
-        // When simply copying properties over for Java calss files, JPA properties do not need modification
+        // When simply copying properties over for Java class files, JPA properties do not need modification
     }
 
     @Override
