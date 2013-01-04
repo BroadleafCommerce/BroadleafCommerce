@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.cms.admin.client.view.pages;
 
-import org.broadleafcommerce.cms.admin.client.view.structure.RulesDisplayIf;
+import org.broadleafcommerce.openadmin.client.rules.RulesDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
@@ -31,7 +31,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
  * Created by IntelliJ IDEA. User: jfischer Date: 8/22/11 Time: 3:51 PM To
  * change this template use File | Settings | File Templates.
  */
-public interface PagesDisplay extends DynamicEditDisplay, RulesDisplayIf {
+public interface PagesDisplay extends DynamicEditDisplay, RulesDisplay {
 
     public FilterBuilder getCustomerFilterBuilder();
 

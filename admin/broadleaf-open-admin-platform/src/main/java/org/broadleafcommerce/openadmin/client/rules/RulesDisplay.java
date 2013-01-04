@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.admin.client.view.structure;
+package org.broadleafcommerce.openadmin.client.rules;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -23,7 +23,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 import java.util.List;
 
-public interface RulesDisplayIf {
+public interface RulesDisplay {
 
 	public abstract List<ItemBuilderDisplay> getItemBuilderViews();
 

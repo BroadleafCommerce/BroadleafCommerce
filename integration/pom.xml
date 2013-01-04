@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
@@ -196,7 +195,7 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-framework</artifactId>
-            <version>${project.version}</version>
+            <version>${project.version}</version><!--$NO-MVN-MAN-VER$-->
             <classifier>tests</classifier>
         </dependency>
         <dependency>
@@ -206,10 +205,6 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-instrument</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>

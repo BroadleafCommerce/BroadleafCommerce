@@ -72,7 +72,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     protected Map<String, DataSource> mergedDataSources;
     
     @Resource(name="blMergedClassTransformers")
-    protected Set<String> mergedClassTransformers;
+    protected Set<BroadleafClassTransformer> mergedClassTransformers;
 
     @PostConstruct
     public void configureMergedItems() {
@@ -99,10 +99,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     
     @PostConstruct
     public void configureClassTransformers() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        for (String transformerClass : mergedClassTransformers) {
-            BroadleafClassTransformer transformer = (BroadleafClassTransformer)Class.forName(transformerClass).newInstance();
-            classTransformers.add(transformer);
-        }
+        classTransformers.addAll(mergedClassTransformers);
     }
 
     protected PersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
@@ -217,39 +214,27 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
 
         try {
-            List<Class<?>> managedClassList = new ArrayList<Class<?>>();
+            List<String> managedClassNames = new ArrayList<String>();
+            
             for (PersistenceUnitInfo pui : mergedPus.values()) {
                 for (BroadleafClassTransformer transformer : classTransformers) {
                     try {
-                        pui.addTransformer(transformer);
+                        if (pui.getPersistenceUnitName().equals("blPU")) {
+                            pui.addTransformer(transformer);
+                        }
                     } catch (IllegalStateException e) {
                         LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring reported a problem (likely that a LoadTimeWeaver is not registered). As a result, the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is not being registered with the persistence unit.", e);
                     }
                 }
             }
+            
             for (PersistenceUnitInfo pui : mergedPus.values()) {
                 for (String managedClassName : pui.getManagedClassNames()) {
-                    Class<?> temp = Class.forName(managedClassName, true, getClass().getClassLoader());
-                    if (!managedClassList.contains(temp)) {
-                        managedClassList.add(temp);
+                    if (!managedClassNames.contains(managedClassName)) {
+                        // Force-load this class so that we are able to ensure our instrumentation happens globally.
+                        Class.forName(managedClassName, true, getClass().getClassLoader());
+                        managedClassNames.add(managedClassName);
                     }
-                }
-            }
-
-            /*
-                * Re-transform any classes that were possibly loaded previously before our class transformers were registered
-                */
-            if (BroadleafLoadTimeWeaver.isInstrumentationAvailable()) {
-                if (BroadleafLoadTimeWeaver.getInstrumentation().isRetransformClassesSupported()) {
-                    List<Class<?>> filteredClasses = new ArrayList<Class<?>>();
-                    for (Class<?> clazz : managedClassList) {
-                        if (BroadleafLoadTimeWeaver.getInstrumentation().isModifiableClass(clazz)) {
-                            filteredClasses.add(clazz);
-                        }
-                    }
-                    BroadleafLoadTimeWeaver.getInstrumentation().retransformClasses(filteredClasses.toArray(new Class[]{}));
-                } else {
-                    LOG.warn("The JVM instrumentation is reporting that retransformation of classes is not supported. This feature is required for dependable class transformation with Broadleaf. Have you made sure to specify the broadleaf-instrument jar as a javaagent parameter for your JVM?");
                 }
             }
         } catch (Exception e) {
