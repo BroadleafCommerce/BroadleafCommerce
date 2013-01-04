@@ -161,13 +161,15 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 		}
 		
 	    try {
-	        String deleteQuery = getNamespaceFieldName() + ":" + getCurrentNamespace();
-	    	LOG.trace("Deleting by query: " + deleteQuery);
-	    	server.deleteByQuery(deleteQuery);
-	    	server.commit();
-	    	
-		    server.add(documents);
-		    server.commit();
+	        if (documents != null && documents.size() > 0) {
+    	        String deleteQuery = getNamespaceFieldName() + ":" + getCurrentNamespace();
+    	    	LOG.trace("Deleting by query: " + deleteQuery);
+    	    	server.deleteByQuery(deleteQuery);
+    	    	server.commit();
+    	    	
+    		    server.add(documents);
+    		    server.commit();
+	        }
 	    } catch (SolrServerException e) {
 	    	throw new ServiceException("Could not rebuild index", e);
 	    } finally {

@@ -64,8 +64,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
         if (xformTemplates.containsKey(convertedClassName)) {
             String xformKey = convertedClassName;
             String xformVal = xformTemplates.get(xformKey);
-            logger.lifecycle(LifeCycleEvent.START, "Transform");
-            logger.lifecycle(LifeCycleEvent.TRANSFORM, String.format("Copying into [%s] from [%s]", xformKey, xformVal));
+            logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying into [%s] from [%s]", xformKey, xformVal));
             
             try {
                 // Load the destination class and defrost it so it is eligible for modifications
@@ -80,14 +79,14 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                 // Add in extra interfaces
                 CtClass[] interfacesToCopy = template.getInterfaces();
                 for (CtClass i : interfacesToCopy) {
-                    logger.lifecycle(LifeCycleEvent.TRANSFORM, String.format("Adding interface [%s]", i.getName()));
+                    logger.debug(String.format("Adding interface [%s]", i.getName()));
                     clazz.addInterface(i);
                 }
                 
                 // Copy over all declared fields from the template class
                 CtField[] fieldsToCopy = template.getDeclaredFields();
                 for (CtField field : fieldsToCopy) {
-                    logger.lifecycle(LifeCycleEvent.TRANSFORM, String.format("Adding field [%s]", field.getName()));
+                    logger.debug(String.format("Adding field [%s]", field.getName()));
                     CtField copiedField = new CtField(field, clazz);
                     clazz.addField(copiedField);
                 }
@@ -95,12 +94,12 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                 // Copy over all declared methods from the template class
                 CtMethod[] methodsToCopy = template.getDeclaredMethods();
                 for (CtMethod method : methodsToCopy) {
-                    logger.lifecycle(LifeCycleEvent.TRANSFORM, String.format("Adding method [%s]", method.getName()));
+                    logger.debug(String.format("Adding method [%s]", method.getName()));
                     CtMethod copiedMethod = new CtMethod(method, clazz, null);
                     clazz.addMethod(copiedMethod);
                 }
                 
-                logger.lifecycle(LifeCycleEvent.END, "Transform");
+                logger.debug(String.format("END - Transform - Copying into [%s] from [%s]", xformKey, xformVal));
                 return clazz.toBytecode();
             } catch (Exception e) {
                 throw new RuntimeException("Unable to transform class", e);

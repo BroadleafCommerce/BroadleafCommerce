@@ -9,9 +9,7 @@
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <!-- Scan Broadleaf defined web utility classes -->
-    <context:component-scan base-package="org.broadleafcommerce.common.web"/>
-    <context:component-scan base-package="org.broadleafcommerce.core.web"/> 
-    <context:component-scan base-package="org.broadleafcommerce.profile.web"/>
+    <context:component-scan base-package="org.broadleafcommerce.core.web"/>
 
 	<bean id="blOrderState"
           class="org.broadleafcommerce.core.web.order.OrderState" scope="request"/>
