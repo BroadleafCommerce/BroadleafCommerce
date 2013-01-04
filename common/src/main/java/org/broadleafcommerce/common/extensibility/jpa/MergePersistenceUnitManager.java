@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.extensibility.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
@@ -219,7 +220,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             for (PersistenceUnitInfo pui : mergedPus.values()) {
                 for (BroadleafClassTransformer transformer : classTransformers) {
                     try {
-                        if (pui.getPersistenceUnitName().equals("blPU")) {
+                        if (!(transformer instanceof NullClassTransformer) && pui.getPersistenceUnitName().equals("blPU")) {
                             pui.addTransformer(transformer);
                         }
                     } catch (IllegalStateException e) {
