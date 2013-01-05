@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.context.MergeApplicationContextXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
+import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -112,7 +113,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
             	throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocations[i]);
             }
         }
-        Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patches);
+        Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patches, new ImportProcessor(this));
 
         reader.loadBeanDefinitions(resources);
     }

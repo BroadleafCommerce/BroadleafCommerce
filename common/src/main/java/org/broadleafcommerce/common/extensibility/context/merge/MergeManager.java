@@ -43,6 +43,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
@@ -117,16 +118,14 @@ public class MergeManager {
             List<Node> exhaustedNodes = new ArrayList<Node>();
 
             //process any defined handlers
-            for (int j=0;j<this.handlers.length;j++){
-            	if (LOG.isDebugEnabled()) {
-            		LOG.debug("Processing handler: " + this.handlers[j].getXPath());
-            	}
-                MergePoint point = new MergePoint(this.handlers[j], doc1, doc2);
+            for (MergeHandler handler : this.handlers) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Processing handler: " + handler.getXPath());
+                }
+                MergePoint point = new MergePoint(handler, doc1, doc2);
                 Node[] list = point.merge(exhaustedNodes);
                 if (list != null) {
-                    for (int x=0;x<list.length;x++){
-                        exhaustedNodes.add(list[x]);
-                    }
+                    Collections.addAll(exhaustedNodes, list);
                 }
             }
 
@@ -153,18 +152,17 @@ public class MergeManager {
 
     private void setHandlers(Properties props) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ArrayList<MergeHandler> handlers = new ArrayList<MergeHandler>();
-        String[] keys = {};
-        keys = props.keySet().toArray(keys);
-        for (int j=0;j<keys.length;j++){
-            if (keys[j].startsWith("handler.")) {
-                MergeHandler temp = (MergeHandler) Class.forName(props.getProperty(keys[j])).newInstance();
-                String name = keys[j].substring(8, keys[j].length());
+        String[] keys = props.keySet().toArray(new String[props.keySet().size()]);
+        for (String key : keys) {
+            if (key.startsWith("handler.")) {
+                MergeHandler temp = (MergeHandler) Class.forName(props.getProperty(key)).newInstance();
+                String name = key.substring(8, key.length());
                 temp.setName(name);
-                String priority = props.getProperty("priority."+name);
+                String priority = props.getProperty("priority." + name);
                 if (priority != null) {
                     temp.setPriority(Integer.parseInt(priority));
                 }
-                String xpath = props.getProperty("xpath."+name);
+                String xpath = props.getProperty("xpath." + name);
                 if (priority != null) {
                     temp.setXPath(xpath);
                 }
@@ -180,9 +178,8 @@ public class MergeManager {
         };
         Arrays.sort(explodedView, nameCompare);
         ArrayList<MergeHandler> finalHandlers = new ArrayList<MergeHandler>();
-        for (int j=0;j<explodedView.length;j++){
-            MergeHandler temp = explodedView[j];
-            if (temp.getName().indexOf(".") >= 0) {
+        for (MergeHandler temp : explodedView) {
+            if (temp.getName().contains(".")) {
                 final String parentName = temp.getName().substring(0, temp.getName().lastIndexOf("."));
                 int pos = Arrays.binarySearch(explodedView, new MergeHandlerAdapter() {
                     @Override
@@ -226,7 +223,7 @@ public class MergeManager {
     public String serialize(InputStream in) {
         InputStreamReader reader = null;
         int temp;
-        StringBuffer item = new StringBuffer();
+        StringBuilder item = new StringBuilder();
         boolean eof = false;
         try {
             reader = new InputStreamReader(in);

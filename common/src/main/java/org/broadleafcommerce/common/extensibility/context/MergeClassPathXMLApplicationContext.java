@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.extensibility.context;
 
+import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -87,7 +88,7 @@ public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationC
 			patches[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[j]), patchLocations[j]);
 		}
 		
-		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
+		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches, new ImportProcessor(this));
 		refresh();
 	}
 

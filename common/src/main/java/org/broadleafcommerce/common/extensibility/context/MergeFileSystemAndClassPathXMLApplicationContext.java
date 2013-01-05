@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.common.extensibility.context;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
+import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.core.io.Resource;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * Standalone XML application context, taking the locations of one or more
@@ -77,7 +78,7 @@ public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXm
 			throw new FatalBeanException("Unable to merge context files", e);
 		}
 		
-		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(classPathSources, fileSystemSources);
+		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(classPathSources, fileSystemSources, new ImportProcessor(this));
 		refresh();
 	}
 
