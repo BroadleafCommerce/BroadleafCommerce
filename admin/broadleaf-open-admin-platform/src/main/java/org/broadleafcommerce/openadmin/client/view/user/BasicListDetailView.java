@@ -48,7 +48,7 @@ public abstract class BasicListDetailView extends HLayout implements Instantiabl
 	
 	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID(getViewPrefix()+"permissionLeftVerticalLayout");
+		leftVerticalLayout.setID(getViewPrefix()+"LeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
