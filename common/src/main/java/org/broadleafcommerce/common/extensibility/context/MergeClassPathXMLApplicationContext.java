@@ -92,8 +92,8 @@ public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationC
 
         ImportProcessor importProcessor = new ImportProcessor(this);
         try {
-            sources = importProcessor.processImports(sources);
-            patches = importProcessor.processImports(patches);
+            sources = importProcessor.extract(sources);
+            patches = importProcessor.extract(patches);
         } catch (MergeException e) {
             throw new FatalBeanException("Unable to merge source and patch locations", e);
         }

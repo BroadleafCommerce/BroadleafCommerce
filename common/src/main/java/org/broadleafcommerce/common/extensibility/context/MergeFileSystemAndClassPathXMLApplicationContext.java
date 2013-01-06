@@ -81,8 +81,8 @@ public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXm
 
         ImportProcessor importProcessor = new ImportProcessor(this);
         try {
-            classPathSources = importProcessor.processImports(classPathSources);
-            fileSystemSources = importProcessor.processImports(fileSystemSources);
+            classPathSources = importProcessor.extract(classPathSources);
+            fileSystemSources = importProcessor.extract(fileSystemSources);
         } catch (MergeException e) {
             throw new FatalBeanException("Unable to merge source and patch locations", e);
         }

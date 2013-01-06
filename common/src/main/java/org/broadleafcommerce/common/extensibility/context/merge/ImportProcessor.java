@@ -56,7 +56,7 @@ public class ImportProcessor {
         this.applicationContext = applicationContext;
     }
 
-    public ResourceInputStream[] processImports(ResourceInputStream[] sources) throws MergeException {
+    public ResourceInputStream[] extract(ResourceInputStream[] sources) throws MergeException {
         if (sources == null) {
             return null;
         }

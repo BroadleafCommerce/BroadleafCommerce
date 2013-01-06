@@ -118,8 +118,8 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 
         ImportProcessor importProcessor = new ImportProcessor(this);
         try {
-            filteredSources = importProcessor.processImports(filteredSources);
-            patches = importProcessor.processImports(patches);
+            filteredSources = importProcessor.extract(filteredSources);
+            patches = importProcessor.extract(patches);
         } catch (MergeException e) {
             throw new FatalBeanException("Unable to merge source and patch locations", e);
         }
