@@ -55,7 +55,7 @@ import java.util.Arrays;
 public class ImportProcessor {
 
     private static final Log LOG = LogFactory.getLog(ImportProcessor.class);
-    private static final String importPath = "/beans/import";
+    private static final String IMPORT_PATH = "/beans/import";
 
     protected ApplicationContext applicationContext;
     protected DocumentBuilder builder;
@@ -84,7 +84,7 @@ public class ImportProcessor {
             while(resourceList.hasNext()) {
                 ResourceInputStream myStream = resourceList.nextResource();
                 Document doc = builder.parse(myStream);
-                NodeList nodeList = (NodeList) xPath.evaluate(importPath, doc, XPathConstants.NODESET);
+                NodeList nodeList = (NodeList) xPath.evaluate(IMPORT_PATH, doc, XPathConstants.NODESET);
                 int length = nodeList.getLength();
                 for (int j=0;j<length;j++) {
                     Element element = (Element) nodeList.item(j);
