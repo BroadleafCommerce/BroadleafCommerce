@@ -1,3 +1,19 @@
+/*
+ * Copyright 2008-2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.broadleafcommerce.common.extensibility.context.merge;
 
 import org.apache.commons.logging.Log;
@@ -28,17 +44,25 @@ import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
 /**
+ * This class serves to parse any passed in source application context files and
+ * look for the Spring "import" element. If found, the resource of the import element
+ * is retrieved and set as another source element after the current one. Also, once the
+ * resource is retrieved and included, the import element is deleted from the source
+ * document.
+ *
  * @author Jeff Fischer
  */
 public class ImportProcessor {
 
     private static final Log LOG = LogFactory.getLog(ImportProcessor.class);
-
-    private static DocumentBuilder builder;
-    private static XPath xPath;
     private static final String importPath = "/beans/import";
 
-    static {
+    protected ApplicationContext applicationContext;
+    protected DocumentBuilder builder;
+    protected XPath xPath;
+
+    public ImportProcessor(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             builder = dbf.newDocumentBuilder();
@@ -48,12 +72,6 @@ public class ImportProcessor {
             LOG.error("Unable to create document builder", e);
             throw new RuntimeException(e);
         }
-    }
-
-    private ApplicationContext applicationContext;
-
-    public ImportProcessor(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
     }
 
     public ResourceInputStream[] extract(ResourceInputStream[] sources) throws MergeException {
