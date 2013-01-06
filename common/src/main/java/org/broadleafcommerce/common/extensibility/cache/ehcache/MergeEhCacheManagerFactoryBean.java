@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.extensibility.cache.ehcache;
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
+import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
@@ -68,8 +69,8 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
                 sources[j] = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
                 j++;
             }
-            setConfigLocation(merge.getMergedConfigResource(sources, new ImportProcessor(applicationContext)));
-        } catch (IOException e) {
+            setConfigLocation(merge.getMergedConfigResource(sources));
+        } catch (Exception e) {
             throw new FatalBeanException("Unable to merge cache locations", e);
         }
     }

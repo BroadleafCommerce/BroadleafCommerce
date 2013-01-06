@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.extensibility.context;
 
 import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
+import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
@@ -101,8 +102,16 @@ public class MergeFileSystemXMLApplicationContext extends AbstractXmlApplication
 		} catch (FileNotFoundException e) {
 			throw new FatalBeanException("Unable to merge context files", e);
 		}
-		
-		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches, new ImportProcessor(this));
+
+        ImportProcessor importProcessor = new ImportProcessor(this);
+        try {
+            sources = importProcessor.processImports(sources);
+            patches = importProcessor.processImports(patches);
+        } catch (MergeException e) {
+            throw new FatalBeanException("Unable to merge source and patch locations", e);
+        }
+
+		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
 		refresh();
 	}
 

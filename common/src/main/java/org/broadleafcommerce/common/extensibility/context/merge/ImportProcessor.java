@@ -57,6 +57,9 @@ public class ImportProcessor {
     }
 
     public ResourceInputStream[] processImports(ResourceInputStream[] sources) throws MergeException {
+        if (sources == null) {
+            return null;
+        }
         try {
             DynamicResourceIterator resourceList = new DynamicResourceIterator();
             resourceList.addAll(Arrays.asList(sources));

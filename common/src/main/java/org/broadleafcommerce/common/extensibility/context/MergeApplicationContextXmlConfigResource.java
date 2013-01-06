@@ -18,7 +18,6 @@ package org.broadleafcommerce.common.extensibility.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeManagerSetupException;
@@ -50,18 +49,18 @@ public class MergeApplicationContextXmlConfigResource extends MergeXmlConfigReso
      * @param patches array of input streams for the patch application context files
      * @throws BeansException
      */
-    public Resource[] getConfigResources(ResourceInputStream[] sources, ResourceInputStream[] patches, ImportProcessor importProcessor) throws BeansException {
+    public Resource[] getConfigResources(ResourceInputStream[] sources, ResourceInputStream[] patches) throws BeansException {
         Resource[] configResources = null;
         ResourceInputStream merged = null;
         try {
-            merged = merge(sources, importProcessor);
+            merged = merge(sources);
 
             if (patches != null) {
                 ResourceInputStream[] patches2 = new ResourceInputStream[patches.length+1];
                 patches2[0] = merged;
                 System.arraycopy(patches, 0, patches2, 1, patches.length);
 
-                merged = merge(patches2, importProcessor);
+                merged = merge(patches2);
             }
 
             //read the final stream into a byte array

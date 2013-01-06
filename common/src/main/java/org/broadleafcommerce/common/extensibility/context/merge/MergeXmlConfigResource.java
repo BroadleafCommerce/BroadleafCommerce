@@ -40,11 +40,11 @@ public class MergeXmlConfigResource {
 
     private static final Log LOG = LogFactory.getLog(MergeXmlConfigResource.class);
 
-    public Resource getMergedConfigResource(ResourceInputStream[] sources, ImportProcessor importProcessor) throws BeansException {
+    public Resource getMergedConfigResource(ResourceInputStream[] sources) throws BeansException {
         Resource configResource = null;
         ResourceInputStream merged = null;
         try {
-            merged = merge(sources, importProcessor);
+            merged = merge(sources);
 
             //read the final stream into a byte array
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -79,8 +79,7 @@ public class MergeXmlConfigResource {
         return configResource;
     }
 
-    protected ResourceInputStream merge(ResourceInputStream[] originalSources, ImportProcessor importProcessor) throws MergeException, MergeManagerSetupException {
-        ResourceInputStream[] sources = importProcessor.processImports(originalSources);
+    protected ResourceInputStream merge(ResourceInputStream[] sources) throws MergeException, MergeManagerSetupException {
         if (sources.length == 1) return sources[0];
 
         ResourceInputStream response = null;
@@ -125,7 +124,7 @@ public class MergeXmlConfigResource {
     public String serialize(InputStream in) {
         InputStreamReader reader = null;
         int temp;
-        StringBuffer item = new StringBuffer();
+        StringBuilder item = new StringBuilder();
         boolean eof = false;
         try {
             reader = new InputStreamReader(in);

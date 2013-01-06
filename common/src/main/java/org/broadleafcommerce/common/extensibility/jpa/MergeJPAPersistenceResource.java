@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.extensibility.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
-import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeManagerSetupException;
@@ -53,7 +52,7 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
     private static final Log LOG = LogFactory.getLog(MergeJPAPersistenceResource.class);
     private ErrorHandler handler = new SimpleSaxErrorHandler(LOG);
 
-    public Resource getMergedConfigResource(ResourceInputStream[] sources, ImportProcessor importProcessor) throws BeansException {
+    public Resource getMergedConfigResource(ResourceInputStream[] sources) throws BeansException {
         Resource configResource = null;
         ResourceInputStream merged = null;
         try {
@@ -65,7 +64,7 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
                 inMemoryStreams[j] = new ResourceInputStream(new ByteArrayInputStream(sourceArray), sources[j].getName());
             }
 
-            merged = merge(inMemoryStreams, importProcessor);
+            merged = merge(inMemoryStreams);
 
             //read the final stream into a byte array
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

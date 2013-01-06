@@ -27,7 +27,9 @@ import org.broadleafcommerce.common.extensibility.context.MergeApplicationContex
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
 import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
+import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -113,7 +115,16 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
             	throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocations[i]);
             }
         }
-        Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patches, new ImportProcessor(this));
+
+        ImportProcessor importProcessor = new ImportProcessor(this);
+        try {
+            filteredSources = importProcessor.processImports(filteredSources);
+            patches = importProcessor.processImports(patches);
+        } catch (MergeException e) {
+            throw new FatalBeanException("Unable to merge source and patch locations", e);
+        }
+
+        Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patches);
 
         reader.loadBeanDefinitions(resources);
     }
