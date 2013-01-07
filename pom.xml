@@ -359,7 +359,7 @@
                 <artifactId>guava-gwt</artifactId>
                 <version>12.0</version>
                 <type>jar</type>
-                <scope>compile</scope>
+                <scope>provided</scope>
             </dependency>
 
             <!-- Commons Libraries -->
