@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -34,12 +34,12 @@ import java.util.List;
  */
 public class AttributePreserveInsert extends BaseHandler {
 
-    public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
-        if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
+    public Node[] merge(List<Node> nodeList1, List<Node> nodeList2, List<Node> exhaustedNodes) {
+        if (CollectionUtils.isEmpty(nodeList1) || CollectionUtils.isEmpty(nodeList2)) {
             return null;
         }
-        Node node1 = nodeList1.item(0);
-        Node node2 = nodeList2.item(0);
+        Node node1 = nodeList1.get(0);
+        Node node2 = nodeList2.get(0);
         NamedNodeMap attributes2 = node2.getAttributes();
 
         Comparator<Object> nameCompare = new Comparator<Object>() {
