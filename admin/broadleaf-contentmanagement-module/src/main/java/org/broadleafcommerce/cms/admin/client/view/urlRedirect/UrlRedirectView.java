@@ -17,28 +17,28 @@
 package org.broadleafcommerce.cms.admin.client.view.urlRedirect;
 
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.user.BasicListDetailView;
-import org.broadleafcommerce.openadmin.client.view.user.PermissionManagementDisplay;
 
 /**
  * 
- * @author jfischer
+ * @author ppatel
  *
  */
-public class UrlRedirectView extends BasicListDetailView implements PermissionManagementDisplay {
+public class UrlRedirectView extends BasicListDetailView implements Display {
 
     @Override
     public String getViewPrefix() {
-        return "permission";
+        return "urlRedirectView";
     }
 
     @Override
     public String getFormTitle() {
-        return BLCMain.getMessageManager().getString("permissionDetailsTitle");
+        return BLCMain.getMessageManager().getString("urlRedirectViewDetailsTitle");
     }
 
     @Override
     public String getListTitle() {
-        return BLCMain.getMessageManager().getString("permissionListTitle");
+        return BLCMain.getMessageManager().getString("urlRedirectViewListTitle");
     }
 }
