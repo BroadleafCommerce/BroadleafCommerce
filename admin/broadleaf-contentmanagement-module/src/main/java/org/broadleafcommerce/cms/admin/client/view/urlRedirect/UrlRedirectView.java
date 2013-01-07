@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.admin.client.view.urlRedirect;
 
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.view.Display;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.user.BasicListDetailView;
 
 /**
@@ -25,7 +26,7 @@ import org.broadleafcommerce.openadmin.client.view.user.BasicListDetailView;
  * @author ppatel
  *
  */
-public class UrlRedirectView extends BasicListDetailView implements Display {
+public class UrlRedirectView extends BasicListDetailView implements DynamicEditDisplay {
 
     @Override
     public String getViewPrefix() {

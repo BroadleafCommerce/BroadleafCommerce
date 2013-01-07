@@ -90,7 +90,7 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 		redirectUrlPermissions.add("PERMISSION_DELETE_URLHANDLER");
         redirectUrlPermissions.add("PERMISSION_READ_URLHANDLER");
 		setSection(
-            BLCMain.getMessageManager().getString("redirectUrlPermissions"),
+            BLCMain.getMessageManager().getString("redirectUrl"),
 			"urlRedirect",
 			"org.broadleafcommerce.cms.admin.client.view.urlRedirect.UrlRedirectView",
 			"urlRedirectPresenter",
