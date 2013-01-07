@@ -74,6 +74,51 @@ public abstract class AbstractModule implements EntryPoint, Module {
     public void addConstants(i18nConstants constants) {
         BLCMain.MESSAGE_MANAGER.addConstants(constants);
     }
+    
+    /**
+     * Calls setSection using module standards for the arguments.
+     * 
+     * Prefix:  title cased name of the module (e.g. moduleName)
+     * Base package:  root package of the module admin classes (e.g. com.broadleafcommerce.modulename.admin)  
+     * 
+     * For example, for the prefix "SampleModule" and base package would call as follows:
+     *         setSection(BLCMain.getMessageManager().getString("sampleModuleMainTitle"), 
+     *  		"sampleModuleView", 
+     *  		"com.broadleafcommerce.samplemodule.admin.SampleModuleView", 
+     *  		"sampleModulePresenter",
+     *          "com.broadleafcommerce.samplemodule.admin.SampleModulePresenter", 
+     *          sampleModulePermissions);
+     *          
+     *         The permissions in the above method call will be created as follows:
+     *              	List<String> sampleModulePermissions = new ArrayList<String>();
+     *				 	sampleModulePermissions.add("PERMISSION_CREATE_SAMPLEMODULE");
+     *   				sampleModulePermissions.add("PERMISSION_UPDATE_SAMPLEMODULE");
+     *					sampleModulePermissions.add("PERMISSION_DELETE_SAMPLEMODULE");
+     *					sampleModulePermissions.add("PERMISSION_READ_SAMPLEMODULE"); 
+     *
+     * @param modulePrefix
+     */
+    public void addStandardSection(String modulePrefix, String basePackageName) {
+    	String uppercaseName = modulePrefix.toUpperCase();
+    	String firstCharLowerCaseName = modulePrefix.substring(0,1).toLowerCase();
+    	
+    	List<String> permissions = new ArrayList<String>();
+        permissions.add("PERMISSION_CREATE_"+uppercaseName);
+        permissions.add("PERMISSION_UPDATE_"+uppercaseName);
+        permissions.add("PERMISSION_DELETE_"+uppercaseName);
+        permissions.add("PERMISSION_READ_"+uppercaseName); 
+    	
+    	if (modulePrefix.length() > 1) {
+    		firstCharLowerCaseName = firstCharLowerCaseName + modulePrefix.substring(1);
+    	} 
+    	
+    	setSection(BLCMain.getMessageManager().getString(modulePrefix+"MainTitle"),
+    			modulePrefix+"View",
+    			basePackageName + ".view." + firstCharLowerCaseName+"View",
+    			modulePrefix+"Presenter",
+    			basePackageName + ".presenter." + firstCharLowerCaseName+"Presenter",
+    			permissions);
+    }
 
     public void setSection(
         String sectionTitle, 
