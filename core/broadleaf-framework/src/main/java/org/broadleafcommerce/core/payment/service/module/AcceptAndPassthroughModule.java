@@ -16,16 +16,12 @@
 
 package org.broadleafcommerce.core.payment.service.module;
 
-import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.springframework.beans.factory.annotation.Required;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This payment module can be utilized when you wish to accept an order's payment without acting on it.
@@ -56,38 +52,44 @@ public class AcceptAndPassthroughModule extends AbstractModule {
         validPaymentInfoType = PaymentInfoType.getInstance(validType);
     }
 
-    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("authorize not implemented.");
     }
 
-    public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processReverseAuthorize(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("reverse authorize not implemented.");
     }
 
-    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-        PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-        responseItem.setTransactionTimestamp(SystemTime.asDate());
+    @Override
+    public PaymentResponseItem processAuthorizeAndDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
         responseItem.setTransactionSuccess(true);
-        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
+        responseItem.setAmountPaid(amountToDebit);
         return responseItem;
     }
 
-    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("debit not implemented.");
     }
 
-    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processCredit(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("credit not implemented.");
     }
 
-    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processVoidPayment(PaymentContext paymentContext, Money amountToVoid, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("voidPayment not implemented.");
     }
 
-    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processBalance(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("balance not implemented.");
     }
 
+    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return validPaymentInfoType.equals(paymentType);
     }
