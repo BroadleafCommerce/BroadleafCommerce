@@ -22,9 +22,49 @@ import org.broadleafcommerce.common.money.Money;
 
 public interface PaymentContext {
 
+    /**
+     *
+     * @deprecated Use getTransactionAmount() instead.
+     * @return
+     */
     public Money getOriginalPaymentAmount();
 
+    /**
+     *
+     * @deprecated Use getRemainingTransactionAmount() instead.
+     * @return
+     */
     public Money getRemainingPaymentAmount();
+
+    /**
+     * The amount that the system should attempt to process.   For example, when submitting an order, this would be the order.getTotal.
+     * If refunding $10, this would be 10.
+     *
+     * @return
+     */
+    public Money getTransactionAmount();
+
+    /**
+     * Sets the transaction amount
+     *
+     * @param amount
+     */
+    public void setTransactionAmount(Money amount);
+
+    /**
+     * Returns the remaining transaction amount that needs to be processed.   When using multiple forms of payment, each payment module will
+     * attempt to perform the operation if they are able to up to this amount.
+     *
+     * @return
+     */
+    public Money getRemainingTransactionAmount();
+
+    /**
+     * Sets the remaining transaction amount.
+     *
+     * @param amount
+     */
+    public void setRemainingTransactionAmount(Money amount);
 
     public PaymentInfo getPaymentInfo();
 

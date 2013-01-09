@@ -24,25 +24,49 @@ public class PaymentContextImpl implements PaymentContext {
 
     protected Money originalPaymentAmount;
     protected Money remainingPaymentAmount;
+    protected Money transactionAmount;
+    protected Money remainingTransactionAmount;
     protected PaymentInfo paymentInfo;
     protected Referenced referencedPaymentInfo;
     protected String transactionId;
     protected String userName;
 
-    public PaymentContextImpl(Money originalPaymentAmount, Money remainingPaymentAmount, PaymentInfo paymentInfo, Referenced referencedPaymentInfo, String userName) {
-        this.originalPaymentAmount = originalPaymentAmount;
-        this.remainingPaymentAmount = remainingPaymentAmount;
+    public PaymentContextImpl(Money transactionAmount, Money remainingTransactionAmount, PaymentInfo paymentInfo, Referenced referencedPaymentInfo, String userName) {
+        this.transactionAmount = transactionAmount;
+        this.remainingTransactionAmount = remainingTransactionAmount;
         this.paymentInfo = paymentInfo;
         this.referencedPaymentInfo = referencedPaymentInfo;
         this.userName = userName;
     }
 
+    @Deprecated
     public Money getOriginalPaymentAmount() {
         return originalPaymentAmount;
     }
 
+    @Deprecated
     public Money getRemainingPaymentAmount() {
         return remainingPaymentAmount;
+    }
+
+    @Override
+    public Money getTransactionAmount() {
+        return transactionAmount;
+    }
+
+    @Override
+    public void setTransactionAmount(Money transactionAmount) {
+        this.transactionAmount = transactionAmount;
+    }
+
+    @Override
+    public Money getRemainingTransactionAmount() {
+        return remainingTransactionAmount;
+    }
+
+    @Override
+    public void setRemainingTransactionAmount(Money remainingTransactionAmount) {
+        this.remainingTransactionAmount = remainingTransactionAmount;
     }
 
     public PaymentInfo getPaymentInfo() {
