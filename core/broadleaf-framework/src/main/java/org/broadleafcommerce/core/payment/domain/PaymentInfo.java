@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.Phone;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.Phone;
 
 public interface PaymentInfo extends Serializable {
 
@@ -73,5 +74,17 @@ public interface PaymentInfo extends Serializable {
     public void setRequestParameterMap(Map<String, String[]> requestParameterMap);
 
     public Referenced createEmptyReferenced();
+
+    public List<PaymentInfoDetail> getPaymentInfoDetails();
+
+    public void setPaymentInfoDetails(List<PaymentInfoDetail> details);
+
+    public Money getPaymentCapturedAmount();
+
+    public Money getPaymentCreditedAmount();
+
+    public Money getReverseAuthAmount();
+
+    public BroadleafCurrency getCurrency();
 
 }
