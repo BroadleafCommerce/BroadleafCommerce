@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.test;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
 import org.springframework.test.context.TestExecutionListeners;
@@ -23,19 +24,25 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import java.lang.management.ManagementFactory;
 
 @TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
 @TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})
 public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 
-	private static MergeClassPathXMLApplicationContext mergeContext = null;
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+
+    protected static MergeClassPathXMLApplicationContext mergeContext = null;
+
+    protected static List<String> moduleContexts = new ArrayList<String>();
 	
 	public static MergeClassPathXMLApplicationContext getContext() {
-			
 		try {
 			if (mergeContext == null) {
 				String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
@@ -43,16 +50,20 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 				String[] additionalContexts = (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) 
 						? new String[]{"bl-applicationContext-test-legacy.xml"} 
 						: new String[]{};
+
+                additionalContexts = (String[]) ArrayUtils.addAll(additionalContexts, moduleContexts.toArray());
 				
 				mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
 		return mergeContext;
 	}
-	
-	@PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
+
+    protected static List<String> getModuleContexts() {
+        return moduleContexts;
+    }
 
 }
