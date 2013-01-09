@@ -126,7 +126,7 @@
     </build>
     <profiles>
         <profile>
-            <id>jrebel-debug</id>
+            <id>blc-development</id>
             <build>
                 <plugins>
                     <plugin>
@@ -140,16 +140,22 @@
                                     <goal>generate</goal>
                                 </goals>
                             </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <executions>
                             <execution>
+                                <id>generate-test-rebel-xml</id>
+                                <phase>process-test-resources</phase>
                                 <goals>
-                                    <goal>test-jar</goal>
+                                    <goal>generate</goal>
                                 </goals>
+                                <configuration>
+	                                <classpath>
+	                                    <resources>
+	                                        <resource>
+									            <directory>target/test-classes</directory>
+									        </resource>
+									    </resources>
+	                                </classpath>
+	                                <rebelXmlDirectory>target/test-classes</rebelXmlDirectory>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -160,13 +166,20 @@
 			            	<execution>
 			            		<id>legacy-test</id>
 					            <configuration>
-		                            <argLine>-Dlegacy=true -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 -Drebel.root=${rebel.root} -javaagent:/usr/lib/jrebel/jrebel.jar -Drebel.log.stdout=true</argLine>
+		                            <argLine>
+                                        -Dlegacy=true 
+                                        -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
+                                        -javaagent:${jrebel.path} -Drebel.log.stdout=true
+                                    </argLine>
 					            </configuration>
 			          		</execution>
 			            	<execution>
 			            		<id>non-legacy-test</id>
 					            <configuration>
-		                            <argLine>-Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 -Drebel.root=${rebel.root} -javaagent:/usr/lib/jrebel/jrebel.jar -Drebel.log.stdout=true</argLine>
+		                            <argLine>
+                                        -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
+                                        -javaagent:${jrebel.path} -Drebel.log.stdout=true
+                                    </argLine>
 					            </configuration>
 			          		</execution>
 			          	</executions>
