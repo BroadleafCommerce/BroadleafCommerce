@@ -66,54 +66,54 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected FulfillmentOption fulfillmentOption;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public Order getOrder() {
-		return order;
-	}
+    @Override
+    public Order getOrder() {
+        return order;
+    }
 
-	@Override
-	public void setOrder(Order order) {
-		this.order = order;
-	}
+    @Override
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 
-	@Override
-	public OrderItem getOrderItem() {
-		return orderItem;
-	}
+    @Override
+    public OrderItem getOrderItem() {
+        return orderItem;
+    }
 
-	@Override
-	public void setOrderItem(OrderItem orderItem) {
-		this.orderItem = orderItem;
-	}
+    @Override
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
 
-	@Override
-	public Address getAddress() {
-		return address;
-	}
+    @Override
+    public Address getAddress() {
+        return address;
+    }
 
-	@Override
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    @Override
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
-	@Override
-	public FulfillmentOption getFulfillmentOption() {
-		return fulfillmentOption;
-	}
+    @Override
+    public FulfillmentOption getFulfillmentOption() {
+        return fulfillmentOption;
+    }
 
-	@Override
-	public void setFulfillmentOption(FulfillmentOption fulfillmentOption) {
-		this.fulfillmentOption = fulfillmentOption;
-	}
+    @Override
+    public void setFulfillmentOption(FulfillmentOption fulfillmentOption) {
+        this.fulfillmentOption = fulfillmentOption;
+    }
 
 }

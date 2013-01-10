@@ -25,7 +25,7 @@ import org.apache.tools.ant.Task;
  */
 public class FileSystemApplicationContextTask extends Task {
 
-	private String path;
+    private String path;
 
     public String getPath() {
         return path;

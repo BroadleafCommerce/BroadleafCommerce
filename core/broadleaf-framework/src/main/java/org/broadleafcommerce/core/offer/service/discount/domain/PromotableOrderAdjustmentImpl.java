@@ -24,57 +24,57 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment {
-	
-	private static final long serialVersionUID = 1L;
-	
-	protected OrderAdjustment delegate;
-	protected PromotableOrder order;
-	
-	public PromotableOrderAdjustmentImpl(OrderAdjustment orderAdjustment, PromotableOrder order) {
-		this.delegate = orderAdjustment;
-		this.order = order;
-	}
-	
-	public void reset() {
-		delegate = null;
-	}
-	
-	public OrderAdjustment getDelegate() {
-		return delegate;
-	}
-	
-	protected boolean roundOfferValues = true;
-	protected int roundingScale = 2;
-	protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
-	
-	/**
+    
+    private static final long serialVersionUID = 1L;
+    
+    protected OrderAdjustment delegate;
+    protected PromotableOrder order;
+    
+    public PromotableOrderAdjustmentImpl(OrderAdjustment orderAdjustment, PromotableOrder order) {
+        this.delegate = orderAdjustment;
+        this.order = order;
+    }
+    
+    public void reset() {
+        delegate = null;
+    }
+    
+    public OrderAdjustment getDelegate() {
+        return delegate;
+    }
+    
+    protected boolean roundOfferValues = true;
+    protected int roundingScale = 2;
+    protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
+    
+    /**
      * It is sometimes problematic to offer percentage-off offers with regards to rounding. For example,
      * consider an item that costs 9.99 and has a 50% promotion. To be precise, the offer value is 4.995,
      * but this may be a strange value to display to the user depending on the currency being used.
      */
     public boolean isRoundOfferValues() {
-		return roundOfferValues;
-	}
+        return roundOfferValues;
+    }
 
     /**
      * @see #isRoundOfferValues()
      * 
      * @param roundingScale
      */
-	public void setRoundingScale(int roundingScale) {
-		this.roundingScale = roundingScale;
-	}
-	
+    public void setRoundingScale(int roundingScale) {
+        this.roundingScale = roundingScale;
+    }
+    
     /**
      * @see #isRoundOfferValues()
      * 
-	 * @param roundingMode
-	 */
-	public void setRoundingMode(RoundingMode roundingMode) {
-		this.roundingMode = roundingMode;
-	}
+     * @param roundingMode
+     */
+    public void setRoundingMode(RoundingMode roundingMode) {
+        this.roundingMode = roundingMode;
+    }
 
-	/*
+    /*
      * Calculates the value of the adjustment
      */
     public void computeAdjustmentValue() {
@@ -84,29 +84,29 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
                 adjustmentPrice = order.getSubTotal();
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-            	delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
+                delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
                 BigDecimal offerValue = adjustmentPrice.getAmount().subtract(delegate.getOffer().getValue());
-            	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
+                delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                 BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
                 if (isRoundOfferValues()) {
-                	offerValue = offerValue.setScale(roundingScale, roundingMode);
+                    offerValue = offerValue.setScale(roundingScale, roundingMode);
                 }
-            	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
+                delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (adjustmentPrice.lessThan(delegate.getValue())) {
-            	delegate.setValue(adjustmentPrice);
+                delegate.setValue(adjustmentPrice);
             }
         }
     }
     
     public Money getValue() {
-		if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
-			computeAdjustmentValue();
-		}
-		return delegate.getValue();
-	}
+        if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
+            computeAdjustmentValue();
+        }
+        return delegate.getValue();
+    }
 }

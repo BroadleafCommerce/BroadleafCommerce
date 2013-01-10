@@ -44,36 +44,36 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public class OrderView extends HLayout implements Instantiable, OrderDisplay {
-	
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
-	protected OrderItemView orderItemsDisplay;
-	protected SubItemView fulfillmentGroupDisplay;
-	protected SubItemView paymentInfoDisplay;
-	protected GridStructureView additionalAttributesDisplay;
-	protected SubItemView offerCodeDisplay;
-	protected GridStructureView orderAdjustmentDisplay;
-	protected GridStructureView orderItemAdjustmentDisplay;
-	protected GridStructureView orderItemFeeDisplay;
-	protected GridStructureView fulfillmentGroupAdjustmentDisplay;
+    
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected OrderItemView orderItemsDisplay;
+    protected SubItemView fulfillmentGroupDisplay;
+    protected SubItemView paymentInfoDisplay;
+    protected GridStructureView additionalAttributesDisplay;
+    protected SubItemView offerCodeDisplay;
+    protected GridStructureView orderAdjustmentDisplay;
+    protected GridStructureView orderItemAdjustmentDisplay;
+    protected GridStructureView orderItemFeeDisplay;
+    protected GridStructureView fulfillmentGroupAdjustmentDisplay;
     protected GridStructureView paymentResponseDisplay;
     protected GridStructureView paymentLogDisplay;
     protected ToolStripButton exportOrdersButton;
     
-	public OrderView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	@Override
+    public OrderView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("orderLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("orderLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("ordersListTitle"), entityDataSource, false);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("ordersListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
         
         exportOrdersButton = new ToolStripButton(BLCMain.getMessageManager().getString("exportOrdersButtonTitle"));
@@ -145,67 +145,67 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	@Override
+    @Override
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	@Override
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	@Override
+        return dynamicFormDisplay;
+    }
+    
+    @Override
     public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+        return listDisplay;
+    }
 
-	@Override
+    @Override
     public OrderItemDisplay getOrderItemsDisplay() {
-		return orderItemsDisplay;
-	}
+        return orderItemsDisplay;
+    }
 
-	@Override
+    @Override
     public SubItemDisplay getFulfillmentGroupDisplay() {
-		return fulfillmentGroupDisplay;
-	}
+        return fulfillmentGroupDisplay;
+    }
 
-	@Override
+    @Override
     public SubItemDisplay getPaymentInfoDisplay() {
-		return paymentInfoDisplay;
-	}
-	
-	@Override
+        return paymentInfoDisplay;
+    }
+    
+    @Override
     public SubItemDisplay getOfferCodeDisplay() {
-		return offerCodeDisplay;
-	}
+        return offerCodeDisplay;
+    }
 
-	@Override
+    @Override
     public GridStructureDisplay getAdditionalAttributesDisplay() {
-		return additionalAttributesDisplay;
-	}
-	
-	@Override
+        return additionalAttributesDisplay;
+    }
+    
+    @Override
     public GridStructureDisplay getOrderAdjustmentDisplay() {
-		return orderAdjustmentDisplay;
-	}
-	
-	@Override
+        return orderAdjustmentDisplay;
+    }
+    
+    @Override
     public GridStructureDisplay getOrderItemAdjustmentDisplay() {
-		return orderItemAdjustmentDisplay;
-	}
-	
-	@Override
+        return orderItemAdjustmentDisplay;
+    }
+    
+    @Override
     public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay() {
-		return fulfillmentGroupAdjustmentDisplay;
-	}
+        return fulfillmentGroupAdjustmentDisplay;
+    }
 
-	@Override
+    @Override
     public GridStructureView getOrderItemFeeDisplay() {
-		return orderItemFeeDisplay;
-	}
+        return orderItemFeeDisplay;
+    }
 
     @Override
     public GridStructureView getPaymentLogDisplay() {

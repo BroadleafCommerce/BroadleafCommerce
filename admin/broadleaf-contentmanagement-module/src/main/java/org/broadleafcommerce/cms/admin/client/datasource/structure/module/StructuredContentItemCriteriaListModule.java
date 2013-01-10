@@ -40,55 +40,55 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
  */
 public class StructuredContentItemCriteriaListModule extends BasicClientEntityModule {
 
-	public StructuredContentItemCriteriaListModule(
+    public StructuredContentItemCriteriaListModule(
             String ceilingEntityFullyQualifiedClassname,
             PersistencePerspective persistencePerspective,
             DynamicEntityServiceAsync service) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
-	}
+        super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
+    }
 
-	@Override
-	public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-    	BLCMain.NON_MODAL_PROGRESS.startProgress();
-		JavaScriptObject data = request.getData();
+    @Override
+    public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
+        BLCMain.NON_MODAL_PROGRESS.startProgress();
+        JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         record.setAttribute("_type", new String[]{((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()});
         Entity entity = buildEntity(record, request);
         service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
-			public void onSuccess(Void item) {
-				super.onSuccess(null);
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
-			}
+            public void onSuccess(Void item) {
+                super.onSuccess(null);
+                if (cb != null) {
+                    cb.onSuccess(dataSource);
+                }
+                dataSource.processResponse(requestId, response);
+            }
 
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-			
-		});
+            @Override
+            protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                super.onError(opType, requestId, request, response, caught);
+                if (cb != null) {
+                    cb.onFailure(caught);
+                }
+            }
+            
+        });
     }
 
-	
+    
 }

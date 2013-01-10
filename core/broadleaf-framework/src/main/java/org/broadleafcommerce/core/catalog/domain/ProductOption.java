@@ -135,7 +135,7 @@ public interface ProductOption extends Serializable {
      * 
      * @param displayOrder
      */
-	public void setDisplayOrder(Integer displayOrder);
+    public void setDisplayOrder(Integer displayOrder);
 
 
     /**

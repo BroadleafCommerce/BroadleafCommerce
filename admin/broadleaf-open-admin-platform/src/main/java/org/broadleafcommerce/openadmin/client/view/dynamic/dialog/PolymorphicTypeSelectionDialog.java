@@ -44,22 +44,22 @@ import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler
  */
 public class PolymorphicTypeSelectionDialog extends Window {
 
-	protected ListGrid searchGrid;
-	protected IButton saveButton;
-	protected SearchItemSelectedHandler handler;
+    protected ListGrid searchGrid;
+    protected IButton saveButton;
+    protected SearchItemSelectedHandler handler;
 
-	public PolymorphicTypeSelectionDialog() {
-		super();
-		this.setIsModal(true);
-		this.setShowModalMask(true);
-		this.setShowMinimizeButton(false);
-		this.setWidth(600);
-		this.setHeight(300);
-		this.setCanDragResize(true);
-		this.setOverflow(Overflow.AUTO);
-		this.setVisible(false);
+    public PolymorphicTypeSelectionDialog() {
+        super();
+        this.setIsModal(true);
+        this.setShowModalMask(true);
+        this.setShowMinimizeButton(false);
+        this.setWidth(600);
+        this.setHeight(300);
+        this.setCanDragResize(true);
+        this.setOverflow(Overflow.AUTO);
+        this.setVisible(false);
         
-		searchGrid = new ListGrid();
+        searchGrid = new ListGrid();
         searchGrid.setAlternateRecordStyles(true);
         searchGrid.setSelectionType(SelectionStyle.SINGLE);
         searchGrid.setShowAllColumns(true);
@@ -70,9 +70,9 @@ public class PolymorphicTypeSelectionDialog extends Window {
         searchGrid.setFields(new ListGridField("name", "Name"));
         
         searchGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				saveButton.enable();
-			}
+            public void onSelectionChanged(SelectionEvent event) {
+                saveButton.enable();
+            }
         });
         
         addItem(searchGrid);
@@ -80,16 +80,16 @@ public class PolymorphicTypeSelectionDialog extends Window {
         saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	Record selectedRecord = searchGrid.getSelectedRecord();
+                Record selectedRecord = searchGrid.getSelectedRecord();
                 PolymorphicTypeSelectionDialog.this.handler.onSearchItemSelected(new SearchItemSelected((ListGridRecord) selectedRecord, searchGrid.getDataSource()));
-            	hide();
+                hide();
             }
         });
 
         IButton cancelButton = new IButton(BLCMain.getMessageManager().getString("cancel"));
         cancelButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
-            	hide();
+                hide();
             }  
         });
         
@@ -101,14 +101,14 @@ public class PolymorphicTypeSelectionDialog extends Window {
         hLayout.setLayoutBottomMargin(10);
         
         addItem(hLayout);
-	}
-	
-	public void search(String title, LinkedHashMap<String, String> types, SearchItemSelectedHandler handler) {
-		this.setTitle(title);
-		this.handler = handler;
-		centerInPage();
-		saveButton.disable();
-		searchGrid.deselectAllRecords();
+    }
+    
+    public void search(String title, LinkedHashMap<String, String> types, SearchItemSelectedHandler handler) {
+        this.setTitle(title);
+        this.handler = handler;
+        centerInPage();
+        saveButton.disable();
+        searchGrid.deselectAllRecords();
 
         ListGridRecord[] records = new ListGridRecord[types.size()];
         int j = 0;
@@ -121,8 +121,8 @@ public class PolymorphicTypeSelectionDialog extends Window {
         }
         searchGrid.setData(records);
 
-		show();
-	}
+        show();
+    }
 
     public SearchItemSelectedHandler getHandler() {
         return handler;

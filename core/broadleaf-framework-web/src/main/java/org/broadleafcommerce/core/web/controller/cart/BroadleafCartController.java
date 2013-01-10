@@ -43,219 +43,219 @@ import java.util.Map;
  * @author Andre Azzolini (apazzolini)
  */
 public class BroadleafCartController extends AbstractCartController {
-	
-	protected static String cartView = "cart/cart";
-	protected static String cartPageRedirect = "redirect:/cart";
-	
-	/**
-	 * Renders the cart page.
-	 * 
-	 * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
-	 * Otherwise, it will render the "cart" template.
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @throws PricingException
-	 */
-	public String cart(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-		return getCartView();
-	}
-	
-	/**
-	 * Takes in an item request, adds the item to the customer's current cart, and returns.
-	 * 
-	 * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
-	 * Otherwise, it will perform a 302 redirect to "/cart"
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @param itemRequest
-	 * @throws IOException
-	 * @throws AddToCartException 
-	 * @throws PricingException
-	 */
-	public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-			AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException  {
-		Order cart = CartState.getCart();
-		
-		// If the cart is currently empty, it will be the shared, "null" cart. We must detect this
-		// and provision a fresh cart for the current customer upon the first cart add
-		if (cart == null || cart.equals(orderService.getNullOrder())) {
-			cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
-		}
-		
-		cart = orderService.addItem(cart.getId(), itemRequest, false);
-		cart = orderService.save(cart,  true);
-		CartState.setCart(cart);
-		
-    	return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
-	}
-	
-	/**
-	 * Takes in an item request and updates the quantity of that item in the cart. If the quantity
-	 * was passed in as 0, it will remove the item.
-	 * 
-	 * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
-	 * Otherwise, it will perform a 302 redirect to "/cart"
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @param itemRequest
-	 * @throws IOException
-	 * @throws PricingException
-	 * @throws UpdateCartException
-	 * @throws RemoveFromCartException 
-	 */
-	public String updateQuantity(HttpServletRequest request, HttpServletResponse response, Model model,
-			AddToCartItem itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
-		Order cart = CartState.getCart();
-		
-		cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
-		cart = orderService.save(cart, false);
-		CartState.setCart(cart);
-		
-		if (isAjaxRequest(request)) {
-			Map<String, Object> extraData = new HashMap<String, Object>();
-			extraData.put("productId", itemRequest.getProductId());
-			extraData.put("cartItemCount", cart.getItemCount());
-			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-			return getCartView();
-		} else {
-			return getCartPageRedirect();
-		}
-	}
-	
-	/**
-	 * Takes in an item request, updates the quantity of that item in the cart, and returns
-	 * 
-	 * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
-	 * Otherwise, it will perform a 302 redirect to "/cart"
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @param nonAjaxSuccessUrl
-	 * @param itemRequest
-	 * @throws IOException
-	 * @throws PricingException
-	 * @throws RemoveFromCartException 
-	 */
-	public String remove(HttpServletRequest request, HttpServletResponse response, Model model,
-			AddToCartItem itemRequest) throws IOException, PricingException, RemoveFromCartException {
-		Order cart = CartState.getCart();
-		
-		cart = orderService.removeItem(cart.getId(), itemRequest.getOrderItemId(), false);
-		cart = orderService.save(cart, true);
-		CartState.setCart(cart);
-		
-		if (isAjaxRequest(request)) {
-			Map<String, Object> extraData = new HashMap<String, Object>();
-			extraData.put("cartItemCount", cart.getItemCount());
-			extraData.put("productId", itemRequest.getProductId());
-			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-			return getCartView();
-		} else {
-			return getCartPageRedirect();
-		}
-	}
-	
-	/**
-	 * Cancels the current cart and redirects to the homepage
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @throws PricingException
-	 */
-	public String empty(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-		Order cart = CartState.getCart();
-    	orderService.cancelOrder(cart);
-		CartState.setCart(null);
-    	return "redirect:/";
-	}
-	
-	/** Attempts to add provided Offer to Cart
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @param customerOffer
-	 * @return the return view
-	 * @throws IOException
-	 * @throws PricingException
-	 * @throws ItemNotFoundException
-	 * @throws OfferMaxUseExceededException 
-	 */
-	public String addPromo(HttpServletRequest request, HttpServletResponse response, Model model,
-			String customerOffer) throws IOException, PricingException {
-		Order cart = CartState.getCart();
-		
-		Boolean promoAdded = false;
-		String exception = "";
-		
-		OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
-		
-		if (offerCode!=null) {
-			try {
-				orderService.addOfferCode(cart, offerCode, false);
-				promoAdded = true;
-				cart = orderService.save(cart, true);
-			} catch(OfferMaxUseExceededException e) {
-				exception = "Use Limit Exceeded";
-			}
-		} else {
-			exception = "Invalid Code";
-		}
-		
-		CartState.setCart(cart);
-		
-		if (isAjaxRequest(request)) {
-			Map<String, Object> extraData = new HashMap<String, Object>();
-			extraData.put("promoAdded", promoAdded);
-			extraData.put("exception" , exception);
-			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-			return getCartView();
-		} else {
-		    model.addAttribute("exception", exception);
-			return getCartView();
-		}
-		
-	}
-	
-	/** Removes offer from cart
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @param offerId
-	 * @return the return view
-	 * @throws IOException
-	 * @throws PricingException
-	 * @throws ItemNotFoundException
-	 * @throws OfferMaxUseExceededException 
-	 */
-	public String removePromo(HttpServletRequest request, HttpServletResponse response, Model model,
-			Long offerCodeId) throws IOException, PricingException {
-		Order cart = CartState.getCart();
-		
-		OfferCode offerCode = offerService.findOfferCodeById(offerCodeId);
+    
+    protected static String cartView = "cart/cart";
+    protected static String cartPageRedirect = "redirect:/cart";
+    
+    /**
+     * Renders the cart page.
+     * 
+     * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
+     * Otherwise, it will render the "cart" template.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @throws PricingException
+     */
+    public String cart(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
+        return getCartView();
+    }
+    
+    /**
+     * Takes in an item request, adds the item to the customer's current cart, and returns.
+     * 
+     * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
+     * Otherwise, it will perform a 302 redirect to "/cart"
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param itemRequest
+     * @throws IOException
+     * @throws AddToCartException 
+     * @throws PricingException
+     */
+    public String add(HttpServletRequest request, HttpServletResponse response, Model model,
+            AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException  {
+        Order cart = CartState.getCart();
+        
+        // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
+        // and provision a fresh cart for the current customer upon the first cart add
+        if (cart == null || cart.equals(orderService.getNullOrder())) {
+            cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
+        }
+        
+        cart = orderService.addItem(cart.getId(), itemRequest, false);
+        cart = orderService.save(cart,  true);
+        CartState.setCart(cart);
+        
+        return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+    }
+    
+    /**
+     * Takes in an item request and updates the quantity of that item in the cart. If the quantity
+     * was passed in as 0, it will remove the item.
+     * 
+     * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
+     * Otherwise, it will perform a 302 redirect to "/cart"
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param itemRequest
+     * @throws IOException
+     * @throws PricingException
+     * @throws UpdateCartException
+     * @throws RemoveFromCartException 
+     */
+    public String updateQuantity(HttpServletRequest request, HttpServletResponse response, Model model,
+            AddToCartItem itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
+        Order cart = CartState.getCart();
+        
+        cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
+        cart = orderService.save(cart, false);
+        CartState.setCart(cart);
+        
+        if (isAjaxRequest(request)) {
+            Map<String, Object> extraData = new HashMap<String, Object>();
+            extraData.put("productId", itemRequest.getProductId());
+            extraData.put("cartItemCount", cart.getItemCount());
+            model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
+            return getCartView();
+        } else {
+            return getCartPageRedirect();
+        }
+    }
+    
+    /**
+     * Takes in an item request, updates the quantity of that item in the cart, and returns
+     * 
+     * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
+     * Otherwise, it will perform a 302 redirect to "/cart"
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param nonAjaxSuccessUrl
+     * @param itemRequest
+     * @throws IOException
+     * @throws PricingException
+     * @throws RemoveFromCartException 
+     */
+    public String remove(HttpServletRequest request, HttpServletResponse response, Model model,
+            AddToCartItem itemRequest) throws IOException, PricingException, RemoveFromCartException {
+        Order cart = CartState.getCart();
+        
+        cart = orderService.removeItem(cart.getId(), itemRequest.getOrderItemId(), false);
+        cart = orderService.save(cart, true);
+        CartState.setCart(cart);
+        
+        if (isAjaxRequest(request)) {
+            Map<String, Object> extraData = new HashMap<String, Object>();
+            extraData.put("cartItemCount", cart.getItemCount());
+            extraData.put("productId", itemRequest.getProductId());
+            model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
+            return getCartView();
+        } else {
+            return getCartPageRedirect();
+        }
+    }
+    
+    /**
+     * Cancels the current cart and redirects to the homepage
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @throws PricingException
+     */
+    public String empty(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
+        Order cart = CartState.getCart();
+        orderService.cancelOrder(cart);
+        CartState.setCart(null);
+        return "redirect:/";
+    }
+    
+    /** Attempts to add provided Offer to Cart
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param customerOffer
+     * @return the return view
+     * @throws IOException
+     * @throws PricingException
+     * @throws ItemNotFoundException
+     * @throws OfferMaxUseExceededException 
+     */
+    public String addPromo(HttpServletRequest request, HttpServletResponse response, Model model,
+            String customerOffer) throws IOException, PricingException {
+        Order cart = CartState.getCart();
+        
+        Boolean promoAdded = false;
+        String exception = "";
+        
+        OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
+        
+        if (offerCode!=null) {
+            try {
+                orderService.addOfferCode(cart, offerCode, false);
+                promoAdded = true;
+                cart = orderService.save(cart, true);
+            } catch(OfferMaxUseExceededException e) {
+                exception = "Use Limit Exceeded";
+            }
+        } else {
+            exception = "Invalid Code";
+        }
+        
+        CartState.setCart(cart);
+        
+        if (isAjaxRequest(request)) {
+            Map<String, Object> extraData = new HashMap<String, Object>();
+            extraData.put("promoAdded", promoAdded);
+            extraData.put("exception" , exception);
+            model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
+            return getCartView();
+        } else {
+            model.addAttribute("exception", exception);
+            return getCartView();
+        }
+        
+    }
+    
+    /** Removes offer from cart
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param offerId
+     * @return the return view
+     * @throws IOException
+     * @throws PricingException
+     * @throws ItemNotFoundException
+     * @throws OfferMaxUseExceededException 
+     */
+    public String removePromo(HttpServletRequest request, HttpServletResponse response, Model model,
+            Long offerCodeId) throws IOException, PricingException {
+        Order cart = CartState.getCart();
+        
+        OfferCode offerCode = offerService.findOfferCodeById(offerCodeId);
 
-		orderService.removeOfferCode(cart, offerCode, false);
-		cart = orderService.save(cart, true);
-		CartState.setCart(cart);
+        orderService.removeOfferCode(cart, offerCode, false);
+        cart = orderService.save(cart, true);
+        CartState.setCart(cart);
 
-    	return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
-	}
+        return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+    }
 
-	public String getCartView() {
-		return cartView;
-	}
+    public String getCartView() {
+        return cartView;
+    }
 
-	public String getCartPageRedirect() {
-		return cartPageRedirect;
-	}
-	
+    public String getCartPageRedirect() {
+        return cartPageRedirect;
+    }
+    
 }

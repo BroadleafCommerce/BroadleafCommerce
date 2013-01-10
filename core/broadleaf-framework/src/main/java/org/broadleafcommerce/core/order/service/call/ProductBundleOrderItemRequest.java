@@ -49,14 +49,14 @@ public class ProductBundleOrderItemRequest {
     }
     
     public Sku getSku() {
-		return sku;
-	}
+        return sku;
+    }
 
-	public void setSku(Sku sku) {
-		this.sku = sku;
-	}
+    public void setSku(Sku sku) {
+        this.sku = sku;
+    }
 
-	public int getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
@@ -64,20 +64,20 @@ public class ProductBundleOrderItemRequest {
         this.quantity = quantity;
     }
 
-	public ProductBundle getProductBundle() {
-		return productBundle;
-	}
+    public ProductBundle getProductBundle() {
+        return productBundle;
+    }
 
-	public void setProductBundle(ProductBundle productBundle) {
-		this.productBundle = productBundle;
-	}
+    public void setProductBundle(ProductBundle productBundle) {
+        this.productBundle = productBundle;
+    }
 
-	public Map<String, String> getItemAttributes() {
-		return itemAttributes;
-	}
+    public Map<String, String> getItemAttributes() {
+        return itemAttributes;
+    }
 
-	public void setItemAttributes(Map<String, String> itemAttributes) {
-		this.itemAttributes = itemAttributes;
-	}
-	
+    public void setItemAttributes(Map<String, String> itemAttributes) {
+        this.itemAttributes = itemAttributes;
+    }
+    
 }

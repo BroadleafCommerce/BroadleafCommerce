@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.easymock.classextension.EasyMock;
 
 public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
-	
+    
     private CategoryBreadCrumbTag categoryBreadcrumbTag;
     private Category category;
     private JspWriter writer;
@@ -72,11 +72,11 @@ public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
         super.verifyBaseMockObjects(category, defaultParentCategory);
     }
 
-	@Override
-	public void setup() {
-		categoryBreadcrumbTag = new CategoryBreadCrumbTag();
+    @Override
+    public void setup() {
+        categoryBreadcrumbTag = new CategoryBreadCrumbTag();
         category = EasyMock.createMock(Category.class);
         writer = EasyMock.createNiceMock(JspWriter.class);
-	}
+    }
 
 }

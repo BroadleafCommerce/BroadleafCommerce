@@ -50,32 +50,32 @@ public class PresentationLayerAssociatedDataSource extends DynamicEntityDataSour
         }}
     };
     
-	protected DataBoundComponent associatedGrid;
-	
-	/**
-	 * @param name
-	 * @param persistencePerspective
-	 * @param service
-	 * @param modules
-	 */
-	public PresentationLayerAssociatedDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
-		super(name, persistencePerspective, service, modules);
-	}
+    protected DataBoundComponent associatedGrid;
+    
+    /**
+     * @param name
+     * @param persistencePerspective
+     * @param service
+     * @param modules
+     */
+    public PresentationLayerAssociatedDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
+        super(name, persistencePerspective, service, modules);
+    }
 
-	public DataBoundComponent getAssociatedGrid() {
-		return associatedGrid;
-	}
+    public DataBoundComponent getAssociatedGrid() {
+        return associatedGrid;
+    }
 
-	public void setAssociatedGrid(DataBoundComponent associatedGrid) {
-		this.associatedGrid = associatedGrid;
-	}
+    public void setAssociatedGrid(DataBoundComponent associatedGrid) {
+        this.associatedGrid = associatedGrid;
+    }
 
-	public void loadAssociatedGridBasedOnRelationship(String relationshipValue, DSCallback dsCallback) {
-		Criteria criteria = createRelationshipCriteria(relationshipValue);
-		if (dsCallback != null) {
-			getAssociatedGrid().fetchData(criteria, dsCallback);
-		} else {
-			getAssociatedGrid().fetchData(criteria);
-		}
-	}
+    public void loadAssociatedGridBasedOnRelationship(String relationshipValue, DSCallback dsCallback) {
+        Criteria criteria = createRelationshipCriteria(relationshipValue);
+        if (dsCallback != null) {
+            getAssociatedGrid().fetchData(criteria, dsCallback);
+        } else {
+            getAssociatedGrid().fetchData(criteria);
+        }
+    }
 }

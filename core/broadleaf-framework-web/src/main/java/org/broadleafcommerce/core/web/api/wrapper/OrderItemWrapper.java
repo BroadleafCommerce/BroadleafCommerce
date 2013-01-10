@@ -94,14 +94,14 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
         
         Map<String, OrderItemAttribute> itemAttributes = model.getOrderItemAttributes();
         if (itemAttributes != null && ! itemAttributes.isEmpty()) {
-        	this.orderItemAttributes = new ArrayList<OrderItemAttributeWrapper>();
-        	Set<String> keys = itemAttributes.keySet();
-        	for (String key : keys) {
-        		OrderItemAttributeWrapper orderItemAttributeWrapper = 
-        				(OrderItemAttributeWrapper) context.getBean(OrderItemAttributeWrapper.class.getName());
-        		orderItemAttributeWrapper.wrap(itemAttributes.get(key), request);
-        		this.orderItemAttributes.add(orderItemAttributeWrapper);
-        	}
+            this.orderItemAttributes = new ArrayList<OrderItemAttributeWrapper>();
+            Set<String> keys = itemAttributes.keySet();
+            for (String key : keys) {
+                OrderItemAttributeWrapper orderItemAttributeWrapper = 
+                        (OrderItemAttributeWrapper) context.getBean(OrderItemAttributeWrapper.class.getName());
+                orderItemAttributeWrapper.wrap(itemAttributes.get(key), request);
+                this.orderItemAttributes.add(orderItemAttributeWrapper);
+            }
         }
         
         if (model instanceof DiscreteOrderItem) {

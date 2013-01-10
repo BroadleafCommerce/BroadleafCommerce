@@ -150,7 +150,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
         this.totalTax = Money.toAmount(totalTax);
     }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

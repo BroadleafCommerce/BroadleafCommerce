@@ -60,15 +60,15 @@ public interface CustomerService {
     public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners);
     
     public Customer resetPassword(PasswordReset passwordReset);
-	
+    
     public List<PasswordUpdatedHandler> getPasswordResetHandlers();
 
-	public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers);
-	
-	public List<PasswordUpdatedHandler> getPasswordChangedHandlers();
+    public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers);
+    
+    public List<PasswordUpdatedHandler> getPasswordChangedHandlers();
 
-	public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers);
-	
+    public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers);
+    
     /**
      * Looks up the corresponding Customer and emails the address on file with
      * the associated username.

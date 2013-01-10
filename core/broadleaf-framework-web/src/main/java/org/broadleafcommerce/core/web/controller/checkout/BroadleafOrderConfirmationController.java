@@ -61,8 +61,8 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
         return null;
     }
 
-	public String getOrderConfirmationView() {
-		return orderConfirmationView;
-	}
+    public String getOrderConfirmationView() {
+        return orderConfirmationView;
+    }
 
 }

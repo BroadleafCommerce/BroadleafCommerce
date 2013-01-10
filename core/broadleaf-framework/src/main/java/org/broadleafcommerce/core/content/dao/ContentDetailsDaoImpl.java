@@ -37,50 +37,50 @@ import java.util.List;
 @Repository("blContentDetailsDao")
 public class ContentDetailsDaoImpl extends BatchRetrieveDao implements ContentDetailsDao {
 
-	@PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.content.dao.ContentDetailsDao#delete(org.broadleafcommerce.core.content.domain.ContentDetails)
-	 */
-	public void delete(ContentDetails contentDetails) {
-		if (!em.contains(contentDetails)){
-			contentDetails = readContentDetailsById(contentDetails.getId());
-		}
-		em.remove(contentDetails);
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.content.dao.ContentDetailsDao#delete(org.broadleafcommerce.core.content.domain.ContentDetails)
+     */
+    public void delete(ContentDetails contentDetails) {
+        if (!em.contains(contentDetails)){
+            contentDetails = readContentDetailsById(contentDetails.getId());
+        }
+        em.remove(contentDetails);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.content.dao.ContentDetailsDao#readContentDetailsById(java.lang.Long)
-	 */
-	public ContentDetails readContentDetailsById(Integer id) {
-		return (ContentDetails) em.find(ContentDetailsImpl.class, id);
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.content.dao.ContentDetailsDao#readContentDetailsById(java.lang.Long)
+     */
+    public ContentDetails readContentDetailsById(Integer id) {
+        return (ContentDetails) em.find(ContentDetailsImpl.class, id);
+    }
 
-	public List<ContentDetails> readContentDetailsByOrderedIds(List<Integer> ids){
-		Query query = em.createNamedQuery("BC_READ_CONTENT_DETAILS_BY_IDS");
-		List<ContentDetails> cds = batchExecuteReadQuery(query, ids, "contentIds");
-		List<ContentDetails> orderedCds = new ArrayList<ContentDetails>();
-		for (Integer id : ids){
-			for (ContentDetails cd : cds){
-				if(id.intValue() ==  cd.getId().intValue()){
-					orderedCds.add(cd);
-				}
-			}
-		}
-		return orderedCds;
+    public List<ContentDetails> readContentDetailsByOrderedIds(List<Integer> ids){
+        Query query = em.createNamedQuery("BC_READ_CONTENT_DETAILS_BY_IDS");
+        List<ContentDetails> cds = batchExecuteReadQuery(query, ids, "contentIds");
+        List<ContentDetails> orderedCds = new ArrayList<ContentDetails>();
+        for (Integer id : ids){
+            for (ContentDetails cd : cds){
+                if(id.intValue() ==  cd.getId().intValue()){
+                    orderedCds.add(cd);
+                }
+            }
+        }
+        return orderedCds;
 
-	}
+    }
 
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.content.dao.ContentDetailsDao#save(org.broadleafcommerce.core.content.domain.ContentDetails)
-	 */
-	public ContentDetails save(ContentDetails contentDetails) {
-		return em.merge(contentDetails);
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.content.dao.ContentDetailsDao#save(org.broadleafcommerce.core.content.domain.ContentDetails)
+     */
+    public ContentDetails save(ContentDetails contentDetails) {
+        return em.merge(contentDetails);
+    }
 
 }

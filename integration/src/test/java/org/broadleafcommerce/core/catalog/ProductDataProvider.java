@@ -66,8 +66,8 @@ public class ProductDataProvider {
     }
 
     private static Product getProduct(Long id) {
-    	Calendar activeStartCal = Calendar.getInstance();
-    	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
         Product product = new ProductImpl();
         Sku defaultSku = new SkuImpl();
         defaultSku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));

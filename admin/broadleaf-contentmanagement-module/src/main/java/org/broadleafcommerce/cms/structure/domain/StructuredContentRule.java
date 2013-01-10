@@ -57,14 +57,14 @@ public interface StructuredContentRule extends Serializable {
      * @return the rule as an MVEL string
      */
     @Nonnull
-	public String getMatchRule();
+    public String getMatchRule();
 
     /**
      * Sets the match rule used to test this item.
      *
      * @param matchRule
      */
-	public void setMatchRule(@Nonnull String matchRule);
+    public void setMatchRule(@Nonnull String matchRule);
 
     /**
      * Builds a copy of this content rule.   Used by the content management system when an

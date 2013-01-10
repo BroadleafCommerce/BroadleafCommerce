@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface AdminPresentationOverrides {
 
-	AdminPresentationOverride[] value() default {};
+    AdminPresentationOverride[] value() default {};
 
     AdminPresentationCollectionOverride[] collections() default {};
 

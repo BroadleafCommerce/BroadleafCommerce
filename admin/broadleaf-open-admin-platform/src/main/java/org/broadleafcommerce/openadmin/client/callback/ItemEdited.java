@@ -26,20 +26,20 @@ import com.smartgwt.client.data.Record;
  */
 public class ItemEdited {
 
-	private Record record;
-	private DataSource dataSource;
+    private Record record;
+    private DataSource dataSource;
 
-	public ItemEdited(Record record, DataSource dataSource) {
-		this.record = record;
-		this.dataSource = dataSource;
-	}
+    public ItemEdited(Record record, DataSource dataSource) {
+        this.record = record;
+        this.dataSource = dataSource;
+    }
 
-	public Record getRecord() {
-		return record;
-	}
-	
-	public DataSource getDataSource() {
-		return dataSource;
-	}
+    public Record getRecord() {
+        return record;
+    }
+    
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 
 }

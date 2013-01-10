@@ -36,33 +36,33 @@ import java.math.BigDecimal;
 @Component("blPriceTextDisplayProcessor")
 public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProcessor {
 
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
-	public PriceTextDisplayProcessor() {
-		super("price");
-	}
-	
-	@Override
-	public int getPrecedence() {
-		return 1500;
-	}
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
+    public PriceTextDisplayProcessor() {
+        super("price");
+    }
+    
+    @Override
+    public int getPrecedence() {
+        return 1500;
+    }
 
-	// TODO: Actually make the returned text formatted for the given locale
-	@Override
-	protected String getText(Arguments arguments, Element element, String attributeName) {
-		Money price;
-		try {
-			price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		} catch (ClassCastException e) {
-			BigDecimal value = (BigDecimal) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-			price = new Money(value);
-		}
-		
-		if (price == null || price.isZero()) {
-			return "$0.00";
-		} else {
-			return "$" + price.getAmount().toString();
-		}
-	}
+    // TODO: Actually make the returned text formatted for the given locale
+    @Override
+    protected String getText(Arguments arguments, Element element, String attributeName) {
+        Money price;
+        try {
+            price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        } catch (ClassCastException e) {
+            BigDecimal value = (BigDecimal) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+            price = new Money(value);
+        }
+        
+        if (price == null || price.isZero()) {
+            return "$0.00";
+        } else {
+            return "$" + price.getAmount().toString();
+        }
+    }
 }

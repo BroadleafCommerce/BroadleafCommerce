@@ -32,7 +32,7 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
  *
  */
 public class OfferDeliveryType implements Serializable, BroadleafEnumerationType {
-	
+    
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferDeliveryType> TYPES = new HashMap<String, OfferDeliveryType>();
@@ -53,7 +53,7 @@ public class OfferDeliveryType implements Serializable, BroadleafEnumerationType
     }
 
     public OfferDeliveryType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -69,10 +69,10 @@ public class OfferDeliveryType implements Serializable, BroadleafEnumerationType
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

@@ -27,10 +27,10 @@ public interface UserPermissionDisplay {
 
     public ToolStripButton getAddButton();
 
-    	public ListGrid getGrid();
+        public ListGrid getGrid();
 
-    	public ToolStripButton getRemoveButton();
+        public ToolStripButton getRemoveButton();
 
-    	public ToolStrip getToolBar();
+        public ToolStrip getToolBar();
 
 }

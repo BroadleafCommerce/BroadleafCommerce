@@ -33,26 +33,26 @@ import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsideratio
  */
 public abstract class AbstractDynamicSkuPricingFilter implements DynamicSkuPricingFilter {
 
-	public void destroy() {
-		//do nothing
-	}
+    public void destroy() {
+        //do nothing
+    }
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-		SkuPricingConsiderationContext.setSkuPricingConsiderationContext(getPricingConsiderations(request));
-		SkuPricingConsiderationContext.setSkuPricingService(getDynamicSkuPricingService(request));
-		try {
-			filterChain.doFilter(request, response);
-		} finally {
-			SkuPricingConsiderationContext.setSkuPricingConsiderationContext(null);
-			SkuPricingConsiderationContext.setSkuPricingService(null);
-		}
-		
-	}
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        SkuPricingConsiderationContext.setSkuPricingConsiderationContext(getPricingConsiderations(request));
+        SkuPricingConsiderationContext.setSkuPricingService(getDynamicSkuPricingService(request));
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            SkuPricingConsiderationContext.setSkuPricingConsiderationContext(null);
+            SkuPricingConsiderationContext.setSkuPricingService(null);
+        }
+        
+    }
 
-	public void init(FilterConfig arg0) throws ServletException {
-		//do nothing
-	}
-	
-	
+    public void init(FilterConfig arg0) throws ServletException {
+        //do nothing
+    }
+    
+    
 
 }

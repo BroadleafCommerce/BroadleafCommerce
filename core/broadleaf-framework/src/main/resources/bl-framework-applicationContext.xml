@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:task="http://www.springframework.org/schema/task"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
-	
-	<context:component-scan base-package="org.broadleafcommerce.core">
+    
+    <context:component-scan base-package="org.broadleafcommerce.core">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/>
     </context:component-scan>
     
     <task:annotation-driven/>
-	
-	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
-	    <property name="autodetect" value="true"/>
-	    <property name="assembler" ref="blAssembler"/>
-	    <property name="namingStrategy" ref="blNamingStrategy"/>
-	</bean>
-	
-	<bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">
+    
+    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="autodetect" value="true"/>
+        <property name="assembler" ref="blAssembler"/>
+        <property name="namingStrategy" ref="blNamingStrategy"/>
+    </bean>
+    
+    <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">
         <constructor-arg>
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
-	        	<property name="jndiName">
-	            	<value>java:/comp/env/appName</value>
-	        	</property>
-	        	<property name="defaultObject" value="broadleaf"/>
-			</bean>
+                <property name="jndiName">
+                    <value>java:/comp/env/appName</value>
+                </property>
+                <property name="defaultObject" value="broadleaf"/>
+            </bean>
         </constructor-arg>
     </bean>
-	
-	<bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
-	    <property name="attributeSource" ref="blAttributeSource"/>
-	</bean>
-	
-	<bean id="blNamingStrategy" class="org.broadleafcommerce.common.jmx.MetadataNamingStrategy">
-	    <property name="attributeSource" ref="blAttributeSource"/>
-	</bean>
+    
+    <bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
+        <property name="attributeSource" ref="blAttributeSource"/>
+    </bean>
+    
+    <bean id="blNamingStrategy" class="org.broadleafcommerce.common.jmx.MetadataNamingStrategy">
+        <property name="attributeSource" ref="blAttributeSource"/>
+    </bean>
 
-	<bean id="blAccountNumberMask" class="org.broadleafcommerce.common.payment.AccountNumberMask">
-		<constructor-arg>
-			<list>
-				<bean class="org.broadleafcommerce.common.payment.UnmaskRange">
-					<constructor-arg value="0"/>
-					<constructor-arg value="0"/>
-				</bean>
-				<bean class="org.broadleafcommerce.common.payment.UnmaskRange">
-					<constructor-arg value="1"/>
-					<constructor-arg value="4"/>
-				</bean>
-			</list>
-		</constructor-arg>
-		<constructor-arg value="X"/>
-	</bean>
+    <bean id="blAccountNumberMask" class="org.broadleafcommerce.common.payment.AccountNumberMask">
+        <constructor-arg>
+            <list>
+                <bean class="org.broadleafcommerce.common.payment.UnmaskRange">
+                    <constructor-arg value="0"/>
+                    <constructor-arg value="0"/>
+                </bean>
+                <bean class="org.broadleafcommerce.common.payment.UnmaskRange">
+                    <constructor-arg value="1"/>
+                    <constructor-arg value="4"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg value="X"/>
+    </bean>
 
     <bean id="blContentCartRuleProcessor" class="org.broadleafcommerce.core.order.service.StructuredContentCartRuleProcessor">
         <property name="orderDao" ref="blOrderDao"/>
@@ -60,7 +60,7 @@
             <map>
                 <entry key="discreteOrderItem" value="org.broadleafcommerce.core.order.domain.DiscreteOrderItem" />
             </map>
-	    </property>
+        </property>
     </bean>
 
     <!-- Append the content rule processor that checks for cart contents -->
@@ -78,7 +78,7 @@
             <map>
                 <entry key="discreteOrderItem" value="org.broadleafcommerce.core.order.domain.DiscreteOrderItem" />
             </map>
-	    </property>
+        </property>
     </bean>
 
     <!-- Append the content rule processor that checks for cart contents -->
@@ -91,11 +91,11 @@
     </bean>    
 
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
-	    <property name="converters">
-	        <set>
-	            <bean class="org.broadleafcommerce.openadmin.server.util.LocaleConverter" />
-	        </set>
-	    </property>
-	</bean>
+        <property name="converters">
+            <set>
+                <bean class="org.broadleafcommerce.openadmin.server.util.LocaleConverter" />
+            </set>
+        </property>
+    </bean>
 
 </beans>

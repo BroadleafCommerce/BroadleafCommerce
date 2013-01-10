@@ -42,19 +42,19 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
 
 
     public DiscreteOrderItemRequest clone() {
-    	DiscreteOrderItemRequest returnRequest = new DiscreteOrderItemRequest();
+        DiscreteOrderItemRequest returnRequest = new DiscreteOrderItemRequest();
         copyProperties(returnRequest);
         returnRequest.setDiscreteOrderItemFeePrices(discreteOrderItemFeePrices);
         return returnRequest;
     }
 
 
-	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
-		return discreteOrderItemFeePrices;
-	}
+    public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
+        return discreteOrderItemFeePrices;
+    }
 
-	public void setDiscreteOrderItemFeePrices(
-			List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
-		this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
-	}
+    public void setDiscreteOrderItemFeePrices(
+            List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
+        this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
+    }
 }

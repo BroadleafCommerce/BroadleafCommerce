@@ -27,90 +27,90 @@ import com.google.gwt.core.client.GWT;
  *
  */
 public class Log implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 
-	private void log(Object arg0, Throwable arg1) {
-		System.out.println(arg0 + " : " + arg1.getMessage());
-		GWT.log((String) arg0, arg1);
-	}
-	
-	private void log(Object arg0) {
-		System.out.println(arg0);
-		GWT.log((String) arg0, null);
-	}
-	
-	public void debug(Object arg0, Throwable arg1) {
-		log(arg0, arg1);
-	}
+    private void log(Object arg0, Throwable arg1) {
+        System.out.println(arg0 + " : " + arg1.getMessage());
+        GWT.log((String) arg0, arg1);
+    }
+    
+    private void log(Object arg0) {
+        System.out.println(arg0);
+        GWT.log((String) arg0, null);
+    }
+    
+    public void debug(Object arg0, Throwable arg1) {
+        log(arg0, arg1);
+    }
 
-	public void debug(Object arg0) {
-		log(arg0);
-	}
+    public void debug(Object arg0) {
+        log(arg0);
+    }
 
-	public void error(Object arg0, Throwable arg1) {
-		log(arg0, arg1);
-	}
+    public void error(Object arg0, Throwable arg1) {
+        log(arg0, arg1);
+    }
 
-	public void error(Object arg0) {
-		log(arg0);
-	}
+    public void error(Object arg0) {
+        log(arg0);
+    }
 
-	public void fatal(Object arg0, Throwable arg1) {
-		log(arg0, arg1);
-	}
+    public void fatal(Object arg0, Throwable arg1) {
+        log(arg0, arg1);
+    }
 
-	public void fatal(Object arg0) {
-		log(arg0);
-	}
+    public void fatal(Object arg0) {
+        log(arg0);
+    }
 
-	public void info(Object arg0, Throwable arg1) {
-		log(arg0, arg1);
-	}
+    public void info(Object arg0, Throwable arg1) {
+        log(arg0, arg1);
+    }
 
-	public void info(Object arg0) {
-		log(arg0);
-	}
+    public void info(Object arg0) {
+        log(arg0);
+    }
 
-	public boolean isDebugEnabled() {
-		return true;
-	}
+    public boolean isDebugEnabled() {
+        return true;
+    }
 
-	public boolean isErrorEnabled() {
-		return true;
-	}
+    public boolean isErrorEnabled() {
+        return true;
+    }
 
-	public boolean isFatalEnabled() {
-		return true;
-	}
+    public boolean isFatalEnabled() {
+        return true;
+    }
 
-	public boolean isInfoEnabled() {
-		return true;
-	}
+    public boolean isInfoEnabled() {
+        return true;
+    }
 
-	public boolean isTraceEnabled() {
-		return true;
-	}
+    public boolean isTraceEnabled() {
+        return true;
+    }
 
-	public boolean isWarnEnabled() {
-		return true;
-	}
+    public boolean isWarnEnabled() {
+        return true;
+    }
 
-	public void trace(Object arg0, Throwable arg1) {
-		log(arg0, arg1);
-	}
+    public void trace(Object arg0, Throwable arg1) {
+        log(arg0, arg1);
+    }
 
-	public void trace(Object arg0) {
-		log(arg0);
-	}
+    public void trace(Object arg0) {
+        log(arg0);
+    }
 
-	public void warn(Object arg0, Throwable arg1) {
-		log(arg0, arg1);
-	}
+    public void warn(Object arg0, Throwable arg1) {
+        log(arg0, arg1);
+    }
 
-	public void warn(Object arg0) {
-		log(arg0);
-	}
-	
-	
+    public void warn(Object arg0) {
+        log(arg0);
+    }
+    
+    
 }

@@ -32,13 +32,13 @@ import org.springframework.stereotype.Service;
  */
 @Service("blShippingOfferService")
 public class ShippingOfferServiceImpl implements ShippingOfferService {
-	
-	@Resource(name="blOfferService")
-	protected OfferService offerService;
+    
+    @Resource(name="blOfferService")
+    protected OfferService offerService;
 
-	public void reviewOffers(Order order) throws PricingException {
-		List<Offer> offers = offerService.buildOfferListForOrder(order);
+    public void reviewOffers(Order order) throws PricingException {
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyFulfillmentGroupOffersToOrder(offers, order);
-	}
+    }
 
 }

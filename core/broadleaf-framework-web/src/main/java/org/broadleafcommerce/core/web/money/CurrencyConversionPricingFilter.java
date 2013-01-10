@@ -24,10 +24,10 @@ import javax.servlet.ServletRequest;
 import org.broadleafcommerce.common.money.CurrencyConversionService;
 
 public interface CurrencyConversionPricingFilter extends Filter {
-	
-	@SuppressWarnings("rawtypes")
-	public HashMap getCurrencyConversionContext(ServletRequest request);
-	
-	public CurrencyConversionService getCurrencyConversionService(ServletRequest request);
-	
+    
+    @SuppressWarnings("rawtypes")
+    public HashMap getCurrencyConversionContext(ServletRequest request);
+    
+    public CurrencyConversionService getCurrencyConversionService(ServletRequest request);
+    
 }

@@ -168,7 +168,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     }
     
     public void setValue(Money value) {
-    	this.value = value.getAmount();
+        this.value = value.getAmount();
     }
 
     public boolean isAppliedToSalePrice() {

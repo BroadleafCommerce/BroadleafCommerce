@@ -49,34 +49,34 @@ public interface FulfillmentGroupService {
      * @param order
      * @param orderItem
      */
-	public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
-	
-	public FulfillmentGroupFee createFulfillmentGroupFee();
+    public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
+    
+    public FulfillmentGroupFee createFulfillmentGroupFee();
 
-	/**
-	 * Associates FulfillmentGroupItems in the given Order such that they match the structure
-	 * of the OrderMultishipOptions associated with the given Order. 
-	 * 
-	 * @see OrderMultishipOption
-	 * 
-	 * @param order
-	 * @return the saved order
-	 * @throws PricingException 
-	 */
-	public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException;
+    /**
+     * Associates FulfillmentGroupItems in the given Order such that they match the structure
+     * of the OrderMultishipOptions associated with the given Order. 
+     * 
+     * @see OrderMultishipOption
+     * 
+     * @param order
+     * @return the saved order
+     * @throws PricingException 
+     */
+    public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException;
 
-	/**
-	 * Collapses all of the fulfillment groups in the given order to the first fulfillment group
-	 * in the order.
-	 * 
-	 * @see #matchFulfillmentGroupsToMultishipOptions(Order, boolean)
-	 * 
-	 * @param order
-	 * @param priceOrder
-	 * @return the saved order
-	 * @throws PricingException 
-	 */
-	public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
+    /**
+     * Collapses all of the fulfillment groups in the given order to the first fulfillment group
+     * in the order.
+     * 
+     * @see #matchFulfillmentGroupsToMultishipOptions(Order, boolean)
+     * 
+     * @param order
+     * @param priceOrder
+     * @return the saved order
+     * @throws PricingException 
+     */
+    public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
 
 
 }

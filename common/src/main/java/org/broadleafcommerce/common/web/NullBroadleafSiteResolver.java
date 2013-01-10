@@ -30,9 +30,9 @@ import org.springframework.stereotype.Component;
 @Component("blSiteResolver")
 public class NullBroadleafSiteResolver implements BroadleafSiteResolver {
 
-	@Override
-	public Site resolveSite(HttpServletRequest request) {
-		return null;
-	}
-	
+    @Override
+    public Site resolveSite(HttpServletRequest request) {
+        return null;
+    }
+    
 }

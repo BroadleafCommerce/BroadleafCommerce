@@ -24,7 +24,7 @@ import java.util.List;
 
 public interface SandBoxItemDao {
 
-	public SandBoxItem retrieveById(Long id);
+    public SandBoxItem retrieveById(Long id);
 
     public SandBoxItem retrieveBySandboxAndTemporaryItemId(Long sandBoxId, SandBoxItemType type, Long tempItemId);
 

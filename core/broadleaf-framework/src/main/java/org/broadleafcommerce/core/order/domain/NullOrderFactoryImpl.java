@@ -24,12 +24,12 @@ import org.springframework.stereotype.Service;
  */
 @Service("blNullOrderFactory")
 public class NullOrderFactoryImpl implements NullOrderFactory {
-	
-	protected static final Order NULL_ORDER = new NullOrderImpl();
+    
+    protected static final Order NULL_ORDER = new NullOrderImpl();
 
-	@Override
-	public Order getNullOrder() {
-		return NULL_ORDER;
-	}
+    @Override
+    public Order getNullOrder() {
+        return NULL_ORDER;
+    }
 
 }

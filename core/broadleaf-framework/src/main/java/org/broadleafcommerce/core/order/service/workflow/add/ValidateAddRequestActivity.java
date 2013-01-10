@@ -55,13 +55,13 @@ public class ValidateAddRequestActivity extends BaseActivity {
         }
 
         // Throw an exception if the user tried to add a negative quantity of something
-    	if (orderItemRequestDTO.getQuantity() < 0) {
-    		throw new IllegalArgumentException("Quantity cannot be negative");
-    	}
+        if (orderItemRequestDTO.getQuantity() < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
 
-    	// Throw an exception if the user did not specify an order to add the item to
+        // Throw an exception if the user did not specify an order to add the item to
         if (request.getOrder() == null) {
-    		throw new IllegalArgumentException("Order is required when adding item to order");
+            throw new IllegalArgumentException("Order is required when adding item to order");
         }
 
         // Validate that if the user specified a productId, it is a legitimate productId
@@ -77,19 +77,19 @@ public class ValidateAddRequestActivity extends BaseActivity {
         
         // If we couldn't find a sku, then we're unable to add to cart.
         if (sku == null) {
-        	StringBuilder sb = new StringBuilder();
-        	for (Entry<String, String> entry : orderItemRequestDTO.getItemAttributes().entrySet()) {
-        		sb.append(entry.toString());
-        	}
-        	
-        	throw new IllegalArgumentException("Could not find SKU for :" +
-        			" productId: " + (product == null ? "null" : product.getId()) + 
-        			" skuId: " + orderItemRequestDTO.getSkuId() + 
-        			" attributes: " + sb.toString());
+            StringBuilder sb = new StringBuilder();
+            for (Entry<String, String> entry : orderItemRequestDTO.getItemAttributes().entrySet()) {
+                sb.append(entry.toString());
+            }
+            
+            throw new IllegalArgumentException("Could not find SKU for :" +
+                    " productId: " + (product == null ? "null" : product.getId()) + 
+                    " skuId: " + orderItemRequestDTO.getSkuId() + 
+                    " attributes: " + sb.toString());
         } else { 
-        	// We know definitively which sku we're going to add, so we can set this
-        	// value with certainty
-        	request.getItemRequest().setSkuId(sku.getId());
+            // We know definitively which sku we're going to add, so we can set this
+            // value with certainty
+            request.getItemRequest().setSkuId(sku.getId());
         }
         
         return context;
@@ -105,9 +105,9 @@ public class ValidateAddRequestActivity extends BaseActivity {
 
         if (sku == null && product != null) {
             // Set to the default sku
-        	if (product.getAdditionalSkus() != null && product.getAdditionalSkus().size() > 0 && !product.getCanSellWithoutOptions()) {
-        		throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku");
-        	}
+            if (product.getAdditionalSkus() != null && product.getAdditionalSkus().size() > 0 && !product.getCanSellWithoutOptions()) {
+                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku");
+            }
             sku = product.getDefaultSku();
         }
         return sku;

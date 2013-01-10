@@ -41,44 +41,44 @@ import java.util.List;
  *
  */
 public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDataSource {
-	
-	protected LinkedHashMap<String, String> keyMap;
+    
+    protected LinkedHashMap<String, String> keyMap;
     protected DataSource optionDataSource;
     protected String displayField;
     protected String valueField;
 
-	/**
-	 * @param name
-	 * @param persistencePerspective
-	 * @param service
-	 * @param modules
-	 */
-	public ComplexValueMapStructureDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, LinkedHashMap<String, String> keyMap) {
-		super(name, persistencePerspective, service, modules);
-		this.keyMap = keyMap;
-	}
+    /**
+     * @param name
+     * @param persistencePerspective
+     * @param service
+     * @param modules
+     */
+    public ComplexValueMapStructureDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, LinkedHashMap<String, String> keyMap) {
+        super(name, persistencePerspective, service, modules);
+        this.keyMap = keyMap;
+    }
 
     public ComplexValueMapStructureDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, DataSource optionDataSource, String displayField, String valueField) {
-		super(name, persistencePerspective, service, modules);
-		this.optionDataSource = optionDataSource;
+        super(name, persistencePerspective, service, modules);
+        this.optionDataSource = optionDataSource;
         this.displayField = displayField;
         this.valueField = valueField;
-	}
-	
-	@Override
-	public String[] setupGridFields(String[] fieldNames, Boolean[] canEdit) {
-		if (fieldNames.length > 0) {
-			resetPermanentFieldVisibility(fieldNames);
-		}
-		DataSourceField[] fields = getFields();
-		ListGridField[] gridFields = new ListGridField[fields.length];
+    }
+    
+    @Override
+    public String[] setupGridFields(String[] fieldNames, Boolean[] canEdit) {
+        if (fieldNames.length > 0) {
+            resetPermanentFieldVisibility(fieldNames);
+        }
+        DataSourceField[] fields = getFields();
+        ListGridField[] gridFields = new ListGridField[fields.length];
         int j = 0;
         List<DataSourceField> prominentFields = new ArrayList<DataSourceField>();
         String keyProperty = null;
         for (DataSourceField field : fields) {
-        	if (field.getAttributeAsBoolean("prominent") && !prominentFields.contains(field)) {
-        		prominentFields.add(field);
-        	}
+            if (field.getAttributeAsBoolean("prominent") && !prominentFields.contains(field)) {
+                prominentFields.add(field);
+            }
             if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType")) && !prominentFields.contains(field)) {
                 permanentlyShowFields(field.getName());
                 setProminent(field.getName());
@@ -88,67 +88,67 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         }
         int availableSlots = 4;
         for (DataSourceField field : prominentFields) {
-        	gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+            gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
             if (FieldType.DATE == field.getType() || FieldType.DATETIME == field.getType()) {
                 gridFields[j].setEditorType(new MiniDateRangeItem());
             }
-        	if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
-        		ComboBoxItem selectItem = new ComboBoxItem();
-        		//selectItem.setMultiple(false);
+            if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
+                ComboBoxItem selectItem = new ComboBoxItem();
+                //selectItem.setMultiple(false);
                 if (keyMap == null && optionDataSource == null) {
                     throw new RuntimeException("Must supply either a key map or option data source to support the key values for this map structure.");
                 }
                 if (keyMap != null) {
-        		    selectItem.setValueMap(keyMap);
+                    selectItem.setValueMap(keyMap);
                 } else {
                     selectItem.setOptionDataSource(optionDataSource);
                     selectItem.setDisplayField(displayField);
                     selectItem.setValueField(valueField);
                 }
-        		selectItem.setDefaultToFirstOption(true);
-        		selectItem.setAutoFetchData(false);
-        		gridFields[j].setEditorType(selectItem);
-        	}
-        	gridFields[j].setHidden(false);
-        	gridFields[j].setWidth("*");
-        	int pos = Arrays.binarySearch(fieldNames, field.getName());
-        	if (pos >= 0) {
-        		gridFields[j].setCanEdit(canEdit[pos]);
-        	}
-        	j++;
-        	availableSlots--;
+                selectItem.setDefaultToFirstOption(true);
+                selectItem.setAutoFetchData(false);
+                gridFields[j].setEditorType(selectItem);
+            }
+            gridFields[j].setHidden(false);
+            gridFields[j].setWidth("*");
+            int pos = Arrays.binarySearch(fieldNames, field.getName());
+            if (pos >= 0) {
+                gridFields[j].setCanEdit(canEdit[pos]);
+            }
+            j++;
+            availableSlots--;
         }
         for (DataSourceField field : fields) {
-        	if (!prominentFields.contains(field)) {
-        		gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+            if (!prominentFields.contains(field)) {
+                gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
                 if (FieldType.DATE == field.getType() || FieldType.DATETIME == field.getType()) {
                     gridFields[j].setEditorType(new MiniDateRangeItem());
                 }
-        		if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
-            		SelectItem selectItem = new SelectItem();
-            		selectItem.setMultiple(false);
-            		selectItem.setValueMap(keyMap);
-            		selectItem.setDefaultToFirstOption(true);
-            		selectItem.setAutoFetchData(false);
-            		gridFields[j].setEditorType(selectItem);
-            	}
-        		if (field.getAttributeAsBoolean("permanentlyHidden")) {
-        			gridFields[j].setHidden(true);
-	        		gridFields[j].setCanHide(false);
-        		} else if (field.getAttributeAsBoolean("hidden")) {
-        			gridFields[j].setHidden(true);
-        		} else if (availableSlots <= 0) {
-	        		gridFields[j].setHidden(true);
-	        	} else {
-	        		gridFields[j].setWidth("*");
-	        		int pos = Arrays.binarySearch(fieldNames, field.getName());
-	            	if (pos >= 0) {
-	            		gridFields[j].setCanEdit(canEdit[pos]);
-	            	}
-	        		availableSlots--;
-	        	}
-        		j++;
-        	}
+                if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
+                    SelectItem selectItem = new SelectItem();
+                    selectItem.setMultiple(false);
+                    selectItem.setValueMap(keyMap);
+                    selectItem.setDefaultToFirstOption(true);
+                    selectItem.setAutoFetchData(false);
+                    gridFields[j].setEditorType(selectItem);
+                }
+                if (field.getAttributeAsBoolean("permanentlyHidden")) {
+                    gridFields[j].setHidden(true);
+                    gridFields[j].setCanHide(false);
+                } else if (field.getAttributeAsBoolean("hidden")) {
+                    gridFields[j].setHidden(true);
+                } else if (availableSlots <= 0) {
+                    gridFields[j].setHidden(true);
+                } else {
+                    gridFields[j].setWidth("*");
+                    int pos = Arrays.binarySearch(fieldNames, field.getName());
+                    if (pos >= 0) {
+                        gridFields[j].setCanEdit(canEdit[pos]);
+                    }
+                    availableSlots--;
+                }
+                j++;
+            }
         }
         final String finalKeyProperty = keyProperty;
         //sort so the key field appears first
@@ -174,12 +174,12 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         }
         ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
-        	int pos = 0;
-        	for (String fieldName : fieldNames) {
-        		int originalPos = ((ListGrid) getAssociatedGrid()).getFieldNum(fieldName);
-        		((ListGrid) getAssociatedGrid()).reorderField(originalPos, pos);
-        		pos++;
-        	}
+            int pos = 0;
+            for (String fieldName : fieldNames) {
+                int originalPos = ((ListGrid) getAssociatedGrid()).getFieldNum(fieldName);
+                ((ListGrid) getAssociatedGrid()).reorderField(originalPos, pos);
+                pos++;
+            }
         } else {
             fieldNames = new String[gridFields.length];
             for (int x=0;x<gridFields.length;x++){
@@ -190,5 +190,5 @@ public class ComplexValueMapStructureDataSource extends CustomCriteriaListGridDa
         getAssociatedGrid().setHilites(hilites);
 
         return fieldNames;
-	}
+    }
 }

@@ -164,38 +164,38 @@ public interface Offer extends Serializable {
 
     public Set<OfferItemCriteria> getQualifyingItemCriteria();
 
-	public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
+    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
 
     public Set<OfferItemCriteria> getTargetItemCriteria();
 
     public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
-	
-	public Boolean isTotalitarianOffer();
+    
+    public Boolean isTotalitarianOffer();
 
-	public void setTotalitarianOffer(Boolean totalitarianOffer);
-	
-	public Map<String, OfferRule> getOfferMatchRules();
+    public void setTotalitarianOffer(Boolean totalitarianOffer);
+    
+    public Map<String, OfferRule> getOfferMatchRules();
 
-	public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
-	
-	public Boolean getTreatAsNewFormat();
+    public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
+    
+    public Boolean getTreatAsNewFormat();
 
-	public void setTreatAsNewFormat(Boolean treatAsNewFormat);
-	
-	/**
-	 * Indicates the amount of items that must be purchased for this offer to
-	 * be considered for this order.
-	 * 
-	 * The system will find all qualifying items for the given offer and sum their prices before
-	 * any discounts are applied to make the determination.  
-	 * 
-	 * If the sum of the qualifying items is not greater than this value the offer is 
-	 * not considered by the offer processing algorithm.
-	 * @return
-	 */
+    public void setTreatAsNewFormat(Boolean treatAsNewFormat);
+    
+    /**
+     * Indicates the amount of items that must be purchased for this offer to
+     * be considered for this order.
+     * 
+     * The system will find all qualifying items for the given offer and sum their prices before
+     * any discounts are applied to make the determination.  
+     * 
+     * If the sum of the qualifying items is not greater than this value the offer is 
+     * not considered by the offer processing algorithm.
+     * @return
+     */
     public Money getQualifyingItemSubTotal();
     
     
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
-	
+    
 }

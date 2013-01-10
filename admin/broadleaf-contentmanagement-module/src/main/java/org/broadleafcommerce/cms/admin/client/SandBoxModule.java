@@ -35,8 +35,8 @@ import java.util.List;
  *
  */
 public class SandBoxModule extends AbstractModule {
-	
-	public void onModuleLoad() {
+    
+    public void onModuleLoad() {
         addConstants(GWT.<ConstantsWithLookup>create(ContentManagementMessages.class));
         addConstants(GWT.<ConstantsWithLookup>create(SandBoxMessages.class));
         addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityCommon.class));

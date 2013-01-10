@@ -26,18 +26,18 @@ import org.springframework.web.servlet.ViewResolver;
  *
  */
 public class WrappingViewResolver implements ViewResolver {
-	
-	private View view;
-	
-	public WrappingViewResolver(View view) {
-		this.view = view;
-	}
+    
+    private View view;
+    
+    public WrappingViewResolver(View view) {
+        this.view = view;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.springframework.web.servlet.ViewResolver#resolveViewName(java.lang.String, java.util.Locale)
-	 */
-	public View resolveViewName(String arg0, Locale arg1) throws Exception {
-		return view;
-	}
+    /* (non-Javadoc)
+     * @see org.springframework.web.servlet.ViewResolver#resolveViewName(java.lang.String, java.util.Locale)
+     */
+    public View resolveViewName(String arg0, Locale arg1) throws Exception {
+        return view;
+    }
 
 }

@@ -36,7 +36,7 @@ public class StructuredContentTypeFormListDataSourceFactory {
 
     public static long count = 0;
 
-	public static StructuredContentTypeFormListDataSource createDataSource(String name, String[] customCriteria, AsyncCallback<DataSource> cb) {
+    public static StructuredContentTypeFormListDataSource createDataSource(String name, String[] customCriteria, AsyncCallback<DataSource> cb) {
         OperationTypes operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
         PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
         DataSourceModule[] modules = new DataSourceModule[]{
@@ -46,6 +46,6 @@ public class StructuredContentTypeFormListDataSourceFactory {
         dataSource.buildFields(customCriteria, false, cb);
 
         return dataSource;
-	}
+    }
 
 }

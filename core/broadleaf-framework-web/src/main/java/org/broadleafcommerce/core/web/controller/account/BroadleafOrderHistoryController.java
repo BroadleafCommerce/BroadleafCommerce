@@ -40,34 +40,34 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     public String viewOrderDetails(HttpServletRequest request, Model model, String orderNumber) {
         Order order = orderService.findOrderByOrderNumber(orderNumber);
         if (order == null) {
-        	throw new IllegalArgumentException("The orderNumber provided is not valid");
+            throw new IllegalArgumentException("The orderNumber provided is not valid");
         }
         model.addAttribute("order", order);
         return isAjaxRequest(request) ? getOrderDetailsView() : getOrderDetailsRedirectView();
     }
 
-	public static String getOrderHistoryView() {
-		return orderHistoryView;
-	}
+    public static String getOrderHistoryView() {
+        return orderHistoryView;
+    }
 
-	public static void setOrderHistoryView(String orderHistoryView) {
-		BroadleafOrderHistoryController.orderHistoryView = orderHistoryView;
-	}
+    public static void setOrderHistoryView(String orderHistoryView) {
+        BroadleafOrderHistoryController.orderHistoryView = orderHistoryView;
+    }
 
-	public static String getOrderDetailsView() {
-		return orderDetailsView;
-	}
+    public static String getOrderDetailsView() {
+        return orderDetailsView;
+    }
 
-	public static void setOrderDetailsView(String orderDetailsView) {
-		BroadleafOrderHistoryController.orderDetailsView = orderDetailsView;
-	}
+    public static void setOrderDetailsView(String orderDetailsView) {
+        BroadleafOrderHistoryController.orderDetailsView = orderDetailsView;
+    }
 
-	public static String getOrderDetailsRedirectView() {
-		return orderDetailsRedirectView;
-	}
+    public static String getOrderDetailsRedirectView() {
+        return orderDetailsRedirectView;
+    }
 
-	public static void setOrderDetailsRedirectView(String orderDetailsRedirectView) {
-		BroadleafOrderHistoryController.orderDetailsRedirectView = orderDetailsRedirectView;
-	}
+    public static void setOrderDetailsRedirectView(String orderDetailsRedirectView) {
+        BroadleafOrderHistoryController.orderDetailsRedirectView = orderDetailsRedirectView;
+    }
 
 }

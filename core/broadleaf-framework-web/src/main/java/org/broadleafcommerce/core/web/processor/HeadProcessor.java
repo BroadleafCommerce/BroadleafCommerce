@@ -35,11 +35,11 @@ import java.util.Map;
  * following variables for use by the head fragment.
  * 
  * <ul>
- * 	<li><b>pageTitle</b> - The title of the page</li>
- * 	<li><b>additionalCss</b> - An additional, page specific CSS file to include</li>
- * 	<li><b>metaDescription</b> - Optional, Content for the Meta-Description tag</li>
- * 	<li><b>metaKeywords</b> - Optional, Content for the Meta-Keywords tag</li>
- * 	<li><b>metaRobot</b> - Optional, Content for the Meta-Robots tag</li>
+ *  <li><b>pageTitle</b> - The title of the page</li>
+ *  <li><b>additionalCss</b> - An additional, page specific CSS file to include</li>
+ *  <li><b>metaDescription</b> - Optional, Content for the Meta-Description tag</li>
+ *  <li><b>metaKeywords</b> - Optional, Content for the Meta-Keywords tag</li>
+ *  <li><b>metaRobot</b> - Optional, Content for the Meta-Robots tag</li>
  * </ul>
  * 
  * @author apazzolini
@@ -53,9 +53,9 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
     public static final String FRAGMENT_ATTR_NAME = StandardFragmentAttrProcessor.ATTR_NAME;
     protected String HEAD_PARTIAL_PATH = "layout/partials/head";
     
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
     public HeadProcessor() {
         super("head");
     }
@@ -65,32 +65,32 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         return 10000;
     }
 
-	@Override
-	protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {
-		return true;
-	}
+    @Override
+    protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {
+        return true;
+    }
 
     @Override
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     protected FragmentAndTarget getFragmentAndTarget(Arguments arguments, Element element, boolean substituteInclusionNode) {
-		// The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
-		// to its text value if the expression wasn't able to be processed. This will allow things like
-		// pageTitle="Hello this is a string"
-		// as well as expressions like
-		// pageTitle="${'Hello this is a ' + product.name}"
-		
-		String pageTitle = element.getAttributeValue("pageTitle");
-		try {
-			pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
-		} catch (TemplateProcessingException e) {
-			// Do nothing.
-		}
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
+        // The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
+        // to its text value if the expression wasn't able to be processed. This will allow things like
+        // pageTitle="Hello this is a string"
+        // as well as expressions like
+        // pageTitle="${'Hello this is a ' + product.name}"
+        
+        String pageTitle = element.getAttributeValue("pageTitle");
+        try {
+            pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
+        } catch (TemplateProcessingException e) {
+            // Do nothing.
+        }
+        ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
+        ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
 
         extensionManager.processAttributeValues(arguments, element);
 
-		return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
     }
 
 }

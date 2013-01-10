@@ -29,10 +29,10 @@ import java.util.Comparator;
  */
 public class Entity implements IsSerializable, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String[] type;
-	private Property[] properties;
+    private String[] type;
+    private Property[] properties;
     private boolean isDirty = false;
     private Boolean isDeleted = false;
     private Boolean isInactive = false;
@@ -43,43 +43,43 @@ public class Entity implements IsSerializable, Serializable {
     private boolean multiPartAvailableOnThread = false;
     private boolean isValidationFailure;
     private String[][] validationErrors;
-	
-	public String[] getType() {
-		return type;
-	}
+    
+    public String[] getType() {
+        return type;
+    }
 
-	public void setType(String[] type) {
-		if (type != null && type.length > 0) {
-			Arrays.sort(type);
-		}
-		this.type = type;
-	}
+    public void setType(String[] type) {
+        if (type != null && type.length > 0) {
+            Arrays.sort(type);
+        }
+        this.type = type;
+    }
 
-	public Property[] getProperties() {
-		return properties;
-	}
-	
-	public void setProperties(Property[] properties) {
-		this.properties = properties;
-	}
-	
-	public void mergeProperties(String prefix, Entity entity) {
-		int j = 0;
-		Property[] merged = new Property[properties.length + entity.getProperties().length];
-		for (Property property : properties) {
-			merged[j] = property;
-			j++;
-		}
-		for (Property property : entity.getProperties()) {
-			property.setName(prefix!=null?prefix+"."+property.getName():""+property.getName());
-			merged[j] = property;
-			j++;
-		}
-		properties = merged;
-	}
-	
-	public Property findProperty(String name) {
-		Arrays.sort(properties, new Comparator<Property>() {
+    public Property[] getProperties() {
+        return properties;
+    }
+    
+    public void setProperties(Property[] properties) {
+        this.properties = properties;
+    }
+    
+    public void mergeProperties(String prefix, Entity entity) {
+        int j = 0;
+        Property[] merged = new Property[properties.length + entity.getProperties().length];
+        for (Property property : properties) {
+            merged[j] = property;
+            j++;
+        }
+        for (Property property : entity.getProperties()) {
+            property.setName(prefix!=null?prefix+"."+property.getName():""+property.getName());
+            merged[j] = property;
+            j++;
+        }
+        properties = merged;
+    }
+    
+    public Property findProperty(String name) {
+        Arrays.sort(properties, new Comparator<Property>() {
             public int compare(Property o1, Property o2) {
                 if (o1 == null && o2 == null) {
                     return 0;
@@ -91,10 +91,10 @@ public class Entity implements IsSerializable, Serializable {
                 return o1.getName().compareTo(o2.getName());
             }
         });
-		Property searchProperty = new Property();
-		searchProperty.setName(name);
-		int index = Arrays.binarySearch(properties, searchProperty, new Comparator<Property>() {
-			public int compare(Property o1, Property o2) {
+        Property searchProperty = new Property();
+        searchProperty.setName(name);
+        int index = Arrays.binarySearch(properties, searchProperty, new Comparator<Property>() {
+            public int compare(Property o1, Property o2) {
                 if (o1 == null && o2 == null) {
                     return 0;
                 } else if (o1 == null) {
@@ -102,24 +102,24 @@ public class Entity implements IsSerializable, Serializable {
                 } else if (o2 == null) {
                     return -1;
                 }
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
-		if (index >= 0) {
-			return properties[index];
-		}
-		return null;
-	}
-	
-	public void addProperty(Property property) {
-		Property[] allProps = getProperties();
-		Property[] newProps = new Property[allProps.length + 1];
-		for (int j=0;j<allProps.length;j++) {
-			newProps[j] = allProps[j];
-		}
-		newProps[newProps.length - 1] = property;
-		setProperties(newProps);
-	}
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        if (index >= 0) {
+            return properties[index];
+        }
+        return null;
+    }
+    
+    public void addProperty(Property property) {
+        Property[] allProps = getProperties();
+        Property[] newProps = new Property[allProps.length + 1];
+        for (int j=0;j<allProps.length;j++) {
+            newProps[j] = allProps[j];
+        }
+        newProps[newProps.length - 1] = property;
+        setProperties(newProps);
+    }
     
     public void addValidationError(String fieldName, String errorOrErrorKey) {
         if (getValidationErrors() == null) {

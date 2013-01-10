@@ -40,30 +40,30 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
  *
  */
 public class AutoLevelsRGB extends BaseFilter {
-	
-	private static final double TOPCLIP = 0.01D;
-	private static final double BOTTOMCLIP = 0.01D;
-	
-	public static void main(String[] args) {
-		try {
-			BufferedImage image = ImageIO.read(new File("C:/temp/test.jpg"));
-			AutoLevelsRGB levels = new AutoLevelsRGB(null);
-			BufferedImage newImage = levels.filter(image, null);
-			ImageIO.write(newImage, "jpg", new File("C:/temp/test2.jpg"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    
+    private static final double TOPCLIP = 0.01D;
+    private static final double BOTTOMCLIP = 0.01D;
+    
+    public static void main(String[] args) {
+        try {
+            BufferedImage image = ImageIO.read(new File("C:/temp/test.jpg"));
+            AutoLevelsRGB levels = new AutoLevelsRGB(null);
+            BufferedImage newImage = levels.filter(image, null);
+            ImageIO.write(newImage, "jpg", new File("C:/temp/test2.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	private RenderingHints hints;
+    private RenderingHints hints;
 
     public AutoLevelsRGB() {
         //do nothing
     }
 
-	public AutoLevelsRGB(RenderingHints hints) {
-		this.hints = hints;
-	}
+    public AutoLevelsRGB(RenderingHints hints) {
+        this.hints = hints;
+    }
     
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
@@ -79,11 +79,11 @@ public class AutoLevelsRGB extends BaseFilter {
         return operation;
     }
 
-	/* (non-Javadoc)
-	 * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
-	 */
-	public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-		if (src == null) {
+    /* (non-Javadoc)
+     * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
+     */
+    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
+        if (src == null) {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
@@ -122,153 +122,153 @@ public class AutoLevelsRGB extends BaseFilter {
         }
         
         int[] originalPixels = ImageConverter.getPixels(src);
-		int imageWidth = dst.getWidth();
-		int imageHeight = dst.getHeight();
-		
-		/*
-		 * Sort all the red pixels from low to high and establish
-		 * the clipping regions. We also note the delta from the 
-		 * lowest and highest leftover pixels to black and white,
-		 * respectively.
-		 */
-		int[] redPixels = new int[originalPixels.length];
-		for (int j=0;j<originalPixels.length;j++){
-			redPixels[j] = (originalPixels[j] >> 16) & 0xff;
-		}
-		Arrays.sort(redPixels);
-		int redStart = redPixels[(int) (redPixels.length * BOTTOMCLIP )];
-		int redEnd = redPixels[redPixels.length-(int) (redPixels.length * TOPCLIP)];
-		int redEndDelta = 255 - redEnd;
-		int redStartDelta = redStart;
-		
-		int[] greenPixels = new int[originalPixels.length];
-		for (int j=0;j<originalPixels.length;j++){
-			greenPixels[j] = (originalPixels[j] >> 8) & 0xff;
-		}
-		Arrays.sort(greenPixels);
-		int greenStart = greenPixels[(int) (greenPixels.length * BOTTOMCLIP )];
-		int greenEnd = greenPixels[greenPixels.length-(int) (greenPixels.length * TOPCLIP)];
-		int greenEndDelta = 255 - greenEnd;
-		int greenStartDelta = greenStart;
-		
-		int[] bluePixels = new int[originalPixels.length];
-		for (int j=0;j<originalPixels.length;j++){
-			bluePixels[j] = (originalPixels[j] >> 0) & 0xff;
-		}
-		Arrays.sort(bluePixels);
-		int blueStart = bluePixels[(int) (bluePixels.length * BOTTOMCLIP )];
-		int blueEnd = bluePixels[bluePixels.length-(int) (bluePixels.length * TOPCLIP)];
-		int blueEndDelta = 255 - blueEnd;
-		int blueStartDelta = blueStart;
-		
-		int r=0;
-		int g=0;
-		int b=0;
-		int index=0;
-		for (int y=0;y<imageHeight;y++){
-			for (int x=0;x<imageWidth;x++){
-				r = (originalPixels[index] >> 16) & 0xff;
-				g = (originalPixels[index] >> 8) & 0xff;
-				b = (originalPixels[index] >> 0) & 0xff;
-				
-				if (r > redStart && r < redEnd) {
-					if (redEndDelta > 0) {
-						if (redEnd - r == 0) {
-							r = 255;
-						} else {
-							/*
-							 * If there was a white shift, distribute all the pixels proportionally up
-							 */
-							r = redEnd + redEndDelta - (((redEnd - r) * (redEnd + redEndDelta)) / redEnd);
-						}
-					}
-					if (redStartDelta > 0) {
-						if (r - redStartDelta == 0) {
-							r = 0;
-						} else {
-							/*
-							 * If there was a black shift, distribute all the pixels proportionally down
-							 */
-							r = redEnd - (((redEnd -(redStart - redStartDelta)) * (redEnd - r))/(redEnd - redStart));
-						}
-					}
-				} else if (r <= redStart) {
-					r = 0;
-				} else {
-					r = 255;
-				}
-				
-				if (g > greenStart && g < greenEnd) {
-					if (greenEndDelta > 0){
-						if (greenEnd - g == 0) {
-							g = 255;
-						} else {
-							g = greenEnd + greenEndDelta - (((greenEnd - g) * (greenEnd + greenEndDelta)) / greenEnd);
-						}
-					}
-					if (greenStartDelta > 0){
-						if (g - greenStartDelta == 0) {
-							g = 0;
-						} else {
-							g = greenEnd - (((greenEnd -(greenStart - greenStartDelta)) * (greenEnd - g))/(greenEnd - greenStart));
-						}
-					}
-				} else if (g <= greenStart) {
-					g = 0;
-				} else {
-					g = 255;
-				}
-				
-				if (b > blueStart && b < blueEnd) {
-					if (blueEndDelta > 0){
-						if (blueEnd - b == 0) {
-							b = 255;
-						} else {
-							b = blueEnd + blueEndDelta - (((blueEnd - b) * (blueEnd + blueEndDelta)) / blueEnd);
-						}
-					}
-					if (blueStartDelta > 0){
-						if (b - blueStartDelta == 0) {
-							b = 0;
-						} else {
-							b = blueEnd - (((blueEnd -(blueStart - blueStartDelta)) * (blueEnd - b))/(blueEnd - blueStart));
-						}
-					}
-				} else if (b <= blueStart) {
-					b = 0;
-				} else {
-					b = 255;
-				}
+        int imageWidth = dst.getWidth();
+        int imageHeight = dst.getHeight();
+        
+        /*
+         * Sort all the red pixels from low to high and establish
+         * the clipping regions. We also note the delta from the 
+         * lowest and highest leftover pixels to black and white,
+         * respectively.
+         */
+        int[] redPixels = new int[originalPixels.length];
+        for (int j=0;j<originalPixels.length;j++){
+            redPixels[j] = (originalPixels[j] >> 16) & 0xff;
+        }
+        Arrays.sort(redPixels);
+        int redStart = redPixels[(int) (redPixels.length * BOTTOMCLIP )];
+        int redEnd = redPixels[redPixels.length-(int) (redPixels.length * TOPCLIP)];
+        int redEndDelta = 255 - redEnd;
+        int redStartDelta = redStart;
+        
+        int[] greenPixels = new int[originalPixels.length];
+        for (int j=0;j<originalPixels.length;j++){
+            greenPixels[j] = (originalPixels[j] >> 8) & 0xff;
+        }
+        Arrays.sort(greenPixels);
+        int greenStart = greenPixels[(int) (greenPixels.length * BOTTOMCLIP )];
+        int greenEnd = greenPixels[greenPixels.length-(int) (greenPixels.length * TOPCLIP)];
+        int greenEndDelta = 255 - greenEnd;
+        int greenStartDelta = greenStart;
+        
+        int[] bluePixels = new int[originalPixels.length];
+        for (int j=0;j<originalPixels.length;j++){
+            bluePixels[j] = (originalPixels[j] >> 0) & 0xff;
+        }
+        Arrays.sort(bluePixels);
+        int blueStart = bluePixels[(int) (bluePixels.length * BOTTOMCLIP )];
+        int blueEnd = bluePixels[bluePixels.length-(int) (bluePixels.length * TOPCLIP)];
+        int blueEndDelta = 255 - blueEnd;
+        int blueStartDelta = blueStart;
+        
+        int r=0;
+        int g=0;
+        int b=0;
+        int index=0;
+        for (int y=0;y<imageHeight;y++){
+            for (int x=0;x<imageWidth;x++){
+                r = (originalPixels[index] >> 16) & 0xff;
+                g = (originalPixels[index] >> 8) & 0xff;
+                b = (originalPixels[index] >> 0) & 0xff;
+                
+                if (r > redStart && r < redEnd) {
+                    if (redEndDelta > 0) {
+                        if (redEnd - r == 0) {
+                            r = 255;
+                        } else {
+                            /*
+                             * If there was a white shift, distribute all the pixels proportionally up
+                             */
+                            r = redEnd + redEndDelta - (((redEnd - r) * (redEnd + redEndDelta)) / redEnd);
+                        }
+                    }
+                    if (redStartDelta > 0) {
+                        if (r - redStartDelta == 0) {
+                            r = 0;
+                        } else {
+                            /*
+                             * If there was a black shift, distribute all the pixels proportionally down
+                             */
+                            r = redEnd - (((redEnd -(redStart - redStartDelta)) * (redEnd - r))/(redEnd - redStart));
+                        }
+                    }
+                } else if (r <= redStart) {
+                    r = 0;
+                } else {
+                    r = 255;
+                }
+                
+                if (g > greenStart && g < greenEnd) {
+                    if (greenEndDelta > 0){
+                        if (greenEnd - g == 0) {
+                            g = 255;
+                        } else {
+                            g = greenEnd + greenEndDelta - (((greenEnd - g) * (greenEnd + greenEndDelta)) / greenEnd);
+                        }
+                    }
+                    if (greenStartDelta > 0){
+                        if (g - greenStartDelta == 0) {
+                            g = 0;
+                        } else {
+                            g = greenEnd - (((greenEnd -(greenStart - greenStartDelta)) * (greenEnd - g))/(greenEnd - greenStart));
+                        }
+                    }
+                } else if (g <= greenStart) {
+                    g = 0;
+                } else {
+                    g = 255;
+                }
+                
+                if (b > blueStart && b < blueEnd) {
+                    if (blueEndDelta > 0){
+                        if (blueEnd - b == 0) {
+                            b = 255;
+                        } else {
+                            b = blueEnd + blueEndDelta - (((blueEnd - b) * (blueEnd + blueEndDelta)) / blueEnd);
+                        }
+                    }
+                    if (blueStartDelta > 0){
+                        if (b - blueStartDelta == 0) {
+                            b = 0;
+                        } else {
+                            b = blueEnd - (((blueEnd -(blueStart - blueStartDelta)) * (blueEnd - b))/(blueEnd - blueStart));
+                        }
+                    }
+                } else if (b <= blueStart) {
+                    b = 0;
+                } else {
+                    b = 255;
+                }
 
-				// fix overflows
-				if (r > 255) r = 255;
-				if (r < 0) r = 0;
-				if (g > 255) g = 255;
-				if (g < 0) g = 0;
-				if (b > 255) b = 255;
-				if (b < 0) b = 0;
+                // fix overflows
+                if (r > 255) r = 255;
+                if (r < 0) r = 0;
+                if (g > 255) g = 255;
+                if (g < 0) g = 0;
+                if (b > 255) b = 255;
+                if (b < 0) b = 0;
 
-				originalPixels[index] = (originalPixels[index] & 0xff000000)  | (r << 16) | (g << 8) | (b << 0);
-				index++;
-			}
-		}
-		
-		dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
-	     
-	    if (needToConvert) {
+                originalPixels[index] = (originalPixels[index] & 0xff000000)  | (r << 16) | (g << 8) | (b << 0);
+                index++;
+            }
+        }
+        
+        dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
+         
+        if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
         }
         else if (origDst != dst) {
             java.awt.Graphics2D g2 = origDst.createGraphics();
-	    try {
+        try {
             g2.drawImage(dst, 0, 0, null);
-	    } finally {
-	        g2.dispose();
-	    }
+        } finally {
+            g2.dispose();
+        }
         }
 
         return origDst;
-	}
+    }
 
 }

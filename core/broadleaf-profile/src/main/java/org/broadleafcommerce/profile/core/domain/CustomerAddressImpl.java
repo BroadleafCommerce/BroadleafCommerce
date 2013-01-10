@@ -118,11 +118,11 @@ public class CustomerAddressImpl implements CustomerAddress {
         this.address = address;
     }
 
-	@Override
+    @Override
     public String toString() {
-    	return (addressName == null) 
-        		? address.getFirstName() + " - " + address.getAddressLine1()
-        		: addressName;
+        return (addressName == null) 
+                ? address.getFirstName() + " - " + address.getAddressLine1()
+                : addressName;
     }
 
     @Override

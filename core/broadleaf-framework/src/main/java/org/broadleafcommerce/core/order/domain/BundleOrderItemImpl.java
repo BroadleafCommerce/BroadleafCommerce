@@ -119,14 +119,14 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices() {
-		return bundleOrderItemFeePrices;
-	}
+        return bundleOrderItemFeePrices;
+    }
 
-	public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
-		this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
-	}
+    public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
+        this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
+    }
 
-	@Override
+    @Override
     public void removeAllCandidateItemOffers() {
         if (shouldSumItems()) {
             for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
@@ -150,7 +150,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
     }
 
-	@Override
+    @Override
     public void assignFinalPrice() {
         if (shouldSumItems()) {
             for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
@@ -235,20 +235,20 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     public Money getBaseRetailPrice() {
-   		return baseRetailPrice != null?new Money(baseRetailPrice):null;
-   	}
+        return baseRetailPrice != null?new Money(baseRetailPrice):null;
+    }
 
-   	public void setBaseRetailPrice(Money baseRetailPrice) {
-   		this.baseRetailPrice = baseRetailPrice==null?null:baseRetailPrice.getAmount();
-   	}
+    public void setBaseRetailPrice(Money baseRetailPrice) {
+        this.baseRetailPrice = baseRetailPrice==null?null:baseRetailPrice.getAmount();
+    }
 
-   	public Money getBaseSalePrice() {
-   		return baseSalePrice!=null?new Money(baseRetailPrice):null;
-   	}
+    public Money getBaseSalePrice() {
+        return baseSalePrice!=null?new Money(baseRetailPrice):null;
+    }
 
-   	public void setBaseSalePrice(Money baseSalePrice) {
-   		this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
-   	}
+    public void setBaseSalePrice(Money baseSalePrice) {
+        this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
+    }
 
     private boolean hasSaleItems() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
@@ -314,7 +314,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         BundleOrderItemImpl other = (BundleOrderItemImpl) obj;
         
         if (!super.equals(obj)) {
-        	return false;
+            return false;
         }
 
         if (id != null && other.id != null) {

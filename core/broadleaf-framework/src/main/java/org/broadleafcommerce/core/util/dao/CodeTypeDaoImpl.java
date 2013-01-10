@@ -49,9 +49,9 @@ public class CodeTypeDaoImpl implements CodeTypeDao {
     }
 
     public void delete(CodeType codeType) {
-    	if (!em.contains(codeType)) {
-        	codeType = (CodeType) em.find(CodeTypeImpl.class, codeType.getId());
-    	}
+        if (!em.contains(codeType)) {
+            codeType = (CodeType) em.find(CodeTypeImpl.class, codeType.getId());
+        }
         em.remove(codeType);
     }
 

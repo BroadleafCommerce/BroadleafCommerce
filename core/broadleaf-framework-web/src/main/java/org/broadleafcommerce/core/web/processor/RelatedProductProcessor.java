@@ -56,90 +56,90 @@ import java.util.List;
 @Component("blRelatedProductProcessor")
 public class RelatedProductProcessor extends AbstractModelVariableModifierProcessor {
 
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
-	public RelatedProductProcessor() {
-		super("related_products");
-	}
-	
-	@Override
-	public int getPrecedence() {
-		return 10000;
-	}
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
+    public RelatedProductProcessor() {
+        super("related_products");
+    }
+    
+    @Override
+    public int getPrecedence() {
+        return 10000;
+    }
 
-	@Override
-	/**
-	 * Controller method for the processor that readies the service call and adds the results to the model.
-	 */
-	protected void modifyModelAttributes(Arguments arguments, Element element) {
-		RelatedProductsService relatedProductsService = ProcessorUtils.getRelatedProductsService(arguments);
-		List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
-		addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
-		addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
-	}
-	
-	protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
-		List<Product> products = new ArrayList<Product>();
-		if (relatedProducts != null) {
-			for (PromotableProduct product : relatedProducts) {
-				products.add(product.getRelatedProduct());
-			}
-		}
-		return products;		
-	}
-	
-	private String getRelatedProductsResultVar(Element element) {
-		String resultVar = element.getAttributeValue("relatedProductsResultVar");		
-		if (resultVar == null) {
-			resultVar = "relatedProducts";
-		}
-		return resultVar;
-	}
-	
-	private String getProductsResultVar(Element element) {
-		String resultVar = element.getAttributeValue("productsResultVar");		
-		if (resultVar == null) {
-			resultVar = "products";
-		}
-		return resultVar;
-	}
+    @Override
+    /**
+     * Controller method for the processor that readies the service call and adds the results to the model.
+     */
+    protected void modifyModelAttributes(Arguments arguments, Element element) {
+        RelatedProductsService relatedProductsService = ProcessorUtils.getRelatedProductsService(arguments);
+        List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
+        addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
+        addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
+    }
+    
+    protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
+        List<Product> products = new ArrayList<Product>();
+        if (relatedProducts != null) {
+            for (PromotableProduct product : relatedProducts) {
+                products.add(product.getRelatedProduct());
+            }
+        }
+        return products;        
+    }
+    
+    private String getRelatedProductsResultVar(Element element) {
+        String resultVar = element.getAttributeValue("relatedProductsResultVar");       
+        if (resultVar == null) {
+            resultVar = "relatedProducts";
+        }
+        return resultVar;
+    }
+    
+    private String getProductsResultVar(Element element) {
+        String resultVar = element.getAttributeValue("productsResultVar");      
+        if (resultVar == null) {
+            resultVar = "products";
+        }
+        return resultVar;
+    }
 
-	private RelatedProductDTO buildDTO(Arguments args, Element element) {
-		RelatedProductDTO relatedProductDTO = new RelatedProductDTO();
-		String productIdStr = element.getAttributeValue("productId"); 
-		String categoryIdStr = element.getAttributeValue("categoryId"); 
-		String quantityStr = element.getAttributeValue("quantity"); 
-		String typeStr = element.getAttributeValue("type"); 
-		
-		if (productIdStr != null) {
-		    Object productId = StandardExpressionProcessor.processExpression(args, productIdStr);
-		    if (productId instanceof BigDecimal) {
-		        productId = new Long(((BigDecimal) productId).toPlainString());
-		    }
-			relatedProductDTO.setProductId((Long) productId);
-		}
-		
-		if (categoryIdStr != null) {
-		    Object categoryId = StandardExpressionProcessor.processExpression(args, categoryIdStr);
-		    if (categoryId instanceof BigDecimal) {
-		        categoryId = new Long(((BigDecimal) categoryId).toPlainString());
-		    }
-			relatedProductDTO.setCategoryId((Long) categoryId);			
-		}
-		
-		if (quantityStr != null) {
-			relatedProductDTO.setQuantity(((BigDecimal) StandardExpressionProcessor.processExpression(args, quantityStr)).intValue());			
-		}		
-				
-		if (typeStr != null && RelatedProductTypeEnum.getInstance(typeStr) != null) {
-			relatedProductDTO.setType(RelatedProductTypeEnum.getInstance(typeStr));			
-		}
-		
-		if ("false".equalsIgnoreCase(element.getAttributeValue("cumulativeResults"))) {
-			relatedProductDTO.setCumulativeResults(false);			
-		}
-					
-		return relatedProductDTO;
-	}
+    private RelatedProductDTO buildDTO(Arguments args, Element element) {
+        RelatedProductDTO relatedProductDTO = new RelatedProductDTO();
+        String productIdStr = element.getAttributeValue("productId"); 
+        String categoryIdStr = element.getAttributeValue("categoryId"); 
+        String quantityStr = element.getAttributeValue("quantity"); 
+        String typeStr = element.getAttributeValue("type"); 
+        
+        if (productIdStr != null) {
+            Object productId = StandardExpressionProcessor.processExpression(args, productIdStr);
+            if (productId instanceof BigDecimal) {
+                productId = new Long(((BigDecimal) productId).toPlainString());
+            }
+            relatedProductDTO.setProductId((Long) productId);
+        }
+        
+        if (categoryIdStr != null) {
+            Object categoryId = StandardExpressionProcessor.processExpression(args, categoryIdStr);
+            if (categoryId instanceof BigDecimal) {
+                categoryId = new Long(((BigDecimal) categoryId).toPlainString());
+            }
+            relatedProductDTO.setCategoryId((Long) categoryId);         
+        }
+        
+        if (quantityStr != null) {
+            relatedProductDTO.setQuantity(((BigDecimal) StandardExpressionProcessor.processExpression(args, quantityStr)).intValue());          
+        }       
+                
+        if (typeStr != null && RelatedProductTypeEnum.getInstance(typeStr) != null) {
+            relatedProductDTO.setType(RelatedProductTypeEnum.getInstance(typeStr));         
+        }
+        
+        if ("false".equalsIgnoreCase(element.getAttributeValue("cumulativeResults"))) {
+            relatedProductDTO.setCumulativeResults(false);          
+        }
+                    
+        return relatedProductDTO;
+    }
 }

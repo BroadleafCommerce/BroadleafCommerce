@@ -60,46 +60,11 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
-			adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-
-            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultCategory())) {
-                adminInstance.getAllParentCategories().add(adminInstance.getDefaultCategory());
-            }
-
-			adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
-            
-			//Since none of the Sku fields are required, it's possible that the user did not fill out
-			//any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
-			if (adminInstance.getDefaultSku() == null) {
-			    Sku newSku = catalogService.createSku();
-			    adminInstance.setDefaultSku(newSku);
-			    adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
-			}
-
-			//also set the default product for the Sku
-			adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
-            dynamicEntityDao.merge(adminInstance.getDefaultSku());
-			
-            return helper.getRecord(adminProperties, adminInstance, null, null);
-		} catch (Exception e) {
-            LOG.error("Unable to add entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
-    }
-
-    @Override
-    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Entity entity = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-			adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+            adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultCategory())) {
                 adminInstance.getAllParentCategories().add(adminInstance.getDefaultCategory());
@@ -107,10 +72,45 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
             adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
             
-			return helper.getRecord(adminProperties, adminInstance, null, null);
-		} catch (Exception e) {
+            //Since none of the Sku fields are required, it's possible that the user did not fill out
+            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
+            if (adminInstance.getDefaultSku() == null) {
+                Sku newSku = catalogService.createSku();
+                adminInstance.setDefaultSku(newSku);
+                adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
+            }
+
+            //also set the default product for the Sku
+            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
+            dynamicEntityDao.merge(adminInstance.getDefaultSku());
+            
+            return helper.getRecord(adminProperties, adminInstance, null, null);
+        } catch (Exception e) {
+            LOG.error("Unable to add entity for " + entity.getType()[0], e);
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
+    }
+
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultCategory())) {
+                adminInstance.getAllParentCategories().add(adminInstance.getDefaultCategory());
+            }
+
+            adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
+            
+            return helper.getRecord(adminProperties, adminInstance, null, null);
+        } catch (Exception e) {
             LOG.error("Unable to update entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
     }
 }

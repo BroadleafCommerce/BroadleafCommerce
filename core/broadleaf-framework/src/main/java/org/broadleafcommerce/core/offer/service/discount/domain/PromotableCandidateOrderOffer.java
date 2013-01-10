@@ -25,18 +25,18 @@ import java.util.List;
 
 public interface PromotableCandidateOrderOffer {
 
-	public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
 
-	public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
+    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
-	public void computeDiscountedPriceAndAmount();
+    public void computeDiscountedPriceAndAmount();
 
-	public void reset();
-	
-	public CandidateOrderOffer getDelegate();
-	
-	public PromotableOrder getOrder();
-	
-	public Offer getOffer();
-	
+    public void reset();
+    
+    public CandidateOrderOffer getDelegate();
+    
+    public PromotableOrder getOrder();
+    
+    public Offer getOffer();
+    
 }

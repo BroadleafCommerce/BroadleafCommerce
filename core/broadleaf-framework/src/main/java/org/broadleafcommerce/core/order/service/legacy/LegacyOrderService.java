@@ -136,7 +136,7 @@ public interface LegacyOrderService extends OrderService {
      * @throws ItemNotFoundException
      * @throws PricingException
      */
-	public void updateItemQuantity(Order order, OrderItemRequestDTO orderItemRequestDTO) throws ItemNotFoundException, PricingException;
+    public void updateItemQuantity(Order order, OrderItemRequestDTO orderItemRequestDTO) throws ItemNotFoundException, PricingException;
 
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
     
@@ -176,16 +176,16 @@ public interface LegacyOrderService extends OrderService {
     public Order addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
 
 
-	/**
-	 * Not typically used in versions since 1.7.
-	 * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
-	 * 
-	 * @param skuId
-	 * @param productId
-	 * @param categoryId
-	 * @param quantity
-	 * @return
-	 */
+    /**
+     * Not typically used in versions since 1.7.
+     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
+     * 
+     * @param skuId
+     * @param productId
+     * @param categoryId
+     * @param quantity
+     * @return
+     */
     public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);    
 
     /**
@@ -351,8 +351,8 @@ public interface LegacyOrderService extends OrderService {
     @Deprecated
     public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException;
 
-	OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException;
+    OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException;
 
-	Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException;
+    Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException;
 
 }

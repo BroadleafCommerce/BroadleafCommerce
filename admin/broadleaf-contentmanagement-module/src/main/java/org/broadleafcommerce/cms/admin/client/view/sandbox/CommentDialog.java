@@ -33,19 +33,19 @@ import com.smartgwt.client.widgets.layout.HLayout;
  */
 public class CommentDialog extends Window {
 
-	protected IButton saveButton;
+    protected IButton saveButton;
     protected CommentCallback callback;
 
-	public CommentDialog() {
-		super();
-		this.setIsModal(true);
-		this.setShowModalMask(true);
-		this.setShowMinimizeButton(false);
-		this.setWidth(350);
-		this.setHeight(300);
-		this.setCanDragResize(true);
-		this.setOverflow(Overflow.AUTO);
-		this.setVisible(false);
+    public CommentDialog() {
+        super();
+        this.setIsModal(true);
+        this.setShowModalMask(true);
+        this.setShowMinimizeButton(false);
+        this.setWidth(350);
+        this.setHeight(300);
+        this.setCanDragResize(true);
+        this.setOverflow(Overflow.AUTO);
+        this.setVisible(false);
 
         HLayout formLayout = new HLayout();
         formLayout.setLayoutMargin(20);
@@ -53,11 +53,11 @@ public class CommentDialog extends Window {
         formLayout.setWidth100();
         DynamicForm form = new DynamicForm();
         final TextAreaItem formItem = new TextAreaItem();
-		//formItem.setLength(255);
-		formItem.setHeight(155);
-		formItem.setColSpan(2);
+        //formItem.setLength(255);
+        formItem.setHeight(155);
+        formItem.setColSpan(2);
         formItem.setShowTitle(false);
-		formItem.setWidth(255);
+        formItem.setWidth(255);
         form.setFields(formItem);
         formLayout.addMember(form);
         
@@ -66,18 +66,18 @@ public class CommentDialog extends Window {
         saveButton = new IButton("Ok");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	if (callback != null) {
+                if (callback != null) {
                     String val = formItem.getValueAsString();
                     callback.comment(val==null?"":val);
                 }
-            	hide();
+                hide();
             }
         });
 
         IButton cancelButton = new IButton("Cancel");  
         cancelButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
-            	hide();
+                hide();
             }  
         });
         
@@ -89,14 +89,14 @@ public class CommentDialog extends Window {
         hLayout.setLayoutBottomMargin(10);
         
         addItem(hLayout);
-	}
-	
-	public void launch(String title, CommentCallback callback) {
-		this.setTitle(title);
-		this.callback = callback;
-		centerInPage();
-		show();
-	}
+    }
+    
+    public void launch(String title, CommentCallback callback) {
+        this.setTitle(title);
+        this.callback = callback;
+        centerInPage();
+        show();
+    }
 
     public IButton getSaveButton() {
         return saveButton;

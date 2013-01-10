@@ -33,20 +33,20 @@ import java.util.Map;
  */
 public interface PersistenceModule {
 
-	public boolean isCompatible(OperationType operationType);
-	
-	public Entity add(PersistencePackage persistencePackage) throws ServiceException;
-	
-	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException;
-	
-	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException;
-	
-	public Entity update(PersistencePackage persistencePackage) throws ServiceException;
-	
-	public void remove(PersistencePackage persistencePackage) throws ServiceException;
-	
-	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
-	
-	public void setPersistenceManager(PersistenceManager persistenceManager);
-	
+    public boolean isCompatible(OperationType operationType);
+    
+    public Entity add(PersistencePackage persistencePackage) throws ServiceException;
+    
+    public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException;
+    
+    public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException;
+    
+    public Entity update(PersistencePackage persistencePackage) throws ServiceException;
+    
+    public void remove(PersistencePackage persistencePackage) throws ServiceException;
+    
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
+    
+    public void setPersistenceManager(PersistenceManager persistenceManager);
+    
 }

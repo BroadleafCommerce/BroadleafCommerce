@@ -28,16 +28,16 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
  */
 public class SecurityExceptionFactory {
 
-	public static ApplicationSecurityException get(final Throwable springException) {
-		ApplicationSecurityException gwtException = null;
-		if (springException instanceof AccessDeniedException) {
-			gwtException = new com.gwtincubator.security.exception.AccessDeniedException(springException.getMessage(), springException);
-		} else if (springException instanceof AuthenticationException) {
-			gwtException = new com.gwtincubator.security.exception.AuthenticationException(springException.getMessage(), springException);
-		} else {
-			gwtException = new com.gwtincubator.security.exception.ApplicationSecurityException(springException.getMessage(), springException);
-		}
-		return gwtException;
-	}
+    public static ApplicationSecurityException get(final Throwable springException) {
+        ApplicationSecurityException gwtException = null;
+        if (springException instanceof AccessDeniedException) {
+            gwtException = new com.gwtincubator.security.exception.AccessDeniedException(springException.getMessage(), springException);
+        } else if (springException instanceof AuthenticationException) {
+            gwtException = new com.gwtincubator.security.exception.AuthenticationException(springException.getMessage(), springException);
+        } else {
+            gwtException = new com.gwtincubator.security.exception.ApplicationSecurityException(springException.getMessage(), springException);
+        }
+        return gwtException;
+    }
 
 }

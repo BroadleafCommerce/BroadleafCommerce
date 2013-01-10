@@ -207,20 +207,20 @@ public interface Product extends Serializable {
      */
     public void setDefaultSku(Sku defaultSku);
     
-	/**
-	 * @return whether or not the default sku can be used for a multi-sku product in the case that no 
-	 * product options are set. Defaults to false if not specified. Note that this only affects multi-sku
-	 * products.
-	 */
-	public Boolean getCanSellWithoutOptions();
+    /**
+     * @return whether or not the default sku can be used for a multi-sku product in the case that no 
+     * product options are set. Defaults to false if not specified. Note that this only affects multi-sku
+     * products.
+     */
+    public Boolean getCanSellWithoutOptions();
 
-	/**
-	 * Sets whether or not the default sku can be sold in the case that no product options are specified. Note
-	 * that this only affects multi-sku products.
-	 * 
-	 * @param canSellWithoutOptions
-	 */
-	public void setCanSellWithoutOptions(Boolean canSellWithoutOptions);
+    /**
+     * Sets whether or not the default sku can be sold in the case that no product options are specified. Note
+     * that this only affects multi-sku products.
+     * 
+     * @param canSellWithoutOptions
+     */
+    public void setCanSellWithoutOptions(Boolean canSellWithoutOptions);
 
     /**
      * Returns a list of {@link Sku}s filtered by whether the Skus are active or not.
@@ -583,40 +583,40 @@ public interface Product extends Serializable {
      * 
      * @return the attributes for this Product
      */
-	public List<ProductAttribute> getProductAttributes();
+    public List<ProductAttribute> getProductAttributes();
 
-	/**
-	 * Sets a generic list of key-value pairs for Product
-	 * @param productAttributes
-	 */
-	public void setProductAttributes(List<ProductAttribute> productAttributes);
+    /**
+     * Sets a generic list of key-value pairs for Product
+     * @param productAttributes
+     */
+    public void setProductAttributes(List<ProductAttribute> productAttributes);
 
-	/**
-	 * Gets the promotional message for this Product. For instance, this could be a limited-time
-	 * Product
-	 * 
-	 * @return the Product's promotional message
-	 */
-	public String getPromoMessage();
+    /**
+     * Gets the promotional message for this Product. For instance, this could be a limited-time
+     * Product
+     * 
+     * @return the Product's promotional message
+     */
+    public String getPromoMessage();
 
-	/**
-	 * Sets the promotional message for this Product
-	 * 
-	 * @param promoMessage
-	 */
-	public void setPromoMessage(String promoMessage);
+    /**
+     * Sets the promotional message for this Product
+     * 
+     * @param promoMessage
+     */
+    public void setPromoMessage(String promoMessage);
 
-	/**
-	 * The available {@link ProductOption}s for this Product.  For instance, if this
-	 * Product is a T-Shirt, you might be able to specify a size and color. This would
-	 * be modeled by 2 {@link ProductOption}s, each that could have multiple {@link ProductOptionValue}s 
-	 * (which could be "small" "medium" "large", "blue", "yellow", "green").  For specific pricing or
-	 * inventory needs on a per-value basis, multiple Skus can be associated to this Product based
-	 * off of the {@link ProductOptionValue}s
-	 * 
-	 * @return the {@link ProductOption}s for this Product
-	 * @see Product#getAdditionalSkus(), {@link ProductOption}, {@link ProductOptionValue}
-	 */
+    /**
+     * The available {@link ProductOption}s for this Product.  For instance, if this
+     * Product is a T-Shirt, you might be able to specify a size and color. This would
+     * be modeled by 2 {@link ProductOption}s, each that could have multiple {@link ProductOptionValue}s 
+     * (which could be "small" "medium" "large", "blue", "yellow", "green").  For specific pricing or
+     * inventory needs on a per-value basis, multiple Skus can be associated to this Product based
+     * off of the {@link ProductOptionValue}s
+     * 
+     * @return the {@link ProductOption}s for this Product
+     * @see Product#getAdditionalSkus(), {@link ProductOption}, {@link ProductOptionValue}
+     */
     public List<ProductOption> getProductOptions();
 
     /**
@@ -638,75 +638,75 @@ public interface Product extends Serializable {
      */
     public String getUrl();
 
-	/**
-	 * Sets the URL that a customer could type in to reach this product.
-	 * 
-	 * @param url
-	 */
-	public void setUrl(String url);
-	
-	/**
-	 * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for 
-	 * this product by taking the {@link Product.getName()} and removing special characters and replacing
-	 * dashes with spaces.
-	 */	
-	public String getUrlKey();
+    /**
+     * Sets the URL that a customer could type in to reach this product.
+     * 
+     * @param url
+     */
+    public void setUrl(String url);
+    
+    /**
+     * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for 
+     * this product by taking the {@link Product.getName()} and removing special characters and replacing
+     * dashes with spaces.
+     */ 
+    public String getUrlKey();
 
-	/**
-	 * Sets a url-fragment to be used with this product.  By default, the system will attempt to create a 
-	 * unique url-fragment for this product by taking the {@link Product.getName()} and removing special characters and replacing
-	 * dashes with spaces.
-	 */
-	public void setUrlKey(String url);
+    /**
+     * Sets a url-fragment to be used with this product.  By default, the system will attempt to create a 
+     * unique url-fragment for this product by taking the {@link Product.getName()} and removing special characters and replacing
+     * dashes with spaces.
+     */
+    public void setUrlKey(String url);
 
-	/**
-	 * Returns the name of a display template that is used to render this product.   Most implementations have a default
-	 * template for all products.    This allows for the user to define a specific template to be used by this product.
-	 * 
-	 * @return
-	 */
-	public String getDisplayTemplate();
+    /**
+     * Returns the name of a display template that is used to render this product.   Most implementations have a default
+     * template for all products.    This allows for the user to define a specific template to be used by this product.
+     * 
+     * @return
+     */
+    public String getDisplayTemplate();
 
-	/**
-	 * Sets the name of a display template that is used to render this product.   Most implementations have a default
-	 * template for all products.    This allows for the user to define a specific template to be used by this product.
-	 * @param displayTemplate
-	 */
-	public void setDisplayTemplate(String displayTemplate);
-	
-	/**
-	 * Generates a URL that can be used to access the product.  
-	 * Builds the url by combining the url of the default category with the getUrlKey() of this product.
-	 */
-	public String getGeneratedUrl();
+    /**
+     * Sets the name of a display template that is used to render this product.   Most implementations have a default
+     * template for all products.    This allows for the user to define a specific template to be used by this product.
+     * @param displayTemplate
+     */
+    public void setDisplayTemplate(String displayTemplate);
+    
+    /**
+     * Generates a URL that can be used to access the product.  
+     * Builds the url by combining the url of the default category with the getUrlKey() of this product.
+     */
+    public String getGeneratedUrl();
 
-	/**
-	 * Looks at all ProductAttributes for this product and returns the attribute that matches the given name
-	 * 
-	 * @param name the name of the attribute
-	 * @return the matching ProductAttribute (null if no match)
-	 */
-	public ProductAttribute getProductAttributeByName(String name);
+    /**
+     * Looks at all ProductAttributes for this product and returns the attribute that matches the given name
+     * 
+     * @param name the name of the attribute
+     * @return the matching ProductAttribute (null if no match)
+     */
+    public ProductAttribute getProductAttributeByName(String name);
 
-	/**
-	 * @return a Map of all the product attributes on this product keyed by the attribute name
-	 */
-	public Map<String, ProductAttribute> getMappedProductAttributes();
-	
-	/** 
-	 * Returns a list of the cross sale products for this product as well
-	 * all cross sale products in all parent categories of this product.
-	 * 
-	 * @return the cumulative cross sale products
-	 */
-	public List<RelatedProduct> getCumulativeCrossSaleProducts();
-	
-	/** 
-	 * Returns a list of the upsale products for this product as well as
-	 * all upsale products in all parent categories of this product.
-	 * 
-	 * @return the cumulative upsale products
-	 */
-	public List<RelatedProduct> getCumulativeUpSaleProducts();
+    /**
+     * @return a Map of all the product attributes on this product keyed by the attribute name
+     */
+    public Map<String, ProductAttribute> getMappedProductAttributes();
+    
+    /** 
+     * Returns a list of the cross sale products for this product as well
+     * all cross sale products in all parent categories of this product.
+     * 
+     * @return the cumulative cross sale products
+     */
+    public List<RelatedProduct> getCumulativeCrossSaleProducts();
+    
+    /** 
+     * Returns a list of the upsale products for this product as well as
+     * all upsale products in all parent categories of this product.
+     * 
+     * @return the cumulative upsale products
+     */
+    public List<RelatedProduct> getCumulativeUpSaleProducts();
 
 }

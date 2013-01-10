@@ -47,24 +47,24 @@ import java.util.Arrays;
  */
 public class UserPermissionPresenter implements SubPresentable {
 
-	protected UserPermissionDisplay display;
+    protected UserPermissionDisplay display;
 
-	protected Record associatedRecord;
-	protected AbstractDynamicDataSource abstractDynamicDataSource;
-	protected Boolean disabled = false;
-	protected EntitySearchDialog searchDialog;
+    protected Record associatedRecord;
+    protected AbstractDynamicDataSource abstractDynamicDataSource;
+    protected Boolean disabled = false;
+    protected EntitySearchDialog searchDialog;
     protected String[] availableToTypes = {EntityImplementations.ADMIN_USER};
 
-	public UserPermissionPresenter(UserPermissionDisplay display, EntitySearchDialog searchDialog) {
-		this.display = display;
-		this.searchDialog = searchDialog;
-	}
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
-	}
+    public UserPermissionPresenter(UserPermissionDisplay display, EntitySearchDialog searchDialog) {
+        this.display = display;
+        this.searchDialog = searchDialog;
+    }
+    
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+        display.getGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getGrid());
+        dataSource.setupGridFields(gridFields, editable);
+    }
 
     @Override
     public Canvas getDisplay() {
@@ -72,37 +72,37 @@ public class UserPermissionPresenter implements SubPresentable {
     }
 
     public void setStartState() {
-		if (!disabled) {
-			display.getAddButton().enable();
-			display.getGrid().enable();
-			display.getRemoveButton().disable();
-		}
-	}
-	
-	public void enable() {
-		disabled = false;
-		display.getAddButton().enable();
-		display.getGrid().enable();
-		display.getRemoveButton().enable();
-		display.getToolBar().enable();
-	}
-	
-	public void disable() {
-		disabled = true;
-		display.getAddButton().disable();
-		display.getGrid().disable();
-		display.getRemoveButton().disable();
-		display.getToolBar().disable();
-	}
-	
-	public void setReadOnly(Boolean readOnly) {
-		if (readOnly) {
-			disable();
-			display.getGrid().enable();
-		} else {
-			enable();
-		}
-	}
+        if (!disabled) {
+            display.getAddButton().enable();
+            display.getGrid().enable();
+            display.getRemoveButton().disable();
+        }
+    }
+    
+    public void enable() {
+        disabled = false;
+        display.getAddButton().enable();
+        display.getGrid().enable();
+        display.getRemoveButton().enable();
+        display.getToolBar().enable();
+    }
+    
+    public void disable() {
+        disabled = true;
+        display.getAddButton().disable();
+        display.getGrid().disable();
+        display.getRemoveButton().disable();
+        display.getToolBar().disable();
+    }
+    
+    public void setReadOnly(Boolean readOnly) {
+        if (readOnly) {
+            disable();
+            display.getGrid().enable();
+        } else {
+            enable();
+        }
+    }
 
     @Override
     public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource) {
@@ -111,8 +111,8 @@ public class UserPermissionPresenter implements SubPresentable {
 
     @Override
     public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
-		this.associatedRecord = associatedRecord;
-		this.abstractDynamicDataSource = abstractDynamicDataSource;
+        this.associatedRecord = associatedRecord;
+        this.abstractDynamicDataSource = abstractDynamicDataSource;
         ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
         String[] types = associatedRecord.getAttributeAsStringArray("_type");
         boolean shouldLoad = availableToTypes == null;
@@ -147,41 +147,41 @@ public class UserPermissionPresenter implements SubPresentable {
         }
 
         return shouldLoad;
-	}
-	
-	public void bind() {
-		display.getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					searchDialog.search(BLCMain.getMessageManager().getString("userPermissionsTitle"), new SearchItemSelectedHandler() {
-						public void onSearchItemSelected(SearchItemSelected event) {
-							display.getGrid().addData(event.getRecord());
-						}
-					});
-				}
-			}
-		});
-		
-		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					display.getRemoveButton().enable();
-					((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-				} else {
-					display.getRemoveButton().disable();
-				}
-			}
-		});
-		display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
-						}
-					});
-				}
-			}
-		});
-	}
+    }
+    
+    public void bind() {
+        display.getAddButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    searchDialog.search(BLCMain.getMessageManager().getString("userPermissionsTitle"), new SearchItemSelectedHandler() {
+                        public void onSearchItemSelected(SearchItemSelected event) {
+                            display.getGrid().addData(event.getRecord());
+                        }
+                    });
+                }
+            }
+        });
+        
+        display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                if (event.getState()) {
+                    display.getRemoveButton().enable();
+                    ((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
+                } else {
+                    display.getRemoveButton().disable();
+                }
+            }
+        });
+        display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            display.getRemoveButton().disable();
+                        }
+                    });
+                }
+            }
+        });
+    }
 }

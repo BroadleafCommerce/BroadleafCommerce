@@ -22,38 +22,38 @@ import org.springframework.validation.Validator;
 
 @Component("blResetPasswordValidator")
 public class ResetPasswordValidator implements Validator {
-	
+    
     private String validPasswordRegex = RegistrationValidator.DEFAULT_VALID_PASSWORD_REGEX;
 
     public void validate(String username, String password, String confirmPassword, Errors errors) {
-    	if (password == null || "".equals(password)) {
-    		errors.reject("password", "password.required");
-    	}
-    	
-    	if (username == null || "".equals(username)) {
-    		errors.reject("username", "username.required");
-    	}
-    	
-    	if (! errors.hasErrors()) {
+        if (password == null || "".equals(password)) {
+            errors.reject("password", "password.required");
+        }
+        
+        if (username == null || "".equals(username)) {
+            errors.reject("username", "username.required");
+        }
+        
+        if (! errors.hasErrors()) {
             if (! password.matches(validPasswordRegex)) {
                 errors.rejectValue("password", "password.invalid", null, null);
             } else {
-            	if (!password.equals(confirmPassword)) {
-            		errors.rejectValue("password", "passwordConfirm.invalid", null, null);
-            	}
+                if (!password.equals(confirmPassword)) {
+                    errors.rejectValue("password", "passwordConfirm.invalid", null, null);
+                }
             }        
         }
     }
 
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return false;
-	}
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return false;
+    }
 
-	@Override
-	public void validate(Object target, Errors errors) {
-	}
-	
+    @Override
+    public void validate(Object target, Errors errors) {
+    }
+    
     public String getValidPasswordRegex() {
         return validPasswordRegex;
     }

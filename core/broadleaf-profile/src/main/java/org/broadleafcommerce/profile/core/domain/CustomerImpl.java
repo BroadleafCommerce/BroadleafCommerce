@@ -218,15 +218,15 @@ public class CustomerImpl implements Customer {
 
     @Override
     public ChallengeQuestion getChallengeQuestion() {
-		return challengeQuestion;
-	}
+        return challengeQuestion;
+    }
 
-	@Override
+    @Override
     public void setChallengeQuestion(ChallengeQuestion challengeQuestion) {
-		this.challengeQuestion = challengeQuestion;
-	}
+        this.challengeQuestion = challengeQuestion;
+    }
 
-	@Override
+    @Override
     public String getChallengeAnswer() {
         return challengeAnswer;
     }
@@ -348,39 +348,39 @@ public class CustomerImpl implements Customer {
 
     @Override
     public List<CustomerAttribute> getCustomerAttributes() {
-		return customerAttributes;
-	}
+        return customerAttributes;
+    }
     
     @Override
     public CustomerAttribute getCustomerAttributeByName(String name) {
-    	for (CustomerAttribute attribute : getCustomerAttributes()) {
-    		if (attribute.getName().equals(name)) {
-    			return attribute;
-    		}
-    	}
-    	return null;
+        for (CustomerAttribute attribute : getCustomerAttributes()) {
+            if (attribute.getName().equals(name)) {
+                return attribute;
+            }
+        }
+        return null;
     }
 
-	@Override
+    @Override
     public void setCustomerAttributes(List<CustomerAttribute> customerAttributes) {
-		this.customerAttributes = customerAttributes;
-	}
-	
-	@Override
+        this.customerAttributes = customerAttributes;
+    }
+    
+    @Override
     public boolean isDeactivated() {
-		if (deactivated == null) {
-			return false;
-		} else {
-			return deactivated.booleanValue();
-		}
-	}
+        if (deactivated == null) {
+            return false;
+        } else {
+            return deactivated.booleanValue();
+        }
+    }
 
-	@Override
+    @Override
     public void setDeactivated(boolean deactivated) {
-		this.deactivated = Boolean.valueOf(deactivated);
-	}
+        this.deactivated = Boolean.valueOf(deactivated);
+    }
 
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
