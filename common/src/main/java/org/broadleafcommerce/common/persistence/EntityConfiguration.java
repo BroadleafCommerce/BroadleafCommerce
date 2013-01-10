@@ -82,7 +82,7 @@ public class EntityConfiguration implements ApplicationContextAware {
     }
     
     public String[] getEntityBeanNames() {
-    	return applicationcontext.getBeanDefinitionNames();
+        return applicationcontext.getBeanDefinitionNames();
     }
 
     public <T> Class<T> lookupEntityClass(String beanId, Class<T> resultClass) {
@@ -116,11 +116,11 @@ public class EntityConfiguration implements ApplicationContextAware {
         return bean;
     }
 
-	public Resource[] getEntityContexts() {
-		return entityContexts;
-	}
+    public Resource[] getEntityContexts() {
+        return entityContexts;
+    }
 
-	public void setEntityContexts(Resource[] entityContexts) {
-		this.entityContexts = entityContexts;
-	}
+    public void setEntityContexts(Resource[] entityContexts) {
+        this.entityContexts = entityContexts;
+    }
 }

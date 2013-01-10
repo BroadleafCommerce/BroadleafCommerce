@@ -76,9 +76,9 @@ public class PaymentInfoDaoImpl implements PaymentInfoDao {
     }
 
     public void delete(PaymentInfo paymentInfo) {
-    	if (!em.contains(paymentInfo)) {
-    		paymentInfo = readPaymentInfoById(paymentInfo.getId());
-    	}
+        if (!em.contains(paymentInfo)) {
+            paymentInfo = readPaymentInfoById(paymentInfo.getId());
+        }
         em.remove(paymentInfo);
     }
 }

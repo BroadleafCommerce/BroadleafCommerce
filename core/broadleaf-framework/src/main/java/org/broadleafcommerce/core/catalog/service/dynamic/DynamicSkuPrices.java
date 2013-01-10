@@ -27,27 +27,27 @@ import org.broadleafcommerce.common.money.Money;
  */
 public class DynamicSkuPrices implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	protected Money retailPrice;
-	protected Money salePrice;
-	protected Money priceAdjustment;
-	protected Money qualifyingOrderSubtotal;
-	public Money getRetailPrice() {
-		return retailPrice;
-	}
-	
-	public void setRetailPrice(Money retailPrice) {
-		this.retailPrice = retailPrice;
-	}
-	
-	public Money getSalePrice() {
-		return salePrice;
-	}
-	
-	public void setSalePrice(Money salePrice) {
-		this.salePrice = salePrice;
-	}
+    private static final long serialVersionUID = 1L;
+    
+    protected Money retailPrice;
+    protected Money salePrice;
+    protected Money priceAdjustment;
+    protected Money qualifyingOrderSubtotal;
+    public Money getRetailPrice() {
+        return retailPrice;
+    }
+    
+    public void setRetailPrice(Money retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+    
+    public Money getSalePrice() {
+        return salePrice;
+    }
+    
+    public void setSalePrice(Money salePrice) {
+        this.salePrice = salePrice;
+    }
 
         public Money getPriceAdjustment() {
                 return priceAdjustment;

@@ -83,18 +83,18 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         this.promoMessage = model.getPromoMessage();
         
         if (model.getDefaultSku() != null) {
-        	this.defaultSku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-        	this.defaultSku.wrap(model.getDefaultSku(), request);
+            this.defaultSku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
+            this.defaultSku.wrap(model.getDefaultSku(), request);
         }
         
         if (model.getProductOptions() != null) {
-        	this.productOptions = new ArrayList<ProductOptionWrapper>();
-        	List<ProductOption> options = model.getProductOptions();
-        	for (ProductOption option : options) {
-        		ProductOptionWrapper optionWrapper = (ProductOptionWrapper)context.getBean(ProductOptionWrapper.class.getName());
-        		optionWrapper.wrap(option, request);
-        		this.productOptions.add(optionWrapper);
-        	}
+            this.productOptions = new ArrayList<ProductOptionWrapper>();
+            List<ProductOption> options = model.getProductOptions();
+            for (ProductOption option : options) {
+                ProductOptionWrapper optionWrapper = (ProductOptionWrapper)context.getBean(ProductOptionWrapper.class.getName());
+                optionWrapper.wrap(option, request);
+                this.productOptions.add(optionWrapper);
+            }
         }
     }
 }

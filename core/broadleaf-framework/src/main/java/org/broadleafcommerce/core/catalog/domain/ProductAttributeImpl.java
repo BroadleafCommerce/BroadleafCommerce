@@ -44,7 +44,7 @@ import javax.persistence.Table;
 @AdminPresentationClass(friendlyName = "ProductAttributeImpl_baseProductAttribute")
 public class ProductAttributeImpl implements ProductAttribute {
 
-	/** The Constant serialVersionUID. */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
     
     /** The id. */

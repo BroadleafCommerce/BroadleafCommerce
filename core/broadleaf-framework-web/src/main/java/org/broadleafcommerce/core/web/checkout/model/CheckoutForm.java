@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CheckoutForm implements Serializable {
-	
-	private static final long serialVersionUID = 8866879738364589339L;
-	
-	private String emailAddress;
+    
+    private static final long serialVersionUID = 8866879738364589339L;
+    
+    private String emailAddress;
     private Address shippingAddress = new AddressImpl();
     private Address billingAddress = new AddressImpl();
     private String creditCardNumber;

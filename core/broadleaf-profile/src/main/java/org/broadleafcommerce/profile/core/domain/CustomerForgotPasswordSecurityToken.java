@@ -72,7 +72,7 @@ public interface CustomerForgotPasswordSecurityToken extends Serializable {
      * Id associated with this forgot password token.
      * @return
      */
-	public void setCustomerId(Long customerId);
+    public void setCustomerId(Long customerId);
 
     /**
      * Returns true if the token has already been used.

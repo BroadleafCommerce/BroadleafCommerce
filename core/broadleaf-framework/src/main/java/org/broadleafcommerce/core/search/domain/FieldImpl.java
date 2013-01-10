@@ -45,7 +45,7 @@ import java.util.List;
 @Table(name = "BLC_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 public class FieldImpl implements Field,Serializable {
-	
+    
     /**
      * 
      */
@@ -81,134 +81,134 @@ public class FieldImpl implements Field,Serializable {
     protected String facetFieldType;
 
     // This is a broadleaf enumeration
-	@ElementCollection
+    @ElementCollection
     @CollectionTable(name="BLC_FIELD_SEARCH_TYPES", joinColumns=@JoinColumn(name="FIELD_ID"))
     @Column(name="SEARCHABLE_FIELD_TYPE")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-	protected List<String> searchableFieldTypes = new ArrayList<String>();
-	
-	@Column(name = "TRANSLATABLE")
-	@AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_description")
-	protected Boolean translatable = false;
+    protected List<String> searchableFieldTypes = new ArrayList<String>();
+    
+    @Column(name = "TRANSLATABLE")
+    @AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_description")
+    protected Boolean translatable = false;
     
     @Override
     public String getQualifiedFieldName() {
-    	return getEntityType().getFriendlyType() + "." + propertyName;
+        return getEntityType().getFriendlyType() + "." + propertyName;
     }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public FieldEntity getEntityType() {
-		return FieldEntity.getInstance(entityType);
-	}
+    @Override
+    public FieldEntity getEntityType() {
+        return FieldEntity.getInstance(entityType);
+    }
 
-	@Override
-	public void setEntityType(FieldEntity entityType) {
-		this.entityType = entityType.getType();
-	}
+    @Override
+    public void setEntityType(FieldEntity entityType) {
+        this.entityType = entityType.getType();
+    }
 
-	@Override
-	public String getPropertyName() {
-		return propertyName;
-	}
+    @Override
+    public String getPropertyName() {
+        return propertyName;
+    }
 
-	@Override
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
-	}
+    @Override
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
 
-	@Override
-	public String getAbbreviation() {
-		return abbreviation;
-	}
+    @Override
+    public String getAbbreviation() {
+        return abbreviation;
+    }
 
-	@Override
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
-	}
+    @Override
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
 
-	@Override
-	public Boolean getSearchable() {
-		return searchable;
-	}
+    @Override
+    public Boolean getSearchable() {
+        return searchable;
+    }
 
-	@Override
-	public void setSearchable(Boolean searchable) {
-		this.searchable = searchable;
-	}
+    @Override
+    public void setSearchable(Boolean searchable) {
+        this.searchable = searchable;
+    }
     
-	@Override
+    @Override
     public FieldType getFacetFieldType() {
-		return FieldType.getInstance(facetFieldType);
-	}
+        return FieldType.getInstance(facetFieldType);
+    }
 
-	@Override
-	public void setFacetFieldType(FieldType facetFieldType) {
-		this.facetFieldType = facetFieldType.getType();
-	}
+    @Override
+    public void setFacetFieldType(FieldType facetFieldType) {
+        this.facetFieldType = facetFieldType.getType();
+    }
 
-	@Override
-	public List<FieldType> getSearchableFieldTypes() {
-		List<FieldType> fieldTypes = new ArrayList<FieldType>();
-		for (String fieldType : searchableFieldTypes) {
-			fieldTypes.add(FieldType.getInstance(fieldType));
-		}
-		return fieldTypes;
-	}
+    @Override
+    public List<FieldType> getSearchableFieldTypes() {
+        List<FieldType> fieldTypes = new ArrayList<FieldType>();
+        for (String fieldType : searchableFieldTypes) {
+            fieldTypes.add(FieldType.getInstance(fieldType));
+        }
+        return fieldTypes;
+    }
 
-	@Override
-	public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes) {
-		List<String> fieldTypes = new ArrayList<String>();
-		for (FieldType fieldType : searchableFieldTypes) {
-			fieldTypes.add(fieldType.getType());
-		}
-		this.searchableFieldTypes = fieldTypes;
-	}
-	
-	@Override
+    @Override
+    public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes) {
+        List<String> fieldTypes = new ArrayList<String>();
+        for (FieldType fieldType : searchableFieldTypes) {
+            fieldTypes.add(fieldType.getType());
+        }
+        this.searchableFieldTypes = fieldTypes;
+    }
+    
+    @Override
     public Boolean getTranslatable() {
         return translatable == null ? false : translatable;
     }
 
-	@Override
+    @Override
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
     }
 
     @Override
-	public List<SearchConfig> getSearchConfigs() {
-		throw new UnsupportedOperationException("The default Field implementation does not support search configs");
-	}
+    public List<SearchConfig> getSearchConfigs() {
+        throw new UnsupportedOperationException("The default Field implementation does not support search configs");
+    }
 
-	@Override
-	public void setSearchConfigs(List<SearchConfig> searchConfigs) {
-		throw new UnsupportedOperationException("The default Field implementation does not support search configs");
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-	   	if (this == obj) {
+    @Override
+    public void setSearchConfigs(List<SearchConfig> searchConfigs) {
+        throw new UnsupportedOperationException("The default Field implementation does not support search configs");
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-	    if (obj == null) {
+        if (obj == null) {
             return false;
         }
-	    if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         Field other = (Field) obj;
         
         return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
-        		
+                
     }
 }

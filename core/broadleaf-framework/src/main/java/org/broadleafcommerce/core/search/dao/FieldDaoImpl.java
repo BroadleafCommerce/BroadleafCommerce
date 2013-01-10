@@ -41,33 +41,33 @@ public class FieldDaoImpl implements FieldDao {
     protected EntityConfiguration entityConfiguration;
     
     @Override
-	public Field readFieldByAbbreviation(String abbreviation) {
-    	CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
-		
-		Root<FieldImpl> root = criteria.from(FieldImpl.class);
-		
-		criteria.select(root);
-		criteria.where(
-			builder.equal(root.get("abbreviation").as(String.class), abbreviation)
-		);
-    	
-		return em.createQuery(criteria).getSingleResult();
+    public Field readFieldByAbbreviation(String abbreviation) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
+        
+        Root<FieldImpl> root = criteria.from(FieldImpl.class);
+        
+        criteria.select(root);
+        criteria.where(
+            builder.equal(root.get("abbreviation").as(String.class), abbreviation)
+        );
+        
+        return em.createQuery(criteria).getSingleResult();
     }
     
     @Override
-	public List<Field> readAllProductFields() {
-    	CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
-		
-		Root<FieldImpl> root = criteria.from(FieldImpl.class);
-		
-		criteria.select(root);
-		criteria.where(
-			builder.equal(root.get("entityType").as(String.class), FieldEntity.PRODUCT.getType())
-		);
-    	
-		return em.createQuery(criteria).getResultList();
+    public List<Field> readAllProductFields() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
+        
+        Root<FieldImpl> root = criteria.from(FieldImpl.class);
+        
+        criteria.select(root);
+        criteria.where(
+            builder.equal(root.get("entityType").as(String.class), FieldEntity.PRODUCT.getType())
+        );
+        
+        return em.createQuery(criteria).getResultList();
     }
     
 }

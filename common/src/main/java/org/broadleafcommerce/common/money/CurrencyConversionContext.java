@@ -19,25 +19,25 @@ package org.broadleafcommerce.common.money;
 import java.util.HashMap;
 
 public class CurrencyConversionContext {
-	
-	private static final ThreadLocal<CurrencyConversionService> currencyConversionService = new ThreadLocal<CurrencyConversionService>();
+    
+    private static final ThreadLocal<CurrencyConversionService> currencyConversionService = new ThreadLocal<CurrencyConversionService>();
 
-	private static final ThreadLocal<HashMap> currencyConversionContext = new ThreadLocal<HashMap>();
+    private static final ThreadLocal<HashMap> currencyConversionContext = new ThreadLocal<HashMap>();
 
-	public static HashMap getCurrencyConversionContext() {
-		return CurrencyConversionContext.currencyConversionContext.get();
-	}
-	
-	public static void setCurrencyConversionContext(HashMap currencyConsiderationContext) {
-		CurrencyConversionContext.currencyConversionContext.set(currencyConsiderationContext);
-	}
-	
-	public static CurrencyConversionService getCurrencyConversionService() {
-		return CurrencyConversionContext.currencyConversionService.get();
-	}
-	
-	public static void setCurrencyConversionService(CurrencyConversionService currencyDeterminationService) {
-		CurrencyConversionContext.currencyConversionService.set(currencyDeterminationService);
-	}
+    public static HashMap getCurrencyConversionContext() {
+        return CurrencyConversionContext.currencyConversionContext.get();
+    }
+    
+    public static void setCurrencyConversionContext(HashMap currencyConsiderationContext) {
+        CurrencyConversionContext.currencyConversionContext.set(currencyConsiderationContext);
+    }
+    
+    public static CurrencyConversionService getCurrencyConversionService() {
+        return CurrencyConversionContext.currencyConversionService.get();
+    }
+    
+    public static void setCurrencyConversionService(CurrencyConversionService currencyDeterminationService) {
+        CurrencyConversionContext.currencyConversionService.set(currencyDeterminationService);
+    }
 
 }

@@ -39,11 +39,11 @@ import java.util.logging.Logger;
  *
  */
 public class FormItemCallbackHandlerManager {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(FormItemCallbackHandlerManager.class.getName());
-	
-	protected HashMap<String, FormItemCallback> callbacks = new HashMap<String, FormItemCallback>();
+    
+    protected HashMap<String, FormItemCallback> callbacks = new HashMap<String, FormItemCallback>();
 
     public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay) {
         addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null);
@@ -109,16 +109,16 @@ public class FormItemCallbackHandlerManager {
         addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, foreignKey, cb, dynamicFormDisplay.getFormOnlyDisplay().getForm().getDataSource());
     }
 
-	public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
-		addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null, cb);
-	}
-	
-	public void addFormItemCallback(String fieldName, FormItemCallback formItemCallback) {
-		callbacks.put(fieldName, formItemCallback);
-	}
-	
-	public FormItemCallback getFormItemCallback(String fieldName) {
-		return callbacks.get(fieldName);
-	}
-	
+    public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
+        addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null, cb);
+    }
+    
+    public void addFormItemCallback(String fieldName, FormItemCallback formItemCallback) {
+        callbacks.put(fieldName, formItemCallback);
+    }
+    
+    public FormItemCallback getFormItemCallback(String fieldName) {
+        return callbacks.get(fieldName);
+    }
+    
 }

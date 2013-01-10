@@ -84,10 +84,10 @@ public class CheckoutTest extends BaseTest {
     @Resource(name = "blSecurePaymentInfoService")
     private SecurePaymentInfoService securePaymentInfoService;
 
-	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
-	@Transactional
+    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
+    @Transactional
     public void testCheckout() throws Exception {
-    	String userName = "customer1";
+        String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Order order = orderService.createNewCartForCustomer(customer);
 
@@ -126,8 +126,8 @@ public class CheckoutTest extends BaseTest {
 
 /*
     @SuppressWarnings("serial")
-   	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
-   	@Transactional
+    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
+    @Transactional
     public void testCustomerMaxUsesPromo() throws Exception {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
@@ -219,88 +219,88 @@ public class CheckoutTest extends BaseTest {
 
         CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
 
-			private static final long serialVersionUID = 1L;
-			private String referenceNumber = "1234";
+            private static final long serialVersionUID = 1L;
+            private String referenceNumber = "1234";
 
-			@Override
+            @Override
             public String getCvvCode() {
-				return "123";
-			}
+                return "123";
+            }
 
-			@Override
+            @Override
             public Integer getExpirationMonth() {
-				return 11;
-			}
+                return 11;
+            }
 
-			@Override
+            @Override
             public Integer getExpirationYear() {
-				return 2011;
-			}
+                return 2011;
+            }
 
-			@Override
+            @Override
             public Long getId() {
-				return null;
-			}
+                return null;
+            }
 
-			@Override
+            @Override
             public String getPan() {
-				return "1111111111111111";
-			}
+                return "1111111111111111";
+            }
 
-			@Override
+            @Override
             public void setCvvCode(String cvvCode) {
-				//do nothing
-			}
+                //do nothing
+            }
 
-			@Override
+            @Override
             public void setExpirationMonth(Integer expirationMonth) {
-				//do nothing
-			}
+                //do nothing
+            }
 
-			@Override
+            @Override
             public void setExpirationYear(Integer expirationYear) {
-				//do nothing
-			}
+                //do nothing
+            }
 
-			@Override
+            @Override
             public void setId(Long id) {
-				//do nothing
-			}
+                //do nothing
+            }
 
-			@Override
+            @Override
             public void setPan(String pan) {
-				//do nothing
-			}
+                //do nothing
+            }
 
-			@Override
+            @Override
             public EncryptionModule getEncryptionModule() {
-				return encryptionModule;
-			}
+                return encryptionModule;
+            }
 
-			@Override
+            @Override
             public String getReferenceNumber() {
-				return referenceNumber;
-			}
+                return referenceNumber;
+            }
 
-			@Override
+            @Override
             public void setEncryptionModule(EncryptionModule encryptionModule) {
-				//do nothing
-			}
+                //do nothing
+            }
 
-			@Override
+            @Override
             public void setReferenceNumber(String referenceNumber) {
-				this.referenceNumber = referenceNumber;
-			}
+                this.referenceNumber = referenceNumber;
+            }
 
-			@Override
-			public String getNameOnCard() {
-				return "Cardholder Name";
-			}
+            @Override
+            public String getNameOnCard() {
+                return "Cardholder Name";
+            }
 
-			@Override
-			public void setNameOnCard(String nameOnCard) {
-				// do nothing
-			}
+            @Override
+            public void setNameOnCard(String nameOnCard) {
+                // do nothing
+            }
 
         };
 

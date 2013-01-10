@@ -23,7 +23,7 @@ import java.util.Map;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 public class URLRedirectType implements Serializable, BroadleafEnumerationType {
-	
+    
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, URLRedirectType> TYPES = new HashMap<String, URLRedirectType>();
@@ -44,7 +44,7 @@ public class URLRedirectType implements Serializable, BroadleafEnumerationType {
     }
 
     public URLRedirectType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -60,10 +60,10 @@ public class URLRedirectType implements Serializable, BroadleafEnumerationType {
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

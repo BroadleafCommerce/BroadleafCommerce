@@ -35,12 +35,12 @@ public class CustomerState {
      * @return
      */
     public static Customer getCustomer() {
-    	HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         return (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
     }
     
     public static void setCustomer(Customer customer) {
-    	HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         request.setAttribute(CustomerStateFilter.getCustomerRequestAttributeName(), customer);
     }
 

@@ -18,33 +18,33 @@ package org.broadleafcommerce.common.web;
 
 
 public class SandBoxContext {
-	
-	private static final ThreadLocal<SandBoxContext> SANDBOXCONTEXT = new ThreadLocal<SandBoxContext>();
-	
-	public static SandBoxContext getSandBoxContext() {
-		return SANDBOXCONTEXT.get();
-	}
-	
-	public static void setSandBoxContext(SandBoxContext sandBoxContext) {
-		SANDBOXCONTEXT.set(sandBoxContext);
-	}
+    
+    private static final ThreadLocal<SandBoxContext> SANDBOXCONTEXT = new ThreadLocal<SandBoxContext>();
+    
+    public static SandBoxContext getSandBoxContext() {
+        return SANDBOXCONTEXT.get();
+    }
+    
+    public static void setSandBoxContext(SandBoxContext sandBoxContext) {
+        SANDBOXCONTEXT.set(sandBoxContext);
+    }
 
-	protected Long sandBoxId;
+    protected Long sandBoxId;
     protected Boolean previewMode = false;
 
     /**
-	 * @return the sandBoxName
-	 */
-	public Long getSandBoxId() {
-		return sandBoxId;
-	}
-	
-	/**
-	 * @param sandBoxId the sandBoxName to set
-	 */
-	public void setSandBoxId(Long sandBoxId) {
-		this.sandBoxId = sandBoxId;
-	}
+     * @return the sandBoxName
+     */
+    public Long getSandBoxId() {
+        return sandBoxId;
+    }
+    
+    /**
+     * @param sandBoxId the sandBoxName to set
+     */
+    public void setSandBoxId(Long sandBoxId) {
+        this.sandBoxId = sandBoxId;
+    }
 
     public Boolean getPreviewMode() {
         return previewMode;

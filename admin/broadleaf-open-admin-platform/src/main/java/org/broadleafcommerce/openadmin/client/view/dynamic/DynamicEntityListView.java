@@ -38,27 +38,27 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  */
 public class DynamicEntityListView extends VLayout implements DynamicEntityListDisplay {
 
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
     protected ToolStripButton showArchivedButton;
-	protected ComboBoxItem entityType = new ComboBoxItem();
-	protected ListGrid grid;
-	protected ToolStrip toolBar;
+    protected ComboBoxItem entityType = new ComboBoxItem();
+    protected ListGrid grid;
+    protected ToolStrip toolBar;
 
     public DynamicEntityListView(DataSource dataSource) {
-		this("", dataSource, true);
-	}
-	
-	public DynamicEntityListView(String title, DataSource dataSource) {
-		this(title, dataSource, true);
-	}
-	
-	public DynamicEntityListView(String title, DataSource dataSource, Boolean canReorder) {
-		super();
-		toolBar = new ToolStrip();
-		toolBar.setHeight(30);
-		toolBar.setWidth100();
-		toolBar.addSpacer(6);
+        this("", dataSource, true);
+    }
+    
+    public DynamicEntityListView(String title, DataSource dataSource) {
+        this(title, dataSource, true);
+    }
+    
+    public DynamicEntityListView(String title, DataSource dataSource, Boolean canReorder) {
+        super();
+        toolBar = new ToolStrip();
+        toolBar.setHeight(30);
+        toolBar.setWidth100();
+        toolBar.addSpacer(6);
         addButton = new ToolStripButton();
         addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
         addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/actions/add.png");
@@ -118,36 +118,36 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
             }
         });
         addMember(grid);
-	}
+    }
 
-	@Override
+    @Override
     public ToolStripButton getAddButton() {
-		return addButton;
-	}
+        return addButton;
+    }
 
-	@Override
+    @Override
     public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+        return removeButton;
+    }
 
     @Override
     public ToolStripButton getShowArchivedButton() {
         return showArchivedButton;
     }
 
-	@Override
+    @Override
     public ComboBoxItem getEntityType() {
-		return entityType;
-	}
+        return entityType;
+    }
 
-	@Override
+    @Override
     public ListGrid getGrid() {
-		return grid;
-	}
+        return grid;
+    }
 
-	@Override
+    @Override
     public ToolStrip getToolBar() {
-		return toolBar;
-	}
+        return toolBar;
+    }
 
 }

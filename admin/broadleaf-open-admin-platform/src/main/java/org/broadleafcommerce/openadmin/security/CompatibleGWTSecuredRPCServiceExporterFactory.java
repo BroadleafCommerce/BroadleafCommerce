@@ -25,8 +25,8 @@ import org.gwtwidgets.server.spring.RPCServiceExporterFactory;
  */
 public class CompatibleGWTSecuredRPCServiceExporterFactory implements RPCServiceExporterFactory {
 
-	public RPCServiceExporter create() {
-		CompatibleGWTSecuredRPCServiceExporter exporter = new CompatibleGWTSecuredRPCServiceExporter();
-		return exporter;
-	}
+    public RPCServiceExporter create() {
+        CompatibleGWTSecuredRPCServiceExporter exporter = new CompatibleGWTSecuredRPCServiceExporter();
+        return exporter;
+    }
 }

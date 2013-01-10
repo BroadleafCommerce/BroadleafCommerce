@@ -54,7 +54,7 @@ public interface Customer extends Serializable {
 
     public ChallengeQuestion getChallengeQuestion();
 
-	public void setChallengeQuestion(ChallengeQuestion challengeQuestion);
+    public void setChallengeQuestion(ChallengeQuestion challengeQuestion);
 
     public String getChallengeAnswer();
 
@@ -80,7 +80,7 @@ public interface Customer extends Serializable {
 
     public void setAuditable(Auditable auditable);
     
-	public void setCookied(boolean cookied);
+    public void setCookied(boolean cookied);
     
     public boolean isCookied();
 
@@ -98,30 +98,30 @@ public interface Customer extends Serializable {
     
     public List<CustomerAttribute> getCustomerAttributes();
     
-	/**
-	 * Looks at all CustomerAttributes for this product and returns the attribute that matches the given name
-	 * 
-	 * @param name the name of the attribute
-	 * @return the matching CustomerAttribute (null if no match)
-	 */
-	public CustomerAttribute getCustomerAttributeByName(String name);
+    /**
+     * Looks at all CustomerAttributes for this product and returns the attribute that matches the given name
+     * 
+     * @param name the name of the attribute
+     * @return the matching CustomerAttribute (null if no match)
+     */
+    public CustomerAttribute getCustomerAttributeByName(String name);
 
-	public void setCustomerAttributes(List<CustomerAttribute> customerAttributes);  
-	
-	/**
-	 * Returns true if this user has been deactivated.
-	 * Most implementations will not allow the user to login if they are deactivated.
-	 * 
-	 * @return
-	 */
-	public boolean isDeactivated();
-	
-	/**
-	 * Sets the users deactivated status.
-	 * 
-	 * @param deactivated
-	 */
-	public void setDeactivated(boolean deactivated);
+    public void setCustomerAttributes(List<CustomerAttribute> customerAttributes);  
+    
+    /**
+     * Returns true if this user has been deactivated.
+     * Most implementations will not allow the user to login if they are deactivated.
+     * 
+     * @return
+     */
+    public boolean isDeactivated();
+    
+    /**
+     * Sets the users deactivated status.
+     * 
+     * @param deactivated
+     */
+    public void setDeactivated(boolean deactivated);
 
     public List<CustomerAddress> getCustomerAddresses();
 

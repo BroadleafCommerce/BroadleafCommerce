@@ -52,81 +52,81 @@ public interface FulfillmentGroupService {
      * @param order
      * @param orderItem
      */
-	public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
-	
-	public FulfillmentGroupFee createFulfillmentGroupFee();
+    public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
+    
+    public FulfillmentGroupFee createFulfillmentGroupFee();
 
-	/**
-	 * Associates FulfillmentGroupItems in the given Order such that they match the structure
-	 * of the OrderMultishipOptions associated with the given Order. 
-	 * 
-	 * @see OrderMultishipOption
-	 * 
-	 * @param order
-	 * @return the saved order
-	 * @throws PricingException 
-	 */
-	public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException;
+    /**
+     * Associates FulfillmentGroupItems in the given Order such that they match the structure
+     * of the OrderMultishipOptions associated with the given Order. 
+     * 
+     * @see OrderMultishipOption
+     * 
+     * @param order
+     * @return the saved order
+     * @throws PricingException 
+     */
+    public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException;
 
-	/**
-	 * Collapses all of the fulfillment groups in the given order to the first fulfillment group
-	 * in the order.
-	 * 
-	 * @see #matchFulfillmentGroupsToMultishipOptions(Order, boolean)
-	 * 
-	 * @param order
-	 * @param priceOrder
-	 * @return the saved order
-	 * @throws PricingException 
-	 */
-	public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
+    /**
+     * Collapses all of the fulfillment groups in the given order to the first fulfillment group
+     * in the order.
+     * 
+     * @see #matchFulfillmentGroupsToMultishipOptions(Order, boolean)
+     * 
+     * @param order
+     * @param priceOrder
+     * @return the saved order
+     * @throws PricingException 
+     */
+    public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
 
 
-	/**
-	 * Reads FulfillmentGroups whose status is not FULFILLED or DELIVERED.
-	 * @param start
-	 * @param maxResults
-	 * @return
-	 */
-	public List<FulfillmentGroup> findUnfulfilledFulfillmentGroups(int start, int maxResults);
-	
-	/**
-	 * Reads FulfillmentGroups whose status is PARTIALLY_FULFILLED or PARTIALLY_DELIVERED.
-	 * 
-	 * @param start
-	 * @param maxResults
-	 * @return
-	 */
-	public List<FulfillmentGroup> findPartiallyFulfilledFulfillmentGroups(int start, int maxResults);
-	
-	/**
-	 * Returns FulfillmentGroups whose status is null, or where no processing has yet occured. 
-	 * Default returns in ascending order according to date that the order was created.
-	 * @param start
-	 * @param maxResults
-	 * @return
-	 */
-	public List<FulfillmentGroup> findUnprocessedFulfillmentGroups(int start, int maxResults);
-	
-	/**
-	 * Reads FulfillmentGroups by status, either ascending or descending according to the date that 
-	 * the order was created.
-	 * @param status
-	 * @param start
-	 * @param maxResults
-	 * @param ascending
-	 * @return
-	 */
-	public List<FulfillmentGroup> findFulfillmentGroupsByStatus(FulfillmentGroupStatusType status, int start, int maxResults, boolean ascending);
-	
-	/**
-	 * Reads FulfillmentGroups by status, ascending according to the date that 
-	 * the order was created.
-	 * @param status
-	 * @param start
-	 * @param maxResults
-	 * @return
-	 */
-	public List<FulfillmentGroup> findFulfillmentGroupsByStatus(FulfillmentGroupStatusType status, int start, int maxResults);
+    /**
+     * Reads FulfillmentGroups whose status is not FULFILLED or DELIVERED.
+     * @param start
+     * @param maxResults
+     * @return
+     */
+    public List<FulfillmentGroup> findUnfulfilledFulfillmentGroups(int start, int maxResults);
+    
+    /**
+     * Reads FulfillmentGroups whose status is PARTIALLY_FULFILLED or PARTIALLY_DELIVERED.
+     * 
+     * @param start
+     * @param maxResults
+     * @return
+     */
+    public List<FulfillmentGroup> findPartiallyFulfilledFulfillmentGroups(int start, int maxResults);
+    
+    /**
+     * Returns FulfillmentGroups whose status is null, or where no processing has yet occured. 
+     * Default returns in ascending order according to date that the order was created.
+     * @param start
+     * @param maxResults
+     * @return
+     */
+    public List<FulfillmentGroup> findUnprocessedFulfillmentGroups(int start, int maxResults);
+    
+    /**
+     * Reads FulfillmentGroups by status, either ascending or descending according to the date that 
+     * the order was created.
+     * @param status
+     * @param start
+     * @param maxResults
+     * @param ascending
+     * @return
+     */
+    public List<FulfillmentGroup> findFulfillmentGroupsByStatus(FulfillmentGroupStatusType status, int start, int maxResults, boolean ascending);
+    
+    /**
+     * Reads FulfillmentGroups by status, ascending according to the date that 
+     * the order was created.
+     * @param status
+     * @param start
+     * @param maxResults
+     * @return
+     */
+    public List<FulfillmentGroup> findFulfillmentGroupsByStatus(FulfillmentGroupStatusType status, int start, int maxResults);
 
 }

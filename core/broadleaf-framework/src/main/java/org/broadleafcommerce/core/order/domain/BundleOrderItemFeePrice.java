@@ -20,29 +20,29 @@ import org.broadleafcommerce.common.money.Money;
 
 public interface BundleOrderItemFeePrice {
 
-	public abstract Long getId();
+    public abstract Long getId();
 
-	public abstract void setId(Long id);
+    public abstract void setId(Long id);
 
-	public abstract BundleOrderItem getBundleOrderItem();
+    public abstract BundleOrderItem getBundleOrderItem();
 
-	public abstract void setBundleOrderItem(BundleOrderItem bundleOrderItem);
+    public abstract void setBundleOrderItem(BundleOrderItem bundleOrderItem);
 
-	public abstract Money getAmount();
+    public abstract Money getAmount();
 
-	public abstract void setAmount(Money amount);
+    public abstract void setAmount(Money amount);
 
-	public abstract String getName();
+    public abstract String getName();
 
-	public abstract void setName(String name);
+    public abstract void setName(String name);
 
-	public abstract Boolean isTaxable();
+    public abstract Boolean isTaxable();
 
-	public abstract void setTaxable(Boolean isTaxable);
+    public abstract void setTaxable(Boolean isTaxable);
 
-	public abstract String getReportingCode();
+    public abstract String getReportingCode();
 
-	public abstract void setReportingCode(String reportingCode);
+    public abstract void setReportingCode(String reportingCode);
 
     public BundleOrderItemFeePrice clone();
 

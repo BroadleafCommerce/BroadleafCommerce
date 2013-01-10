@@ -53,13 +53,13 @@ public class UpdateOrderItemActivity extends BaseActivity {
 
         orderItemMergeService.gatherSplitItemsInBundles(order);
         
-    	OrderItem orderItem = null;
-		for (OrderItem oi : order.getOrderItems()) {
-			if (oi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
-				orderItem = oi;
-			}
-		}
-		
+        OrderItem orderItem = null;
+        for (OrderItem oi : order.getOrderItems()) {
+            if (oi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
+                orderItem = oi;
+            }
+        }
+        
         if (orderItem == null || !order.getOrderItems().contains(orderItem)) {
             throw new ItemNotFoundException("Order Item (" + orderItem.getId() + ") not found in Order (" + order.getId() + ")");
         }

@@ -52,7 +52,7 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
     protected CustomerService customerService;
 
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-    	return addAllItemsToCartFromNamedOrder(namedOrder, true);
+        return addAllItemsToCartFromNamedOrder(namedOrder, true);
     }
 
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
@@ -62,22 +62,22 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
         }
         List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
         for (int i = 0; i < items.size(); i++) {
-			OrderItem orderItem = items.get(i);
+            OrderItem orderItem = items.get(i);
 
             // only run pricing routines on the last item.
             boolean shouldPriceOrder = (priceOrder && (i == items.size() -1));
-			if (moveNamedOrderItems) {
-				moveItemToOrder(namedOrder, cartOrder, orderItem, shouldPriceOrder);
-			} else {
-				addOrderItemToOrder(cartOrder, orderItem, shouldPriceOrder);
-			}
-			
-		}
+            if (moveNamedOrderItems) {
+                moveItemToOrder(namedOrder, cartOrder, orderItem, shouldPriceOrder);
+            } else {
+                addOrderItemToOrder(cartOrder, orderItem, shouldPriceOrder);
+            }
+            
+        }
         return cartOrder;
     }
     
     public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException {
-    	return moveItemToCartFromNamedOrder(customerId, orderName, orderItemId, quantity, true);
+        return moveItemToCartFromNamedOrder(customerId, orderName, orderItemId, quantity, true);
     }
 
     public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity, boolean priceOrder) throws PricingException {
@@ -88,7 +88,7 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
     }
     
     public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem) throws PricingException {
-    	return moveItemToCartFromNamedOrder(namedOrder, orderItem, true);
+        return moveItemToCartFromNamedOrder(namedOrder, orderItem, true);
     }
 
     public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws PricingException {
@@ -102,14 +102,14 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
                 cancelOrder(namedOrder);
             }
         } else {
-        	orderItem = addOrderItemToOrder(cartOrder, orderItem, priceOrder);
+            orderItem = addOrderItemToOrder(cartOrder, orderItem, priceOrder);
         }
         
         return orderItem;
     }
     
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-    	return moveAllItemsToCartFromNamedOrder(namedOrder, true);
+        return moveAllItemsToCartFromNamedOrder(namedOrder, true);
     }
 
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
@@ -121,61 +121,61 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
     }
 
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {
-    	return mergeCart(customer, anonymousCart, true);
+        return mergeCart(customer, anonymousCart, true);
     }
 
     public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
-    	return reconstructCart(customer, true);
+        return reconstructCart(customer, true);
     }
 
-	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException {
-	    try {
-	        return mergeCartService.mergeCart(customer, anonymousCart, priceOrder);
-	    } catch (RemoveFromCartException e) {
-	        // This should not happen as this service should be configured to use the LegacyMergeCartService, which will
-	        // not throw this exception
-	        throw new PricingException(e);
-	    }
-	}
-	
-	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
-	    try {
-	        return mergeCartService.reconstructCart(customer, priceOrder);
-	    } catch (RemoveFromCartException e) {
-	        // This should not happen as this service should be configured to use the LegacyMergeCartService, which will
-	        // not throw this exception
-	        throw new PricingException(e);
-	    }
-	}
+    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException {
+        try {
+            return mergeCartService.mergeCart(customer, anonymousCart, priceOrder);
+        } catch (RemoveFromCartException e) {
+            // This should not happen as this service should be configured to use the LegacyMergeCartService, which will
+            // not throw this exception
+            throw new PricingException(e);
+        }
+    }
+    
+    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
+        try {
+            return mergeCartService.reconstructCart(customer, priceOrder);
+        } catch (RemoveFromCartException e) {
+            // This should not happen as this service should be configured to use the LegacyMergeCartService, which will
+            // not throw this exception
+            throw new PricingException(e);
+        }
+    }
 
-	@Override
-	public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
-		try {
-			return addItemToOrder(orderId, orderItemRequestDTO, priceOrder);
-		} catch (PricingException e) {
-			throw new AddToCartException("Could not add item", e);
-		}
-	}
+    @Override
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+        try {
+            return addItemToOrder(orderId, orderItemRequestDTO, priceOrder);
+        } catch (PricingException e) {
+            throw new AddToCartException("Could not add item", e);
+        }
+    }
 
-	@Override
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException {
-		try {
-			Order order = findOrderById(orderId);
-			updateItemQuantity(order, orderItemRequestDTO);
-			return order;
-		} catch (PricingException e) {
-			throw new UpdateCartException("Could not update cart", e);
-		} catch (ItemNotFoundException e) {
-			throw new UpdateCartException("Could not update cart", e);
-		}
-	}
+    @Override
+    public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException {
+        try {
+            Order order = findOrderById(orderId);
+            updateItemQuantity(order, orderItemRequestDTO);
+            return order;
+        } catch (PricingException e) {
+            throw new UpdateCartException("Could not update cart", e);
+        } catch (ItemNotFoundException e) {
+            throw new UpdateCartException("Could not update cart", e);
+        }
+    }
 
-	@Override
-	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
-		try {
-			return removeItemFromOrder(orderId, orderItemId, priceOrder);
-		} catch (PricingException e) {
-			throw new RemoveFromCartException("Could not remove item", e);
-		}
-	}
+    @Override
+    public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
+        try {
+            return removeItemFromOrder(orderId, orderItemId, priceOrder);
+        } catch (PricingException e) {
+            throw new RemoveFromCartException("Could not remove item", e);
+        }
+    }
 }

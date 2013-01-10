@@ -97,65 +97,65 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
     protected Boolean requiresAllDependentFacets = false;
     
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	@Override
-	public Field getField() {
-		return field;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    @Override
+    public Field getField() {
+        return field;
+    }
 
-	@Override
-	public void setField(Field field) {
-		this.field = field;
-	}
+    @Override
+    public void setField(Field field) {
+        this.field = field;
+    }
 
-	@Override
-	public String getLabel() {
+    @Override
+    public String getLabel() {
         return label;
-	}
+    }
 
-	@Override
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    @Override
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	@Override
-	public Boolean getShowOnSearch() {
-		return showOnSearch;
-	}
+    @Override
+    public Boolean getShowOnSearch() {
+        return showOnSearch;
+    }
 
-	@Override
-	public void setShowOnSearch(Boolean showOnSearch) {
-		this.showOnSearch = showOnSearch;
-	}
+    @Override
+    public void setShowOnSearch(Boolean showOnSearch) {
+        this.showOnSearch = showOnSearch;
+    }
 
-	@Override
-	public Integer getSearchDisplayPriority() {
-		return searchDisplayPriority;
-	}
+    @Override
+    public Integer getSearchDisplayPriority() {
+        return searchDisplayPriority;
+    }
 
-	@Override
-	public void setSearchDisplayPriority(Integer searchDisplayPriority) {
-		this.searchDisplayPriority = searchDisplayPriority;
-	}
-	
-	@Override
-	public Boolean getCanMultiselect() {
-		return canMultiselect;
-	}
+    @Override
+    public void setSearchDisplayPriority(Integer searchDisplayPriority) {
+        this.searchDisplayPriority = searchDisplayPriority;
+    }
+    
+    @Override
+    public Boolean getCanMultiselect() {
+        return canMultiselect;
+    }
 
-	@Override
-	public void setCanMultiselect(Boolean canMultiselect) {
-		this.canMultiselect = canMultiselect;
-	}
+    @Override
+    public void setCanMultiselect(Boolean canMultiselect) {
+        this.canMultiselect = canMultiselect;
+    }
 
     public List<RequiredFacet> getRequiredFacets() {
         return requiredFacets;
@@ -170,30 +170,30 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         return requiresAllDependentFacets == null ? false : requiresAllDependentFacets;
     }
 
-	@Override
+    @Override
     public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets) {
         this.requiresAllDependentFacets = requiresAllDependentFacets;
     }
 
     @Override
-	public List<SearchFacetRange> getSearchFacetRanges() {
+    public List<SearchFacetRange> getSearchFacetRanges() {
         return searchFacetRanges;
-	}
+    }
 
-	@Override
-	public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
-		this.searchFacetRanges = searchFacetRanges;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-	   	if (this == obj) {
+    @Override
+    public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
+        this.searchFacetRanges = searchFacetRanges;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-	    if (obj == null) {
+        if (obj == null) {
             return false;
         }
-	    if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         SearchFacet other = (SearchFacet) obj;

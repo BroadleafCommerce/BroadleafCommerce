@@ -96,14 +96,14 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public ProductWrapper findProductById(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-        	ProductWrapper wrapper;
-        	if (product instanceof ProductBundle) {
-        		wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-        	} else {
+            ProductWrapper wrapper;
+            if (product instanceof ProductBundle) {
+                wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
+            } else {
                 wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
                 
-        	}
-        	wrapper.wrap(product, request);
+            }
+            wrapper.wrap(product, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -134,14 +134,14 @@ public class CatalogEndpoint implements ApplicationContextAware {
         List<ProductWrapper> out = new ArrayList<ProductWrapper>();
         if (result != null) {
             for (Product product : result) {
-            	ProductWrapper wrapper;
-            	if (product instanceof ProductBundle) {
-            		wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-            	} else {
+                ProductWrapper wrapper;
+                if (product instanceof ProductBundle) {
+                    wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
+                } else {
                     wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
                     
-            	}
-            	wrapper.wrap(product, request);
+                }
+                wrapper.wrap(product, request);
                 out.add(wrapper);
             }
         }
@@ -176,13 +176,13 @@ public class CatalogEndpoint implements ApplicationContextAware {
     @GET
     @Path("product/{id}/defaultSku")
     public SkuWrapper findDefaultSkuByProductId(@Context HttpServletRequest request, @PathParam("id") Long id) {
-    	Product product = catalogService.findProductById(id);
-    	if (product != null && product.getDefaultSku() != null) {
-    		SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
+        Product product = catalogService.findProductById(id);
+        if (product != null && product.getDefaultSku() != null) {
+            SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
             wrapper.wrap(product.getDefaultSku(), request);
             return wrapper;
-    	}
-    	throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
@@ -304,14 +304,14 @@ public class CatalogEndpoint implements ApplicationContextAware {
             }
             if (products != null) {
                 for (Product product : products) {
-                	ProductWrapper wrapper;
-                	if (product instanceof ProductBundle) {
-                		wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-                	} else {
+                    ProductWrapper wrapper;
+                    if (product instanceof ProductBundle) {
+                        wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
+                    } else {
                         wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
                         
-                	}
-                	wrapper.wrap(product, request);
+                    }
+                    wrapper.wrap(product, request);
                     out.add(wrapper);
                 }
             }

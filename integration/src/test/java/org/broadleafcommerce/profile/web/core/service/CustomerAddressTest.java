@@ -36,45 +36,45 @@ import java.util.List;
 
 public class CustomerAddressTest extends CommonSetupBaseTest {
 
-	private String userName;
-	private Long userId;
-	
+    private String userName;
+    private Long userId;
+    
     @Resource
     private CustomerAddressService customerAddressService;
 
     @Test(groups = "testCustomerAddress")
     @Transactional
     public void readCustomerAddresses() {
-    	Customer customer = createCustomerWithAddresses();
-    	List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
-    	for (CustomerAddress ca : customerAddressList) {
-    		assert ca != null;
-    	}
+        Customer customer = createCustomerWithAddresses();
+        List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
+        for (CustomerAddress ca : customerAddressList) {
+            assert ca != null;
+        }
     }
     
     @Test(groups = "testCustomerAddress")
     @Transactional
     public void createNewDefaultAddress() {
-    	Customer customer = createCustomerWithAddresses();
-    	CustomerAddress ca = new CustomerAddressImpl();
-    	Address address = new AddressImpl();
-    	address.setAddressLine1("123 Main");
-    	address.setCity("Dallas");
-    	address.setPostalCode("75201");
-    	address.setDefault(true);
-    	ca.setAddress(address);
-    	ca.setCustomer(customer);
-    	ca.setAddressName("address3");
-    	CustomerAddress savedAddress = saveCustomerAddress(ca);
-    	
-    	List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
-    	for (CustomerAddress customerAddress : customerAddressList) {
-    		if (customerAddress.getId().equals(savedAddress.getId())) {
-    			assert customerAddress.getAddress().isDefault();
-    		} else {
-    			assert !customerAddress.getAddress().isDefault();
-    		}
-    	}
+        Customer customer = createCustomerWithAddresses();
+        CustomerAddress ca = new CustomerAddressImpl();
+        Address address = new AddressImpl();
+        address.setAddressLine1("123 Main");
+        address.setCity("Dallas");
+        address.setPostalCode("75201");
+        address.setDefault(true);
+        ca.setAddress(address);
+        ca.setCustomer(customer);
+        ca.setAddressName("address3");
+        CustomerAddress savedAddress = saveCustomerAddress(ca);
+        
+        List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
+        for (CustomerAddress customerAddress : customerAddressList) {
+            if (customerAddress.getId().equals(savedAddress.getId())) {
+                assert customerAddress.getAddress().isDefault();
+            } else {
+                assert !customerAddress.getAddress().isDefault();
+            }
+        }
     }
     
     

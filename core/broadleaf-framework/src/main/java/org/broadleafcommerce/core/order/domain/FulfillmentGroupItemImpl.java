@@ -160,12 +160,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     
     @Override
     public void removeAssociations() {
-		if (getFulfillmentGroup() != null) {
+        if (getFulfillmentGroup() != null) {
             getFulfillmentGroup().getFulfillmentGroupItems().remove(this);
         }
-		setFulfillmentGroup(null);
-		setOrderItem(null);
-	}
+        setFulfillmentGroup(null);
+        setOrderItem(null);
+    }
 
     @Override
     public List<TaxDetail> getTaxes() {
@@ -211,7 +211,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
             clonedFulfillmentGroupItem.setOrderItem(getOrderItem());
             clonedFulfillmentGroupItem.setQuantity(getQuantity());
             if (getStatus() != null) {
-            	clonedFulfillmentGroupItem.setStatus(getStatus());
+                clonedFulfillmentGroupItem.setStatus(getStatus());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

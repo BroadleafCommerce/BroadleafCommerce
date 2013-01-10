@@ -33,26 +33,26 @@ import java.io.Serializable;
  */
 public class ShippingInfoForm implements Serializable {
 
-	private static final long serialVersionUID = -7895489234675056031L;
-	protected Address address = new AddressImpl();
+    private static final long serialVersionUID = -7895489234675056031L;
+    protected Address address = new AddressImpl();
     protected String addressName;
     protected FulfillmentOption fulfillmentOption;
     protected Long fulfillmentOptionId;
-	protected PersonalMessage personalMessage = new PersonalMessageImpl();
-	protected String deliveryMessage;
+    protected PersonalMessage personalMessage = new PersonalMessageImpl();
+    protected String deliveryMessage;
 
     public ShippingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
     }
-	
-	public Long getFulfillmentOptionId() {
-		return fulfillmentOptionId;
-	}
-	
-	public void setFulfillmentOptionId(Long fulfillmentOptionId) {
-		this.fulfillmentOptionId = fulfillmentOptionId;
-	}
-	
+    
+    public Long getFulfillmentOptionId() {
+        return fulfillmentOptionId;
+    }
+    
+    public void setFulfillmentOptionId(Long fulfillmentOptionId) {
+        this.fulfillmentOptionId = fulfillmentOptionId;
+    }
+    
     public FulfillmentOption getFulfillmentOption() {
         return fulfillmentOption;
     }
@@ -62,35 +62,35 @@ public class ShippingInfoForm implements Serializable {
     }
 
     public Address getAddress() {
-		return address;
-	}
+        return address;
+    }
 
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
-	public String getAddressName() {
-		return addressName;
-	}
+    public String getAddressName() {
+        return addressName;
+    }
 
-	public void setAddressName(String addressName) {
-		this.addressName = addressName;
-	} 
-	
-	public String getDeliveryMessage() {
-		return deliveryMessage;
-	}
-	
-	public void setDeliveryMessage(String deliveryMessage) {
-		this.deliveryMessage = deliveryMessage;
-	}
-	
-	public void setPersonalMessage(PersonalMessage personalMessage) {
-		this.personalMessage = personalMessage;
-	}
-	
-	public PersonalMessage getPersonalMessage() {
-		return personalMessage;
-	}
-	
+    public void setAddressName(String addressName) {
+        this.addressName = addressName;
+    } 
+    
+    public String getDeliveryMessage() {
+        return deliveryMessage;
+    }
+    
+    public void setDeliveryMessage(String deliveryMessage) {
+        this.deliveryMessage = deliveryMessage;
+    }
+    
+    public void setPersonalMessage(PersonalMessage personalMessage) {
+        this.personalMessage = personalMessage;
+    }
+    
+    public PersonalMessage getPersonalMessage() {
+        return personalMessage;
+    }
+    
 }

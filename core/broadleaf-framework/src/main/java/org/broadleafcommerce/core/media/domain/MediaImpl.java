@@ -37,10 +37,10 @@ import javax.persistence.Table;
 @Table(name="BLC_MEDIA")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class MediaImpl implements Media {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
     @GeneratedValue(generator= "MediaId")
     @GenericGenerator(
         name="MediaId",
@@ -61,7 +61,7 @@ public class MediaImpl implements Media {
     @Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
     @AdminPresentation(friendlyName = "MediaImpl_Media_Url", order=1, prominent=true, fieldType = SupportedFieldType.ASSET_URL)
     protected String url;
-	
+    
     @Column(name = "TITLE")
     @Index(name="MEDIA_TITLE_INDEX", columnNames={"TITLE"})
     @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order=2, prominent=true)
@@ -125,52 +125,52 @@ public class MediaImpl implements Media {
         this.tags = tags;
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		result = prime * result + ((altText == null) ? 0 : altText.hashCode());
-		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-		result = prime * result + ((url == null) ? 0 : url.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((title == null) ? 0 : title.hashCode());
+        result = prime * result + ((altText == null) ? 0 : altText.hashCode());
+        result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MediaImpl other = (MediaImpl) obj;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MediaImpl other = (MediaImpl) obj;
 
-		if (id != null && other.id != null) {
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-		
-		if (title == null) {
-			if (other.title != null)
-				return false;
-		} else if (!title.equals(other.title))
-			return false;
-		if (altText == null) {
-			if (other.altText != null)
-				return false;
-		} else if (!altText.equals(other.altText))
-			return false;
+        
+        if (title == null) {
+            if (other.title != null)
+                return false;
+        } else if (!title.equals(other.title))
+            return false;
+        if (altText == null) {
+            if (other.altText != null)
+                return false;
+        } else if (!altText.equals(other.altText))
+            return false;
         if (tags == null) {
             if (other.tags != null)
                 return false;
         } else if (!tags.equals(other.tags))
             return false;
-		if (url == null) {
-			if (other.url != null)
-				return false;
-		} else if (!url.equals(other.url))
-			return false;
-		return true;
-	}
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        return true;
+    }
 
 }

@@ -22,7 +22,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.easymock.classextension.EasyMock;
 
 public class CategoryTagTest extends BaseTagLibTest {
-	
+    
     private CategoryTag categoryTag;
     private Category category;
 
@@ -48,9 +48,9 @@ public class CategoryTagTest extends BaseTagLibTest {
         super.verifyBaseMockObjects(category);
     }
 
-	@Override
-	public void setup() {
-		categoryTag = new CategoryTag();
+    @Override
+    public void setup() {
+        categoryTag = new CategoryTag();
         category = EasyMock.createMock(Category.class);
-	}
+    }
 }

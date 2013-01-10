@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 @Component("blLocaleResolver")
 public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
     private final Log LOG = LogFactory.getLog(BroadleafLocaleResolverImpl.class);
-	
+    
     /**
      * Parameter/Attribute name for the current language
      */
@@ -47,7 +47,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
 
     @Resource(name = "blLocaleService")
     private LocaleService localeService;  
-	
+    
     public Locale resolveLocale(HttpServletRequest request) {
         Locale locale = null;
 

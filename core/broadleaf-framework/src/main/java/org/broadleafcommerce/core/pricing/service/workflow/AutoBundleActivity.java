@@ -134,11 +134,11 @@ public class AutoBundleActivity extends BaseActivity {
         }
 
         for (BundleOrderItem bundleOrderItem : bundlesToRemove) {
-        	try {
-        		order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), false);
-        	} catch (RemoveFromCartException e) {
-        		throw new PricingException("Could not remove item", e);
-        	}
+            try {
+                order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), false);
+            } catch (RemoveFromCartException e) {
+                throw new PricingException("Could not remove item", e);
+            }
         }
 
         return order;
@@ -220,7 +220,7 @@ public class AutoBundleActivity extends BaseActivity {
             // remove-all-items from order
             // this call also deletes any fulfillment group items that are associated with that order item
             for (DiscreteOrderItem item : itemMatches) {
-	            order = orderService.removeItem(order.getId(), item.getId(), false);
+                order = orderService.removeItem(order.getId(), item.getId(), false);
             }
 
             DiscreteOrderItem baseItem = null;

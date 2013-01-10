@@ -25,34 +25,34 @@ import java.io.Serializable;
 
 public class CustomerAddressForm implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected Address address = new AddressImpl();
-	protected String addressName;
-	protected Long customerAddressId;
+    protected Address address = new AddressImpl();
+    protected String addressName;
+    protected Long customerAddressId;
 
     public CustomerAddressForm() {
         address.setPhonePrimary(new PhoneImpl());
     }
-	public Address getAddress() {
-		return address;
-	}
-	public void setAddress(Address address) {
+    public Address getAddress() {
+        return address;
+    }
+    public void setAddress(Address address) {
         if (address.getPhonePrimary() == null) {
             address.setPhonePrimary(new PhoneImpl());
         }
-		this.address = address;
-	}
-	public String getAddressName() {
-		return addressName;
-	}
-	public void setAddressName(String addressName) {
-		this.addressName = addressName;
-	}
-	public Long getCustomerAddressId() {
-		return customerAddressId;
-	}
-	public void setCustomerAddressId(Long customerAddressId) {
-		this.customerAddressId = customerAddressId;
-	}
+        this.address = address;
+    }
+    public String getAddressName() {
+        return addressName;
+    }
+    public void setAddressName(String addressName) {
+        this.addressName = addressName;
+    }
+    public Long getCustomerAddressId() {
+        return customerAddressId;
+    }
+    public void setCustomerAddressId(Long customerAddressId) {
+        this.customerAddressId = customerAddressId;
+    }
 }

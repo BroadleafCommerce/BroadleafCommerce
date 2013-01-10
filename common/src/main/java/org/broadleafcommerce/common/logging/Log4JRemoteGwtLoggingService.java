@@ -31,10 +31,10 @@ import java.util.logging.LogRecord;
 public class Log4JRemoteGwtLoggingService implements RemoteLoggingService {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 2885716139420208787L;
-	private static final Log LOG = LogFactory.getLog(Log4JRemoteGwtLoggingService.class);
+     * 
+     */
+    private static final long serialVersionUID = 2885716139420208787L;
+    private static final Log LOG = LogFactory.getLog(Log4JRemoteGwtLoggingService.class);
 
     @Override
     public String logOnServer(LogRecord record) {
@@ -45,13 +45,13 @@ public class Log4JRemoteGwtLoggingService implements RemoteLoggingService {
         if (Level.INFO.equals(level)) {
             LOG.info(message,record.getThrown());
         } else if (Level.SEVERE.equals(level)) {
-        	LOG.error(message,record.getThrown());
+            LOG.error(message,record.getThrown());
         } else if (Level.WARNING.equals(level)) {
-        	LOG.warn(message,record.getThrown());
+            LOG.warn(message,record.getThrown());
         } else if (Level.FINE.equals(level)) {
-        	LOG.debug(message,record.getThrown());
+            LOG.debug(message,record.getThrown());
         }else   {
-        	LOG.error(message,record.getThrown());
+            LOG.error(message,record.getThrown());
         }
 
         return null;

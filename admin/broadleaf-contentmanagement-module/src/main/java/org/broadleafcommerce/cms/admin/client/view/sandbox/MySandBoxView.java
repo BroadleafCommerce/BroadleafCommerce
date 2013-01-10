@@ -39,13 +39,13 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 
     protected ToolStripButton promoteAllButton;
     protected ToolStripButton promoteSelectionButton;
-	protected ToolStripButton revertSelectionButton;
+    protected ToolStripButton revertSelectionButton;
     protected ToolStripButton revertRejectAllButton;
     protected ToolStripButton refreshButton;
     protected ToolStripButton previewButton;
-	protected ListGrid grid;
+    protected ListGrid grid;
     protected ListGrid pendingGrid;
-	protected ToolStrip toolBar;
+    protected ToolStrip toolBar;
     protected ToolStrip pendingToolBar;
     protected ToolStripButton reclaimSelectionButton;
     protected ToolStripButton reclaimAllButton;
@@ -61,9 +61,9 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         setLayoutMargin(20);
     }
 
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
         setHeight100();
-		setWidth100();
+        setWidth100();
 
         VLayout insideLayout = new VLayout();
         insideLayout.setHeight("50%");
@@ -75,10 +75,10 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 
         insideLayout.addMember(header);
 
-		toolBar = new ToolStrip();
-		toolBar.setHeight(30);
-		toolBar.setWidth100();
-		toolBar.addSpacer(6);
+        toolBar = new ToolStrip();
+        toolBar.setHeight(30);
+        toolBar.setWidth100();
+        toolBar.addSpacer(6);
 
         promoteAllButton = new ToolStripButton();
         promoteAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
@@ -152,10 +152,10 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         pendingApprovalLabel.setHeight(15);
         insideLayout2.addMember(pendingApprovalLabel);
 
-		pendingToolBar = new ToolStrip();
-		pendingToolBar.setHeight(30);
-		pendingToolBar.setWidth100();
-		pendingToolBar.addSpacer(6);
+        pendingToolBar = new ToolStrip();
+        pendingToolBar.setHeight(30);
+        pendingToolBar.setWidth100();
+        pendingToolBar.addSpacer(6);
 
 
         reclaimAllButton = new ToolStripButton();
@@ -223,25 +223,25 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         insideLayout2.addMember(pendingGrid);
 
         addMember(insideLayout2);
-	}
+    }
 
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getAddButton()
-	 */
-	public ToolStripButton getPromoteAllButton() {
-		return promoteAllButton;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getAddButton()
+     */
+    public ToolStripButton getPromoteAllButton() {
+        return promoteAllButton;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getRemoveButton()
-	 */
-	public ToolStripButton getRevertRejectSelectionButton() {
-		return this.revertSelectionButton;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getRemoveButton()
+     */
+    public ToolStripButton getRevertRejectSelectionButton() {
+        return this.revertSelectionButton;
+    }
 
     public ToolStripButton getPromoteSelectionButton() {
         return promoteSelectionButton;
@@ -258,13 +258,13 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
     /* (non-Javadoc)
       * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getGrid()
       */
-	public ListGrid getGrid() {
-		return grid;
-	}
+    public ListGrid getGrid() {
+        return grid;
+    }
 
-	public ToolStrip getToolBar() {
-		return toolBar;
-	}
+    public ToolStrip getToolBar() {
+        return toolBar;
+    }
 
     public ToolStripButton getPreviewButton() {
         return previewButton;

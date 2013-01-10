@@ -28,6 +28,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface AdminSecurityServiceAsync {
 
-	public void getAdminUser(AsyncCallback<AdminUser> cb);
-	
+    public void getAdminUser(AsyncCallback<AdminUser> cb);
+    
 }

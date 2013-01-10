@@ -45,21 +45,21 @@ import java.util.List;
  */
 public interface OrderService {
 
-	/**
-	 * Creates a new Order for the given customer. Generally, you will want to use the customer
-	 * that is on the current request, which can be grabbed by utilizing the CustomerState 
-	 * utility class.
-	 * 
-	 * The default Broadleaf implementation of this method will provision a new Order in the 
-	 * database and set the current customer as the owner of the order. If the customer has an
-	 * email address associated with their profile, that will be copied as well. If the customer
-	 * is a new, anonymous customer, his username will be set to his database id.
-	 * 
-	 * @see org.broadleafcommerce.profile.web.core.CustomerState#getCustomer()
-	 * 
-	 * @param customer
-	 * @return the newly created order
-	 */
+    /**
+     * Creates a new Order for the given customer. Generally, you will want to use the customer
+     * that is on the current request, which can be grabbed by utilizing the CustomerState 
+     * utility class.
+     * 
+     * The default Broadleaf implementation of this method will provision a new Order in the 
+     * database and set the current customer as the owner of the order. If the customer has an
+     * email address associated with their profile, that will be copied as well. If the customer
+     * is a new, anonymous customer, his username will be set to his database id.
+     * 
+     * @see org.broadleafcommerce.profile.web.core.CustomerState#getCustomer()
+     * 
+     * @param customer
+     * @return the newly created order
+     */
     public Order createNewCartForCustomer(Customer customer);
 
     /**
@@ -247,7 +247,7 @@ public interface OrderService {
      * @param order to confirm
      * @return the order that was confirmed
      */
-	public Order confirmOrder(Order order);
+    public Order confirmOrder(Order order);
     
     /**
      * Looks through the given order and returns the latest added OrderItem that matches on the skuId
@@ -265,24 +265,24 @@ public interface OrderService {
      * @param productId
      * @return the best matching OrderItem with highest index in the list of OrderItems in the order
      */
-	public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId);
-	
-	/**
-	 * Adds a GiftWrapItem to the order based on the itemRequest. A GiftWrapItem is a product (for example,
-	 * a "Gift Box with Red Ribbon") that contains a list of OrderItems that should be wrapped by this
-	 * GiftWrapItem.
-	 * 
-	 * The OrderItems must already exist and belong to an order before they are able to be wrapped by the
-	 * GiftWrapItem
-	 * 
-	 * @param order
-	 * @param itemRequest
-	 * @param priceOrder
-	 * @return the GiftWrapItem instance that was created and attached to the order
-	 * @throws PricingException
-	 */
-	public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
-	
+    public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId);
+    
+    /**
+     * Adds a GiftWrapItem to the order based on the itemRequest. A GiftWrapItem is a product (for example,
+     * a "Gift Box with Red Ribbon") that contains a list of OrderItems that should be wrapped by this
+     * GiftWrapItem.
+     * 
+     * The OrderItems must already exist and belong to an order before they are able to be wrapped by the
+     * GiftWrapItem
+     * 
+     * @param order
+     * @param itemRequest
+     * @param priceOrder
+     * @return the GiftWrapItem instance that was created and attached to the order
+     * @throws PricingException
+     */
+    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
+    
     /**
      * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
      * to the Order. The item to be added can be determined in a few different ways. For example, the 
@@ -318,8 +318,8 @@ public interface OrderService {
      * @throws UpdateCartException
      * @throws RemoveFromCartException 
      */
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException;
-	
+    public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException;
+    
     /**
      * Initiates the removeItem workflow that will attempt to remove the specified OrderItem from 
      * the given Order
@@ -331,12 +331,12 @@ public interface OrderService {
      * @return the order the item was added to
      * @throws RemoveFromCartException 
      */
-	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
-	
-	/**
-	 * @see #setMoveNamedOrderItems(boolean)
-	 * @return whether items will be removed from the wishlist when added to the cart
-	 */
+    public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
+    
+    /**
+     * @see #setMoveNamedOrderItems(boolean)
+     * @return whether items will be removed from the wishlist when added to the cart
+     */
     public boolean isMoveNamedOrderItems();
 
     /**
@@ -379,8 +379,8 @@ public interface OrderService {
      * @throws RemoveFromCartException
      * @throws AddToCartException
      */
-	public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
-	
+    public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
+    
     /**
      * This method performs the same function as addItemFromNamedOrder(Order, OrderItem, boolean)
      * except that instead of adding all of the quantity from the named order to the cart, it will
@@ -397,11 +397,11 @@ public interface OrderService {
      * @throws AddToCartException
      * @throws UpdateCartException 
      */
-	public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException;
+    public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException;
 
-	/**
-	 * Adds all orderItems to the current cart from the same Customer that owns the named
-	 * order. This method will remove the item from the wishlist based on whether the 
+    /**
+     * Adds all orderItems to the current cart from the same Customer that owns the named
+     * order. This method will remove the item from the wishlist based on whether the 
      * {@link setMoveNamedOrderItems} flag is set.
      * 
      * Note that any items that are in the wishlist but are no longer able to be added to a cart
@@ -411,13 +411,13 @@ public interface OrderService {
      * order -- instead, those OrderItems is completely removed and a new OrderItem that mirrors
      * it is created.
      * 
-	 * @param namedOrder
-	 * @param priceOrder
-	 * @return
-	 * @throws RemoveFromCartException
-	 * @throws AddToCartException
-	 */
-	public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
+     * @param namedOrder
+     * @param priceOrder
+     * @return
+     * @throws RemoveFromCartException
+     * @throws AddToCartException
+     */
+    public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
 
     /**
      * Deletes all the Payment Info's on the order.

@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Required;
  * For example:
  *
  * <code>
- * 	<bean id="blCheckPaymentModule" class="org.broadleafcommerce.core.payment.service.module.AcceptAndPassthroughModule" scope="prototype">
+ *  <bean id="blCheckPaymentModule" class="org.broadleafcommerce.core.payment.service.module.AcceptAndPassthroughModule" scope="prototype">
  *      <property name="validPaymentInfoType" value="CHECK"/>
  *  </bean>
  *  <bean id="blWirePaymentModule" class="org.broadleafcommerce.core.payment.service.module.AcceptAndPassthroughModule" scope="prototype">

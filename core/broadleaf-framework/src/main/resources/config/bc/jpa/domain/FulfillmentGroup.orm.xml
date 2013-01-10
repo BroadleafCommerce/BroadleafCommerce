@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 <!--
-	<named-query name="BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID" >
-		<query>SELECT fulfillmentGroup FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fulfillmentGroup
-		WHERE fulfillmentGroup.orderId = :orderId</query>
-	</named-query>
+    <named-query name="BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID" >
+        <query>SELECT fulfillmentGroup FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fulfillmentGroup
+        WHERE fulfillmentGroup.orderId = :orderId</query>
+    </named-query>
  -->
-	<named-query name="BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID">
-		<query>
-			SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg
-			 WHERE fg.order.id = :orderId
-			 AND fg.primary = TRUE
-		</query>
-	</named-query>
-	
-	     <named-query name="BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC">
+    <named-query name="BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg
+             WHERE fg.order.id = :orderId
+             AND fg.primary = TRUE
+        </query>
+    </named-query>
+    
+         <named-query name="BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC">
         <query>
             SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
             WHERE fg.status = :status ORDER BY fg.order.auditable.dateCreated ASC

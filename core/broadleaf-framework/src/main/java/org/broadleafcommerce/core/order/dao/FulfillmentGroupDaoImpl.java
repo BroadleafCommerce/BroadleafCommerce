@@ -55,15 +55,15 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         final Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         @SuppressWarnings("unchecked")
-		List<FulfillmentGroupImpl> fulfillmentGroups = query.getResultList();
+        List<FulfillmentGroupImpl> fulfillmentGroups = query.getResultList();
         return fulfillmentGroups == null || fulfillmentGroups.isEmpty() ? null : fulfillmentGroups.get(0);
     }
 
     @Override
     public void delete(FulfillmentGroup fulfillmentGroup) {
-    	if (!em.contains(fulfillmentGroup)) {
-    		fulfillmentGroup = readFulfillmentGroupById(fulfillmentGroup.getId());
-    	}
+        if (!em.contains(fulfillmentGroup)) {
+            fulfillmentGroup = readFulfillmentGroupById(fulfillmentGroup.getId());
+        }
         em.remove(fulfillmentGroup);
     }
 
@@ -85,58 +85,58 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         return ((FulfillmentGroupFee) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroupFee"));
     }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<FulfillmentGroup> readUnfulfilledFulfillmentGroups(int start,
-			int maxResults) {
-		Query query = em.createNamedQuery("BC_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC");
-		query.setFirstResult(start);
-		query.setMaxResults(maxResults);
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<FulfillmentGroup> readUnfulfilledFulfillmentGroups(int start,
+            int maxResults) {
+        Query query = em.createNamedQuery("BC_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC");
+        query.setFirstResult(start);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<FulfillmentGroup> readPartiallyFulfilledFulfillmentGroups(int start,
-			int maxResults) {
-		Query query = em.createNamedQuery("BC_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC");
-		query.setFirstResult(start);
-		query.setMaxResults(maxResults);
-		
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<FulfillmentGroup> readPartiallyFulfilledFulfillmentGroups(int start,
+            int maxResults) {
+        Query query = em.createNamedQuery("BC_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC");
+        query.setFirstResult(start);
+        query.setMaxResults(maxResults);
+        
+        return query.getResultList();
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<FulfillmentGroup> readUnprocessedFulfillmentGroups(int start,
-			int maxResults) {
-		Query query = em.createNamedQuery("BC_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC");
-		query.setFirstResult(start);
-		query.setMaxResults(maxResults);
-		
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<FulfillmentGroup> readUnprocessedFulfillmentGroups(int start,
+            int maxResults) {
+        Query query = em.createNamedQuery("BC_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC");
+        query.setFirstResult(start);
+        query.setMaxResults(maxResults);
+        
+        return query.getResultList();
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
-			FulfillmentGroupStatusType status, int start, int maxResults, boolean ascending) {
-		Query query = null;
-		if (ascending) {
-			query =	em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC");
-		} else {
-			query =	em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_DESC");
-		}
-		query.setParameter("status", status.getType());
-		query.setFirstResult(start);
-		query.setMaxResults(maxResults);
-		
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
+            FulfillmentGroupStatusType status, int start, int maxResults, boolean ascending) {
+        Query query = null;
+        if (ascending) {
+            query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC");
+        } else {
+            query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_DESC");
+        }
+        query.setParameter("status", status.getType());
+        query.setFirstResult(start);
+        query.setMaxResults(maxResults);
+        
+        return query.getResultList();
+    }
 
-	@Override
-	public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
-			FulfillmentGroupStatusType status, int start, int maxResults) {
-		return readFulfillmentGroupsByStatus(status, start, maxResults, true);
-	}
+    @Override
+    public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
+            FulfillmentGroupStatusType status, int start, int maxResults) {
+        return readFulfillmentGroupsByStatus(status, start, maxResults, true);
+    }
 }

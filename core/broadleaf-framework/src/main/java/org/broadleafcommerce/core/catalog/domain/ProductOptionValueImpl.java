@@ -142,7 +142,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         this.productOption = productOption;
     }
 
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

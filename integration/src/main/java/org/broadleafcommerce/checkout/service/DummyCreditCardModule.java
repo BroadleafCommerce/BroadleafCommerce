@@ -29,48 +29,48 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
  */
 public class DummyCreditCardModule extends AbstractModule {
 
-	@Override
+    @Override
     public PaymentResponseItem processAuthorize(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
         return createResponse(paymentContext, responseItem);
     }
 
     @Override
     public PaymentResponseItem processAuthorizeAndDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
-    	return createResponse(paymentContext, responseItem);
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
     public PaymentResponseItem processDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
-    	return createResponse(paymentContext, responseItem);
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
     public PaymentResponseItem processCredit(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException {
-    	return createResponse(paymentContext, responseItem);
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
     public PaymentResponseItem processVoidPayment(PaymentContext paymentContext, Money amountToVoid, PaymentResponseItem responseItem) throws PaymentException {
-    	return createResponse(paymentContext, responseItem);
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
     public PaymentResponseItem processBalance(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
-    	return createResponse(paymentContext, responseItem);
+        return createResponse(paymentContext, responseItem);
     }
     
     @Override
     public PaymentResponseItem processReverseAuthorize(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
-    	return createResponse(paymentContext, responseItem);
-	}
+        return createResponse(paymentContext, responseItem);
+    }
 
-	private PaymentResponseItem createResponse(PaymentContext paymentContext, PaymentResponseItem responseItem) {
+    private PaymentResponseItem createResponse(PaymentContext paymentContext, PaymentResponseItem responseItem) {
         paymentContext.getPaymentInfo().setReferenceNumber("abc123");
-		responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
-		responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
-		responseItem.setTransactionSuccess(true);
-		responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
-		responseItem.setCurrency(paymentContext.getPaymentInfo().getCurrency());
+        responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
+        responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
+        responseItem.setTransactionSuccess(true);
+        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
+        responseItem.setCurrency(paymentContext.getPaymentInfo().getCurrency());
         return responseItem;
     }
 

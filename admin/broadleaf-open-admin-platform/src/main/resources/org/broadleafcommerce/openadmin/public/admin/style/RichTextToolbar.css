@@ -1,70 +1,70 @@
 /** Add css rules here for your application. */
 
 .RichTextToolbar {
-	background: #E2E2E2;
-	padding:5px;
-	margin:0px;
-	/*border: red 1px solid;*/
+    background: #E2E2E2;
+    padding:5px;
+    margin:0px;
+    /*border: red 1px solid;*/
 }
 
 .RichTextToolbar .gwt-ToggleButton {
-	background: #F4F4F4;
-	border: 1px outset #ccc;
+    background: #F4F4F4;
+    border: 1px outset #ccc;
 }
 
 .RichTextToolbar .gwt-PushButton {
-	background: #F4F4F4;
-	border: 1px outset #ccc;
+    background: #F4F4F4;
+    border: 1px outset #ccc;
 }
 
 .RichTextToolbar .gwt-ToggleButton-up-hovering {
-	background: #F4F4F4;
-	border-color: #9cf #69e #69e #7af;
+    background: #F4F4F4;
+    border-color: #9cf #69e #69e #7af;
 }
 
 .RichTextToolbar .gwt-PushButton-up-hovering {
-	background: #F4F4F4;
-	border-color: #9cf #69e #69e #7af;
+    background: #F4F4F4;
+    border-color: #9cf #69e #69e #7af;
 }
 
 .RichTextToolbar .gwt-ToggleButton-down {
-	background: #D5D5D5;
-	border-color: #777777 #777777 #777777 #777777;
+    background: #D5D5D5;
+    border-color: #777777 #777777 #777777 #777777;
 }
 
 .RichTextToolbar .gwt-PushButton-down {
-	background: #D5D5D5;
-	border-color: #777777 #777777 #777777 #777777;
+    background: #D5D5D5;
+    border-color: #777777 #777777 #777777 #777777;
 }
 
 .RichTextToolbar .gwt-ToggleButton-down-hovering {
-	background: #D5D5D5;
-	border-color: #9cf #69e #69e #7af;
+    background: #D5D5D5;
+    border-color: #9cf #69e #69e #7af;
 }
 
 .RichTextToolbar .gwt-PushButton-down-hovering {
-	background: #D5D5D5;
-	border-color: #9cf #69e #69e #7af;
+    background: #D5D5D5;
+    border-color: #9cf #69e #69e #7af;
 }
 
 .RichTextToolbar .gwt-PushButton-up-disabled {
-	background: #717171;
-	border-color: #B9968F #B9968F #B9968F #B9968F;
+    background: #717171;
+    border-color: #B9968F #B9968F #B9968F #B9968F;
 }
 
 .RichTextToolbar .gwt-PushButton-down-disabled {
-	background: #717171;
-	border-color: #B9968F #B9968F #B9968F #B9968F;
+    background: #717171;
+    border-color: #B9968F #B9968F #B9968F #B9968F;
 }
 
 .RichTextToolbar .gwt-ToggleButton-up-disabled {
-	background: #717171;
-	border-color: #B9968F #B9968F #B9968F #B9968F;
+    background: #717171;
+    border-color: #B9968F #B9968F #B9968F #B9968F;
 }
 
 .RichTextToolbar .gwt-ToggleButton-down-disabled {
-	background: #717171;
-	border-color: #B9968F #B9968F #B9968F #B9968F;
+    background: #717171;
+    border-color: #B9968F #B9968F #B9968F #B9968F;
 }
 
 .hasRichTextToolbar {

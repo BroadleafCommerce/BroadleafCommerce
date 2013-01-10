@@ -44,22 +44,22 @@ import java.util.List;
 
 public class BroadleafManageCustomerAddressesController extends BroadleafAbstractController {
 
-	@Resource(name = "blCustomerAddressService")
+    @Resource(name = "blCustomerAddressService")
     private CustomerAddressService customerAddressService;
-	@Resource(name = "blAddressService")
-	private AddressService addressService;
-	@Resource(name = "blCountryService")
-	private CountryService countryService;
-	@Resource(name = "blCustomerAddressValidator")
-	private CustomerAddressValidator customerAddressValidator;
-	@Resource(name = "blStateService")
-	private StateService stateService;
+    @Resource(name = "blAddressService")
+    private AddressService addressService;
+    @Resource(name = "blCountryService")
+    private CountryService countryService;
+    @Resource(name = "blCustomerAddressValidator")
+    private CustomerAddressValidator customerAddressValidator;
+    @Resource(name = "blStateService")
+    private StateService stateService;
    
     protected String addressUpdatedMessage = "Address successfully updated";
     protected String addressAddedMessage = "Address successfully added";
     protected String addressRemovedMessage = "Address successfully removed";
     protected String addressRemovedErrorMessage = "Address could not be removed as it is in use";
-	
+    
     protected static String customerAddressesView = "account/manageCustomerAddresses";
     protected static String customerAddressesRedirect = "redirect:/account/addresses";
     
@@ -78,7 +78,7 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-            	State state = stateService.findStateByAbbreviation(text);
+                State state = stateService.findStateByAbbreviation(text);
                 setValue(state);
             }
         });
@@ -106,118 +106,118 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     }
      
     protected List<State> populateStates() {
-    	return stateService.findStates();
+        return stateService.findStates();
     }
     
     protected List<Country> populateCountries() {
-    	return countryService.findCountries();
+        return countryService.findCountries();
     }
     
     protected List<CustomerAddress> populateCustomerAddresses() {
-    	return customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
+        return customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
     }
     
     public String viewCustomerAddresses(HttpServletRequest request, Model model) {
-    	model.addAttribute("customerAddressForm", new CustomerAddressForm());
-    	return getCustomerAddressesView();
+        model.addAttribute("customerAddressForm", new CustomerAddressForm());
+        return getCustomerAddressesView();
     }
     
     public String viewCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId) {
-    	CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
-    	if (customerAddress == null) {
-    		throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
-    	}
-    	CustomerAddressForm form = new CustomerAddressForm();
-    	form.setAddress(customerAddress.getAddress());
-    	form.setAddressName(customerAddress.getAddressName());
-    	form.setCustomerAddressId(customerAddress.getId());
-    	model.addAttribute("customerAddressForm", form);
-    	return getCustomerAddressesView();
+        CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
+        if (customerAddress == null) {
+            throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
+        }
+        CustomerAddressForm form = new CustomerAddressForm();
+        form.setAddress(customerAddress.getAddress());
+        form.setAddressName(customerAddress.getAddressName());
+        form.setCustomerAddressId(customerAddress.getId());
+        model.addAttribute("customerAddressForm", form);
+        return getCustomerAddressesView();
     }
 
     public String addCustomerAddress(HttpServletRequest request, Model model, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
-    	customerAddressValidator.validate(form, result);
-    	if (result.hasErrors()) {
-    		return getCustomerAddressesView();
-    	}
+        customerAddressValidator.validate(form, result);
+        if (result.hasErrors()) {
+            return getCustomerAddressesView();
+        }
         Address address = addressService.saveAddress(form.getAddress());
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddress(address);
         customerAddress.setAddressName(form.getAddressName());
         customerAddress.setCustomer(CustomerState.getCustomer());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
-    	if (form.getAddress().isDefault()) {
-    		customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
-    	}
+        if (form.getAddress().isDefault()) {
+            customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
+        }
         if (!isAjaxRequest(request)) {
-    		List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
-    		model.addAttribute("addresses", addresses);
-    	}
+            List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
+            model.addAttribute("addresses", addresses);
+        }
         redirectAttributes.addFlashAttribute("successMessage", getAddressAddedMessage());
         return getCustomerAddressesRedirect();
     }
     
     public String updateCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
-    	customerAddressValidator.validate(form, result);
-    	if (result.hasErrors()) {
-    		return getCustomerAddressesView();
-    	}
-    	CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
-    	if (customerAddress == null) {
-    		throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
-    	}
-    	customerAddress.setAddress(form.getAddress());
-    	customerAddress.setAddressName(form.getAddressName());
-    	customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
-    	if (form.getAddress().isDefault()) {
-    		customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
-    	}
-    	redirectAttributes.addFlashAttribute("successMessage", getAddressUpdatedMessage());
-    	return getCustomerAddressesRedirect();
+        customerAddressValidator.validate(form, result);
+        if (result.hasErrors()) {
+            return getCustomerAddressesView();
+        }
+        CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
+        if (customerAddress == null) {
+            throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
+        }
+        customerAddress.setAddress(form.getAddress());
+        customerAddress.setAddressName(form.getAddressName());
+        customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
+        if (form.getAddress().isDefault()) {
+            customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
+        }
+        redirectAttributes.addFlashAttribute("successMessage", getAddressUpdatedMessage());
+        return getCustomerAddressesRedirect();
     }
     
     public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
         try {
-        	customerAddressService.deleteCustomerAddressById(customerAddressId);
-        	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
+            customerAddressService.deleteCustomerAddressById(customerAddressId);
+            redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
         } catch (DataIntegrityViolationException e) {
             // This likely occurred because there is an order or cart in the system that is currently utilizing this
             // address. Therefore, we're not able to remove it as it breaks a foreign key constraint
             redirectAttributes.addFlashAttribute("errorMessage", getAddressRemovedErrorMessage());
         }
-    	return getCustomerAddressesRedirect();
+        return getCustomerAddressesRedirect();
     }
 
-	public static String getCustomerAddressesView() {
-		return customerAddressesView;
-	}
+    public static String getCustomerAddressesView() {
+        return customerAddressesView;
+    }
 
-	public static void setCustomerAddressesView(String customerAddressesView) {
-		BroadleafManageCustomerAddressesController.customerAddressesView = customerAddressesView;
-	}
+    public static void setCustomerAddressesView(String customerAddressesView) {
+        BroadleafManageCustomerAddressesController.customerAddressesView = customerAddressesView;
+    }
 
-	public static String getCustomerAddressesRedirect() {
-		return customerAddressesRedirect;
-	}
+    public static String getCustomerAddressesRedirect() {
+        return customerAddressesRedirect;
+    }
 
-	public static void setCustomerAddressesRedirect(String customerAddressesRedirect) {
-		BroadleafManageCustomerAddressesController.customerAddressesRedirect = customerAddressesRedirect;
-	}
+    public static void setCustomerAddressesRedirect(String customerAddressesRedirect) {
+        BroadleafManageCustomerAddressesController.customerAddressesRedirect = customerAddressesRedirect;
+    }
 
-	public String getAddressUpdatedMessage() {
-		return addressUpdatedMessage;
-	}
+    public String getAddressUpdatedMessage() {
+        return addressUpdatedMessage;
+    }
 
-	public String getAddressAddedMessage() {
-		return addressAddedMessage;
-	}
+    public String getAddressAddedMessage() {
+        return addressAddedMessage;
+    }
 
-	public String getAddressRemovedMessage() {
-		return addressRemovedMessage;
-	}
-	
-	public String getAddressRemovedErrorMessage() {
-		return addressRemovedErrorMessage;
-	}
-	
+    public String getAddressRemovedMessage() {
+        return addressRemovedMessage;
+    }
+    
+    public String getAddressRemovedErrorMessage() {
+        return addressRemovedErrorMessage;
+    }
+    
 }

@@ -30,7 +30,7 @@ import org.broadleafcommerce.openadmin.client.view.Stoppable;
  */
 public class ServerProcessProgressWindow extends Window implements Stoppable {
 
-	private Progress progressBar;
+    private Progress progressBar;
     private String titleKey;
 
     public ServerProcessProgressWindow() {
@@ -42,7 +42,7 @@ public class ServerProcessProgressWindow extends Window implements Stoppable {
         setShowCloseButton(false);
     }
 
-	public void startProgress() {
+    public void startProgress() {
         if (BLCMain.SPLASH_PROGRESS.isActive()) {
             SplashWindow splash = (SplashWindow) BLCMain.SPLASH_PROGRESS;
             setTop(splash.getTop() + 280);
@@ -50,21 +50,21 @@ public class ServerProcessProgressWindow extends Window implements Stoppable {
         } else {
             centerInPage();
         }
-		show();
-		progressBar.startProgress();
-	}
-	
-	public void stopProgress() {
-		progressBar.stopProgress();
-	}
-	
-	public void finalizeProgress() {
-		hide();
-	}
-	
-	public Boolean isActive() {
-		return progressBar.isActive();
-	}
+        show();
+        progressBar.startProgress();
+    }
+    
+    public void stopProgress() {
+        progressBar.stopProgress();
+    }
+    
+    public void finalizeProgress() {
+        hide();
+    }
+    
+    public Boolean isActive() {
+        return progressBar.isActive();
+    }
 
     public Progress getProgressBar() {
         return progressBar;

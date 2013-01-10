@@ -50,8 +50,8 @@ import java.util.LinkedHashMap;
  *
  */
 public class MasterView extends VLayout implements ValueChangeHandler<String> {
-	
-	protected HLayout canvas;
+    
+    protected HLayout canvas;
     protected static IButton editButton;
     protected static Record userRecord;
     protected LinkedHashMap<String, Module> modules;
@@ -141,9 +141,9 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         History.newItem(destinationPage);
     }
 
-	public Canvas getContainer() {
-		return canvas;
-	}
+    public Canvas getContainer() {
+        return canvas;
+    }
 
     public static void editUserInfoDialog() {
         editButton.fireEvent(new ClickEvent(editButton.getJsObj()));

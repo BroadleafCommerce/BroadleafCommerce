@@ -55,77 +55,77 @@ import java.util.Map;
 @Component("blProductOptionsProcessor")
 public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
 
-	private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
+    private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
 
-	public ProductOptionsProcessor() {
-		super("product_options");
-	}
+    public ProductOptionsProcessor() {
+        super("product_options");
+    }
 
-	@Override
-	public int getPrecedence() {
-		return 10000;
-	}
+    @Override
+    public int getPrecedence() {
+        return 10000;
+    }
 
-	@Override
-	protected void modifyModelAttributes(Arguments arguments, Element element) {
-		CatalogService catalogService = ProcessorUtils.getCatalogService(arguments);
-		Long productId = (Long) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("productId"));
-		Product product = catalogService.findProductById(productId);
-		if (product != null) {
-			addAllProductOptionsToModel(arguments, product);
-			addProductOptionPricingToModel(arguments, product);
-		}
-	}
-	
-	private void addProductOptionPricingToModel(Arguments arguments, Product product) {
-		List<Sku> skus = product.getSkus();
-		List<ProductOptionPricingDTO> skuPricing = new ArrayList<ProductOptionPricingDTO>();
-		for (Sku sku : skus) {
-			
-			List<Long> productOptionValueIds = new ArrayList<Long>();
-			
-			List<ProductOptionValue> productOptionValues = sku.getProductOptionValues();
-			for (ProductOptionValue productOptionValue : productOptionValues) {
-				productOptionValueIds.add(productOptionValue.getId());
-			}
-			
-			Long[] values = new Long[productOptionValueIds.size()];
-			productOptionValueIds.toArray(values);
-			
-			ProductOptionPricingDTO dto = new ProductOptionPricingDTO();
+    @Override
+    protected void modifyModelAttributes(Arguments arguments, Element element) {
+        CatalogService catalogService = ProcessorUtils.getCatalogService(arguments);
+        Long productId = (Long) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("productId"));
+        Product product = catalogService.findProductById(productId);
+        if (product != null) {
+            addAllProductOptionsToModel(arguments, product);
+            addProductOptionPricingToModel(arguments, product);
+        }
+    }
+    
+    private void addProductOptionPricingToModel(Arguments arguments, Product product) {
+        List<Sku> skus = product.getSkus();
+        List<ProductOptionPricingDTO> skuPricing = new ArrayList<ProductOptionPricingDTO>();
+        for (Sku sku : skus) {
+            
+            List<Long> productOptionValueIds = new ArrayList<Long>();
+            
+            List<ProductOptionValue> productOptionValues = sku.getProductOptionValues();
+            for (ProductOptionValue productOptionValue : productOptionValues) {
+                productOptionValueIds.add(productOptionValue.getId());
+            }
+            
+            Long[] values = new Long[productOptionValueIds.size()];
+            productOptionValueIds.toArray(values);
+            
+            ProductOptionPricingDTO dto = new ProductOptionPricingDTO();
             Money currentPrice;
-			if (sku.isOnSale()) {
+            if (sku.isOnSale()) {
                 currentPrice = sku.getSalePrice();
-			} else {
+            } else {
                 currentPrice = sku.getRetailPrice();
-			}
+            }
             dto.setPrice(formatPrice(currentPrice));
-			dto.setSelectedOptions(values);
-			skuPricing.add(dto);
-		}
-		writeJSONToModel(arguments, "skuPricing", skuPricing);
-	}
-	
-	private void addAllProductOptionsToModel(Arguments arguments, Product product) {
-		List<ProductOption> productOptions = product.getProductOptions();
-		List<ProductOptionDTO> dtos = new ArrayList<ProductOptionDTO>();
-		for (ProductOption option : productOptions) {
-			ProductOptionDTO dto = new ProductOptionDTO();
-			dto.setId(option.getId());
-			dto.setType(option.getType().getType());
-			Map<Long, String> values = new HashMap<Long, String>();
-			for (ProductOptionValue value : option.getAllowedValues()) {
-				values.put(value.getId(), value.getAttributeValue());
-			}
-			dto.setValues(values);
-			dtos.add(dto);
-		}
-		writeJSONToModel(arguments, "allProductOptions", dtos);
-	}
-	
-	private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
-		try {
+            dto.setSelectedOptions(values);
+            skuPricing.add(dto);
+        }
+        writeJSONToModel(arguments, "skuPricing", skuPricing);
+    }
+    
+    private void addAllProductOptionsToModel(Arguments arguments, Product product) {
+        List<ProductOption> productOptions = product.getProductOptions();
+        List<ProductOptionDTO> dtos = new ArrayList<ProductOptionDTO>();
+        for (ProductOption option : productOptions) {
+            ProductOptionDTO dto = new ProductOptionDTO();
+            dto.setId(option.getId());
+            dto.setType(option.getType().getType());
+            Map<Long, String> values = new HashMap<Long, String>();
+            for (ProductOptionValue value : option.getAllowedValues()) {
+                values.put(value.getId(), value.getAttributeValue());
+            }
+            dto.setValues(values);
+            dtos.add(dto);
+        }
+        writeJSONToModel(arguments, "allProductOptions", dtos);
+    }
+    
+    private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
+        try {
             if (!JSON_CACHE.containsKey(o)) {
                 ObjectMapper mapper = new ObjectMapper();
                 Writer strWriter = new StringWriter();
@@ -133,10 +133,10 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
                 JSON_CACHE.put(o, strWriter.toString());
             }
             addToModel(arguments, modelKey, JSON_CACHE.get(o));
-		} catch (Exception ex) {
-			LOG.error("There was a problem writing the product option map to JSON", ex);
-		}
-	}
+        } catch (Exception ex) {
+            LOG.error("There was a problem writing the product option map to JSON", ex);
+        }
+    }
 
     private String formatPrice(Money price){
         if (price == null){
@@ -152,41 +152,41 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             return "$ " + price.getAmount().toString();
         }
     }
-	
-	private class ProductOptionDTO {
-		private Long id;
-		private String type;
-		private Map<Long, String> values;
-		private String selectedValue;
-		@SuppressWarnings("unused")
-		public Long getId() {
-			return id;
-		}
-		public void setId(Long id) {
-			this.id = id;
-		}
-		@SuppressWarnings("unused")
-		public String getType() {
-			return type;
-		}
-		public void setType(String type) {
-			this.type = type;
-		}
-		@SuppressWarnings("unused")
-		public Map<Long, String> getValues() {
-			return values;
-		}
-		public void setValues(Map<Long, String> values) {
-			this.values = values;
-		}
-		@SuppressWarnings("unused")
-		public String getSelectedValue() {
-			return selectedValue;
-		}
-		@SuppressWarnings("unused")
-		public void setSelectedValue(String selectedValue) {
-			this.selectedValue = selectedValue;
-		}
+    
+    private class ProductOptionDTO {
+        private Long id;
+        private String type;
+        private Map<Long, String> values;
+        private String selectedValue;
+        @SuppressWarnings("unused")
+        public Long getId() {
+            return id;
+        }
+        public void setId(Long id) {
+            this.id = id;
+        }
+        @SuppressWarnings("unused")
+        public String getType() {
+            return type;
+        }
+        public void setType(String type) {
+            this.type = type;
+        }
+        @SuppressWarnings("unused")
+        public Map<Long, String> getValues() {
+            return values;
+        }
+        public void setValues(Map<Long, String> values) {
+            this.values = values;
+        }
+        @SuppressWarnings("unused")
+        public String getSelectedValue() {
+            return selectedValue;
+        }
+        @SuppressWarnings("unused")
+        public void setSelectedValue(String selectedValue) {
+            this.selectedValue = selectedValue;
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -213,24 +213,24 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             return result;
         }
     }
-	
-	private class ProductOptionPricingDTO {
-		private Long[] skuOptions;
-		private String price;
-		@SuppressWarnings("unused")
-		public Long[] getSelectedOptions() {
-			return skuOptions;
-		}
-		public void setSelectedOptions(Long[] skuOptions) {
-			this.skuOptions = skuOptions;
-		}
-		@SuppressWarnings("unused")
-		public String getPrice() {
-			return price;
-		}
-		public void setPrice(String price) {
-			this.price = price;
-		}
+    
+    private class ProductOptionPricingDTO {
+        private Long[] skuOptions;
+        private String price;
+        @SuppressWarnings("unused")
+        public Long[] getSelectedOptions() {
+            return skuOptions;
+        }
+        public void setSelectedOptions(Long[] skuOptions) {
+            this.skuOptions = skuOptions;
+        }
+        @SuppressWarnings("unused")
+        public String getPrice() {
+            return price;
+        }
+        public void setPrice(String price) {
+            this.price = price;
+        }
 
         @Override
         public boolean equals(Object o) {

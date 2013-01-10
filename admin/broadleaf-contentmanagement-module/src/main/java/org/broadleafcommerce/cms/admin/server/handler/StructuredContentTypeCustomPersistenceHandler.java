@@ -66,7 +66,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     private Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
 
     @Resource(name="blStructuredContentService")
-	protected StructuredContentService structuredContentService;
+    protected StructuredContentService structuredContentService;
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
@@ -192,8 +192,8 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             propertiesList.add(property);
 
             Property[] properties = new Property[propertiesList.size()];
-		    properties = propertiesList.toArray(properties);
-		    Arrays.sort(properties, new Comparator<Property>() {
+            properties = propertiesList.toArray(properties);
+            Arrays.sort(properties, new Comparator<Property>() {
                 public int compare(Property o1, Property o2) {
                     /*
                          * First, compare properties based on order fields
@@ -217,7 +217,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     }
                 }
             });
-		    metadata.setProperties(properties);
+            metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
             return results;

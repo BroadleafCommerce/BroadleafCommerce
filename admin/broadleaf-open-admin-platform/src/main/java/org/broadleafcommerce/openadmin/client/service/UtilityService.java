@@ -43,7 +43,7 @@ public interface UtilityService extends RemoteService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-	public String getWebAppContext() throws ServiceException, ApplicationSecurityException;
+    public String getWebAppContext() throws ServiceException, ApplicationSecurityException;
 
     /**
      * Retrieve the current web url prefix (if any) for the actual store front associated
@@ -63,7 +63,7 @@ public interface UtilityService extends RemoteService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-	public String getStoreFrontWebAppPrefix() throws ServiceException, ApplicationSecurityException;
+    public String getStoreFrontWebAppPrefix() throws ServiceException, ApplicationSecurityException;
 
     /**
      * Retrieve the portion of the url that is key for identifying a request for a CMS managed asset.

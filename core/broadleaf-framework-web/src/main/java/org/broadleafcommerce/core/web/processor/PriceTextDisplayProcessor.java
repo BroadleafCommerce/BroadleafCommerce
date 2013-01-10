@@ -38,27 +38,27 @@ import java.text.NumberFormat;
 @Component("blPriceTextDisplayProcessor")
 public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProcessor {
 
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
-	public PriceTextDisplayProcessor() {
-		super("price");
-	}
-	
-	@Override
-	public int getPrecedence() {
-		return 1500;
-	}
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
+    public PriceTextDisplayProcessor() {
+        super("price");
+    }
+    
+    @Override
+    public int getPrecedence() {
+        return 1500;
+    }
 
-	@Override
-	protected String getText(Arguments arguments, Element element, String attributeName) {
-		Money price;
-		try {
-			price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		} catch (ClassCastException e) {
-			BigDecimal value = (BigDecimal) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-			price = new Money(value);
-		}
+    @Override
+    protected String getText(Arguments arguments, Element element, String attributeName) {
+        Money price;
+        try {
+            price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        } catch (ClassCastException e) {
+            BigDecimal value = (BigDecimal) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+            price = new Money(value);
+        }
 
         if (price == null) {
             return "Not Available";
@@ -73,5 +73,5 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
             return "$ " + price.getAmount().toString();
         }
-	}
+    }
 }

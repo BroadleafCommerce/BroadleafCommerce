@@ -31,35 +31,35 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public interface OrderDisplay extends DynamicEditDisplay {
-	
-	@Override
+    
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay();
 
-	@Override
+    @Override
     public DynamicEntityListDisplay getListDisplay();
 
-	public OrderItemDisplay getOrderItemsDisplay();
-	
-	public SubItemDisplay getFulfillmentGroupDisplay();
-	
-	public SubItemDisplay getPaymentInfoDisplay();
-	
-	public GridStructureDisplay getAdditionalAttributesDisplay();
-	
-	public SubItemDisplay getOfferCodeDisplay();
-	
-	public GridStructureDisplay getOrderAdjustmentDisplay();
-	
-	public GridStructureDisplay getOrderItemAdjustmentDisplay();
-	
-	public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay();
-	
-	public GridStructureView getOrderItemFeeDisplay();
+    public OrderItemDisplay getOrderItemsDisplay();
+    
+    public SubItemDisplay getFulfillmentGroupDisplay();
+    
+    public SubItemDisplay getPaymentInfoDisplay();
+    
+    public GridStructureDisplay getAdditionalAttributesDisplay();
+    
+    public SubItemDisplay getOfferCodeDisplay();
+    
+    public GridStructureDisplay getOrderAdjustmentDisplay();
+    
+    public GridStructureDisplay getOrderItemAdjustmentDisplay();
+    
+    public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay();
+    
+    public GridStructureView getOrderItemFeeDisplay();
 
     public GridStructureView getPaymentLogDisplay();
 
     public GridStructureView getPaymentResponseDisplay();
     
     public ToolStripButton getExportOrdersButton();
-	
+    
 }

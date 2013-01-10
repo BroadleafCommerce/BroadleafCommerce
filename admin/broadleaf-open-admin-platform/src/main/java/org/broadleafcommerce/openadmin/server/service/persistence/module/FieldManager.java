@@ -36,19 +36,19 @@ import java.util.StringTokenizer;
  *
  */
 public class FieldManager {
-	
-	private static final Log LOG = LogFactory.getLog(FieldManager.class);
+    
+    private static final Log LOG = LogFactory.getLog(FieldManager.class);
 
     protected EntityConfiguration entityConfiguration;
-	protected DynamicEntityDao dynamicEntityDao;
-	protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
+    protected DynamicEntityDao dynamicEntityDao;
+    protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
 
     public FieldManager(EntityConfiguration entityConfiguration, DynamicEntityDao dynamicEntityDao) {
         this.entityConfiguration = entityConfiguration;
         this.dynamicEntityDao = dynamicEntityDao;
     }
 
-	public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
+    public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
         try {
             return clazz.getDeclaredField(fieldName);
         } catch (NoSuchFieldException nsf) {
@@ -69,8 +69,8 @@ public class FieldManager {
             String propertyName = tokens[j];
             field = getSingleField(clazz, propertyName);
             if (field != null && j < tokens.length - 1) {
-            	Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
-            	if (entities.length > 0) {
+                Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
+                if (entities.length > 0) {
                     String peekAheadToken = tokens[j+1];
                     List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
                     for (Class<?> entity : entities) {
@@ -101,26 +101,26 @@ public class FieldManager {
                         } else {
                             clazz = matchedClass;
                         }
-	            	} else {
-	            		clazz = field.getType();
-	            	}
-            	} else {
+                    } else {
+                        clazz = field.getType();
+                    }
+                } else {
                     //may be an embedded class - try the class directly
                     clazz = field.getType();
                 }
             } else {
-            	break;
+                break;
             }
         }
         
         if (field != null) {
-        	field.setAccessible(true);
+            field.setAccessible(true);
         }
         return field;
-	}
-	
-	public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
-		StringTokenizer tokens = new StringTokenizer(fieldName, ".");
+    }
+    
+    public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
+        StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
         Field field;
         Object value = bean;
@@ -144,9 +144,9 @@ public class FieldManager {
         return value;
 
     }
-	
-	public Object setFieldValue(Object bean, String fieldName, Object newValue) throws IllegalAccessException, InstantiationException {
-		StringTokenizer tokens = new StringTokenizer(fieldName, ".");
+    
+    public Object setFieldValue(Object bean, String fieldName, Object newValue) throws IllegalAccessException, InstantiationException {
+        StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
         Field field = null;
         Object value = bean;
@@ -157,25 +157,25 @@ public class FieldManager {
             field = getSingleField(componentClass, tokens.nextToken());
             field.setAccessible(true);
             if (j == count - 1) {
-            	field.set(value, newValue);
+                field.set(value, newValue);
             } else {
-	            Object myValue = field.get(value);
-	            if (myValue != null) {
-	                componentClass = myValue.getClass();
-	                value = myValue;
-	            } else {
-	            	//consult the entity configuration manager to see if there is a user
-	            	//configured entity for this class
-					try {
-						Object newEntity = entityConfiguration.createEntityInstance(field.getType().getName());
-						SortableValue val = new SortableValue((Serializable) newEntity, j);
-						middleFields.add(val);
-	            		field.set(value, newEntity);
-	            		componentClass = newEntity.getClass();
-	            		value = newEntity;
-					} catch (Exception e) {
-						//Use the most extended type based on the field type
-	            		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
+                Object myValue = field.get(value);
+                if (myValue != null) {
+                    componentClass = myValue.getClass();
+                    value = myValue;
+                } else {
+                    //consult the entity configuration manager to see if there is a user
+                    //configured entity for this class
+                    try {
+                        Object newEntity = entityConfiguration.createEntityInstance(field.getType().getName());
+                        SortableValue val = new SortableValue((Serializable) newEntity, j);
+                        middleFields.add(val);
+                        field.set(value, newEntity);
+                        componentClass = newEntity.getClass();
+                        value = newEntity;
+                    } catch (Exception e) {
+                        //Use the most extended type based on the field type
+                        Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
                             Object newEntity = entities[0].newInstance();
                             SortableValue val = new SortableValue((Serializable) newEntity, j);
@@ -192,8 +192,8 @@ public class FieldManager {
                             value = newEntity;
                             LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. Using the type of this class.");
                         }
-					}
-	            }
+                    }
+                }
             }
             j++;
         }
@@ -201,72 +201,72 @@ public class FieldManager {
         return value;
 
     }
-	
-	public void persistMiddleEntities() {
-		Collections.sort(middleFields);
-		for (SortableValue val : middleFields) {
-			dynamicEntityDao.merge(val.entity);
-		}
-	}
+    
+    public void persistMiddleEntities() {
+        Collections.sort(middleFields);
+        for (SortableValue val : middleFields) {
+            dynamicEntityDao.merge(val.entity);
+        }
+    }
 
-	public EntityConfiguration getEntityConfiguration() {
-		return entityConfiguration;
-	}
-	
-	private class SortableValue implements Comparable<SortableValue> {
-		
-		private Integer pos;
-		private Serializable entity;
-		private Class<?> entityClass;
-		
-		public SortableValue(Serializable entity, Integer pos) {
-			this.entity = entity;
-			this.pos = pos;
-			this.entityClass = entity.getClass();
-		}
+    public EntityConfiguration getEntityConfiguration() {
+        return entityConfiguration;
+    }
+    
+    private class SortableValue implements Comparable<SortableValue> {
+        
+        private Integer pos;
+        private Serializable entity;
+        private Class<?> entityClass;
+        
+        public SortableValue(Serializable entity, Integer pos) {
+            this.entity = entity;
+            this.pos = pos;
+            this.entityClass = entity.getClass();
+        }
 
-		public int compareTo(SortableValue o) {
-			return pos.compareTo(o.pos) * -1;
-		}
+        public int compareTo(SortableValue o) {
+            return pos.compareTo(o.pos) * -1;
+        }
 
-		@Override
-		public int hashCode() {
-			int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (entityClass == null ? 0 : entityClass.hashCode());
-			result = prime * result + (pos == null ? 0 : pos.hashCode());
-			return result;
-		}
+        @Override
+        public int hashCode() {
+            int prime = 31;
+            int result = 1;
+            result = prime * result + getOuterType().hashCode();
+            result = prime * result + (entityClass == null ? 0 : entityClass.hashCode());
+            result = prime * result + (pos == null ? 0 : pos.hashCode());
+            return result;
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			SortableValue other = (SortableValue) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (entityClass == null) {
-				if (other.entityClass != null)
-					return false;
-			} else if (!entityClass.equals(other.entityClass))
-				return false;
-			if (pos == null) {
-				if (other.pos != null)
-					return false;
-			} else if (!pos.equals(other.pos))
-				return false;
-			return true;
-		}
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            SortableValue other = (SortableValue) obj;
+            if (!getOuterType().equals(other.getOuterType()))
+                return false;
+            if (entityClass == null) {
+                if (other.entityClass != null)
+                    return false;
+            } else if (!entityClass.equals(other.entityClass))
+                return false;
+            if (pos == null) {
+                if (other.pos != null)
+                    return false;
+            } else if (!pos.equals(other.pos))
+                return false;
+            return true;
+        }
 
-		private FieldManager getOuterType() {
-			return FieldManager.this;
-		}
+        private FieldManager getOuterType() {
+            return FieldManager.this;
+        }
 
-	}
-	
+    }
+    
 }

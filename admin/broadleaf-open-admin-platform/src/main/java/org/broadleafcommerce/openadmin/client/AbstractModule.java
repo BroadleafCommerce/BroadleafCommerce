@@ -33,97 +33,97 @@ import java.util.List;
  */
 public abstract class AbstractModule implements EntryPoint, Module {
 
-	protected LinkedHashMap<String, String[]> pages = new LinkedHashMap<String, String[]>();
-	protected String moduleTitle;
-	protected String moduleKey;
+    protected LinkedHashMap<String, String[]> pages = new LinkedHashMap<String, String[]>();
+    protected String moduleTitle;
+    protected String moduleKey;
     protected Integer order = Integer.MAX_VALUE;
-	protected List<Section> sections = new ArrayList<Section>();
-	
-	public void registerModule() {
-		BLCMain.addModule(this);
-	}
-	
-	@Override
+    protected List<Section> sections = new ArrayList<Section>();
+    
+    public void registerModule() {
+        BLCMain.addModule(this);
+    }
+    
+    @Override
     public String getModuleTitle() {
-		return moduleTitle;
-	}
-	
-	public void setModuleTitle(String moduleTitle) {
-		this.moduleTitle = moduleTitle;
+        return moduleTitle;
+    }
+    
+    public void setModuleTitle(String moduleTitle) {
+        this.moduleTitle = moduleTitle;
         if (moduleKey == null) {
             moduleKey = moduleTitle;
         }
-	}
-	
-	@Override
+    }
+    
+    @Override
     public String getModuleKey() {
-		return moduleKey;
-	}
+        return moduleKey;
+    }
 
-	/**
-	 * If 2 modules have the same key, the sections in that module are merged together. For instance, if you wanted to add
-	 * a new section to the merchandising module, you would create a new AbstractModule subclass and call this method
-	 * with the same key as the Merchandising module
-	 * 
-	 * @param moduleKey
-	 */
-	public void setModuleKey(String moduleKey) {
-		this.moduleKey = moduleKey;
-	}
+    /**
+     * If 2 modules have the same key, the sections in that module are merged together. For instance, if you wanted to add
+     * a new section to the merchandising module, you would create a new AbstractModule subclass and call this method
+     * with the same key as the Merchandising module
+     * 
+     * @param moduleKey
+     */
+    public void setModuleKey(String moduleKey) {
+        this.moduleKey = moduleKey;
+    }
 
     public void addConstants(i18nConstants constants) {
         BLCMain.MESSAGE_MANAGER.addConstants(constants);
     }
 
-	public void setSection(
-		String sectionTitle, 
-		String sectionViewKey, 
-		String sectionViewClass,
-		String sectionPresenterKey, 
-		String sectionPresenterClass,
-		List<String> sectionPermissions
-	) {
+    public void setSection(
+        String sectionTitle, 
+        String sectionViewKey, 
+        String sectionViewClass,
+        String sectionPresenterKey, 
+        String sectionPresenterClass,
+        List<String> sectionPermissions
+    ) {
         //remove spaces from sectionTitle
         sectionTitle = sectionTitle.replaceAll("\\s", "");
-	    sections.add(new Section(sectionTitle,sectionViewKey,sectionViewClass,sectionPresenterKey,sectionPresenterClass,sectionPermissions));
-		pages.put(sectionTitle, new String[]{sectionViewKey, sectionPresenterKey});
-		ModuleFactory moduleFactory = ModuleFactory.getInstance();
-		moduleFactory.put(sectionViewKey, sectionViewClass);
-		moduleFactory.put(sectionPresenterKey, sectionPresenterClass);
-		SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionPermissions);
-	}
-	
-	public void setSecurity(
-		String sectionViewKey,
-		List<String> sectionPermissions
-	) {
-		SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionPermissions);
-	}
-	
-	public void removeSection(
-		String sectionTitle
-	) {
+        sections.add(new Section(sectionTitle,sectionViewKey,sectionViewClass,sectionPresenterKey,sectionPresenterClass,sectionPermissions));
+        pages.put(sectionTitle, new String[]{sectionViewKey, sectionPresenterKey});
+        ModuleFactory moduleFactory = ModuleFactory.getInstance();
+        moduleFactory.put(sectionViewKey, sectionViewClass);
+        moduleFactory.put(sectionPresenterKey, sectionPresenterClass);
+        SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionPermissions);
+    }
+    
+    public void setSecurity(
+        String sectionViewKey,
+        List<String> sectionPermissions
+    ) {
+        SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionPermissions);
+    }
+    
+    public void removeSection(
+        String sectionTitle
+    ) {
         sectionTitle = sectionTitle.replaceAll("\\s", "");
-		String[] items = pages.remove(sectionTitle);
-		ModuleFactory.getInstance().remove(items[0]);
-		ModuleFactory.getInstance().remove(items[1]);
-	}
-	
+        String[] items = pages.remove(sectionTitle);
+        ModuleFactory.getInstance().remove(items[0]);
+        ModuleFactory.getInstance().remove(items[1]);
+    }
+    
 
-	@Override
+    @Override
     public LinkedHashMap<String, String[]> getPages() {
-		return pages;
-	}
+        return pages;
+    }
 
-	@Override
+    @Override
     public void postDraw() {
-		//do nothing
-	}
+        //do nothing
+    }
 
-	@Override
+    @Override
     public void preDraw() {
-		//do nothing
-	}
+        //do nothing
+    }
 
     @Override
     public Integer getOrder() {

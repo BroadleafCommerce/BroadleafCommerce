@@ -41,10 +41,10 @@ import java.io.Serializable;
  * @author Brian Polster (bpolster)
  */
 public class BillingInfoForm implements Serializable {
-	
-	private static final long serialVersionUID = 7408792703984771616L;
-	
-	private Address address = new AddressImpl();
+    
+    private static final long serialVersionUID = 7408792703984771616L;
+    
+    private Address address = new AddressImpl();
     private String paymentMethod;
     private String creditCardName;
     private String creditCardNumber;
@@ -59,14 +59,14 @@ public class BillingInfoForm implements Serializable {
     }
 
     public String getPaymentMethod() {
-		return paymentMethod;
-	}
+        return paymentMethod;
+    }
 
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-	public Address getAddress() {
+    public Address getAddress() {
         return address;
     }
 

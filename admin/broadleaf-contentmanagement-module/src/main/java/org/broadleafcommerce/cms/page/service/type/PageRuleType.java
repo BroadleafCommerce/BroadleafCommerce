@@ -62,7 +62,7 @@ public class PageRuleType implements Serializable, BroadleafEnumerationType {
      * @param <code>friendlyType</code>
      */
     public PageRuleType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -92,10 +92,10 @@ public class PageRuleType implements Serializable, BroadleafEnumerationType {
      */
     @Override
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -106,22 +106,22 @@ public class PageRuleType implements Serializable, BroadleafEnumerationType {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-	    return true;
-	}
+        return true;
+    }
         if (obj == null) {
-	    return false;
-	}
+        return false;
+    }
         if (getClass() != obj.getClass()) {
-	    return false;
-	}
+        return false;
+    }
         PageRuleType other = (PageRuleType) obj;
         if (type == null) {
             if (other.type != null) {
-		return false;
-	    }
+        return false;
+        }
         } else if (!type.equals(other.type)) {
-	    return false;
-	}
+        return false;
+    }
         return true;
     }
 

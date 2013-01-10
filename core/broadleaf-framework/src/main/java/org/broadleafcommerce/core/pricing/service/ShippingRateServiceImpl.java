@@ -34,23 +34,23 @@ import java.math.BigDecimal;
 @Service("blShippingRateService")
 @Deprecated
 public class ShippingRateServiceImpl implements ShippingRateService {
-	
-	@Resource(name="blShippingRatesDao")
-	protected ShippingRateDao shippingRateDao;
+    
+    @Resource(name="blShippingRatesDao")
+    protected ShippingRateDao shippingRateDao;
 
-	@Override
+    @Override
     public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity) {
-		return shippingRateDao.readShippingRateByFeeTypesUnityQty(feeType, feeSubType, unitQuantity);
-	}
+        return shippingRateDao.readShippingRateByFeeTypesUnityQty(feeType, feeSubType, unitQuantity);
+    }
 
-	@Override
+    @Override
     public ShippingRate readShippingRateById(Long id) {
-		return shippingRateDao.readShippingRateById(id);
-	}
+        return shippingRateDao.readShippingRateById(id);
+    }
 
-	@Override
+    @Override
     public ShippingRate save(ShippingRate shippingRate) {
-		return shippingRateDao.save(shippingRate);
-	}
+        return shippingRateDao.save(shippingRate);
+    }
 
 }

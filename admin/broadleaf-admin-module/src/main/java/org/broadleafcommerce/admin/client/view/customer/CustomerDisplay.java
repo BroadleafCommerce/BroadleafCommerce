@@ -27,7 +27,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public interface CustomerDisplay extends DynamicEditDisplay {
-	
-	public ToolStripButton getUpdateLoginButton();
+    
+    public ToolStripButton getUpdateLoginButton();
 
 }

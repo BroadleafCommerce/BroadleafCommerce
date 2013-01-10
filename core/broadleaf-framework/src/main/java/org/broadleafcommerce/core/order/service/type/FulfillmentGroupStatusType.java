@@ -83,21 +83,21 @@ public class FulfillmentGroupStatusType implements Serializable, BroadleafEnumer
     }
 
     public FulfillmentGroupStatusType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
     @Override
-	public String getType() {
+    public String getType() {
         return type;
     }
 
     @Override
-	public String getFriendlyType() {
-		return friendlyType;
-	}
+    public String getFriendlyType() {
+        return friendlyType;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

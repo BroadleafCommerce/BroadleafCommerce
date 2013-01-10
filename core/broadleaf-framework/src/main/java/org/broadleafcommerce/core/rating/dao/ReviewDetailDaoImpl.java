@@ -48,23 +48,23 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
     
     @Override
     public ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId) {
-    	final Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_ITEM_ID");
-    	query.setParameter("customerId", customer.getId());
-    	query.setParameter("itemId", itemId);
-    	ReviewDetail reviewDetail = null;
-    	try {
-    		reviewDetail = (ReviewDetail) query.getSingleResult();
-    	} catch (NoResultException nre) {
-    		//ignore
-    	}
-    	return reviewDetail;
+        final Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_ITEM_ID");
+        query.setParameter("customerId", customer.getId());
+        query.setParameter("itemId", itemId);
+        ReviewDetail reviewDetail = null;
+        try {
+            reviewDetail = (ReviewDetail) query.getSingleResult();
+        } catch (NoResultException nre) {
+            //ignore
+        }
+        return reviewDetail;
     }
 
-	public ReviewDetail create() {
-		return (ReviewDetail) entityConfiguration.createEntityInstance(ReviewDetail.class.getName());
-	}
+    public ReviewDetail create() {
+        return (ReviewDetail) entityConfiguration.createEntityInstance(ReviewDetail.class.getName());
+    }
 
-	public ReviewFeedback createFeedback() {
-		return (ReviewFeedback) entityConfiguration.createEntityInstance(ReviewFeedback.class.getName());
-	}
+    public ReviewFeedback createFeedback() {
+        return (ReviewFeedback) entityConfiguration.createEntityInstance(ReviewFeedback.class.getName());
+    }
 }

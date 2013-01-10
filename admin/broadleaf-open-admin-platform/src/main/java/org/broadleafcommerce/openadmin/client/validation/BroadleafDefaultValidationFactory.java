@@ -33,31 +33,31 @@ import java.util.Map;
  */
 public class BroadleafDefaultValidationFactory implements ValidationFactory {
 
-	private static final long serialVersionUID = 1L;
-	
-	private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
-	
-	public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
-		return true;
-	}
+    private static final long serialVersionUID = 1L;
+    
+    private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
+    
+    public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
+        return true;
+    }
 
-	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
-		Object response = factory.newInstance(validatorClassname);
-		if (response == null) {
-			throw new RuntimeException("Unable to instantiate the item from the Factory using classname: (" + validatorClassname + "). Are you sure this classname is correct?");
-		}
-		Validator valid = (Validator) response;
-		if (configurationItems.containsKey("regularExpression")) {
-			((RegExpValidator) valid).setExpression(configurationItems.get("regularExpression"));
-		}
-		if (configurationItems.containsKey("errorMessageKey")) {
-			String message = BLCMain.getMessageManager().getString(configurationItems.get("errorMessageKey"));
-			if (message != null) {
-				valid.setErrorMessage(message);
-			}
-		} else if (configurationItems.containsKey("errorMessage")) {
-			valid.setErrorMessage(configurationItems.get("errorMessage"));
-		}
+    public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
+        Object response = factory.newInstance(validatorClassname);
+        if (response == null) {
+            throw new RuntimeException("Unable to instantiate the item from the Factory using classname: (" + validatorClassname + "). Are you sure this classname is correct?");
+        }
+        Validator valid = (Validator) response;
+        if (configurationItems.containsKey("regularExpression")) {
+            ((RegExpValidator) valid).setExpression(configurationItems.get("regularExpression"));
+        }
+        if (configurationItems.containsKey("errorMessageKey")) {
+            String message = BLCMain.getMessageManager().getString(configurationItems.get("errorMessageKey"));
+            if (message != null) {
+                valid.setErrorMessage(message);
+            }
+        } else if (configurationItems.containsKey("errorMessage")) {
+            valid.setErrorMessage(configurationItems.get("errorMessage"));
+        }
 
         if (valid instanceof IntegerRangeValidator) {
             IntegerRangeValidator integerRangeValidator = (IntegerRangeValidator) valid;
@@ -69,7 +69,7 @@ public class BroadleafDefaultValidationFactory implements ValidationFactory {
             }
         }
 
-		return valid;
-	}
+        return valid;
+    }
 
 }

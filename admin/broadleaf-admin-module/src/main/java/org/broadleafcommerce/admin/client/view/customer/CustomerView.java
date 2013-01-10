@@ -37,25 +37,25 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
  *
  */
 public class CustomerView extends HLayout implements Instantiable, CustomerDisplay {
-	
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
-	protected ToolStripButton updateLoginButton;
+    
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected ToolStripButton updateLoginButton;
 
-	public CustomerView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	@Override
+    public CustomerView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("customerLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("customerLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("customerListTitle"), entityDataSource, false);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("customerListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
        
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("customerDetailsTitle"), entityDataSource);
@@ -74,26 +74,26 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
         leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(dynamicFormDisplay);
-	}
+    }
 
-	@Override
+    @Override
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	@Override
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	@Override
+        return dynamicFormDisplay;
+    }
+    
+    @Override
     public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+        return listDisplay;
+    }
 
-	@Override
+    @Override
     public ToolStripButton getUpdateLoginButton() {
-		return updateLoginButton;
-	}
+        return updateLoginButton;
+    }
 
 }

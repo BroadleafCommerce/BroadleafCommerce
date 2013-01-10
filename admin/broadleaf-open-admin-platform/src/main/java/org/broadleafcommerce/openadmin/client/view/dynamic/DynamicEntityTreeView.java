@@ -38,23 +38,23 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
  *
  */
 public class DynamicEntityTreeView extends VLayout implements DynamicEntityListDisplay {
-	
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
+    
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
     protected ToolStripButton showArchivedButton;
-	protected ComboBoxItem entityType = new ComboBoxItem();
-	protected TreeGrid grid;
-	protected ToolStrip toolBar;
+    protected ComboBoxItem entityType = new ComboBoxItem();
+    protected TreeGrid grid;
+    protected ToolStrip toolBar;
 
     public DynamicEntityTreeView(String title, DataSource dataSource) {
         this(title, dataSource, false);
     }
-	
-	public DynamicEntityTreeView(String title, DataSource dataSource, boolean showRoot) {
-		toolBar = new ToolStrip();
-		toolBar.setHeight(30);
-		toolBar.setWidth100();
-		toolBar.addSpacer(6);
+    
+    public DynamicEntityTreeView(String title, DataSource dataSource, boolean showRoot) {
+        toolBar = new ToolStrip();
+        toolBar.setHeight(30);
+        toolBar.setWidth100();
+        toolBar.addSpacer(6);
 
         addButton = new ToolStripButton();  
         addButton.setDisabled(true);
@@ -111,32 +111,32 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
             }
         });
         addMember(grid);
-	}
+    }
 
-	@Override
+    @Override
     public ToolStripButton getAddButton() {
-		return addButton;
-	}
+        return addButton;
+    }
 
-	@Override
+    @Override
     public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+        return removeButton;
+    }
 
-	@Override
+    @Override
     public ComboBoxItem getEntityType() {
-		return entityType;
-	}
+        return entityType;
+    }
 
-	@Override
+    @Override
     public ListGrid getGrid() {
-		return grid;
-	}
+        return grid;
+    }
 
-	@Override
+    @Override
     public ToolStrip getToolBar() {
-		return toolBar;
-	}
+        return toolBar;
+    }
 
     @Override
     public ToolStripButton getShowArchivedButton() {

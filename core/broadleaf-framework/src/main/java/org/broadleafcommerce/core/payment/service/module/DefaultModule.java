@@ -31,11 +31,11 @@ public class DefaultModule extends AbstractModule {
 
     @Override
     public PaymentResponseItem processReverseAuthorize(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
-    	throw new PaymentException("reverse authorize not implemented.");
-	}
+        throw new PaymentException("reverse authorize not implemented.");
+    }
 
     @Override
-	public PaymentResponseItem processAuthorizeAndDebit(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
+    public PaymentResponseItem processAuthorizeAndDebit(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("authorizeAndDebit not implemented.");
     }
 

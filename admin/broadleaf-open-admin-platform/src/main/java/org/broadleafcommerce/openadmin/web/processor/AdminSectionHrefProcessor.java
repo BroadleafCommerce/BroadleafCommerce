@@ -53,8 +53,8 @@ public class AdminSectionHrefProcessor extends AbstractAttributeModifierAttrProc
     @Override
     protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
         String href = "#";
-		
-		AdminSection section = (AdminSection) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        
+        AdminSection section = (AdminSection) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
         if (section != null) {
             HttpServletRequest request = ((SpringWebContext) arguments.getContext()).getHttpServletRequest();
 
@@ -76,10 +76,10 @@ public class AdminSectionHrefProcessor extends AbstractAttributeModifierAttrProc
                 href += "#moduleKey=" + section.getModule().getModuleKey() + "&pageKey=" + section.getSectionKey();
             }
         }
-		
-		Map<String, String> attrs = new HashMap<String, String>();
-		attrs.put("href", href);
-		return attrs;
+        
+        Map<String, String> attrs = new HashMap<String, String>();
+        attrs.put("href", href);
+        return attrs;
     }
 
     @Override

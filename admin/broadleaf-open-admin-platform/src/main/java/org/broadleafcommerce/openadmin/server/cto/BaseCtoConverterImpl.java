@@ -37,12 +37,12 @@ import java.util.Date;
 @Component("blBaseCtoConverter")
 @Scope("prototype")
 public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter implements BaseCtoConverter {
-	
-	public static final FilterValueConverter<Long> NULL_AWARE_LONG = new FilterValueConverter<Long>() {
+    
+    public static final FilterValueConverter<Long> NULL_AWARE_LONG = new FilterValueConverter<Long>() {
         public Long convert(String stringValue) {
-        	if (stringValue == null || stringValue.equals("null")) {
-        		return null;
-        	}
+            if (stringValue == null || stringValue.equals("null")) {
+                return null;
+            }
             try {
                 return Long.valueOf(stringValue);
             } catch (NumberFormatException e) {
@@ -53,9 +53,9 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
     
     public static final FilterValueConverter<Integer> NULL_AWARE_INTEGER = new FilterValueConverter<Integer>() {
         public Integer convert(String stringValue) {
-        	if (stringValue == null || stringValue.equals("null")) {
-        		return null;
-        	}
+            if (stringValue == null || stringValue.equals("null")) {
+                return null;
+            }
             try {
                 return Integer.valueOf(stringValue);
             } catch (NumberFormatException e) {
@@ -66,9 +66,9 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
     
     public static final FilterValueConverter<BigDecimal> DECIMAL = new FilterValueConverter<BigDecimal>() {
         public BigDecimal convert(String stringValue) {
-        	if (stringValue == null) {
-        		return null;
-        	}
+            if (stringValue == null) {
+                return null;
+            }
             try {
                 return new BigDecimal(stringValue);
             } catch (NumberFormatException e) {

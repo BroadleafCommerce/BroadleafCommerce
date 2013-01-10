@@ -30,18 +30,18 @@ import com.smartgwt.client.data.Record;
  */
 public class CategoryTreeAdornedTargetListModule extends AdornedTargetListClientModule {
 
-	/**
-	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param persistencePerspective
-	 * @param service
-	 */
-	public CategoryTreeAdornedTargetListModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
-	}
+    /**
+     * @param ceilingEntityFullyQualifiedClassname
+     * @param persistencePerspective
+     * @param service
+     */
+    public CategoryTreeAdornedTargetListModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+        super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
+    }
 
-	@Override
-	public Record buildRecord(Entity entity, Boolean updateId) {
-		return super.buildRecord(entity, true);
-	}
+    @Override
+    public Record buildRecord(Entity entity, Boolean updateId) {
+        return super.buildRecord(entity, true);
+    }
 
 }

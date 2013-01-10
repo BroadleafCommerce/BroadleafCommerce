@@ -51,22 +51,22 @@ public class StructuredContentRuleBasedPresenterInitializer extends RuleBasedPre
         ATTRIBUTEMAP.put(RuleType.LOCALE, "localeRule");
     }
     
-	public StructuredContentRuleBasedPresenterInitializer(StructuredContentPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
-		this.presenter = presenter;
-		this.offerItemCriteriaDataSource = offerItemCriteriaDataSource;
-		this.orderItemDataSource = orderItemDataSource;
-	}
-	public void initSection(Record selectedRecord, boolean disabled) {
-	    initFilterBuilder(getDisplay().getCustomerFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(RuleType.CUSTOMER)));
-	    initFilterBuilder(getDisplay().getProductFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(RuleType.PRODUCT)));
-	    initFilterBuilder(getDisplay().getRequestFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(RuleType.REQUEST)));
-	    initFilterBuilder(getDisplay().getTimeFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(RuleType.TIME)));
-		initItemQualifiers(selectedRecord, disabled);
-	}
+    public StructuredContentRuleBasedPresenterInitializer(StructuredContentPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
+        this.presenter = presenter;
+        this.offerItemCriteriaDataSource = offerItemCriteriaDataSource;
+        this.orderItemDataSource = orderItemDataSource;
+    }
+    public void initSection(Record selectedRecord, boolean disabled) {
+        initFilterBuilder(getDisplay().getCustomerFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(RuleType.CUSTOMER)));
+        initFilterBuilder(getDisplay().getProductFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(RuleType.PRODUCT)));
+        initFilterBuilder(getDisplay().getRequestFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(RuleType.REQUEST)));
+        initFilterBuilder(getDisplay().getTimeFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(RuleType.TIME)));
+        initItemQualifiers(selectedRecord, disabled);
+    }
 
-	protected void bindItemBuilderEvents(org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay display) {
-		presenter.bindItemBuilderEvents(display);
-	}
+    protected void bindItemBuilderEvents(org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay display) {
+        presenter.bindItemBuilderEvents(display);
+    }
     public void initItemQualifiers(final Record selectedRecord, final boolean disabled) {
         Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
         offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {

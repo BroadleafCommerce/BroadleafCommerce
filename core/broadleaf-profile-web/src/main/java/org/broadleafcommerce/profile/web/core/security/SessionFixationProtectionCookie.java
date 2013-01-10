@@ -32,63 +32,63 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 public class SessionFixationProtectionCookie {
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	public static final String COOKIE_NAME = "ActiveID";
-	
-	public static String readActiveID() {
-	    HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-		String cookieData = null;
-		
-		try {
-			Cookie[] cookies = request.getCookies();
-			if (cookies != null) {
-				for (Cookie cookie : cookies) {
-					if (cookie.getName().equals(COOKIE_NAME)) {
-						cookieData = cookie.getValue();
-						break;
-					}
-				}
-			}
-		} catch(Exception e) {
-			// Do nothing -- we'll be returning null
-		}
-		
-		return cookieData;
-	}
+    public static final String COOKIE_NAME = "ActiveID";
+    
+    public static String readActiveID() {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        String cookieData = null;
+        
+        try {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals(COOKIE_NAME)) {
+                        cookieData = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+        } catch(Exception e) {
+            // Do nothing -- we'll be returning null
+        }
+        
+        return cookieData;
+    }
 
-	public static void writeActiveID(HttpServletResponse response, String data) {
-		if (data != null) {
-			Cookie cookie = new Cookie(COOKIE_NAME, data);
-			cookie.setMaxAge(-1);
-			cookie.setSecure(true);
-			cookie.setPath("/");
-			response.addCookie(cookie);
-		}
-	}
+    public static void writeActiveID(HttpServletResponse response, String data) {
+        if (data != null) {
+            Cookie cookie = new Cookie(COOKIE_NAME, data);
+            cookie.setMaxAge(-1);
+            cookie.setSecure(true);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
+    }
 
-	public static void remove(HttpServletResponse response) {
-	    HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-		if (request != null && request.getCookies() != null) {
-			for (Cookie cookie : request.getCookies()) {
-				if (cookie.getName().equals(COOKIE_NAME)) {
-					cookie.setMaxAge(0);
-					cookie.setPath("/");
-					cookie.setSecure(true);
-					cookie.setValue("-1");
-					response.addCookie(cookie);
-				}
-			}
-		}
-	}
-	
-	public static void forceRemove(HttpServletResponse response) {
-		Cookie cookie = new Cookie(COOKIE_NAME, "");
-		cookie.setMaxAge(0);
-		cookie.setPath("/");
-		cookie.setSecure(true);
-		cookie.setValue("-1");
-		response.addCookie(cookie);
-	}
+    public static void remove(HttpServletResponse response) {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        if (request != null && request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals(COOKIE_NAME)) {
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    cookie.setSecure(true);
+                    cookie.setValue("-1");
+                    response.addCookie(cookie);
+                }
+            }
+        }
+    }
+    
+    public static void forceRemove(HttpServletResponse response) {
+        Cookie cookie = new Cookie(COOKIE_NAME, "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        cookie.setSecure(true);
+        cookie.setValue("-1");
+        response.addCookie(cookie);
+    }
 
 }

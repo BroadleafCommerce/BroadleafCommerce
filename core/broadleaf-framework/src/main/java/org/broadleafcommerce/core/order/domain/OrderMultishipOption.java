@@ -29,79 +29,79 @@ import org.broadleafcommerce.profile.core.domain.Address;
  */
 public interface OrderMultishipOption {
 
-	/**
-	 * Returns the internal id of this OrderMultishipOption
-	 * 
-	 * @return the internal id
-	 */
-	public Long getId();
+    /**
+     * Returns the internal id of this OrderMultishipOption
+     * 
+     * @return the internal id
+     */
+    public Long getId();
 
-	/**
-	 * Sets the internal id of this OrderMultishipOption
-	 * 
-	 * @param id the internal id
-	 */
-	public void setId(Long id);
+    /**
+     * Sets the internal id of this OrderMultishipOption
+     * 
+     * @param id the internal id
+     */
+    public void setId(Long id);
 
-	/**
-	 * Returns the Order associated with this OrderMultishipOption
-	 * 
-	 * @return the associated Order
-	 */
-	public Order getOrder();
+    /**
+     * Returns the Order associated with this OrderMultishipOption
+     * 
+     * @return the associated Order
+     */
+    public Order getOrder();
 
-	/**
-	 * Sets the associated Order with this OrderMultishipOption
-	 * 
-	 * @param order the associated order
-	 */
-	public void setOrder(Order order);
+    /**
+     * Sets the associated Order with this OrderMultishipOption
+     * 
+     * @param order the associated order
+     */
+    public void setOrder(Order order);
 
-	/**
-	 * Gets the OrderItem associated with this OrderMultishipOption.
-	 * Note that the default Broadleaf implementation will produce
-	 * an equal number of instances of OrderMultishipOption to the
-	 * quantity of the OrderItem
-	 * 
-	 * @return the associated OrderItem
-	 */
-	public OrderItem getOrderItem();
+    /**
+     * Gets the OrderItem associated with this OrderMultishipOption.
+     * Note that the default Broadleaf implementation will produce
+     * an equal number of instances of OrderMultishipOption to the
+     * quantity of the OrderItem
+     * 
+     * @return the associated OrderItem
+     */
+    public OrderItem getOrderItem();
 
-	/**
-	 * Sets the associated OrderItem with this OrderMultishipOption
-	 * 
-	 * @see OrderMultishipOption#getOrderItem()
-	 * 
-	 * @param orderItem the associated OrderItem
-	 */
-	public void setOrderItem(OrderItem orderItem);
+    /**
+     * Sets the associated OrderItem with this OrderMultishipOption
+     * 
+     * @see OrderMultishipOption#getOrderItem()
+     * 
+     * @param orderItem the associated OrderItem
+     */
+    public void setOrderItem(OrderItem orderItem);
 
-	/**
-	 * Gets the associated Address with this OrderMultishipOption
-	 * 
-	 * @return the associated Address
-	 */
-	public Address getAddress();
+    /**
+     * Gets the associated Address with this OrderMultishipOption
+     * 
+     * @return the associated Address
+     */
+    public Address getAddress();
 
-	/**
-	 * Sets the associated Address with this OrderMultishipOption
-	 * 
-	 * @param address the associated Address
-	 */
-	public void setAddress(Address address);
+    /**
+     * Sets the associated Address with this OrderMultishipOption
+     * 
+     * @param address the associated Address
+     */
+    public void setAddress(Address address);
 
-	/**
-	 * Gets the associated FulfillmentOption with this OrderMultishipOption
-	 * 
-	 * @return the associated FulfillmentOption
-	 */
-	public FulfillmentOption getFulfillmentOption();
+    /**
+     * Gets the associated FulfillmentOption with this OrderMultishipOption
+     * 
+     * @return the associated FulfillmentOption
+     */
+    public FulfillmentOption getFulfillmentOption();
 
-	/**
-	 * Sets the associated FulfillmentOption with this OrderMultishipOption
-	 * 
-	 * @param fulfillmentOption the associated FulfillmentOption
-	 */
-	public void setFulfillmentOption(FulfillmentOption fulfillmentOption);
+    /**
+     * Sets the associated FulfillmentOption with this OrderMultishipOption
+     * 
+     * @param fulfillmentOption the associated FulfillmentOption
+     */
+    public void setFulfillmentOption(FulfillmentOption fulfillmentOption);
 
 }

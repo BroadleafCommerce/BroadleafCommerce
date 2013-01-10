@@ -3,8 +3,8 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
-	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
-		<mapping-file>config/bc/jpa/domain/Page.orm.xml</mapping-file>
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/Page.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/StructuredContent.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/StaticAsset.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Locale.orm.xml</mapping-file>
@@ -43,7 +43,7 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
-	</persistence-unit>
+    </persistence-unit>
 
     <persistence-unit name="blCMSStorage" transaction-type="RESOURCE_LOCAL">
         <mapping-file>config/bc/jpa/domain/StaticAssetStorage.orm.xml</mapping-file>
@@ -61,5 +61,5 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
-	</persistence-unit>
+    </persistence-unit>
 </persistence>

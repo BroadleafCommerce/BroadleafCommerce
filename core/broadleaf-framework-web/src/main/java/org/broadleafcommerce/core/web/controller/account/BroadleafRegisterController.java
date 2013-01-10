@@ -48,11 +48,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 public class BroadleafRegisterController extends BroadleafAbstractController {
-		
-	private boolean useEmailForLogin = true;
-	protected static String registerSuccessView = "ajaxredirect:/";
-	protected static String registerView = "authentication/register";
-	
+        
+    private boolean useEmailForLogin = true;
+    protected static String registerSuccessView = "ajaxredirect:/";
+    protected static String registerView = "authentication/register";
+    
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
@@ -64,88 +64,88 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     
     @Resource(name="blLoginService")
     protected LoginService loginService;    
-	
-	public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, 
-			HttpServletResponse response, Model model) {
-		String redirectUrl = request.getParameter("successUrl");
-		if (StringUtils.isNotBlank(redirectUrl)) {
-			registerCustomerForm.setRedirectUrl(redirectUrl);
-		}
-		return getRegisterView();
-	}
-	
-	public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, 
-			HttpServletRequest request, HttpServletResponse response, Model model) 
-			throws ServiceException {
-		
-		if (useEmailForLogin) {
-			Customer customer = registerCustomerForm.getCustomer();
-			customer.setUsername(customer.getEmailAddress());
-		}
-		
-	    registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
-	    if (!errors.hasErrors()) {
-	        Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), 
-	        		registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
-	        assert(newCustomer != null);
-	        
-	        // The next line needs to use the customer from the input form and not the customer returned after registration
-        	// so that we still have the unencoded password for use by the authentication mechanism.
-	        Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
-	        mergeCartProcessor.execute(request, response, auth);	        
-	        
-	        String redirectUrl = registerCustomerForm.getRedirectUrl();
-	        if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {
-	            redirectUrl = null;
-	        }
-	        return StringUtils.isBlank(redirectUrl) ? getRegisterSuccessView() : "redirect:" + redirectUrl;
-	    } else {
-	    	return getRegisterView();
-	    }
-	}
-	
+    
+    public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, 
+            HttpServletResponse response, Model model) {
+        String redirectUrl = request.getParameter("successUrl");
+        if (StringUtils.isNotBlank(redirectUrl)) {
+            registerCustomerForm.setRedirectUrl(redirectUrl);
+        }
+        return getRegisterView();
+    }
+    
+    public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, 
+            HttpServletRequest request, HttpServletResponse response, Model model) 
+            throws ServiceException {
+        
+        if (useEmailForLogin) {
+            Customer customer = registerCustomerForm.getCustomer();
+            customer.setUsername(customer.getEmailAddress());
+        }
+        
+        registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
+        if (!errors.hasErrors()) {
+            Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), 
+                    registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
+            assert(newCustomer != null);
+            
+            // The next line needs to use the customer from the input form and not the customer returned after registration
+            // so that we still have the unencoded password for use by the authentication mechanism.
+            Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
+            mergeCartProcessor.execute(request, response, auth);            
+            
+            String redirectUrl = registerCustomerForm.getRedirectUrl();
+            if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {
+                redirectUrl = null;
+            }
+            return StringUtils.isBlank(redirectUrl) ? getRegisterSuccessView() : "redirect:" + redirectUrl;
+        } else {
+            return getRegisterView();
+        }
+    }
+    
     public RegisterCustomerForm initCustomerRegistrationForm() {
-    	Customer customer = CustomerState.getCustomer();
-    	if (customer == null || ! customer.isAnonymous()) {
-    		customer = customerService.createCustomerFromId(null);
-    	}
-    	
+        Customer customer = CustomerState.getCustomer();
+        if (customer == null || ! customer.isAnonymous()) {
+            customer = customerService.createCustomerFromId(null);
+        }
+        
         RegisterCustomerForm customerRegistrationForm = new RegisterCustomerForm();
         customerRegistrationForm.setCustomer(customer);
         return customerRegistrationForm;
     }
 
-	public boolean isUseEmailForLogin() {
-		return useEmailForLogin;
-	}
+    public boolean isUseEmailForLogin() {
+        return useEmailForLogin;
+    }
 
-	public void setUseEmailForLogin(boolean useEmailForLogin) {
-		this.useEmailForLogin = useEmailForLogin;
-	}
+    public void setUseEmailForLogin(boolean useEmailForLogin) {
+        this.useEmailForLogin = useEmailForLogin;
+    }
 
-	/**
-	 * Returns the view that will be returned from this controller when the 
-	 * registration is successful.   The success view should be a redirect (e.g. start with "redirect:" since 
-	 * this will cause the entire SpringSecurity pipeline to be fulfilled.
-	 * 
-	 * By default, returns "redirect:/"
-	 * 
-	 * @return the register success view
-	 */
-	public String getRegisterSuccessView() {
-		return registerSuccessView;
-	}
+    /**
+     * Returns the view that will be returned from this controller when the 
+     * registration is successful.   The success view should be a redirect (e.g. start with "redirect:" since 
+     * this will cause the entire SpringSecurity pipeline to be fulfilled.
+     * 
+     * By default, returns "redirect:/"
+     * 
+     * @return the register success view
+     */
+    public String getRegisterSuccessView() {
+        return registerSuccessView;
+    }
 
-	/**
-	 * Returns the view that will be used to display the registration page.
-	 * 
-	 * By default, returns "/register"
-	 * 
-	 * @return the register view
-	 */
-	public String getRegisterView() {
-		return registerView;
-	}
+    /**
+     * Returns the view that will be used to display the registration page.
+     * 
+     * By default, returns "/register"
+     * 
+     * @return the register view
+     */
+    public String getRegisterView() {
+        return registerView;
+    }
 
 
 }

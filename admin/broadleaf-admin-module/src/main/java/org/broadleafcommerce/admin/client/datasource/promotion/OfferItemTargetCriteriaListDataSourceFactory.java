@@ -37,25 +37,25 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  *
  */
 public class OfferItemTargetCriteriaListDataSourceFactory implements DataSourceFactory {
-	
-	public static final String foreignKeyName = "targetOffer";
-	public static DynamicEntityDataSource dataSource = null;
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.OFFER, null));
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new OfferItemCriteriaListModule(CeilingEntities.OFFER_ITEM_CRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new DynamicEntityDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    
+    public static final String foreignKeyName = "targetOffer";
+    public static DynamicEntityDataSource dataSource = null;
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.OFFER, null));
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new OfferItemCriteriaListModule(CeilingEntities.OFFER_ITEM_CRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new DynamicEntityDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

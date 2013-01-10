@@ -29,29 +29,29 @@ import java.util.List;
 
 public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableCandidateFulfillmentGroupOffer {
 
-	private static final long serialVersionUID = 1L;
-	
-	protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
-	protected CandidateFulfillmentGroupOffer delegate;
-	protected PromotableFulfillmentGroup promotableFulfillmentGroup;
+    private static final long serialVersionUID = 1L;
+    
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+    protected CandidateFulfillmentGroupOffer delegate;
+    protected PromotableFulfillmentGroup promotableFulfillmentGroup;
     protected Money discountedAmount;
-	
-	public PromotableCandidateFulfillmentGroupOfferImpl(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup) {
-		this.delegate = candidateFulfillmentGroupOffer;
-		this.promotableFulfillmentGroup = promotableFulfillmentGroup;
-	}
-	
-	@Override
+    
+    public PromotableCandidateFulfillmentGroupOfferImpl(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup) {
+        this.delegate = candidateFulfillmentGroupOffer;
+        this.promotableFulfillmentGroup = promotableFulfillmentGroup;
+    }
+    
+    @Override
     public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
-		return candidateQualifiersMap;
-	}
+        return candidateQualifiersMap;
+    }
 
-	@Override
+    @Override
     public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
-		this.candidateQualifiersMap = candidateItemsMap;
-	}
-	
-	@Override
+        this.candidateQualifiersMap = candidateItemsMap;
+    }
+    
+    @Override
     public void computeDiscountedPriceAndAmount() {
         if (delegate.getOffer() != null && delegate.getFulfillmentGroup() != null){
 
@@ -77,24 +77,24 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
             }
         }
     }
-	
-	@Override
+    
+    @Override
     public void reset() {
-		delegate = null;
-	}
-	
-	@Override
+        delegate = null;
+    }
+    
+    @Override
     public CandidateFulfillmentGroupOffer getDelegate() {
-		return delegate;
-	}
-	
-	@Override
+        return delegate;
+    }
+    
+    @Override
     public Money getDiscountedPrice() {
-		if (delegate.getDiscountedPrice() == null) {
+        if (delegate.getDiscountedPrice() == null) {
             computeDiscountedPriceAndAmount();
         }
-		return delegate.getDiscountedPrice();
-	}
+        return delegate.getDiscountedPrice();
+    }
 
     @Override
     public Money getDiscountedAmount() {
@@ -104,17 +104,17 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
         return discountedAmount;
     }
 
-	@Override
+    @Override
     public Offer getOffer() {
-		return delegate.getOffer();
-	}
-	
-	@Override
+        return delegate.getOffer();
+    }
+    
+    @Override
     public PromotableFulfillmentGroup getFulfillmentGroup() {
-		return promotableFulfillmentGroup;
-	}
+        return promotableFulfillmentGroup;
+    }
 
     public int getPriority() {
-		return delegate.getPriority();
-	}
+        return delegate.getPriority();
+    }
 }

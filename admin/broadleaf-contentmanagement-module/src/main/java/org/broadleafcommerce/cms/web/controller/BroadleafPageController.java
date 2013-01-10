@@ -31,17 +31,17 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bpolster
  */
-public class BroadleafPageController extends BroadleafAbstractController implements Controller {	
+public class BroadleafPageController extends BroadleafAbstractController implements Controller {    
     protected static String MODEL_ATTRIBUTE_NAME="page";    
 
-	@Override
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView model = new ModelAndView();
-		PageDTO page = (PageDTO) request.getAttribute(PageHandlerMapping.PAGE_ATTRIBUTE_NAME);
-		assert page != null;
+    @Override
+    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ModelAndView model = new ModelAndView();
+        PageDTO page = (PageDTO) request.getAttribute(PageHandlerMapping.PAGE_ATTRIBUTE_NAME);
+        assert page != null;
 
-		model.addObject(MODEL_ATTRIBUTE_NAME, page);		
-		model.setViewName(page.getTemplatePath());
-		return model;
-	}
+        model.addObject(MODEL_ATTRIBUTE_NAME, page);        
+        model.setViewName(page.getTemplatePath());
+        return model;
+    }
 }

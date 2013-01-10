@@ -62,7 +62,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     private static int PASSWORD_TOKEN_LENGTH = 12;
 
-	@Resource(name = "blAdminRoleDao")
+    @Resource(name = "blAdminRoleDao")
     protected AdminRoleDao adminRoleDao;
 
     @Resource(name = "blAdminUserDao")
@@ -146,7 +146,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Override
     @Transactional("blTransactionManager")
     public AdminUser saveAdminUser(AdminUser user) {
-    	if (user.getUnencodedPassword() != null) {
+        if (user.getUnencodedPassword() != null) {
             user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), getSalt(user)));
         }
         return adminUserDao.saveAdminUser(user);
@@ -155,7 +155,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Override
     @Transactional("blTransactionManager")
     public AdminUser changePassword(PasswordChange passwordChange) {
-    	AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
+        AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
         user = saveAdminUser(user);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -393,26 +393,26 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         this.salt = salt;
     }
 
-	@Override
+    @Override
     @Transactional("blTransactionManager")
-	public GenericResponse changePassword(String username,
-			String oldPassword, String password, String confirmPassword) {
-		GenericResponse response = new GenericResponse();
-		AdminUser user = null;
-		if (username != null) {
-			user = adminUserDao.readAdminUserByUserName(username);
-		}
-		checkUser(user, response);
-		checkPassword(password, confirmPassword, response);
-		checkExistingPassword(oldPassword, user, response);
+    public GenericResponse changePassword(String username,
+            String oldPassword, String password, String confirmPassword) {
+        GenericResponse response = new GenericResponse();
+        AdminUser user = null;
+        if (username != null) {
+            user = adminUserDao.readAdminUserByUserName(username);
+        }
+        checkUser(user, response);
+        checkPassword(password, confirmPassword, response);
+        checkExistingPassword(oldPassword, user, response);
 
-		if (!response.getHasErrors()) {
-			user.setUnencodedPassword(password);
-			saveAdminUser(user);
+        if (!response.getHasErrors()) {
+            user.setUnencodedPassword(password);
+            saveAdminUser(user);
 
-		}
+        }
 
-		return response;
+        return response;
 
-	}
+    }
 }

@@ -30,12 +30,12 @@ import java.util.Date;
 public class OrderBaseTest extends CommonSetupBaseTest {
 
     protected Customer createNamedCustomer() {
-    	Customer customer = customerService.createCustomerFromId(null);
-    	customer.setUsername(String.valueOf(customer.getId()));
-    	return customer;
+        Customer customer = customerService.createCustomerFromId(null);
+        customer.setUsername(String.valueOf(customer.getId()));
+        return customer;
     }
     
-	public Order setUpNamedOrder() throws AddToCartException {
+    public Order setUpNamedOrder() throws AddToCartException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
 
         Order order = orderService.createNamedOrderForCustomer("Boxes Named Order", customer);
@@ -44,12 +44,12 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         Category newCategory = newProduct.getDefaultCategory();
         
         order = orderService.addItem(order.getId(), 
-        		new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 2), 
-        		true);
+                new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 2), 
+                true);
 
         return order;
     }
-	
+    
     public Order setUpCartWithActiveSku() throws AddToCartException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
 
@@ -59,8 +59,8 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         Category newCategory = newProduct.getDefaultCategory();
         
         order = orderService.addItem(order.getId(), 
-        		new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 1), 
-        		true);
+                new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 1), 
+                true);
 
         return order;
     }
@@ -74,8 +74,8 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         Category newCategory = newProduct.getDefaultCategory();
         
         order = orderService.addItem(order.getId(), 
-        		new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 1), 
-        		true);
+                new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 1), 
+                true);
         
         // Make the SKU inactive
         newProduct.getDefaultSku().setActiveEndDate(DateUtils.addDays(new Date(), -1));
@@ -83,5 +83,5 @@ public class OrderBaseTest extends CommonSetupBaseTest {
 
         return order;
     }
-	
+    
 }

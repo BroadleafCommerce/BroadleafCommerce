@@ -85,12 +85,12 @@ public class RegistrationValidator implements Validator {
         this.validPasswordRegex = validPasswordRegex;
     }
 
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return false;
-	}
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return false;
+    }
 
-	@Override
-	public void validate(Object target, Errors errors) {
-	}
+    @Override
+    public void validate(Object target, Errors errors) {
+    }
 }

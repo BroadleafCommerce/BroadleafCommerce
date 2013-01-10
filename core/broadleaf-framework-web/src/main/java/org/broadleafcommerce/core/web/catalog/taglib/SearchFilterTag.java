@@ -45,27 +45,27 @@ public class SearchFilterTag extends TagSupport {
     public int doStartTag() throws JspException {
         JspWriter out = this.pageContext.getOut();
 //        if (products == null || products.size() == 0) { return SKIP_BODY; }
-        if(products != null && products.size() > 0 ){        	
-	        if (queryString != null && !"".equals(queryString)) {
-	            try {
-	                out.println("<h3>Your Search</h3>");
-	                out.println("<input type=\"text\"  class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
-	                out.println("<input type=\"hidden\"  name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
-	            } catch (IOException e) {
-	            }
-	        }
-	        return EVAL_BODY_INCLUDE;
+        if(products != null && products.size() > 0 ){           
+            if (queryString != null && !"".equals(queryString)) {
+                try {
+                    out.println("<h3>Your Search</h3>");
+                    out.println("<input type=\"text\"  class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
+                    out.println("<input type=\"hidden\"  name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
+                } catch (IOException e) {
+                }
+            }
+            return EVAL_BODY_INCLUDE;
         }
         if(categories != null && categories.size() > 0){
-	        if (queryString != null && !"".equals(queryString)) {
-	            try {
-	                out.println("<h3>Your Search</h3>");
-	                out.println("<input type=\"text\"  class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
-	                out.println("<input type=\"hidden\"  name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
-	            } catch (IOException e) {
-	            }
-	        }
-	        return EVAL_BODY_INCLUDE;        	
+            if (queryString != null && !"".equals(queryString)) {
+                try {
+                    out.println("<h3>Your Search</h3>");
+                    out.println("<input type=\"text\"  class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
+                    out.println("<input type=\"hidden\"  name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
+                } catch (IOException e) {
+                }
+            }
+            return EVAL_BODY_INCLUDE;           
         }
         
         return SKIP_BODY;
@@ -80,14 +80,14 @@ public class SearchFilterTag extends TagSupport {
     }
 
     public List<Category> getCategories() {
-		return categories;
-	}
+        return categories;
+    }
 
-	public void setCategories(List<Category> categories) {
-		this.categories = categories;
-	}
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
 
-	public String getQueryString() {
+    public String getQueryString() {
         return queryString;
     }
 

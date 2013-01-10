@@ -26,8 +26,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDispl
  */
 public interface DynamicEditDisplay extends Display {
 
-	public DynamicFormDisplay getDynamicFormDisplay();
-	
-	public DynamicEntityListDisplay getListDisplay();
-	
+    public DynamicFormDisplay getDynamicFormDisplay();
+    
+    public DynamicEntityListDisplay getListDisplay();
+    
 }

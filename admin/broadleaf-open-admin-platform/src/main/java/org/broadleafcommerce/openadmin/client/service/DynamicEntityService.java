@@ -35,22 +35,22 @@ import org.springframework.security.access.annotation.Secured;
  */
 public interface DynamicEntityService extends RemoteService {
     
-	@Secured("PERMISSION_OTHER_DEFAULT")
-	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
 
     @Secured("PERMISSION_OTHER_DEFAULT")
     public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException, ApplicationSecurityException;
-	
-	@Secured("PERMISSION_OTHER_DEFAULT")
-	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException, ApplicationSecurityException;
     
-	@Secured("PERMISSION_OTHER_DEFAULT")
-	public Entity add(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException, ApplicationSecurityException;
     
-	@Secured("PERMISSION_OTHER_DEFAULT")
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public Entity add(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
+    
+    @Secured("PERMISSION_OTHER_DEFAULT")
     public Entity update(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
     
-	@Secured("PERMISSION_OTHER_DEFAULT")
+    @Secured("PERMISSION_OTHER_DEFAULT")
     public void remove(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
     
 }

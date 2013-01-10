@@ -45,12 +45,12 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
     private int bundleCount = 0;
     
     protected Customer createNamedCustomer() {
-    	Customer customer = customerService.createCustomerFromId(null);
-    	customer.setUsername(String.valueOf(customer.getId()));
-    	return customer;
+        Customer customer = customerService.createCustomerFromId(null);
+        customer.setUsername(String.valueOf(customer.getId()));
+        return customer;
     }
     
-	public Order setUpNamedOrder() throws PricingException {
+    public Order setUpNamedOrder() throws PricingException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
 
         Order order = cartService.createNamedOrderForCustomer("Boxes Named Order", customer);
@@ -60,7 +60,7 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
 
         cartService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2);
-    	
+        
         return order;
     }
     
@@ -77,8 +77,8 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
         cartService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2);
         cartService.addSkuToOrder(order.getId(), newInactiveProduct.getDefaultSku().getId(),
-        		newProduct.getId(), newCategory.getId(), 2);
-    	
+                newProduct.getId(), newCategory.getId(), 2);
+        
         cartService.addBundleItemToOrder(order, createBundleOrderItemRequest());
         cartService.addBundleItemToOrder(order, createBundleOrderItemRequestWithInactiveSku());
         
@@ -138,9 +138,9 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
         Order order = cartService.createNewCartForCustomer(customer);
 
         cartService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
-        		newProduct.getId(), newCategory.getId(), 2);
+                newProduct.getId(), newCategory.getId(), 2);
         cartService.addSkuToOrder(order.getId(), newInactiveProduct.getDefaultSku().getId(),
-        		newProduct.getId(), newCategory.getId(), 2);
+                newProduct.getId(), newCategory.getId(), 2);
         
         cartService.addBundleItemToOrder(order, createBundleOrderItemRequest());
         cartService.addBundleItemToOrder(order, createBundleOrderItemRequestWithInactiveSku());
@@ -149,19 +149,19 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
     }
 
     public Order initializeExistingCart(Customer customer) throws PricingException {
-    	Product newProduct = addTestProduct("Plastic Crate", "Crates");
-    	Product newOtherProduct = addTestProduct("Plastic Crate", "Crates");
-    	
-    	Category newCategory = newProduct.getDefaultCategory();
-    	
-    	Order order = cartService.createNewCartForCustomer(customer);
-    	
-    	cartService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
-    			newProduct.getId(), newCategory.getId(), 2);
-    	cartService.addSkuToOrder(order.getId(), newOtherProduct.getDefaultSku().getId(),
-    			newProduct.getId(), newCategory.getId(), 2);
-    	
-    	return order;
+        Product newProduct = addTestProduct("Plastic Crate", "Crates");
+        Product newOtherProduct = addTestProduct("Plastic Crate", "Crates");
+        
+        Category newCategory = newProduct.getDefaultCategory();
+        
+        Order order = cartService.createNewCartForCustomer(customer);
+        
+        cartService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
+                newProduct.getId(), newCategory.getId(), 2);
+        cartService.addSkuToOrder(order.getId(), newOtherProduct.getDefaultSku().getId(),
+                newProduct.getId(), newCategory.getId(), 2);
+        
+        return order;
     }
     
     public BundleOrderItemRequest createBundleOrderItemRequest() {
@@ -184,26 +184,26 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
     }
     
     public BundleOrderItemRequest createBundleOrderItemRequestWithInactiveSku() {
-    	Product drawerProduct = addTestProduct("Drawer System", "Systems");
-    	Product nailsProduct = addTestProduct("Drawer System", "Systems");
-    	Product tracksProduct = addTestProduct("Drawer System", "Systems", false);
-    	Category category = drawerProduct.getDefaultCategory();
-    	
-    	List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(drawerProduct, drawerProduct.getDefaultSku(), 20));
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(nailsProduct, nailsProduct.getDefaultSku(), 3));
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(tracksProduct, tracksProduct.getDefaultSku(), 6));
-    	
-    	BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
-    	itemRequest.setCategory(category);
-    	itemRequest.setName("test bundle " + bundleCount++);
-    	itemRequest.setQuantity(1);
-    	itemRequest.setDiscreteOrderItems(discreteOrderItems);
-    	return itemRequest;
+        Product drawerProduct = addTestProduct("Drawer System", "Systems");
+        Product nailsProduct = addTestProduct("Drawer System", "Systems");
+        Product tracksProduct = addTestProduct("Drawer System", "Systems", false);
+        Category category = drawerProduct.getDefaultCategory();
+        
+        List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
+        discreteOrderItems.add(createDiscreteOrderItemRequest(drawerProduct, drawerProduct.getDefaultSku(), 20));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(nailsProduct, nailsProduct.getDefaultSku(), 3));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(tracksProduct, tracksProduct.getDefaultSku(), 6));
+        
+        BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
+        itemRequest.setCategory(category);
+        itemRequest.setName("test bundle " + bundleCount++);
+        itemRequest.setQuantity(1);
+        itemRequest.setDiscreteOrderItems(discreteOrderItems);
+        return itemRequest;
     }
     
     public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Product product, Sku sku, int quantity) {
-    	DiscreteOrderItemRequest request = new DiscreteOrderItemRequest();
+        DiscreteOrderItemRequest request = new DiscreteOrderItemRequest();
         request.setSku(sku);
         request.setQuantity(quantity);
         request.setProduct(product);

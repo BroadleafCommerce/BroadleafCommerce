@@ -167,7 +167,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
 
     @Override
     public void setValue(Money value) {
-    	this.value = value.getAmount();
+        this.value = value.getAmount();
     }
 
     @Override

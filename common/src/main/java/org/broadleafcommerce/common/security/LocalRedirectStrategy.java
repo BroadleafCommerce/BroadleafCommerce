@@ -34,112 +34,112 @@ import org.springframework.security.web.RedirectStrategy;
  */
 public class LocalRedirectStrategy implements RedirectStrategy {
 
-	private boolean contextRelative = false;
-	private Logger logger = Logger.getLogger(this.getClass());
-	private boolean enforcePortMatch = false;
+    private boolean contextRelative = false;
+    private Logger logger = Logger.getLogger(this.getClass());
+    private boolean enforcePortMatch = false;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.security.web.RedirectStrategy#sendRedirect(javax.
-	 * servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
-	 * java.lang.String)
-	 */
-	public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
-		if (!url.startsWith("/")) {
-			if (StringUtils.equals(request.getParameter("successUrl"), url) || StringUtils.equals(request.getParameter("failureUrl"), url)) {
-				validateRedirectUrl(request.getContextPath(), url, request.getServerName(), request.getServerPort());
-			}
-		}
-		String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
-		redirectUrl = response.encodeRedirectURL(redirectUrl);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Redirecting to '" + url + "'");
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.security.web.RedirectStrategy#sendRedirect(javax.
+     * servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+     * java.lang.String)
+     */
+    public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+        if (!url.startsWith("/")) {
+            if (StringUtils.equals(request.getParameter("successUrl"), url) || StringUtils.equals(request.getParameter("failureUrl"), url)) {
+                validateRedirectUrl(request.getContextPath(), url, request.getServerName(), request.getServerPort());
+            }
+        }
+        String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
+        redirectUrl = response.encodeRedirectURL(redirectUrl);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Redirecting to '" + url + "'");
+        }
 
-		response.sendRedirect(redirectUrl);
-	}
+        response.sendRedirect(redirectUrl);
+    }
 
-	/**
-	 * Create the redirect url
-	 * 
-	 * @param contextPath
-	 * @param url
-	 * @return
-	 */
-	protected String calculateRedirectUrl(String contextPath, String url) {
-		if ((!(url.startsWith("http://"))) && (!(url.startsWith("https://")))) {
-			if (this.contextRelative) {
-				return url;
-			}
-			return contextPath + url;
-		}
+    /**
+     * Create the redirect url
+     * 
+     * @param contextPath
+     * @param url
+     * @return
+     */
+    protected String calculateRedirectUrl(String contextPath, String url) {
+        if ((!(url.startsWith("http://"))) && (!(url.startsWith("https://")))) {
+            if (this.contextRelative) {
+                return url;
+            }
+            return contextPath + url;
+        }
 
-		if (!(this.contextRelative)) {
-			return url;
-		}
+        if (!(this.contextRelative)) {
+            return url;
+        }
 
-		url = url.substring(url.indexOf("://") + 3);
-		url = url.substring(url.indexOf(contextPath) + contextPath.length());
+        url = url.substring(url.indexOf("://") + 3);
+        url = url.substring(url.indexOf(contextPath) + contextPath.length());
 
-		if ((url.length() > 1) && (url.charAt(0) == '/')) {
-			url = url.substring(1);
-		}
+        if ((url.length() > 1) && (url.charAt(0) == '/')) {
+            url = url.substring(1);
+        }
 
-		return url;
-	}
+        return url;
+    }
 
-	/**
-	 * Insure the url is valid (must begin with http or https) and local to the
-	 * application
-	 * 
-	 * @param contextPath
-	 *            the application context path
-	 * @param url
-	 *            the url to validate
-	 * @param requestServerName
-	 *            the server name of the request
-	 * @param requestServerPort
-	 *            the port of the request
-	 * @throws MalformedURLException
-	 *             if the url is invalid
-	 */
-	private void validateRedirectUrl(String contextPath, String url, String requestServerName, int requestServerPort) throws MalformedURLException {
-		URL urlObject = new URL(url);
-		if (urlObject.getProtocol().equals("http") || urlObject.getProtocol().equals("https")) {
-			if (StringUtils.equals(requestServerName, urlObject.getHost())) {
-				if (!enforcePortMatch || requestServerPort == urlObject.getPort()) {
-					if (StringUtils.isEmpty(contextPath) || urlObject.getPath().startsWith("/" + contextPath)) {
-						return;
-					}
-				}
-			}
-		}
-		String errorMessage = "Invalid redirect url specified.  Must be of the form /<relative view> or http[s]://<server name>[:<server port>][/<context path>]/...";
-		logger.warn(errorMessage + ":  " + url);
-		throw new MalformedURLException(errorMessage + ":  " + url);
-	}
+    /**
+     * Insure the url is valid (must begin with http or https) and local to the
+     * application
+     * 
+     * @param contextPath
+     *            the application context path
+     * @param url
+     *            the url to validate
+     * @param requestServerName
+     *            the server name of the request
+     * @param requestServerPort
+     *            the port of the request
+     * @throws MalformedURLException
+     *             if the url is invalid
+     */
+    private void validateRedirectUrl(String contextPath, String url, String requestServerName, int requestServerPort) throws MalformedURLException {
+        URL urlObject = new URL(url);
+        if (urlObject.getProtocol().equals("http") || urlObject.getProtocol().equals("https")) {
+            if (StringUtils.equals(requestServerName, urlObject.getHost())) {
+                if (!enforcePortMatch || requestServerPort == urlObject.getPort()) {
+                    if (StringUtils.isEmpty(contextPath) || urlObject.getPath().startsWith("/" + contextPath)) {
+                        return;
+                    }
+                }
+            }
+        }
+        String errorMessage = "Invalid redirect url specified.  Must be of the form /<relative view> or http[s]://<server name>[:<server port>][/<context path>]/...";
+        logger.warn(errorMessage + ":  " + url);
+        throw new MalformedURLException(errorMessage + ":  " + url);
+    }
 
-	/**
-	 * This forces the redirect url port to match the request port. This could
-	 * be problematic when switching between secure and non-secure (e.g.
-	 * http://localhost:8080 to https://localhost:8443)
-	 * 
-	 * @param enforcePortMatch
-	 */
-	public void setEnforcePortMatch(boolean enforcePortMatch) {
-		this.enforcePortMatch = enforcePortMatch;
-	}
+    /**
+     * This forces the redirect url port to match the request port. This could
+     * be problematic when switching between secure and non-secure (e.g.
+     * http://localhost:8080 to https://localhost:8443)
+     * 
+     * @param enforcePortMatch
+     */
+    public void setEnforcePortMatch(boolean enforcePortMatch) {
+        this.enforcePortMatch = enforcePortMatch;
+    }
 
-	/**
-	 * Set whether or not the context should be included in the redirect path. If true, the context
-	 * is excluded from the generated path, otherwise it is included.
-	 * 
-	 * @param contextRelative
-	 */
-	public void setContextRelative(boolean contextRelative) {
-		this.contextRelative = contextRelative;
-	}
+    /**
+     * Set whether or not the context should be included in the redirect path. If true, the context
+     * is excluded from the generated path, otherwise it is included.
+     * 
+     * @param contextRelative
+     */
+    public void setContextRelative(boolean contextRelative) {
+        this.contextRelative = contextRelative;
+    }
 
 }

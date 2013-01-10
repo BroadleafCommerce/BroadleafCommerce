@@ -66,39 +66,39 @@ public class CategoryXrefImpl implements CategoryXref {
     }
 
     /**
-	 * @return
-	 * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#getCategory()
-	 */
-	public Category getCategory() {
-		return categoryXrefPK.getCategory();
-	}
+     * @return
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#getCategory()
+     */
+    public Category getCategory() {
+        return categoryXrefPK.getCategory();
+    }
 
-	/**
-	 * @param category
-	 * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#setCategory(org.broadleafcommerce.core.catalog.domain.Category)
-	 */
-	public void setCategory(Category category) {
-		categoryXrefPK.setCategory(category);
-	}
+    /**
+     * @param category
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#setCategory(org.broadleafcommerce.core.catalog.domain.Category)
+     */
+    public void setCategory(Category category) {
+        categoryXrefPK.setCategory(category);
+    }
 
-	/**
-	 * @return
-	 * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#getSubCategory()
-	 */
-	public Category getSubCategory() {
-		return categoryXrefPK.getSubCategory();
-	}
+    /**
+     * @return
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#getSubCategory()
+     */
+    public Category getSubCategory() {
+        return categoryXrefPK.getSubCategory();
+    }
 
-	/**
-	 * @param subCategory
-	 * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#setSubCategory(org.broadleafcommerce.core.catalog.domain.Category)
-	 */
-	public void setSubCategory(Category subCategory) {
-		categoryXrefPK.setSubCategory(subCategory);
-	}
+    /**
+     * @param subCategory
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#setSubCategory(org.broadleafcommerce.core.catalog.domain.Category)
+     */
+    public void setSubCategory(Category subCategory) {
+        categoryXrefPK.setSubCategory(subCategory);
+    }
 
-	public static class CategoryXrefPK implements Serializable {
-    	
+    public static class CategoryXrefPK implements Serializable {
+        
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
@@ -111,22 +111,22 @@ public class CategoryXrefImpl implements CategoryXref {
         protected Category subCategory = new CategoryImpl();
 
         public Category getCategory() {
-			return category;
-		}
+            return category;
+        }
 
-		public void setCategory(final Category category) {
-			this.category = category;
-		}
+        public void setCategory(final Category category) {
+            this.category = category;
+        }
 
-		public Category getSubCategory() {
-			return subCategory;
-		}
+        public Category getSubCategory() {
+            return subCategory;
+        }
 
-		public void setSubCategory(final Category subCategory) {
-			this.subCategory = subCategory;
-		}
+        public void setSubCategory(final Category subCategory) {
+            this.subCategory = subCategory;
+        }
 
-		@Override
+        @Override
         public boolean equals(final Object obj) {
             if (obj == null) return false;
             else if (!(obj instanceof CategoryXrefPK)) return false;
@@ -134,11 +134,11 @@ public class CategoryXrefImpl implements CategoryXref {
             return category.getId().equals(((CategoryXrefPK) obj).getCategory().getId())
             && subCategory.getId().equals(((CategoryXrefPK) obj).getSubCategory().getId());
         }
-		
+        
 
         @Override
         public int hashCode() {
-        	return category.hashCode() + subCategory.hashCode();
+            return category.hashCode() + subCategory.hashCode();
         }
 
 

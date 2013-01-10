@@ -49,11 +49,11 @@ import org.springframework.stereotype.Component;
 @Component("blSandBoxResolver")
 public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     private final Log LOG = LogFactory.getLog(BroadleafSandBoxResolverImpl.class);
-	
-	/**
-	 * Property used to disable sandbox mode.   Some implementations will want to
-	 * turn off sandboxes in production.
-	 */
+    
+    /**
+     * Property used to disable sandbox mode.   Some implementations will want to
+     * turn off sandboxes in production.
+     */
     protected Boolean sandBoxPreviewEnabled = true;
     
     // Request Parameters and Attributes for Sandbox Mode properties - mostly values to manage dates.
@@ -75,10 +75,10 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * Request attribute to store the current sandbox
      */
     public static String SANDBOX_VAR = "blSandbox";
-	
+    
     @Resource(name = "blSandBoxDao")
     private SandBoxDao sandBoxDao;
-	
+    
     /**
      * Determines the current sandbox based on other parameters on the request such as
      * the blSandBoxId parameters.    
@@ -100,9 +100,9 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             if ( (request.getParameter("blClearSandBox") == null) || (request.getParameter("blSandboxDateTimeRibbonProduction") == null)) {
                 sandboxId = lookupSandboxId(request);
             } else {
-            	if (LOG.isTraceEnabled()) {
-            		LOG.trace("Removing sandbox from session.");
-            	}
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Removing sandbox from session.");
+                }
                 request.getSession().removeAttribute(SANDBOX_DATE_TIME_VAR);
                 request.getSession().removeAttribute(SANDBOX_ID_VAR);
             }
@@ -120,11 +120,11 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         }
 
         if (LOG.isTraceEnabled()) {
-        	if (currentSandbox != null) {
-        		LOG.trace("Serving request using sandbox: " + currentSandbox);
-        	} else {
-        		LOG.trace("Serving request without a sandbox.");
-        	}
+            if (currentSandbox != null) {
+                LOG.trace("Serving request using sandbox: " + currentSandbox);
+            } else {
+                LOG.trace("Serving request without a sandbox.");
+            }
         }
 
         Date currentSystemDateTime = SystemTime.asDate(true);
@@ -254,12 +254,12 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * Sets whether or not the site can be viewed in preview mode.  
      * @return
      */
-	public Boolean getSandBoxPreviewEnabled() {
-		return sandBoxPreviewEnabled;
-	}
+    public Boolean getSandBoxPreviewEnabled() {
+        return sandBoxPreviewEnabled;
+    }
 
-	public void setSandBoxPreviewEnabled(Boolean sandBoxPreviewEnabled) {
-		this.sandBoxPreviewEnabled = sandBoxPreviewEnabled;
-	}
+    public void setSandBoxPreviewEnabled(Boolean sandBoxPreviewEnabled) {
+        this.sandBoxPreviewEnabled = sandBoxPreviewEnabled;
+    }
  
 }

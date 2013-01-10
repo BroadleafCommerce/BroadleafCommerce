@@ -32,7 +32,7 @@ import java.util.Comparator;
  */
 public class FieldDataSourceWrapper extends DataSource {
 
-	public FieldDataSourceWrapper(DataSource delegate) {
+    public FieldDataSourceWrapper(DataSource delegate) {
         setClientOnly(true);
         DataSourceField[] legacyFields = delegate.getFields();
         DataSourceField[] fields = new DataSourceField[legacyFields.length];
@@ -97,6 +97,6 @@ public class FieldDataSourceWrapper extends DataSource {
         });
         setFields(fields);
         setCacheData(records);
-	}
+    }
 
 }
