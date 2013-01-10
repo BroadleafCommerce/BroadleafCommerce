@@ -26,6 +26,6 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspective
  */
 public interface PersistencePerspectiveItem {
 
-	public void accept(PersistencePerspectiveItemVisitor visitor);
-	
+    public void accept(PersistencePerspectiveItemVisitor visitor);
+    
 }

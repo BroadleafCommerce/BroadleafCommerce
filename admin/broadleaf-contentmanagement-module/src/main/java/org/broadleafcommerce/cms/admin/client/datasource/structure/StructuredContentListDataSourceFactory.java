@@ -41,7 +41,7 @@ public class StructuredContentListDataSourceFactory implements DataSourceFactory
     public static final String structuredContentTypeForeignKey = "structuredContentType";
     public static final String localeForeignKey = "locale";
 
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
         operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
         PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(structuredContentTypeForeignKey, EntityImplementations.STRUCTUREDCONTENTTYPEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "name"), new ForeignKey(localeForeignKey, EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName")});
         DataSourceModule[] modules = new DataSourceModule[]{
@@ -49,6 +49,6 @@ public class StructuredContentListDataSourceFactory implements DataSourceFactory
         };
         StructuredContentListDataSource dataSource = new StructuredContentListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
         dataSource.buildFields(null, false, cb);
-	}
+    }
 
 }

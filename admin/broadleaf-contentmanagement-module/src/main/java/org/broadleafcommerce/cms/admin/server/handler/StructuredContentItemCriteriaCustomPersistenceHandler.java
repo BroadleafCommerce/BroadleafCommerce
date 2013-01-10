@@ -71,62 +71,62 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
         removeHtmlEncoding(entity);
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
-			adminInstance = (StructuredContentItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            if (adminInstance.getStructuredContent().getLockedFlag()) {
-                throw new IllegalArgumentException("Unable to update a locked record");
-            }
-            adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.merge(adminInstance);
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
-
-			return adminEntity;
-		} catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
-    }
-
-    @Override
-    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Entity entity = persistencePackage.getEntity();
-        removeHtmlEncoding(entity);
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-			adminInstance = (StructuredContentItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
+            adminInstance = (StructuredContentItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             if (adminInstance.getStructuredContent().getLockedFlag()) {
                 throw new IllegalArgumentException("Unable to update a locked record");
             }
             adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.merge(adminInstance);
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
+    }
+
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        removeHtmlEncoding(entity);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            adminInstance = (StructuredContentItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            if (adminInstance.getStructuredContent().getLockedFlag()) {
+                throw new IllegalArgumentException("Unable to update a locked record");
+            }
+            adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.merge(adminInstance);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+            return adminEntity;
+        } catch (Exception e) {
+            LOG.error("Unable to execute persistence activity", e);
+            throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		Entity entity = persistencePackage.getEntity();
+        Entity entity = persistencePackage.getEntity();
         try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (adminInstance.getStructuredContent().getLockedFlag()) {
                 throw new IllegalArgumentException("Unable to update a locked record");
             }
             dynamicEntityDao.remove(adminInstance);
-		} catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
+        }
     }
 }

@@ -22,6 +22,6 @@ package org.broadleafcommerce.openadmin.client.dto;
  *
  */
 public enum ForeignKeyRestrictionType {
-	ID_EQ,
-	COLLECTION_SIZE_EQ
+    ID_EQ,
+    COLLECTION_SIZE_EQ
 }

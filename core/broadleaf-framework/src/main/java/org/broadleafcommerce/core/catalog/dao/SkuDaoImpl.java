@@ -71,10 +71,10 @@ public class SkuDaoImpl implements SkuDao {
 
     @Override
     public void delete(Sku sku){
-    	if (!em.contains(sku)) {
-    		sku = readSkuById(sku.getId());
-    	}
-        em.remove(sku);    	
+        if (!em.contains(sku)) {
+            sku = readSkuById(sku.getId());
+        }
+        em.remove(sku);     
     }
 
     @Override

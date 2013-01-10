@@ -59,241 +59,241 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BroadleafPersistenceAnnotationBeanPostProcessor extends PersistenceAnnotationBeanPostProcessor {
 
-	private static final long serialVersionUID = 1L;
-	
-	private transient final Map<Class<?>, InjectionMetadata> injectionMetadataCache = new ConcurrentHashMap<Class<?>, InjectionMetadata>();
-	
-	@Override
-	public PropertyValues postProcessPropertyValues(
-			PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
+    private static final long serialVersionUID = 1L;
+    
+    private transient final Map<Class<?>, InjectionMetadata> injectionMetadataCache = new ConcurrentHashMap<Class<?>, InjectionMetadata>();
+    
+    @Override
+    public PropertyValues postProcessPropertyValues(
+            PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
 
-		InjectionMetadata metadata = findPersistenceMetadata(bean.getClass());
-		try {
-			metadata.inject(bean, beanName, pvs);
-		}
-		catch (Throwable ex) {
-			throw new BeanCreationException(beanName, "Injection of persistence dependencies failed", ex);
-		}
-		return pvs;
-	}
-	
-	private InjectionMetadata findPersistenceMetadata(final Class<?> clazz) {
-		// Quick check on the concurrent map first, with minimal locking.
-		InjectionMetadata metadata = this.injectionMetadataCache.get(clazz);
-		if (metadata == null) {
-			synchronized (this.injectionMetadataCache) {
-				metadata = this.injectionMetadataCache.get(clazz);
-				if (metadata == null) {
-					LinkedList<InjectionMetadata.InjectedElement> elements = new LinkedList<InjectionMetadata.InjectedElement>();
-					Class<?> targetClass = clazz;
+        InjectionMetadata metadata = findPersistenceMetadata(bean.getClass());
+        try {
+            metadata.inject(bean, beanName, pvs);
+        }
+        catch (Throwable ex) {
+            throw new BeanCreationException(beanName, "Injection of persistence dependencies failed", ex);
+        }
+        return pvs;
+    }
+    
+    private InjectionMetadata findPersistenceMetadata(final Class<?> clazz) {
+        // Quick check on the concurrent map first, with minimal locking.
+        InjectionMetadata metadata = this.injectionMetadataCache.get(clazz);
+        if (metadata == null) {
+            synchronized (this.injectionMetadataCache) {
+                metadata = this.injectionMetadataCache.get(clazz);
+                if (metadata == null) {
+                    LinkedList<InjectionMetadata.InjectedElement> elements = new LinkedList<InjectionMetadata.InjectedElement>();
+                    Class<?> targetClass = clazz;
 
-					do {
-						LinkedList<InjectionMetadata.InjectedElement> currElements = new LinkedList<InjectionMetadata.InjectedElement>();
-						for (Field field : targetClass.getDeclaredFields()) {
-							BroadleafPersistenceContext bpc = field.getAnnotation(BroadleafPersistenceContext.class);
-							PersistenceContext pc = field.getAnnotation(PersistenceContext.class);
-							PersistenceUnit pu = field.getAnnotation(PersistenceUnit.class);
-							if (pc != null || pu != null || bpc != null) {
-								if (Modifier.isStatic(field.getModifiers())) {
-									throw new IllegalStateException("Persistence annotations are not supported on static fields");
-								}
-								currElements.add(new PersistenceElement(field, null));
-							}
-						}
-						for (Method method : targetClass.getDeclaredMethods()) {
-							BroadleafPersistenceContext bpc = method.getAnnotation(BroadleafPersistenceContext.class);
-							PersistenceContext pc = method.getAnnotation(PersistenceContext.class);
-							PersistenceUnit pu = method.getAnnotation(PersistenceUnit.class);
-							if (pc != null || pu != null || bpc != null &&
-									method.equals(ClassUtils.getMostSpecificMethod(method, clazz))) {
-								if (Modifier.isStatic(method.getModifiers())) {
-									throw new IllegalStateException("Persistence annotations are not supported on static methods");
-								}
-								if (method.getParameterTypes().length != 1) {
-									throw new IllegalStateException("Persistence annotation requires a single-arg method: " + method);
-								}
-								PropertyDescriptor pd = BeanUtils.findPropertyForMethod(method);
-								currElements.add(new PersistenceElement(method, pd));
-							}
-						}
-						elements.addAll(0, currElements);
-						targetClass = targetClass.getSuperclass();
-					}
-					while (targetClass != null && targetClass != Object.class);
+                    do {
+                        LinkedList<InjectionMetadata.InjectedElement> currElements = new LinkedList<InjectionMetadata.InjectedElement>();
+                        for (Field field : targetClass.getDeclaredFields()) {
+                            BroadleafPersistenceContext bpc = field.getAnnotation(BroadleafPersistenceContext.class);
+                            PersistenceContext pc = field.getAnnotation(PersistenceContext.class);
+                            PersistenceUnit pu = field.getAnnotation(PersistenceUnit.class);
+                            if (pc != null || pu != null || bpc != null) {
+                                if (Modifier.isStatic(field.getModifiers())) {
+                                    throw new IllegalStateException("Persistence annotations are not supported on static fields");
+                                }
+                                currElements.add(new PersistenceElement(field, null));
+                            }
+                        }
+                        for (Method method : targetClass.getDeclaredMethods()) {
+                            BroadleafPersistenceContext bpc = method.getAnnotation(BroadleafPersistenceContext.class);
+                            PersistenceContext pc = method.getAnnotation(PersistenceContext.class);
+                            PersistenceUnit pu = method.getAnnotation(PersistenceUnit.class);
+                            if (pc != null || pu != null || bpc != null &&
+                                    method.equals(ClassUtils.getMostSpecificMethod(method, clazz))) {
+                                if (Modifier.isStatic(method.getModifiers())) {
+                                    throw new IllegalStateException("Persistence annotations are not supported on static methods");
+                                }
+                                if (method.getParameterTypes().length != 1) {
+                                    throw new IllegalStateException("Persistence annotation requires a single-arg method: " + method);
+                                }
+                                PropertyDescriptor pd = BeanUtils.findPropertyForMethod(method);
+                                currElements.add(new PersistenceElement(method, pd));
+                            }
+                        }
+                        elements.addAll(0, currElements);
+                        targetClass = targetClass.getSuperclass();
+                    }
+                    while (targetClass != null && targetClass != Object.class);
 
-					metadata = new InjectionMetadata(clazz, elements);
-					this.injectionMetadataCache.put(clazz, metadata);
-				}
-			}
-		}
-		return metadata;
-	}
-	
-	/**
-	 * Class representing injection information about an annotated field
-	 * or setter method.
-	 */
-	private class PersistenceElement extends InjectionMetadata.InjectedElement {
+                    metadata = new InjectionMetadata(clazz, elements);
+                    this.injectionMetadataCache.put(clazz, metadata);
+                }
+            }
+        }
+        return metadata;
+    }
+    
+    /**
+     * Class representing injection information about an annotated field
+     * or setter method.
+     */
+    private class PersistenceElement extends InjectionMetadata.InjectedElement {
 
-		private final String unitName;
-		private String sandBoxUnitName;
-		private PersistenceContextType type;
-		private final PersistenceContextFlavor flavor;
-		private Properties properties;
+        private final String unitName;
+        private String sandBoxUnitName;
+        private PersistenceContextType type;
+        private final PersistenceContextFlavor flavor;
+        private Properties properties;
 
-		@SuppressWarnings("rawtypes")
-		public PersistenceElement(Member member, PropertyDescriptor pd) {
-			super(member, pd);
-			AnnotatedElement ae = (AnnotatedElement) member;
-			PersistenceContext pc = ae.getAnnotation(PersistenceContext.class);
-			PersistenceUnit pu = ae.getAnnotation(PersistenceUnit.class);
-			BroadleafPersistenceContext bpc = ae.getAnnotation(BroadleafPersistenceContext.class);
-			Class resourceType = EntityManager.class;
-			if (pc != null) {
-				if (pu != null) {
-					throw new IllegalStateException("Member may only be annotated with either " +
-							"@PersistenceContext or @PersistenceUnit, not both: " + member);
-				}
-				Properties properties = null;
-				PersistenceProperty[] pps = pc.properties();
-				if (!ObjectUtils.isEmpty(pps)) {
-					properties = new Properties();
-					for (PersistenceProperty pp : pps) {
-						properties.setProperty(pp.name(), pp.value());
-					}
-				}
-				this.unitName = pc.unitName();
-				this.type = pc.type();
-				this.properties = properties;
-				this.flavor = PersistenceContextFlavor.JPA;
-			} else if (bpc != null) {
-				if (pu != null) {
-					throw new IllegalStateException("Member may only be annotated with either " +
-							"@PersistenceContext or @PersistenceUnit, not both: " + member);
-				}
-				Properties properties = null;
-				PersistenceProperty[] pps = bpc.properties();
-				if (!ObjectUtils.isEmpty(pps)) {
-					properties = new Properties();
-					for (PersistenceProperty pp : pps) {
-						properties.setProperty(pp.name(), pp.value());
-					}
-				}
-				this.unitName = bpc.unitName();
-				this.sandBoxUnitName = bpc.sandBoxUnitName();
-				this.type = PersistenceContextType.TRANSACTION;
-				this.properties = properties;
-				this.flavor = PersistenceContextFlavor.BROADLEAF;
-			} else {
-				resourceType = EntityManagerFactory.class;
-				this.unitName = pu.unitName();
-				this.flavor = PersistenceContextFlavor.JPA;
-			}
-			checkResourceType(resourceType);
-		}
+        @SuppressWarnings("rawtypes")
+        public PersistenceElement(Member member, PropertyDescriptor pd) {
+            super(member, pd);
+            AnnotatedElement ae = (AnnotatedElement) member;
+            PersistenceContext pc = ae.getAnnotation(PersistenceContext.class);
+            PersistenceUnit pu = ae.getAnnotation(PersistenceUnit.class);
+            BroadleafPersistenceContext bpc = ae.getAnnotation(BroadleafPersistenceContext.class);
+            Class resourceType = EntityManager.class;
+            if (pc != null) {
+                if (pu != null) {
+                    throw new IllegalStateException("Member may only be annotated with either " +
+                            "@PersistenceContext or @PersistenceUnit, not both: " + member);
+                }
+                Properties properties = null;
+                PersistenceProperty[] pps = pc.properties();
+                if (!ObjectUtils.isEmpty(pps)) {
+                    properties = new Properties();
+                    for (PersistenceProperty pp : pps) {
+                        properties.setProperty(pp.name(), pp.value());
+                    }
+                }
+                this.unitName = pc.unitName();
+                this.type = pc.type();
+                this.properties = properties;
+                this.flavor = PersistenceContextFlavor.JPA;
+            } else if (bpc != null) {
+                if (pu != null) {
+                    throw new IllegalStateException("Member may only be annotated with either " +
+                            "@PersistenceContext or @PersistenceUnit, not both: " + member);
+                }
+                Properties properties = null;
+                PersistenceProperty[] pps = bpc.properties();
+                if (!ObjectUtils.isEmpty(pps)) {
+                    properties = new Properties();
+                    for (PersistenceProperty pp : pps) {
+                        properties.setProperty(pp.name(), pp.value());
+                    }
+                }
+                this.unitName = bpc.unitName();
+                this.sandBoxUnitName = bpc.sandBoxUnitName();
+                this.type = PersistenceContextType.TRANSACTION;
+                this.properties = properties;
+                this.flavor = PersistenceContextFlavor.BROADLEAF;
+            } else {
+                resourceType = EntityManagerFactory.class;
+                this.unitName = pu.unitName();
+                this.flavor = PersistenceContextFlavor.JPA;
+            }
+            checkResourceType(resourceType);
+        }
 
-		/**
-		 * Resolve the object against the application context.
-		 */
-		@Override
-		protected Object getResourceToInject(Object target, String requestingBeanName) {
-			// Resolves to EntityManagerFactory or EntityManager.
-			if (this.type != null) {
-				if (this.flavor == PersistenceContextFlavor.JPA) {
-					return (this.type == PersistenceContextType.EXTENDED ?
-							resolveExtendedEntityManager(target, requestingBeanName) :
-							resolveEntityManager(requestingBeanName, this.unitName));
-				} else {
-					EntityManager standardManager = resolveEntityManager(requestingBeanName, this.unitName);
-					EntityManager sandboxManager = resolveEntityManager(requestingBeanName, this.sandBoxUnitName);
+        /**
+         * Resolve the object against the application context.
+         */
+        @Override
+        protected Object getResourceToInject(Object target, String requestingBeanName) {
+            // Resolves to EntityManagerFactory or EntityManager.
+            if (this.type != null) {
+                if (this.flavor == PersistenceContextFlavor.JPA) {
+                    return (this.type == PersistenceContextType.EXTENDED ?
+                            resolveExtendedEntityManager(target, requestingBeanName) :
+                            resolveEntityManager(requestingBeanName, this.unitName));
+                } else {
+                    EntityManager standardManager = resolveEntityManager(requestingBeanName, this.unitName);
+                    EntityManager sandboxManager = resolveEntityManager(requestingBeanName, this.sandBoxUnitName);
                     BroadleafEntityManagerInvocationHandler handler = new BroadleafEntityManagerInvocationHandler((HibernateEntityManager) standardManager, (HibernateEntityManager) sandboxManager, (HibernateCleaner) getBeanFactory().getBean("blHibernateCleaner"));
                     HibernateEntityManager proxy = (HibernateEntityManager) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{HibernateEntityManager.class, DualEntityManager.class}, handler);
-					return proxy;
-				}
-			}
-			else {
-				// OK, so we need an EntityManagerFactory...
-				return resolveEntityManagerFactory(requestingBeanName);
-			}
-		}
+                    return proxy;
+                }
+            }
+            else {
+                // OK, so we need an EntityManagerFactory...
+                return resolveEntityManagerFactory(requestingBeanName);
+            }
+        }
 
-		private EntityManagerFactory resolveEntityManagerFactory(String requestingBeanName) {
-			// Obtain EntityManagerFactory from JNDI?
-			EntityManagerFactory emf = getPersistenceUnit(this.unitName);
-			if (emf == null) {
-				// Need to search for EntityManagerFactory beans.
-				emf = findEntityManagerFactory(this.unitName, requestingBeanName);
-			}
-			return emf;
-		}
+        private EntityManagerFactory resolveEntityManagerFactory(String requestingBeanName) {
+            // Obtain EntityManagerFactory from JNDI?
+            EntityManagerFactory emf = getPersistenceUnit(this.unitName);
+            if (emf == null) {
+                // Need to search for EntityManagerFactory beans.
+                emf = findEntityManagerFactory(this.unitName, requestingBeanName);
+            }
+            return emf;
+        }
 
-		private EntityManager resolveEntityManager(String requestingBeanName, String unitName) {
-			// Obtain EntityManager reference from JNDI?
-			EntityManager em = getPersistenceContext(unitName, false);
-			if (em == null) {
-				// No pre-built EntityManager found -> build one based on factory.
-				// Obtain EntityManagerFactory from JNDI?
-				EntityManagerFactory emf = getPersistenceUnit(unitName);
-				if (emf == null) {
-					// Need to search for EntityManagerFactory beans.
-					emf = findEntityManagerFactory(unitName, requestingBeanName);
-				}
-				// Inject a shared transactional EntityManager proxy.
-				if (emf instanceof EntityManagerFactoryInfo &&
-						((EntityManagerFactoryInfo) emf).getEntityManagerInterface() != null) {
-					// Create EntityManager based on the info's vendor-specific type
-					// (which might be more specific than the field's type).
-					em = SharedEntityManagerCreator.createSharedEntityManager(emf, this.properties);
-				}
-				else {
-					// Create EntityManager based on the field's type.
-					em = SharedEntityManagerCreator.createSharedEntityManager(emf, this.properties, getResourceType());
-				}
-			}
-			return em;
-		}
+        private EntityManager resolveEntityManager(String requestingBeanName, String unitName) {
+            // Obtain EntityManager reference from JNDI?
+            EntityManager em = getPersistenceContext(unitName, false);
+            if (em == null) {
+                // No pre-built EntityManager found -> build one based on factory.
+                // Obtain EntityManagerFactory from JNDI?
+                EntityManagerFactory emf = getPersistenceUnit(unitName);
+                if (emf == null) {
+                    // Need to search for EntityManagerFactory beans.
+                    emf = findEntityManagerFactory(unitName, requestingBeanName);
+                }
+                // Inject a shared transactional EntityManager proxy.
+                if (emf instanceof EntityManagerFactoryInfo &&
+                        ((EntityManagerFactoryInfo) emf).getEntityManagerInterface() != null) {
+                    // Create EntityManager based on the info's vendor-specific type
+                    // (which might be more specific than the field's type).
+                    em = SharedEntityManagerCreator.createSharedEntityManager(emf, this.properties);
+                }
+                else {
+                    // Create EntityManager based on the field's type.
+                    em = SharedEntityManagerCreator.createSharedEntityManager(emf, this.properties, getResourceType());
+                }
+            }
+            return em;
+        }
 
-		private EntityManager resolveExtendedEntityManager(Object target, String requestingBeanName) {
-			// Obtain EntityManager reference from JNDI?
-			EntityManager em = getPersistenceContext(this.unitName, true);
-			if (em == null) {
-				// No pre-built EntityManager found -> build one based on factory.
-				// Obtain EntityManagerFactory from JNDI?
-				EntityManagerFactory emf = getPersistenceUnit(this.unitName);
-				if (emf == null) {
-					// Need to search for EntityManagerFactory beans.
-					emf = findEntityManagerFactory(this.unitName, requestingBeanName);
-				}
-				// Inject a container-managed extended EntityManager.
-				em = ExtendedEntityManagerCreator.createContainerManagedEntityManager(emf, this.properties);
-			}
-			if (em instanceof EntityManagerProxy &&
-					getBeanFactory() != null && !getBeanFactory().isPrototype(requestingBeanName)) {
-				getExtendedEntityManagersToClose().put(target, ((EntityManagerProxy) em).getTargetEntityManager());
-			}
-			return em;
-		}
-	}
-	
-	private BeanFactory getBeanFactory() {
-		try {
-			Field field = (Field) getClass().getSuperclass().getDeclaredField("beanFactory");
-			ReflectionUtils.makeAccessible(field);
-			return (BeanFactory) field.get(this);
-		} catch (Throwable e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Map<Object, EntityManager> getExtendedEntityManagersToClose() {
-		try {
-			Field field = (Field) getClass().getSuperclass().getDeclaredField("extendedEntityManagersToClose");
-			ReflectionUtils.makeAccessible(field);
-			return (Map<Object, EntityManager>) field.get(this);
-		} catch (Throwable e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
+        private EntityManager resolveExtendedEntityManager(Object target, String requestingBeanName) {
+            // Obtain EntityManager reference from JNDI?
+            EntityManager em = getPersistenceContext(this.unitName, true);
+            if (em == null) {
+                // No pre-built EntityManager found -> build one based on factory.
+                // Obtain EntityManagerFactory from JNDI?
+                EntityManagerFactory emf = getPersistenceUnit(this.unitName);
+                if (emf == null) {
+                    // Need to search for EntityManagerFactory beans.
+                    emf = findEntityManagerFactory(this.unitName, requestingBeanName);
+                }
+                // Inject a container-managed extended EntityManager.
+                em = ExtendedEntityManagerCreator.createContainerManagedEntityManager(emf, this.properties);
+            }
+            if (em instanceof EntityManagerProxy &&
+                    getBeanFactory() != null && !getBeanFactory().isPrototype(requestingBeanName)) {
+                getExtendedEntityManagersToClose().put(target, ((EntityManagerProxy) em).getTargetEntityManager());
+            }
+            return em;
+        }
+    }
+    
+    private BeanFactory getBeanFactory() {
+        try {
+            Field field = (Field) getClass().getSuperclass().getDeclaredField("beanFactory");
+            ReflectionUtils.makeAccessible(field);
+            return (BeanFactory) field.get(this);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Map<Object, EntityManager> getExtendedEntityManagersToClose() {
+        try {
+            Field field = (Field) getClass().getSuperclass().getDeclaredField("extendedEntityManagersToClose");
+            ReflectionUtils.makeAccessible(field);
+            return (Map<Object, EntityManager>) field.get(this);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
 }

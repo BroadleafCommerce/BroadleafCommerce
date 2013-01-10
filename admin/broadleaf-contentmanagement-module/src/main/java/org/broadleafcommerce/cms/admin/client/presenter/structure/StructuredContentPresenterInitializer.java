@@ -43,55 +43,55 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 public class StructuredContentPresenterInitializer {
 
     public static Map<FilterType, String> ATTRIBUTEMAP = new HashMap<FilterType, String>();
-	static {
-		ATTRIBUTEMAP.put(FilterType.PRODUCT, "productRule");
-		ATTRIBUTEMAP.put(FilterType.REQUEST, "requestRule");
-		ATTRIBUTEMAP.put(FilterType.CUSTOMER, "customerRule");
+    static {
+        ATTRIBUTEMAP.put(FilterType.PRODUCT, "productRule");
+        ATTRIBUTEMAP.put(FilterType.REQUEST, "requestRule");
+        ATTRIBUTEMAP.put(FilterType.CUSTOMER, "customerRule");
         ATTRIBUTEMAP.put(FilterType.TIME, "timeRule");
-	}
+    }
 
-	private static final MVELToAdvancedCriteriaTranslator TRANSLATOR = new MVELToAdvancedCriteriaTranslator();
-	
-	protected StructuredContentPresenter presenter;
-	protected DynamicEntityDataSource offerItemCriteriaDataSource;
-	protected DynamicEntityDataSource orderItemDataSource;
-	
-	public StructuredContentPresenterInitializer(StructuredContentPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
-		this.presenter = presenter;
-		this.offerItemCriteriaDataSource = offerItemCriteriaDataSource;
-		this.orderItemDataSource = orderItemDataSource;
-	}
-	
-	protected StructuredContentDisplay getDisplay() {
-		return presenter.getDisplay();
-	}
-	
-	public void initSection(Record selectedRecord, boolean disabled) {
+    private static final MVELToAdvancedCriteriaTranslator TRANSLATOR = new MVELToAdvancedCriteriaTranslator();
+    
+    protected StructuredContentPresenter presenter;
+    protected DynamicEntityDataSource offerItemCriteriaDataSource;
+    protected DynamicEntityDataSource orderItemDataSource;
+    
+    public StructuredContentPresenterInitializer(StructuredContentPresenter presenter, DynamicEntityDataSource offerItemCriteriaDataSource, DynamicEntityDataSource orderItemDataSource) {
+        this.presenter = presenter;
+        this.offerItemCriteriaDataSource = offerItemCriteriaDataSource;
+        this.orderItemDataSource = orderItemDataSource;
+    }
+    
+    protected StructuredContentDisplay getDisplay() {
+        return presenter.getDisplay();
+    }
+    
+    public void initSection(Record selectedRecord, boolean disabled) {
         initFilterBuilder(getDisplay().getCustomerFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.CUSTOMER)));
         initFilterBuilder(getDisplay().getProductFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.PRODUCT)));
         initFilterBuilder(getDisplay().getRequestFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.REQUEST)));
         initFilterBuilder(getDisplay().getTimeFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.TIME)));
-		initItemQualifiers(selectedRecord, disabled);
-	}
+        initItemQualifiers(selectedRecord, disabled);
+    }
 
     public void initFilterBuilder(FilterBuilder filterBuilder, String rule) {
-		filterBuilder.clearCriteria();
-		if (rule != null) {
-			try {
-				AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(rule, filterBuilder.getDataSource());
-				if (myCriteria != null) {
-					filterBuilder.setCriteria(myCriteria);
-				}
-			} catch (IncompatibleMVELTranslationException e) {
-				throw new RuntimeException(BLCMain.getMessageManager().getString("mvelTranslationProblem"), e);
-			}
-		}
-	}
+        filterBuilder.clearCriteria();
+        if (rule != null) {
+            try {
+                AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(rule, filterBuilder.getDataSource());
+                if (myCriteria != null) {
+                    filterBuilder.setCriteria(myCriteria);
+                }
+            } catch (IncompatibleMVELTranslationException e) {
+                throw new RuntimeException(BLCMain.getMessageManager().getString("mvelTranslationProblem"), e);
+            }
+        }
+    }
 
-	public void initItemQualifiers(final Record selectedRecord, final boolean disabled) {
-		Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
-		offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
+    public void initItemQualifiers(final Record selectedRecord, final boolean disabled) {
+        Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
+        offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
+            public void execute(DSResponse response, Object rawData, DSRequest request) {
                 getDisplay().removeAllItemBuilders();
                 for (Record record : response.getData()) {
                     if (Integer.parseInt(record.getAttribute("quantity")) > 0) {
@@ -120,8 +120,8 @@ public class StructuredContentPresenterInitializer {
                         });
                     }
                 }
-			}
-		});
-	}
-	
+            }
+        });
+    }
+    
 }

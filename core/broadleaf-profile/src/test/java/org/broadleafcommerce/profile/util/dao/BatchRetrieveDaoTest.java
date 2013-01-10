@@ -32,31 +32,31 @@ import org.easymock.classextension.EasyMock;
  *
  */
 public class BatchRetrieveDaoTest extends TestCase {
-	
-	private static final int BATCHSIZE = 5;
-	private BatchRetrieveDao dao;
-	private Query queryMock;
-	
-	@Override
-	protected void setUp() throws Exception {
-		dao = new BatchRetrieveDao();
-		queryMock = EasyMock.createMock(Query.class);
-		List<String> response = new ArrayList<String>();
-		response.add("test");
-		EasyMock.expect(queryMock.getResultList()).andReturn(response).times(2);
-		EasyMock.expect(queryMock.setParameter(EasyMock.eq("test"), EasyMock.isA(List.class))).andReturn(queryMock).times(2);
-	}
+    
+    private static final int BATCHSIZE = 5;
+    private BatchRetrieveDao dao;
+    private Query queryMock;
+    
+    @Override
+    protected void setUp() throws Exception {
+        dao = new BatchRetrieveDao();
+        queryMock = EasyMock.createMock(Query.class);
+        List<String> response = new ArrayList<String>();
+        response.add("test");
+        EasyMock.expect(queryMock.getResultList()).andReturn(response).times(2);
+        EasyMock.expect(queryMock.setParameter(EasyMock.eq("test"), EasyMock.isA(List.class))).andReturn(queryMock).times(2);
+    }
 
-	public void testFilter() throws Exception {
-		EasyMock.replay(queryMock);
-		dao.setInClauseBatchSize(BATCHSIZE);
-		List<Integer> keys = new ArrayList<Integer>();
-		for (int j = 0; j < 10; j++) {
-			keys.add(j);
-		}
-		List<Object> response = dao.batchExecuteReadQuery(queryMock, keys, "test");
-		assertTrue(response.size() == 2);
-		EasyMock.verify(queryMock);
-	}
+    public void testFilter() throws Exception {
+        EasyMock.replay(queryMock);
+        dao.setInClauseBatchSize(BATCHSIZE);
+        List<Integer> keys = new ArrayList<Integer>();
+        for (int j = 0; j < 10; j++) {
+            keys.add(j);
+        }
+        List<Object> response = dao.batchExecuteReadQuery(queryMock, keys, "test");
+        assertTrue(response.size() == 2);
+        EasyMock.verify(queryMock);
+    }
 
 }

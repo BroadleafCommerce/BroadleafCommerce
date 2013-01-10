@@ -47,46 +47,46 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTyp
  *
  */
 public class BLCMain implements EntryPoint {
-	
-	public static final MessageManager MESSAGE_MANAGER = new MessageManager();
+    
+    public static final MessageManager MESSAGE_MANAGER = new MessageManager();
     static {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
     }
-	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
+    private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
 
     public static String csrfToken;
     public static String webAppContext;
     public static String storeFrontWebAppPrefix;
     public static String assetServerUrlPrefix;
     public static String adminContext;
-	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
-	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
-	public static SimpleProgress NON_MODAL_PROGRESS = new SimpleProgress(16, 150);
-	public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
+    public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
+    public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
+    public static SimpleProgress NON_MODAL_PROGRESS = new SimpleProgress(16, 150);
+    public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
     public static PolymorphicTypeSelectionDialog POLYMORPHIC_ADD = new PolymorphicTypeSelectionDialog();
-	public static MasterView MASTERVIEW;
-	public static boolean ISNEW = true;
-	public static String currentModuleKey;
+    public static MasterView MASTERVIEW;
+    public static boolean ISNEW = true;
+    public static String currentModuleKey;
     public static String currentPageKey;
     public static String currentViewKey;
-	
-	public static final boolean DEBUG = true;
-	
-	public static void addModule(Module module) {
-		modules.put(module.getModuleKey(), module);
-	}
-	
-	public static Module getModule(String moduleKey) {
-		return modules.get(moduleKey);
-	}
-	
-	public static void setSplashWindow(SplashView splashWindow) {
-		SPLASH_PROGRESS = splashWindow;
-	}
-	
-	public static void removeSplashWindow() {
-		SPLASH_PROGRESS = null;
-	}
+    
+    public static final boolean DEBUG = true;
+    
+    public static void addModule(Module module) {
+        modules.put(module.getModuleKey(), module);
+    }
+    
+    public static Module getModule(String moduleKey) {
+        return modules.get(moduleKey);
+    }
+    
+    public static void setSplashWindow(SplashView splashWindow) {
+        SPLASH_PROGRESS = splashWindow;
+    }
+    
+    public static void removeSplashWindow() {
+        SPLASH_PROGRESS = null;
+    }
 
     public static void setCurrentModuleKey(String requestedModuleKey) {
         if (requestedModuleKey != null && modules.get(requestedModuleKey) != null) {
@@ -149,8 +149,8 @@ public class BLCMain implements EntryPoint {
 
         return prefix + (path==null?"":path);
     }
-	
-	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
+    
+    public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
         SC.logWarn("Retrieving web app context...");
         AppServices.UTILITY.getAllItems(new AbstractCallback<String[]>() {
             @Override
@@ -200,39 +200,39 @@ public class BLCMain implements EntryPoint {
             }
         });
         adminContext = GWT.getModuleBaseURL();
-	}
+    }
 
-	public void onModuleLoad() {
-		if (!GWT.isScript()) { 
-		    KeyIdentifier debugKey = new KeyIdentifier(); 
-		    debugKey.setCtrlKey(true); 
-		    debugKey.setKeyName("D"); 
-		    Page.registerKey(debugKey, new KeyCallback() { 
-		        public void execute(String keyName) { 
-		            SC.showConsole(); 
-		        }
-		    });
-		}
-	}
+    public void onModuleLoad() {
+        if (!GWT.isScript()) { 
+            KeyIdentifier debugKey = new KeyIdentifier(); 
+            debugKey.setCtrlKey(true); 
+            debugKey.setKeyName("D"); 
+            Page.registerKey(debugKey, new KeyCallback() { 
+                public void execute(String keyName) { 
+                    SC.showConsole(); 
+                }
+            });
+        }
+    }
 
     public static MessageManager getMessageManager() {
         return MESSAGE_MANAGER;
     }
 
-	/**
+    /**
      * Log a debug.
      *
      * @param message  the message to log
      * @param category category to log in, defaults to "Log"
      */
     public static native void logDebug(String message, String category) /*-{
-    	if ($wnd.isc.Log.logIsDebugEnabled(category)) {
-    		$wnd.isc.Log.logDebug(message, category);
-    	}
-	}-*/;
+        if ($wnd.isc.Log.logIsDebugEnabled(category)) {
+            $wnd.isc.Log.logDebug(message, category);
+        }
+    }-*/;
     
     public static native boolean isLogDebugEnabled(String category) /*-{
-		return $wnd.isc.Log.logIsDebugEnabled(category)
-	}-*/;
+        return $wnd.isc.Log.logIsDebugEnabled(category)
+    }-*/;
 
 }

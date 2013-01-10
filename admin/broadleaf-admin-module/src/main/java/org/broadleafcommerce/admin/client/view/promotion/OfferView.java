@@ -57,105 +57,105 @@ import java.util.List;
  */
 public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
-	protected DynamicForm stepFGForm;
-	protected DynamicForm stepItemForm;
-	protected DynamicForm stepBogoForm;
-	protected DynamicForm orderCombineForm;
-	protected DynamicForm rawCustomerForm;
-	protected DynamicForm rawOrderForm;
-	protected DynamicForm rawFGForm;
-	protected DynamicForm restrictForm;
-	protected DynamicForm customerObtainForm;
-	protected DynamicForm whichCustomerForm;
-	protected DynamicForm orderForm;
-	protected DynamicForm receiveFromAnotherPromoForm;
-	protected DynamicForm qualifyForAnotherPromoForm;
-	protected DynamicForm receiveFromAnotherPromoTargetForm;
-	protected DynamicForm qualifyForAnotherPromoTargetForm;
-	protected DynamicForm fgCombineForm;
-	protected DynamicForm orderItemCombineForm;
+    protected DynamicForm stepFGForm;
+    protected DynamicForm stepItemForm;
+    protected DynamicForm stepBogoForm;
+    protected DynamicForm orderCombineForm;
+    protected DynamicForm rawCustomerForm;
+    protected DynamicForm rawOrderForm;
+    protected DynamicForm rawFGForm;
+    protected DynamicForm restrictForm;
+    protected DynamicForm customerObtainForm;
+    protected DynamicForm whichCustomerForm;
+    protected DynamicForm orderForm;
+    protected DynamicForm receiveFromAnotherPromoForm;
+    protected DynamicForm qualifyForAnotherPromoForm;
+    protected DynamicForm receiveFromAnotherPromoTargetForm;
+    protected DynamicForm qualifyForAnotherPromoTargetForm;
+    protected DynamicForm fgCombineForm;
+    protected DynamicForm orderItemCombineForm;
 
     protected VLayout customerLayout;
     protected VLayout orderSectionLayout;
     protected SectionView customerSection;
     protected SectionView orderSection;
-	
-	protected VLayout itemBuilderContainerLayout;
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
-	protected ToolStripButton advancedButton;
-	protected ImgButton helpButtonType;
-	protected RadioGroupItem deliveryTypeRadio;
-	protected TextItem codeField;
-	protected RadioGroupItem customerRuleRadio;
-	protected FilterBuilder customerFilterBuilder;
-	protected FilterBuilder fulfillmentGroupFilterBuilder;
-	protected Label stepFGLabel;
-	protected RadioGroupItem fgRuleRadio;
-	protected Label requiredItemsLabel;
-	protected RadioGroupItem itemRuleRadio;
-	protected List<ItemBuilderDisplay> itemBuilderViews = new ArrayList<ItemBuilderDisplay>();
-	protected Button addItemButton;
-	protected ImgButton helpButtonBogo;
-	protected RadioGroupItem bogoRadio;
-	protected ItemBuilderDisplay targetItemBuilder;
-	protected Label targetItemsLabel;
-	protected Label bogoQuestionLabel;
-	protected VLayout bogoQuestionLayout;
-	protected VLayout fgQuestionLayout;
-	protected RadioGroupItem orderRuleRadio;
-	protected FilterBuilder orderFilterBuilder;
-	protected VLayout requiredItemsLayout;
-	protected VLayout targetItemsLayout;
-	protected VLayout newItemBuilderLayout;
-	protected VLayout orderItemLayout;
-	protected SectionView fgSectionView;
-	protected RadioGroupItem receiveFromAnotherPromoRadio;
-	protected SectionView itemTargetSectionView;
-	protected RadioGroupItem qualifyForAnotherPromoRadio;
-	protected RadioGroupItem receiveFromAnotherPromoTargetRadio;
-	protected RadioGroupItem qualifyForAnotherPromoTargetRadio;
-	protected VLayout advancedItemCriteriaTarget;
-	protected VLayout advancedItemCriteria;
-	protected RadioGroupItem fgCombineRuleRadio;
-	protected Label orderCombineLabel;
-	protected RadioGroupItem orderCombineRuleRadio;
-	protected RadioGroupItem restrictRuleRadio;
-	protected SectionView restrictionSectionView;
-	protected SectionView itemQualificationSectionView;
-	protected Label orderItemCombineLabel;
-	protected RadioGroupItem orderItemCombineRuleRadio;
-	
-	protected TextAreaItem rawCustomerTextArea;
-	protected TextAreaItem rawOrderTextArea;
-	protected TextAreaItem rawFGTextArea;
-	
-	protected ToolStripButton cloneButton;
-	
-	public OfferView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		DataSource orderDataSource = additionalDataSources[0]; 
-		final DataSource orderItemDataSource = additionalDataSources[1];
-		DataSource fulfillmentGroupDataSource = additionalDataSources[2];
-		DataSource customerDataSource = additionalDataSources[3];
-		
-		VLayout leftVerticalLayout = new VLayout(10);
-		leftVerticalLayout.setID("offerLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("30%");
-		leftVerticalLayout.setShowResizeBar(true);
+    
+    protected VLayout itemBuilderContainerLayout;
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected ToolStripButton advancedButton;
+    protected ImgButton helpButtonType;
+    protected RadioGroupItem deliveryTypeRadio;
+    protected TextItem codeField;
+    protected RadioGroupItem customerRuleRadio;
+    protected FilterBuilder customerFilterBuilder;
+    protected FilterBuilder fulfillmentGroupFilterBuilder;
+    protected Label stepFGLabel;
+    protected RadioGroupItem fgRuleRadio;
+    protected Label requiredItemsLabel;
+    protected RadioGroupItem itemRuleRadio;
+    protected List<ItemBuilderDisplay> itemBuilderViews = new ArrayList<ItemBuilderDisplay>();
+    protected Button addItemButton;
+    protected ImgButton helpButtonBogo;
+    protected RadioGroupItem bogoRadio;
+    protected ItemBuilderDisplay targetItemBuilder;
+    protected Label targetItemsLabel;
+    protected Label bogoQuestionLabel;
+    protected VLayout bogoQuestionLayout;
+    protected VLayout fgQuestionLayout;
+    protected RadioGroupItem orderRuleRadio;
+    protected FilterBuilder orderFilterBuilder;
+    protected VLayout requiredItemsLayout;
+    protected VLayout targetItemsLayout;
+    protected VLayout newItemBuilderLayout;
+    protected VLayout orderItemLayout;
+    protected SectionView fgSectionView;
+    protected RadioGroupItem receiveFromAnotherPromoRadio;
+    protected SectionView itemTargetSectionView;
+    protected RadioGroupItem qualifyForAnotherPromoRadio;
+    protected RadioGroupItem receiveFromAnotherPromoTargetRadio;
+    protected RadioGroupItem qualifyForAnotherPromoTargetRadio;
+    protected VLayout advancedItemCriteriaTarget;
+    protected VLayout advancedItemCriteria;
+    protected RadioGroupItem fgCombineRuleRadio;
+    protected Label orderCombineLabel;
+    protected RadioGroupItem orderCombineRuleRadio;
+    protected RadioGroupItem restrictRuleRadio;
+    protected SectionView restrictionSectionView;
+    protected SectionView itemQualificationSectionView;
+    protected Label orderItemCombineLabel;
+    protected RadioGroupItem orderItemCombineRuleRadio;
+    
+    protected TextAreaItem rawCustomerTextArea;
+    protected TextAreaItem rawOrderTextArea;
+    protected TextAreaItem rawFGTextArea;
+    
+    protected ToolStripButton cloneButton;
+    
+    public OfferView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        DataSource orderDataSource = additionalDataSources[0]; 
+        final DataSource orderItemDataSource = additionalDataSources[1];
+        DataSource fulfillmentGroupDataSource = additionalDataSources[2];
+        DataSource customerDataSource = additionalDataSources[3];
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("promotionsListTitle"), entityDataSource, false, false);
-		//listDisplay.getToolBar().addFill();
-		cloneButton = new ToolStripButton();  
-		cloneButton.setDisabled(true);
-		cloneButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_right.png"); 
-		cloneButton.setPrompt(BLCMain.getMessageManager().getString("clonePromotionHelp"));
-		//listDisplay.getToolBar().addButton(cloneButton);
+        VLayout leftVerticalLayout = new VLayout(10);
+        leftVerticalLayout.setID("offerLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("30%");
+        leftVerticalLayout.setShowResizeBar(true);
+        
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("promotionsListTitle"), entityDataSource, false, false);
+        //listDisplay.getToolBar().addFill();
+        cloneButton = new ToolStripButton();  
+        cloneButton.setDisabled(true);
+        cloneButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_right.png"); 
+        cloneButton.setPrompt(BLCMain.getMessageManager().getString("clonePromotionHelp"));
+        //listDisplay.getToolBar().addButton(cloneButton);
         //listDisplay.getToolBar().addSpacer(6);
         leftVerticalLayout.addMember(listDisplay);
         
@@ -474,7 +474,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         itemBuilderContainerLayout = new VLayout();
         newItemBuilderLayout.addMember(itemBuilderContainerLayout);
         for (ItemBuilderDisplay widget : itemBuilderViews) {
-        	itemBuilderContainerLayout.addMember((ItemBuilderView) widget);
+            itemBuilderContainerLayout.addMember((ItemBuilderView) widget);
         }
         requiredItemsLayout.addMember(newItemBuilderLayout);
         
@@ -649,301 +649,301 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fgSectionView.setWidth("98%");
         fgSectionView.getContentLayout().addMember(fgQuestionLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(fgSectionView);
-        		
+                
         rightVerticalLayout.addMember(dynamicFormDisplay);
         
         addMember(leftVerticalLayout);
         addMember(rightVerticalLayout);
-	}
-	
-	public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
-		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
-		builder.enable();
-		builder.setDirty(true);
-		itemBuilderContainerLayout.addMember((ItemBuilderView) builder);
-		itemBuilderViews.add(builder);
-		return builder;
-	}
-	
-	public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
-		itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
-		itemBuilderViews.remove(itemBuilder);
-	}
-	
-	public void removeAllItemBuilders() {
-		ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
-		for (ItemBuilderView view : myViews) {
-			removeItemBuilder(view);
-		}
-	}
-
-	public Canvas asCanvas() {
-		return this;
-	}
-
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
-
-	public ToolStripButton getAdvancedButton() {
-		return advancedButton;
-	}
-
-	public ImgButton getHelpButtonType() {
-		return helpButtonType;
-	}
-
-	public RadioGroupItem getDeliveryTypeRadio() {
-		return deliveryTypeRadio;
-	}
-
-	public TextItem getCodeField() {
-		return codeField;
-	}
-
-	public FilterBuilder getCustomerFilterBuilder() {
-		return customerFilterBuilder;
-	}
-
-	public RadioGroupItem getCustomerRuleRadio() {
-		return customerRuleRadio;
-	}
-
-	public FilterBuilder getFulfillmentGroupFilterBuilder() {
-		return fulfillmentGroupFilterBuilder;
-	}
-
-	public Label getStepFGLabel() {
-		return stepFGLabel;
-	}
-
-	public RadioGroupItem getFgRuleRadio() {
-		return fgRuleRadio;
-	}
-
-	public DynamicForm getStepFGForm() {
-		return stepFGForm;
-	}
-
-	public Label getRequiredItemsLabel() {
-		return requiredItemsLabel;
-	}
-
-	public Button getAddItemButton() {
-		return addItemButton;
-	}
-
-	public RadioGroupItem getItemRuleRadio() {
-		return itemRuleRadio;
-	}
-
-	public List<ItemBuilderDisplay> getItemBuilderViews() {
-		return itemBuilderViews;
-	}
-
-	public ImgButton getHelpButtonBogo() {
-		return helpButtonBogo;
-	}
-
-	public RadioGroupItem getBogoRadio() {
-		return bogoRadio;
-	}
-
-	public Label getTargetItemsLabel() {
-		return targetItemsLabel;
-	}
-
-	public Label getBogoQuestionLabel() {
-		return bogoQuestionLabel;
-	}
-
-	public void setHelpButtonBogo(ImgButton helpButtonBogo) {
-		this.helpButtonBogo = helpButtonBogo;
-	}
-
-	public ItemBuilderDisplay getTargetItemBuilder() {
-		return targetItemBuilder;
-	}
-
-	public DynamicForm getStepBogoForm() {
-		return stepBogoForm;
-	}
-
-	public VLayout getBogoQuestionLayout() {
-		return bogoQuestionLayout;
-	}
-
-	public VLayout getFgQuestionLayout() {
-		return fgQuestionLayout;
-	}
-
-	public RadioGroupItem getOrderRuleRadio() {
-		return orderRuleRadio;
-	}
-
-	public FilterBuilder getOrderFilterBuilder() {
-		return orderFilterBuilder;
-	}
-
-	public VLayout getRequiredItemsLayout() {
-		return requiredItemsLayout;
-	}
-
-	public VLayout getTargetItemsLayout() {
-		return targetItemsLayout;
-	}
-
-	public VLayout getNewItemBuilderLayout() {
-		return newItemBuilderLayout;
-	}
-
-	public VLayout getOrderItemLayout() {
-		return orderItemLayout;
-	}
-
-	public SectionView getFgSectionView() {
-		return fgSectionView;
-	}
-
-	public RadioGroupItem getReceiveFromAnotherPromoRadio() {
-		return receiveFromAnotherPromoRadio;
-	}
-
-	public SectionView getItemTargetSectionView() {
-		return itemTargetSectionView;
-	}
-
-	public RadioGroupItem getQualifyForAnotherPromoRadio() {
-		return qualifyForAnotherPromoRadio;
-	}
-
-	public RadioGroupItem getReceiveFromAnotherPromoTargetRadio() {
-		return receiveFromAnotherPromoTargetRadio;
-	}
-
-	public RadioGroupItem getQualifyForAnotherPromoTargetRadio() {
-		return qualifyForAnotherPromoTargetRadio;
-	}
-
-	public VLayout getAdvancedItemCriteriaTarget() {
-		return advancedItemCriteriaTarget;
-	}
-
-	public VLayout getAdvancedItemCriteria() {
-		return advancedItemCriteria;
-	}
-
-	public Label getOrderCombineLabel() {
-		return orderCombineLabel;
-	}
-
-	public DynamicForm getOrderCombineForm() {
-		return orderCombineForm;
-	}
-
-	public RadioGroupItem getOrderCombineRuleRadio() {
-		return orderCombineRuleRadio;
-	}
-
-	public RadioGroupItem getFgCombineRuleRadio() {
-		return fgCombineRuleRadio;
-	}
-
-	public RadioGroupItem getRestrictRuleRadio() {
-		return restrictRuleRadio;
-	}
-
-	public SectionView getRestrictionSectionView() {
-		return restrictionSectionView;
-	}
-
-	public DynamicForm getRawCustomerForm() {
-		return rawCustomerForm;
-	}
-
-	public TextAreaItem getRawCustomerTextArea() {
-		return rawCustomerTextArea;
-	}
-
-	public DynamicForm getRawOrderForm() {
-		return rawOrderForm;
-	}
-
-	public TextAreaItem getRawOrderTextArea() {
-		return rawOrderTextArea;
-	}
-
-	public DynamicForm getRawFGForm() {
-		return rawFGForm;
-	}
-
-	public TextAreaItem getRawFGTextArea() {
-		return rawFGTextArea;
-	}
-
-	public SectionView getItemQualificationSectionView() {
-		return itemQualificationSectionView;
-	}
-
-	public DynamicForm getRestrictForm() {
-		return restrictForm;
-	}
-
-	public DynamicForm getCustomerObtainForm() {
-		return customerObtainForm;
-	}
-
-	public DynamicForm getWhichCustomerForm() {
-		return whichCustomerForm;
-	}
-
-	public DynamicForm getOrderForm() {
-		return orderForm;
-	}
-
-	public DynamicForm getReceiveFromAnotherPromoForm() {
-		return receiveFromAnotherPromoForm;
-	}
-
-	public DynamicForm getQualifyForAnotherPromoForm() {
-		return qualifyForAnotherPromoForm;
-	}
-
-	public DynamicForm getReceiveFromAnotherPromoTargetForm() {
-		return receiveFromAnotherPromoTargetForm;
-	}
-
-	public DynamicForm getQualifyForAnotherPromoTargetForm() {
-		return qualifyForAnotherPromoTargetForm;
-	}
-
-	public DynamicForm getFGCombineForm() {
-		return fgCombineForm;
-	}
-
-	public DynamicForm getStepItemForm() {
-		return stepItemForm;
-	}
-
-	public ToolStripButton getCloneButton() {
-		return cloneButton;
-	}
-
-	public DynamicForm getOrderItemCombineForm() {
-		return orderItemCombineForm;
-	}
-
-	public RadioGroupItem getOrderItemCombineRuleRadio() {
-		return orderItemCombineRuleRadio;
-	}
-
-	public Label getOrderItemCombineLabel() {
-		return orderItemCombineLabel;
-	}
+    }
+    
+    public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
+        ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
+        builder.enable();
+        builder.setDirty(true);
+        itemBuilderContainerLayout.addMember((ItemBuilderView) builder);
+        itemBuilderViews.add(builder);
+        return builder;
+    }
+    
+    public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
+        itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
+        itemBuilderViews.remove(itemBuilder);
+    }
+    
+    public void removeAllItemBuilders() {
+        ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
+        for (ItemBuilderView view : myViews) {
+            removeItemBuilder(view);
+        }
+    }
+
+    public Canvas asCanvas() {
+        return this;
+    }
+
+    public DynamicFormDisplay getDynamicFormDisplay() {
+        return dynamicFormDisplay;
+    }
+    
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
+
+    public ToolStripButton getAdvancedButton() {
+        return advancedButton;
+    }
+
+    public ImgButton getHelpButtonType() {
+        return helpButtonType;
+    }
+
+    public RadioGroupItem getDeliveryTypeRadio() {
+        return deliveryTypeRadio;
+    }
+
+    public TextItem getCodeField() {
+        return codeField;
+    }
+
+    public FilterBuilder getCustomerFilterBuilder() {
+        return customerFilterBuilder;
+    }
+
+    public RadioGroupItem getCustomerRuleRadio() {
+        return customerRuleRadio;
+    }
+
+    public FilterBuilder getFulfillmentGroupFilterBuilder() {
+        return fulfillmentGroupFilterBuilder;
+    }
+
+    public Label getStepFGLabel() {
+        return stepFGLabel;
+    }
+
+    public RadioGroupItem getFgRuleRadio() {
+        return fgRuleRadio;
+    }
+
+    public DynamicForm getStepFGForm() {
+        return stepFGForm;
+    }
+
+    public Label getRequiredItemsLabel() {
+        return requiredItemsLabel;
+    }
+
+    public Button getAddItemButton() {
+        return addItemButton;
+    }
+
+    public RadioGroupItem getItemRuleRadio() {
+        return itemRuleRadio;
+    }
+
+    public List<ItemBuilderDisplay> getItemBuilderViews() {
+        return itemBuilderViews;
+    }
+
+    public ImgButton getHelpButtonBogo() {
+        return helpButtonBogo;
+    }
+
+    public RadioGroupItem getBogoRadio() {
+        return bogoRadio;
+    }
+
+    public Label getTargetItemsLabel() {
+        return targetItemsLabel;
+    }
+
+    public Label getBogoQuestionLabel() {
+        return bogoQuestionLabel;
+    }
+
+    public void setHelpButtonBogo(ImgButton helpButtonBogo) {
+        this.helpButtonBogo = helpButtonBogo;
+    }
+
+    public ItemBuilderDisplay getTargetItemBuilder() {
+        return targetItemBuilder;
+    }
+
+    public DynamicForm getStepBogoForm() {
+        return stepBogoForm;
+    }
+
+    public VLayout getBogoQuestionLayout() {
+        return bogoQuestionLayout;
+    }
+
+    public VLayout getFgQuestionLayout() {
+        return fgQuestionLayout;
+    }
+
+    public RadioGroupItem getOrderRuleRadio() {
+        return orderRuleRadio;
+    }
+
+    public FilterBuilder getOrderFilterBuilder() {
+        return orderFilterBuilder;
+    }
+
+    public VLayout getRequiredItemsLayout() {
+        return requiredItemsLayout;
+    }
+
+    public VLayout getTargetItemsLayout() {
+        return targetItemsLayout;
+    }
+
+    public VLayout getNewItemBuilderLayout() {
+        return newItemBuilderLayout;
+    }
+
+    public VLayout getOrderItemLayout() {
+        return orderItemLayout;
+    }
+
+    public SectionView getFgSectionView() {
+        return fgSectionView;
+    }
+
+    public RadioGroupItem getReceiveFromAnotherPromoRadio() {
+        return receiveFromAnotherPromoRadio;
+    }
+
+    public SectionView getItemTargetSectionView() {
+        return itemTargetSectionView;
+    }
+
+    public RadioGroupItem getQualifyForAnotherPromoRadio() {
+        return qualifyForAnotherPromoRadio;
+    }
+
+    public RadioGroupItem getReceiveFromAnotherPromoTargetRadio() {
+        return receiveFromAnotherPromoTargetRadio;
+    }
+
+    public RadioGroupItem getQualifyForAnotherPromoTargetRadio() {
+        return qualifyForAnotherPromoTargetRadio;
+    }
+
+    public VLayout getAdvancedItemCriteriaTarget() {
+        return advancedItemCriteriaTarget;
+    }
+
+    public VLayout getAdvancedItemCriteria() {
+        return advancedItemCriteria;
+    }
+
+    public Label getOrderCombineLabel() {
+        return orderCombineLabel;
+    }
+
+    public DynamicForm getOrderCombineForm() {
+        return orderCombineForm;
+    }
+
+    public RadioGroupItem getOrderCombineRuleRadio() {
+        return orderCombineRuleRadio;
+    }
+
+    public RadioGroupItem getFgCombineRuleRadio() {
+        return fgCombineRuleRadio;
+    }
+
+    public RadioGroupItem getRestrictRuleRadio() {
+        return restrictRuleRadio;
+    }
+
+    public SectionView getRestrictionSectionView() {
+        return restrictionSectionView;
+    }
+
+    public DynamicForm getRawCustomerForm() {
+        return rawCustomerForm;
+    }
+
+    public TextAreaItem getRawCustomerTextArea() {
+        return rawCustomerTextArea;
+    }
+
+    public DynamicForm getRawOrderForm() {
+        return rawOrderForm;
+    }
+
+    public TextAreaItem getRawOrderTextArea() {
+        return rawOrderTextArea;
+    }
+
+    public DynamicForm getRawFGForm() {
+        return rawFGForm;
+    }
+
+    public TextAreaItem getRawFGTextArea() {
+        return rawFGTextArea;
+    }
+
+    public SectionView getItemQualificationSectionView() {
+        return itemQualificationSectionView;
+    }
+
+    public DynamicForm getRestrictForm() {
+        return restrictForm;
+    }
+
+    public DynamicForm getCustomerObtainForm() {
+        return customerObtainForm;
+    }
+
+    public DynamicForm getWhichCustomerForm() {
+        return whichCustomerForm;
+    }
+
+    public DynamicForm getOrderForm() {
+        return orderForm;
+    }
+
+    public DynamicForm getReceiveFromAnotherPromoForm() {
+        return receiveFromAnotherPromoForm;
+    }
+
+    public DynamicForm getQualifyForAnotherPromoForm() {
+        return qualifyForAnotherPromoForm;
+    }
+
+    public DynamicForm getReceiveFromAnotherPromoTargetForm() {
+        return receiveFromAnotherPromoTargetForm;
+    }
+
+    public DynamicForm getQualifyForAnotherPromoTargetForm() {
+        return qualifyForAnotherPromoTargetForm;
+    }
+
+    public DynamicForm getFGCombineForm() {
+        return fgCombineForm;
+    }
+
+    public DynamicForm getStepItemForm() {
+        return stepItemForm;
+    }
+
+    public ToolStripButton getCloneButton() {
+        return cloneButton;
+    }
+
+    public DynamicForm getOrderItemCombineForm() {
+        return orderItemCombineForm;
+    }
+
+    public RadioGroupItem getOrderItemCombineRuleRadio() {
+        return orderItemCombineRuleRadio;
+    }
+
+    public Label getOrderItemCombineLabel() {
+        return orderItemCombineLabel;
+    }
 
     public VLayout getCustomerLayout() {
         return customerLayout;

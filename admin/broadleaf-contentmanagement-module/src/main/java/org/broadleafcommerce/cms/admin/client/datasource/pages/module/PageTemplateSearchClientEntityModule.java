@@ -52,8 +52,8 @@ public class PageTemplateSearchClientEntityModule extends BasicClientEntityModul
         BLCMain.NON_MODAL_PROGRESS.startProgress();
         Criteria criteria = request.getCriteria();
         criteria.addCriteria(((PageTemplateSearchListDataSource) dataSource).getPermanentCriteria());
-		CriteriaTransferObject cto = getCto(request);
-		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+        CriteriaTransferObject cto = getCto(request);
+        service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
             public void onSuccess(DynamicResultSet result) {
                 super.onSuccess(result);
                 TreeNode[] recordList = buildRecords(result, null);

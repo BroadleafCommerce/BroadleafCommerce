@@ -13,21 +13,21 @@ import org.broadleafcommerce.open${artifactId}.client.view.dynamic.grid.GridStru
 
 public class MyCompanyProductView extends OneToOneProductSkuView implements MyCompanyProductDisplay {
 
-	protected GridStructureView shippingCountryDisplay;
-	
-	@Override
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		super.build(entityDataSource, additionalDataSources);
-		shippingCountryDisplay = new GridStructureView(MyCompanyAdminModule.ADMINMESSAGES.shippingCountryListTitle(), false, false);
-		((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(shippingCountryDisplay);
-	}
+    protected GridStructureView shippingCountryDisplay;
+    
+    @Override
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        super.build(entityDataSource, additionalDataSources);
+        shippingCountryDisplay = new GridStructureView(MyCompanyAdminModule.ADMINMESSAGES.shippingCountryListTitle(), false, false);
+        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(shippingCountryDisplay);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ganz.${artifactId}.client.view.product.GanzProductDisplay${symbol_pound}getAdditionalAttributesDisplay()
-	 */
-	@Override
-	public GridStructureDisplay getShippingCountryDisplay() {
-		return shippingCountryDisplay;
-	}
-	
+    /* (non-Javadoc)
+     * @see com.ganz.${artifactId}.client.view.product.GanzProductDisplay${symbol_pound}getAdditionalAttributesDisplay()
+     */
+    @Override
+    public GridStructureDisplay getShippingCountryDisplay() {
+        return shippingCountryDisplay;
+    }
+    
 }

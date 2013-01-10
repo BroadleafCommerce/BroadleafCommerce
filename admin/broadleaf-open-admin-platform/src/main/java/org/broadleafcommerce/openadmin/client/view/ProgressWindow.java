@@ -26,36 +26,36 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
  *
  */
 public class ProgressWindow extends Window implements Stoppable {
-	
-	private SimpleProgress simpleProgress;
-	
-	public ProgressWindow() {
-    	setWidth(360);  
-    	setHeight(52);  
-    	setShowMinimizeButton(false);  
-    	setIsModal(true);   
-    	centerInPage();
-    	setTitle(BLCMain.getMessageManager().getString("contactingServerTitle"));
-    	setShowCloseButton(false);
-    	simpleProgress = new SimpleProgress(24);    
-    	addItem(simpleProgress);
-	}
+    
+    private SimpleProgress simpleProgress;
+    
+    public ProgressWindow() {
+        setWidth(360);  
+        setHeight(52);  
+        setShowMinimizeButton(false);  
+        setIsModal(true);   
+        centerInPage();
+        setTitle(BLCMain.getMessageManager().getString("contactingServerTitle"));
+        setShowCloseButton(false);
+        simpleProgress = new SimpleProgress(24);    
+        addItem(simpleProgress);
+    }
 
-	public void startProgress(Timer timer) {
-		show();
-		simpleProgress.startProgress();
-		timer.schedule(300);
-	}
-	
-	public void stopProgress() {
-		simpleProgress.stopProgress(this);
-	}
-	
-	public void finalizeProgress() {
-		hide();
-	}
-	
-	public Boolean isActive() {
-		return simpleProgress.isActive();
-	}
+    public void startProgress(Timer timer) {
+        show();
+        simpleProgress.startProgress();
+        timer.schedule(300);
+    }
+    
+    public void stopProgress() {
+        simpleProgress.stopProgress(this);
+    }
+    
+    public void finalizeProgress() {
+        hide();
+    }
+    
+    public Boolean isActive() {
+        return simpleProgress.isActive();
+    }
 }

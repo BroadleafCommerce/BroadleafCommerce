@@ -30,10 +30,10 @@ import org.broadleafcommerce.presentation.BroadleafEnumerationType;
  */
 public class LocaleType implements Serializable, BroadleafEnumerationType {
 
-	public static void main(String[] items) {
-		System.out.println(Locale.TAIWAN.toString());
-	}
-	
+    public static void main(String[] items) {
+        System.out.println(Locale.TAIWAN.toString());
+    }
+    
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, LocaleType> TYPES = new HashMap<String, LocaleType>();
@@ -72,8 +72,8 @@ public class LocaleType implements Serializable, BroadleafEnumerationType {
     }
 
     public LocaleType(final String type, final String friendlyType, final Locale locale) {
-    	this.friendlyType = friendlyType;
-    	this.locale = locale;
+        this.friendlyType = friendlyType;
+        this.locale = locale;
         setType(type);
     }
 
@@ -82,14 +82,14 @@ public class LocaleType implements Serializable, BroadleafEnumerationType {
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
     
     public Locale getLocale() {
-		return locale;
-	}
+        return locale;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

@@ -63,321 +63,321 @@ import java.util.List;
  *
  */
 public class OfferServiceTest extends TestCase { 
-	
-	private OfferServiceImpl offerService;
-	private CustomerOfferDao customerOfferDaoMock;
-	private OfferCodeDao offerCodeDaoMock;
-	private OfferDao offerDaoMock;
-	private CartService cartServiceMock;
-	private OrderItemService orderItemServiceMock;
-	private FulfillmentGroupItemDao fgItemDaoMock;
-	private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
-	
-	@Override
-	protected void setUp() throws Exception {
-		offerService = new OfferServiceImpl();
-		customerOfferDaoMock = EasyMock.createMock(CustomerOfferDao.class);
-		offerCodeDaoMock = EasyMock.createMock(OfferCodeDao.class);
-		offerDaoMock = EasyMock.createMock(OfferDao.class);
-		offerService.setCustomerOfferDao(customerOfferDaoMock);
-		offerService.setOfferCodeDao(offerCodeDaoMock);
-		offerService.setOfferDao(offerDaoMock);
-		cartServiceMock = EasyMock.createMock(CartService.class);
-		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
-		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
-		
-		OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
-		orderProcessor.setOfferDao(offerDaoMock);
-		orderProcessor.setCartService(cartServiceMock);
-		orderProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
-		orderProcessor.setOrderItemService(orderItemServiceMock);
-		orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
-		offerService.setOrderOfferProcessor(orderProcessor);
-		
-		ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
-		itemProcessor.setOfferDao(offerDaoMock);
-		itemProcessor.setCartService(cartServiceMock);
-		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
-		itemProcessor.setOrderItemService(orderItemServiceMock);
-		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
-		offerService.setItemOfferProcessor(itemProcessor);
-		
-		FulfillmentGroupOfferProcessor fgProcessor = new FulfillmentGroupOfferProcessorImpl();
-		fgProcessor.setOfferDao(offerDaoMock);
-		fgProcessor.setCartService(cartServiceMock);
-		fgProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
-		fgProcessor.setOrderItemService(orderItemServiceMock);
-		fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
-		offerService.setFulfillmentGroupOfferProcessor(fgProcessor);
-		offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
-	}
-	
-	public void replay() {
-		EasyMock.replay(customerOfferDaoMock);
-		EasyMock.replay(offerCodeDaoMock);
-		EasyMock.replay(offerDaoMock);
-		EasyMock.replay(cartServiceMock);
-		EasyMock.replay(orderItemServiceMock);
-		EasyMock.replay(fgItemDaoMock);
-	}
-	
-	public void verify() {
-		EasyMock.verify(customerOfferDaoMock);
-		EasyMock.verify(offerCodeDaoMock);
-		EasyMock.verify(offerDaoMock);
-		EasyMock.verify(cartServiceMock);
-		EasyMock.verify(orderItemServiceMock);
-		EasyMock.verify(fgItemDaoMock);
-	}
-	
-	public void testApplyOffersToOrder_Order() throws Exception {
-		CandidateOrderOfferAnswer candidateOrderOfferAnswer = new CandidateOrderOfferAnswer();
-		OrderAdjustmentAnswer orderAdjustmentAnswer = new OrderAdjustmentAnswer();
-		EasyMock.expect(offerDaoMock.createCandidateOrderOffer()).andAnswer(candidateOrderOfferAnswer).atLeastOnce();
-		EasyMock.expect(offerDaoMock.createOrderAdjustment()).andAnswer(orderAdjustmentAnswer).atLeastOnce();
-		
-		CandidateItemOfferAnswer candidateItemOfferAnswer = new CandidateItemOfferAnswer();
-		OrderItemAdjustmentAnswer orderItemAdjustmentAnswer = new OrderItemAdjustmentAnswer();
-		EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(candidateItemOfferAnswer).atLeastOnce();
-		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(orderItemAdjustmentAnswer).atLeastOnce();
-		
-		EasyMock.expect(cartServiceMock.addItemToFulfillmentGroup(EasyMock.isA(OrderItem.class), EasyMock.isA(FulfillmentGroup.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
-		EasyMock.expect(cartServiceMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
-		EasyMock.expect(cartServiceMock.removeItemFromOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
-		EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
-		EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
-		
-		replay();
-		
-		Order order = dataProvider.createBasicOrder().getDelegate();
-		List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		int adjustmentCount = order.getOrderAdjustments().size();
-		
-		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(116.95D)));
-		
-		order = dataProvider.createBasicOrder().getDelegate();
-		offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
-		List<Offer> offers2 = dataProvider.createItemBasedOfferWithItemCriteria(
-			"order.subTotal.getAmount()>20", 
-			OfferDiscountType.PERCENT_OFF, 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
-		);
-		offers.addAll(offers2);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		//with the item offers in play, the subtotal restriction for the order offer is no longer valid
-		adjustmentCount = 0;
-		for (OrderItem item : order.getOrderItems()) {
-			if (item.getOrderItemAdjustments() != null) {
-				adjustmentCount += item.getOrderItemAdjustments().size();
-			}
-		}
-		
-		assertTrue(adjustmentCount == 2);
-		adjustmentCount = order.getOrderAdjustments().size();
-		assertTrue(adjustmentCount == 0);
-		assertTrue(order.getSubTotal().equals(new Money(124.95D)));
-		
-		order = dataProvider.createBasicOrder().getDelegate();
-		OfferRule orderRule = new OfferRuleImpl();
-		orderRule.setMatchRule("order.subTotal.getAmount()>124");
-		offers.get(0).getOfferMatchRules().put(OfferRuleType.ORDER.getType(), orderRule);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		//now that the order restriction has been lessened, even with the item level discounts applied, the order offer still qualifies
-		adjustmentCount = 0;
-		for (OrderItem item : order.getOrderItems()) {
-			if (item.getOrderItemAdjustments() != null) {
-				adjustmentCount += item.getOrderItemAdjustments().size();
-			}
-		}
-		
-		assertTrue(adjustmentCount == 2);
-		adjustmentCount = order.getOrderAdjustments().size();
-		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(112.45D)));
-		assertTrue(order.getSubTotal().equals(new Money(124.95D)));
-		
-		order = dataProvider.createBasicOrder().getDelegate();
-		//offers.get(0).setCombinableWithOtherOffers(false);
-		List<Offer> offers3 = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>20", OfferDiscountType.AMOUNT_OFF);
-		offers.addAll(offers3);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		adjustmentCount = order.getOrderAdjustments().size();
-		assertTrue(adjustmentCount == 2);
-		
-		order = dataProvider.createBasicOrder().getDelegate();
-		offers.get(0).setCombinableWithOtherOffers(false);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		//there is a non combinable order offer now
-		adjustmentCount = 0;
-		for (OrderItem item : order.getOrderItems()) {
-			if (item.getOrderItemAdjustments() != null) {
-				adjustmentCount += item.getOrderItemAdjustments().size();
-			}
-		}
-		
-		assertTrue(adjustmentCount == 2);
-		adjustmentCount = order.getOrderAdjustments().size();
-		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(112.45D)));
-		assertTrue(order.getSubTotal().equals(new Money(124.95D)));
-		
-		order = dataProvider.createBasicOrder().getDelegate();
-		offers.get(0).setTotalitarianOffer(true);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		//there is a totalitarian order offer now - it is better than the item offers - the item offers are removed
-		adjustmentCount = 0;
-		for (OrderItem item : order.getOrderItems()) {
-			if (item.getOrderItemAdjustments() != null) {
-				adjustmentCount += item.getOrderItemAdjustments().size();
-			}
-		}
-		
-		assertTrue(adjustmentCount == 0);
-		adjustmentCount = order.getOrderAdjustments().size();
-		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(116.95D)));
-		assertTrue(order.getSubTotal().equals(new Money(129.95D)));
-		
-		order = dataProvider.createBasicOrder().getDelegate();
-		offers.get(0).setValue(new BigDecimal(".05"));
-		offers.get(2).setValue(new BigDecimal(".01"));
-		offers.get(2).setDiscountType(OfferDiscountType.PERCENT_OFF);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		//even though the first order offer is totalitarian, it is worth less than the order item offer, so it is removed.
-		//the other order offer is still valid, however, and is included.
-		adjustmentCount = 0;
-		for (OrderItem item : order.getOrderItems()) {
-			if (item.getOrderItemAdjustments() != null) {
-				adjustmentCount += item.getOrderItemAdjustments().size();
-			}
-		}
-		
-		assertTrue(adjustmentCount == 2);
-		adjustmentCount = order.getOrderAdjustments().size();
-		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(124.94D)));
-		assertTrue(order.getSubTotal().equals(new Money(124.95D)));
-		
-		verify();
-	}
-	
-	public void testApplyOffersToOrder_Items() throws Exception {
-		CandidateItemOfferAnswer answer = new CandidateItemOfferAnswer();
-		OrderItemAdjustmentAnswer answer2 = new OrderItemAdjustmentAnswer();
-		EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);
-		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(2);
-		
-		EasyMock.expect(cartServiceMock.addItemToFulfillmentGroup(EasyMock.isA(OrderItem.class), EasyMock.isA(FulfillmentGroup.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
-		EasyMock.expect(cartServiceMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
-		EasyMock.expect(cartServiceMock.removeItemFromOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
-		EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
-		EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
-		
-		replay();
-		
-		Order order = dataProvider.createBasicOrder().getDelegate();
-		List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
-			"order.subTotal.getAmount()>20", 
-			OfferDiscountType.PERCENT_OFF, 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
-		);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		int adjustmentCount = 0;
-		for (OrderItem item : order.getOrderItems()) {
-			if (item.getOrderItemAdjustments() != null) {
-				adjustmentCount += item.getOrderItemAdjustments().size();
-			}
-		}
-		
-		assertTrue(adjustmentCount == 2);
-		
-		order = dataProvider.createBasicOrder().getDelegate();
-		
-		offers = dataProvider.createItemBasedOfferWithItemCriteria(
-			"order.subTotal.getAmount()>20", 
-			OfferDiscountType.PERCENT_OFF, 
-			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
-			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
-		);
-		
-		offerService.applyOffersToOrder(offers, order);
-		
-		adjustmentCount = 0;
-		for (OrderItem item : order.getOrderItems()) {
-			if (item.getOrderItemAdjustments() != null) {
-				adjustmentCount += item.getOrderItemAdjustments().size();
-			}
-		}
-		
-		//Qualifiers are there, but the targets are not, so no adjustments
-		assertTrue(adjustmentCount == 0);
-		
-		verify();
-	}
+    
+    private OfferServiceImpl offerService;
+    private CustomerOfferDao customerOfferDaoMock;
+    private OfferCodeDao offerCodeDaoMock;
+    private OfferDao offerDaoMock;
+    private CartService cartServiceMock;
+    private OrderItemService orderItemServiceMock;
+    private FulfillmentGroupItemDao fgItemDaoMock;
+    private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
+    
+    @Override
+    protected void setUp() throws Exception {
+        offerService = new OfferServiceImpl();
+        customerOfferDaoMock = EasyMock.createMock(CustomerOfferDao.class);
+        offerCodeDaoMock = EasyMock.createMock(OfferCodeDao.class);
+        offerDaoMock = EasyMock.createMock(OfferDao.class);
+        offerService.setCustomerOfferDao(customerOfferDaoMock);
+        offerService.setOfferCodeDao(offerCodeDaoMock);
+        offerService.setOfferDao(offerDaoMock);
+        cartServiceMock = EasyMock.createMock(CartService.class);
+        orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
+        fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
+        
+        OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
+        orderProcessor.setOfferDao(offerDaoMock);
+        orderProcessor.setCartService(cartServiceMock);
+        orderProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
+        orderProcessor.setOrderItemService(orderItemServiceMock);
+        orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerService.setOrderOfferProcessor(orderProcessor);
+        
+        ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
+        itemProcessor.setOfferDao(offerDaoMock);
+        itemProcessor.setCartService(cartServiceMock);
+        itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
+        itemProcessor.setOrderItemService(orderItemServiceMock);
+        itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerService.setItemOfferProcessor(itemProcessor);
+        
+        FulfillmentGroupOfferProcessor fgProcessor = new FulfillmentGroupOfferProcessorImpl();
+        fgProcessor.setOfferDao(offerDaoMock);
+        fgProcessor.setCartService(cartServiceMock);
+        fgProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
+        fgProcessor.setOrderItemService(orderItemServiceMock);
+        fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerService.setFulfillmentGroupOfferProcessor(fgProcessor);
+        offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
+    }
+    
+    public void replay() {
+        EasyMock.replay(customerOfferDaoMock);
+        EasyMock.replay(offerCodeDaoMock);
+        EasyMock.replay(offerDaoMock);
+        EasyMock.replay(cartServiceMock);
+        EasyMock.replay(orderItemServiceMock);
+        EasyMock.replay(fgItemDaoMock);
+    }
+    
+    public void verify() {
+        EasyMock.verify(customerOfferDaoMock);
+        EasyMock.verify(offerCodeDaoMock);
+        EasyMock.verify(offerDaoMock);
+        EasyMock.verify(cartServiceMock);
+        EasyMock.verify(orderItemServiceMock);
+        EasyMock.verify(fgItemDaoMock);
+    }
+    
+    public void testApplyOffersToOrder_Order() throws Exception {
+        CandidateOrderOfferAnswer candidateOrderOfferAnswer = new CandidateOrderOfferAnswer();
+        OrderAdjustmentAnswer orderAdjustmentAnswer = new OrderAdjustmentAnswer();
+        EasyMock.expect(offerDaoMock.createCandidateOrderOffer()).andAnswer(candidateOrderOfferAnswer).atLeastOnce();
+        EasyMock.expect(offerDaoMock.createOrderAdjustment()).andAnswer(orderAdjustmentAnswer).atLeastOnce();
+        
+        CandidateItemOfferAnswer candidateItemOfferAnswer = new CandidateItemOfferAnswer();
+        OrderItemAdjustmentAnswer orderItemAdjustmentAnswer = new OrderItemAdjustmentAnswer();
+        EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(candidateItemOfferAnswer).atLeastOnce();
+        EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(orderItemAdjustmentAnswer).atLeastOnce();
+        
+        EasyMock.expect(cartServiceMock.addItemToFulfillmentGroup(EasyMock.isA(OrderItem.class), EasyMock.isA(FulfillmentGroup.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
+        EasyMock.expect(cartServiceMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
+        EasyMock.expect(cartServiceMock.removeItemFromOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
+        EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
+        EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
+        
+        replay();
+        
+        Order order = dataProvider.createBasicOrder().getDelegate();
+        List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        int adjustmentCount = order.getOrderAdjustments().size();
+        
+        assertTrue(adjustmentCount == 1);
+        assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(116.95D)));
+        
+        order = dataProvider.createBasicOrder().getDelegate();
+        offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
+        List<Offer> offers2 = dataProvider.createItemBasedOfferWithItemCriteria(
+            "order.subTotal.getAmount()>20", 
+            OfferDiscountType.PERCENT_OFF, 
+            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
+            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
+        );
+        offers.addAll(offers2);
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        //with the item offers in play, the subtotal restriction for the order offer is no longer valid
+        adjustmentCount = 0;
+        for (OrderItem item : order.getOrderItems()) {
+            if (item.getOrderItemAdjustments() != null) {
+                adjustmentCount += item.getOrderItemAdjustments().size();
+            }
+        }
+        
+        assertTrue(adjustmentCount == 2);
+        adjustmentCount = order.getOrderAdjustments().size();
+        assertTrue(adjustmentCount == 0);
+        assertTrue(order.getSubTotal().equals(new Money(124.95D)));
+        
+        order = dataProvider.createBasicOrder().getDelegate();
+        OfferRule orderRule = new OfferRuleImpl();
+        orderRule.setMatchRule("order.subTotal.getAmount()>124");
+        offers.get(0).getOfferMatchRules().put(OfferRuleType.ORDER.getType(), orderRule);
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        //now that the order restriction has been lessened, even with the item level discounts applied, the order offer still qualifies
+        adjustmentCount = 0;
+        for (OrderItem item : order.getOrderItems()) {
+            if (item.getOrderItemAdjustments() != null) {
+                adjustmentCount += item.getOrderItemAdjustments().size();
+            }
+        }
+        
+        assertTrue(adjustmentCount == 2);
+        adjustmentCount = order.getOrderAdjustments().size();
+        assertTrue(adjustmentCount == 1);
+        assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(112.45D)));
+        assertTrue(order.getSubTotal().equals(new Money(124.95D)));
+        
+        order = dataProvider.createBasicOrder().getDelegate();
+        //offers.get(0).setCombinableWithOtherOffers(false);
+        List<Offer> offers3 = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>20", OfferDiscountType.AMOUNT_OFF);
+        offers.addAll(offers3);
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        adjustmentCount = order.getOrderAdjustments().size();
+        assertTrue(adjustmentCount == 2);
+        
+        order = dataProvider.createBasicOrder().getDelegate();
+        offers.get(0).setCombinableWithOtherOffers(false);
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        //there is a non combinable order offer now
+        adjustmentCount = 0;
+        for (OrderItem item : order.getOrderItems()) {
+            if (item.getOrderItemAdjustments() != null) {
+                adjustmentCount += item.getOrderItemAdjustments().size();
+            }
+        }
+        
+        assertTrue(adjustmentCount == 2);
+        adjustmentCount = order.getOrderAdjustments().size();
+        assertTrue(adjustmentCount == 1);
+        assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(112.45D)));
+        assertTrue(order.getSubTotal().equals(new Money(124.95D)));
+        
+        order = dataProvider.createBasicOrder().getDelegate();
+        offers.get(0).setTotalitarianOffer(true);
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        //there is a totalitarian order offer now - it is better than the item offers - the item offers are removed
+        adjustmentCount = 0;
+        for (OrderItem item : order.getOrderItems()) {
+            if (item.getOrderItemAdjustments() != null) {
+                adjustmentCount += item.getOrderItemAdjustments().size();
+            }
+        }
+        
+        assertTrue(adjustmentCount == 0);
+        adjustmentCount = order.getOrderAdjustments().size();
+        assertTrue(adjustmentCount == 1);
+        assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(116.95D)));
+        assertTrue(order.getSubTotal().equals(new Money(129.95D)));
+        
+        order = dataProvider.createBasicOrder().getDelegate();
+        offers.get(0).setValue(new BigDecimal(".05"));
+        offers.get(2).setValue(new BigDecimal(".01"));
+        offers.get(2).setDiscountType(OfferDiscountType.PERCENT_OFF);
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        //even though the first order offer is totalitarian, it is worth less than the order item offer, so it is removed.
+        //the other order offer is still valid, however, and is included.
+        adjustmentCount = 0;
+        for (OrderItem item : order.getOrderItems()) {
+            if (item.getOrderItemAdjustments() != null) {
+                adjustmentCount += item.getOrderItemAdjustments().size();
+            }
+        }
+        
+        assertTrue(adjustmentCount == 2);
+        adjustmentCount = order.getOrderAdjustments().size();
+        assertTrue(adjustmentCount == 1);
+        assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(124.94D)));
+        assertTrue(order.getSubTotal().equals(new Money(124.95D)));
+        
+        verify();
+    }
+    
+    public void testApplyOffersToOrder_Items() throws Exception {
+        CandidateItemOfferAnswer answer = new CandidateItemOfferAnswer();
+        OrderItemAdjustmentAnswer answer2 = new OrderItemAdjustmentAnswer();
+        EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);
+        EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(2);
+        
+        EasyMock.expect(cartServiceMock.addItemToFulfillmentGroup(EasyMock.isA(OrderItem.class), EasyMock.isA(FulfillmentGroup.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
+        EasyMock.expect(cartServiceMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
+        EasyMock.expect(cartServiceMock.removeItemFromOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
+        EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
+        EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
+        
+        replay();
+        
+        Order order = dataProvider.createBasicOrder().getDelegate();
+        List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
+            "order.subTotal.getAmount()>20", 
+            OfferDiscountType.PERCENT_OFF, 
+            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
+            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
+        );
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        int adjustmentCount = 0;
+        for (OrderItem item : order.getOrderItems()) {
+            if (item.getOrderItemAdjustments() != null) {
+                adjustmentCount += item.getOrderItemAdjustments().size();
+            }
+        }
+        
+        assertTrue(adjustmentCount == 2);
+        
+        order = dataProvider.createBasicOrder().getDelegate();
+        
+        offers = dataProvider.createItemBasedOfferWithItemCriteria(
+            "order.subTotal.getAmount()>20", 
+            OfferDiscountType.PERCENT_OFF, 
+            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
+            "([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
+        );
+        
+        offerService.applyOffersToOrder(offers, order);
+        
+        adjustmentCount = 0;
+        for (OrderItem item : order.getOrderItems()) {
+            if (item.getOrderItemAdjustments() != null) {
+                adjustmentCount += item.getOrderItemAdjustments().size();
+            }
+        }
+        
+        //Qualifiers are there, but the targets are not, so no adjustments
+        assertTrue(adjustmentCount == 0);
+        
+        verify();
+    }
 
-	public void testBuildOfferListForOrder() throws Exception {
-		EasyMock.expect(customerOfferDaoMock.readCustomerOffersByCustomer(EasyMock.isA(Customer.class))).andReturn(new ArrayList<CustomerOffer>());
-		EasyMock.expect(offerDaoMock.readOffersByAutomaticDeliveryType()).andReturn(dataProvider.createCustomerBasedOffer(null, dataProvider.yesterday(), dataProvider.tomorrow(), OfferDiscountType.PERCENT_OFF));
-		
-		replay();
-		
-		Order order = dataProvider.createBasicOrder().getDelegate();
-		List<Offer> offers = offerService.buildOfferListForOrder(order);
-		
-		assertTrue(offers.size() == 1);
-		
-		verify();
-	}
+    public void testBuildOfferListForOrder() throws Exception {
+        EasyMock.expect(customerOfferDaoMock.readCustomerOffersByCustomer(EasyMock.isA(Customer.class))).andReturn(new ArrayList<CustomerOffer>());
+        EasyMock.expect(offerDaoMock.readOffersByAutomaticDeliveryType()).andReturn(dataProvider.createCustomerBasedOffer(null, dataProvider.yesterday(), dataProvider.tomorrow(), OfferDiscountType.PERCENT_OFF));
+        
+        replay();
+        
+        Order order = dataProvider.createBasicOrder().getDelegate();
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        
+        assertTrue(offers.size() == 1);
+        
+        verify();
+    }
 
-	public class CandidateItemOfferAnswer implements IAnswer<CandidateItemOffer> {
+    public class CandidateItemOfferAnswer implements IAnswer<CandidateItemOffer> {
 
-		public CandidateItemOffer answer() throws Throwable {
-			return new CandidateItemOfferImpl();
-		}
-		
-	}
-	
-	public class OrderItemAdjustmentAnswer implements IAnswer<OrderItemAdjustment> {
+        public CandidateItemOffer answer() throws Throwable {
+            return new CandidateItemOfferImpl();
+        }
+        
+    }
+    
+    public class OrderItemAdjustmentAnswer implements IAnswer<OrderItemAdjustment> {
 
-		public OrderItemAdjustment answer() throws Throwable {
-			return new OrderItemAdjustmentImpl();
-		}
-		
-	}
-	
-	public class CandidateOrderOfferAnswer implements IAnswer<CandidateOrderOffer> {
+        public OrderItemAdjustment answer() throws Throwable {
+            return new OrderItemAdjustmentImpl();
+        }
+        
+    }
+    
+    public class CandidateOrderOfferAnswer implements IAnswer<CandidateOrderOffer> {
 
-		public CandidateOrderOffer answer() throws Throwable {
-			return new CandidateOrderOfferImpl();
-		}
-		
-	}
-	
-	public class OrderAdjustmentAnswer implements IAnswer<OrderAdjustment> {
+        public CandidateOrderOffer answer() throws Throwable {
+            return new CandidateOrderOfferImpl();
+        }
+        
+    }
+    
+    public class OrderAdjustmentAnswer implements IAnswer<OrderAdjustment> {
 
-		public OrderAdjustment answer() throws Throwable {
-			return new OrderAdjustmentImpl();
-		}
-		
-	}
+        public OrderAdjustment answer() throws Throwable {
+            return new OrderAdjustmentImpl();
+        }
+        
+    }
 }

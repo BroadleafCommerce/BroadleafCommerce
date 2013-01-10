@@ -22,10 +22,10 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.money.Money;
 
 public interface CandidateItemOffer extends Serializable {
-	
-	public Long getId();
+    
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
     public OrderItem getOrderItem();
 

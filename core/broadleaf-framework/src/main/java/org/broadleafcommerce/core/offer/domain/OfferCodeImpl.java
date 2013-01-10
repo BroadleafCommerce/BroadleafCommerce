@@ -175,14 +175,14 @@ public class OfferCodeImpl implements OfferCode {
     }
 
     public List<Order> getOrders() {
-		return orders;
-	}
+        return orders;
+    }
 
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
-	}
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

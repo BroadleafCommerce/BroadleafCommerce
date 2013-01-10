@@ -33,72 +33,72 @@ import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceT
  *
  */
 public abstract class CyberSourcePaymentRequest extends CyberSourceRequest {
-	
-	private static final long serialVersionUID = 1L;
-	
-	protected CyberSourceBillingRequest billingRequest;
-	protected String currency;
-	protected List<CyberSourceItemRequest> itemRequests = new AutoNumberMemberIdList();
-	protected CyberSourceTransactionType transactionType;
-	protected CyberSourceMethodType methodType;
-	protected Money grandTotal;
-	protected Boolean useGrandTotal;
+    
+    private static final long serialVersionUID = 1L;
+    
+    protected CyberSourceBillingRequest billingRequest;
+    protected String currency;
+    protected List<CyberSourceItemRequest> itemRequests = new AutoNumberMemberIdList();
+    protected CyberSourceTransactionType transactionType;
+    protected CyberSourceMethodType methodType;
+    protected Money grandTotal;
+    protected Boolean useGrandTotal;
 
-	public CyberSourcePaymentRequest(CyberSourceMethodType methodType) {
-		super(CyberSourceServiceType.PAYMENT);
-		this.methodType = methodType;
-	}
+    public CyberSourcePaymentRequest(CyberSourceMethodType methodType) {
+        super(CyberSourceServiceType.PAYMENT);
+        this.methodType = methodType;
+    }
 
-	public CyberSourceTransactionType getTransactionType() {
-		return transactionType;
-	}
-	
-	public void setTransactionType(CyberSourceTransactionType transactionType) {
-		this.transactionType = transactionType;
-	}
-	
-	public CyberSourceMethodType getMethodType() {
-		return methodType;
-	}
-	
-	public CyberSourceBillingRequest getBillingRequest() {
-		return billingRequest;
-	}
-	
-	public void setBillingRequest(CyberSourceBillingRequest billingRequest) {
-		this.billingRequest = billingRequest;
-	}
-	
-	public String getCurrency() {
-		return currency;
-	}
-	
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
-	
-	public List<CyberSourceItemRequest> getItemRequests() {
-		return itemRequests;
-	}
-	
-	public void setItemRequests(List<CyberSourceItemRequest> itemRequests) {
-		this.itemRequests = itemRequests;
-	}
+    public CyberSourceTransactionType getTransactionType() {
+        return transactionType;
+    }
+    
+    public void setTransactionType(CyberSourceTransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
+    
+    public CyberSourceMethodType getMethodType() {
+        return methodType;
+    }
+    
+    public CyberSourceBillingRequest getBillingRequest() {
+        return billingRequest;
+    }
+    
+    public void setBillingRequest(CyberSourceBillingRequest billingRequest) {
+        this.billingRequest = billingRequest;
+    }
+    
+    public String getCurrency() {
+        return currency;
+    }
+    
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+    
+    public List<CyberSourceItemRequest> getItemRequests() {
+        return itemRequests;
+    }
+    
+    public void setItemRequests(List<CyberSourceItemRequest> itemRequests) {
+        this.itemRequests = itemRequests;
+    }
 
-	public Money getGrandTotal() {
-		return grandTotal;
-	}
+    public Money getGrandTotal() {
+        return grandTotal;
+    }
 
-	public void setGrandTotal(Money grandTotal) {
-		this.grandTotal = grandTotal;
-	}
+    public void setGrandTotal(Money grandTotal) {
+        this.grandTotal = grandTotal;
+    }
 
-	public Boolean getUseGrandTotal() {
-		return useGrandTotal;
-	}
+    public Boolean getUseGrandTotal() {
+        return useGrandTotal;
+    }
 
-	public void setUseGrandTotal(Boolean useGrandTotal) {
-		this.useGrandTotal = useGrandTotal;
-	}
-	
+    public void setUseGrandTotal(Boolean useGrandTotal) {
+        this.useGrandTotal = useGrandTotal;
+    }
+    
 }

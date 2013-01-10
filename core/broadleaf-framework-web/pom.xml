@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>core</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.2.4</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>broadleaf-framework-web</artifactId>
-	<name>BroadleafCommerce Framework Web</name>
-	<description>BroadleafCommerce Framework Web</description>
+    <parent>
+        <artifactId>core</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.5.2.4</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>broadleaf-framework-web</artifactId>
+    <name>BroadleafCommerce Framework Web</name>
+    <description>BroadleafCommerce Framework Web</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
         <license>
@@ -46,139 +46,139 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<build>
-		<plugins>
-			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-source-plugin</artifactId>
-		        <version>2.1.2</version>
-		        <executions>
-		          <execution>
-		            <id>attach-sources</id>
-		            <phase>verify</phase>
-		            <goals>
-		              <goal>jar-no-fork</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-		    </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-					<!-- this ant script runs testng natively -->
-					<execution>
-						<id>cobertura</id>
-						<phase>package</phase>
-						<configuration>
-							<tasks unless="maven.test.skip">
-								<taskdef classpathref="maven.test.classpath" resource="tasks.properties" />
-								<cobertura-instrument todir="target/instrumented" datafile="target/instrumented/cobertura.ser" classpathref="maven.test.classpath">
-									<ignore regex="org.apache.log4j.*" />
-									<fileset dir="${project.build.outputDirectory}">
-										<include name="**/*.class" />
-										<exclude name="**/*Test.class" />
-									</fileset>
-								</cobertura-instrument>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>ant</groupId>
-						<artifactId>ant-junit</artifactId>
-						<version>1.6.2</version>
-					</dependency>
-					<dependency>
-						<groupId>cobertura</groupId>
-						<artifactId>cobertura</artifactId>
-						<version>1.8</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.ant</groupId>
-						<artifactId>ant-jsch</artifactId>
-						<version>1.7.1</version>
-						<exclusions>
-							<exclusion>
-								<groupId>com.jcraft</groupId>
-								<artifactId>jsch</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-					<dependency>
-						<groupId>com.jcraft</groupId>
-						<artifactId>jsch</artifactId>
-						<version>0.1.42</version>
-					</dependency>
-					<dependency>
-						<groupId>ant-contrib</groupId>
-						<artifactId>ant-contrib</artifactId>
-						<version>1.0b3</version>
-						<exclusions>
-							<exclusion>
-								<groupId>ant</groupId>
-								<artifactId>ant</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.zeroturnaround</groupId>
-				<artifactId>javarebel-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>generate-rebel-xml</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<relativePath>../../</relativePath>
-					<rootPath>$${rebel.root}</rootPath>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-profile</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-profile-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-framework</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-	</dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                  <execution>
+                    <id>attach-sources</id>
+                    <phase>verify</phase>
+                    <goals>
+                      <goal>jar-no-fork</goal>
+                    </goals>
+                  </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <!-- this ant script runs testng natively -->
+                    <execution>
+                        <id>cobertura</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks unless="maven.test.skip">
+                                <taskdef classpathref="maven.test.classpath" resource="tasks.properties" />
+                                <cobertura-instrument todir="target/instrumented" datafile="target/instrumented/cobertura.ser" classpathref="maven.test.classpath">
+                                    <ignore regex="org.apache.log4j.*" />
+                                    <fileset dir="${project.build.outputDirectory}">
+                                        <include name="**/*.class" />
+                                        <exclude name="**/*Test.class" />
+                                    </fileset>
+                                </cobertura-instrument>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-junit</artifactId>
+                        <version>1.6.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>cobertura</groupId>
+                        <artifactId>cobertura</artifactId>
+                        <version>1.8</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant-jsch</artifactId>
+                        <version>1.7.1</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>com.jcraft</groupId>
+                                <artifactId>jsch</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.jcraft</groupId>
+                        <artifactId>jsch</artifactId>
+                        <version>0.1.42</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>1.0b3</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>ant</groupId>
+                                <artifactId>ant</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>javarebel-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <relativePath>../../</relativePath>
+                    <rootPath>$${rebel.root}</rootPath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-profile</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-profile-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-framework</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
 </project>

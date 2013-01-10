@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
@@ -14,122 +14,122 @@
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
     
     <bean id="blTaxModule" class="org.broadleafcommerce.core.pricing.service.module.SimpleTaxModule">
-		<property name="factor" value="0.05"/>
-	</bean>
+        <property name="factor" value="0.05"/>
+    </bean>
 
-	<bean id="blShippingModule" class="org.broadleafcommerce.core.pricing.service.module.BandedShippingModule">
-		<property name="feeTypeMapping">
-			<map>
-	 			<entry key="standard" value="SHIPPING" />
-	 			<entry key="expedited" value="EXPEDITED"/>
-	 			<entry key="truck" value="FREE" />
-	 			<entry key="pickup" value="FREE" />
-			</map>
-		</property>
-		<property name="feeSubTypeMapping">
-			<map>
-				<entry key="ALL" value="ALL" />
-	 			<entry key="alsk" value="alsk" />
-	 			<entry key="hawi" value="hawi" />
-			</map>
-		</property>
-		<property name="defaultModule" value="true"/>
-	</bean>
+    <bean id="blShippingModule" class="org.broadleafcommerce.core.pricing.service.module.BandedShippingModule">
+        <property name="feeTypeMapping">
+            <map>
+                <entry key="standard" value="SHIPPING" />
+                <entry key="expedited" value="EXPEDITED"/>
+                <entry key="truck" value="FREE" />
+                <entry key="pickup" value="FREE" />
+            </map>
+        </property>
+        <property name="feeSubTypeMapping">
+            <map>
+                <entry key="ALL" value="ALL" />
+                <entry key="alsk" value="alsk" />
+                <entry key="hawi" value="hawi" />
+            </map>
+        </property>
+        <property name="defaultModule" value="true"/>
+    </bean>
 
-	<bean id="blPricingWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
-		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.core.pricing.service.workflow.PricingProcessContextFactory"/>
-		</property>
-		<property name="activities">
-			<list>
+    <bean id="blPricingWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.pricing.service.workflow.PricingProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupTotalActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingActivity">
                     <property name="shippingService" ref="blShippingService"/>
                 </bean>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity"/>
-				<bean class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity">
-					<property name="taxModule" ref="blTaxModule"/>
-				</bean>
-				<bean class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
-			</list>
-		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
-	</bean>
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity">
+                    <property name="taxModule" ref="blTaxModule"/>
+                </bean>
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
 
-	<bean id="blGiftCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blGiftCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
-	<bean id="blBankAccountModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blBankAccountModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
-	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
-	<bean id="blShippingService" class="org.broadleafcommerce.core.pricing.service.ShippingServiceImpl">
-		<property name="shippingModule" ref="blShippingModule"/>
-	</bean>
-	
-	<bean id="blGiftCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
-		<property name="paymentModule" ref="blGiftCardModule"/>
-	</bean>
+    <bean id="blShippingService" class="org.broadleafcommerce.core.pricing.service.ShippingServiceImpl">
+        <property name="shippingModule" ref="blShippingModule"/>
+    </bean>
+    
+    <bean id="blGiftCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blGiftCardModule"/>
+    </bean>
 
-	<bean id="blCreditCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
-		<property name="paymentModule" ref="blCreditCardModule"/>
-	</bean>
+    <bean id="blCreditCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blCreditCardModule"/>
+    </bean>
 
-	<bean id="blBankAccountService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
-		<property name="paymentModule" ref="blBankAccountModule"/>
-	</bean>
+    <bean id="blBankAccountService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blBankAccountModule"/>
+    </bean>
 
-	<bean id="blAuthorizeAndDebitWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
-		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
-				<property name="paymentActionType" value="AUTHORIZEANDDEBIT"/>
-			</bean>
-		</property>
-		<property name="activities">
-			<list>
-				<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-					<property name="paymentService" ref="blGiftCardService"/>
-					<property name="userName" value="web"/>
-				</bean>
-				<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-					<property name="paymentService" ref="blBankAccountService"/>
-					<property name="userName" value="web"/>
-				</bean>
-				<bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-					<property name="paymentService" ref="blCreditCardService"/>
-					<property name="userName" value="web"/>
-				</bean>
-			</list>
-		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
-	</bean>
+    <bean id="blAuthorizeAndDebitWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="AUTHORIZEANDDEBIT"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+                    <property name="paymentService" ref="blGiftCardService"/>
+                    <property name="userName" value="web"/>
+                </bean>
+                <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+                    <property name="paymentService" ref="blBankAccountService"/>
+                    <property name="userName" value="web"/>
+                </bean>
+                <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+                    <property name="paymentService" ref="blCreditCardService"/>
+                    <property name="userName" value="web"/>
+                </bean>
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
 
-	<bean id="blPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
-		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.core.payment.service.workflow.SimplePaymentProcessContextFactory"/>
-		</property>
-		<property name="activities">
-			<list>
-				<bean class="org.broadleafcommerce.core.payment.service.workflow.CompositeActivity">
-					<property name="workflow" ref="blAuthorizeAndDebitWorkflow"/>
-				</bean>
-			</list>
-		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
-	</bean>
+    <bean id="blPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.SimplePaymentProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <bean class="org.broadleafcommerce.core.payment.service.workflow.CompositeActivity">
+                    <property name="workflow" ref="blAuthorizeAndDebitWorkflow"/>
+                </bean>
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
 
-	<bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
-		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
-		</property>
-		<property name="activities">
-			<list>
-				<bean class="org.broadleafcommerce.core.checkout.service.workflow.PricingServiceActivity"/>
-				<bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
-				<bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
-			</list>
-		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
-	</bean>
-	   
+    <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <bean class="org.broadleafcommerce.core.checkout.service.workflow.PricingServiceActivity"/>
+                <bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
+                <bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+       
 </beans>

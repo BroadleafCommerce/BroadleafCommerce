@@ -30,19 +30,19 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface ValidationConfiguration {
-	
-	/**
-	 * The fully qualified classname of the com.smartgwt.client.widgets.form.validator.Validator
-	 * instance to use for validation
-	 * 
-	 * @return the validator classname
-	 */
-	String validationImplementation();
-	
-	/**
-	 * Optional configuration items that can be used to setup the validator
-	 * 
-	 * @return validator configuration attributes
-	 */
-	ConfigurationItem[] configurationItems() default {};
+    
+    /**
+     * The fully qualified classname of the com.smartgwt.client.widgets.form.validator.Validator
+     * instance to use for validation
+     * 
+     * @return the validator classname
+     */
+    String validationImplementation();
+    
+    /**
+     * Optional configuration items that can be used to setup the validator
+     * 
+     * @return validator configuration attributes
+     */
+    ConfigurationItem[] configurationItems() default {};
 }

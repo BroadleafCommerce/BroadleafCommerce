@@ -22,10 +22,10 @@ package org.broadleafcommerce.vendor.cybersource.service.message;
  *
  */
 public class CyberSourceBillingRequest  implements java.io.Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private java.lang.String title;
+    
+    private static final long serialVersionUID = 1L;
+    
+    private java.lang.String title;
     private java.lang.String firstName;
     private java.lang.String middleName;
     private java.lang.String lastName;

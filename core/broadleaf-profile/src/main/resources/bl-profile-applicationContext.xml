@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
@@ -13,46 +13,46 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-	<context:component-scan base-package="org.broadleafcommerce.profile">
+    <context:component-scan base-package="org.broadleafcommerce.profile">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.profile.web.*"/>
     </context:component-scan>
     
-	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
-		<property name="propertyLocations">
-			<set>
-				<value>classpath:config/bc/</value>
-			</set>
-		</property>
-		<property name="environments">
-			<set>
-				<value>production</value>
-				<value>staging</value>
-				<value>integration</value>
-				<value>development</value>
-			</set>
-		</property>
-		<property name="defaultEnvironment" value="development"/>
-		<property name="ignoreUnresolvablePlaceholders" value="true"/>
-	</bean>
+    <bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
+        <property name="propertyLocations">
+            <set>
+                <value>classpath:config/bc/</value>
+            </set>
+        </property>
+        <property name="environments">
+            <set>
+                <value>production</value>
+                <value>staging</value>
+                <value>integration</value>
+                <value>development</value>
+            </set>
+        </property>
+        <property name="defaultEnvironment" value="development"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
 
-	<bean id="blServerInfo" class="org.broadleafcommerce.profile.email.service.info.ServerInfo">
-		<property name="serverName" value="localhost"/>
-		<property name="serverPort" value="8080"/>
-	</bean>
+    <bean id="blServerInfo" class="org.broadleafcommerce.profile.email.service.info.ServerInfo">
+        <property name="serverName" value="localhost"/>
+        <property name="serverPort" value="8080"/>
+    </bean>
 
-	<bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-    	<property name="host"><value>localhost</value></property>
-    	<property name="port"><value>25</value></property>
-    	<property name="protocol"><value>smtp</value></property>
-    	<property name="javaMailProperties">
-			<props>
-				<prop key="mail.smtp.starttls.enable">true</prop>
-				<prop key="mail.smtp.timeout">25000</prop>
-			</props>
-		</property>
-	</bean>
+    <bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host"><value>localhost</value></property>
+        <property name="port"><value>25</value></property>
+        <property name="protocol"><value>smtp</value></property>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.timeout">25000</prop>
+            </props>
+        </property>
+    </bean>
 
-	<bean id="blVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <bean id="blVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
       <property name="velocityProperties">
          <value>
             resource.loader=class
@@ -60,80 +60,80 @@
             <!-- class.resource.loader.path=classpath:/config/velocity/templates/ -->
             <!-- Note that jar specification for the .path configuration property conforms to the same rules for the java.net.JarUrlConnection class-->
             <!-- jar.resource.loader.class =org.apache.velocity.runtime.resource.loader.JarResourceLoader
-			jar.resource.loader.path = jar:file:/broadleaf-profile.jar/emailTemplates
-			file.resource.loader.class=org.apache.velocity.runtime.resource.loader.FileResourceLoader
-			file.resource.loader.cache = false
-			file.resource.loader.path=${file.root}/WEB-INF/config/velocity/templates-->
+            jar.resource.loader.path = jar:file:/broadleaf-profile.jar/emailTemplates
+            file.resource.loader.class=org.apache.velocity.runtime.resource.loader.FileResourceLoader
+            file.resource.loader.cache = false
+            file.resource.loader.path=${file.root}/WEB-INF/config/velocity/templates-->
          </value>
       </property>
    </bean>
-	
-	<bean id="blEmailInfo" class="org.broadleafcommerce.profile.email.service.info.EmailInfo" />
-	<bean id="blNullEmailInfo" class="org.broadleafcommerce.profile.email.service.info.NullEmailInfo" />
-	<bean id="blRegistrationEmailInfo" parent="blNullEmailInfo" />
+    
+    <bean id="blEmailInfo" class="org.broadleafcommerce.profile.email.service.info.EmailInfo" />
+    <bean id="blNullEmailInfo" class="org.broadleafcommerce.profile.email.service.info.NullEmailInfo" />
+    <bean id="blRegistrationEmailInfo" parent="blNullEmailInfo" />
 
-	<bean id="blMessageCreator" class="org.broadleafcommerce.profile.email.service.message.MessageCreator">
-		<constructor-arg ref="blVelocityEngine"/>
-		<constructor-arg ref="blMailSender"/>
-		<constructor-arg>
-			<map>
+    <bean id="blMessageCreator" class="org.broadleafcommerce.profile.email.service.message.MessageCreator">
+        <constructor-arg ref="blVelocityEngine"/>
+        <constructor-arg ref="blMailSender"/>
+        <constructor-arg>
+            <map>
                 <entry key="number">
-                	<bean class="org.apache.velocity.tools.generic.NumberTool" scope="prototype"/>
+                    <bean class="org.apache.velocity.tools.generic.NumberTool" scope="prototype"/>
                 </entry>
                 <entry key="date">
-                	<bean class="org.apache.velocity.tools.generic.ComparisonDateTool" scope="prototype"/>
+                    <bean class="org.apache.velocity.tools.generic.ComparisonDateTool" scope="prototype"/>
                 </entry>
                 <entry key="list">
-                	<bean class="org.apache.velocity.tools.generic.ListTool" scope="prototype"/>
+                    <bean class="org.apache.velocity.tools.generic.ListTool" scope="prototype"/>
                 </entry>
                 <entry key="math">
-                	<bean class="org.apache.velocity.tools.generic.MathTool" scope="prototype"/>
+                    <bean class="org.apache.velocity.tools.generic.MathTool" scope="prototype"/>
                 </entry>
                 <entry key="iterator">
-                	<bean class="org.apache.velocity.tools.generic.IteratorTool" scope="prototype"/>
+                    <bean class="org.apache.velocity.tools.generic.IteratorTool" scope="prototype"/>
                 </entry>
                 <entry key="alternator">
-                	<bean class="org.apache.velocity.tools.generic.AlternatorTool" scope="prototype"/>
+                    <bean class="org.apache.velocity.tools.generic.AlternatorTool" scope="prototype"/>
                 </entry>
                 <entry key="sorter">
-                	<bean class="org.apache.velocity.tools.generic.SortTool" scope="prototype"/>
+                    <bean class="org.apache.velocity.tools.generic.SortTool" scope="prototype"/>
                 </entry>
                 <entry key="esc">
-                	<bean class="org.apache.velocity.tools.generic.EscapeTool" scope="prototype"/>
+                    <bean class="org.apache.velocity.tools.generic.EscapeTool" scope="prototype"/>
                 </entry>
                 <entry key="serverInfo" value-ref="blServerInfo"/>
             </map>
         </constructor-arg>
-	</bean>
-	
-	<bean id="blServiceMonitor" class="org.broadleafcommerce.profile.vendor.service.monitor.ServiceMonitor" init-method="init"/>
-	
-	<bean id="springAppContext" class="org.broadleafcommerce.profile.util.SpringAppContext"/>
-	
-	<bean id="blEncryptionModule" class="org.broadleafcommerce.profile.encryption.DefaultEncryptionModule"/>
-	
-	<bean id="blCustomerService" class="org.broadleafcommerce.profile.core.service.CustomerServiceImpl">
-		<property name="passwordResetHandlers">
-			<list>
-				<bean class="org.broadleafcommerce.profile.core.service.handler.EmailNotificationPasswordUpdatedHandler">
-					<property name="passwordResetEmailSubject">
-						<map>
-							<entry key="en_US">
-								<value>Password Reset</value>
-							</entry>
-						</map>
-					</property>
-					<property name="passwordResetEmailTemplate">
-						<map>
-							<entry key="en_US">
-								<value>org/broadleafcommerce/profile/email/service/template/passwordReset.vm</value>
-							</entry>
-						</map>
-					</property>
-					<property name="passwordResetEmailFromAddress" value="team@yourcompany.com"/>
-				</bean>
-			</list>
-		</property>
-	</bean>
-	
+    </bean>
+    
+    <bean id="blServiceMonitor" class="org.broadleafcommerce.profile.vendor.service.monitor.ServiceMonitor" init-method="init"/>
+    
+    <bean id="springAppContext" class="org.broadleafcommerce.profile.util.SpringAppContext"/>
+    
+    <bean id="blEncryptionModule" class="org.broadleafcommerce.profile.encryption.DefaultEncryptionModule"/>
+    
+    <bean id="blCustomerService" class="org.broadleafcommerce.profile.core.service.CustomerServiceImpl">
+        <property name="passwordResetHandlers">
+            <list>
+                <bean class="org.broadleafcommerce.profile.core.service.handler.EmailNotificationPasswordUpdatedHandler">
+                    <property name="passwordResetEmailSubject">
+                        <map>
+                            <entry key="en_US">
+                                <value>Password Reset</value>
+                            </entry>
+                        </map>
+                    </property>
+                    <property name="passwordResetEmailTemplate">
+                        <map>
+                            <entry key="en_US">
+                                <value>org/broadleafcommerce/profile/email/service/template/passwordReset.vm</value>
+                            </entry>
+                        </map>
+                    </property>
+                    <property name="passwordResetEmailFromAddress" value="team@yourcompany.com"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
 </beans>

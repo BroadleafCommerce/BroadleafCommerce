@@ -26,8 +26,8 @@ import com.smartgwt.client.widgets.form.DynamicForm;
  */
 public interface FormOnlyDisplay {
 
-	public DynamicForm getForm();
-	
-	public void buildFields(final DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId);
-	
+    public DynamicForm getForm();
+    
+    public void buildFields(final DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId);
+    
 }

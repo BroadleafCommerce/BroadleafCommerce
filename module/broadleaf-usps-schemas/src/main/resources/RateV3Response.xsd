@@ -12,41 +12,41 @@
       <xs:element type="xs:float" name="Rate" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:float" name="CommercialRate" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="CommitmentDate" minOccurs="1" maxOccurs="1"/>
-  	  <xs:element type="LocationV3Type" name="Location" minOccurs="0" maxOccurs="200"/>
-  	  <xs:element type="CommitmentV3Type" name="Commitment" minOccurs="0" maxOccurs="5"/>
+      <xs:element type="LocationV3Type" name="Location" minOccurs="0" maxOccurs="200"/>
+      <xs:element type="CommitmentV3Type" name="Commitment" minOccurs="0" maxOccurs="5"/>
     </xs:sequence>
     <xs:attribute type="xs:int" name="CLASSID" use="optional"/>
   </xs:complexType>
   <xs:complexType name="ErrorV3Type">
-  	<xs:sequence>
-  		<xs:element type="xs:int" name="Number" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="Source" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="Description" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="HelpFile" minOccurs="0" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="HelpContext" minOccurs="0" maxOccurs="1"/>
-  	</xs:sequence>
+    <xs:sequence>
+        <xs:element type="xs:int" name="Number" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="Source" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="Description" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="HelpFile" minOccurs="0" maxOccurs="1"/>
+        <xs:element type="xs:string" name="HelpContext" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="CommitmentV3Type">
-  	<xs:sequence>
-  		<xs:element type="xs:string" name="CommitmentDate" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="CommitmentTime" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="LocationV3Type" name="Location" minOccurs="0" maxOccurs="200"/>
-  	</xs:sequence>
+    <xs:sequence>
+        <xs:element type="xs:string" name="CommitmentDate" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="CommitmentTime" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="LocationV3Type" name="Location" minOccurs="0" maxOccurs="200"/>
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="LocationV3Type">
-  	<xs:sequence>
-  		<xs:element type="xs:string" name="CutOff" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="Facility" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="Street" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="City" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="State" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="xs:string" name="Zip" minOccurs="1" maxOccurs="1"/>
-  	</xs:sequence>
+    <xs:sequence>
+        <xs:element type="xs:string" name="CutOff" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="Facility" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="Street" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="City" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="State" minOccurs="1" maxOccurs="1"/>
+        <xs:element type="xs:string" name="Zip" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ResponsePackageV3Type">
     <xs:sequence>
       <xs:element type="xs:int" name="ZipOrigination" minOccurs="1" maxOccurs="1"/>
- 	  <xs:element type="xs:int" name="ZipDestination" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:int" name="ZipDestination" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:int" name="Pounds" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:float" name="Ounces" minOccurs="1" maxOccurs="1"/>
       <xs:element name="FirstClassMailType" minOccurs="0" maxOccurs="1">

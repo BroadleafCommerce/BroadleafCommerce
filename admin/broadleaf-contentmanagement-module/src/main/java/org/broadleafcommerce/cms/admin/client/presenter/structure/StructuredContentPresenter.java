@@ -78,17 +78,17 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected StructuredContentPresenterInitializer initializer;
     protected StructuredContentPresenterExtractor extractor;
 
-	@Override
-	protected void removeClicked() {
-		display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
+    @Override
+    protected void removeClicked() {
+        display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
                 destroyContentTypeForm();
                 formPresenter.disable();
-		        display.getListDisplay().getRemoveButton().disable();
+                display.getListDisplay().getRemoveButton().disable();
             }
         }, null);
-	}
+    }
 
     protected void destroyContentTypeForm() {
         Canvas legacyForm = ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
@@ -127,10 +127,10 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected void addClicked() {
         initialValues.put("priority", 5);
         super.addClicked();
-	}
+    }
 
     @Override
-	protected void changeSelection(final Record selectedRecord) {
+    protected void changeSelection(final Record selectedRecord) {
         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
             getDisplay().getListDisplay().getRemoveButton().enable();
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
@@ -146,7 +146,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         currentStructuredContentId = getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(currentStructuredContentRecord);
         currentStructuredContentPos = getDisplay().getListDisplay().getGrid().getRecordIndex(currentStructuredContentRecord);
         loadContentTypeForm(selectedRecord);
-	}
+    }
 
     protected void loadContentTypeForm(final Record selectedRecord) {
         //load the page template form
@@ -188,23 +188,23 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     }
 
     @Override
-	public void bind() {
-		super.bind();
+    public void bind() {
+        super.bind();
         getSaveButtonHandlerRegistration().removeHandler();
         formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
                     refresh();
-				}
-			}
+                }
+            }
         });
         ruleRefreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
                     refresh();
-				}
-			}
+                }
+            }
         });
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -276,7 +276,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 getDisplay().getStructuredContentRefreshButton().enable();
             }
         });
-	}
+    }
 
     protected void save() {
         extractor.applyData(currentStructuredContentRecord);
@@ -337,9 +337,9 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         });
     }
 
-	public void setup() {
+    public void setup() {
         super.setup();
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("id");
@@ -354,12 +354,12 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentTypeSearchDS", new StructuredContentTypeSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				ListGridDataSource structuredContentTypeDataSource = (ListGridDataSource) result;
-				structuredContentTypeDataSource.resetPermanentFieldVisibility(
-					"name","description"
-				);
-				EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource, true);
+            public void onSetupSuccess(DataSource result) {
+                ListGridDataSource structuredContentTypeDataSource = (ListGridDataSource) result;
+                structuredContentTypeDataSource.resetPermanentFieldVisibility(
+                    "name","description"
+                );
+                EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource, true);
                 setupDisplayItems(
                     getPresenterSequenceSetupManager().getDataSource("structuredContentDS"),
                     getPresenterSequenceSetupManager().getDataSource("scCustomerDS"),
@@ -368,8 +368,8 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                     getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"),
                     getPresenterSequenceSetupManager().getDataSource("scProductDS")
                 );
-				getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
                         "structuredContentType",
                         structuredContentTypeSearchView,
                         "Structured Content Type Search",
@@ -385,19 +385,19 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                         }
                 );
                 ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"locked", "structuredContentType_Grid", "contentName", "locale", "offlineFlag"});
-			}
-		}));
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scItemCriteriaDS", new StructuredContentItemCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource result) {
                 initializer = new StructuredContentPresenterInitializer(StructuredContentPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
                 extractor = new StructuredContentPresenterExtractor(StructuredContentPresenter.this);
             }
         }));
-	}
+    }
 
-	@Override
-	public StructuredContentDisplay getDisplay() {
-		return (StructuredContentDisplay) display;
-	}
-	
+    @Override
+    public StructuredContentDisplay getDisplay() {
+        return (StructuredContentDisplay) display;
+    }
+    
 }

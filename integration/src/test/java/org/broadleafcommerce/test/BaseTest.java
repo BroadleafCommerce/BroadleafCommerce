@@ -30,21 +30,21 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})
 public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 
-	private static MergeClassPathXMLApplicationContext mergeContext = null;
-	
-	public static MergeClassPathXMLApplicationContext getContext() {
-		try {
-			if (mergeContext == null) {
-				String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-				mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[]{});
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return mergeContext;
-	}
-	
-	@PersistenceContext(unitName = "blPU")
+    private static MergeClassPathXMLApplicationContext mergeContext = null;
+    
+    public static MergeClassPathXMLApplicationContext getContext() {
+        try {
+            if (mergeContext == null) {
+                String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
+                mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[]{});
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return mergeContext;
+    }
+    
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
 }

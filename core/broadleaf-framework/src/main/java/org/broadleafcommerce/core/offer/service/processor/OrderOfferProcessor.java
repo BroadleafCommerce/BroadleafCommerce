@@ -35,42 +35,42 @@ import org.broadleafcommerce.core.order.service.OrderItemService;
  */
 public interface OrderOfferProcessor extends BaseProcessor {
 
-	public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer);
+    public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer);
 
-	public OfferDao getOfferDao();
+    public OfferDao getOfferDao();
 
-	public void setOfferDao(OfferDao offerDao);
-	
-	public Boolean executeExpression(String expression, Map<String, Object> vars);
-	
-	public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order);
-	
-	public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers);
-	
-	public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order);
-	
-	public void compileOrderTotal(PromotableOrder order);
+    public void setOfferDao(OfferDao offerDao);
+    
+    public Boolean executeExpression(String expression, Map<String, Object> vars);
+    
+    public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order);
+    
+    public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers);
+    
+    public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order);
+    
+    public void compileOrderTotal(PromotableOrder order);
     
     public void initializeSplitItems(PromotableOrder order);
-	
+    
     public CartService getCartService();
 
-	public void setCartService(CartService cartService);
-	
-	public void gatherCart(PromotableOrder order);
-	
-	public OrderItemService getOrderItemService();
+    public void setCartService(CartService cartService);
+    
+    public void gatherCart(PromotableOrder order);
+    
+    public OrderItemService getOrderItemService();
 
-	public void setOrderItemService(OrderItemService orderItemService);
+    public void setOrderItemService(OrderItemService orderItemService);
 
-	public FulfillmentGroupItemDao getFulfillmentGroupItemDao();
+    public FulfillmentGroupItemDao getFulfillmentGroupItemDao();
 
-	public void setFulfillmentGroupItemDao(FulfillmentGroupItemDao fulfillmentGroupItemDao);
-	
-	public PromotableItemFactory getPromotableItemFactory();
+    public void setFulfillmentGroupItemDao(FulfillmentGroupItemDao fulfillmentGroupItemDao);
+    
+    public PromotableItemFactory getPromotableItemFactory();
 
-	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+    public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
 
     public void initializeBundleSplitItems(PromotableOrder order);
-	
+    
 }

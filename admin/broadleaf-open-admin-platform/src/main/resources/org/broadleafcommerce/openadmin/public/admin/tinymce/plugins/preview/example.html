@@ -4,15 +4,15 @@
 <script type="text/javascript" src="jscripts/embed.js"></script>
 <script type="text/javascript">
 tinyMCEPopup.onInit.add(function(ed) {
-	var dom = tinyMCEPopup.dom;
+    var dom = tinyMCEPopup.dom;
 
-	// Load editor content_css
-	tinymce.each(ed.settings.content_css.split(','), function(u) {
-		dom.loadCSS(ed.documentBaseURI.toAbsolute(u));
-	});
+    // Load editor content_css
+    tinymce.each(ed.settings.content_css.split(','), function(u) {
+        dom.loadCSS(ed.documentBaseURI.toAbsolute(u));
+    });
 
-	// Place contents inside div container
-	dom.setHTML('content', ed.getContent());
+    // Place contents inside div container
+    dom.setHTML('content', ed.getContent());
 });
 </script>
 <title>Example of a custom preview page</title>

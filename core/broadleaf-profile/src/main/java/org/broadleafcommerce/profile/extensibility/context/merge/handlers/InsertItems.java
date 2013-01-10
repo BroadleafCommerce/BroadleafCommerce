@@ -42,7 +42,7 @@ public class InsertItems extends BaseHandler {
         List<Node> usedNodes = new ArrayList<Node>();
         Node node1Parent = nodeList1.item(0).getParentNode();
         for (int j=0;j<nodeList2.getLength();j++) {
-        	Node tempNode = node1Parent.getOwnerDocument().importNode(nodeList2.item(j).cloneNode(true), true);
+            Node tempNode = node1Parent.getOwnerDocument().importNode(nodeList2.item(j).cloneNode(true), true);
             if(LOG.isDebugEnabled()) {
                 StringBuffer sb = new StringBuffer();
                 sb.append("matching node for insertion: ");

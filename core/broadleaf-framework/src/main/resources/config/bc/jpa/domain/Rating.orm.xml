@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
-	<named-query name="BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE" >
-		<query>SELECT ratingSummary 
-			   FROM org.broadleafcommerce.core.rating.domain.RatingSummary ratingSummary
-		       WHERE ratingSummary.ratingTypeStr = :ratingType
-		       AND ratingSummary.itemId IN (:itemIds)
-		</query>
-	</named-query>
+    <named-query name="BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE" >
+        <query>SELECT ratingSummary 
+               FROM org.broadleafcommerce.core.rating.domain.RatingSummary ratingSummary
+               WHERE ratingSummary.ratingTypeStr = :ratingType
+               AND ratingSummary.itemId IN (:itemIds)
+        </query>
+    </named-query>
 
-	<named-query name="BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE" >
-		<query>SELECT ratingSummary 
-			   FROM org.broadleafcommerce.core.rating.domain.RatingSummary ratingSummary
-		       WHERE ratingSummary.ratingTypeStr = :ratingType
-		       AND ratingSummary.itemId = :itemId
-		</query>
-	</named-query>
-	
-	<named-query name="BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID" >
-		<query>SELECT ratingDetail
-			   FROM org.broadleafcommerce.core.rating.domain.RatingDetail ratingDetail
-		       WHERE ratingDetail.customer.id = :customerId
-		       AND ratingDetail.ratingSummary.id = :ratingSummaryId
-		</query>
-	</named-query>
-	
-	<named-query name="BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID" >
-		<query>SELECT reviewDetail 
-			   FROM org.broadleafcommerce.core.rating.domain.ReviewDetail reviewDetail
-		       WHERE reviewDetail.customer.id = :customerId
-		       AND reviewDetail.ratingSummary.id = :ratingSummaryId
-		</query>
-	</named-query>
-	
+    <named-query name="BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE" >
+        <query>SELECT ratingSummary 
+               FROM org.broadleafcommerce.core.rating.domain.RatingSummary ratingSummary
+               WHERE ratingSummary.ratingTypeStr = :ratingType
+               AND ratingSummary.itemId = :itemId
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID" >
+        <query>SELECT ratingDetail
+               FROM org.broadleafcommerce.core.rating.domain.RatingDetail ratingDetail
+               WHERE ratingDetail.customer.id = :customerId
+               AND ratingDetail.ratingSummary.id = :ratingSummaryId
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID" >
+        <query>SELECT reviewDetail 
+               FROM org.broadleafcommerce.core.rating.domain.ReviewDetail reviewDetail
+               WHERE reviewDetail.customer.id = :customerId
+               AND reviewDetail.ratingSummary.id = :ratingSummaryId
+        </query>
+    </named-query>
+    
 </entity-mappings>

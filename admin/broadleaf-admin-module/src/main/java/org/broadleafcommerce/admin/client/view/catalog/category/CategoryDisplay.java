@@ -31,23 +31,23 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public interface CategoryDisplay extends DynamicEditDisplay {
-	
-	public ToolStripButton getRemoveOrphanedButton();
+    
+    public ToolStripButton getRemoveOrphanedButton();
 
-	public ListGrid getOrphanedCategoryGrid();
-	
-	public ToolStripButton getInsertOrphanButton();
-	
-	public DynamicEntityListDisplay getListDisplay();
-	
-	public GridStructureDisplay getMediaDisplay();
+    public ListGrid getOrphanedCategoryGrid();
+    
+    public ToolStripButton getInsertOrphanButton();
+    
+    public DynamicEntityListDisplay getListDisplay();
+    
+    public GridStructureDisplay getMediaDisplay();
 
-	public DynamicFormDisplay getDynamicFormDisplay();
-	
-	public GridStructureDisplay getFeaturedDisplay();
-	
-	public GridStructureDisplay getAllCategoriesDisplay();
-	
-	public GridStructureView getAllProductsDisplay();
-	
+    public DynamicFormDisplay getDynamicFormDisplay();
+    
+    public GridStructureDisplay getFeaturedDisplay();
+    
+    public GridStructureDisplay getAllCategoriesDisplay();
+    
+    public GridStructureView getAllProductsDisplay();
+    
 }

@@ -26,39 +26,39 @@ import org.broadleafcommerce.money.Money;
 
 public interface PromotableCandidateItemOffer {
 
-	public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
 
-	public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
+    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
-	public List<PromotableOrderItem> getCandidateTargets();
+    public List<PromotableOrderItem> getCandidateTargets();
 
-	public void setCandidateTargets(List<PromotableOrderItem> candidateTargets);
+    public void setCandidateTargets(List<PromotableOrderItem> candidateTargets);
 
-	public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings);
+    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings);
 
-	public Money getPotentialSavings();
+    public Money getPotentialSavings();
 
-	public CandidateItemOffer getDelegate();
-	
-	public void reset();
-	
-	public Money calculatePotentialSavings();
-	
-	public int calculateMaximumNumberOfUses();
-	
-	public int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion);
-	
-	public void setOrderItem(PromotableOrderItem orderItem);
-	
-	public PromotableCandidateItemOffer clone();
-	
-	public int getPriority();
-	
-	public Offer getOffer();
-	
-	public void setOffer(Offer offer);
-	
-	public PromotableOrderItem getOrderItem();
+    public CandidateItemOffer getDelegate();
+    
+    public void reset();
+    
+    public Money calculatePotentialSavings();
+    
+    public int calculateMaximumNumberOfUses();
+    
+    public int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion);
+    
+    public void setOrderItem(PromotableOrderItem orderItem);
+    
+    public PromotableCandidateItemOffer clone();
+    
+    public int getPriority();
+    
+    public Offer getOffer();
+    
+    public void setOffer(Offer offer);
+    
+    public PromotableOrderItem getOrderItem();
 
     public int getUses();
 

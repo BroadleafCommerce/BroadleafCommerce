@@ -29,41 +29,41 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
  *
  */
 public class MapStructureEntityEditDialog extends EntityEditDialog {
-	
-	protected MapStructure mapStructure;
-	protected LinkedHashMap<String, String> mapKeys;
+    
+    protected MapStructure mapStructure;
+    protected LinkedHashMap<String, String> mapKeys;
     protected DataSource optionDataSource;
     protected String displayField;
     protected String valueField;
-	
-	public MapStructureEntityEditDialog() {
-		super();
+    
+    public MapStructureEntityEditDialog() {
+        super();
         this.setHeight("300");
-	}
+    }
 
-	public MapStructureEntityEditDialog(MapStructure mapStructure, LinkedHashMap<String, String> mapKeys) {
-		super();
-		this.mapStructure = mapStructure;
-		this.mapKeys = mapKeys;
-		this.setHeight("300");
-	}
+    public MapStructureEntityEditDialog(MapStructure mapStructure, LinkedHashMap<String, String> mapKeys) {
+        super();
+        this.mapStructure = mapStructure;
+        this.mapKeys = mapKeys;
+        this.setHeight("300");
+    }
 
     public MapStructureEntityEditDialog(MapStructure mapStructure, DataSource optionDataSource, String displayField, String valueField) {
-		super();
-		this.mapStructure = mapStructure;
-		this.optionDataSource = optionDataSource;
+        super();
+        this.mapStructure = mapStructure;
+        this.optionDataSource = optionDataSource;
         this.displayField = displayField;
         this.valueField = valueField;
-		this.setHeight("300");
-	}
+        this.setHeight("300");
+    }
 
-	@Override
-	protected void buildFields(DataSource dataSource, DynamicForm form) {
+    @Override
+    protected void buildFields(DataSource dataSource, DynamicForm form) {
         if (mapKeys != null) {
-		    FormBuilder.buildMapForm(dataSource, form, mapStructure, mapKeys, false);
+            FormBuilder.buildMapForm(dataSource, form, mapStructure, mapKeys, false);
         } else {
             FormBuilder.buildMapForm(dataSource, form, mapStructure, optionDataSource, displayField, valueField, false);
         }
-	}
-	
+    }
+    
 }

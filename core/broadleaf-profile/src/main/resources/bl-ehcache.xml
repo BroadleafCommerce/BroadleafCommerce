@@ -1,48 +1,48 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<diskStore path="java.io.tmpdir"/>
-	
+    <diskStore path="java.io.tmpdir"/>
+    
     <defaultCache
-    	maxElementsInMemory="100000"
-    	eternal="false"
-    	overflowToDisk="true"
-    	timeToLiveSeconds="60"
-    	timeToIdleSeconds="30"/>
-   	
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="60"
+        timeToIdleSeconds="30"/>
+    
     <cache
-    	name="blStandardElements"
-    	maxElementsInMemory="100000"
-    	eternal="true"
-    	overflowToDisk="true">
-    	<cacheEventListenerFactory class="org.broadleafcommerce.profile.cache.engine.HydratedCacheEventListenerFactory"/>
+        name="blStandardElements"
+        maxElementsInMemory="100000"
+        eternal="true"
+        overflowToDisk="true">
+        <cacheEventListenerFactory class="org.broadleafcommerce.profile.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
     
     <cache
-    	name="blInventoryElements"
-    	maxElementsInMemory="100000"
-    	eternal="false"
-    	overflowToDisk="true"
-    	timeToLiveSeconds="60"/>
+        name="blInventoryElements"
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="60"/>
         
     <cache
-    	name="org.hibernate.cache.StandardQueryCache"
-    	maxElementsInMemory="1000"
-    	eternal="false"
-    	overflowToDisk="false"
-    	timeToLiveSeconds="600"/>
+        name="org.hibernate.cache.StandardQueryCache"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
 
     <cache
-    	name="query.Catalog"
-    	maxElementsInMemory="1000"
-    	eternal="false"
-    	overflowToDisk="false"
-    	timeToLiveSeconds="600"/>
-    	
-   	<cache
-    	name="blOrderElements"
-    	maxElementsInMemory="100000"
-    	eternal="false"
-    	overflowToDisk="true"
-    	timeToLiveSeconds="600"/>
-    	
+        name="query.Catalog"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
+        
+    <cache
+        name="blOrderElements"
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="600"/>
+        
 </ehcache>

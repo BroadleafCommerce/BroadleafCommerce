@@ -10,16 +10,16 @@ import org.broadleafcommerce.${artifactId}.store.domain.ZipCode;
 
 public interface MyCompanyProduct extends ProductSku {
 
-	public Boolean isRestricted();
+    public Boolean isRestricted();
 
-	public void setRestricted(Boolean restricted);
+    public void setRestricted(Boolean restricted);
 
-	public List<ShippingCountry> getShippingCountries();
+    public List<ShippingCountry> getShippingCountries();
 
-	public void setShippingCountries(List<ShippingCountry> shippingCountries);
+    public void setShippingCountries(List<ShippingCountry> shippingCountries);
 
     public ZipCode getZipCode();
 
     public void setZipCode(ZipCode zipCode);
-	
+    
 }

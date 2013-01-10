@@ -48,7 +48,7 @@ public class CyberSourceServiceType implements Serializable, BroadleafEnumeratio
     }
 
     public CyberSourceServiceType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -57,10 +57,10 @@ public class CyberSourceServiceType implements Serializable, BroadleafEnumeratio
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

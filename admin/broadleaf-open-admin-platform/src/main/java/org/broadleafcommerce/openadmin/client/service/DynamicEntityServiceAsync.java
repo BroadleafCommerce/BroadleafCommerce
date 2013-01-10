@@ -31,14 +31,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DynamicEntityServiceAsync {
     
-	void inspect(PersistencePackage persistencePackage, AsyncCallback<DynamicResultSet> cb);
-	
-	void fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, AsyncCallback<DynamicResultSet> cb);
+    void inspect(PersistencePackage persistencePackage, AsyncCallback<DynamicResultSet> cb);
+    
+    void fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, AsyncCallback<DynamicResultSet> cb);
     
     void add(PersistencePackage persistencePackage, AsyncCallback<Entity> cb);
     
     void update(PersistencePackage persistencePackage, AsyncCallback<Entity> cb);
     
-	void remove(PersistencePackage persistencePackage, AsyncCallback<Void> cb);
+    void remove(PersistencePackage persistencePackage, AsyncCallback<Void> cb);
     
 }

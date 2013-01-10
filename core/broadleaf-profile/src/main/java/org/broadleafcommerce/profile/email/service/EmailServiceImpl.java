@@ -90,9 +90,9 @@ public class EmailServiceImpl implements EmailService {
         props.put(EmailPropertyType.USER.getType(), emailTarget);
 
         if (Boolean.parseBoolean(emailInfo.getSendEmailReliableAsync())) {
-        	if (emailServiceProducer == null) {
-        		throw new EmailException("The property sendEmailReliableAsync on EmailInfo is true, but the EmailService does not have an instance of JMSEmailServiceProducer set.");
-        	}
+            if (emailServiceProducer == null) {
+                throw new EmailException("The property sendEmailReliableAsync on EmailInfo is true, but the EmailService does not have an instance of JMSEmailServiceProducer set.");
+            }
             emailServiceProducer.send(props);
         } else {
             messageCreator.sendMessage(props);

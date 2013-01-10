@@ -23,36 +23,36 @@ import org.broadleafcommerce.money.Money;
 
 public interface PromotableFulfillmentGroup {
 
-	public void reset();
+    public void reset();
 
-	public FulfillmentGroup getDelegate();
+    public FulfillmentGroup getDelegate();
 
-	public List<PromotableOrderItem> getDiscountableDiscreteOrderItems();
+    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems();
 
-	/*
-	 * Adds the adjustment to the order item's adjustment list and discounts the order item's adjustment
-	 * price by the value of the adjustment.
-	 */
-	public void addFulfillmentGroupAdjustment(PromotableFulfillmentGroupAdjustment fulfillmentGroupAdjustment);
+    /*
+     * Adds the adjustment to the order item's adjustment list and discounts the order item's adjustment
+     * price by the value of the adjustment.
+     */
+    public void addFulfillmentGroupAdjustment(PromotableFulfillmentGroupAdjustment fulfillmentGroupAdjustment);
 
-	public void removeAllAdjustments();
+    public void removeAllAdjustments();
 
-	public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
+    public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
 
-	public Money getAdjustmentPrice();
+    public Money getAdjustmentPrice();
 
-	public void setAdjustmentPrice(Money adjustmentPrice);
+    public void setAdjustmentPrice(Money adjustmentPrice);
 
-	public Money getRetailShippingPrice();
+    public Money getRetailShippingPrice();
 
-	public Money getSaleShippingPrice();
-	
-	public void removeAllCandidateOffers();
-	
-	public void setShippingPrice(Money shippingPrice);
-	
-	public Money getShippingPrice();
-	
-	public void addCandidateFulfillmentGroupOffer(PromotableCandidateFulfillmentGroupOffer candidateOffer);
-	
+    public Money getSaleShippingPrice();
+    
+    public void removeAllCandidateOffers();
+    
+    public void setShippingPrice(Money shippingPrice);
+    
+    public Money getShippingPrice();
+    
+    public void addCandidateFulfillmentGroupOffer(PromotableCandidateFulfillmentGroupOffer candidateOffer);
+    
 }

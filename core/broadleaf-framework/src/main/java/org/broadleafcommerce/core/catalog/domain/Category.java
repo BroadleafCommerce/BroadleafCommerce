@@ -401,6 +401,6 @@ public interface Category extends Serializable {
      *
      * @param allProducts the list of products to associate with this category
      */
-	public void setAllProducts(@Nonnull List<Product> allProducts);
+    public void setAllProducts(@Nonnull List<Product> allProducts);
 
 }

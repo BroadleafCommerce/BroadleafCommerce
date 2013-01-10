@@ -40,28 +40,28 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureVie
  *
  */
 public class OneToOneProductSkuView extends HLayout implements Instantiable, OneToOneProductSkuDisplay {
-	
-	protected DynamicFormView dynamicFormDisplay;
-	protected GridStructureView crossSaleDisplay;
-	protected GridStructureView upSaleDisplay;
-	protected GridStructureView mediaDisplay;
-	protected DynamicEntityListView listDisplay;
-	protected GridStructureView attributesDisplay;
-	protected GridStructureView allCategoriesDisplay;
     
-	public OneToOneProductSkuView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("productSkuLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+    protected DynamicFormView dynamicFormDisplay;
+    protected GridStructureView crossSaleDisplay;
+    protected GridStructureView upSaleDisplay;
+    protected GridStructureView mediaDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected GridStructureView attributesDisplay;
+    protected GridStructureView allCategoriesDisplay;
+    
+    public OneToOneProductSkuView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("productSkuLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productsListTitle"), entityDataSource);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productsListTitle"), entityDataSource);
         leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet(); 
@@ -135,38 +135,38 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	public Canvas asCanvas() {
-		return this;
-	}
+    public Canvas asCanvas() {
+        return this;
+    }
 
-	public GridStructureDisplay getCrossSaleDisplay() {
-		return crossSaleDisplay;
-	}
+    public GridStructureDisplay getCrossSaleDisplay() {
+        return crossSaleDisplay;
+    }
 
-	public GridStructureDisplay getUpSaleDisplay() {
-		return upSaleDisplay;
-	}
+    public GridStructureDisplay getUpSaleDisplay() {
+        return upSaleDisplay;
+    }
 
-	public GridStructureDisplay getMediaDisplay() {
-		return mediaDisplay;
-	}
+    public GridStructureDisplay getMediaDisplay() {
+        return mediaDisplay;
+    }
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
-	
-	public GridStructureDisplay getAttributesDisplay() {
-		return attributesDisplay;
-	}
+    public DynamicFormDisplay getDynamicFormDisplay() {
+        return dynamicFormDisplay;
+    }
+    
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
+    
+    public GridStructureDisplay getAttributesDisplay() {
+        return attributesDisplay;
+    }
 
-	public GridStructureDisplay getAllCategoriesDisplay() {
-		return allCategoriesDisplay;
-	}
+    public GridStructureDisplay getAllCategoriesDisplay() {
+        return allCategoriesDisplay;
+    }
 
 }

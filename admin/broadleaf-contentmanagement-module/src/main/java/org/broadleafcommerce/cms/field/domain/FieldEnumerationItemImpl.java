@@ -49,7 +49,7 @@ public class FieldEnumerationItemImpl implements FieldEnumerationItem {
 
     @ManyToOne(targetEntity = FieldEnumerationImpl.class)
     @JoinColumn(name = "FLD_ENUM_ID")
-	protected FieldEnumeration fieldEnumeration;
+    protected FieldEnumeration fieldEnumeration;
 
     @Override
     public FieldEnumeration getFieldEnumeration() {

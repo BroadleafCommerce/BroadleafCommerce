@@ -38,9 +38,9 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
     protected EntityConfiguration entityConfiguration;
 
     public void delete(FulfillmentGroupItem fulfillmentGroupItem) {
-    	if (!em.contains(fulfillmentGroupItem)) {
-    		fulfillmentGroupItem = readFulfillmentGroupItemById(fulfillmentGroupItem.getId());
-    	}
+        if (!em.contains(fulfillmentGroupItem)) {
+            fulfillmentGroupItem = readFulfillmentGroupItemById(fulfillmentGroupItem.getId());
+        }
         em.remove(fulfillmentGroupItem);
     }
 

@@ -27,6 +27,6 @@ import javax.persistence.spi.ClassTransformer;
  */
 public interface BroadleafClassTransformer extends ClassTransformer {
 
-	public void compileJPAProperties(Properties props, Object key) throws Exception;
-		
+    public void compileJPAProperties(Properties props, Object key) throws Exception;
+        
 }

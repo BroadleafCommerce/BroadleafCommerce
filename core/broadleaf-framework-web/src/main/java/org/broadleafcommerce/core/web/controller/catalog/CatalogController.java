@@ -55,7 +55,7 @@ import java.util.List;
 @RequestMapping("/store")
 public class CatalogController {
 
-	//TODO Instead of mixing and matching - we should prob be autowiring all the dependencies for this controller.
+    //TODO Instead of mixing and matching - we should prob be autowiring all the dependencies for this controller.
     @Resource(name="blCartService")
     protected CartService cartService;
     @Resource(name="blCustomerState")

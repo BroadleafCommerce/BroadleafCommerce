@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
@@ -12,51 +12,51 @@
            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-	
-	<aop:config>
-		<aop:pointcut id="blAdminSecurityServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.save*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceSaveOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blAdminSecurityServiceDeleteOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.delete*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceDeleteOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blRemoteServiceInspectOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.inspect(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceInspectOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blRemoteServiceFetchOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.fetch(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceFetchOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blRemoteServiceAddOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.add(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceAddOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blRemoteServiceUpdateOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.update(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceUpdateOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blRemoteServiceRemoveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.remove(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceRemoveOperation"/>
-	</aop:config>
+    
+    <aop:config>
+        <aop:pointcut id="blAdminSecurityServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.save*(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceSaveOperation"/>
+    </aop:config>
+    
+    <aop:config>
+        <aop:pointcut id="blAdminSecurityServiceDeleteOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.delete*(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceDeleteOperation"/>
+    </aop:config>
+    
+    <aop:config>
+        <aop:pointcut id="blRemoteServiceInspectOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.inspect(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceInspectOperation"/>
+    </aop:config>
+    
+    <aop:config>
+        <aop:pointcut id="blRemoteServiceFetchOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.fetch(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceFetchOperation"/>
+    </aop:config>
+    
+    <aop:config>
+        <aop:pointcut id="blRemoteServiceAddOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.add(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceAddOperation"/>
+    </aop:config>
+    
+    <aop:config>
+        <aop:pointcut id="blRemoteServiceUpdateOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.update(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceUpdateOperation"/>
+    </aop:config>
+    
+    <aop:config>
+        <aop:pointcut id="blRemoteServiceRemoveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.remove(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceRemoveOperation"/>
+    </aop:config>
 
     <aop:config>
-		<aop:pointcut id="blSandBoxServiceOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxServiceImpl.retrieveUserSandBox(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSandBoxServiceOperation"/>
-	</aop:config>
-	
-	<!--<aop:config>
-		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* saveEntitySandBoxItemsandBoxItems(..))"/>
-	    <aop:advisor advice-ref="blTxAdviceSandBox" pointcut-ref="blSandBoxServiceSaveOperation"/>
-	</aop:config>-->
+        <aop:pointcut id="blSandBoxServiceOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxServiceImpl.retrieveUserSandBox(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSandBoxServiceOperation"/>
+    </aop:config>
+    
+    <!--<aop:config>
+        <aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* saveEntitySandBoxItemsandBoxItems(..))"/>
+        <aop:advisor advice-ref="blTxAdviceSandBox" pointcut-ref="blSandBoxServiceSaveOperation"/>
+    </aop:config>-->
 
     <bean id="blPersistenceModules" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
@@ -69,12 +69,12 @@
     </bean>
 
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
-	    <property name="converters">
-	        <list>
-	            <bean class="org.broadleafcommerce.openadmin.server.util.TargetModeTypeConverter" />
-	        </list>
-	    </property>
-	</bean>
+        <property name="converters">
+            <list>
+                <bean class="org.broadleafcommerce.openadmin.server.util.TargetModeTypeConverter" />
+            </list>
+        </property>
+    </bean>
 
     <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
         <property name="sourceMap">
@@ -96,12 +96,12 @@
     </bean>
 
     <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
-		<constructor-arg ref="blPersistenceModules"/>
+        <constructor-arg ref="blPersistenceModules"/>
         <property name="customPersistenceHandlers" ref="blCustomPersistenceHandlers"/>
-		<property name="targetEntityManagers" ref="blTargetEntityManagers"/>
-		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
+        <property name="targetEntityManagers" ref="blTargetEntityManagers"/>
+        <property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
         <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
-	</bean>
+    </bean>
 
     <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">
         <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
@@ -117,12 +117,12 @@
         </property>
     </bean>
 
-	<bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+    <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>  
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
-			        
-	<!--<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean">
+                    
+    <!--<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean">
         <property name="sandboxPool">
             <bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.KeyedEntityManagerPool">
                 <constructor-arg>
@@ -140,26 +140,26 @@
                 <property name="maxTotal" value="5"/>
             </bean>
         </property>
-	</bean>
-	
-	<bean id="sandBoxEntityManager" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxSharedEntityManagerBean" scope="prototype">
+    </bean>
+    
+    <bean id="sandBoxEntityManager" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxSharedEntityManagerBean" scope="prototype">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
         <property name="sandBoxEntityManagerFactory">
-        	<bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.ClonedLocalContainerEntityManagerFactoryBean">
-				<property name="jpaVendorAdapter">
-					<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-				</property>
-				<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
-				<property name="persistenceUnitName" value="blMySandBoxPU"/>
-				<property name="clonePersistenceUnitName" value="blPU"/>
-				<property name="dataSource">
+            <bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.ClonedLocalContainerEntityManagerFactoryBean">
+                <property name="jpaVendorAdapter">
+                    <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+                </property>
+                <property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
+                <property name="persistenceUnitName" value="blMySandBoxPU"/>
+                <property name="clonePersistenceUnitName" value="blPU"/>
+                <property name="dataSource">
                     <bean id="sandBoxDataSource" class="org.broadleafcommerce.openadmin.server.service.persistence.datasource.SandBoxDataSource" destroy-method="close" scope="prototype">
                         <property name="maxActive" value="3"/>
                         <property name="minIdle" value="1"/>
                         <property name="timeBetweenEvictionRunsMillis" value="10000"/>
                     </bean>
                 </property>
-			</bean>
+            </bean>
         </property>
         <property name="cleaner" ref="blHibernateCleaner"/>
     </bean>-->

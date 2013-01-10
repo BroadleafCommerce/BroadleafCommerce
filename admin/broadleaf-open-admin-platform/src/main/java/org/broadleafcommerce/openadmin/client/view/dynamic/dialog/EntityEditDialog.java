@@ -52,9 +52,9 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
  *
  */
 public class EntityEditDialog extends Window {
-	
-	private DynamicForm dynamicForm;
-	private ItemEditedHandler handler;
+    
+    private DynamicForm dynamicForm;
+    private ItemEditedHandler handler;
     private VStack pictureStack;
     protected boolean showMedia = false;
     protected String mediaField;
@@ -63,20 +63,20 @@ public class EntityEditDialog extends Window {
     protected Boolean isHidden = true;
     protected VStack previewContainer;
 
-	public EntityEditDialog() {
-		this.setIsModal(true);
-		this.setShowModalMask(true);
-		this.setShowMinimizeButton(false);
-		//this.setWidth(600);
-		this.setCanDragResize(true);
-		this.setOverflow(Overflow.VISIBLE);
+    public EntityEditDialog() {
+        this.setIsModal(true);
+        this.setShowModalMask(true);
+        this.setShowMinimizeButton(false);
+        //this.setWidth(600);
+        this.setCanDragResize(true);
+        this.setOverflow(Overflow.VISIBLE);
 
         hStack = new HStack();
         
-		VStack stack = new VStack();
+        VStack stack = new VStack();
         //stack.setWidth("80%");
-		stack.setLayoutRightMargin(20);
-		dynamicForm = new DynamicForm();
+        stack.setLayoutRightMargin(20);
+        dynamicForm = new DynamicForm();
         dynamicForm.setPadding(10);
         stack.addMember(dynamicForm);
 
@@ -97,27 +97,27 @@ public class EntityEditDialog extends Window {
         IButton saveButton = new IButton("Save");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	if (dynamicForm.validate()) {
-            		dynamicForm.saveData(new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
+                if (dynamicForm.validate()) {
+                    dynamicForm.saveData(new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
                                 TreeNode record = new TreeNode(request.getData());
                                 if (handler != null) {
                                     handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
                                 }
                             }
-						}
-            		});
-            		hide();
+                        }
+                    });
+                    hide();
                     isHidden = true;
-            	}
+                }
             }
         });
 
         IButton cancelButton = new IButton("Cancel");
         cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	hide();
+                hide();
                 isHidden = true;
             }
         });
@@ -133,36 +133,36 @@ public class EntityEditDialog extends Window {
         hLayout.setLayoutBottomMargin(40);
         vLayout.addMember(hLayout);
         addItem(vLayout);
-	}
+    }
 
-	@SuppressWarnings("rawtypes")
-	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
-		editNewRecord(null, dataSource, initialValues, handler, fieldNames, null);
-	}
+    @SuppressWarnings("rawtypes")
+    public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
+        editNewRecord(null, dataSource, initialValues, handler, fieldNames, null);
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
         pictureStack.setVisible(false);
-		initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
-		this.handler = handler;
-		if (fieldNames != null && fieldNames.length > 0) {
-			dataSource.resetVisibilityOnly(fieldNames);
-		} else {
-			dataSource.resetPermanentFieldVisibility();
-		}
-		if (ignoreFields != null) {
-			for (String fieldName : ignoreFields) {
-				dataSource.getField(fieldName).setHidden(true);
-			}
-		}
-		if (title != null) {
-			this.setTitle(title);
-		} else {
-			this.setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
-		}
-		buildFields(dataSource, dynamicForm);
+        initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
+        this.handler = handler;
+        if (fieldNames != null && fieldNames.length > 0) {
+            dataSource.resetVisibilityOnly(fieldNames);
+        } else {
+            dataSource.resetPermanentFieldVisibility();
+        }
+        if (ignoreFields != null) {
+            for (String fieldName : ignoreFields) {
+                dataSource.getField(fieldName).setHidden(true);
+            }
+        }
+        if (title != null) {
+            this.setTitle(title);
+        } else {
+            this.setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
+        }
+        buildFields(dataSource, dynamicForm);
         dynamicForm.editNewRecord(initialValues);
-		show();
+        show();
         redraw();
         setHeight(20);
         int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
@@ -221,32 +221,32 @@ public class EntityEditDialog extends Window {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
+    public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
         pictureStack.setVisible(false);
         if (showMedia && mediaField != null) {
             updateMedia(record.getAttribute(mediaField));
         }
-		this.handler = handler;
-		if (fieldNames != null && fieldNames.length > 0) {
-			dataSource.resetVisibilityOnly(fieldNames);
-		} else {
-			dataSource.resetPermanentFieldVisibility();
-		}
-		if (ignoreFields != null) {
-			for (String fieldName : ignoreFields) {
-				dataSource.getField(fieldName).setHidden(true);
-			}
-		}
-		if (title != null) {
-			this.setTitle(title);
-		} else {
-			this.setTitle("Edit entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
-		}
-		buildFields(dataSource, dynamicForm);
+        this.handler = handler;
+        if (fieldNames != null && fieldNames.length > 0) {
+            dataSource.resetVisibilityOnly(fieldNames);
+        } else {
+            dataSource.resetPermanentFieldVisibility();
+        }
+        if (ignoreFields != null) {
+            for (String fieldName : ignoreFields) {
+                dataSource.getField(fieldName).setHidden(true);
+            }
+        }
+        if (title != null) {
+            this.setTitle(title);
+        } else {
+            this.setTitle("Edit entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
+        }
+        buildFields(dataSource, dynamicForm);
         dynamicForm.editRecord(record);
         centerInPage();
-		setTop(70);
-		show();
+        setTop(70);
+        show();
         redraw();
         setHeight(20);
         int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
@@ -265,11 +265,11 @@ public class EntityEditDialog extends Window {
             setWidth(formWidth);
         }
         isHidden = false;
-	}
-	
-	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {
-		FormBuilder.buildForm(dataSource, dynamicForm, false);
-	}
+    }
+    
+    protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {
+        FormBuilder.buildForm(dataSource, dynamicForm, false);
+    }
 
     public boolean isShowMedia() {
         return showMedia;

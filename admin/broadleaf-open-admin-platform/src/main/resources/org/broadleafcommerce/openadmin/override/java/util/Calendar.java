@@ -25,261 +25,261 @@ import java.io.Serializable;
  *
  */
 public class Calendar implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 
-	public static Calendar getInstance() {
-		return new Calendar();
-	}
+    public static Calendar getInstance() {
+        return new Calendar();
+    }
 
-	private Date calendar = new Date();
+    private Date calendar = new Date();
 
-	public void add(int field, int amount) {
-		long millis = System.currentTimeMillis();
-		switch(field) {
-		case Calendar.DATE: {
-			calendar = new Date(millis + (amount * 1000 * 60 * 60 * 24));
-			break;
-		}
-		case Calendar.HOUR: {
-			calendar = new Date(millis + (amount * 1000 * 60 * 60));
-			break;
-		}
-		case Calendar.MILLISECOND: {
-			calendar = new Date(millis + (amount * 1000));
-			break;
-		}
-		case Calendar.MINUTE: {
-			calendar = new Date(millis + (amount * 1000 * 60));
-			break;
-		}
-		case Calendar.YEAR: {
-			calendar = new Date(millis + (amount * 1000 * 60 * 60 * 24 * 365));
-			break;
-		}
-		//TODO add support for adding month
-		default: {
-			throw new RuntimeException("Type not supported: " + field);
-		}
-		}
-	}
+    public void add(int field, int amount) {
+        long millis = System.currentTimeMillis();
+        switch(field) {
+        case Calendar.DATE: {
+            calendar = new Date(millis + (amount * 1000 * 60 * 60 * 24));
+            break;
+        }
+        case Calendar.HOUR: {
+            calendar = new Date(millis + (amount * 1000 * 60 * 60));
+            break;
+        }
+        case Calendar.MILLISECOND: {
+            calendar = new Date(millis + (amount * 1000));
+            break;
+        }
+        case Calendar.MINUTE: {
+            calendar = new Date(millis + (amount * 1000 * 60));
+            break;
+        }
+        case Calendar.YEAR: {
+            calendar = new Date(millis + (amount * 1000 * 60 * 60 * 24 * 365));
+            break;
+        }
+        //TODO add support for adding month
+        default: {
+            throw new RuntimeException("Type not supported: " + field);
+        }
+        }
+    }
 
-	public boolean after(Object when) {
-		return calendar.getTime() > ((Date) when).getTime();
-	}
+    public boolean after(Object when) {
+        return calendar.getTime() > ((Date) when).getTime();
+    }
 
-	public boolean before(Object when) {
-		return calendar.getTime() < ((Date) when).getTime();
-	}
+    public boolean before(Object when) {
+        return calendar.getTime() < ((Date) when).getTime();
+    }
 
-	public final void clear() {
-		calendar = new Date();
-	}
+    public final void clear() {
+        calendar = new Date();
+    }
 
-	public final void clear(int field) {
-		throw new RuntimeException("Not Supported");
-	}
+    public final void clear(int field) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public Object clone() {
-		return calendar.clone();
-	}
+    public Object clone() {
+        return calendar.clone();
+    }
 
-	public int compareTo(Calendar anotherCalendar) {
-		return getTime().compareTo(anotherCalendar.getTime());
-	}
+    public int compareTo(Calendar anotherCalendar) {
+        return getTime().compareTo(anotherCalendar.getTime());
+    }
 
-	public boolean equals(Object obj) {
-		return calendar.equals(obj);
-	}
+    public boolean equals(Object obj) {
+        return calendar.equals(obj);
+    }
 
-	@SuppressWarnings("deprecation")
-	public int get(int field) {
-		int response;
-		switch(field) {
-		case Calendar.SECOND: {
-			response = calendar.getSeconds();
-			break;
-		}
-		case Calendar.MINUTE: {
-			response = calendar.getMinutes();
-			break;
-		}
-		case Calendar.HOUR: {
-			response = calendar.getHours();
-			break;
-		}
-		case Calendar.DATE: {
-			response = calendar.getDate();
-			break;
-		}
-		case Calendar.MONTH: {
-			response = calendar.getMonth();
-			break;
-		}
-		case Calendar.YEAR: {
-			response = calendar.getYear();
-			break;
-		}
-		default: {
-			throw new RuntimeException("Type not supported: " + field);
-		}
-		}
-		
-		return response;
-	}
+    @SuppressWarnings("deprecation")
+    public int get(int field) {
+        int response;
+        switch(field) {
+        case Calendar.SECOND: {
+            response = calendar.getSeconds();
+            break;
+        }
+        case Calendar.MINUTE: {
+            response = calendar.getMinutes();
+            break;
+        }
+        case Calendar.HOUR: {
+            response = calendar.getHours();
+            break;
+        }
+        case Calendar.DATE: {
+            response = calendar.getDate();
+            break;
+        }
+        case Calendar.MONTH: {
+            response = calendar.getMonth();
+            break;
+        }
+        case Calendar.YEAR: {
+            response = calendar.getYear();
+            break;
+        }
+        default: {
+            throw new RuntimeException("Type not supported: " + field);
+        }
+        }
+        
+        return response;
+    }
 
-	public int getActualMaximum(int field) {
-		throw new RuntimeException("Not Supported");
-	}
+    public int getActualMaximum(int field) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public int getActualMinimum(int field) {
-		throw new RuntimeException("Not Supported");
-	}
+    public int getActualMinimum(int field) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public int getFirstDayOfWeek() {
-		throw new RuntimeException("Not Supported");
-	}
+    public int getFirstDayOfWeek() {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public int getGreatestMinimum(int field) {
-		throw new RuntimeException("Not Supported");
-	}
+    public int getGreatestMinimum(int field) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public int getLeastMaximum(int field) {
-		throw new RuntimeException("Not Supported");
-	}
+    public int getLeastMaximum(int field) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public int getMaximum(int field) {
-		throw new RuntimeException("Not Supported");
-	}
+    public int getMaximum(int field) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public int getMinimalDaysInFirstWeek() {
-		throw new RuntimeException("Not Supported");
-	}
+    public int getMinimalDaysInFirstWeek() {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public int getMinimum(int field) {
-		throw new RuntimeException("Not Supported");
-	}
+    public int getMinimum(int field) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public final Date getTime() {
-		return calendar;
-	}
+    public final Date getTime() {
+        return calendar;
+    }
 
-	public long getTimeInMillis() {
-		return calendar.getTime();
-	}
+    public long getTimeInMillis() {
+        return calendar.getTime();
+    }
 
-	public TimeZone getTimeZone() {
-		throw new RuntimeException("Not Supported");
-	}
+    public TimeZone getTimeZone() {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public int hashCode() {
-		return calendar.hashCode();
-	}
+    public int hashCode() {
+        return calendar.hashCode();
+    }
 
-	public boolean isLenient() {
-		throw new RuntimeException("Not Supported");
-	}
+    public boolean isLenient() {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public final boolean isSet(int field) {
-		throw new RuntimeException("Not Supported");
-	}
+    public final boolean isSet(int field) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public void roll(int field, boolean up) {
-		throw new RuntimeException("Not Supported");
-	}
+    public void roll(int field, boolean up) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public void roll(int field, int amount) {
-		throw new RuntimeException("Not Supported");
-	}
+    public void roll(int field, int amount) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	@SuppressWarnings("deprecation")
-	public final void set(int year, int month, int date, int hourOfDay, int minute, int second) {
-		calendar.setYear(year);
-		calendar.setMonth(month);
-		calendar.setDate(date);
-		calendar.setHours(hourOfDay);
-		calendar.setMinutes(minute);
-		calendar.setSeconds(second);
-	}
+    @SuppressWarnings("deprecation")
+    public final void set(int year, int month, int date, int hourOfDay, int minute, int second) {
+        calendar.setYear(year);
+        calendar.setMonth(month);
+        calendar.setDate(date);
+        calendar.setHours(hourOfDay);
+        calendar.setMinutes(minute);
+        calendar.setSeconds(second);
+    }
 
-	@SuppressWarnings("deprecation")
-	public final void set(int year, int month, int date, int hourOfDay, int minute) {
-		calendar.setYear(year);
-		calendar.setMonth(month);
-		calendar.setDate(date);
-		calendar.setHours(hourOfDay);
-		calendar.setMinutes(minute);
-	}
+    @SuppressWarnings("deprecation")
+    public final void set(int year, int month, int date, int hourOfDay, int minute) {
+        calendar.setYear(year);
+        calendar.setMonth(month);
+        calendar.setDate(date);
+        calendar.setHours(hourOfDay);
+        calendar.setMinutes(minute);
+    }
 
-	@SuppressWarnings("deprecation")
-	public final void set(int year, int month, int date) {
-		calendar.setYear(year);
-		calendar.setMonth(month);
-		calendar.setDate(date);
-	}
+    @SuppressWarnings("deprecation")
+    public final void set(int year, int month, int date) {
+        calendar.setYear(year);
+        calendar.setMonth(month);
+        calendar.setDate(date);
+    }
 
-	@SuppressWarnings("deprecation")
-	public void set(int field, int value) {
-		switch(field) {
-		case Calendar.SECOND: {
-			calendar.setSeconds(value);
-			break;
-		}
-		case Calendar.MINUTE: {
-			calendar.setMinutes(value);
-			break;
-		}
-		case Calendar.HOUR: {
-			calendar.setHours(value);
-			break;
-		}
-		case Calendar.DATE: {
-			calendar.setDate(value);
-			break;
-		}
-		case Calendar.MONTH: {
-			calendar.setMonth(value);
-			break;
-		}
-		case Calendar.YEAR: {
-			calendar.setYear(value);
-			break;
-		}
-		default: {
-			throw new RuntimeException("Type not supported: " + field);
-		}
-		}
-	}
+    @SuppressWarnings("deprecation")
+    public void set(int field, int value) {
+        switch(field) {
+        case Calendar.SECOND: {
+            calendar.setSeconds(value);
+            break;
+        }
+        case Calendar.MINUTE: {
+            calendar.setMinutes(value);
+            break;
+        }
+        case Calendar.HOUR: {
+            calendar.setHours(value);
+            break;
+        }
+        case Calendar.DATE: {
+            calendar.setDate(value);
+            break;
+        }
+        case Calendar.MONTH: {
+            calendar.setMonth(value);
+            break;
+        }
+        case Calendar.YEAR: {
+            calendar.setYear(value);
+            break;
+        }
+        default: {
+            throw new RuntimeException("Type not supported: " + field);
+        }
+        }
+    }
 
-	public void setFirstDayOfWeek(int value) {
-		throw new RuntimeException("Not Supported");
-	}
+    public void setFirstDayOfWeek(int value) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public void setLenient(boolean lenient) {
-		throw new RuntimeException("Not Supported");
-	}
+    public void setLenient(boolean lenient) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public void setMinimalDaysInFirstWeek(int value) {
-		throw new RuntimeException("Not Supported");
-	}
+    public void setMinimalDaysInFirstWeek(int value) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public final void setTime(Date date) {
-		throw new RuntimeException("Not Supported");
-	}
+    public final void setTime(Date date) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public void setTimeInMillis(long millis) {
-		throw new RuntimeException("Not Supported");
-	}
+    public void setTimeInMillis(long millis) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public void setTimeZone(TimeZone value) {
-		throw new RuntimeException("Not Supported");
-	}
+    public void setTimeZone(TimeZone value) {
+        throw new RuntimeException("Not Supported");
+    }
 
-	public String toString() {
-		return calendar.toString();
-	}
-	
-	/**
+    public String toString() {
+        return calendar.toString();
+    }
+    
+    /**
      * Field number for <code>get</code> and <code>set</code> indicating the
      * era, e.g., AD or BC in the Julian calendar. This is a calendar-specific
      * value; see subclass documentation.

@@ -30,36 +30,36 @@ import com.smartgwt.client.widgets.form.fields.TextAreaItem;
  */
 public interface ItemBuilderDisplay {
 
-	public FormItem getItemQuantity();
+    public FormItem getItemQuantity();
 
-	public FilterBuilder getItemFilterBuilder();
+    public FilterBuilder getItemFilterBuilder();
 
-	public ImgButton getRemoveButton();
-	
-	public void enable();
-	
-	public void disable();
-	
-	public void hide();
-	
-	public void show();
-	
-	public DynamicForm getRawItemForm();
+    public ImgButton getRemoveButton();
+    
+    public void enable();
+    
+    public void disable();
+    
+    public void hide();
+    
+    public void show();
+    
+    public DynamicForm getRawItemForm();
 
-	public TextAreaItem getRawItemTextArea();
-	
-	public DynamicForm getItemForm();
-	
-	public Boolean getIncompatibleMVEL();
+    public TextAreaItem getRawItemTextArea();
+    
+    public DynamicForm getItemForm();
+    
+    public Boolean getIncompatibleMVEL();
 
-	public void setIncompatibleMVEL(Boolean incompatibleMVEL);
-	
-	public Boolean getDirty();
+    public void setIncompatibleMVEL(Boolean incompatibleMVEL);
+    
+    public Boolean getDirty();
 
-	public void setDirty(Boolean dirty);
-	
-	public Record getRecord();
+    public void setDirty(Boolean dirty);
+    
+    public Record getRecord();
 
-	public void setRecord(Record record);
-	
+    public void setRecord(Record record);
+    
 }

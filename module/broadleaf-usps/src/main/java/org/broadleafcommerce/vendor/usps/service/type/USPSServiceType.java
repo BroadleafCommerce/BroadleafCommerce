@@ -55,54 +55,54 @@ public class USPSServiceType implements Serializable, BroadleafEnumerationType {
     }
     
     public static USPSServiceType getInstanceByServiceMethod(USPSServiceMethod method) {
-    	if(
-    			method.equals(USPSServiceMethod.FIRSTCLASS) ||
-    			method.equals(USPSServiceMethod.FIRSTCLASSKEYSANDIDS) ||
-    			method.equals(USPSServiceMethod.FIRSTCLASSPOSTCARDSTAMPED)
-    	) {
-    		return FIRSTCLASS;
-    	} else if(
-    			method.equals(USPSServiceMethod.PRIORITYMAIL) ||
-    			method.equals(USPSServiceMethod.PRIORITYMAILFLATRATEBOX) ||
-    			method.equals(USPSServiceMethod.PRIORITYMAILFLATRATEENVELOPE) ||
-    			method.equals(USPSServiceMethod.PRIORITYMAILFLATRATELARGEBOX) ||
-    			method.equals(USPSServiceMethod.PRIORITYMAILKEYSANDIDS)
-    	) {
-    		return PRIORITY;
-    	} else if(
-    			method.equals(USPSServiceMethod.EXPRESSMAILFLATRATEENVELOPE) ||
-    			method.equals(USPSServiceMethod.EXPRESSMAILPOTOADDRESSEE)
-    	) {
-    		return EXPRESS;
-    	} else if(
-    			method.equals(USPSServiceMethod.EXPRESSMAILFLATRATEENVELOPEHOLDFORPICKUP) ||
-    			method.equals(USPSServiceMethod.EXPRESSMAILHOLDFORPICKUP)
-    	) {
-    		return EXPRESS_HFP;
-    	} else if(
-    			method.equals(USPSServiceMethod.EXPRESSMAILFLATRATEENVELOPESUNDAYHOLIDAY) ||
-    			method.equals(USPSServiceMethod.EXPRESSMAILSUNDAYHOLIDAY)
-    	) {
-    		return EXPRESS_SH;
-    	} else if(
-    			method.equals(USPSServiceMethod.BOUNDPRINTEDMATTER)
-    	) {
-    		return BPM;
-    	} else if(
-    			method.equals(USPSServiceMethod.PARCELPOST)
-    	) {
-    		return PARCEL;
-    	} else if(
-    			method.equals(USPSServiceMethod.MEDIAMAIL)
-    	) {
-    		return MEDIA;
-    	} else if(
-    			method.equals(USPSServiceMethod.LIBRARY)
-    	) {
-    		return LIBRARY;
-    	}
-    	
-    	return null;
+        if(
+                method.equals(USPSServiceMethod.FIRSTCLASS) ||
+                method.equals(USPSServiceMethod.FIRSTCLASSKEYSANDIDS) ||
+                method.equals(USPSServiceMethod.FIRSTCLASSPOSTCARDSTAMPED)
+        ) {
+            return FIRSTCLASS;
+        } else if(
+                method.equals(USPSServiceMethod.PRIORITYMAIL) ||
+                method.equals(USPSServiceMethod.PRIORITYMAILFLATRATEBOX) ||
+                method.equals(USPSServiceMethod.PRIORITYMAILFLATRATEENVELOPE) ||
+                method.equals(USPSServiceMethod.PRIORITYMAILFLATRATELARGEBOX) ||
+                method.equals(USPSServiceMethod.PRIORITYMAILKEYSANDIDS)
+        ) {
+            return PRIORITY;
+        } else if(
+                method.equals(USPSServiceMethod.EXPRESSMAILFLATRATEENVELOPE) ||
+                method.equals(USPSServiceMethod.EXPRESSMAILPOTOADDRESSEE)
+        ) {
+            return EXPRESS;
+        } else if(
+                method.equals(USPSServiceMethod.EXPRESSMAILFLATRATEENVELOPEHOLDFORPICKUP) ||
+                method.equals(USPSServiceMethod.EXPRESSMAILHOLDFORPICKUP)
+        ) {
+            return EXPRESS_HFP;
+        } else if(
+                method.equals(USPSServiceMethod.EXPRESSMAILFLATRATEENVELOPESUNDAYHOLIDAY) ||
+                method.equals(USPSServiceMethod.EXPRESSMAILSUNDAYHOLIDAY)
+        ) {
+            return EXPRESS_SH;
+        } else if(
+                method.equals(USPSServiceMethod.BOUNDPRINTEDMATTER)
+        ) {
+            return BPM;
+        } else if(
+                method.equals(USPSServiceMethod.PARCELPOST)
+        ) {
+            return PARCEL;
+        } else if(
+                method.equals(USPSServiceMethod.MEDIAMAIL)
+        ) {
+            return MEDIA;
+        } else if(
+                method.equals(USPSServiceMethod.LIBRARY)
+        ) {
+            return LIBRARY;
+        }
+        
+        return null;
     }
 
     private String type;
@@ -113,7 +113,7 @@ public class USPSServiceType implements Serializable, BroadleafEnumerationType {
     }
 
     public USPSServiceType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -122,10 +122,10 @@ public class USPSServiceType implements Serializable, BroadleafEnumerationType {
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

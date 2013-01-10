@@ -32,73 +32,73 @@ import java.util.List;
  *
  */
 public class JoinStructureClientModule extends BasicClientEntityModule {
-	
-	/**
-	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param persistencePerspective
-	 * @param service
-	 */
-	public JoinStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
-	}
-
-	@Override
-	public CriteriaTransferObject getCto(DSRequest request) {
-		JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-		CriteriaTransferObject cto = super.getCto(request);
-		if (joinTable.getSortField() != null) {
-			FilterAndSortCriteria sortCriteria = cto.get(joinTable.getSortField());
-            sortCriteria.setSortAscending(joinTable.getSortAscending()!=null?joinTable.getSortAscending():true);
-		}
-		return cto;
-	}
-	
-	@Override
-	public boolean isCompatible(OperationType operationType) {
-    	return OperationType.JOINSTRUCTURE.equals(operationType);
+    
+    /**
+     * @param ceilingEntityFullyQualifiedClassname
+     * @param persistencePerspective
+     * @param service
+     */
+    public JoinStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+        super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
     }
-	
-	@Override
-	public Entity buildEntity(Record record, DSRequest request) {
-		JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-		Entity entity = super.buildEntity(record, request);
-		//JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-		entity.setType(new String[]{joinTable.getJoinStructureEntityClassname()});
-		List<Property> properties = new ArrayList<Property>();
-		{
-			Property property = new Property();
-			property.setName(joinTable.getLinkedObjectPath() + "." + joinTable.getLinkedIdProperty());
-			property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(getLinkedValue()));
-			properties.add(property);
-		}
-		{
-			Property property = new Property();
-			property.setName(joinTable.getTargetObjectPath() + "." + joinTable.getTargetIdProperty());
-			String id = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(record));
-			if (id == null || id.equals("")) {
-				id = dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute("backup_id"));
-			}
-			property.setValue(id);
-			properties.add(property);
-		}
-		if (joinTable.getSortField() != null) {
-			Property property = new Property();
-			property.setName(joinTable.getSortField());
-			property.setValue(record.getAttribute(joinTable.getSortField()));
-			properties.add(property);
-		}
-		
-		Property[] props = new Property[properties.size() + entity.getProperties().length];
-		for (int j=0;j<properties.size();j++){
-			props[j] = properties.get(j);
-		}
-		int count = properties.size();
-		for (int j = 0; j<entity.getProperties().length; j++){
-			props[count] = entity.getProperties()[j];
-			count++;
-		}
-		entity.setProperties(props);
-		
-		return entity;
-	}
+
+    @Override
+    public CriteriaTransferObject getCto(DSRequest request) {
+        JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+        CriteriaTransferObject cto = super.getCto(request);
+        if (joinTable.getSortField() != null) {
+            FilterAndSortCriteria sortCriteria = cto.get(joinTable.getSortField());
+            sortCriteria.setSortAscending(joinTable.getSortAscending()!=null?joinTable.getSortAscending():true);
+        }
+        return cto;
+    }
+    
+    @Override
+    public boolean isCompatible(OperationType operationType) {
+        return OperationType.JOINSTRUCTURE.equals(operationType);
+    }
+    
+    @Override
+    public Entity buildEntity(Record record, DSRequest request) {
+        JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+        Entity entity = super.buildEntity(record, request);
+        //JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+        entity.setType(new String[]{joinTable.getJoinStructureEntityClassname()});
+        List<Property> properties = new ArrayList<Property>();
+        {
+            Property property = new Property();
+            property.setName(joinTable.getLinkedObjectPath() + "." + joinTable.getLinkedIdProperty());
+            property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(getLinkedValue()));
+            properties.add(property);
+        }
+        {
+            Property property = new Property();
+            property.setName(joinTable.getTargetObjectPath() + "." + joinTable.getTargetIdProperty());
+            String id = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(record));
+            if (id == null || id.equals("")) {
+                id = dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute("backup_id"));
+            }
+            property.setValue(id);
+            properties.add(property);
+        }
+        if (joinTable.getSortField() != null) {
+            Property property = new Property();
+            property.setName(joinTable.getSortField());
+            property.setValue(record.getAttribute(joinTable.getSortField()));
+            properties.add(property);
+        }
+        
+        Property[] props = new Property[properties.size() + entity.getProperties().length];
+        for (int j=0;j<properties.size();j++){
+            props[j] = properties.get(j);
+        }
+        int count = properties.size();
+        for (int j = 0; j<entity.getProperties().length; j++){
+            props[count] = entity.getProperties()[j];
+            count++;
+        }
+        entity.setProperties(props);
+        
+        return entity;
+    }
 }

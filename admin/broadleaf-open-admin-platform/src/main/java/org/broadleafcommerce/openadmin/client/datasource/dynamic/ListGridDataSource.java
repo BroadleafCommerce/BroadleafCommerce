@@ -38,15 +38,15 @@ import java.util.List;
  */
 public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
 
-	/**
-	 * @param name
-	 * @param persistencePerspective
-	 * @param service
-	 * @param modules
-	 */
-	public ListGridDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
-		super(name, persistencePerspective, service, modules);
-	}
+    /**
+     * @param name
+     * @param persistencePerspective
+     * @param service
+     * @param modules
+     */
+    public ListGridDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
+        super(name, persistencePerspective, service, modules);
+    }
 
     public void setupGridFields(final String[] fieldNames) {
         Boolean[] canEdit = new Boolean[fieldNames.length];
@@ -55,116 +55,116 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         }
         setupGridFields(fieldNames, canEdit);
     }
-	
-	public void setupGridFields(final String[] fieldNames, final Boolean[] canEdit) {
+    
+    public void setupGridFields(final String[] fieldNames, final Boolean[] canEdit) {
         if (fieldNames.length != canEdit.length) {
             throw new IllegalArgumentException("The fieldNames and canEdit array parameters must be of equal length");
         }
-		if (fieldNames.length > 0) {
-			resetProminenceOnly(fieldNames);
-		}
-		
-		String[] sortedFieldNames = new String[fieldNames.length];
-		for (int j=0;j<fieldNames.length;j++) {
-			sortedFieldNames[j] = fieldNames[j];
-		}
-		Arrays.sort(sortedFieldNames);
-		
-		DataSourceField[] fields = getFields();
-		ListGridField[] gridFields = new ListGridField[fields.length];
+        if (fieldNames.length > 0) {
+            resetProminenceOnly(fieldNames);
+        }
+        
+        String[] sortedFieldNames = new String[fieldNames.length];
+        for (int j=0;j<fieldNames.length;j++) {
+            sortedFieldNames[j] = fieldNames[j];
+        }
+        Arrays.sort(sortedFieldNames);
+        
+        DataSourceField[] fields = getFields();
+        ListGridField[] gridFields = new ListGridField[fields.length];
         int j = 0;
         List<DataSourceField> prominentFields = new ArrayList<DataSourceField>();
         for (DataSourceField field : fields) {
-        	if (field.getAttributeAsBoolean("prominent") && !field.getAttributeAsBoolean("permanentlyHidden")) {
-        		prominentFields.add(field);
-        	}
+            if (field.getAttributeAsBoolean("prominent") && !field.getAttributeAsBoolean("permanentlyHidden")) {
+                prominentFields.add(field);
+            }
         }
         int availableSlots = fieldNames.length==0?4:fieldNames.length;
         for (DataSourceField field : prominentFields) {
-        	String columnWidth = field.getAttribute("columnWidth");
-        	gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
-        	if (j == 0) {
-        		if (fieldNames == null || fieldNames.length == 0) {
-        			//gridFields[j].setFrozen(true);
-        		}
-        	}
-        	gridFields[j].setHidden(false);
-        	if (columnWidth != null) {
-    			gridFields[j].setWidth(columnWidth);
-    		} else {
-    			gridFields[j].setWidth("*");
-    		}
-        	int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
-        	if (pos >= 0) {
-        		gridFields[j].setCanEdit(canEdit[pos]);
-        	}
-        	String fieldType = field.getAttribute("fieldType");
-        	if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
-        		gridFields[j].setCellFormatter(new CellFormatter() {
-					public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-						return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
-					}
-        		});
-        	}
-        	j++;
-        	availableSlots--;
+            String columnWidth = field.getAttribute("columnWidth");
+            gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+            if (j == 0) {
+                if (fieldNames == null || fieldNames.length == 0) {
+                    //gridFields[j].setFrozen(true);
+                }
+            }
+            gridFields[j].setHidden(false);
+            if (columnWidth != null) {
+                gridFields[j].setWidth(columnWidth);
+            } else {
+                gridFields[j].setWidth("*");
+            }
+            int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
+            if (pos >= 0) {
+                gridFields[j].setCanEdit(canEdit[pos]);
+            }
+            String fieldType = field.getAttribute("fieldType");
+            if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
+                gridFields[j].setCellFormatter(new CellFormatter() {
+                    public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                        return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
+                    }
+                });
+            }
+            j++;
+            availableSlots--;
         }
         for (DataSourceField field : fields) {
-        	if (!prominentFields.contains(field)) {
-        		gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
-        		if (field.getAttributeAsBoolean("permanentlyHidden")) {
-        			gridFields[j].setHidden(true);
-	        		gridFields[j].setCanHide(false);
-        		} else if (field.getAttributeAsBoolean("hidden") || field.getAttributeAsBoolean("excluded")) {
-        			gridFields[j].setHidden(true);
-        		} else if (availableSlots <= 0) {
-	        		gridFields[j].setHidden(true);
-	        	} else {
-	        		if (j == 0) {
-	        			if (fieldNames == null || fieldNames.length == 0) {
-	            			//gridFields[j].setFrozen(true);
-	            		}
-		        	}
-	        		String columnWidth = field.getAttribute("columnWidth");
-	        		if (columnWidth != null) {
-	        			gridFields[j].setWidth(columnWidth);
-	        		} else {
-	        			gridFields[j].setWidth("*");
-	        		}
-	        		int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
-	            	if (pos >= 0) {
-	            		gridFields[j].setCanEdit(canEdit[pos]);
-	            	}
-	        		availableSlots--;
-	        	}
-        		String fieldType = field.getAttribute("fieldType");
-            	if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
-            		gridFields[j].setCellFormatter(new CellFormatter() {
-    					public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-    						return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse((String) value));
-    					}
-            		});
-            	}
-        		j++;
-        	}
+            if (!prominentFields.contains(field)) {
+                gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+                if (field.getAttributeAsBoolean("permanentlyHidden")) {
+                    gridFields[j].setHidden(true);
+                    gridFields[j].setCanHide(false);
+                } else if (field.getAttributeAsBoolean("hidden") || field.getAttributeAsBoolean("excluded")) {
+                    gridFields[j].setHidden(true);
+                } else if (availableSlots <= 0) {
+                    gridFields[j].setHidden(true);
+                } else {
+                    if (j == 0) {
+                        if (fieldNames == null || fieldNames.length == 0) {
+                            //gridFields[j].setFrozen(true);
+                        }
+                    }
+                    String columnWidth = field.getAttribute("columnWidth");
+                    if (columnWidth != null) {
+                        gridFields[j].setWidth(columnWidth);
+                    } else {
+                        gridFields[j].setWidth("*");
+                    }
+                    int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
+                    if (pos >= 0) {
+                        gridFields[j].setCanEdit(canEdit[pos]);
+                    }
+                    availableSlots--;
+                }
+                String fieldType = field.getAttribute("fieldType");
+                if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
+                    gridFields[j].setCellFormatter(new CellFormatter() {
+                        public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                            return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse((String) value));
+                        }
+                    });
+                }
+                j++;
+            }
         }
         ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
-        	int pos;
-        	if (((ListGrid) getAssociatedGrid()).getCanExpandRecords() != null && ((ListGrid) getAssociatedGrid()).getCanExpandRecords()) {
-        		pos = 1;
-        	} else {
-        		pos = 0;
-        	}
-        	for (String fieldName : fieldNames) {
-        		int originalPos = ((ListGrid) getAssociatedGrid()).getFieldNum(fieldName);
-        		if (pos != originalPos) {
-        			((ListGrid) getAssociatedGrid()).reorderField(originalPos, pos);
-        		}
-        		pos++;
-        	}
+            int pos;
+            if (((ListGrid) getAssociatedGrid()).getCanExpandRecords() != null && ((ListGrid) getAssociatedGrid()).getCanExpandRecords()) {
+                pos = 1;
+            } else {
+                pos = 0;
+            }
+            for (String fieldName : fieldNames) {
+                int originalPos = ((ListGrid) getAssociatedGrid()).getFieldNum(fieldName);
+                if (pos != originalPos) {
+                    ((ListGrid) getAssociatedGrid()).reorderField(originalPos, pos);
+                }
+                pos++;
+            }
         }
         getAssociatedGrid().setHilites(hilites);
-	}
-	
+    }
+    
 }

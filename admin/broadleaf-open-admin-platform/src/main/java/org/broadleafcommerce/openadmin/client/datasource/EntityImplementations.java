@@ -23,9 +23,9 @@ package org.broadleafcommerce.openadmin.client.datasource;
  *
  */
 public class EntityImplementations {
-	
-	public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl";
-	public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl";
-	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl";
-	
+    
+    public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl";
+    public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl";
+    public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl";
+    
 }

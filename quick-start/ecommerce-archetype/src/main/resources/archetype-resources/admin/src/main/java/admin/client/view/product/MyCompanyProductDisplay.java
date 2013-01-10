@@ -8,6 +8,6 @@ import org.broadleafcommerce.open${artifactId}.client.view.dynamic.grid.GridStru
 
 public interface MyCompanyProductDisplay {
 
-	public GridStructureDisplay getShippingCountryDisplay();
+    public GridStructureDisplay getShippingCountryDisplay();
 
 }

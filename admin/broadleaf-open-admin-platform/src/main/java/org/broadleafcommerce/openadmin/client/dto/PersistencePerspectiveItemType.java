@@ -22,7 +22,7 @@ package org.broadleafcommerce.openadmin.client.dto;
  *
  */
 public enum PersistencePerspectiveItemType {
-	FOREIGNKEY,
-	JOINSTRUCTURE,
-	MAPSTRUCTURE
+    FOREIGNKEY,
+    JOINSTRUCTURE,
+    MAPSTRUCTURE
 }

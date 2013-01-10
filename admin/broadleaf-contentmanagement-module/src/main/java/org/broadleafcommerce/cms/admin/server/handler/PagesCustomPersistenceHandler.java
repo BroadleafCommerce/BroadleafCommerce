@@ -73,7 +73,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     private static final Log LOG = LogFactory.getLog(PagesCustomPersistenceHandler.class);
 
     @Resource(name="blPageService")
-	protected PageService pageService;
+    protected PageService pageService;
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
@@ -117,15 +117,15 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Page adminInstance = (Page) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
-			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Page adminInstance = (Page) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
+            adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             adminInstance = pageService.addPage(adminInstance, getSandBox());
 
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
             if (adminEntity.findProperty("pageTemplate") != null) {
                 Property property = new Property();
@@ -134,11 +134,11 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 adminEntity.addProperty(property);
             }
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to add entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
@@ -166,7 +166,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, Page.class.getName(), originalProps);
-			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, Page.class.getName());
+            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, Page.class.getName());
             PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), Page.class.getName());
             Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, Page.class);
             Criteria count = dynamicEntityDao.getCriteria(countCriteria, Page.class);
@@ -205,23 +205,23 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     }
 
     protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
-		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
-			ceilingEntityFullyQualifiedClass.getName(),
-			entities,
-			null,
-			new String[]{},
-			additionalForeignKeys,
-			MergedPropertyType.PRIMARY,
-			populateManyToOneFields,
-			includeManyToOneFields,
-			excludeManyToOneFields,
+        Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
+        Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+            ceilingEntityFullyQualifiedClass.getName(),
+            entities,
+            null,
+            new String[]{},
+            additionalForeignKeys,
+            MergedPropertyType.PRIMARY,
+            populateManyToOneFields,
+            includeManyToOneFields,
+            excludeManyToOneFields,
             configurationKey,
-			""
-		);
+            ""
+        );
 
-		return mergedProperties;
-	}
+        return mergedProperties;
+    }
 
        protected synchronized void createModifiedProperties(DynamicEntityDao dynamicEntityDao, InspectHelper helper, PersistencePerspective persistencePerspective) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, ServiceException, NoSuchFieldException {
         mergedProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
@@ -293,41 +293,41 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
-		try {
+        try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 
             if (getModifiedProperties() == null) {
                 createModifiedProperties(dynamicEntityDao, helper, persistencePerspective);
             }
             Map<String, FieldMetadata> originalProps = getModifiedProperties();
 
-			allMergedProperties.put(MergedPropertyType.PRIMARY, originalProps);
+            allMergedProperties.put(MergedPropertyType.PRIMARY, originalProps);
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
-			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
-			DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
+            ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
+            DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
 
-			return results;
-		} catch (Exception e) {
+            return results;
+        } catch (Exception e) {
             ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
             throw ex;
-		}
+        }
     }
 
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             adminInstance = pageService.updatePage(adminInstance, getSandBox());
 
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
             if (adminEntity.findProperty("pageTemplate") != null) {
                 Property property = new Property();
@@ -336,26 +336,26 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 adminEntity.addProperty(property);
             }
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to update entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		Entity entity = persistencePackage.getEntity();
+        Entity entity = persistencePackage.getEntity();
         try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-			Page adminInstance = (Page) persistenceObject;
+            Page adminInstance = (Page) persistenceObject;
             pageService.deletePage(adminInstance, getSandBox());
-		} catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Unable to remove entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
+        }
     }
 }

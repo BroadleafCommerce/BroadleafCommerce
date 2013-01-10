@@ -33,22 +33,22 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class SandBoxDataSource implements DataSource {
-	
-	private static final Log LOG = LogFactory.getLog(SandBoxDataSource.class);
-	
-	public static final String DRIVERNAME = "org.hsqldb.jdbcDriver";
-	public static final int DEFAULTPORT = 40025;
-	public static final String DEFAULTADDRESS = "localhost";
+    
+    private static final Log LOG = LogFactory.getLog(SandBoxDataSource.class);
+    
+    public static final String DRIVERNAME = "org.hsqldb.jdbcDriver";
+    public static final int DEFAULTPORT = 40025;
+    public static final String DEFAULTADDRESS = "localhost";
     public static Server server;
-	
-	protected PrintWriter logWriter;
-	protected int loginTimeout = 5;
+    
+    protected PrintWriter logWriter;
+    protected int loginTimeout = 5;
     protected GenericObjectPool sandboxDataBasePool;
-	protected int port = DEFAULTPORT;
-	protected String address = DEFAULTADDRESS;
+    protected int port = DEFAULTPORT;
+    protected String address = DEFAULTADDRESS;
     protected String uuid;
-	
-	public SandBoxDataSource() {
+    
+    public SandBoxDataSource() {
         synchronized (this) {
             if (server == null) {
                 try {
@@ -74,186 +74,186 @@ public class SandBoxDataSource implements DataSource {
             }
         }
         uuid = UUID.randomUUID().toString();
-		sandboxDataBasePool = new GenericObjectPool(new PoolableSandBoxDataBaseFactory());
-	}
-	
-	public void close() {
-		try {
-			sandboxDataBasePool.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        sandboxDataBasePool = new GenericObjectPool(new PoolableSandBoxDataBaseFactory());
+    }
+    
+    public void close() {
+        try {
+            sandboxDataBasePool.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
-	
-	//GenericKeyedObjectPool methods
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
+    //GenericKeyedObjectPool methods
 
     public void returnObject(Object obj) throws Exception {
         sandboxDataBasePool.returnObject(obj);
     }
 
-	public int getMaxActive() {
-		return sandboxDataBasePool.getMaxActive();
-	}
+    public int getMaxActive() {
+        return sandboxDataBasePool.getMaxActive();
+    }
 
-	public void setMaxActive(int maxActive) {
-		sandboxDataBasePool.setMaxActive(maxActive);
-	}
+    public void setMaxActive(int maxActive) {
+        sandboxDataBasePool.setMaxActive(maxActive);
+    }
 
-	public byte getWhenExhaustedAction() {
-		return sandboxDataBasePool.getWhenExhaustedAction();
-	}
+    public byte getWhenExhaustedAction() {
+        return sandboxDataBasePool.getWhenExhaustedAction();
+    }
 
-	public void setWhenExhaustedAction(byte whenExhaustedAction) {
-		sandboxDataBasePool.setWhenExhaustedAction(whenExhaustedAction);
-	}
+    public void setWhenExhaustedAction(byte whenExhaustedAction) {
+        sandboxDataBasePool.setWhenExhaustedAction(whenExhaustedAction);
+    }
 
-	public long getMaxWait() {
-		return sandboxDataBasePool.getMaxWait();
-	}
+    public long getMaxWait() {
+        return sandboxDataBasePool.getMaxWait();
+    }
 
-	public void setMaxWait(long maxWait) {
-		sandboxDataBasePool.setMaxWait(maxWait);
-	}
+    public void setMaxWait(long maxWait) {
+        sandboxDataBasePool.setMaxWait(maxWait);
+    }
 
-	public int getMaxIdle() {
-		return sandboxDataBasePool.getMaxIdle();
-	}
+    public int getMaxIdle() {
+        return sandboxDataBasePool.getMaxIdle();
+    }
 
-	public void setMaxIdle(int maxIdle) {
-		sandboxDataBasePool.setMaxIdle(maxIdle);
-	}
+    public void setMaxIdle(int maxIdle) {
+        sandboxDataBasePool.setMaxIdle(maxIdle);
+    }
 
-	public void setMinIdle(int poolSize) {
-		sandboxDataBasePool.setMinIdle(poolSize);
-	}
+    public void setMinIdle(int poolSize) {
+        sandboxDataBasePool.setMinIdle(poolSize);
+    }
 
-	public int getMinIdle() {
-		return sandboxDataBasePool.getMinIdle();
-	}
+    public int getMinIdle() {
+        return sandboxDataBasePool.getMinIdle();
+    }
 
-	public long getTimeBetweenEvictionRunsMillis() {
-		return sandboxDataBasePool.getTimeBetweenEvictionRunsMillis();
-	}
+    public long getTimeBetweenEvictionRunsMillis() {
+        return sandboxDataBasePool.getTimeBetweenEvictionRunsMillis();
+    }
 
-	public void setTimeBetweenEvictionRunsMillis(
-			long timeBetweenEvictionRunsMillis) {
-		sandboxDataBasePool
-				.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
-	}
+    public void setTimeBetweenEvictionRunsMillis(
+            long timeBetweenEvictionRunsMillis) {
+        sandboxDataBasePool
+                .setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
+    }
 
-	public long getMinEvictableIdleTimeMillis() {
-		return sandboxDataBasePool.getMinEvictableIdleTimeMillis();
-	}
+    public long getMinEvictableIdleTimeMillis() {
+        return sandboxDataBasePool.getMinEvictableIdleTimeMillis();
+    }
 
-	public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
-		sandboxDataBasePool
-				.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
-	}
-	
-	//DataSource methods
+    public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
+        sandboxDataBasePool
+                .setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
+    }
+    
+    //DataSource methods
 
-	@Override
-	public PrintWriter getLogWriter() throws SQLException {
-		return logWriter;
-	}
+    @Override
+    public PrintWriter getLogWriter() throws SQLException {
+        return logWriter;
+    }
 
-	@Override
-	public void setLogWriter(PrintWriter out) throws SQLException {
-		this.logWriter = out;
-	}
+    @Override
+    public void setLogWriter(PrintWriter out) throws SQLException {
+        this.logWriter = out;
+    }
 
-	@Override
-	public void setLoginTimeout(int seconds) throws SQLException {
-		this.loginTimeout = seconds;
-	}
+    @Override
+    public void setLoginTimeout(int seconds) throws SQLException {
+        this.loginTimeout = seconds;
+    }
 
-	@Override
-	public int getLoginTimeout() throws SQLException {
-		return loginTimeout;
-	}
+    @Override
+    public int getLoginTimeout() throws SQLException {
+        return loginTimeout;
+    }
 
-	@Override
-	public <T> T unwrap(Class<T> iface) throws SQLException {
-		return null;
-	}
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return null;
+    }
 
-	@Override
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		return false;
-	}
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
+    }
 
-	@Override
-	public Connection getConnection() throws SQLException {
-		try {
-			return (Connection) sandboxDataBasePool.borrowObject();
-		} catch (Exception e) {
-			throw new SQLException(e);
-		}
-	}
+    @Override
+    public Connection getConnection() throws SQLException {
+        try {
+            return (Connection) sandboxDataBasePool.borrowObject();
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
+    }
 
-	@Override
-	public Connection getConnection(String username, String password) throws SQLException {
-		throw new SQLException("Not Supported");
-	}
+    @Override
+    public Connection getConnection(String username, String password) throws SQLException {
+        throw new SQLException("Not Supported");
+    }
 
-	private class PoolableSandBoxDataBaseFactory implements PoolableObjectFactory {
+    private class PoolableSandBoxDataBaseFactory implements PoolableObjectFactory {
 
-		@Override
-		public Object makeObject() throws Exception {
+        @Override
+        public Object makeObject() throws Exception {
             String jdbcUrl = getJDBCUrl();
-			Connection connection = DriverManager.getConnection(jdbcUrl, "SA", "");
-			SandBoxConnection blcConnection = new SandBoxConnection(connection, sandboxDataBasePool);
-			
-			LOG.info("Opening sandbox connection at: " + jdbcUrl);
-			
-			return blcConnection;
-		}
+            Connection connection = DriverManager.getConnection(jdbcUrl, "SA", "");
+            SandBoxConnection blcConnection = new SandBoxConnection(connection, sandboxDataBasePool);
+            
+            LOG.info("Opening sandbox connection at: " + jdbcUrl);
+            
+            return blcConnection;
+        }
 
-		@Override
-		public void destroyObject(Object obj) throws Exception {
-			Connection c = (Connection) obj;
-			try {
-				c.prepareStatement("SHUTDOWN").execute();
+        @Override
+        public void destroyObject(Object obj) throws Exception {
+            Connection c = (Connection) obj;
+            try {
+                c.prepareStatement("SHUTDOWN").execute();
             } catch (Exception e) {
                 e.printStackTrace();
-			} finally {
-				LOG.info("Closing sandbox database at: " + getJDBCUrl());
-			}
-		}
+            } finally {
+                LOG.info("Closing sandbox database at: " + getJDBCUrl());
+            }
+        }
 
-		@Override
-		public boolean validateObject(Object obj) {
-			//TODO add a generic connection validation
-			return true;
-		}
+        @Override
+        public boolean validateObject(Object obj) {
+            //TODO add a generic connection validation
+            return true;
+        }
 
-		@Override
-		public void activateObject(Object obj) throws Exception {
-			//do nothing
-		}
+        @Override
+        public void activateObject(Object obj) throws Exception {
+            //do nothing
+        }
 
-		@Override
-		public void passivateObject(Object obj) throws Exception {
-			//do nothing
-		}
-		
-	}
+        @Override
+        public void passivateObject(Object obj) throws Exception {
+            //do nothing
+        }
+        
+    }
 
     public String getJDBCUrl() {
         String jdbcUrl = "jdbc:hsqldb:hsql://localhost:40025/broadleaf_"+uuid+";mem:broadleaf_"+uuid;

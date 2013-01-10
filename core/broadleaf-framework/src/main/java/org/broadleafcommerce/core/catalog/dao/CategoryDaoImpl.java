@@ -100,14 +100,14 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readActiveSubCategoriesByCategory(Category category) {
         Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(this) {
-	    	if (currentDate.getTime() - currentDate.getTime() > myCurrentDateResolution) {
-	    		currentDate = new Date(currentDate.getTime());
-	    		myDate = currentDate;
-	    	} else {
-	    		myDate = currentDate;
-	    	}
-    	}
+        synchronized(this) {
+            if (currentDate.getTime() - currentDate.getTime() > myCurrentDateResolution) {
+                currentDate = new Date(currentDate.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = currentDate;
+            }
+        }
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
         query.setParameter("defaultParentCategory", category);
         query.setParameter("currentDate", myDate);
@@ -119,10 +119,10 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public void delete(Category category){
-    	if (!em.contains(category)) {
-    		category = readCategoryById(category.getId());
-    	}
-        em.remove(category);    	
+        if (!em.contains(category)) {
+            category = readCategoryById(category.getId());
+        }
+        em.remove(category);        
     }
 
     @Override
@@ -131,11 +131,11 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     public Long getCurrentDateResolution() {
-		return currentDateResolution;
-	}
+        return currentDateResolution;
+    }
 
-	public void setCurrentDateResolution(Long currentDateResolution) {
-		this.currentDateResolution = currentDateResolution;
-	}
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
+    }
     
 }

@@ -24,80 +24,80 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType
 
 public interface PersistencePerspective extends Serializable {
 
-	/**
-	 * @return the id
-	 */
-	public abstract Long getId();
+    /**
+     * @return the id
+     */
+    public abstract Long getId();
 
-	/**
-	 * @param id the id to set
-	 */
-	public abstract void setId(Long id);
+    /**
+     * @param id the id to set
+     */
+    public abstract void setId(Long id);
 
-	/**
-	 * @return the additionalNonPersistentProperties
-	 */
-	public abstract String getAdditionalNonPersistentProperties();
+    /**
+     * @return the additionalNonPersistentProperties
+     */
+    public abstract String getAdditionalNonPersistentProperties();
 
-	/**
-	 * @param additionalNonPersistentProperties the additionalNonPersistentProperties to set
-	 */
-	public abstract void setAdditionalNonPersistentProperties(
-			String additionalNonPersistentProperties);
+    /**
+     * @param additionalNonPersistentProperties the additionalNonPersistentProperties to set
+     */
+    public abstract void setAdditionalNonPersistentProperties(
+            String additionalNonPersistentProperties);
 
-	public List<ForeignKey> getAdditionalForeignKeys();
+    public List<ForeignKey> getAdditionalForeignKeys();
 
-	public void setAdditionalForeignKeys(List<ForeignKey> additionalForeignKeys);
+    public void setAdditionalForeignKeys(List<ForeignKey> additionalForeignKeys);
 
-	/**
-	 * @return the persistencePerspectiveItems
-	 */
-	public abstract Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> getPersistencePerspectiveItems();
+    /**
+     * @return the persistencePerspectiveItems
+     */
+    public abstract Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> getPersistencePerspectiveItems();
 
-	/**
-	 * @param persistencePerspectiveItems the persistencePerspectiveItems to set
-	 */
-	public abstract void setPersistencePerspectiveItems(
-			Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems);
+    /**
+     * @param persistencePerspectiveItems the persistencePerspectiveItems to set
+     */
+    public abstract void setPersistencePerspectiveItems(
+            Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems);
 
-	/**
-	 * @return the operationTypes
-	 */
-	public abstract OperationTypes getOperationTypes();
+    /**
+     * @return the operationTypes
+     */
+    public abstract OperationTypes getOperationTypes();
 
-	/**
-	 * @param operationTypes the operationTypes to set
-	 */
-	public abstract void setOperationTypes(OperationTypes operationTypes);
+    /**
+     * @param operationTypes the operationTypes to set
+     */
+    public abstract void setOperationTypes(OperationTypes operationTypes);
 
-	/**
-	 * @return the populateToOneFields
-	 */
-	public abstract Boolean getPopulateToOneFields();
+    /**
+     * @return the populateToOneFields
+     */
+    public abstract Boolean getPopulateToOneFields();
 
-	/**
-	 * @param populateToOneFields the populateToOneFields to set
-	 */
-	public abstract void setPopulateToOneFields(Boolean populateToOneFields);
+    /**
+     * @param populateToOneFields the populateToOneFields to set
+     */
+    public abstract void setPopulateToOneFields(Boolean populateToOneFields);
 
-	/**
-	 * @return the excludeFields
-	 */
-	public abstract String getExcludeFields();
+    /**
+     * @return the excludeFields
+     */
+    public abstract String getExcludeFields();
 
-	/**
-	 * @param excludeFields the excludeFields to set
-	 */
-	public abstract void setExcludeFields(String excludeFields);
+    /**
+     * @param excludeFields the excludeFields to set
+     */
+    public abstract void setExcludeFields(String excludeFields);
 
-	/**
-	 * @return the includeFields
-	 */
-	public abstract String getIncludeFields();
+    /**
+     * @return the includeFields
+     */
+    public abstract String getIncludeFields();
 
-	/**
-	 * @param includeFields the includeFields to set
-	 */
-	public abstract void setIncludeFields(String includeFields);
-	
+    /**
+     * @param includeFields the includeFields to set
+     */
+    public abstract void setIncludeFields(String includeFields);
+    
 }

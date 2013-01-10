@@ -120,10 +120,10 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
     }
     
     public void removeAssociations() {
-		if (getFulfillmentGroup() != null) getFulfillmentGroup().getFulfillmentGroupItems().remove(this);
-		setFulfillmentGroup(null);
-		setOrderItem(null);
-	}
+        if (getFulfillmentGroup() != null) getFulfillmentGroup().getFulfillmentGroupItems().remove(this);
+        setFulfillmentGroup(null);
+        setOrderItem(null);
+    }
 
     @Override
     public boolean equals(Object obj) {

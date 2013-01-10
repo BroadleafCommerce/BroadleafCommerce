@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
@@ -13,10 +13,10 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-	<context:component-scan base-package="org.broadleafcommerce.profile.web"/>
-	<context:component-scan base-package="org.broadleafcommerce.core.web"/>
-	
-	<bean id="blCacheManager"
+    <context:component-scan base-package="org.broadleafcommerce.profile.web"/>
+    <context:component-scan base-package="org.broadleafcommerce.core.web"/>
+    
+    <bean id="blCacheManager"
           class="org.broadleafcommerce.profile.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
         <property name="shared" value="true"/>
         <property name="configLocations">
@@ -27,59 +27,59 @@
     </bean>
     
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
-		<property name="persistenceXmlLocations">
-			<list>
-				<value>classpath*:/META-INF/persistence-test.xml</value>
-			</list>
-		</property>
-		<property name="dataSources">
+        <property name="persistenceXmlLocations">
+            <list>
+                <value>classpath*:/META-INF/persistence-test.xml</value>
+            </list>
+        </property>
+        <property name="dataSources">
             <map>
                 <entry key="jdbc/test" value-ref="blDS"/>
                 <entry key="jdbc/testSecure" value-ref="blDS"/>
             </map>
         </property>
-		<property name="defaultDataSource" ref="blDS"/>
-	</bean>
+        <property name="defaultDataSource" ref="blDS"/>
+    </bean>
 
     <bean id="blDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:mem:broadleaf" />
-		<property name="username" value="sa" />
-		<property name="password" value="" />
-	</bean>
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="url" value="jdbc:hsqldb:mem:broadleaf" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
 
-	<bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-    	<property name="host"><value>localhost</value></property>
-    	<property name="port"><value>30000</value></property>
-    	<property name="protocol"><value>smtp</value></property>
-    	<property name="javaMailProperties">
-			<props>
-				<prop key="mail.smtp.starttls.enable">true</prop>
-				<prop key="mail.smtp.timeout">25000</prop>
-			</props>
-		</property>
-	</bean>
+    <bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host"><value>localhost</value></property>
+        <property name="port"><value>30000</value></property>
+        <property name="protocol"><value>smtp</value></property>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.timeout">25000</prop>
+            </props>
+        </property>
+    </bean>
 
-	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
-		<property name="propertyLocations">
-			<set>
-				<value>classpath:config/bc/</value>
-				<value>classpath:config/bc/test/</value>
-			</set>
-		</property>
-		<property name="environments">
-			<set>
-				<value>production</value>
-				<value>staging</value>
-				<value>integration</value>
-				<value>development</value>
-			</set>
-		</property>
-		<property name="defaultEnvironment" value="development"/>
-		<property name="ignoreUnresolvablePlaceholders" value="true"/>
-	</bean>
-	
-	<bean id="baseEmailInfo" abstract="true">
+    <bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
+        <property name="propertyLocations">
+            <set>
+                <value>classpath:config/bc/</value>
+                <value>classpath:config/bc/test/</value>
+            </set>
+        </property>
+        <property name="environments">
+            <set>
+                <value>production</value>
+                <value>staging</value>
+                <value>integration</value>
+                <value>development</value>
+            </set>
+        </property>
+        <property name="defaultEnvironment" value="development"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+    
+    <bean id="baseEmailInfo" abstract="true">
         <property name="sendEmailReliableAsync" value="false"/>
         <property name="fromAddress" value="test@broadleafcommerce.org"/>
         <property name="sendAsyncPriority" value="8"/>
@@ -93,98 +93,98 @@
     <bean id="blCreditCardModule" class="org.broadleafcommerce.checkout.service.DummyCreditCardModule"/>
     
     <bean id="blUSPSShippingModule" class="org.broadleafcommerce.pricing.service.module.USPSSingleItemPerPackageShippingCalculationModule">
-		<property name="defaultModule" value="true"/>
-		<property name="originationPostalCode" value="10022"/>
-	</bean>
-	
+        <property name="defaultModule" value="true"/>
+        <property name="originationPostalCode" value="10022"/>
+    </bean>
+    
     <bean id="blShippingCalculationService" class="org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationServiceImpl">
-		<property name="uspsCharSet" value="${usps.charset}"/>
-		<property name="uspsPassword" value="${usps.password}"/>
-		<property name="uspsServerName" value="${usps.server.name}"/>
-		<property name="uspsServiceAPI" value="${usps.service.api}"/>
-		<property name="uspsUserName" value="${usps.user.name}"/>
-		<property name="failureReportingThreshold" value="10"/>
-		<property name="httpProtocol" value="${usps.http.protocol}"/>
-		<property name="uspsShippingAPI" value="${usps.shipping.api}"/>
-		<property name="rateRequestElement" value="${usps.rate.request.tag}"/>
-		<property name="uspsRequestValidator">
-			<bean class="org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator">
-				<constructor-arg>
-					<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
-						<constructor-arg value="${usps.rate.request.validator}"/>
-					</bean>
-				</constructor-arg>
-			</bean>
-		</property>
-		<property name="uspsRequestBuilder">
-			<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
-				<constructor-arg value="${usps.rate.request.builder}"/>
-			</bean>
-		</property>
-		<property name="uspsResponseBuilder">
-			<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
-				<constructor-arg value="${usps.rate.response.builder}"/>
-			</bean>
-		</property>
-	</bean>
-	
-	<bean id="blCyberSourceCreditCardPaymentService" class="org.broadleafcommerce.vendor.cybersource.service.payment.CyberSourceCreditCardPaymentServiceImpl">
-		<property name="failureReportingThreshold" value="10"/>
-		<property name="idGenerationService" ref="blIdGenerationService"/>
-	</bean>
-	
-	<bean id="blCyberSourceTaxService" class="org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxServiceImpl">
-		<property name="failureReportingThreshold" value="10"/>
-		<property name="idGenerationService" ref="blIdGenerationService"/>
-		<property name="isCacheEnabled" value="true"/>
-	</bean>
-	
-	<bean id="blCyberSourceServiceManager" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManagerImpl">
-		<property name="merchantId" value="${cybersource.merchant.id}"/>
-		<property name="serverUrl" value="${cybersource.server.url}"/>
-		<property name="libVersion" value="${cybersource.lib.version}"/>
-		<property name="registeredServices">
-			<list>
-				<ref bean="blCyberSourceCreditCardPaymentService"/>
-				<ref bean="blCyberSourceTaxService"/>
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="cyberSourcePasswordCallback" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourcePasswordCallback">
-		<property name="transactionKey" value="${cybersource.transaction.key}"/>
-	</bean>
+        <property name="uspsCharSet" value="${usps.charset}"/>
+        <property name="uspsPassword" value="${usps.password}"/>
+        <property name="uspsServerName" value="${usps.server.name}"/>
+        <property name="uspsServiceAPI" value="${usps.service.api}"/>
+        <property name="uspsUserName" value="${usps.user.name}"/>
+        <property name="failureReportingThreshold" value="10"/>
+        <property name="httpProtocol" value="${usps.http.protocol}"/>
+        <property name="uspsShippingAPI" value="${usps.shipping.api}"/>
+        <property name="rateRequestElement" value="${usps.rate.request.tag}"/>
+        <property name="uspsRequestValidator">
+            <bean class="org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator">
+                <constructor-arg>
+                    <bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
+                        <constructor-arg value="${usps.rate.request.validator}"/>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="uspsRequestBuilder">
+            <bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
+                <constructor-arg value="${usps.rate.request.builder}"/>
+            </bean>
+        </property>
+        <property name="uspsResponseBuilder">
+            <bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
+                <constructor-arg value="${usps.rate.response.builder}"/>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="blCyberSourceCreditCardPaymentService" class="org.broadleafcommerce.vendor.cybersource.service.payment.CyberSourceCreditCardPaymentServiceImpl">
+        <property name="failureReportingThreshold" value="10"/>
+        <property name="idGenerationService" ref="blIdGenerationService"/>
+    </bean>
+    
+    <bean id="blCyberSourceTaxService" class="org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxServiceImpl">
+        <property name="failureReportingThreshold" value="10"/>
+        <property name="idGenerationService" ref="blIdGenerationService"/>
+        <property name="isCacheEnabled" value="true"/>
+    </bean>
+    
+    <bean id="blCyberSourceServiceManager" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManagerImpl">
+        <property name="merchantId" value="${cybersource.merchant.id}"/>
+        <property name="serverUrl" value="${cybersource.server.url}"/>
+        <property name="libVersion" value="${cybersource.lib.version}"/>
+        <property name="registeredServices">
+            <list>
+                <ref bean="blCyberSourceCreditCardPaymentService"/>
+                <ref bean="blCyberSourceTaxService"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="cyberSourcePasswordCallback" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourcePasswordCallback">
+        <property name="transactionKey" value="${cybersource.transaction.key}"/>
+    </bean>
     
     <bean id="compositeStatusHandler" class="org.broadleafcommerce.profile.vendor.service.monitor.handler.CompositeStatusHandler">
-    	<property name="handlers">
-	    	<list>
-	    		<bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.LogStatusHandler"/>
-	    		<bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.EmailStatusHandler">
-	    			<property name="emailInfo" ref="serviceStatusEmail"/>
-	    			<property name="emailTarget">
-	    				<bean class="org.broadleafcommerce.profile.email.domain.EmailTargetImpl">
-	    					<property name="emailAddress" value="test@broadleafcommerce.org"/>
-	    				</bean>
-	    			</property>
-	    		</bean>
-	    	</list>
-	   	</property>
+        <property name="handlers">
+            <list>
+                <bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.LogStatusHandler"/>
+                <bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.EmailStatusHandler">
+                    <property name="emailInfo" ref="serviceStatusEmail"/>
+                    <property name="emailTarget">
+                        <bean class="org.broadleafcommerce.profile.email.domain.EmailTargetImpl">
+                            <property name="emailAddress" value="test@broadleafcommerce.org"/>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
     </bean>
     
     <bean id="blServiceMonitor" class="org.broadleafcommerce.profile.vendor.service.monitor.ServiceMonitor" init-method="init">
-    	<property name="defaultHandler" ref="compositeStatusHandler"/>
-    	<property name="serviceHandlers">
-    		<map>
+        <property name="defaultHandler" ref="compositeStatusHandler"/>
+        <property name="serviceHandlers">
+            <map>
                 <entry key-ref="blShippingCalculationService" value-ref="compositeStatusHandler"/>
                 <entry key-ref="blCyberSourceCreditCardPaymentService" value-ref="compositeStatusHandler"/>
             </map>
-    	</property>
+        </property>
     </bean>
     
     <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
-	    <tx:attributes>
-	      <tx:method name="*" propagation="REQUIRED"/>
-	    </tx:attributes>
-	</tx:advice>
-	
+        <tx:attributes>
+          <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    
 </beans>

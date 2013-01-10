@@ -31,13 +31,13 @@ import javax.persistence.TypedQuery;
 @Repository("blSandBoxDao")
 public class SandBoxDaoImpl implements SandBoxDao {
 
-	@PersistenceContext(unitName = "blPU")
-	protected EntityManager sandBoxEntityManager;
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager sandBoxEntityManager;
 
-	@Override
-	public SandBox retrieve(Long id) {
-		return  sandBoxEntityManager.find(SandBoxImpl.class, id);
-	}
+    @Override
+    public SandBox retrieve(Long id) {
+        return  sandBoxEntityManager.find(SandBoxImpl.class, id);
+    }
 
     @Override
     public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType) {
@@ -70,8 +70,8 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
     @Override
     public SandBox persist(SandBox entity) {
-		sandBoxEntityManager.persist(entity);
-		sandBoxEntityManager.flush();
-		return entity;
+        sandBoxEntityManager.persist(entity);
+        sandBoxEntityManager.flush();
+        return entity;
     }
 }

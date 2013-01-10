@@ -26,11 +26,11 @@ import org.testng.annotations.DataProvider;
  */
 public class ContentDetailsDaoProvider {
 
-	@DataProvider(name = "basicContentDetails")
-	public static Object[][] provideBasicContentDetails() {
-		ContentDetails cd = new ContentDetailsImpl();
-		cd.setId(Integer.getInteger("1919"));
-		cd.setXmlContent("<xml>some xml content</xml>");
-		return new Object[][] {{cd}};
-	}
+    @DataProvider(name = "basicContentDetails")
+    public static Object[][] provideBasicContentDetails() {
+        ContentDetails cd = new ContentDetailsImpl();
+        cd.setId(Integer.getInteger("1919"));
+        cd.setXmlContent("<xml>some xml content</xml>");
+        return new Object[][] {{cd}};
+    }
 }

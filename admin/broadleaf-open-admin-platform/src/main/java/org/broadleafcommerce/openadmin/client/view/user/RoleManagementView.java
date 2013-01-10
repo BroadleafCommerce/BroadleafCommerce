@@ -40,23 +40,23 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureVie
  */
 public class RoleManagementView extends HLayout implements Instantiable, RoleManagementDisplay {
 
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
     protected GridStructureView permissionsDisplay;
 
-	public RoleManagementView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("roleLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+    public RoleManagementView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("roleLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("roleListTitle"), entityDataSource, false, false);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("roleListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -78,19 +78,19 @@ public class RoleManagementView extends HLayout implements Instantiable, RoleMan
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	public Canvas asCanvas() {
-		return this;
-	}
+    public Canvas asCanvas() {
+        return this;
+    }
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+    public DynamicFormDisplay getDynamicFormDisplay() {
+        return dynamicFormDisplay;
+    }
+    
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
 
     public GridStructureView getPermissionsDisplay() {
         return permissionsDisplay;

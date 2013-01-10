@@ -42,22 +42,22 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSou
  *
  */
 public class AssetSearchDialog extends Window {
-		
-	protected final TileGrid tileGrid;
-	protected IButton saveButton;
-	protected TileGridItemSelectedHandler handler;
-	
-	public AssetSearchDialog(TileGridDataSource staticAssetDataSource) {
-		setIsModal(true);
-		setShowModalMask(true);
-		setShowMinimizeButton(false);
-		setWidth(600);
-		setHeight(500);
-		setCanDragResize(true);
-		setOverflow(Overflow.AUTO);
-		setVisible(true);
+        
+    protected final TileGrid tileGrid;
+    protected IButton saveButton;
+    protected TileGridItemSelectedHandler handler;
+    
+    public AssetSearchDialog(TileGridDataSource staticAssetDataSource) {
+        setIsModal(true);
+        setShowModalMask(true);
+        setShowMinimizeButton(false);
+        setWidth(600);
+        setHeight(500);
+        setCanDragResize(true);
+        setOverflow(Overflow.AUTO);
+        setVisible(true);
 
-		tileGrid = new TileGrid();
+        tileGrid = new TileGrid();
         tileGrid.setTileWidth(80);
         tileGrid.setTileHeight(120);
         tileGrid.setAutoFetchData(true);
@@ -69,10 +69,10 @@ public class AssetSearchDialog extends Window {
         staticAssetDataSource.setupGridFields(new String[]{"pictureLarge", "name"});
         tileGrid.setDataSource(staticAssetDataSource);
         tileGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
-        	@Override
-        	public void onSelectionChanged(SelectionChangedEvent event) {
-        		saveButton.enable();
-        	}
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent event) {
+                saveButton.enable();
+            }
         });
         tileGrid.addClickHandler(new ClickHandler() {
             @Override
@@ -84,21 +84,21 @@ public class AssetSearchDialog extends Window {
                 }
             }
         });
-		
+        
         saveButton = new IButton("Ok");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	//getSelectedRecord() throws a ClassCastException from SmartGWT, maybe a bug.  this seems to work instead:
-            	Record selectedRecord = tileGrid.getSelection()[0];
+                //getSelectedRecord() throws a ClassCastException from SmartGWT, maybe a bug.  this seems to work instead:
+                Record selectedRecord = tileGrid.getSelection()[0];
                 handler.onSearchItemSelected(new TileGridItemSelected(selectedRecord, tileGrid.getDataSource()));
-            	hide();
+                hide();
             }
         });
 
         IButton cancelButton = new IButton("Cancel");  
         cancelButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
-            	hide();
+                hide();
             }  
         });
         
@@ -132,7 +132,7 @@ public class AssetSearchDialog extends Window {
         IButton searchButton = new IButton("Search");
         searchButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
+                Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
                 tileGrid.fetchData(valuesAsCriteria);
             }
         });
@@ -146,15 +146,15 @@ public class AssetSearchDialog extends Window {
         mainLayout.addMember(buttonsLayout);
 
         addItem(mainLayout); 
-	}
-	
-	public void search(String title, TileGridItemSelectedHandler handler) {
-		this.setTitle(title);
-		this.handler = handler;
-		centerInPage();
-		saveButton.disable();
-		show();
-	}
+    }
+    
+    public void search(String title, TileGridItemSelectedHandler handler) {
+        this.setTitle(title);
+        this.handler = handler;
+        centerInPage();
+        saveButton.disable();
+        show();
+    }
 
     public TileGridItemSelectedHandler getHandler() {
         return handler;

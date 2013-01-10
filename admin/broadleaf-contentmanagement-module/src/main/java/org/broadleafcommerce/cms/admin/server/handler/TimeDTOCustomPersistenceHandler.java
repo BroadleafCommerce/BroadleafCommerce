@@ -68,18 +68,18 @@ public class TimeDTOCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-		try {
-			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+        try {
+            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
             Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getSimpleMergedProperties(ceilingEntityFullyQualifiedClassname, persistencePackage.getPersistencePerspective());
-			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
-			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(new Class<?>[]{Class.forName(ceilingEntityFullyQualifiedClassname)}, allMergedProperties);
-			DynamicResultSet results = new DynamicResultSet(mergedMetadata);
+            allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
+            ClassMetadata mergedMetadata = helper.getMergedClassMetadata(new Class<?>[]{Class.forName(ceilingEntityFullyQualifiedClassname)}, allMergedProperties);
+            DynamicResultSet results = new DynamicResultSet(mergedMetadata);
 
-			return results;
-		} catch (Exception e) {
+            return results;
+        } catch (Exception e) {
             ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
             throw ex;
-		}
+        }
     }
 }

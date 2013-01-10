@@ -28,130 +28,130 @@ import java.util.Map;
  *
  */
 public class FieldPresentationAttributes implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private String name;
-	private String friendlyName;
-	private String securityLevel;
-	private Integer order;
+    
+    private static final long serialVersionUID = 1L;
+    
+    private String name;
+    private String friendlyName;
+    private String securityLevel;
+    private Integer order;
     private VisibilityEnum visibility;
-	private String group;
-	private Integer groupOrder;
+    private String group;
+    private Integer groupOrder;
     private Boolean groupCollapsed;
-	private SupportedFieldType explicitFieldType;
-	private Boolean largeEntry;
-	private Boolean prominent;
-	private String columnWidth;
-	private String broadleafEnumeration;
-	private Boolean readOnly;
-	private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
+    private SupportedFieldType explicitFieldType;
+    private Boolean largeEntry;
+    private Boolean prominent;
+    private String columnWidth;
+    private String broadleafEnumeration;
+    private Boolean readOnly;
+    private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
     private Boolean requiredOverride;
     private Boolean excluded;
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getFriendlyName() {
-		return friendlyName;
-	}
-	
-	public void setFriendlyName(String friendlyName) {
-		this.friendlyName = friendlyName;
-	}
-	
-	public String getSecurityLevel() {
-		return securityLevel;
-	}
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+    
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+    
+    public String getSecurityLevel() {
+        return securityLevel;
+    }
 
-	public void setSecurityLevel(String securityLevel) {
-		this.securityLevel = securityLevel;
-	}
+    public void setSecurityLevel(String securityLevel) {
+        this.securityLevel = securityLevel;
+    }
 
-	public Integer getOrder() {
-		return order;
-	}
-	
-	public void setOrder(Integer order) {
-		this.order = order;
-	}
+    public Integer getOrder() {
+        return order;
+    }
+    
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
 
-	public SupportedFieldType getExplicitFieldType() {
-		return explicitFieldType;
-	}
+    public SupportedFieldType getExplicitFieldType() {
+        return explicitFieldType;
+    }
 
-	public void setExplicitFieldType(SupportedFieldType fieldType) {
-		this.explicitFieldType = fieldType;
-	}
+    public void setExplicitFieldType(SupportedFieldType fieldType) {
+        this.explicitFieldType = fieldType;
+    }
 
-	public String getGroup() {
-		return group;
-	}
+    public String getGroup() {
+        return group;
+    }
 
-	public void setGroup(String group) {
-		this.group = group;
-	}
+    public void setGroup(String group) {
+        this.group = group;
+    }
 
-	public Boolean isLargeEntry() {
-		return largeEntry;
-	}
+    public Boolean isLargeEntry() {
+        return largeEntry;
+    }
 
-	public void setLargeEntry(Boolean largeEntry) {
-		this.largeEntry = largeEntry;
-	}
+    public void setLargeEntry(Boolean largeEntry) {
+        this.largeEntry = largeEntry;
+    }
 
-	public Boolean isProminent() {
-		return prominent;
-	}
+    public Boolean isProminent() {
+        return prominent;
+    }
 
-	public void setProminent(Boolean prominent) {
-		this.prominent = prominent;
-	}
+    public void setProminent(Boolean prominent) {
+        this.prominent = prominent;
+    }
 
-	public String getColumnWidth() {
-		return columnWidth;
-	}
+    public String getColumnWidth() {
+        return columnWidth;
+    }
 
-	public void setColumnWidth(String columnWidth) {
-		this.columnWidth = columnWidth;
-	}
+    public void setColumnWidth(String columnWidth) {
+        this.columnWidth = columnWidth;
+    }
 
-	public String getBroadleafEnumeration() {
-		return broadleafEnumeration;
-	}
+    public String getBroadleafEnumeration() {
+        return broadleafEnumeration;
+    }
 
-	public void setBroadleafEnumeration(String broadleafEnumeration) {
-		this.broadleafEnumeration = broadleafEnumeration;
-	}
+    public void setBroadleafEnumeration(String broadleafEnumeration) {
+        this.broadleafEnumeration = broadleafEnumeration;
+    }
 
-	public Boolean getReadOnly() {
-		return readOnly;
-	}
+    public Boolean getReadOnly() {
+        return readOnly;
+    }
 
-	public void setReadOnly(Boolean readOnly) {
-		this.readOnly = readOnly;
-	}
+    public void setReadOnly(Boolean readOnly) {
+        this.readOnly = readOnly;
+    }
 
-	public Integer getGroupOrder() {
-		return groupOrder;
-	}
+    public Integer getGroupOrder() {
+        return groupOrder;
+    }
 
-	public void setGroupOrder(Integer groupOrder) {
-		this.groupOrder = groupOrder;
-	}
+    public void setGroupOrder(Integer groupOrder) {
+        this.groupOrder = groupOrder;
+    }
 
-	public Map<String, Map<String, String>> getValidationConfigurations() {
-		return validationConfigurations;
-	}
+    public Map<String, Map<String, String>> getValidationConfigurations() {
+        return validationConfigurations;
+    }
 
-	public void setValidationConfigurations(Map<String, Map<String, String>> validationConfigurations) {
-		this.validationConfigurations = validationConfigurations;
-	}
+    public void setValidationConfigurations(Map<String, Map<String, String>> validationConfigurations) {
+        this.validationConfigurations = validationConfigurations;
+    }
 
     public Boolean getRequiredOverride() {
         return requiredOverride;

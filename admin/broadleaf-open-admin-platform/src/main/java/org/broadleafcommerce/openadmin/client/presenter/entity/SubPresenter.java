@@ -40,12 +40,12 @@ import java.util.Arrays;
  */
 public class SubPresenter extends DynamicFormPresenter implements SubPresentable {
 
-	protected SubItemDisplay display;
-	
-	protected Record associatedRecord;
-	protected AbstractDynamicDataSource abstractDynamicDataSource;
-	
-	protected Boolean disabled = false;
+    protected SubItemDisplay display;
+    
+    protected Record associatedRecord;
+    protected AbstractDynamicDataSource abstractDynamicDataSource;
+    
+    protected Boolean disabled = false;
 
     protected Boolean showDisabledState = false;
     protected Boolean canEdit = false;
@@ -57,71 +57,71 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
     }
 
     public SubPresenter(SubItemDisplay display, String[] availableToTypes) {
-		this(display, availableToTypes, false, false, false);
-	}
+        this(display, availableToTypes, false, false, false);
+    }
 
     public SubPresenter(SubItemDisplay display, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
-		this(display, null, showDisabledState, canEdit, showId);
-	}
+        this(display, null, showDisabledState, canEdit, showId);
+    }
 
-	public SubPresenter(SubItemDisplay display, String[] availableToTypes, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
-		super(display);
+    public SubPresenter(SubItemDisplay display, String[] availableToTypes, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
+        super(display);
         this.showDisabledState = showDisabledState;
         this.canEdit = canEdit;
         this.showId = showId;
-		this.display = display;
+        this.display = display;
         this.availableToTypes = availableToTypes;
-	}
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
-		display.getFormOnlyDisplay().buildFields(dataSource, true, false, false);
-	}
-	
-	@Override
-	public void setStartState() {
-		if (!disabled) {
-			super.setStartState();
-			display.getAddButton().enable();
-			display.getGrid().enable();
-			display.getRemoveButton().disable();
-		}
-	}
-	
-	@Override
-	public void enable() {
-		disabled = false;
-		super.enable();
-		display.getAddButton().enable();
-		display.getGrid().enable();
-		display.getRemoveButton().enable();
-		display.getToolbar().enable();
-	}
-	
-	@Override
-	public void disable() {
-		disabled = true;
-		super.disable();
-		display.getAddButton().disable();
-		display.getGrid().disable();
-		display.getRemoveButton().disable();
-		display.getToolbar().disable();
-	}
-	
-	public void setReadOnly(Boolean readOnly) {
-		if (readOnly) {
-			disable();
-			display.getGrid().enable();
-		} else {
-			enable();
-		}
-	}
-	
-	public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
-		this.associatedRecord = associatedRecord;
-		this.abstractDynamicDataSource = abstractDynamicDataSource;
+        display.getGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getGrid());
+        dataSource.setupGridFields(gridFields, editable);
+        display.getFormOnlyDisplay().buildFields(dataSource, true, false, false);
+    }
+    
+    @Override
+    public void setStartState() {
+        if (!disabled) {
+            super.setStartState();
+            display.getAddButton().enable();
+            display.getGrid().enable();
+            display.getRemoveButton().disable();
+        }
+    }
+    
+    @Override
+    public void enable() {
+        disabled = false;
+        super.enable();
+        display.getAddButton().enable();
+        display.getGrid().enable();
+        display.getRemoveButton().enable();
+        display.getToolbar().enable();
+    }
+    
+    @Override
+    public void disable() {
+        disabled = true;
+        super.disable();
+        display.getAddButton().disable();
+        display.getGrid().disable();
+        display.getRemoveButton().disable();
+        display.getToolbar().disable();
+    }
+    
+    public void setReadOnly(Boolean readOnly) {
+        if (readOnly) {
+            disable();
+            display.getGrid().enable();
+        } else {
+            enable();
+        }
+    }
+    
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
+        this.associatedRecord = associatedRecord;
+        this.abstractDynamicDataSource = abstractDynamicDataSource;
         ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
         String[] types = associatedRecord.getAttributeAsStringArray("_type");
         boolean shouldLoad = availableToTypes == null || types == null;
@@ -158,34 +158,34 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
         }
 
         return shouldLoad;
-	}
-	
-	@Override
-	public void bind() {
-		super.bind();
-		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					display.getRemoveButton().enable();
-					((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-					display.getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),showDisabledState, canEdit, showId);
-					display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
-					display.getFormOnlyDisplay().getForm().enable();
-				} else {
-					display.getRemoveButton().disable();
-				}
-			}
-		});
-		display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
-						}
-					});
-				}
-			}
-		});
-	}
+    }
+    
+    @Override
+    public void bind() {
+        super.bind();
+        display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                if (event.getState()) {
+                    display.getRemoveButton().enable();
+                    ((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
+                    display.getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),showDisabledState, canEdit, showId);
+                    display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
+                    display.getFormOnlyDisplay().getForm().enable();
+                } else {
+                    display.getRemoveButton().disable();
+                }
+            }
+        });
+        display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            display.getRemoveButton().disable();
+                        }
+                    });
+                }
+            }
+        });
+    }
 }

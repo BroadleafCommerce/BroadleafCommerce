@@ -29,10 +29,10 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  */
 public interface CustomerDisplay extends DynamicEditDisplay {
 
-	public DynamicFormDisplay getDynamicFormDisplay();
+    public DynamicFormDisplay getDynamicFormDisplay();
 
-	public DynamicEntityListDisplay getListDisplay();
-	
-	public ToolStripButton getUpdateLoginButton();
-	
+    public DynamicEntityListDisplay getListDisplay();
+    
+    public ToolStripButton getUpdateLoginButton();
+    
 }

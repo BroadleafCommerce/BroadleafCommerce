@@ -52,94 +52,94 @@ import java.util.Map;
  */
 public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 
-	protected EntitySearchDialog searchDialog;
-	protected String searchDialogTitle;
-	protected String joinStructureEditTitle;
-	protected String[] joinStructureFields;
+    protected EntitySearchDialog searchDialog;
+    protected String searchDialogTitle;
+    protected String joinStructureEditTitle;
+    protected String[] joinStructureFields;
     protected HandlerRegistration addClickedHandlerRegistration;
     protected HandlerRegistration editCompletedHandlerRegistration;
     protected HandlerRegistration recordDropHandlerRegistration;
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removedClickedHandlerRegistration;
     protected HandlerRegistration rowDoubleClickedHandlerRegistration;
-	
-	public EditableJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle, String joinStructureEditTitle, String... joinStructureFields) {
-		super(display, availableToTypes);
-		this.searchDialog = searchDialog;
-		this.searchDialogTitle = searchDialogTitle;
-		this.joinStructureEditTitle = joinStructureEditTitle;
-		this.joinStructureFields = joinStructureFields;
-	}
+    
+    public EditableJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle, String joinStructureEditTitle, String... joinStructureFields) {
+        super(display, availableToTypes);
+        this.searchDialog = searchDialog;
+        this.searchDialogTitle = searchDialogTitle;
+        this.joinStructureEditTitle = joinStructureEditTitle;
+        this.joinStructureFields = joinStructureFields;
+    }
 
     public EditableJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle, String joinStructureEditTitle, String... joinStructureFields) {
-		this(display, searchDialog, null, searchDialogTitle, joinStructureEditTitle, joinStructureFields);
-	}
-	
-	public void bind() {
-		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
-						@SuppressWarnings({ "rawtypes", "unchecked" })
-						public void onSearchItemSelected(SearchItemSelected event) {
-							Map initialValues = ((DynamicEntityDataSource) display.getGrid().getDataSource()).extractRecordValues((TreeNode) event.getRecord());
-							initialValues.put("backup_id", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPrimaryKeyValue(event.getRecord()));
-							BLCMain.ENTITY_ADD.editNewRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, joinStructureFields, null);
-						}
-					});
-				}
-			}
-		});
-		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
-			public void onEditComplete(EditCompleteEvent event) {
-				display.getGrid().deselectAllRecords();
-				setStartState();
-			}
-		});
-		/*
-		 * TODO add code to check if the JoinStructure has a sort field defined. If not,
-		 * then disable the re-order functionality
-		 */
-		recordDropHandlerRegistration = display.getGrid().addRecordDropHandler(new RecordDropHandler() {
-			public void onRecordDrop(RecordDropEvent event) {
-				ListGridRecord record = event.getDropRecords()[0];
-				int originalIndex = ((ListGrid) event.getSource()).getRecordIndex(record);
-				int newIndex = event.getIndex();
-				if (newIndex > originalIndex) {
-					newIndex--;
-				}
-				JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-				record.setAttribute(joinStructure.getSortField(), newIndex);
-				display.getGrid().updateData(record);
-			}
-		});
-		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					display.getRemoveButton().enable();
-				} else {
-					display.getRemoveButton().disable();
-				}
-			}
-		});
-		removedClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
-						}
-					});
-				}
-			}
-		});
+        this(display, searchDialog, null, searchDialogTitle, joinStructureEditTitle, joinStructureFields);
+    }
+    
+    public void bind() {
+        addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
+                        @SuppressWarnings({ "rawtypes", "unchecked" })
+                        public void onSearchItemSelected(SearchItemSelected event) {
+                            Map initialValues = ((DynamicEntityDataSource) display.getGrid().getDataSource()).extractRecordValues((TreeNode) event.getRecord());
+                            initialValues.put("backup_id", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPrimaryKeyValue(event.getRecord()));
+                            BLCMain.ENTITY_ADD.editNewRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, joinStructureFields, null);
+                        }
+                    });
+                }
+            }
+        });
+        editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
+            public void onEditComplete(EditCompleteEvent event) {
+                display.getGrid().deselectAllRecords();
+                setStartState();
+            }
+        });
+        /*
+         * TODO add code to check if the JoinStructure has a sort field defined. If not,
+         * then disable the re-order functionality
+         */
+        recordDropHandlerRegistration = display.getGrid().addRecordDropHandler(new RecordDropHandler() {
+            public void onRecordDrop(RecordDropEvent event) {
+                ListGridRecord record = event.getDropRecords()[0];
+                int originalIndex = ((ListGrid) event.getSource()).getRecordIndex(record);
+                int newIndex = event.getIndex();
+                if (newIndex > originalIndex) {
+                    newIndex--;
+                }
+                JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+                record.setAttribute(joinStructure.getSortField(), newIndex);
+                display.getGrid().updateData(record);
+            }
+        });
+        selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                if (event.getState()) {
+                    display.getRemoveButton().enable();
+                } else {
+                    display.getRemoveButton().disable();
+                }
+            }
+        });
+        removedClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            display.getRemoveButton().disable();
+                        }
+                    });
+                }
+            }
+        });
         rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
             @Override
             public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
                 BLCMain.ENTITY_ADD.editRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, joinStructureFields, null);
             }
         });
-	}
+    }
 
     public HandlerRegistration getAddClickedHandlerRegistration() {
         return addClickedHandlerRegistration;

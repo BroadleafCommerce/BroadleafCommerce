@@ -60,50 +60,50 @@ import org.springframework.web.context.WebApplicationContext;
  */
 public class MergeContextLoader extends ContextLoader {
 
-	/**
-	 * Name of servlet context parameter (i.e., "<code>patchConfigLocation</code>")
-	 * that can specify the config location for the rootId context.
-	 */
-	public static final String PATCH_LOCATION_PARAM = "patchConfigLocation";
-	
-	/**
-	 * Name of a bean to hook before Spring shutdown for this
-	 * context commences.
-	 */
-	public static final String SHUTDOWN_HOOK_BEAN = "shutdownHookBean";
-	
-	/**
-	 * Name of method to call on the shutdown hook bean before
-	 * Spring shutdown for this context commences
-	 */
-	public static final String SHUTDOWN_HOOK_METHOD = "shutdownHookMethod";
+    /**
+     * Name of servlet context parameter (i.e., "<code>patchConfigLocation</code>")
+     * that can specify the config location for the rootId context.
+     */
+    public static final String PATCH_LOCATION_PARAM = "patchConfigLocation";
+    
+    /**
+     * Name of a bean to hook before Spring shutdown for this
+     * context commences.
+     */
+    public static final String SHUTDOWN_HOOK_BEAN = "shutdownHookBean";
+    
+    /**
+     * Name of method to call on the shutdown hook bean before
+     * Spring shutdown for this context commences
+     */
+    public static final String SHUTDOWN_HOOK_METHOD = "shutdownHookMethod";
 
-	/**
-	 * Instantiate the rootId WebApplicationContext for this loader, either the
-	 * default context class or a custom context class if specified.
-	 * <p>This implementation expects custom contexts to implement the
-	 * {@link ConfigurableWebApplicationContext} interface.
-	 * Can be overridden in subclasses.
-	 * <p>In addition, {@link #customizeContext} gets called prior to refreshing the
-	 * context, allowing subclasses to perform custom modifications to the context.
-	 * @param servletContext current servlet context
-	 * @param parent the parent ApplicationContext to use, or <code>null</code> if none
-	 * @return the rootId WebApplicationContext
-	 * @throws BeansException if the context couldn't be initialized
-	 * @see ConfigurableWebApplicationContext
-	 */
-	protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
-		MergeXmlWebApplicationContext wac = new MergeXmlWebApplicationContext();
-		wac.setParent(parent);
-		wac.setServletContext(servletContext);
-		wac.setConfigLocation(servletContext.getInitParameter(CONFIG_LOCATION_PARAM));
-		wac.setPatchLocation(servletContext.getInitParameter(PATCH_LOCATION_PARAM));
-		wac.setShutdownBean(servletContext.getInitParameter(SHUTDOWN_HOOK_BEAN));
-		wac.setShutdownMethod(servletContext.getInitParameter(SHUTDOWN_HOOK_METHOD));
-		customizeContext(servletContext, wac);
-		wac.refresh();
+    /**
+     * Instantiate the rootId WebApplicationContext for this loader, either the
+     * default context class or a custom context class if specified.
+     * <p>This implementation expects custom contexts to implement the
+     * {@link ConfigurableWebApplicationContext} interface.
+     * Can be overridden in subclasses.
+     * <p>In addition, {@link #customizeContext} gets called prior to refreshing the
+     * context, allowing subclasses to perform custom modifications to the context.
+     * @param servletContext current servlet context
+     * @param parent the parent ApplicationContext to use, or <code>null</code> if none
+     * @return the rootId WebApplicationContext
+     * @throws BeansException if the context couldn't be initialized
+     * @see ConfigurableWebApplicationContext
+     */
+    protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
+        MergeXmlWebApplicationContext wac = new MergeXmlWebApplicationContext();
+        wac.setParent(parent);
+        wac.setServletContext(servletContext);
+        wac.setConfigLocation(servletContext.getInitParameter(CONFIG_LOCATION_PARAM));
+        wac.setPatchLocation(servletContext.getInitParameter(PATCH_LOCATION_PARAM));
+        wac.setShutdownBean(servletContext.getInitParameter(SHUTDOWN_HOOK_BEAN));
+        wac.setShutdownMethod(servletContext.getInitParameter(SHUTDOWN_HOOK_METHOD));
+        customizeContext(servletContext, wac);
+        wac.refresh();
 
-		return wac;
-	}
+        return wac;
+    }
 
 }

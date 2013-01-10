@@ -37,66 +37,66 @@ import java.util.MissingResourceException;
  */
 public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 
-	protected LinkedHashMap<String, String> polymorphicEntities = new LinkedHashMap<String, String>(10);
+    protected LinkedHashMap<String, String> polymorphicEntities = new LinkedHashMap<String, String>(10);
     protected ClassTree polymorphicEntityTree;
-	protected String defaultNewEntityFullyQualifiedClassname;
-	protected DynamicEntityServiceAsync service;
-	protected PersistencePerspective persistencePerspective;
-	protected DataSourceModule[] modules;
-	protected FormItemCallbackHandlerManager formItemCallbackHandlerManager = new FormItemCallbackHandlerManager();
+    protected String defaultNewEntityFullyQualifiedClassname;
+    protected DynamicEntityServiceAsync service;
+    protected PersistencePerspective persistencePerspective;
+    protected DataSourceModule[] modules;
+    protected FormItemCallbackHandlerManager formItemCallbackHandlerManager = new FormItemCallbackHandlerManager();
     //TODO change this flag to come from an annotation on the entity that defines the commit status from the server side
-	//protected boolean commitImmediately = true;
+    //protected boolean commitImmediately = true;
     protected Record addedRecord;
-	
-	/**
-	 * @param name
-	 */
-	public AbstractDynamicDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
-		super(name);
-		setCriteriaPolicy(CriteriaPolicy.DROPONCHANGE);
-		setCacheMaxAge(0);
-		this.service = service;
-		this.persistencePerspective = persistencePerspective;
-		for (DataSourceModule module : modules) {
-			module.setDataSource(this);
-		}
-		this.modules = modules;
-	}
+    
+    /**
+     * @param name
+     */
+    public AbstractDynamicDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
+        super(name);
+        setCriteriaPolicy(CriteriaPolicy.DROPONCHANGE);
+        setCacheMaxAge(0);
+        this.service = service;
+        this.persistencePerspective = persistencePerspective;
+        for (DataSourceModule module : modules) {
+            module.setDataSource(this);
+        }
+        this.modules = modules;
+    }
 
-	public LinkedHashMap<String, String> getPolymorphicEntities() {
-		return polymorphicEntities;
-	}
-	
-	public String stripDuplicateAllowSpecialCharacters(String string) {
-    	if (string != null) {
-			int index = string.indexOf("_^_");
-	        if (index >= 0) {
-	        	string = string.substring(0,index);
-	        }
-    	}
+    public LinkedHashMap<String, String> getPolymorphicEntities() {
+        return polymorphicEntities;
+    }
+    
+    public String stripDuplicateAllowSpecialCharacters(String string) {
+        if (string != null) {
+            int index = string.indexOf("_^_");
+            if (index >= 0) {
+                string = string.substring(0,index);
+            }
+        }
         return string;
-	}
-	
-	public String getDefaultNewEntityFullyQualifiedClassname() {
-		return defaultNewEntityFullyQualifiedClassname;
-	}
+    }
+    
+    public String getDefaultNewEntityFullyQualifiedClassname() {
+        return defaultNewEntityFullyQualifiedClassname;
+    }
 
-	public void setDefaultNewEntityFullyQualifiedClassname(String defaultNewEntityFullyQualifiedClassname) {
-		this.defaultNewEntityFullyQualifiedClassname = defaultNewEntityFullyQualifiedClassname;
-	}
-	
-	public FormItemCallbackHandlerManager getFormItemCallbackHandlerManager() {
-		return formItemCallbackHandlerManager;
-	}
+    public void setDefaultNewEntityFullyQualifiedClassname(String defaultNewEntityFullyQualifiedClassname) {
+        this.defaultNewEntityFullyQualifiedClassname = defaultNewEntityFullyQualifiedClassname;
+    }
+    
+    public FormItemCallbackHandlerManager getFormItemCallbackHandlerManager() {
+        return formItemCallbackHandlerManager;
+    }
 
-	public void setFormItemCallbackHandlerManager(FormItemCallbackHandlerManager formItemCallbackHandlerManager) {
-		this.formItemCallbackHandlerManager = formItemCallbackHandlerManager;
-	}
-	
-	public String getPrimaryKeyValue(Record record) {
-		String primaryKey = getPrimaryKeyFieldName();
-		return record.getAttribute(primaryKey);
-	}
+    public void setFormItemCallbackHandlerManager(FormItemCallbackHandlerManager formItemCallbackHandlerManager) {
+        this.formItemCallbackHandlerManager = formItemCallbackHandlerManager;
+    }
+    
+    public String getPrimaryKeyValue(Record record) {
+        String primaryKey = getPrimaryKeyFieldName();
+        return record.getAttribute(primaryKey);
+    }
 
     public ClassTree getPolymorphicEntityTree() {
         return polymorphicEntityTree;

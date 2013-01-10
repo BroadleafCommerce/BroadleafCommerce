@@ -40,14 +40,14 @@ import com.smartgwt.client.data.DataSource;
  */
 public class CategoryListDataSourceFactory implements DataSourceFactory {
 
-	public static final String symbolName = "allParentCategories";
-	public static final String linkedObjectPath = "categoryXrefPK.category";
-	public static final String linkedIdProperty = "id";
-	public static final String targetObjectPath = "categoryXrefPK.subCategory";
-	public static final String targetIdProperty = "id";
-	public static final String sortField = "displayOrder";
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+    public static final String symbolName = "allParentCategories";
+    public static final String linkedObjectPath = "categoryXrefPK.category";
+    public static final String linkedIdProperty = "id";
+    public static final String targetObjectPath = "categoryXrefPK.subCategory";
+    public static final String targetIdProperty = "id";
+    public static final String sortField = "displayOrder";
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
         PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(CategoryTreeDataSourceFactory.defaultParentCategoryForeignKey, EntityImplementations.CATEGORY, null)});
         persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.JOINSTRUCTURE, new JoinStructure(symbolName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, EntityImplementations.CATEGORY_XREF, sortField, true));
         DataSourceModule[] modules = new DataSourceModule[]{
@@ -56,6 +56,6 @@ public class CategoryListDataSourceFactory implements DataSourceFactory {
         };
         ListGridDataSource dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
         dataSource.buildFields(null, false, cb);
-	}
+    }
 
 }

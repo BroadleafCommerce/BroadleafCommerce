@@ -49,9 +49,9 @@ public class ProductWeight implements Serializable {
     }
 
     public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure) {
-    	if (weightUnitOfMeasure != null) {
-    		this.weightUnitOfMeasure = weightUnitOfMeasure.getType();
-    	}
+        if (weightUnitOfMeasure != null) {
+            this.weightUnitOfMeasure = weightUnitOfMeasure.getType();
+        }
     }
 
     public BigDecimal getWeight() {

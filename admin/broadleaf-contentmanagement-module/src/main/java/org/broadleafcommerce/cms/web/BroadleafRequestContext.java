@@ -24,18 +24,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class BroadleafRequestContext {
-	
-	private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();
-	
-	public static BroadleafRequestContext getBroadleafRequestContext() {
-		return BROADLEAF_REQUEST_CONTEXT.get();
-	}
-	
-	public static void setBroadleafRequestContext(BroadleafRequestContext broadleafRequestContext) {
-		BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
-	}
-	
-	private HttpServletRequest request;
+    
+    private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();
+    
+    public static BroadleafRequestContext getBroadleafRequestContext() {
+        return BROADLEAF_REQUEST_CONTEXT.get();
+    }
+    
+    public static void setBroadleafRequestContext(BroadleafRequestContext broadleafRequestContext) {
+        BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
+    }
+    
+    private HttpServletRequest request;
     private HttpServletResponse response;
     private SandBox sandbox;
     private Locale locale;

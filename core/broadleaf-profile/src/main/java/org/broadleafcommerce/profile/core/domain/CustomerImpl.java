@@ -179,14 +179,14 @@ public class CustomerImpl implements Customer {
     }
 
     public ChallengeQuestion getChallengeQuestion() {
-		return challengeQuestion;
-	}
+        return challengeQuestion;
+    }
 
-	public void setChallengeQuestion(ChallengeQuestion challengeQuestion) {
-		this.challengeQuestion = challengeQuestion;
-	}
+    public void setChallengeQuestion(ChallengeQuestion challengeQuestion) {
+        this.challengeQuestion = challengeQuestion;
+    }
 
-	public String getChallengeAnswer() {
+    public String getChallengeAnswer() {
         return challengeAnswer;
     }
 

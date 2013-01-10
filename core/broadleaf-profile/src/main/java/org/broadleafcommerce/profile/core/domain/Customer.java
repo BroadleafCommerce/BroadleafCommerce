@@ -53,7 +53,7 @@ public interface Customer extends Serializable {
 
     public ChallengeQuestion getChallengeQuestion();
 
-	public void setChallengeQuestion(ChallengeQuestion challengeQuestion);
+    public void setChallengeQuestion(ChallengeQuestion challengeQuestion);
 
     public String getChallengeAnswer();
 
@@ -79,7 +79,7 @@ public interface Customer extends Serializable {
 
     public void setAuditable(Auditable auditable);
     
-	public void setCookied(boolean cookied);
+    public void setCookied(boolean cookied);
     
     public boolean isCookied();
 

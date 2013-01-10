@@ -45,31 +45,31 @@ import java.util.HashMap;
  */
 public class AppController implements ValueChangeHandler<String> {
 
-	private static AppController controller = null;
+    private static AppController controller = null;
 
-	public static AppController getInstance() {
-		if (controller == null) {
-			controller = new AppController();
-		}
-		return controller;
-	}
+    public static AppController getInstance() {
+        if (controller == null) {
+            controller = new AppController();
+        }
+        return controller;
+    }
 
-	private final HandlerManager eventBus = new HandlerManager(null);
-	private Canvas container;
-	private UIFactory uiFactory = new UIFactory();
-	private HashMap<String, String[]> pages;
+    private final HandlerManager eventBus = new HandlerManager(null);
+    private Canvas container;
+    private UIFactory uiFactory = new UIFactory();
+    private HashMap<String, String[]> pages;
 
-	private AppController() {
-		bind();
-	}
+    private AppController() {
+        bind();
+    }
 
-	private void bind() {
-		History.addValueChangeHandler(this);
-	}
+    private void bind() {
+        History.addValueChangeHandler(this);
+    }
 
-	public void go(final Canvas container, HashMap<String, String[]> pages, String pageKey, boolean firstTime) {
-		this.pages = pages;
-		this.container = container;
+    public void go(final Canvas container, HashMap<String, String[]> pages, String pageKey, boolean firstTime) {
+        this.pages = pages;
+        this.container = container;
 
         if (firstTime) {
             String token = History.getToken();
@@ -89,19 +89,19 @@ public class AppController implements ValueChangeHandler<String> {
         }
 
         for (String sectionTitle : pages.keySet()){
-	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
-			    History.newItem("moduleKey="+ MasterView.moduleKey+"&pageKey="+sectionTitle);
-			    break;
-	    	}
-		}
-	}
+            if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
+                History.newItem("moduleKey="+ MasterView.moduleKey+"&pageKey="+sectionTitle);
+                break;
+            }
+        }
+    }
 
-	public HandlerManager getEventBus() {
-		return eventBus;
-	}
+    public HandlerManager getEventBus() {
+        return eventBus;
+    }
 
-	public void onValueChange(ValueChangeEvent<String> event) {
-		String token = event.getValue();
+    public void onValueChange(ValueChangeEvent<String> event) {
+        String token = event.getValue();
 
         if (token != null) {
             String page = BLCLaunch.getSelectedPage(token);
@@ -115,9 +115,9 @@ public class AppController implements ValueChangeHandler<String> {
                 }
             }
         }
-	}
+    }
 
-	protected void showView(final String viewKey, final String presenterKey) {
+    protected void showView(final String viewKey, final String presenterKey) {
         if (!BLCMain.ISNEW) {
             BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
                 public void run() {
@@ -127,7 +127,7 @@ public class AppController implements ValueChangeHandler<String> {
         } else {
             setupView(viewKey, presenterKey);
         }
-	}
+    }
 
     protected void setupView(final String viewKey, final String presenterKey) {
         AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
