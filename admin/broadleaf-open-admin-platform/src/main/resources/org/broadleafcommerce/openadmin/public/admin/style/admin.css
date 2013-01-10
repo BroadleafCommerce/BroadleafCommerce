@@ -160,7 +160,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 /*===============================================================================*/
 
 .bl-promo-header {
-    background: none repeat scroll 0 0 #666666;
+    background: none repeat scroll 0 0 #333333;
     border-bottom: 1px solid #444444;
     border-top: 1px solid #444444;
     color: #FFFFFF;
