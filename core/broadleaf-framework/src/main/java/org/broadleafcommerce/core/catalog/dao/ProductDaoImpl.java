@@ -66,16 +66,16 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate) {
-    	Date myDate;
+        Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(this) {
-	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-	    		this.currentDate = new Date(currentDate.getTime());
-	    		myDate = currentDate;
-	    	} else {
-	    		myDate = this.currentDate;
-	    	}
-    	}
+        synchronized(this) {
+            if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+                this.currentDate = new Date(currentDate.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = this.currentDate;
+            }
+        }
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
         query.setParameter("categoryId", categoryId);
         query.setParameter("currentDate", myDate);
@@ -113,16 +113,16 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public List<Product> readActiveProductsBySku(Long skuId, Date currentDate) {
-    	Date myDate;
+        Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(this) {
-	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-	    		this.currentDate = new Date(currentDate.getTime());
-	    		myDate = currentDate;
-	    	} else {
-	    		myDate = this.currentDate;
-	    	}
-    	}
+        synchronized(this) {
+            if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+                this.currentDate = new Date(currentDate.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = this.currentDate;
+            }
+        }
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU", Product.class);
         query.setParameter("skuId", skuId);
         query.setParameter("currentDate", myDate);
@@ -132,16 +132,16 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public List<ProductSku> readActiveProductsBySkuOneToOne(Long skuId, Date currentDate) {
-    	Date myDate;
+        Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(this) {
-	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-	    		this.currentDate = new Date(currentDate.getTime());
-	    		myDate = currentDate;
-	    	} else {
-	    		myDate = this.currentDate;
-	    	}
-    	}
+        synchronized(this) {
+            if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+                this.currentDate = new Date(currentDate.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = this.currentDate;
+            }
+        }
         TypedQuery<ProductSku> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU_ONE_TO_ONE", ProductSku.class);
         query.setParameter("skuId", skuId);
         query.setParameter("currentDate", myDate);
@@ -151,10 +151,10 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void delete(Product product){
-    	if (!em.contains(product)) {
-    		product = readProductById(product.getId());
-    	}
-        em.remove(product);    	
+        if (!em.contains(product)) {
+            product = readProductById(product.getId());
+        }
+        em.remove(product);     
     }
 
     @Override
@@ -162,12 +162,12 @@ public class ProductDaoImpl implements ProductDao {
         return (Product) entityConfiguration.createEntityInstance(productType.getType());
     }
 
-	public Long getCurrentDateResolution() {
-		return currentDateResolution;
-	}
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
 
-	public void setCurrentDateResolution(Long currentDateResolution) {
-		this.currentDateResolution = currentDateResolution;
-	}
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
+    }
     
 }

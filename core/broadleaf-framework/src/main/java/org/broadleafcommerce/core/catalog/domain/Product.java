@@ -364,9 +364,9 @@ public interface Product extends Serializable {
     
     List<ProductAttribute> getProductAttributes();
 
-	void setProductAttributes(List<ProductAttribute> productAttributes);
-	
-	public String getPromoMessage();
+    void setProductAttributes(List<ProductAttribute> productAttributes);
+    
+    public String getPromoMessage();
 
-	public void setPromoMessage(String promoMessage);
+    public void setPromoMessage(String promoMessage);
 }

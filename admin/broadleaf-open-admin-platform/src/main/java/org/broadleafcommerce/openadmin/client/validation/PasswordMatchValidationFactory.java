@@ -33,35 +33,35 @@ import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
  */
 public class PasswordMatchValidationFactory implements ValidationFactory {
 
-	private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
-	
-	public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
+    private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
+    
+    public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
         String fieldType = configurationItems.get("fieldType");
-		return validatorClassname.equals(MatchesFieldValidator.class.getName()) && fieldType != null && fieldType.equals("password");
-	}
+        return validatorClassname.equals(MatchesFieldValidator.class.getName()) && fieldType != null && fieldType.equals("password");
+    }
 
-	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
-		Object response = factory.newInstance(validatorClassname);
-		if (response == null) {
-			throw new RuntimeException("Unable to instantiate the item from the Factory using classname: (" + validatorClassname + "). Are you sure this classname is correct?");
-		}
-		MatchesFieldValidator valid = (MatchesFieldValidator) response;
-		if (configurationItems.containsKey("errorMessageKey")) {
-			String message = null;
+    public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
+        Object response = factory.newInstance(validatorClassname);
+        if (response == null) {
+            throw new RuntimeException("Unable to instantiate the item from the Factory using classname: (" + validatorClassname + "). Are you sure this classname is correct?");
+        }
+        MatchesFieldValidator valid = (MatchesFieldValidator) response;
+        if (configurationItems.containsKey("errorMessageKey")) {
+            String message = null;
             try {
                 message = BLCMain.getMessageManager().getString(configurationItems.get("errorMessageKey"));
             } catch (MissingResourceException e) {
                 //do nothing
             }
-			if (message != null) {
-				valid.setErrorMessage(message);
-			}
-		} else if (configurationItems.containsKey("errorMessage")) {
-			valid.setErrorMessage(configurationItems.get("errorMessage"));
-		}
-		valid.setOtherField(fieldName + "Repeat_blc");
+            if (message != null) {
+                valid.setErrorMessage(message);
+            }
+        } else if (configurationItems.containsKey("errorMessage")) {
+            valid.setErrorMessage(configurationItems.get("errorMessage"));
+        }
+        valid.setOtherField(fieldName + "Repeat_blc");
 
-		return valid;
-	}
+        return valid;
+    }
 
 }

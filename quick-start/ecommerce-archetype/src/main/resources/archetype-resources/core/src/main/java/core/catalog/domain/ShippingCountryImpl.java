@@ -37,10 +37,10 @@ import org.hibernate.annotations.Index;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="shippingcountry", supportUnmarshall=SupportUnmarshall.FALSE)
 public class ShippingCountryImpl implements ShippingCountry {
-	
-	private static final long serialVersionUID = 1L;
-	
-	@Id
+    
+    private static final long serialVersionUID = 1L;
+    
+    @Id
     @GeneratedValue(generator = "ShippingCountryId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ShippingCountryId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ShippingCountryImpl", allocationSize = 50)
     @Column(name = "SHIPPING_COUNTRY_ID")
@@ -65,74 +65,74 @@ public class ShippingCountryImpl implements ShippingCountry {
     protected List<MyCompanyProduct> products = new ArrayList<MyCompanyProduct>();
   
     public Long getId(){
-    	return id;
+        return id;
     }
-	
-	public void setId(Long id){
-		this.id = id;
-	}
-	
-	public String getCurrencyCode(){
-		return currencyCode;
-	}
-	
-	public void setCurrencyCode(String currencyCode){
-		this.currencyCode = currencyCode;
-	}
-	
-	public String getCountryISO(){
-		return countryIso;
-	}
-	
-	public void setCountryISO(String countryIso){
-		this.countryIso = countryIso;
-	}
+    
+    public void setId(Long id){
+        this.id = id;
+    }
+    
+    public String getCurrencyCode(){
+        return currencyCode;
+    }
+    
+    public void setCurrencyCode(String currencyCode){
+        this.currencyCode = currencyCode;
+    }
+    
+    public String getCountryISO(){
+        return countryIso;
+    }
+    
+    public void setCountryISO(String countryIso){
+        this.countryIso = countryIso;
+    }
 
-	public List<MyCompanyProduct> getProducts() {
-		return products;
-	}
+    public List<MyCompanyProduct> getProducts() {
+        return products;
+    }
 
-	public void setProducts(List<MyCompanyProduct> products) {
-		this.products = products;
-	}
+    public void setProducts(List<MyCompanyProduct> products) {
+        this.products = products;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((countryIso == null) ? 0 : countryIso.hashCode());
-		result = prime * result
-				+ ((currencyCode == null) ? 0 : currencyCode.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((countryIso == null) ? 0 : countryIso.hashCode());
+        result = prime * result
+                + ((currencyCode == null) ? 0 : currencyCode.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ShippingCountryImpl other = (ShippingCountryImpl) obj;
-		if (countryIso == null) {
-			if (other.countryIso != null)
-				return false;
-		} else if (!countryIso.equals(other.countryIso))
-			return false;
-		if (currencyCode == null) {
-			if (other.currencyCode != null)
-				return false;
-		} else if (!currencyCode.equals(other.currencyCode))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ShippingCountryImpl other = (ShippingCountryImpl) obj;
+        if (countryIso == null) {
+            if (other.countryIso != null)
+                return false;
+        } else if (!countryIso.equals(other.countryIso))
+            return false;
+        if (currencyCode == null) {
+            if (other.currencyCode != null)
+                return false;
+        } else if (!currencyCode.equals(other.currencyCode))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
     
 }

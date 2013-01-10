@@ -68,16 +68,16 @@ public class DiscreteOrderItemRequest {
         this.quantity = quantity;
     }
 
-	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
-		return discreteOrderItemFeePrices;
-	}
+    public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
+        return discreteOrderItemFeePrices;
+    }
 
-	public void setDiscreteOrderItemFeePrices(
-			List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
-		this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
-	}
+    public void setDiscreteOrderItemFeePrices(
+            List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
+        this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
+    }
 
-	@Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DiscreteOrderItemRequest)) return false;

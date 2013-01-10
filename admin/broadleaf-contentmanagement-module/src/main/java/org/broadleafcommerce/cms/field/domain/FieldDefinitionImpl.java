@@ -88,7 +88,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @ManyToOne(targetEntity = FieldGroupImpl.class)
     @JoinColumn(name = "FLD_GROUP_ID")
-	protected FieldGroup fieldGroup;
+    protected FieldGroup fieldGroup;
 
     @Column(name="FLD_ORDER")
     protected int fieldOrder;

@@ -24,26 +24,26 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
 public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdjustment {
-	
-	private static final long serialVersionUID = 1L;
-	
-	protected PromotableOrderItem orderItem;
-	protected OrderItemAdjustment delegate;
-	
-	public PromotableOrderItemAdjustmentImpl(OrderItemAdjustment orderItemAdjustment, PromotableOrderItem orderItem) {
-		this.delegate = orderItemAdjustment;
-		this.orderItem = orderItem;
-	}
-	
-	public void reset() {
-		delegate = null;
-	}
-	
-	public OrderItemAdjustment getDelegate() {
-		return delegate;
-	}
+    
+    private static final long serialVersionUID = 1L;
+    
+    protected PromotableOrderItem orderItem;
+    protected OrderItemAdjustment delegate;
+    
+    public PromotableOrderItemAdjustmentImpl(OrderItemAdjustment orderItemAdjustment, PromotableOrderItem orderItem) {
+        this.delegate = orderItemAdjustment;
+        this.orderItem = orderItem;
+    }
+    
+    public void reset() {
+        delegate = null;
+    }
+    
+    public OrderItemAdjustment getDelegate() {
+        return delegate;
+    }
 
-	/*
+    /*
      * Calculates the value of the adjustment
      */
     public void computeAdjustmentValues() {
@@ -118,7 +118,7 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
                 }
                 
                 BigDecimal offerValue = retailAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
-            	delegate.setRetailPriceValue(new Money(offerValue, retailAdjustmentPrice.getCurrency(), 5));
+                delegate.setRetailPriceValue(new Money(offerValue, retailAdjustmentPrice.getCurrency(), 5));
             }
 
         }

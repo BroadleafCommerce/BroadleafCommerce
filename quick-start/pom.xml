@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>quick-start</artifactId>
     <packaging>pom</packaging>
-	<name>BroadleafCommerce Quick Start</name>
+    <name>BroadleafCommerce Quick Start</name>
     <description>BroadleafCommerce Quick Start Mid Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>

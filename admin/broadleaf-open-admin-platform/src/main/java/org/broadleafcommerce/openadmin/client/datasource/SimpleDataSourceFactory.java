@@ -45,13 +45,13 @@ public class SimpleDataSourceFactory implements DataSourceFactory {
           // Place holder
         return persistencePerspective;
     }
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
         PersistencePerspective persistencePerspective = createPersistencePerspective();
         DataSourceModule[] modules = createDataSourceModules().toArray(new DataSourceModule[0]);
         ListGridDataSource dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
         dataSource.buildFields(null, false, cb);
-	}
+    }
 
     public PersistencePerspective createPersistencePerspective() {
         PersistencePerspective persistencePerspective = new PersistencePerspective();

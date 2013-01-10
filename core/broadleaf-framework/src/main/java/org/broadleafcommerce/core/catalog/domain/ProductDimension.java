@@ -106,9 +106,9 @@ public class ProductDimension implements Serializable {
     }
 
     public void setSize(final ContainerSizeType size) {
-    	if (size != null) {
-    		this.size = size.getType();
-    	}
+        if (size != null) {
+            this.size = size.getType();
+        }
     }
 
     public ContainerShapeType getContainer() {
@@ -116,9 +116,9 @@ public class ProductDimension implements Serializable {
     }
 
     public void setContainer(final ContainerShapeType container) {
-    	if (container != null) {
-    		this.container = container.getType();
-    	}
+        if (container != null) {
+            this.container = container.getType();
+        }
     }
 
     public DimensionUnitOfMeasureType getDimensionUnitOfMeasure() {
@@ -126,8 +126,8 @@ public class ProductDimension implements Serializable {
     }
 
     public void setDimensionUnitOfMeasure(final DimensionUnitOfMeasureType dimensionUnitOfMeasure) {
-    	if (dimensionUnitOfMeasure != null) {
-    		this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
-    	}
+        if (dimensionUnitOfMeasure != null) {
+            this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
+        }
     }
 }

@@ -26,7 +26,7 @@ import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceReque
  */
 public interface CyberSourceService {
 
-	public ServiceStatusType getServiceStatus();
+    public ServiceStatusType getServiceStatus();
 
     public Integer getFailureReportingThreshold();
 
@@ -34,9 +34,9 @@ public interface CyberSourceService {
 
     public String getServiceName();
     
-	public boolean isValidService(CyberSourceRequest request);
-	
-	public String getMerchantId();
+    public boolean isValidService(CyberSourceRequest request);
+    
+    public String getMerchantId();
     
     public void setMerchantId(String merchantId);
     
@@ -45,7 +45,7 @@ public interface CyberSourceService {
     public void setServerUrl(String serverUrl);
     
     public String getLibVersion();
-	
-	public void setLibVersion(String libVersion);
-	
+    
+    public void setLibVersion(String libVersion);
+    
 }

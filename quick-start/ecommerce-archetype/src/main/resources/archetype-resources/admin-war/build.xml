@@ -1,119 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="MyCompanyAdmin" default="build-app" basedir="."
-	xmlns:artifact="antlib:org.apache.maven.artifact.ant"
-	xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
-	
-	<!-- import the ant / maven integration tasks -->
-	<path id="maven-ant-tasks.classpath" path="../lib/maven-ant-tasks-2.1.3.jar" />
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
-	
-	<property name="project.root" location="../"/>
-	
-	<property file="../build.properties"/>
+    xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+    xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
+    
+    <!-- import the ant / maven integration tasks -->
+    <path id="maven-ant-tasks.classpath" path="../lib/maven-ant-tasks-2.1.3.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+    
+    <property name="project.root" location="../"/>
+    
+    <property file="../build.properties"/>
 
-	<!-- start the integrated gwt development server inplace with the current codebase -->
-	<target name="gwt-run">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="false">
+    <!-- start the integrated gwt development server inplace with the current codebase -->
+    <target name="gwt-run">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="false">
             <arg value="-o"/>
             <arg value="-Pgwt"/>
-			<arg value="gwt:run"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15"/>
-		</artifact:mvn>
-	</target>
+            <arg value="gwt:run"/>
+            <arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15"/>
+        </artifact:mvn>
+    </target>
 
-	<!-- start the integrated gwt development server in debug mode inplace with the current codebase -->
-	<target name="gwt-debug">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
+    <!-- start the integrated gwt development server in debug mode inplace with the current codebase -->
+    <target name="gwt-debug">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true">
             <arg value="-o"/>
             <arg value="-Pgwt"/>
-			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15"/>
-		</artifact:mvn>
-	</target>
-
-	<!-- start the integrated gwt development server in debug mode inplace with the current codebase - add jrebel instrumentation -->
-	<target name="gwt-debug-jrebel">
-		<delete dir="target/broadleafdemo/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
-			<arg value="-Pgwt"/>
             <arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15 -noverify -javaagent:${jrebel.path}"/>
-		</artifact:mvn>
-	</target>
+            <arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15"/>
+        </artifact:mvn>
+    </target>
 
-	<!-- start the integrated gwt development server in debug mode inplace with the current codebase - add yourkit profiling -->
-	<target name="gwt-debug-yourkit">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
+    <!-- start the integrated gwt development server in debug mode inplace with the current codebase - add jrebel instrumentation -->
+    <target name="gwt-debug-jrebel">
+        <delete dir="target/broadleafdemo/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true">
+            <arg value="-Pgwt"/>
+            <arg value="gwt:debug"/>
+            <arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15 -noverify -javaagent:${jrebel.path}"/>
+        </artifact:mvn>
+    </target>
+
+    <!-- start the integrated gwt development server in debug mode inplace with the current codebase - add yourkit profiling -->
+    <target name="gwt-debug-yourkit">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true">
             <arg value="-o"/>
             <arg value="-Pgwt"/>
-			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15 -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
-		</artifact:mvn>
-	</target>
+            <arg value="gwt:debug"/>
+            <arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15 -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
+        </artifact:mvn>
+    </target>
 
     <!-- Requires full maven install. -->
-	<target name="jetty-demo">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
+    <target name="jetty-demo">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
 
 
-	<target name="jetty-debug">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
+    <target name="jetty-debug">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
 
     <target name="jetty-demo-jrebel">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8001,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8001,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
 
-	<target name="jetty-demo-yourkit">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
+    <target name="jetty-demo-yourkit">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
 
     <target name="jetty-demo-jrebel-yourkit">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
-	
-	<target name="jetty-stop">
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
-			<arg value="jetty:stop"/>
-		</artifact:mvn>
-	</target>
-	
-	<!-- Project Reference Targets -->
-	<!-- build the application and create the war artifact -->
-	<target name="build-app">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
-			<arg value="-Dmaven.test.skip=true"/>
-			<arg value="install"/>
-		</artifact:mvn>
-	</target>
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
+    
+    <target name="jetty-stop">
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
+            <arg value="jetty:stop"/>
+        </artifact:mvn>
+    </target>
+    
+    <!-- Project Reference Targets -->
+    <!-- build the application and create the war artifact -->
+    <target name="build-app">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true">
+            <arg value="-Dmaven.test.skip=true"/>
+            <arg value="install"/>
+        </artifact:mvn>
+    </target>
 </project>

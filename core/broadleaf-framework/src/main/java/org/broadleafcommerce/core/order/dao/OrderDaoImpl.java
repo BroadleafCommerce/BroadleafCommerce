@@ -82,7 +82,7 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
         @SuppressWarnings("rawtypes")
-		final List temp = query.getResultList();
+        final List temp = query.getResultList();
         if (temp != null && !temp.isEmpty()) {
             order = (Order) temp.get(0);
         }

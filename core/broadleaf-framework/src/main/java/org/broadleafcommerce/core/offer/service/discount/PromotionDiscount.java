@@ -33,69 +33,69 @@ public class PromotionDiscount implements Serializable{
     private static final long serialVersionUID = 1L;
     
     private PromotableCandidateItemOffer candidateItemOffer;
-	private Offer promotion;
-	private OfferItemCriteria itemCriteria;
-	private int quantity;
-	private int finalizedQuantity;
+    private Offer promotion;
+    private OfferItemCriteria itemCriteria;
+    private int quantity;
+    private int finalizedQuantity;
 
-	
-	public Offer getPromotion() {
-		return promotion;
-	}
-	
-	public void setPromotion(Offer promotion) {
-		this.promotion = promotion;
-	}
-	
-	public OfferItemCriteria getItemCriteria() {
-		return itemCriteria;
-	}
-	
-	public void setItemCriteria(OfferItemCriteria itemCriteria) {
-		this.itemCriteria = itemCriteria;
-	}
+    
+    public Offer getPromotion() {
+        return promotion;
+    }
+    
+    public void setPromotion(Offer promotion) {
+        this.promotion = promotion;
+    }
+    
+    public OfferItemCriteria getItemCriteria() {
+        return itemCriteria;
+    }
+    
+    public void setItemCriteria(OfferItemCriteria itemCriteria) {
+        this.itemCriteria = itemCriteria;
+    }
 
-	public int getQuantity() {
-		return quantity;
-	}
-	
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+    public int getQuantity() {
+        return quantity;
+    }
+    
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-	public int getFinalizedQuantity() {
-		return finalizedQuantity;
-	}
+    public int getFinalizedQuantity() {
+        return finalizedQuantity;
+    }
 
-	public void setFinalizedQuantity(int finalizedQuantity) {
-		this.finalizedQuantity = finalizedQuantity;
-	}
-	
-	public void incrementQuantity(int quantity) {
-		this.quantity = this.quantity + quantity;
-	}
-	
-	public PromotableCandidateItemOffer getCandidateItemOffer() {
-		return candidateItemOffer;
-	}
+    public void setFinalizedQuantity(int finalizedQuantity) {
+        this.finalizedQuantity = finalizedQuantity;
+    }
+    
+    public void incrementQuantity(int quantity) {
+        this.quantity = this.quantity + quantity;
+    }
+    
+    public PromotableCandidateItemOffer getCandidateItemOffer() {
+        return candidateItemOffer;
+    }
 
-	public void setCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer) {
-		this.candidateItemOffer = candidateItemOffer;
-	}
+    public void setCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer) {
+        this.candidateItemOffer = candidateItemOffer;
+    }
 
-	public PromotionDiscount copy() {
-		PromotionDiscount pd = new PromotionDiscount();
-		pd.setItemCriteria(itemCriteria);
-		pd.setPromotion(promotion);
-		pd.setQuantity(quantity);
-		pd.setFinalizedQuantity(finalizedQuantity);
-		pd.setCandidateItemOffer(candidateItemOffer);
-		return pd;
-	}
-	
-	public void resetQty(int qty) {
-		quantity = qty;
-		finalizedQuantity = qty;
-	}
-	
+    public PromotionDiscount copy() {
+        PromotionDiscount pd = new PromotionDiscount();
+        pd.setItemCriteria(itemCriteria);
+        pd.setPromotion(promotion);
+        pd.setQuantity(quantity);
+        pd.setFinalizedQuantity(finalizedQuantity);
+        pd.setCandidateItemOffer(candidateItemOffer);
+        return pd;
+    }
+    
+    public void resetQty(int qty) {
+        quantity = qty;
+        finalizedQuantity = qty;
+    }
+    
 }

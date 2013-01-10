@@ -27,26 +27,26 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDa
  *
  */
 public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> {
-	
-	private PresenterSequenceSetupManager manager;
-	
-	protected void registerDataSourceSetupManager(PresenterSequenceSetupManager manager) {
-		this.manager = manager;
-	}
+    
+    private PresenterSequenceSetupManager manager;
+    
+    protected void registerDataSourceSetupManager(PresenterSequenceSetupManager manager) {
+        this.manager = manager;
+    }
 
-	public void onFailure(Throwable arg0) {
-		//do nothing - let the framework handle the exception
-		//override to custom handle failures
-	}
+    public void onFailure(Throwable arg0) {
+        //do nothing - let the framework handle the exception
+        //override to custom handle failures
+    }
 
-	public final void onSuccess(DataSource dataSource) {
-		onSetupSuccess(dataSource);
+    public final void onSuccess(DataSource dataSource) {
+        onSetupSuccess(dataSource);
         if (manager != null) {
             manager.addDataSource((DynamicEntityDataSource) dataSource);
-		    manager.next();
+            manager.next();
         }
-	}
-	
-	public abstract void onSetupSuccess(DataSource dataSource);
-	
+    }
+    
+    public abstract void onSetupSuccess(DataSource dataSource);
+    
 }

@@ -44,42 +44,42 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
 
     @Override
     public List<CategoryXrefImpl> readXrefsByCategoryId(Long categoryId){
-    	TypedQuery<CategoryXrefImpl> query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_CATEGORYID", CategoryXrefImpl.class);
-    	query.setParameter("categoryId", categoryId);
-    	return query.getResultList();
+        TypedQuery<CategoryXrefImpl> query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_CATEGORYID", CategoryXrefImpl.class);
+        query.setParameter("categoryId", categoryId);
+        return query.getResultList();
     }
 
     @Override
     public List<CategoryXrefImpl> readXrefsBySubCategoryId(Long subCategoryId){
-    	TypedQuery<CategoryXrefImpl> query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID", CategoryXrefImpl.class);
-    	query.setParameter("subCategoryId", subCategoryId);
-    	return query.getResultList();
+        TypedQuery<CategoryXrefImpl> query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID", CategoryXrefImpl.class);
+        query.setParameter("subCategoryId", subCategoryId);
+        return query.getResultList();
     }
 
     @Override
     public CategoryXrefImpl readXrefByIds(Long categoryId, Long subCategoryId){
-    	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_IDS");
-    	query.setParameter("categoryId", categoryId);
-    	query.setParameter("subCategoryId", subCategoryId);
-    	return (CategoryXrefImpl)query.getSingleResult();
+        Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_IDS");
+        query.setParameter("categoryId", categoryId);
+        query.setParameter("subCategoryId", subCategoryId);
+        return (CategoryXrefImpl)query.getSingleResult();
     }
 
     @Override
     public CategoryXref save(CategoryXrefImpl categoryXref){
-    	return em.merge(categoryXref);
+        return em.merge(categoryXref);
     }
 
     @Override
     public void delete(CategoryXrefImpl categoryXref){
-    	if (!em.contains(categoryXref)) {
-    		categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(), categoryXref.getCategoryXrefPK().getSubCategory().getId());
-    	}
-        em.remove(categoryXref);     	
+        if (!em.contains(categoryXref)) {
+            categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(), categoryXref.getCategoryXrefPK().getSubCategory().getId());
+        }
+        em.remove(categoryXref);        
     }
 
     @Override
     public CategoryProductXrefImpl save(CategoryProductXrefImpl categoryProductXref){
-    	return em.merge(categoryProductXref);
+        return em.merge(categoryProductXref);
     }
     
 }

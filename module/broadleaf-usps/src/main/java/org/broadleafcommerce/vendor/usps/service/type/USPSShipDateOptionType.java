@@ -48,7 +48,7 @@ public class USPSShipDateOptionType implements Serializable, BroadleafEnumeratio
     }
 
     public USPSShipDateOptionType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -64,10 +64,10 @@ public class USPSShipDateOptionType implements Serializable, BroadleafEnumeratio
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

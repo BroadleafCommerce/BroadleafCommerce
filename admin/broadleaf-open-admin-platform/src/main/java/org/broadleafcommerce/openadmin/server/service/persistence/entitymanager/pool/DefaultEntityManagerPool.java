@@ -45,8 +45,8 @@ public class DefaultEntityManagerPool extends GenericObjectPool implements Appli
     protected GenericObjectPool sandboxPool;
 
     public DefaultEntityManagerPool() {
-		sandboxPool = new GenericObjectPool(new PoolableSandBoxFactory());
-	}
+        sandboxPool = new GenericObjectPool(new PoolableSandBoxFactory());
+    }
 
     public void invalidateObject(Object obj) throws Exception {
         sandboxPool.invalidateObject(obj);
@@ -145,12 +145,12 @@ public class DefaultEntityManagerPool extends GenericObjectPool implements Appli
     }
 
     public String getMySharedEntityManagerBeanRef() {
-		return mySharedEntityManagerBeanRef;
-	}
+        return mySharedEntityManagerBeanRef;
+    }
 
-	public void setMySharedEntityManagerBeanRef(String mySharedEntityManagerBeanRef) {
-		this.mySharedEntityManagerBeanRef = mySharedEntityManagerBeanRef;
-	}
+    public void setMySharedEntityManagerBeanRef(String mySharedEntityManagerBeanRef) {
+        this.mySharedEntityManagerBeanRef = mySharedEntityManagerBeanRef;
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -159,13 +159,13 @@ public class DefaultEntityManagerPool extends GenericObjectPool implements Appli
 
     private class PoolableSandBoxFactory implements PoolableObjectFactory {
 
-		@Override
-		public Object makeObject() throws Exception {
+        @Override
+        public Object makeObject() throws Exception {
             return applicationContext.getBean(mySharedEntityManagerBeanRef);
-		}
+        }
 
-		@Override
-		public void destroyObject(Object obj) throws Exception {
+        @Override
+        public void destroyObject(Object obj) throws Exception {
             EntityManager em = (EntityManager) obj;
             try {
                 ((SandBoxDataSource) ((EntityManagerFactoryInfo) em.getEntityManagerFactory()).getDataSource()).close();
@@ -173,24 +173,24 @@ public class DefaultEntityManagerPool extends GenericObjectPool implements Appli
                 e.printStackTrace();
             }
             em.close();
-		}
+        }
 
-		@Override
-		public boolean validateObject(Object obj) {
-			//TODO add a generic connection validation
-			return true;
-		}
+        @Override
+        public boolean validateObject(Object obj) {
+            //TODO add a generic connection validation
+            return true;
+        }
 
-		@Override
-		public void activateObject(Object obj) throws Exception {
-			//do nothing
-		}
+        @Override
+        public void activateObject(Object obj) throws Exception {
+            //do nothing
+        }
 
-		@Override
-		public void passivateObject(Object obj) throws Exception {
-			//do nothing
-		}
+        @Override
+        public void passivateObject(Object obj) throws Exception {
+            //do nothing
+        }
 
-	}
+    }
     
 }

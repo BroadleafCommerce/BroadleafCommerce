@@ -27,12 +27,12 @@ import org.broadleafcommerce.common.vendor.service.message.PaymentResponse;
  *
  */
 public class CyberSourcePaymentResponse extends CyberSourceResponse implements PaymentResponse {
-		
-	private static final long serialVersionUID = 1L;
-	
-	protected boolean isErrorDetected = false;
+        
+    private static final long serialVersionUID = 1L;
+    
+    protected boolean isErrorDetected = false;
     protected String errorText;
-	protected String merchantReferenceCode;
+    protected String merchantReferenceCode;
     protected String requestID;
     protected String decision;
     protected Integer reasonCode;
@@ -43,99 +43,99 @@ public class CyberSourcePaymentResponse extends CyberSourceResponse implements P
     private CyberSourceTransactionType transactionType;
 
     public CyberSourceTransactionType getTransactionType() {
-		return transactionType;
-	}
-	
-	public void setTransactionType(CyberSourceTransactionType transactionType) {
-		this.transactionType = transactionType;
-	}
-	
-	public CyberSourceMethodType getMethodType() {
-		return methodType;
-	}
+        return transactionType;
+    }
+    
+    public void setTransactionType(CyberSourceTransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
+    
+    public CyberSourceMethodType getMethodType() {
+        return methodType;
+    }
 
-	public void setMethodType(CyberSourceMethodType venueType) {
-		this.methodType = venueType;
-	}
-	
-	public String getErrorCode() {
-		throw new RuntimeException("ErrorCode not supported");
-	}
+    public void setMethodType(CyberSourceMethodType venueType) {
+        this.methodType = venueType;
+    }
+    
+    public String getErrorCode() {
+        throw new RuntimeException("ErrorCode not supported");
+    }
 
-	public String getErrorText() {
-		return errorText;
-	}
+    public String getErrorText() {
+        return errorText;
+    }
 
-	public boolean isErrorDetected() {
-		return isErrorDetected;
-	}
+    public boolean isErrorDetected() {
+        return isErrorDetected;
+    }
 
-	public void setErrorCode(String errorCode) {
-		throw new RuntimeException("ErrorCode not supported");
-	}
+    public void setErrorCode(String errorCode) {
+        throw new RuntimeException("ErrorCode not supported");
+    }
 
-	public void setErrorDetected(boolean isErrorDetected) {
-		this.isErrorDetected = isErrorDetected;
-	}
+    public void setErrorDetected(boolean isErrorDetected) {
+        this.isErrorDetected = isErrorDetected;
+    }
 
-	public void setErrorText(String errorText) {
-		this.errorText = errorText;
-	}
-	
-	public String getMerchantReferenceCode() {
-		return merchantReferenceCode;
-	}
+    public void setErrorText(String errorText) {
+        this.errorText = errorText;
+    }
+    
+    public String getMerchantReferenceCode() {
+        return merchantReferenceCode;
+    }
 
-	public void setMerchantReferenceCode(String merchantReferenceCode) {
-		this.merchantReferenceCode = merchantReferenceCode;
-	}
+    public void setMerchantReferenceCode(String merchantReferenceCode) {
+        this.merchantReferenceCode = merchantReferenceCode;
+    }
 
-	public String getRequestID() {
-		return requestID;
-	}
+    public String getRequestID() {
+        return requestID;
+    }
 
-	public void setRequestID(String requestID) {
-		this.requestID = requestID;
-	}
+    public void setRequestID(String requestID) {
+        this.requestID = requestID;
+    }
 
-	public String getDecision() {
-		return decision;
-	}
+    public String getDecision() {
+        return decision;
+    }
 
-	public void setDecision(String decision) {
-		this.decision = decision;
-	}
+    public void setDecision(String decision) {
+        this.decision = decision;
+    }
 
-	public Integer getReasonCode() {
-		return reasonCode;
-	}
+    public Integer getReasonCode() {
+        return reasonCode;
+    }
 
-	public void setReasonCode(Integer reasonCode) {
-		this.reasonCode = reasonCode;
-	}
+    public void setReasonCode(Integer reasonCode) {
+        this.reasonCode = reasonCode;
+    }
 
-	public String[] getMissingField() {
-		return missingField;
-	}
+    public String[] getMissingField() {
+        return missingField;
+    }
 
-	public void setMissingField(String[] missingField) {
-		this.missingField = missingField;
-	}
+    public void setMissingField(String[] missingField) {
+        this.missingField = missingField;
+    }
 
-	public String[] getInvalidField() {
-		return invalidField;
-	}
+    public String[] getInvalidField() {
+        return invalidField;
+    }
 
-	public void setInvalidField(String[] invalidField) {
-		this.invalidField = invalidField;
-	}
+    public void setInvalidField(String[] invalidField) {
+        this.invalidField = invalidField;
+    }
 
-	public String getRequestToken() {
-		return requestToken;
-	}
+    public String getRequestToken() {
+        return requestToken;
+    }
 
-	public void setRequestToken(String requestToken) {
-		this.requestToken = requestToken;
-	}
+    public void setRequestToken(String requestToken) {
+        this.requestToken = requestToken;
+    }
 
 }

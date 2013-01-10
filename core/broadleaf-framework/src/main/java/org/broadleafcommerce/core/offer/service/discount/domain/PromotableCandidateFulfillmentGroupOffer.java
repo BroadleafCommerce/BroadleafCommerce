@@ -26,21 +26,21 @@ import org.broadleafcommerce.common.money.Money;
 
 public interface PromotableCandidateFulfillmentGroupOffer {
 
-	public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
 
-	public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
+    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
-	public void computeDiscountedPriceAndAmount();
+    public void computeDiscountedPriceAndAmount();
 
-	public void reset();
+    public void reset();
 
-	public CandidateFulfillmentGroupOffer getDelegate();
+    public CandidateFulfillmentGroupOffer getDelegate();
 
-	public Money getDiscountedPrice();
-	
-	public Offer getOffer();
-	
-	public PromotableFulfillmentGroup getFulfillmentGroup();
+    public Money getDiscountedPrice();
+    
+    public Offer getOffer();
+    
+    public PromotableFulfillmentGroup getFulfillmentGroup();
 
     public Money getDiscountedAmount();
 }

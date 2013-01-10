@@ -228,12 +228,12 @@ public class OrderImpl implements Order {
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
-        	Money price;
-        	if (includeNonTaxableItems) {
-        		price = orderItem.getPrice();
-        	} else {
-        		price = orderItem.getTaxablePrice();
-        	}
+            Money price;
+            if (includeNonTaxableItems) {
+                price = orderItem.getPrice();
+            } else {
+                price = orderItem.getTaxablePrice();
+            }
             calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
         }
         return calculatedSubTotal;
@@ -468,9 +468,9 @@ public class OrderImpl implements Order {
     }
     
     public Money getFulfillmentGroupAdjustmentsValue() {
-    	Money adjustmentValue = new Money(0);
+        Money adjustmentValue = new Money(0);
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-        	adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFulfillmentGroupAdjustmentsValue());
+            adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFulfillmentGroupAdjustmentsValue());
         }
         return adjustmentValue;
     }
@@ -490,7 +490,7 @@ public class OrderImpl implements Order {
         return totalAdjustmentsValue;
     }
 
-	public boolean updatePrices() {
+    public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
             if (orderItem.updatePrices()) {
@@ -499,23 +499,23 @@ public class OrderImpl implements Order {
         }
         return updated;
     }
-	
-	@Deprecated
-	public void addAddedOfferCode(OfferCode offerCode) {
-		addOfferCode(offerCode);
-	}
-	
-	public void addOfferCode(OfferCode offerCode) {
+    
+    @Deprecated
+    public void addAddedOfferCode(OfferCode offerCode) {
+        addOfferCode(offerCode);
+    }
+    
+    public void addOfferCode(OfferCode offerCode) {
         getAddedOfferCodes().add(offerCode);
     }
 
-	public boolean equals(Object obj) {
-	   	if (this == obj)
-	        return true;
-	    if (obj == null)
-	        return false;
-	    if (getClass() != obj.getClass())
-	        return false;
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
         OrderImpl other = (OrderImpl) obj;
 
         if (id != null && other.id != null) {

@@ -10,7 +10,7 @@ package ${package}.${artifactId}.client.datasource;
  *
  */
 public class CeilingEntities {
-	
-	public static final String SHIPPING_COUNTRY = "${package}.core.catalog.domain.ShippingCountry";
-	
+    
+    public static final String SHIPPING_COUNTRY = "${package}.core.catalog.domain.ShippingCountry";
+    
 }

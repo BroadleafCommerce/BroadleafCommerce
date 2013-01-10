@@ -17,33 +17,33 @@ import org.springframework.${artifactId}.context.transaction.TransactionConfigur
 @TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})
 public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 
-	private static MergeClassPathXMLApplicationContext mergeContext = null;
-	
-	public static MergeClassPathXMLApplicationContext getContext() {
-		try {
-			if (mergeContext == null) {
-				String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.SERVICECONTEXTTYPE);
-				String[] allContexts = new String[contexts.length + 7];
-				String[] tempContexts = new String[] {
-					"bl-open-admin-contentClient-applicationContext.xml",
+    private static MergeClassPathXMLApplicationContext mergeContext = null;
+    
+    public static MergeClassPathXMLApplicationContext getContext() {
+        try {
+            if (mergeContext == null) {
+                String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.SERVICECONTEXTTYPE);
+                String[] allContexts = new String[contexts.length + 7];
+                String[] tempContexts = new String[] {
+                    "bl-open-admin-contentClient-applicationContext.xml",
                     "bl-open-admin-contentCreator-applicationContext.xml",
                     "bl-admin-applicationContext.xml",
-					"mycompany-applicationContext.xml",
-					"mycompany-core-applicationContext-entity.xml",
-					"mycompany-applicationContext-${artifactId}-security.xml",
-					"mycompany-applicationContext-${artifactId}.xml"
-				};
-				System.arraycopy(contexts, 0, allContexts, 0, contexts.length);
-				System.arraycopy(tempContexts, 0, allContexts, contexts.length, tempContexts.length);
-				mergeContext = new MergeClassPathXMLApplicationContext(allContexts, new String[]{});
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return mergeContext;
-	}
-	
-	@PersistenceContext(unitName = "blPU")
+                    "mycompany-applicationContext.xml",
+                    "mycompany-core-applicationContext-entity.xml",
+                    "mycompany-applicationContext-${artifactId}-security.xml",
+                    "mycompany-applicationContext-${artifactId}.xml"
+                };
+                System.arraycopy(contexts, 0, allContexts, 0, contexts.length);
+                System.arraycopy(tempContexts, 0, allContexts, contexts.length, tempContexts.length);
+                mergeContext = new MergeClassPathXMLApplicationContext(allContexts, new String[]{});
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return mergeContext;
+    }
+    
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
 }

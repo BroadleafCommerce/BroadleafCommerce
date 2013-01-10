@@ -30,12 +30,12 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
  */
 public interface FulfillmentGroupOfferProcessor extends OrderOfferProcessor {
 
-	public void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer);
+    public void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer);
 
-	public void calculateFulfillmentGroupTotal(PromotableOrder order);
-	
-	public boolean applyAllFulfillmentGroupOffers(List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableOrder order);
-	
-	public List<FulfillmentGroupOfferPotential> removeTrailingNotCombinableFulfillmentGroupOffers(List<FulfillmentGroupOfferPotential> candidateOffers);
-	
+    public void calculateFulfillmentGroupTotal(PromotableOrder order);
+    
+    public boolean applyAllFulfillmentGroupOffers(List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableOrder order);
+    
+    public List<FulfillmentGroupOfferPotential> removeTrailingNotCombinableFulfillmentGroupOffers(List<FulfillmentGroupOfferPotential> candidateOffers);
+    
 }

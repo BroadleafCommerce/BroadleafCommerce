@@ -132,7 +132,7 @@ public class StructuredContentImpl implements StructuredContent {
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "ORIG_SANDBOX_ID")
     @AdminPresentation(excluded = true)
-	protected SandBox originalSandBox;
+    protected SandBox originalSandBox;
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="SC_TYPE_ID")

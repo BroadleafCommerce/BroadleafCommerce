@@ -54,7 +54,7 @@ public class TransactionType implements Serializable, BroadleafEnumerationType {
     }
 
     public TransactionType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -63,10 +63,10 @@ public class TransactionType implements Serializable, BroadleafEnumerationType {
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>core</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.6.0-M1-32</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>broadleaf-profile-web</artifactId>
-	<name>BroadleafCommerce Profile Web</name>
-	<description>BroadleafCommerce Profile Web</description>
+    <parent>
+        <artifactId>core</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.6.0-M1-32</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>broadleaf-profile-web</artifactId>
+    <name>BroadleafCommerce Profile Web</name>
+    <description>BroadleafCommerce Profile Web</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
         <license>
@@ -46,76 +46,76 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-					<!-- this ant script runs testng natively -->
-					<execution>
-						<id>cobertura</id>
-						<phase>package</phase>
-						<configuration>
-							<tasks unless="maven.test.skip">
-								<taskdef classpathref="maven.test.classpath" resource="tasks.properties" />
-								<cobertura-instrument todir="target/instrumented" datafile="target/instrumented/cobertura.ser" classpathref="maven.test.classpath">
-									<ignore regex="org.apache.log4j.*" />
-									<fileset dir="${project.build.outputDirectory}">
-										<include name="**/*.class" />
-										<exclude name="**/*Test.class" />
-									</fileset>
-								</cobertura-instrument>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>ant</groupId>
-						<artifactId>ant-junit</artifactId>
-						<version>1.6.2</version>
-					</dependency>
-					<dependency>
-						<groupId>cobertura</groupId>
-						<artifactId>cobertura</artifactId>
-						<version>1.8</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.ant</groupId>
-						<artifactId>ant-jsch</artifactId>
-						<version>1.7.1</version>
-						<exclusions>
-							<exclusion>
-								<groupId>com.jcraft</groupId>
-								<artifactId>jsch</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-					<dependency>
-						<groupId>com.jcraft</groupId>
-						<artifactId>jsch</artifactId>
-						<version>0.1.42</version>
-					</dependency>
-					<dependency>
-						<groupId>ant-contrib</groupId>
-						<artifactId>ant-contrib</artifactId>
-						<version>1.0b3</version>
-						<exclusions>
-							<exclusion>
-								<groupId>ant</groupId>
-								<artifactId>ant</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-				</dependencies>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <!-- this ant script runs testng natively -->
+                    <execution>
+                        <id>cobertura</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks unless="maven.test.skip">
+                                <taskdef classpathref="maven.test.classpath" resource="tasks.properties" />
+                                <cobertura-instrument todir="target/instrumented" datafile="target/instrumented/cobertura.ser" classpathref="maven.test.classpath">
+                                    <ignore regex="org.apache.log4j.*" />
+                                    <fileset dir="${project.build.outputDirectory}">
+                                        <include name="**/*.class" />
+                                        <exclude name="**/*Test.class" />
+                                    </fileset>
+                                </cobertura-instrument>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-junit</artifactId>
+                        <version>1.6.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>cobertura</groupId>
+                        <artifactId>cobertura</artifactId>
+                        <version>1.8</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant-jsch</artifactId>
+                        <version>1.7.1</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>com.jcraft</groupId>
+                                <artifactId>jsch</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.jcraft</groupId>
+                        <artifactId>jsch</artifactId>
+                        <version>0.1.42</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>1.0b3</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>ant</groupId>
+                                <artifactId>ant</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
     <profiles>
         <profile>
             <id>blc-development</id>
@@ -142,58 +142,58 @@
             </build>
         </profile>
     </profiles>
-	<dependencies>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-profile</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>cobertura</groupId>
-			<artifactId>cobertura</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>taglibs</groupId>
-			<artifactId>standard</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-acl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-oxm</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-profile</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cobertura</groupId>
+            <artifactId>cobertura</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </dependency>
+    </dependencies>
 </project>

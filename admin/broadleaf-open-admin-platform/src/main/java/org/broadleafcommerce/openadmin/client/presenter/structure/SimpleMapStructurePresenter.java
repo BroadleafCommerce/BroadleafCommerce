@@ -43,84 +43,84 @@ import java.util.Map;
  */
 public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 
-	protected Map<String, Object> initialValues = new LinkedHashMap<String, Object>(10);
-	protected String[] gridFields;
+    protected Map<String, Object> initialValues = new LinkedHashMap<String, Object>(10);
+    protected String[] gridFields;
     protected HandlerRegistration dataArrivedHandlerRegistration;
     protected HandlerRegistration editCompletedHandlerRegistration;
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickedHandlerRegistration;
     protected HandlerRegistration addClickedHandlerRegistration;
-	
-	public SimpleMapStructurePresenter(GridStructureDisplay display, String[] availableToTypes, Map<String, Object> initialValues) {
-		super(display, availableToTypes);
-		this.initialValues.putAll(initialValues);
-	}
+    
+    public SimpleMapStructurePresenter(GridStructureDisplay display, String[] availableToTypes, Map<String, Object> initialValues) {
+        super(display, availableToTypes);
+        this.initialValues.putAll(initialValues);
+    }
 
     public SimpleMapStructurePresenter(GridStructureDisplay display, Map<String, Object> initialValues) {
-		this(display, null, initialValues);
-	}
+        this(display, null, initialValues);
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
-		this.gridFields = gridFields;
-	}
-	
-	public void bind() {
-		dataArrivedHandlerRegistration = display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
-			public void onDataArrived(DataArrivedEvent event) {
-				display.getRemoveButton().disable();
-			}
-		});
-		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
-			public void onEditComplete(EditCompleteEvent event) {
-				display.getGrid().deselectAllRecords();
-				setStartState();
-			}
-		});
-		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					display.getRemoveButton().enable();
-				} else {
-					display.getRemoveButton().disable();
-				}
-			}
-		});
-		removeClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
-						}
-					});
-				}
-			}
-		});
-		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
-					if (initialValues == null) {
-						initialValues = new LinkedHashMap<String, Object>(10);
-					}
-					initialValues.put("symbolicId", dataSource.getCompatibleModule(dataSource.getPersistencePerspective().getOperationTypes().getAddType()).getLinkedValue());
-					String[] type = associatedRecord.getAttributeAsStringArray("_type");
-					if (type == null) {
-						type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
-					}
-					initialValues.put("_type", type);
-					if (initialValues != null) {
-						display.getGrid().startEditingNew(initialValues);
-					} else {
-						display.getGrid().startEditingNew();
-					}
-				}
-			}
-		});
-	}
+        display.getGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getGrid());
+        dataSource.setupGridFields(gridFields, editable);
+        this.gridFields = gridFields;
+    }
+    
+    public void bind() {
+        dataArrivedHandlerRegistration = display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
+            public void onDataArrived(DataArrivedEvent event) {
+                display.getRemoveButton().disable();
+            }
+        });
+        editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
+            public void onEditComplete(EditCompleteEvent event) {
+                display.getGrid().deselectAllRecords();
+                setStartState();
+            }
+        });
+        selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                if (event.getState()) {
+                    display.getRemoveButton().enable();
+                } else {
+                    display.getRemoveButton().disable();
+                }
+            }
+        });
+        removeClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            display.getRemoveButton().disable();
+                        }
+                    });
+                }
+            }
+        });
+        addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
+                    if (initialValues == null) {
+                        initialValues = new LinkedHashMap<String, Object>(10);
+                    }
+                    initialValues.put("symbolicId", dataSource.getCompatibleModule(dataSource.getPersistencePerspective().getOperationTypes().getAddType()).getLinkedValue());
+                    String[] type = associatedRecord.getAttributeAsStringArray("_type");
+                    if (type == null) {
+                        type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
+                    }
+                    initialValues.put("_type", type);
+                    if (initialValues != null) {
+                        display.getGrid().startEditingNew(initialValues);
+                    } else {
+                        display.getGrid().startEditingNew();
+                    }
+                }
+            }
+        });
+    }
 
     public HandlerRegistration getAddClickedHandlerRegistration() {
         return addClickedHandlerRegistration;

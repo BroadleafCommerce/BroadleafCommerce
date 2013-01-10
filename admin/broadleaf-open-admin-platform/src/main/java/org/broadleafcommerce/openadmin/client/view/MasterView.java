@@ -70,10 +70,10 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDial
  *
  */
 public class MasterView extends VLayout implements ValueChangeHandler<String> {
-	
-	protected Canvas canvas;
-	protected ToolStrip bottomBar;
-	protected Label status;
+    
+    protected Canvas canvas;
+    protected ToolStrip bottomBar;
+    protected Label status;
     
     protected Map<String,Label> moduleLabelMap = new HashMap<String, Label>();
 
@@ -110,7 +110,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
     }
 
     public void onValueChange(ValueChangeEvent<String> event) {
-        	String token = event.getValue();
+            String token = event.getValue();
             if (token != null) {
                 String page = BLCLaunch.getSelectedPage(token);
                 String moduleName = BLCLaunch.getSelectedModule(token);
@@ -129,7 +129,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                         buildSecondaryMenu(page, moduleName);
                     }
                 }
-        	}
+            }
         }
     
     private void selectPrimaryMenu(String selectedModule) {
@@ -327,9 +327,9 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                         BLCMain.setCurrentModuleKey(module.getModuleKey());                     
                         buildSecondaryMenu(null, module.getModuleKey());
                         AppController.getInstance().go(canvas, module.getPages(), null, module.getModuleKey(), false);
-	                 }
+                     }
                 }
-	        }
+            }
         });
 
         return tmp;
@@ -394,7 +394,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
             MenuItem tempMenuItem = new MenuItem(languages[i]);
             menuItems[i] = tempMenuItem;
         }
-	    localeMenu.setData(menuItems);
+        localeMenu.setData(menuItems);
         localeMenu.setShowIcons(false);
 
         String currentLanguage = languages[0];
@@ -520,7 +520,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
             }
         });
 
-	    logout.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
+        logout.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
             @Override
             public void onClick(MenuItemClickEvent event) {
                 UrlBuilder builder = Window.Location.createUrlBuilder();
@@ -563,21 +563,21 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 
     }
 
-	public Canvas getContainer() {
-		return canvas;
-	}
+    public Canvas getContainer() {
+        return canvas;
+    }
 
-	public ToolStrip getBottomBar() {
-		return bottomBar;
-	}
+    public ToolStrip getBottomBar() {
+        return bottomBar;
+    }
 
-	public Label getStatus() {
-		return status;
-	}
-	
-	public void clearStatus() {
-		status.setContents("");
-	}
+    public Label getStatus() {
+        return status;
+    }
+    
+    public void clearStatus() {
+        status.setContents("");
+    }
     
     public Module lookupModule(String key) {
         return modules.get(key);

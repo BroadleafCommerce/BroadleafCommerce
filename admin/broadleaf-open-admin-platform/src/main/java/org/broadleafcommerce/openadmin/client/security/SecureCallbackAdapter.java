@@ -25,9 +25,9 @@ import com.smartgwt.client.util.SC;
  */
 public abstract class SecureCallbackAdapter {
 
-	public abstract void succeed();
-	
-	public void fail() {
-		SC.say("Insufficient Privileges. Permission is required to execute this action.");
-	} 
+    public abstract void succeed();
+    
+    public void fail() {
+        SC.say("Insufficient Privileges. Permission is required to execute this action.");
+    } 
 }

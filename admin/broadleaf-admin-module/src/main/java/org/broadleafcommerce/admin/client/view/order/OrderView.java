@@ -42,34 +42,34 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureVie
  *
  */
 public class OrderView extends HLayout implements Instantiable, OrderDisplay {
-	
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
-	protected OrderItemView orderItemsDisplay;
-	protected SubItemView fulfillmentGroupDisplay;
-	protected SubItemView paymentInfoDisplay;
-	protected GridStructureView additionalAttributesDisplay;
-	protected SubItemView offerCodeDisplay;
-	protected GridStructureView orderAdjustmentDisplay;
-	protected GridStructureView orderItemAdjustmentDisplay;
-	protected GridStructureView orderItemFeeDisplay;
-	protected GridStructureView fulfillmentGroupAdjustmentDisplay;
+    
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected OrderItemView orderItemsDisplay;
+    protected SubItemView fulfillmentGroupDisplay;
+    protected SubItemView paymentInfoDisplay;
+    protected GridStructureView additionalAttributesDisplay;
+    protected SubItemView offerCodeDisplay;
+    protected GridStructureView orderAdjustmentDisplay;
+    protected GridStructureView orderItemAdjustmentDisplay;
+    protected GridStructureView orderItemFeeDisplay;
+    protected GridStructureView fulfillmentGroupAdjustmentDisplay;
     protected GridStructureView paymentResponseDisplay;
     protected GridStructureView paymentLogDisplay;
     
-	public OrderView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("orderLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+    public OrderView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("orderLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("ordersListTitle"), entityDataSource, false, false);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("ordersListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet(); 
@@ -138,55 +138,55 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	public Canvas asCanvas() {
-		return this;
-	}
+    public Canvas asCanvas() {
+        return this;
+    }
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+    public DynamicFormDisplay getDynamicFormDisplay() {
+        return dynamicFormDisplay;
+    }
+    
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
 
-	public OrderItemDisplay getOrderItemsDisplay() {
-		return orderItemsDisplay;
-	}
+    public OrderItemDisplay getOrderItemsDisplay() {
+        return orderItemsDisplay;
+    }
 
-	public SubItemDisplay getFulfillmentGroupDisplay() {
-		return fulfillmentGroupDisplay;
-	}
+    public SubItemDisplay getFulfillmentGroupDisplay() {
+        return fulfillmentGroupDisplay;
+    }
 
-	public SubItemDisplay getPaymentInfoDisplay() {
-		return paymentInfoDisplay;
-	}
-	
-	public SubItemDisplay getOfferCodeDisplay() {
-		return offerCodeDisplay;
-	}
+    public SubItemDisplay getPaymentInfoDisplay() {
+        return paymentInfoDisplay;
+    }
+    
+    public SubItemDisplay getOfferCodeDisplay() {
+        return offerCodeDisplay;
+    }
 
-	public GridStructureDisplay getAdditionalAttributesDisplay() {
-		return additionalAttributesDisplay;
-	}
-	
-	public GridStructureDisplay getOrderAdjustmentDisplay() {
-		return orderAdjustmentDisplay;
-	}
-	
-	public GridStructureDisplay getOrderItemAdjustmentDisplay() {
-		return orderItemAdjustmentDisplay;
-	}
-	
-	public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay() {
-		return fulfillmentGroupAdjustmentDisplay;
-	}
+    public GridStructureDisplay getAdditionalAttributesDisplay() {
+        return additionalAttributesDisplay;
+    }
+    
+    public GridStructureDisplay getOrderAdjustmentDisplay() {
+        return orderAdjustmentDisplay;
+    }
+    
+    public GridStructureDisplay getOrderItemAdjustmentDisplay() {
+        return orderItemAdjustmentDisplay;
+    }
+    
+    public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay() {
+        return fulfillmentGroupAdjustmentDisplay;
+    }
 
-	public GridStructureView getOrderItemFeeDisplay() {
-		return orderItemFeeDisplay;
-	}
+    public GridStructureView getOrderItemFeeDisplay() {
+        return orderItemFeeDisplay;
+    }
 
     public GridStructureView getPaymentLogDisplay() {
         return paymentLogDisplay;

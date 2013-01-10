@@ -25,9 +25,9 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingServi
 
 public interface DynamicSkuPricingFilter extends Filter {
 
-	@SuppressWarnings("rawtypes")
-	public abstract HashMap getPricingConsiderations(ServletRequest arg0);
-	
-	public abstract DynamicSkuPricingService getDynamicSkuPricingService(ServletRequest arg0);
-	
+    @SuppressWarnings("rawtypes")
+    public abstract HashMap getPricingConsiderations(ServletRequest arg0);
+    
+    public abstract DynamicSkuPricingService getDynamicSkuPricingService(ServletRequest arg0);
+    
 }

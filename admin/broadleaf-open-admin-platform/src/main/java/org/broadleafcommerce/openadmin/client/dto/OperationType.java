@@ -24,8 +24,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  *
  */
 public enum OperationType implements IsSerializable {
-	FOREIGNKEY,
-	ENTITY,
-	JOINSTRUCTURE,
-	MAPSTRUCTURE
+    FOREIGNKEY,
+    ENTITY,
+    JOINSTRUCTURE,
+    MAPSTRUCTURE
 }

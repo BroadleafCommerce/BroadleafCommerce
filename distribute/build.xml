@@ -1,399 +1,399 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="BroadleafCommerceDistribution" default="create-all" xmlns:artifact="antlib:org.apache.maven.artifact.ant" xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
 
-	<!--
-		This build script requires at least ANT version 1.7, or above
-	-->
-	<property name="releaseParentDir" location="${basedir}/../" />
-	<echo message="basedir: ${basedir}" />
-	<echo message="releaseParentDir: ${releaseParentDir}" />
-	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+    <!--
+        This build script requires at least ANT version 1.7, or above
+    -->
+    <property name="releaseParentDir" location="${basedir}/../" />
+    <echo message="basedir: ${basedir}" />
+    <echo message="releaseParentDir: ${releaseParentDir}" />
+    <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
 
-	<artifact:pom id="mypom" file="${releaseParentDir}/pom.xml" />
+    <artifact:pom id="mypom" file="${releaseParentDir}/pom.xml" />
 
-	<property file="build.properties" />
-	<property name="maven.build.dir" value="${releaseParentDir}/distribute/target" />
-	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}" />
+    <property file="build.properties" />
+    <property name="maven.build.dir" value="${releaseParentDir}/distribute/target" />
+    <property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}" />
 
-	<artifact:pom id="uspsPom" file="${releaseParentDir}/module/broadleaf-usps/pom.xml" />
-	<artifact:pom id="cybersourcePom" file="${releaseParentDir}/module/broadleaf-cybersource/pom.xml" />
-	<artifact:pom id="frameworkPom" file="${releaseParentDir}/core/broadleaf-framework/pom.xml" />
-	<artifact:pom id="frameworkWebPom" file="${releaseParentDir}/core/broadleaf-framework-web/pom.xml" />
-	<artifact:pom id="adminModulePom" file="${releaseParentDir}/admin/broadleaf-admin-module/pom.xml" />
-	<artifact:pom id="openAdminModulePom" file="${releaseParentDir}/admin/broadleaf-open-admin-platform/pom.xml" />
-	<artifact:pom id="distributionPom" file="${releaseParentDir}/distribute/pom.xml" />
-	<artifact:pom id="integrationPom" file="${releaseParentDir}/integration/pom.xml" />
+    <artifact:pom id="uspsPom" file="${releaseParentDir}/module/broadleaf-usps/pom.xml" />
+    <artifact:pom id="cybersourcePom" file="${releaseParentDir}/module/broadleaf-cybersource/pom.xml" />
+    <artifact:pom id="frameworkPom" file="${releaseParentDir}/core/broadleaf-framework/pom.xml" />
+    <artifact:pom id="frameworkWebPom" file="${releaseParentDir}/core/broadleaf-framework-web/pom.xml" />
+    <artifact:pom id="adminModulePom" file="${releaseParentDir}/admin/broadleaf-admin-module/pom.xml" />
+    <artifact:pom id="openAdminModulePom" file="${releaseParentDir}/admin/broadleaf-open-admin-platform/pom.xml" />
+    <artifact:pom id="distributionPom" file="${releaseParentDir}/distribute/pom.xml" />
+    <artifact:pom id="integrationPom" file="${releaseParentDir}/integration/pom.xml" />
 
-	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-sql, build-docs, build-dependencies">
-		<mkdir dir="${maven.build.dir}/${distributionPom.version}"/>
-		<zip destfile="${maven.build.dir}/${distributionPom.version}/${maven.build.finalName}-with-dependencies.zip">
-			<fileset dir="${maven.build.dir}/${maven.build.finalName}">
-				<include name="dist/**/*.*" />
-				<include name="src/**/*.*" />
-				<include name="docs/**/*.*" />
-				<include name="lib/**/*.*" />
-				<include name="sql/*.*" />
-				<include name="*.*" />
-				<exclude name="*.zip" />
-			</fileset>
-		</zip>
-	</target>
+    <target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-sql, build-docs, build-dependencies">
+        <mkdir dir="${maven.build.dir}/${distributionPom.version}"/>
+        <zip destfile="${maven.build.dir}/${distributionPom.version}/${maven.build.finalName}-with-dependencies.zip">
+            <fileset dir="${maven.build.dir}/${maven.build.finalName}">
+                <include name="dist/**/*.*" />
+                <include name="src/**/*.*" />
+                <include name="docs/**/*.*" />
+                <include name="lib/**/*.*" />
+                <include name="sql/*.*" />
+                <include name="*.*" />
+                <exclude name="*.zip" />
+            </fileset>
+        </zip>
+    </target>
 
-	<target name="create-with-docs" depends="setup, build-bin, build-src-jars, build-docs, build-sql">
-		<mkdir dir="${maven.build.dir}/${distributionPom.version}"/>
-		<zip destfile="${maven.build.dir}/${distributionPom.version}/${maven.build.finalName}-with-docs.zip">
-			<fileset dir="${maven.build.dir}/${maven.build.finalName}">
-				<include name="dist/**/*.*" />
-				<include name="docs/**/*.*" />
-				<include name="sql/*.*" />
-				<include name="*.*" />
-				<exclude name="*.zip" />
-			</fileset>
-		</zip>
-	</target>
+    <target name="create-with-docs" depends="setup, build-bin, build-src-jars, build-docs, build-sql">
+        <mkdir dir="${maven.build.dir}/${distributionPom.version}"/>
+        <zip destfile="${maven.build.dir}/${distributionPom.version}/${maven.build.finalName}-with-docs.zip">
+            <fileset dir="${maven.build.dir}/${maven.build.finalName}">
+                <include name="dist/**/*.*" />
+                <include name="docs/**/*.*" />
+                <include name="sql/*.*" />
+                <include name="*.*" />
+                <exclude name="*.zip" />
+            </fileset>
+        </zip>
+    </target>
 
-	<target name="create-bin" depends="setup, build-bin, build-src-jars, build-sql">
-		<mkdir dir="${maven.build.dir}/${distributionPom.version}"/>
-		<zip destfile="${maven.build.dir}/${distributionPom.version}/${maven.build.finalName}.zip">
-			<fileset dir="${maven.build.dir}/${maven.build.finalName}">
-				<include name="dist/**/*.*" />
-				<include name="sql/*.*" />
-				<include name="*.*" />
-				<exclude name="*.zip" />
-			</fileset>
-		</zip>
-	</target>
+    <target name="create-bin" depends="setup, build-bin, build-src-jars, build-sql">
+        <mkdir dir="${maven.build.dir}/${distributionPom.version}"/>
+        <zip destfile="${maven.build.dir}/${distributionPom.version}/${maven.build.finalName}.zip">
+            <fileset dir="${maven.build.dir}/${maven.build.finalName}">
+                <include name="dist/**/*.*" />
+                <include name="sql/*.*" />
+                <include name="*.*" />
+                <exclude name="*.zip" />
+            </fileset>
+        </zip>
+    </target>
 
-	<target name="create-all" depends="create-with-dependencies, create-with-docs, create-bin" />
+    <target name="create-all" depends="create-with-dependencies, create-with-docs, create-bin" />
 
-	<target name="create-all-and-deploy" depends="create-all">
-		<copy todir="${distribution.location}">
-			<fileset dir="${maven.build.dir}">
-				<include name="${distributionPom.version}/*.zip"/>
-			</fileset>
-		</copy>
-	</target>
+    <target name="create-all-and-deploy" depends="create-all">
+        <copy todir="${distribution.location}">
+            <fileset dir="${maven.build.dir}">
+                <include name="${distributionPom.version}/*.zip"/>
+            </fileset>
+        </copy>
+    </target>
 
-	<target name="build-sql" depends="setup">
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/sql"/>
-		<path id="combined.path">
-			<union id="union"><path refid="build.admin.compile.classpath"/><path refid="build.admin.runtime.classpath"/></union>
-		</path>
-		<taskdef name="hibernatetool" classname="org.broadleafcommerce.common.util.sql.HibernateToolTask" classpathref="combined.path" />
-		<hibernatetool destDir="${maven.build.dir}/${maven.build.finalName}/sql" combinePersistenceUnits="false" refineFileNames="true">
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.broadleafcommerce.common.util.sql.MySQLInnoDBDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.OracleDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SybaseDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SQLServerDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SAPDBDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.HSQLDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.IngresDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.MckoiDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.InterbaseDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.FirebirdDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.DB2Dialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.broadleafcommerce.common.util.sql.MySQLInnoDBDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.OracleDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SybaseDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SQLServerDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SAPDBDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.HSQLDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.IngresDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.MckoiDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.InterbaseDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.FirebirdDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.DB2Dialect" />
-			<classpath refid="combined.path" />
-			<hbm2ddl export="false"/>
-		</hibernatetool>
-	</target>
+    <target name="build-sql" depends="setup">
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/sql"/>
+        <path id="combined.path">
+            <union id="union"><path refid="build.admin.compile.classpath"/><path refid="build.admin.runtime.classpath"/></union>
+        </path>
+        <taskdef name="hibernatetool" classname="org.broadleafcommerce.common.util.sql.HibernateToolTask" classpathref="combined.path" />
+        <hibernatetool destDir="${maven.build.dir}/${maven.build.finalName}/sql" combinePersistenceUnits="false" refineFileNames="true">
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.broadleafcommerce.common.util.sql.MySQLInnoDBDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.OracleDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SybaseDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SQLServerDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SAPDBDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.HSQLDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.IngresDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.MckoiDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.InterbaseDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.FirebirdDialect" />
+            <jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.DB2Dialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.broadleafcommerce.common.util.sql.MySQLInnoDBDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.OracleDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SybaseDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SQLServerDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SAPDBDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.HSQLDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.IngresDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.MckoiDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.InterbaseDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.FirebirdDialect" />
+            <jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.DB2Dialect" />
+            <classpath refid="combined.path" />
+            <hbm2ddl export="false"/>
+        </hibernatetool>
+    </target>
 
-	<target name="build-bin" depends="setup">
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/dist" />
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/dist" flatten="true">
-			<restrict>
-				<fileset refid="integrationDeps" />
-				<rsel:name name="org/broadleafcommerce*.jar" />
-			</restrict>
-		</copy>
-		<copy todir="${maven.build.dir}/${maven.build.finalName}" file="${releaseParentDir}/doc/license.txt" />
-	</target>
+    <target name="build-bin" depends="setup">
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/dist" />
+        <copy todir="${maven.build.dir}/${maven.build.finalName}/dist" flatten="true">
+            <restrict>
+                <fileset refid="integrationDeps" />
+                <rsel:name name="org/broadleafcommerce*.jar" />
+            </restrict>
+        </copy>
+        <copy todir="${maven.build.dir}/${maven.build.finalName}" file="${releaseParentDir}/doc/license.txt" />
+    </target>
 
-	<target name="build-src" depends="setup">
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/src" />
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/src">
-			<fileset dir="${releaseParentDir}">
-				<include name="admin/**/*.*" />
-				<include name="site/**/*.*" />
-				<include name="integration/**/*.*" />
-				<include name="distribute/**/*.*" />
-				<exclude name="distribute/target/**/*.*" />
-				<include name="core/**/*.*" />
-				<include name="module/**/*.*" />
-				<include name="lib/**/*.*" />
-				<include name="pom.xml" />
-				<include name="build.properties" />
-				<exclude name="**/.*/*.*" />
-				<exclude name="**/.*" />
-			</fileset>
-		</copy>
-	</target>
+    <target name="build-src" depends="setup">
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/src" />
+        <copy todir="${maven.build.dir}/${maven.build.finalName}/src">
+            <fileset dir="${releaseParentDir}">
+                <include name="admin/**/*.*" />
+                <include name="site/**/*.*" />
+                <include name="integration/**/*.*" />
+                <include name="distribute/**/*.*" />
+                <exclude name="distribute/target/**/*.*" />
+                <include name="core/**/*.*" />
+                <include name="module/**/*.*" />
+                <include name="lib/**/*.*" />
+                <include name="pom.xml" />
+                <include name="build.properties" />
+                <exclude name="**/.*/*.*" />
+                <exclude name="**/.*" />
+            </fileset>
+        </copy>
+    </target>
 
-	<target name="build-src-jars" depends="setup">
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/dist" />
-		<artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
-			<arg value="source:jar" />
-		</artifact:mvn>
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/dist">
-			<fileset dir="${releaseParentDir}/admin/broadleaf-admin-module/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/admin/broadleaf-open-admin-platform/target">
-				<include name="*sources.jar" />
-			</fileset>
+    <target name="build-src-jars" depends="setup">
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/dist" />
+        <artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
+            <arg value="source:jar" />
+        </artifact:mvn>
+        <copy todir="${maven.build.dir}/${maven.build.finalName}/dist">
+            <fileset dir="${releaseParentDir}/admin/broadleaf-admin-module/target">
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/admin/broadleaf-open-admin-platform/target">
+                <include name="*sources.jar" />
+            </fileset>
             <fileset dir="${releaseParentDir}/admin/broadleaf-contentmanagement-module/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/core/broadleaf-framework/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/core/broadleaf-framework-web/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/core/broadleaf-profile/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/core/broadleaf-profile-web/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/module/broadleaf-usps/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/module/broadleaf-usps-schemas/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/module/broadleaf-cybersource/target">
-				<include name="*sources.jar" />
-			</fileset>
-			<fileset dir="${releaseParentDir}/module/broadleaf-cybersource-api/target">
-				<include name="*sources.jar" />
-			</fileset>
-		</copy>
-	</target>
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/core/broadleaf-framework/target">
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/core/broadleaf-framework-web/target">
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/core/broadleaf-profile/target">
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/core/broadleaf-profile-web/target">
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/module/broadleaf-usps/target">
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/module/broadleaf-usps-schemas/target">
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/module/broadleaf-cybersource/target">
+                <include name="*sources.jar" />
+            </fileset>
+            <fileset dir="${releaseParentDir}/module/broadleaf-cybersource-api/target">
+                <include name="*sources.jar" />
+            </fileset>
+        </copy>
+    </target>
 
-	<target name="build-docs" depends="setup">
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs" />
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs/api" />
-		<artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
-			<arg value="javadoc:aggregate" />
-		</artifact:mvn>
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/docs/api">
-			<fileset dir="${releaseParentDir}/target/site/apidocs">
-				<include name="**/*.*" />
-			</fileset>
-		</copy>
-	</target>
+    <target name="build-docs" depends="setup">
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs" />
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs/api" />
+        <artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
+            <arg value="javadoc:aggregate" />
+        </artifact:mvn>
+        <copy todir="${maven.build.dir}/${maven.build.finalName}/docs/api">
+            <fileset dir="${releaseParentDir}/target/site/apidocs">
+                <include name="**/*.*" />
+            </fileset>
+        </copy>
+    </target>
 
-	<target name="setup-dependencies">
-		<artifact:dependencies filesetId="uspsDeps" pomRefId="uspsPom" useScope="runtime" />
-		<artifact:dependencies filesetId="cybersourceDeps" pomRefId="cybersourcePom" useScope="runtime" />
-		<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime" />
-		<artifact:dependencies filesetId="frameworkWebDeps" pomRefId="frameworkWebPom" useScope="runtime" />
-		<artifact:dependencies filesetId="adminDeps" pomRefId="adminModulePom" useScope="runtime"/>
-		<artifact:dependencies filesetId="adminDeps2" pomRefId="adminModulePom" useScope="compile"/>
-		<artifact:dependencies filesetId="openAdminDeps" pomRefId="openAdminModulePom" useScope="runtime"/>
-		<artifact:dependencies filesetId="openAdminDeps2" pomRefId="openAdminModulePom" useScope="compile"/>
-		<artifact:dependencies filesetId="distributionDeps" pomRefId="distributionPom" versionsId="distributionVersions" />
-		<artifact:dependencies filesetId="integrationDeps" pomRefId="integrationPom" />
-		<path id="build.runtime.classpath">
-			<fileset refid="frameworkWebDeps" />
-		</path>
-		<path id="build.open.admin.compile.classpath">
-			<fileset refid="openAdminDeps2"/>
-		</path>
-		<path id="build.open.admin.runtime.classpath">
-			<fileset refid="openAdminDeps"/>
-		</path>
-		<path id="build.admin.compile.classpath">
-			<fileset refid="adminDeps2"/>
-		</path>
-		<path id="build.admin.runtime.classpath">
-			<fileset refid="adminDeps"/>
-		</path>
-	</target>
+    <target name="setup-dependencies">
+        <artifact:dependencies filesetId="uspsDeps" pomRefId="uspsPom" useScope="runtime" />
+        <artifact:dependencies filesetId="cybersourceDeps" pomRefId="cybersourcePom" useScope="runtime" />
+        <artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime" />
+        <artifact:dependencies filesetId="frameworkWebDeps" pomRefId="frameworkWebPom" useScope="runtime" />
+        <artifact:dependencies filesetId="adminDeps" pomRefId="adminModulePom" useScope="runtime"/>
+        <artifact:dependencies filesetId="adminDeps2" pomRefId="adminModulePom" useScope="compile"/>
+        <artifact:dependencies filesetId="openAdminDeps" pomRefId="openAdminModulePom" useScope="runtime"/>
+        <artifact:dependencies filesetId="openAdminDeps2" pomRefId="openAdminModulePom" useScope="compile"/>
+        <artifact:dependencies filesetId="distributionDeps" pomRefId="distributionPom" versionsId="distributionVersions" />
+        <artifact:dependencies filesetId="integrationDeps" pomRefId="integrationPom" />
+        <path id="build.runtime.classpath">
+            <fileset refid="frameworkWebDeps" />
+        </path>
+        <path id="build.open.admin.compile.classpath">
+            <fileset refid="openAdminDeps2"/>
+        </path>
+        <path id="build.open.admin.runtime.classpath">
+            <fileset refid="openAdminDeps"/>
+        </path>
+        <path id="build.admin.compile.classpath">
+            <fileset refid="adminDeps2"/>
+        </path>
+        <path id="build.admin.runtime.classpath">
+            <fileset refid="adminDeps"/>
+        </path>
+    </target>
 
-	<target name="build-dependencies" depends="setup">
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib" />
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" />
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/usps" />
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" />
-		<taskdef name="licenseCopy" classname="org.broadleafcommerce.common.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
-		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" licenseDir="${releaseParentDir}/doc/dependency-licenses">
-			<restrict>
-				<union>
-					<fileset refid="frameworkWebDeps" />
-					<fileset refid="openAdminDeps" />
-				</union>
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-				<rsel:not>
-					<rsel:name name="**/*cobertura*.jar" />
-				</rsel:not>
-			</restrict>
-		</licenseCopy>
-		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/usps" licenseDir="${releaseParentDir}/doc/dependency-licenses">
-			<restrict>
-				<difference>
-					<fileset refid="uspsDeps" />
-					<intersect>
-						<fileset refid="uspsDeps" />
-						<fileset refid="frameworkDeps" />
-					</intersect>
-				</difference>
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-			</restrict>
-		</licenseCopy>
-		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" licenseDir="${releaseParentDir}/doc/dependency-licenses">
-			<restrict>
-				<difference>
-					<fileset refid="cybersourceDeps" />
-					<intersect>
-						<fileset refid="cybersourceDeps" />
-						<fileset refid="frameworkDeps" />
-					</intersect>
-				</difference>
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-			</restrict>
-		</licenseCopy>
-		<copy file="${releaseParentDir}/doc/dependency-licenses/readme.txt" todir="${maven.build.dir}/${maven.build.finalName}/lib" />
-		<copy file="${releaseParentDir}/doc/dependency-licenses/build.xml" todir="${maven.build.dir}/${maven.build.finalName}/lib" />
-	</target>
+    <target name="build-dependencies" depends="setup">
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib" />
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" />
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/usps" />
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" />
+        <taskdef name="licenseCopy" classname="org.broadleafcommerce.common.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
+        <licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" licenseDir="${releaseParentDir}/doc/dependency-licenses">
+            <restrict>
+                <union>
+                    <fileset refid="frameworkWebDeps" />
+                    <fileset refid="openAdminDeps" />
+                </union>
+                <rsel:not>
+                    <rsel:name name="org/broadleafcommerce*.jar" />
+                </rsel:not>
+                <rsel:not>
+                    <rsel:name name="**/*cobertura*.jar" />
+                </rsel:not>
+            </restrict>
+        </licenseCopy>
+        <licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/usps" licenseDir="${releaseParentDir}/doc/dependency-licenses">
+            <restrict>
+                <difference>
+                    <fileset refid="uspsDeps" />
+                    <intersect>
+                        <fileset refid="uspsDeps" />
+                        <fileset refid="frameworkDeps" />
+                    </intersect>
+                </difference>
+                <rsel:not>
+                    <rsel:name name="org/broadleafcommerce*.jar" />
+                </rsel:not>
+            </restrict>
+        </licenseCopy>
+        <licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" licenseDir="${releaseParentDir}/doc/dependency-licenses">
+            <restrict>
+                <difference>
+                    <fileset refid="cybersourceDeps" />
+                    <intersect>
+                        <fileset refid="cybersourceDeps" />
+                        <fileset refid="frameworkDeps" />
+                    </intersect>
+                </difference>
+                <rsel:not>
+                    <rsel:name name="org/broadleafcommerce*.jar" />
+                </rsel:not>
+            </restrict>
+        </licenseCopy>
+        <copy file="${releaseParentDir}/doc/dependency-licenses/readme.txt" todir="${maven.build.dir}/${maven.build.finalName}/lib" />
+        <copy file="${releaseParentDir}/doc/dependency-licenses/build.xml" todir="${maven.build.dir}/${maven.build.finalName}/lib" />
+    </target>
 
-	<target name="setup" depends="setup-dependencies">
-		<artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
-			<arg value="clean" />
-		</artifact:mvn>
-		<delete dir="${maven.build.dir}/${maven.build.finalName}" />
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}" />
-		<copy file="${releaseParentDir}/doc/readme.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
-		<copy file="${releaseParentDir}/doc/dependencies.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
-		<copy file="${releaseParentDir}/doc/releaseNotes.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
-		<replace file="${maven.build.dir}/${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}" />
-		
-		<path id="service-dependencies">
-			<restrict>
-				<fileset refid="frameworkDeps" />
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-				<rsel:not>
-					<rsel:name name="**/spring-security*.jar" />
-				</rsel:not>
-				<rsel:not>
-					<rsel:name name="**/spring-orm*.jar" />
-				</rsel:not>
-				<rsel:not>
-					<rsel:name name="**/*gwt*.jar" />
-				</rsel:not>				
-				<rsel:not>
-					<rsel:name name="**/daofusion-core*.jar" />
-				</rsel:not>						
-				<rsel:not>
-					<rsel:name name="**/*security*.jar" />
-				</rsel:not>	
-				<rsel:not>
-					<rsel:name name="**/*transmorph*.jar" />
-				</rsel:not>
-				<rsel:not>
-					<rsel:name name="**/*cobertura*.jar" />
-				</rsel:not>
-			</restrict>
-		</path>
-		<pathconvert property="prop-service-dependencies" pathsep="${line.separator} * " refid="service-dependencies">
-	        <mapper type="flatten"/>
-	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%service-dependencies%%" value="${prop-service-dependencies}" />
-		
-		<path id="web-dependencies">
-			<restrict>
-				<difference>
-					<fileset refid="frameworkWebDeps" />
-					<intersect>
-						<fileset refid="frameworkWebDeps" />
-						<fileset refid="frameworkDeps" />
-					</intersect>
-				</difference>
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-			</restrict>
-		</path>
-		<pathconvert property="prop-web-dependencies" pathsep="${line.separator} * " refid="web-dependencies">
-	        <mapper type="flatten"/>
-	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%web-dependencies%%" value="${prop-web-dependencies}" />
-		
-		<path id="usps-dependencies">
-			<restrict>
-				<difference>
-					<fileset refid="uspsDeps" />
-					<intersect>
-						<fileset refid="uspsDeps" />
-						<fileset refid="frameworkDeps" />
-					</intersect>
-				</difference>
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-			</restrict>
-		</path>
-		<pathconvert property="prop-usps-dependencies" pathsep="${line.separator} * " refid="usps-dependencies">
-	        <mapper type="flatten"/>
-	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%usps-dependencies%%" value="${prop-usps-dependencies}" />
-		
-		<path id="cybersource-dependencies">
-			<restrict>
-				<difference>
-					<fileset refid="cybersourceDeps" />
-					<intersect>
-						<fileset refid="cybersourceDeps" />
-						<fileset refid="frameworkDeps" />
-					</intersect>
-				</difference>
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-			</restrict>
-		</path>
-		<pathconvert property="prop-cybersource-dependencies" pathsep="${line.separator} * " refid="cybersource-dependencies">
-	        <mapper type="flatten"/>
-	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%cybersource-dependencies%%" value="${prop-cybersource-dependencies}" />
-		
-		<path id="admin-dependencies">
-			<restrict>
-				<fileset refid="openAdminDeps" />
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-			</restrict>
-		</path>
-		<pathconvert property="prop-admin-dependencies" pathsep="${line.separator} * " refid="admin-dependencies">
-	        <mapper type="flatten"/>
-	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%admin-dependencies%%" value="${prop-admin-dependencies}" />
-	</target>
+    <target name="setup" depends="setup-dependencies">
+        <artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
+            <arg value="clean" />
+        </artifact:mvn>
+        <delete dir="${maven.build.dir}/${maven.build.finalName}" />
+        <mkdir dir="${maven.build.dir}/${maven.build.finalName}" />
+        <copy file="${releaseParentDir}/doc/readme.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
+        <copy file="${releaseParentDir}/doc/dependencies.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
+        <copy file="${releaseParentDir}/doc/releaseNotes.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
+        <replace file="${maven.build.dir}/${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}" />
+        
+        <path id="service-dependencies">
+            <restrict>
+                <fileset refid="frameworkDeps" />
+                <rsel:not>
+                    <rsel:name name="org/broadleafcommerce*.jar" />
+                </rsel:not>
+                <rsel:not>
+                    <rsel:name name="**/spring-security*.jar" />
+                </rsel:not>
+                <rsel:not>
+                    <rsel:name name="**/spring-orm*.jar" />
+                </rsel:not>
+                <rsel:not>
+                    <rsel:name name="**/*gwt*.jar" />
+                </rsel:not>             
+                <rsel:not>
+                    <rsel:name name="**/daofusion-core*.jar" />
+                </rsel:not>                     
+                <rsel:not>
+                    <rsel:name name="**/*security*.jar" />
+                </rsel:not> 
+                <rsel:not>
+                    <rsel:name name="**/*transmorph*.jar" />
+                </rsel:not>
+                <rsel:not>
+                    <rsel:name name="**/*cobertura*.jar" />
+                </rsel:not>
+            </restrict>
+        </path>
+        <pathconvert property="prop-service-dependencies" pathsep="${line.separator} * " refid="service-dependencies">
+            <mapper type="flatten"/>
+        </pathconvert>
+        <replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%service-dependencies%%" value="${prop-service-dependencies}" />
+        
+        <path id="web-dependencies">
+            <restrict>
+                <difference>
+                    <fileset refid="frameworkWebDeps" />
+                    <intersect>
+                        <fileset refid="frameworkWebDeps" />
+                        <fileset refid="frameworkDeps" />
+                    </intersect>
+                </difference>
+                <rsel:not>
+                    <rsel:name name="org/broadleafcommerce*.jar" />
+                </rsel:not>
+            </restrict>
+        </path>
+        <pathconvert property="prop-web-dependencies" pathsep="${line.separator} * " refid="web-dependencies">
+            <mapper type="flatten"/>
+        </pathconvert>
+        <replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%web-dependencies%%" value="${prop-web-dependencies}" />
+        
+        <path id="usps-dependencies">
+            <restrict>
+                <difference>
+                    <fileset refid="uspsDeps" />
+                    <intersect>
+                        <fileset refid="uspsDeps" />
+                        <fileset refid="frameworkDeps" />
+                    </intersect>
+                </difference>
+                <rsel:not>
+                    <rsel:name name="org/broadleafcommerce*.jar" />
+                </rsel:not>
+            </restrict>
+        </path>
+        <pathconvert property="prop-usps-dependencies" pathsep="${line.separator} * " refid="usps-dependencies">
+            <mapper type="flatten"/>
+        </pathconvert>
+        <replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%usps-dependencies%%" value="${prop-usps-dependencies}" />
+        
+        <path id="cybersource-dependencies">
+            <restrict>
+                <difference>
+                    <fileset refid="cybersourceDeps" />
+                    <intersect>
+                        <fileset refid="cybersourceDeps" />
+                        <fileset refid="frameworkDeps" />
+                    </intersect>
+                </difference>
+                <rsel:not>
+                    <rsel:name name="org/broadleafcommerce*.jar" />
+                </rsel:not>
+            </restrict>
+        </path>
+        <pathconvert property="prop-cybersource-dependencies" pathsep="${line.separator} * " refid="cybersource-dependencies">
+            <mapper type="flatten"/>
+        </pathconvert>
+        <replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%cybersource-dependencies%%" value="${prop-cybersource-dependencies}" />
+        
+        <path id="admin-dependencies">
+            <restrict>
+                <fileset refid="openAdminDeps" />
+                <rsel:not>
+                    <rsel:name name="org/broadleafcommerce*.jar" />
+                </rsel:not>
+            </restrict>
+        </path>
+        <pathconvert property="prop-admin-dependencies" pathsep="${line.separator} * " refid="admin-dependencies">
+            <mapper type="flatten"/>
+        </pathconvert>
+        <replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%admin-dependencies%%" value="${prop-admin-dependencies}" />
+    </target>
 
-	<target name="clean">
-		<delete dir="${maven.build.dir}" />
-	</target>
+    <target name="clean">
+        <delete dir="${maven.build.dir}" />
+    </target>
 </project>

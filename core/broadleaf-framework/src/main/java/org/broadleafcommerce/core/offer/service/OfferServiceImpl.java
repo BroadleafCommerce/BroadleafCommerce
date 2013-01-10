@@ -47,7 +47,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("blOfferService")
 public class OfferServiceImpl implements OfferService {
-	
+    
     // should be called outside of Offer service after Offer service is executed
     @Resource(name="blCustomerOfferDao")
     protected CustomerOfferDao customerOfferDao;
@@ -217,14 +217,14 @@ public class OfferServiceImpl implements OfferService {
      *
      */
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
-    	PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
+        PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
         orderOfferProcessor.clearOffersandAdjustments(promotableOrder);
         List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, promotableOrder.getCustomer());
 
         if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
             orderOfferProcessor.compileOrderTotal(promotableOrder);
         } else {
-        	itemOfferProcessor.gatherCart(promotableOrder);
+            itemOfferProcessor.gatherCart(promotableOrder);
             orderOfferProcessor.initializeBundleSplitItems(promotableOrder);
             List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
             List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
@@ -243,83 +243,83 @@ public class OfferServiceImpl implements OfferService {
             }
         }
     }
-	
-	public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
-		PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
-		promotableOrder.removeAllCandidateFulfillmentGroupOffers();
-		promotableOrder.removeAllFulfillmentAdjustments();
-    	List<Offer> possibleFGOffers = new ArrayList<Offer>();
-    	for (Offer offer : offers) {
-    		if (offer.getType().getType().equals(OfferType.FULFILLMENT_GROUP.getType())) {
-    			possibleFGOffers.add(offer);
-    		}
-    	}
-    	List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, promotableOrder.getCustomer());
-    	List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
-    	for (Offer offer : filteredOffers) {
-    		fulfillmentGroupOfferProcessor.filterFulfillmentGroupLevelOffer(promotableOrder, qualifiedFGOffers, offer);
-    	}
-    	if (!qualifiedFGOffers.isEmpty()) {
-		    fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
-    	}
-    	fulfillmentGroupOfferProcessor.gatherCart(promotableOrder);
-    	fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
+    
+    public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+        PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
+        promotableOrder.removeAllCandidateFulfillmentGroupOffers();
+        promotableOrder.removeAllFulfillmentAdjustments();
+        List<Offer> possibleFGOffers = new ArrayList<Offer>();
+        for (Offer offer : offers) {
+            if (offer.getType().getType().equals(OfferType.FULFILLMENT_GROUP.getType())) {
+                possibleFGOffers.add(offer);
+            }
+        }
+        List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, promotableOrder.getCustomer());
+        List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
+        for (Offer offer : filteredOffers) {
+            fulfillmentGroupOfferProcessor.filterFulfillmentGroupLevelOffer(promotableOrder, qualifiedFGOffers, offer);
+        }
+        if (!qualifiedFGOffers.isEmpty()) {
+            fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
+        }
+        fulfillmentGroupOfferProcessor.gatherCart(promotableOrder);
+        fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
     }
 
-	public CustomerOfferDao getCustomerOfferDao() {
-		return customerOfferDao;
-	}
+    public CustomerOfferDao getCustomerOfferDao() {
+        return customerOfferDao;
+    }
 
-	public void setCustomerOfferDao(CustomerOfferDao customerOfferDao) {
-		this.customerOfferDao = customerOfferDao;
-	}
+    public void setCustomerOfferDao(CustomerOfferDao customerOfferDao) {
+        this.customerOfferDao = customerOfferDao;
+    }
 
-	public OfferCodeDao getOfferCodeDao() {
-		return offerCodeDao;
-	}
+    public OfferCodeDao getOfferCodeDao() {
+        return offerCodeDao;
+    }
 
-	public void setOfferCodeDao(OfferCodeDao offerCodeDao) {
-		this.offerCodeDao = offerCodeDao;
-	}
+    public void setOfferCodeDao(OfferCodeDao offerCodeDao) {
+        this.offerCodeDao = offerCodeDao;
+    }
 
-	public OfferDao getOfferDao() {
-		return offerDao;
-	}
+    public OfferDao getOfferDao() {
+        return offerDao;
+    }
 
-	public void setOfferDao(OfferDao offerDao) {
-		this.offerDao = offerDao;
-	}
+    public void setOfferDao(OfferDao offerDao) {
+        this.offerDao = offerDao;
+    }
 
-	public OrderOfferProcessor getOrderOfferProcessor() {
-		return orderOfferProcessor;
-	}
+    public OrderOfferProcessor getOrderOfferProcessor() {
+        return orderOfferProcessor;
+    }
 
-	public void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor) {
-		this.orderOfferProcessor = orderOfferProcessor;
-	}
+    public void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor) {
+        this.orderOfferProcessor = orderOfferProcessor;
+    }
 
-	public ItemOfferProcessor getItemOfferProcessor() {
-		return itemOfferProcessor;
-	}
+    public ItemOfferProcessor getItemOfferProcessor() {
+        return itemOfferProcessor;
+    }
 
-	public void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor) {
-		this.itemOfferProcessor = itemOfferProcessor;
-	}
+    public void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor) {
+        this.itemOfferProcessor = itemOfferProcessor;
+    }
 
-	public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor() {
-		return fulfillmentGroupOfferProcessor;
-	}
+    public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor() {
+        return fulfillmentGroupOfferProcessor;
+    }
 
-	public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor) {
-		this.fulfillmentGroupOfferProcessor = fulfillmentGroupOfferProcessor;
-	}
+    public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor) {
+        this.fulfillmentGroupOfferProcessor = fulfillmentGroupOfferProcessor;
+    }
 
-	public PromotableItemFactory getPromotableItemFactory() {
-		return promotableItemFactory;
-	}
+    public PromotableItemFactory getPromotableItemFactory() {
+        return promotableItemFactory;
+    }
 
-	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
-		this.promotableItemFactory = promotableItemFactory;
-	}
+    public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
+        this.promotableItemFactory = promotableItemFactory;
+    }
 
 }

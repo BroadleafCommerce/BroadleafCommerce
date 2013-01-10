@@ -38,26 +38,26 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLay
  *
  */
 public class UserRoleView extends VLayout implements UserRoleDisplay {
-	
-	protected ToolStrip toolBar;
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
-	protected ListGrid grid;
-	protected ListGrid expansionGrid;
+    
+    protected ToolStrip toolBar;
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
+    protected ListGrid grid;
+    protected ListGrid expansionGrid;
 
-	public UserRoleView(Boolean canReorder, Boolean canEdit) {
+    public UserRoleView(Boolean canReorder, Boolean canEdit) {
         setHeight100();
         setWidth100();
         setBackgroundColor("#eaeaea");
         setOverflow(Overflow.AUTO);
-		
-		HStack hStack = new HStack(10);
-		hStack.setID("userRoleHStack");
-		
-		hStack.setHeight("45%");
-		hStack.setWidth100();
-		hStack.setBackgroundColor("#eaeaea");
-		hStack.setAlign(Alignment.CENTER);
+        
+        HStack hStack = new HStack(10);
+        hStack.setID("userRoleHStack");
+        
+        hStack.setHeight("45%");
+        hStack.setWidth100();
+        hStack.setBackgroundColor("#eaeaea");
+        hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();
         stack.setID("userRoleVerticalLayout");
@@ -95,7 +95,7 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         expansionGrid.setSaveByCell(true);
         expansionGrid.setAlternateRecordStyles(true);
         if (!canEdit) {
-        	expansionGrid.setAlternateBodyStyleName("editRowDisabled");
+            expansionGrid.setAlternateBodyStyleName("editRowDisabled");
         }
         expansionGrid.setVisibility(Visibility.HIDDEN);
         expansionGrid.setHeight(100);
@@ -103,14 +103,14 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         expansionGrid.draw();
         
         grid = new ListGrid() {
-        	@Override  
+            @Override  
             protected Canvas getExpansionComponent(final ListGridRecord record) {
                 VLayout layout = new VLayout(5);
                 layout.setPadding(5);
                 layout.addMember(expansionGrid);
                 expansionGrid.setVisibility(Visibility.INHERIT);
                 String id = ((AbstractDynamicDataSource) grid.getDataSource()).getPrimaryKeyValue(record);
-        		((PresentationLayerAssociatedDataSource) expansionGrid.getDataSource()).loadAssociatedGridBasedOnRelationship(id, null);
+                ((PresentationLayerAssociatedDataSource) expansionGrid.getDataSource()).loadAssociatedGridBasedOnRelationship(id, null);
                 return layout;
             }  
         };
@@ -133,7 +133,7 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         grid.setCanExpandRecords(true);
         grid.setCanGroupBy(false);
         if (!canEdit) {
-        	grid.setAlternateBodyStyleName("editRowDisabled");
+            grid.setAlternateBodyStyleName("editRowDisabled");
         }
         stack.addMember(grid);
         
@@ -141,26 +141,26 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         hStack.setOverflow(Overflow.AUTO);
         
         addMember(hStack);
-	}
+    }
 
-	public ToolStrip getToolBar() {
-		return toolBar;
-	}
+    public ToolStrip getToolBar() {
+        return toolBar;
+    }
 
-	public ToolStripButton getAddButton() {
-		return addButton;
-	}
+    public ToolStripButton getAddButton() {
+        return addButton;
+    }
 
-	public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+    public ToolStripButton getRemoveButton() {
+        return removeButton;
+    }
 
-	public ListGrid getGrid() {
-		return grid;
-	}
+    public ListGrid getGrid() {
+        return grid;
+    }
 
-	public ListGrid getExpansionGrid() {
-		return expansionGrid;
-	}
+    public ListGrid getExpansionGrid() {
+        return expansionGrid;
+    }
 
 }

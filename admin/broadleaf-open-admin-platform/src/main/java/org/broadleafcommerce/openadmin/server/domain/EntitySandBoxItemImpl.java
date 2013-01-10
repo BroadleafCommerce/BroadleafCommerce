@@ -29,7 +29,7 @@ import javax.persistence.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class EntitySandBoxItemImpl extends SandBoxItemImpl implements EntitySandBoxItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     
     @ManyToOne(targetEntity = EntityImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "ENTITY_ID")
@@ -47,44 +47,44 @@ public class EntitySandBoxItemImpl extends SandBoxItemImpl implements EntitySand
     protected String ceilingEntityFullyQualifiedClassname;
 
     @Column(name = "CUST_CRITERIA")
-	protected String customCriteria;
+    protected String customCriteria;
 
     @Column(name = "CHANGE_TYPE")
     @Index(name="SNDBX_ITM_CHG_TYPE", columnNames={"CHANGE_TYPE"})
     protected ChangeType changeType;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#getEntity()
-	 */
-	@Override
-	public Entity getEntity() {
-		return entity;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#getEntity()
+     */
+    @Override
+    public Entity getEntity() {
+        return entity;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#setEntity(org.broadleafcommerce.openadmin.domain.Entity)
-	 */
-	@Override
-	public void setEntity(Entity entity) {
-		this.entity = entity;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#setEntity(org.broadleafcommerce.openadmin.domain.Entity)
+     */
+    @Override
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#getPersistencePerspective()
-	 */
-	@Override
-	public PersistencePerspective getPersistencePerspective() {
-		return persistencePerspective;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#getPersistencePerspective()
+     */
+    @Override
+    public PersistencePerspective getPersistencePerspective() {
+        return persistencePerspective;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#setPersistencePerspective(org.broadleafcommerce.openadmin.domain.PersistencePerspective)
-	 */
-	@Override
-	public void setPersistencePerspective(
-			PersistencePerspective persistencePerspective) {
-		this.persistencePerspective = persistencePerspective;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#setPersistencePerspective(org.broadleafcommerce.openadmin.domain.PersistencePerspective)
+     */
+    @Override
+    public void setPersistencePerspective(
+            PersistencePerspective persistencePerspective) {
+        this.persistencePerspective = persistencePerspective;
+    }
 
     @Override
     public String getCeilingEntityFullyQualifiedClassname() {
@@ -127,43 +127,43 @@ public class EntitySandBoxItemImpl extends SandBoxItemImpl implements EntitySand
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((entity == null) ? 0 : entity.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime
-				* result
-				+ ((persistencePerspective == null) ? 0
-						: persistencePerspective.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((entity == null) ? 0 : entity.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime
+                * result
+                + ((persistencePerspective == null) ? 0
+                        : persistencePerspective.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EntitySandBoxItemImpl other = (EntitySandBoxItemImpl) obj;
-		if (entity == null) {
-			if (other.entity != null)
-				return false;
-		} else if (!entity.equals(other.entity))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (persistencePerspective == null) {
-			if (other.persistencePerspective != null)
-				return false;
-		} else if (!persistencePerspective.equals(other.persistencePerspective))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EntitySandBoxItemImpl other = (EntitySandBoxItemImpl) obj;
+        if (entity == null) {
+            if (other.entity != null)
+                return false;
+        } else if (!entity.equals(other.entity))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (persistencePerspective == null) {
+            if (other.persistencePerspective != null)
+                return false;
+        } else if (!persistencePerspective.equals(other.persistencePerspective))
+            return false;
+        return true;
+    }
     
 }

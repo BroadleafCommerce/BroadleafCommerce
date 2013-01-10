@@ -93,7 +93,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     }
     
     public void setDiscountedPrice(Money discountedPrice) {
-    	this.discountedPrice = discountedPrice.getAmount();
+        this.discountedPrice = discountedPrice.getAmount();
     }
 
     public FulfillmentGroup getFulfillmentGroup() {
@@ -109,7 +109,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
         return offer.getPriority();
     }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

@@ -8,7 +8,7 @@
 }
 
 .editRowDisabled {
-	background-color: #f3f3f3;	
+    background-color: #f3f3f3;  
 }
 
 .label-bold {
@@ -18,13 +18,13 @@
 }
 
 .sectionViewBorder {
-	border-left: 1px solid #a6abb5;
-	border-bottom: 1px solid #a6abb5;
-	border-right: 1px solid #a6abb5;		
+    border-left: 1px solid #a6abb5;
+    border-bottom: 1px solid #a6abb5;
+    border-right: 1px solid #a6abb5;        
 }
 
 .versionStyle {
-	font-family:Verdana,Bitstream Vera Sans,sans-serif;
+    font-family:Verdana,Bitstream Vera Sans,sans-serif;
     font-size:14px;
     color:white;
 }

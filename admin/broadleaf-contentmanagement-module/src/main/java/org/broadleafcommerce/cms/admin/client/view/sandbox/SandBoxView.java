@@ -39,12 +39,12 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 
     protected ToolStripButton promoteAllButton;
     protected ToolStripButton promoteSelectionButton;
-	protected ToolStripButton revertRejectSelectionButton;
+    protected ToolStripButton revertRejectSelectionButton;
     protected ToolStripButton revertRejectAllButton;
     protected ToolStripButton refreshButton;
     protected ToolStripButton previewButton;
-	protected ListGrid grid;
-	protected ToolStrip toolBar;
+    protected ListGrid grid;
+    protected ToolStrip toolBar;
 
     public SandBoxView() {
         setWidth100();
@@ -52,9 +52,9 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         setLayoutMargin(20);
     }
 
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
         setHeight100();
-		setWidth100();
+        setWidth100();
 
         VLayout insideLayout = new VLayout();
 
@@ -64,10 +64,10 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 
         insideLayout.addMember(header);
 
-		toolBar = new ToolStrip();
-		toolBar.setHeight(30);
-		toolBar.setWidth100();
-		toolBar.addSpacer(6);
+        toolBar = new ToolStrip();
+        toolBar.setHeight(30);
+        toolBar.setWidth100();
+        toolBar.addSpacer(6);
 
         promoteAllButton = new ToolStripButton();
         promoteAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
@@ -132,25 +132,25 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         insideLayout.addMember(grid);
 
         addMember(insideLayout);
-	}
+    }
 
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getAddButton()
-	 */
-	public ToolStripButton getPromoteAllButton() {
-		return promoteAllButton;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getAddButton()
+     */
+    public ToolStripButton getPromoteAllButton() {
+        return promoteAllButton;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getRemoveButton()
-	 */
-	public ToolStripButton getRevertRejectSelectionButton() {
-		return revertRejectSelectionButton;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getRemoveButton()
+     */
+    public ToolStripButton getRevertRejectSelectionButton() {
+        return revertRejectSelectionButton;
+    }
 
     public ToolStripButton getPromoteSelectionButton() {
         return promoteSelectionButton;
@@ -167,13 +167,13 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
     /* (non-Javadoc)
       * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getGrid()
       */
-	public ListGrid getGrid() {
-		return grid;
-	}
+    public ListGrid getGrid() {
+        return grid;
+    }
 
-	public ToolStrip getToolBar() {
-		return toolBar;
-	}
+    public ToolStrip getToolBar() {
+        return toolBar;
+    }
 
     public ToolStripButton getPreviewButton() {
         return previewButton;

@@ -16,6 +16,6 @@ import com.google.gwt.i18n.client.LocalizableResource.Generate;
 @DefaultLocale("en_US")
 public interface MyCompanyAdminMessages extends ConstantsWithLookup {
 
-	public String shippingCountryListTitle();
-	
+    public String shippingCountryListTitle();
+    
 }

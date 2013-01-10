@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
  *
  */
 public interface ShippingOfferService {
-	
+    
     public void reviewOffers(Order order) throws PricingException;
     
 }

@@ -27,36 +27,36 @@ import org.broadleafcommerce.openadmin.client.view.Stoppable;
  */
 public class UploadProgressWindow extends Window implements Stoppable {
 
-	private UploadStatusProgress progressBar;
+    private UploadStatusProgress progressBar;
 
-	public UploadProgressWindow() {
-    	setWidth(360);  
-    	setHeight(52);  
-    	setShowMinimizeButton(false);  
-    	setIsModal(true);   
-    	centerInPage();
-    	setTitle(BLCMain.getMessageManager().getString("contactingServerTitle"));
-    	setShowCloseButton(false);
-    	progressBar = new UploadStatusProgress(24);
-    	addItem(progressBar);
-	}
+    public UploadProgressWindow() {
+        setWidth(360);  
+        setHeight(52);  
+        setShowMinimizeButton(false);  
+        setIsModal(true);   
+        centerInPage();
+        setTitle(BLCMain.getMessageManager().getString("contactingServerTitle"));
+        setShowCloseButton(false);
+        progressBar = new UploadStatusProgress(24);
+        addItem(progressBar);
+    }
 
-	public void startProgress() {
-		show();
-		progressBar.startProgress();
-	}
-	
-	public void stopProgress() {
-		progressBar.stopProgress();
-	}
-	
-	public void finalizeProgress() {
-		hide();
-	}
-	
-	public Boolean isActive() {
-		return progressBar.isActive();
-	}
+    public void startProgress() {
+        show();
+        progressBar.startProgress();
+    }
+    
+    public void stopProgress() {
+        progressBar.stopProgress();
+    }
+    
+    public void finalizeProgress() {
+        hide();
+    }
+    
+    public Boolean isActive() {
+        return progressBar.isActive();
+    }
 
     public UploadStatusProgress getProgressBar() {
         return progressBar;

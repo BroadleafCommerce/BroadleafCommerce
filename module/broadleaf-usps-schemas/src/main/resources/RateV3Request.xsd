@@ -48,7 +48,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element type="xs:int" name="ZipOrigination" maxOccurs="1" minOccurs="1"/>
- 	  <xs:element type="xs:int" name="ZipDestination" maxOccurs="1" minOccurs="1"/>
+      <xs:element type="xs:int" name="ZipDestination" maxOccurs="1" minOccurs="1"/>
       <xs:element type="xs:int" name="Pounds" maxOccurs="1" minOccurs="1"/>
       <xs:element type="xs:string" name="Ounces" maxOccurs="1" minOccurs="1"/>
       <xs:element name="Container" minOccurs="0" maxOccurs="1">

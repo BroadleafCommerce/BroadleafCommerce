@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>broadleaf</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.6.0-M1-32</version>
-	</parent>
-	<artifactId>admin</artifactId>
-	<packaging>pom</packaging>
-	<name>BroadleafCommerce Admin</name>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>broadleaf</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.6.0-M1-32</version>
+    </parent>
+    <artifactId>admin</artifactId>
+    <packaging>pom</packaging>
+    <name>BroadleafCommerce Admin</name>
     <description>BroadleafCommerce Admin Mid Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -47,9 +47,9 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<modules>
-		<module>broadleaf-admin-module</module>
-		<module>broadleaf-open-admin-platform</module>
+    <modules>
+        <module>broadleaf-admin-module</module>
+        <module>broadleaf-open-admin-platform</module>
         <module>broadleaf-contentmanagement-module</module>
-	</modules>
+    </modules>
 </project>

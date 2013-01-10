@@ -9,16 +9,16 @@ import org.broadleafcommerce.${artifactId}.workflow.BaseActivity;
 import org.broadleafcommerce.${artifactId}.workflow.ProcessContext;
 
 public class MyCompanyOrderManagementCheckoutActivity extends BaseActivity {
-	
-	@Override
-	public ProcessContext execute(ProcessContext context) throws Exception {
+    
+    @Override
+    public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
         
         /*
-		 * TODO do some logic to submit this order to the external OMS
-		 */
-		System.out.println(seed.getOrder().getOrderNumber());
-		
+         * TODO do some logic to submit this order to the external OMS
+         */
+        System.out.println(seed.getOrder().getOrderNumber());
+        
         return context;
     }
 

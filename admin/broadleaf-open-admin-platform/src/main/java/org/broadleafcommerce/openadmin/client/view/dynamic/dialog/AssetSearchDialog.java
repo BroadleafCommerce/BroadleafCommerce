@@ -56,24 +56,24 @@ import java.util.Map;
  *
  */
 public class AssetSearchDialog extends Window {
-		
-	protected final TileGrid tileGrid;
-	protected IButton saveButton;
-	protected TileGridItemSelectedHandler handler;
-	private HashMap<String, Object> initialValues;
-	   public static FileUploadDialog FILE_UPLOAD = new FileUploadDialog();
+        
+    protected final TileGrid tileGrid;
+    protected IButton saveButton;
+    protected TileGridItemSelectedHandler handler;
+    private HashMap<String, Object> initialValues;
+       public static FileUploadDialog FILE_UPLOAD = new FileUploadDialog();
 
-	public AssetSearchDialog(final TileGridDataSource staticAssetDataSource) {
-		setIsModal(true);
-		setShowModalMask(true);
-		setShowMinimizeButton(false);
-		setWidth(600);
-		setHeight(500);
-		setCanDragResize(true);
-		setOverflow(Overflow.AUTO);
-		setVisible(true);
+    public AssetSearchDialog(final TileGridDataSource staticAssetDataSource) {
+        setIsModal(true);
+        setShowModalMask(true);
+        setShowMinimizeButton(false);
+        setWidth(600);
+        setHeight(500);
+        setCanDragResize(true);
+        setOverflow(Overflow.AUTO);
+        setVisible(true);
 
-		tileGrid = new TileGrid();
+        tileGrid = new TileGrid();
         tileGrid.setTileWidth(120);
         tileGrid.setTileHeight(120);
         tileGrid.setAutoFetchData(true);
@@ -85,10 +85,10 @@ public class AssetSearchDialog extends Window {
         staticAssetDataSource.setupGridFields(new String[]{"pictureLarge", "name"});
         tileGrid.setDataSource(staticAssetDataSource);
         tileGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
-        	@Override
-        	public void onSelectionChanged(SelectionChangedEvent event) {
-        		saveButton.enable();
-        	}
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent event) {
+                saveButton.enable();
+            }
         });
         tileGrid.addClickHandler(new ClickHandler() {
             @Override
@@ -100,15 +100,15 @@ public class AssetSearchDialog extends Window {
                 }
             }
         });
-		
+        
         saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-            	//getSelectedRecord() throws a ClassCastException from SmartGWT, maybe a bug.  this seems to work instead:
-            	Record selectedRecord = tileGrid.getSelection()[0];
+                //getSelectedRecord() throws a ClassCastException from SmartGWT, maybe a bug.  this seems to work instead:
+                Record selectedRecord = tileGrid.getSelection()[0];
                 handler.onSearchItemSelected(new TileGridItemSelected(selectedRecord, tileGrid.getDataSource()));
-            	hide();
+                hide();
             }
         });
 
@@ -116,7 +116,7 @@ public class AssetSearchDialog extends Window {
         cancelButton.addClickHandler(new ClickHandler() {  
             @Override
             public void onClick(ClickEvent event) {  
-            	hide();
+                hide();
             }  
         });
         
@@ -151,7 +151,7 @@ public class AssetSearchDialog extends Window {
         searchButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-            	Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
+                Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
                 tileGrid.fetchData(valuesAsCriteria);
             }
         });
@@ -159,7 +159,7 @@ public class AssetSearchDialog extends Window {
         addAssetButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-            	addNewItem("Add a New Asset",staticAssetDataSource);
+                addNewItem("Add a New Asset",staticAssetDataSource);
             }
         });
   
@@ -175,23 +175,23 @@ public class AssetSearchDialog extends Window {
         addItem(mainLayout); 
         addAssetButton.hide();
         SecurityManager.getInstance().doSecure("PERMISSION_CREATE_ASSET", new  SecureCallbackAdapter() {
-			 public void succeed() {
-				addAssetButton.show();
-			}
-			 @Override
-			public void fail() {
-				 addAssetButton.hide();
-			}
-		});
-		
-	}
-	
-	protected void addNewItem(String newItemTitle,final DynamicEntityDataSource staticAssetDataSource) {
-	
+             public void succeed() {
+                addAssetButton.show();
+            }
+             @Override
+            public void fail() {
+                 addAssetButton.hide();
+            }
+        });
+        
+    }
+    
+    protected void addNewItem(String newItemTitle,final DynamicEntityDataSource staticAssetDataSource) {
+    
         Map<String, String> hints = new HashMap<String, String>();
         hints.put("name", BLCMain.getMessageManager().getString("assetUploadNameHint"));
         hints.put("fullUrl", BLCMain.getMessageManager().getString("assetUploadFullUrlHint"));
-		FILE_UPLOAD.editNewRecord("Upload Artifact", staticAssetDataSource, initialValues, hints, new ItemEditedHandler() {
+        FILE_UPLOAD.editNewRecord("Upload Artifact", staticAssetDataSource, initialValues, hints, new ItemEditedHandler() {
             @Override
             public void onItemEdited(ItemEdited event) {
                 ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
@@ -202,14 +202,14 @@ public class AssetSearchDialog extends Window {
                 staticAssetDataSource.updateCaches(updateResponse, updateRequest);
             }
         }, null, new String[]{"file", "name", "fullUrl", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria", "csrfToken"}, null);
-	}
-	public void search(String title, TileGridItemSelectedHandler handler) {
-		this.setTitle(title);
-		this.handler = handler;
-		centerInPage();
-		saveButton.disable();
-		show();
-	}
+    }
+    public void search(String title, TileGridItemSelectedHandler handler) {
+        this.setTitle(title);
+        this.handler = handler;
+        centerInPage();
+        saveButton.disable();
+        show();
+    }
 
     public TileGridItemSelectedHandler getHandler() {
         return handler;
@@ -227,9 +227,9 @@ public class AssetSearchDialog extends Window {
         this.saveButton = saveButton;
     }
 
-	public void setInitialValues(HashMap<String, Object> initialValues) {
-		this.initialValues=initialValues;
-		
-	}
+    public void setInitialValues(HashMap<String, Object> initialValues) {
+        this.initialValues=initialValues;
+        
+    }
 
 }

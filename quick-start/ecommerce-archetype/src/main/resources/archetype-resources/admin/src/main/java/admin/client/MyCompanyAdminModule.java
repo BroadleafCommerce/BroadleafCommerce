@@ -8,16 +8,16 @@ import org.broadleafcommerce.${artifactId}.client.MerchandisingModule;
 import org.broadleafcommerce.open${artifactId}.client.reflection.ModuleFactory;
 
 public class MyCompanyAdminModule extends MerchandisingModule {
-	
-	public static final MyCompanyAdminMessages ADMINMESSAGES = GWT.create(MyCompanyAdminMessages.class);
-	
-	public void onModuleLoad() {
+    
+    public static final MyCompanyAdminMessages ADMINMESSAGES = GWT.create(MyCompanyAdminMessages.class);
+    
+    public void onModuleLoad() {
         super.onModuleLoad();
 
-		ModuleFactory moduleFactory = ModuleFactory.getInstance();
-		moduleFactory.put("product", "${package}.${artifactId}.client.view.product.MyCompanyProductView");
-		moduleFactory.put("productPresenter", "${package}.${artifactId}.client.presenter.product.MyCompanyProductPresenter");
-	}
+        ModuleFactory moduleFactory = ModuleFactory.getInstance();
+        moduleFactory.put("product", "${package}.${artifactId}.client.view.product.MyCompanyProductView");
+        moduleFactory.put("productPresenter", "${package}.${artifactId}.client.presenter.product.MyCompanyProductPresenter");
+    }
 
     @Override
     public void postDraw() {

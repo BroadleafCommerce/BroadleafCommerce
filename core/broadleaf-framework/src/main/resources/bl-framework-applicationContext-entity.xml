@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
            
     <!-- Entity mappings - override for extensibility -->
-	<bean id="org.broadleafcommerce.core.catalog.domain.Category" class="org.broadleafcommerce.core.catalog.domain.CategoryImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroup" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroupFee" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.Order" class="org.broadleafcommerce.core.order.domain.OrderImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItemImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.DiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.BundleOrderItem" class="org.broadleafcommerce.core.order.domain.BundleOrderItemImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.order.domain.PersonalMessage" class="org.broadleafcommerce.core.order.domain.PersonalMessageImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.payment.domain.PaymentInfo" class="org.broadleafcommerce.core.payment.domain.PaymentInfoImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.payment.domain.PaymentLog" class="org.broadleafcommerce.core.payment.domain.PaymentLogImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.catalog.domain.Product" class="org.broadleafcommerce.core.catalog.domain.ProductImpl" scope="prototype" />
-	<bean id="org.broadleafcommerce.core.catalog.domain.Sku" class="org.broadleafcommerce.core.catalog.domain.SkuImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.marketing.domain.TargetContent" class="org.broadleafcommerce.core.marketing.domain.TargetContentImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.Offer" class="org.broadleafcommerce.core.offer.domain.OfferImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.OfferRule" class="org.broadleafcommerce.core.offer.domain.OfferRuleImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.CustomerOffer" class="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.OfferCode" class="org.broadleafcommerce.core.offer.domain.OfferCodeImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.CandidateOrderOffer" class="org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.CandidateItemOffer" class="org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer" class="org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.OrderAdjustment" class="org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.OrderItemAdjustment" class="org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment" class="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.pricing.domain.ShippingRate" class="org.broadleafcommerce.core.pricing.domain.ShippingRateImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.offer.domain.OfferInfo" class="org.broadleafcommerce.core.offer.domain.OfferInfoImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.media.domain.Media" class="org.broadleafcommerce.core.media.domain.MediaImpl" scope="prototype" />
-	<bean id="org.broadleafcommerce.core.rating.domain.RatingSummary" class="org.broadleafcommerce.core.rating.domain.RatingSummaryImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.rating.domain.RatingDetail" class="org.broadleafcommerce.core.rating.domain.RatingDetailImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.rating.domain.ReviewDetail" class="org.broadleafcommerce.core.rating.domain.ReviewDetailImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.rating.domain.ReviewFeedback" class="org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.util.domain.CodeType" class="org.broadleafcommerce.core.util.domain.CodeTypeImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.core.content.domain.Content" class="org.broadleafcommerce.core.content.domain.ContentImpl" scope="prototype" />
-	<bean id="org.broadleafcommerce.core.content.domain.ContentDetails" class="org.broadleafcommerce.core.content.domain.ContentDetailsImpl" scope="prototype" />
-	<bean id="org.broadleafcommerce.core.offer.domain.OfferItemCriteria" class="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl" scope="prototype" />
-	
+    <bean id="org.broadleafcommerce.core.catalog.domain.Category" class="org.broadleafcommerce.core.catalog.domain.CategoryImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroup" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroupFee" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.Order" class="org.broadleafcommerce.core.order.domain.OrderImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItemImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.DiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.BundleOrderItem" class="org.broadleafcommerce.core.order.domain.BundleOrderItemImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.PersonalMessage" class="org.broadleafcommerce.core.order.domain.PersonalMessageImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.PaymentInfo" class="org.broadleafcommerce.core.payment.domain.PaymentInfoImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.PaymentLog" class="org.broadleafcommerce.core.payment.domain.PaymentLogImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.catalog.domain.Product" class="org.broadleafcommerce.core.catalog.domain.ProductImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.core.catalog.domain.Sku" class="org.broadleafcommerce.core.catalog.domain.SkuImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.marketing.domain.TargetContent" class="org.broadleafcommerce.core.marketing.domain.TargetContentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.Offer" class="org.broadleafcommerce.core.offer.domain.OfferImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.OfferRule" class="org.broadleafcommerce.core.offer.domain.OfferRuleImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.CustomerOffer" class="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.OfferCode" class="org.broadleafcommerce.core.offer.domain.OfferCodeImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.CandidateOrderOffer" class="org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.CandidateItemOffer" class="org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer" class="org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.OrderAdjustment" class="org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.OrderItemAdjustment" class="org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment" class="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.pricing.domain.ShippingRate" class="org.broadleafcommerce.core.pricing.domain.ShippingRateImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.OfferInfo" class="org.broadleafcommerce.core.offer.domain.OfferInfoImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.media.domain.Media" class="org.broadleafcommerce.core.media.domain.MediaImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.core.rating.domain.RatingSummary" class="org.broadleafcommerce.core.rating.domain.RatingSummaryImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rating.domain.RatingDetail" class="org.broadleafcommerce.core.rating.domain.RatingDetailImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rating.domain.ReviewDetail" class="org.broadleafcommerce.core.rating.domain.ReviewDetailImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.rating.domain.ReviewFeedback" class="org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.util.domain.CodeType" class="org.broadleafcommerce.core.util.domain.CodeTypeImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.content.domain.Content" class="org.broadleafcommerce.core.content.domain.ContentImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.core.content.domain.ContentDetails" class="org.broadleafcommerce.core.content.domain.ContentDetailsImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.core.offer.domain.OfferItemCriteria" class="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl" scope="prototype" />
+    
 </beans>

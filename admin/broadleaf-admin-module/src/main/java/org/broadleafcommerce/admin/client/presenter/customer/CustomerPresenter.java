@@ -60,65 +60,65 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
     protected SubPresentable customerAddressPresenter;
     protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 
-	@Override
-	protected void changeSelection(final Record selectedRecord) {
-		getDisplay().getUpdateLoginButton().enable();
+    @Override
+    protected void changeSelection(final Record selectedRecord) {
+        getDisplay().getUpdateLoginButton().enable();
         customerAddressPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("customerDS"));
-	}
-	
-	@Override
-	protected void addClicked() {
-		initialValues.put("username", BLCMain.getMessageManager().getString("usernameDefault"));
+    }
+    
+    @Override
+    protected void addClicked() {
+        initialValues.put("username", BLCMain.getMessageManager().getString("usernameDefault"));
         super.addClicked(BLCMain.getMessageManager().getString("newCustomerTitle"));
-	}
+    }
 
-	@Override
-	public void bind() {
-		super.bind();
+    @Override
+    public void bind() {
+        super.bind();
         customerAddressPresenter.bind();
-		getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					SC.confirm(BLCMain.getMessageManager().getString("confirmResetPassword"), new BooleanCallback() {
-						public void execute(Boolean value) {
-							if (value) {
-								BLCMain.NON_MODAL_PROGRESS.startProgress();
-								
-								PersistencePerspective tempPerspective = new PersistencePerspective();
-			            		OperationTypes opTypes = new OperationTypes();
-			            		tempPerspective.setOperationTypes(opTypes);
-			            		
-								final Entity entity = new Entity();
-			            		Property prop = new Property();
-			            		prop.setName("username");
-			            		prop.setValue(display.getListDisplay().getGrid().getSelectedRecord().getAttribute("username"));
-			            		entity.setProperties(new Property[]{prop});
-			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
-			            		
-			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage("org.broadleafcommerce.profile.core.domain.Customer", entity, tempPerspective, new String[]{"passwordUpdate"}, BLCMain.csrfToken), new AbstractCallback<Entity>() {
-									public void onSuccess(Entity arg0) {
-										BLCMain.NON_MODAL_PROGRESS.stopProgress();
-										SC.say(BLCMain.getMessageManager().getString("resetPasswordSuccessful"));
-									}	
-			            		}); 
-							}
-						}
-					});
-				}
-			}
-		});
-	}
+        getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    SC.confirm(BLCMain.getMessageManager().getString("confirmResetPassword"), new BooleanCallback() {
+                        public void execute(Boolean value) {
+                            if (value) {
+                                BLCMain.NON_MODAL_PROGRESS.startProgress();
+                                
+                                PersistencePerspective tempPerspective = new PersistencePerspective();
+                                OperationTypes opTypes = new OperationTypes();
+                                tempPerspective.setOperationTypes(opTypes);
+                                
+                                final Entity entity = new Entity();
+                                Property prop = new Property();
+                                prop.setName("username");
+                                prop.setValue(display.getListDisplay().getGrid().getSelectedRecord().getAttribute("username"));
+                                entity.setProperties(new Property[]{prop});
+                                entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
+                                
+                                AppServices.DYNAMIC_ENTITY.update(new PersistencePackage("org.broadleafcommerce.profile.core.domain.Customer", entity, tempPerspective, new String[]{"passwordUpdate"}, BLCMain.csrfToken), new AbstractCallback<Entity>() {
+                                    public void onSuccess(Entity arg0) {
+                                        BLCMain.NON_MODAL_PROGRESS.stopProgress();
+                                        SC.say(BLCMain.getMessageManager().getString("resetPasswordSuccessful"));
+                                    }   
+                                }); 
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
 
-	public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
-				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"username", "firstName", "lastName", "emailAddress"}, new Boolean[]{true, true, true, true});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				((ListGridDataSource) result).resetPermanentFieldVisibility("question");
+    public void setup() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource top) {
+                setupDisplayItems(top);
+                ((ListGridDataSource) top).setupGridFields(new String[]{"username", "firstName", "lastName", "emailAddress"}, new Boolean[]{true, true, true, true});
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                ((ListGridDataSource) result).resetPermanentFieldVisibility("question");
                 final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 getPresenterSequenceSetupManager().getDataSource("customerDS").
                 getFormItemCallbackHandlerManager().addSearchFormItemCallback(
@@ -127,11 +127,11 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
                     BLCMain.getMessageManager().getString("challengeQuestionSearchPrompt"),
                     display.getDynamicFormDisplay()
                 );
-			}
-		}));
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				((ListGridDataSource) result).resetPermanentFieldVisibility("friendlyName");
+            public void onSetupSuccess(DataSource result) {
+                ((ListGridDataSource) result).resetPermanentFieldVisibility("friendlyName");
                 final EntitySearchDialog localeSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 getPresenterSequenceSetupManager().getDataSource("customerDS").
                 getFormItemCallbackHandlerManager().addSearchFormItemCallback(
@@ -140,8 +140,8 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
                     BLCMain.getMessageManager().getString("localeSearchPrompt"),
                     display.getDynamicFormDisplay()
                 );
-			}
-		}));
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource result) {
                 ((ListGridDataSource) result).resetPermanentFieldVisibility(
@@ -183,11 +183,11 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
                 );
             }
         }));
-	}
+    }
 
-	@Override
-	public CustomerDisplay getDisplay() {
-		return (CustomerDisplay) display;
-	}
-	
+    @Override
+    public CustomerDisplay getDisplay() {
+        return (CustomerDisplay) display;
+    }
+    
 }

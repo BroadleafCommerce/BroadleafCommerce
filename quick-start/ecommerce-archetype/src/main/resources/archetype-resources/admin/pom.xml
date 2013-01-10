@@ -13,22 +13,22 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
-		<plugins>
-			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-source-plugin</artifactId>
-		        <version>2.1.2</version>
-		        <executions>
-		          <execution>
-		            <id>attach-sources</id>
-		            <phase>verify</phase>
-		            <goals>
-		              <goal>jar-no-fork</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-		    </plugin>		
-		</plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                  <execution>
+                    <id>attach-sources</id>
+                    <phase>verify</phase>
+                    <goals>
+                      <goal>jar-no-fork</goal>
+                    </goals>
+                  </execution>
+                </executions>
+            </plugin>       
+        </plugins>
         <resources>
           <resource>
               <directory>src/main/resources</directory>
@@ -38,25 +38,25 @@
               <directory>src/main/java</directory>
           </resource>
         </resources>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-admin-module</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.gwt</groupId>
-					<artifactId>gwt-user</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    </build>
+    <dependencies>
         <dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-contentmanagement-module</artifactId>
-		</dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-admin-module</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.gwt</groupId>
+                    <artifactId>gwt-user</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-contentmanagement-module</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
         </dependency>
-	</dependencies>
+    </dependencies>
 </project>

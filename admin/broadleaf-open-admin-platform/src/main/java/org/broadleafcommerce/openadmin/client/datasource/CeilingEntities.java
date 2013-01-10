@@ -23,10 +23,10 @@ package org.broadleafcommerce.openadmin.client.datasource;
  *
  */
 public class CeilingEntities {
-	
-	public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUser";
-	public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRole";
-	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermission";
-	public static final String STATICASSETS = "org.broadleafcommerce.cms.file.domain.StaticAsset";
-	
+    
+    public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUser";
+    public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRole";
+    public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermission";
+    public static final String STATICASSETS = "org.broadleafcommerce.cms.file.domain.StaticAsset";
+    
 }

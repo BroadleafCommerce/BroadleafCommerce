@@ -24,8 +24,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  *
  */
 public enum MergedPropertyType implements IsSerializable {
-	PRIMARY,
-	JOINSTRUCTURE,
-	MAPSTRUCTUREKEY,
-	MAPSTRUCTUREVALUE
+    PRIMARY,
+    JOINSTRUCTURE,
+    MAPSTRUCTUREKEY,
+    MAPSTRUCTUREVALUE
 }

@@ -93,20 +93,20 @@ import java.util.Set;
  */
 public class BasicClientEntityModule implements DataSourceModule {
 
-	protected final DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy.MM.dd HH:mm:ss Z");
-	
-	protected ForeignKey currentForeignKey;
-	protected AbstractDynamicDataSource dataSource;
-	protected String linkedValue;
-	protected DynamicEntityServiceAsync service;
-	protected final String ceilingEntityFullyQualifiedClassname;
+    protected final DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy.MM.dd HH:mm:ss Z");
+    
+    protected ForeignKey currentForeignKey;
+    protected AbstractDynamicDataSource dataSource;
+    protected String linkedValue;
+    protected DynamicEntityServiceAsync service;
+    protected final String ceilingEntityFullyQualifiedClassname;
     protected final String fetchTypeFullyQualifiedClassname;
-	protected PersistencePerspective persistencePerspective;
-	protected Long loadLevelCount = 0L;
-	
-	public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
-		this(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, service);
-	}
+    protected PersistencePerspective persistencePerspective;
+    protected Long loadLevelCount = 0L;
+    
+    public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+        this(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, service);
+    }
 
     public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
         this.service = service;
@@ -114,8 +114,8 @@ public class BasicClientEntityModule implements DataSourceModule {
         this.fetchTypeFullyQualifiedClassname = fetchTypeFullyQualifiedClassname;
         this.persistencePerspective = persistencePerspective;
     }
-	
-	/**
+    
+    /**
      * Transforms the given <tt>request</tt> into
      * {@link CriteriaTransferObject} instance.
      * <p>
@@ -129,36 +129,36 @@ public class BasicClientEntityModule implements DataSourceModule {
         
         // paging
         if (request.getStartRow() != null) {
-        	cto.setFirstResult(request.getStartRow());
-        	if (request.getEndRow() != null) {
-        		cto.setMaxResults(request.getEndRow() - request.getStartRow());
-        	}
+            cto.setFirstResult(request.getStartRow());
+            if (request.getEndRow() != null) {
+                cto.setMaxResults(request.getEndRow() - request.getStartRow());
+            }
         }
         
         try {
-			// sort
-			SortSpecifier[] sortBy = request.getSortBy();
-			if (sortBy != null && sortBy.length > 0) {
-				String sortPropertyId = sortBy[0].getField();
-			    boolean sortAscending = sortBy[0].getSortDirection().equals(SortDirection.ASCENDING);            
-			    FilterAndSortCriteria sortCriteria = cto.get(sortPropertyId);
-			    sortCriteria.setSortAscending(sortAscending);
-			}
-		} catch (Exception e) {
-			//do nothing
-			GWT.log("WARN: Unable to set sort criteria because of an exception.", e);
-		}
+            // sort
+            SortSpecifier[] sortBy = request.getSortBy();
+            if (sortBy != null && sortBy.length > 0) {
+                String sortPropertyId = sortBy[0].getField();
+                boolean sortAscending = sortBy[0].getSortDirection().equals(SortDirection.ASCENDING);            
+                FilterAndSortCriteria sortCriteria = cto.get(sortPropertyId);
+                sortCriteria.setSortAscending(sortAscending);
+            }
+        } catch (Exception e) {
+            //do nothing
+            GWT.log("WARN: Unable to set sort criteria because of an exception.", e);
+        }
         
         Criteria criteria = request.getCriteria();
         String jsObj = JSON.encode(criteria.getJsObj());
         // filter
         @SuppressWarnings("rawtypes")
-		Map filterData = criteria.getValues();
+        Map filterData = criteria.getValues();
         Set<String> filterFieldNames = filterData.keySet();
         for (String fieldName : filterFieldNames) {
-        	if (!fieldName.equals("_constructor") && !fieldName.equals("operator")) {
-        		if (!fieldName.equals("criteria")) {
-        			FilterAndSortCriteria filterCriteria = cto.get(fieldName);
+            if (!fieldName.equals("_constructor") && !fieldName.equals("operator")) {
+                if (!fieldName.equals("criteria")) {
+                    FilterAndSortCriteria filterCriteria = cto.get(fieldName);
                     Object filterValue = filterData.get(fieldName);
                     String filterString = null;
                     if (filterValue != null) {
@@ -188,17 +188,17 @@ public class BasicClientEntityModule implements DataSourceModule {
                     } else {
                         filterCriteria.setFilterValue(dataSource.stripDuplicateAllowSpecialCharacters(filterString));
                     }
-        		} else {
-        			JSONValue value = JSONParser.parse(jsObj);
-        			JSONObject criteriaObj = value.isObject();
-        			JSONArray criteriaArray = criteriaObj.get("criteria").isArray();
-        			buildCriteria(criteriaArray, cto);
-        		}
-        	}
+                } else {
+                    JSONValue value = JSONParser.parse(jsObj);
+                    JSONObject criteriaObj = value.isObject();
+                    JSONArray criteriaArray = criteriaObj.get("criteria").isArray();
+                    buildCriteria(criteriaArray, cto);
+                }
+            }
         }
         if (getCurrentForeignKey() != null) {
-        	FilterAndSortCriteria filterCriteria = cto.get(getCurrentForeignKey().getManyToField());
-			filterCriteria.setFilterValue(getCurrentForeignKey().getCurrentValue());
+            FilterAndSortCriteria filterCriteria = cto.get(getCurrentForeignKey().getManyToField());
+            filterCriteria.setFilterValue(getCurrentForeignKey().getCurrentValue());
         }
         
         return cto;
@@ -217,33 +217,33 @@ public class BasicClientEntityModule implements DataSourceModule {
     }
 
     public ForeignKey getCurrentForeignKey() {
-		return currentForeignKey;
-	}
+        return currentForeignKey;
+    }
 
-	public void setCurrentForeignKey(ForeignKey currentForeignKey) {
-		this.currentForeignKey = currentForeignKey;
-	}
-	
-	@Override
+    public void setCurrentForeignKey(ForeignKey currentForeignKey) {
+        this.currentForeignKey = currentForeignKey;
+    }
+    
+    @Override
     public String getLinkedValue() {
-		return linkedValue;
-	}
+        return linkedValue;
+    }
 
-	@Override
+    @Override
     public void setLinkedValue(String linkedValue) {
-		this.linkedValue = linkedValue;
-	}
+        this.linkedValue = linkedValue;
+    }
     
     protected void buildCriteria(JSONArray criteriaArray, CriteriaTransferObject cto) {
-    	if (criteriaArray != null) {
-			for (int i=0; i<=criteriaArray.size()-1; i++) {
-				JSONObject itemObj = criteriaArray.get(i).isObject();
-				if (itemObj != null) {
-					JSONValue val = itemObj.get("fieldName");
-					if (val == null) {
-						JSONArray array = itemObj.get("criteria").isArray();
-						buildCriteria(array, cto);
-					} else {
+        if (criteriaArray != null) {
+            for (int i=0; i<=criteriaArray.size()-1; i++) {
+                JSONObject itemObj = criteriaArray.get(i).isObject();
+                if (itemObj != null) {
+                    JSONValue val = itemObj.get("fieldName");
+                    if (val == null) {
+                        JSONArray array = itemObj.get("criteria").isArray();
+                        buildCriteria(array, cto);
+                    } else {
                         FilterAndSortCriteria filterCriteria = cto.get(val.isString().stringValue());
                         String[] items = filterCriteria.getFilterValues();
                         String[] newItems = new String[items.length + 1];
@@ -303,10 +303,10 @@ public class BasicClientEntityModule implements DataSourceModule {
                         } else {
                             filterCriteria.setFilterValues(newItems);
                         }
-					}
-				}
-			}
-		}
+                    }
+                }
+            }
+        }
     }
     
     protected String updateMinutesFromDateFilter(String originalDateString, int position) {
@@ -331,12 +331,12 @@ public class BasicClientEntityModule implements DataSourceModule {
     
     @Override
     public boolean isCompatible(OperationType operationType) {
-    	return OperationType.ENTITY.equals(operationType) || OperationType.FOREIGNKEY.equals(operationType);
+        return OperationType.ENTITY.equals(operationType) || OperationType.FOREIGNKEY.equals(operationType);
     }
     
     @Override
     public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-    	BLCMain.NON_MODAL_PROGRESS.startProgress();
+        BLCMain.NON_MODAL_PROGRESS.startProgress();
         if (request.getCriteria() != null && request.getCriteria().getAttribute("blc.fetch.from.cache") != null) {
             Criteria currentCriteria = request.getCriteria();
             String cacheFetchId = currentCriteria.getAttribute("blc.fetch.from.cache");
@@ -392,18 +392,18 @@ public class BasicClientEntityModule implements DataSourceModule {
                 }
             });
         }
-	}
+    }
     
     @Override
     public void executeAdd(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-    	BLCMain.NON_MODAL_PROGRESS.startProgress();
-		JavaScriptObject data = request.getData();
+        BLCMain.NON_MODAL_PROGRESS.startProgress();
+        JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
         service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
-			@Override
+            @Override
             public void onSuccess(Entity result) {
-				super.onSuccess(result);
+                super.onSuccess(result);
                 if (processResult(result, requestId, response, dataSource)) {
                     TreeNode record = (TreeNode) buildRecord(result, false);
                     TreeNode[] recordList = new TreeNode[]{record};
@@ -413,51 +413,51 @@ public class BasicClientEntityModule implements DataSourceModule {
                     }
                     dataSource.processResponse(requestId, response);
                 }
-			}
-			
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            }
+            
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-		});
-	}
+            @Override
+            protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                super.onError(opType, requestId, request, response, caught);
+                if (cb != null) {
+                    cb.onFailure(caught);
+                }
+            }
+        });
+    }
     
     @Override
     public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-    	BLCMain.NON_MODAL_PROGRESS.startProgress();
-		JavaScriptObject data = request.getData();
+        BLCMain.NON_MODAL_PROGRESS.startProgress();
+        JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-		String componentId = request.getComponentId();
+        String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
-            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-            	entity.setType(type);
+                String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
+                entity.setType(type);
             }
         }
         service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
-			@Override
+            @Override
             public void onSuccess(Entity result) {
-				super.onSuccess(null);
+                super.onSuccess(null);
                 if (processResult(result, requestId, response, dataSource)) {
                     TreeNode record = (TreeNode) buildRecord(result, false);
                     TreeNode[] recordList = new TreeNode[]{record};
@@ -468,99 +468,99 @@ public class BasicClientEntityModule implements DataSourceModule {
                     }
                     dataSource.processResponse(requestId, response);
                 }
-			}
-			
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            }
+            
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-		});
-	}
+            @Override
+            protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                super.onError(opType, requestId, request, response, caught);
+                if (cb != null) {
+                    cb.onFailure(caught);
+                }
+            }
+        });
+    }
     
     @Override
     public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-    	BLCMain.NON_MODAL_PROGRESS.startProgress();
-		JavaScriptObject data = request.getData();
+        BLCMain.NON_MODAL_PROGRESS.startProgress();
+        JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-		String componentId = request.getComponentId();
+        String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
-            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-            	entity.setType(type);
+                String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
+                entity.setType(type);
             }
         }
         service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
-			@Override
+            @Override
             public void onSuccess(Void item) {
-				super.onSuccess(null);
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
-			}
+                super.onSuccess(null);
+                if (cb != null) {
+                    cb.onSuccess(dataSource);
+                }
+                dataSource.processResponse(requestId, response);
+            }
 
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-			
-		});
+            @Override
+            protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                super.onError(opType, requestId, request, response, caught);
+                if (cb != null) {
+                    cb.onFailure(caught);
+                }
+            }
+            
+        });
     }
     
     @Override
     public Record buildRecord(Entity entity, Boolean updateId) {
-		TreeNode record = new TreeNode();
-		return updateRecord(entity, record, updateId);
-	}
+        TreeNode record = new TreeNode();
+        return updateRecord(entity, record, updateId);
+    }
 
-	@Override
+    @Override
     public Record updateRecord(Entity entity, Record record, Boolean updateId) {
-		String id = entity.findProperty(dataSource.getPrimaryKeyFieldName()).getValue();
-		if (updateId) {
-			id = id + "_^_" + loadLevelCount;
-			loadLevelCount++;
-		}
-		for (Property property : entity.getProperties()){
-			String attributeName = property.getName();
+        String id = entity.findProperty(dataSource.getPrimaryKeyFieldName()).getValue();
+        if (updateId) {
+            id = id + "_^_" + loadLevelCount;
+            loadLevelCount++;
+        }
+        for (Property property : entity.getProperties()){
+            String attributeName = property.getName();
             if (dataSource.getField(attributeName) != null) {
                 if (
                     property.getValue() != null &&
@@ -610,187 +610,187 @@ public class BasicClientEntityModule implements DataSourceModule {
                     }
                 }
             }
-			if (property.getDisplayValue() != null) {
-				record.setAttribute("__display_"+attributeName, property.getDisplayValue());
-			}
+            if (property.getDisplayValue() != null) {
+                record.setAttribute("__display_"+attributeName, property.getDisplayValue());
+            }
             if (property.getIsDirty()) {
                 record.setAttribute("_hilite", "listGridDirtyPropertyHilite");
             }
-		}
-		String[] entityType = entity.getType();
-		record.setAttribute("_type", entityType);
-		return record;
-	}
+        }
+        String[] entityType = entity.getType();
+        record.setAttribute("_type", entityType);
+        return record;
+    }
     
     @Override
     public TreeNode[] buildRecords(DynamicResultSet result, String[] filterOutIds) {
-		List<TreeNode> recordList = new ArrayList<TreeNode>();
-		int decrement = 0;
-		for (Entity entity : result.getRecords()){
-			if (filterOutIds == null || (filterOutIds != null && Arrays.binarySearch(filterOutIds, entity.findProperty(dataSource.getPrimaryKeyFieldName()).getValue()) < 0)) {
-				TreeNode record = (TreeNode) buildRecord(entity, false);
-				recordList.add(record);
-			} else {
-				decrement++;
-			}
-		}
-		result.setTotalRecords(result.getTotalRecords() - decrement);
-		TreeNode[] response = new TreeNode[recordList.size()];
-		response = recordList.toArray(response);
-		return response;
-	}
+        List<TreeNode> recordList = new ArrayList<TreeNode>();
+        int decrement = 0;
+        for (Entity entity : result.getRecords()){
+            if (filterOutIds == null || (filterOutIds != null && Arrays.binarySearch(filterOutIds, entity.findProperty(dataSource.getPrimaryKeyFieldName()).getValue()) < 0)) {
+                TreeNode record = (TreeNode) buildRecord(entity, false);
+                recordList.add(record);
+            } else {
+                decrement++;
+            }
+        }
+        result.setTotalRecords(result.getTotalRecords() - decrement);
+        TreeNode[] response = new TreeNode[recordList.size()];
+        response = recordList.toArray(response);
+        return response;
+    }
     
     @Override
     public Entity buildEntity(Record record, DSRequest request) {
-		Entity entity = new Entity();
-		//Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
-		List<Property> properties = new ArrayList<Property>();
-		String[] attributes = record.getAttributes();
-		for (String attribute : attributes) {
-			if (!attribute.equals("_type") && !attribute.startsWith("__") && dataSource.getField(attribute) != null) {
-				Property property = new Property();
-				if (record.getAttribute(attribute) != null && dataSource.getField(attribute) != null && dataSource.getField(attribute).getType().equals(FieldType.DATETIME)) {
-					property.setValue(formatter.format(record.getAttributeAsDate(attribute)));
-				} else if (linkedValue != null && dataSource.getField(attribute).getAttribute("fieldType") != null && SupportedFieldType.valueOf(dataSource.getField(attribute).getAttribute("fieldType")).equals(SupportedFieldType.FOREIGN_KEY)) {
-					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(linkedValue));
-				} else {
-					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute(attribute)));
-				}
-				property.setName(dataSource.getField(attribute).getAttribute("rawName"));
-				//if (dirtyValues != null && dirtyValues.containsKey(property.getName())) {
-					//property.setIsDirty(true);
-				//}
-				properties.add(property);
-			} else if (attribute.equals("_type")) {
+        Entity entity = new Entity();
+        //Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
+        List<Property> properties = new ArrayList<Property>();
+        String[] attributes = record.getAttributes();
+        for (String attribute : attributes) {
+            if (!attribute.equals("_type") && !attribute.startsWith("__") && dataSource.getField(attribute) != null) {
+                Property property = new Property();
+                if (record.getAttribute(attribute) != null && dataSource.getField(attribute) != null && dataSource.getField(attribute).getType().equals(FieldType.DATETIME)) {
+                    property.setValue(formatter.format(record.getAttributeAsDate(attribute)));
+                } else if (linkedValue != null && dataSource.getField(attribute).getAttribute("fieldType") != null && SupportedFieldType.valueOf(dataSource.getField(attribute).getAttribute("fieldType")).equals(SupportedFieldType.FOREIGN_KEY)) {
+                    property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(linkedValue));
+                } else {
+                    property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute(attribute)));
+                }
+                property.setName(dataSource.getField(attribute).getAttribute("rawName"));
+                //if (dirtyValues != null && dirtyValues.containsKey(property.getName())) {
+                    //property.setIsDirty(true);
+                //}
+                properties.add(property);
+            } else if (attribute.equals("_type")) {
                 entity.setType(record.getAttributeAsStringArray("_type"));
             }
-		}
-		
-		Property fullyQualifiedName = new Property();
-		fullyQualifiedName.setName("ceilingEntityFullyQualifiedClassname");
-		fullyQualifiedName.setValue(ceilingEntityFullyQualifiedClassname);
-		properties.add(fullyQualifiedName);
-		
-		Property[] props = new Property[properties.size()];
-		props = properties.toArray(props);
-		entity.setProperties(props);
-		
-		return entity;
-	}
+        }
+        
+        Property fullyQualifiedName = new Property();
+        fullyQualifiedName.setName("ceilingEntityFullyQualifiedClassname");
+        fullyQualifiedName.setValue(ceilingEntityFullyQualifiedClassname);
+        properties.add(fullyQualifiedName);
+        
+        Property[] props = new Property[properties.size()];
+        props = properties.toArray(props);
+        entity.setProperties(props);
+        
+        return entity;
+    }
     
     @Override
     public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
-			
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
+        AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
+            
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
                 if (cb != null) {
-				    cb.onFailure(exception);
+                    cb.onFailure(exception);
                 }
-			}
+            }
 
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
                 if (cb != null) {
-				    cb.onFailure(exception);
+                    cb.onFailure(exception);
                 }
-			}
+            }
 
-			@Override
+            @Override
             public void onSuccess(DynamicResultSet result) {
-				super.onSuccess(result);
-				ClassMetadata metadata = result.getClassMetaData();
-				filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE}, overrideFieldSort);
-				
-				//Add a hidden field to store the polymorphic type for this entity
-				DataSourceField typeField = new DataSourceTextField("_type");
-				typeField.setCanEdit(false);
-				typeField.setHidden(true);
-				typeField.setAttribute("permanentlyHidden", true);
-				dataSource.addField(typeField);
+                super.onSuccess(result);
+                ClassMetadata metadata = result.getClassMetaData();
+                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE}, overrideFieldSort);
+                
+                //Add a hidden field to store the polymorphic type for this entity
+                DataSourceField typeField = new DataSourceTextField("_type");
+                typeField.setCanEdit(false);
+                typeField.setHidden(true);
+                typeField.setAttribute("permanentlyHidden", true);
+                dataSource.addField(typeField);
                 dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
-				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
+                dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
 
                 if (cb != null) {
-				    cb.onSuccess(dataSource);
+                    cb.onSuccess(dataSource);
                 }
-			}
-			
-		});
-	}
+            }
+            
+        });
+    }
     
     protected OperatorId[] getBasicIdOperators() {
-    	return new OperatorId[]{OperatorId.CONTAINS, OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN};
+        return new OperatorId[]{OperatorId.CONTAINS, OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN};
     }
     
     protected OperatorId[] getBasicBooleanOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
+        return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
     }
     
     protected OperatorId[] getBasicDateOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD};
+        return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD};
     }
     
     protected OperatorId[] getBasicNumericOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET};
+        return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET};
     }
     
     protected OperatorId[] getBasicTextOperators() {
-    	return new OperatorId[]{OperatorId.CONTAINS, OperatorId.NOT_CONTAINS, OperatorId.STARTS_WITH, OperatorId.ENDS_WITH, OperatorId.NOT_STARTS_WITH, OperatorId.NOT_ENDS_WITH, OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET};
+        return new OperatorId[]{OperatorId.CONTAINS, OperatorId.NOT_CONTAINS, OperatorId.STARTS_WITH, OperatorId.ENDS_WITH, OperatorId.NOT_STARTS_WITH, OperatorId.NOT_ENDS_WITH, OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET};
     }
     
     protected OperatorId[] getBasicEnumerationOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
+        return new OperatorId[]{OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD};
     }
-	
-	protected void filterProperties(ClassMetadata metadata, MergedPropertyType[] includeTypes, Boolean overrideFieldSort) throws IllegalStateException {
-		if (BLCMain.isLogDebugEnabled("classmetadata")) {
-			Map<String, List<String>> props = new HashMap<String, List<String>>();
-			for (Property property : metadata.getProperties()) {
-				String type = property.getMetadata().getInheritedFromType();
-				List<String> myProps = props.get(type);
-				if (myProps == null) {
-					props.put(type, new ArrayList<String>());
-					myProps = props.get(type);
-				}
-				myProps.add(property.getName());
-			}
-			for (String key: props.keySet()) {
-				List<String> myProps = props.get(key);
-				for (String prop : myProps) {
-					BLCMain.logDebug(key + " : " + prop, "classmetadata");
-				}
-			}
-		}
-		//sort properties based on their display name
-		Property[] properties = metadata.getProperties();
-		if (overrideFieldSort) {
-			Arrays.sort(properties, new Comparator<Property>() {
-				@Override
+    
+    protected void filterProperties(ClassMetadata metadata, MergedPropertyType[] includeTypes, Boolean overrideFieldSort) throws IllegalStateException {
+        if (BLCMain.isLogDebugEnabled("classmetadata")) {
+            Map<String, List<String>> props = new HashMap<String, List<String>>();
+            for (Property property : metadata.getProperties()) {
+                String type = property.getMetadata().getInheritedFromType();
+                List<String> myProps = props.get(type);
+                if (myProps == null) {
+                    props.put(type, new ArrayList<String>());
+                    myProps = props.get(type);
+                }
+                myProps.add(property.getName());
+            }
+            for (String key: props.keySet()) {
+                List<String> myProps = props.get(key);
+                for (String prop : myProps) {
+                    BLCMain.logDebug(key + " : " + prop, "classmetadata");
+                }
+            }
+        }
+        //sort properties based on their display name
+        Property[] properties = metadata.getProperties();
+        if (overrideFieldSort) {
+            Arrays.sort(properties, new Comparator<Property>() {
+                @Override
                 public int compare(Property o1, Property o2) {
-					if (o1.getMetadata().getPresentationAttributes().getFriendlyName() == null && o2.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
-						return 0;
-					} else if (o1.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
-						return -1;
-					} else if (o2.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
-						return 1;
-					} else {
-						return o1.getMetadata().getPresentationAttributes().getFriendlyName().compareTo(o2.getMetadata().getPresentationAttributes().getFriendlyName());
-					}
-				}
-			});
-		}
-		for (Property property : metadata.getProperties()) {
-			String mergedPropertyType = property.getMetadata().getMergedPropertyType().toString();
-			if (Arrays.binarySearch(includeTypes, MergedPropertyType.valueOf(mergedPropertyType)) >= 0) {
+                    if (o1.getMetadata().getPresentationAttributes().getFriendlyName() == null && o2.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
+                        return 0;
+                    } else if (o1.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
+                        return -1;
+                    } else if (o2.getMetadata().getPresentationAttributes().getFriendlyName() == null) {
+                        return 1;
+                    } else {
+                        return o1.getMetadata().getPresentationAttributes().getFriendlyName().compareTo(o2.getMetadata().getPresentationAttributes().getFriendlyName());
+                    }
+                }
+            });
+        }
+        for (Property property : metadata.getProperties()) {
+            String mergedPropertyType = property.getMetadata().getMergedPropertyType().toString();
+            if (Arrays.binarySearch(includeTypes, MergedPropertyType.valueOf(mergedPropertyType)) >= 0) {
                 Boolean isDirty = property.getIsDirty();
-				String rawName = property.getName();
-				String propertyName = rawName;
-				String fieldType = property.getMetadata().getFieldType()==null?null:property.getMetadata().getFieldType().toString();
-				String secondaryFieldType = property.getMetadata().getSecondaryType()==null?null:property.getMetadata().getSecondaryType().toString();
-				Long length = property.getMetadata().getLength()==null?null:property.getMetadata().getLength().longValue();
+                String rawName = property.getName();
+                String propertyName = rawName;
+                String fieldType = property.getMetadata().getFieldType()==null?null:property.getMetadata().getFieldType().toString();
+                String secondaryFieldType = property.getMetadata().getSecondaryType()==null?null:property.getMetadata().getSecondaryType().toString();
+                Long length = property.getMetadata().getLength()==null?null:property.getMetadata().getLength().longValue();
                 Boolean required;
                 if (property.getMetadata().getPresentationAttributes().getRequiredOverride() != null) {
                     required = property.getMetadata().getPresentationAttributes().getRequiredOverride();
@@ -800,16 +800,16 @@ public class BasicClientEntityModule implements DataSourceModule {
                         required = false;
                     }
                 }
-				Boolean mutable = property.getMetadata().getMutable();
-				String inheritedFromType = property.getMetadata().getInheritedFromType();
-				String[] availableToTypes = property.getMetadata().getAvailableToTypes();
-				String foreignKeyClass = property.getMetadata().getForeignKeyClass();
-				String foreignKeyProperty = property.getMetadata().getForeignKeyProperty();
-				String friendlyName = property.getMetadata().getPresentationAttributes().getFriendlyName();
-				if (friendlyName == null || friendlyName.equals("")) {
-					friendlyName = property.getName();
-				} else {
-					//check if the friendly name is an i18N key
+                Boolean mutable = property.getMetadata().getMutable();
+                String inheritedFromType = property.getMetadata().getInheritedFromType();
+                String[] availableToTypes = property.getMetadata().getAvailableToTypes();
+                String foreignKeyClass = property.getMetadata().getForeignKeyClass();
+                String foreignKeyProperty = property.getMetadata().getForeignKeyProperty();
+                String friendlyName = property.getMetadata().getPresentationAttributes().getFriendlyName();
+                if (friendlyName == null || friendlyName.equals("")) {
+                    friendlyName = property.getName();
+                } else {
+                    //check if the friendly name is an i18N key
                     try {
                         String val = BLCMain.getMessageManager().getString(friendlyName);
                         if (val != null) {
@@ -818,13 +818,13 @@ public class BasicClientEntityModule implements DataSourceModule {
                     } catch (MissingResourceException e) {
                         //do nothing
                     }
-				}
-				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
+                }
+                String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
                 VisibilityEnum visibility = property.getMetadata().getPresentationAttributes().getVisibility();
                 if (visibility == null) {
                     visibility = VisibilityEnum.HIDDEN_ALL;
                 }
-				Boolean hidden = visibility == VisibilityEnum.HIDDEN_ALL || visibility == VisibilityEnum.GRID_HIDDEN;
+                Boolean hidden = visibility == VisibilityEnum.HIDDEN_ALL || visibility == VisibilityEnum.GRID_HIDDEN;
                 FormHiddenEnum formHidden;
                 switch (visibility) {
                     case FORM_HIDDEN:
@@ -837,216 +837,216 @@ public class BasicClientEntityModule implements DataSourceModule {
                         formHidden = FormHiddenEnum.VISIBLE;
                         break;
                 }
-				String group = property.getMetadata().getPresentationAttributes().getGroup();
-				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
+                String group = property.getMetadata().getPresentationAttributes().getGroup();
+                Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
                 Boolean groupCollapsed = property.getMetadata().getPresentationAttributes().getGroupCollapsed();
-				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
-				Boolean prominent = property.getMetadata().getPresentationAttributes().isProminent();
-				Integer order = property.getMetadata().getPresentationAttributes().getOrder();
-				String columnWidth = property.getMetadata().getPresentationAttributes().getColumnWidth();
-				String[][] enumerationValues = property.getMetadata().getEnumerationValues();
-				String enumerationClass = property.getMetadata().getEnumerationClass();
-				if (mutable) {
-					Boolean isReadOnly = property.getMetadata().getPresentationAttributes().getReadOnly();
-					if (isReadOnly != null) {
-						mutable = !isReadOnly;
-					}
-				}
-				DataSourceField field;
-				switch(SupportedFieldType.valueOf(fieldType)){
-				case ID:
-					field = new DataSourceTextField(propertyName, friendlyName);
-					if (propertyName.indexOf(".") < 0) {
-						field.setPrimaryKey(true);
-					}
-					field.setCanEdit(false);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicIdOperators());
-					break;
-				case BOOLEAN:
-					field = new DataSourceBooleanField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					//field.setValidOperators(getBasicBooleanOperators());
-					break;
-				case DATE:
-					field = new DataSourceDateTimeField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					field.setEditorType(new MiniDateRangeItem());
-					//field.setValidOperators(getBasicDateOperators());
-					break;
-				case INTEGER:
-					field = new DataSourceIntegerField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicNumericOperators());
-					break;
-				case DECIMAL:
-					field = new DataSourceFloatField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicNumericOperators());
-					break;
-				case EMAIL:
-					field = new DataSourceTextField(propertyName, friendlyName);
-			        field.setCanEdit(mutable);
-			        field.setRequired(required);
-			        //field.setValidOperators(getBasicTextOperators());
-			        break;
-				case MONEY:
-					field = new DataSourceFloatField(propertyName, friendlyName);
-			        field.setCanEdit(mutable);
-			        field.setRequired(required);
-			        //field.setValidOperators(getBasicNumericOperators());
-			        break;
-				case FOREIGN_KEY:{
-					field = new DataSourceTextField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					String dataSourceName = null;
-					ForeignKey foreignField = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-					if (foreignField != null && foreignField.getForeignKeyClass().equals(foreignKeyClass)) {
-						dataSourceName = foreignField.getDataSourceName();
-					}
-					if (dataSourceName == null) {
-						field.setForeignKey(foreignKeyProperty);
-					} else {
-						field.setForeignKey(dataSourceName+"."+foreignKeyProperty);
-					}
-					if (hidden == null) {
-						hidden = true;
-					}
-					field.setRequired(required);
-					//field.setValidOperators(getBasicNumericOperators());
-					break;}
-				case ADDITIONAL_FOREIGN_KEY:{
-					field = new DataSourceTextField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					if (hidden == null) {
-						hidden = true;
-					}
-					field.setRequired(required);
-					//field.setValidOperators(getBasicNumericOperators());
-					break;}
-				case BROADLEAF_ENUMERATION:
-					field = new DataSourceEnumField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-					for (int j=0; j<enumerationValues.length; j++) {
-						valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
-					}
-	        		field.setValueMap(valueMap);
-	        		//field.setValidOperators(getBasicEnumerationOperators());
-					break;
+                Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
+                Boolean prominent = property.getMetadata().getPresentationAttributes().isProminent();
+                Integer order = property.getMetadata().getPresentationAttributes().getOrder();
+                String columnWidth = property.getMetadata().getPresentationAttributes().getColumnWidth();
+                String[][] enumerationValues = property.getMetadata().getEnumerationValues();
+                String enumerationClass = property.getMetadata().getEnumerationClass();
+                if (mutable) {
+                    Boolean isReadOnly = property.getMetadata().getPresentationAttributes().getReadOnly();
+                    if (isReadOnly != null) {
+                        mutable = !isReadOnly;
+                    }
+                }
+                DataSourceField field;
+                switch(SupportedFieldType.valueOf(fieldType)){
+                case ID:
+                    field = new DataSourceTextField(propertyName, friendlyName);
+                    if (propertyName.indexOf(".") < 0) {
+                        field.setPrimaryKey(true);
+                    }
+                    field.setCanEdit(false);
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicIdOperators());
+                    break;
+                case BOOLEAN:
+                    field = new DataSourceBooleanField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    //field.setValidOperators(getBasicBooleanOperators());
+                    break;
+                case DATE:
+                    field = new DataSourceDateTimeField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    field.setEditorType(new MiniDateRangeItem());
+                    //field.setValidOperators(getBasicDateOperators());
+                    break;
+                case INTEGER:
+                    field = new DataSourceIntegerField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicNumericOperators());
+                    break;
+                case DECIMAL:
+                    field = new DataSourceFloatField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicNumericOperators());
+                    break;
+                case EMAIL:
+                    field = new DataSourceTextField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicTextOperators());
+                    break;
+                case MONEY:
+                    field = new DataSourceFloatField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicNumericOperators());
+                    break;
+                case FOREIGN_KEY:{
+                    field = new DataSourceTextField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    String dataSourceName = null;
+                    ForeignKey foreignField = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                    if (foreignField != null && foreignField.getForeignKeyClass().equals(foreignKeyClass)) {
+                        dataSourceName = foreignField.getDataSourceName();
+                    }
+                    if (dataSourceName == null) {
+                        field.setForeignKey(foreignKeyProperty);
+                    } else {
+                        field.setForeignKey(dataSourceName+"."+foreignKeyProperty);
+                    }
+                    if (hidden == null) {
+                        hidden = true;
+                    }
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicNumericOperators());
+                    break;}
+                case ADDITIONAL_FOREIGN_KEY:{
+                    field = new DataSourceTextField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    if (hidden == null) {
+                        hidden = true;
+                    }
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicNumericOperators());
+                    break;}
+                case BROADLEAF_ENUMERATION:
+                    field = new DataSourceEnumField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+                    for (int j=0; j<enumerationValues.length; j++) {
+                        valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
+                    }
+                    field.setValueMap(valueMap);
+                    //field.setValidOperators(getBasicEnumerationOperators());
+                    break;
                 case EXPLICIT_ENUMERATION:
-					field = new DataSourceEnumField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
-					for (int j=0; j<enumerationValues.length; j++) {
-						valueMap2.put(enumerationValues[j][0], enumerationValues[j][1]);
-					}
-	        		field.setValueMap(valueMap2);
-	        		//field.setValidOperators(getBasicEnumerationOperators());
-					break;
-				case PASSWORD:
-					field = new DataSourcePasswordField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicTextOperators());
-					break;
+                    field = new DataSourceEnumField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
+                    for (int j=0; j<enumerationValues.length; j++) {
+                        valueMap2.put(enumerationValues[j][0], enumerationValues[j][1]);
+                    }
+                    field.setValueMap(valueMap2);
+                    //field.setValidOperators(getBasicEnumerationOperators());
+                    break;
+                case PASSWORD:
+                    field = new DataSourcePasswordField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicTextOperators());
+                    break;
                 case ASSET:
                     field = new DataSourceImageField(propertyName, friendlyName);
                     field.setCanEdit(mutable);
-					field.setRequired(required);
+                    field.setRequired(required);
                     break;
-				default:
-					field = new DataSourceTextField(propertyName, friendlyName);
-					field.setCanEdit(mutable);
-					field.setRequired(required);
-					//field.setValidOperators(getBasicTextOperators());
-					break;
-				}
-				field.setAttribute("friendlyName", friendlyName);
-				if (property.getMetadata().getPresentationAttributes().getValidationConfigurations().size() > 0) {
-					field.setValidators(ValidationFactoryManager.getInstance().createValidators(property.getMetadata().getPresentationAttributes().getValidationConfigurations(), propertyName));
-				}
-				if (fieldType.equals(SupportedFieldType.ID.toString())) {
-					field.setHidden(hidden);
-					field.setAttribute("permanentlyHidden", hidden);
+                default:
+                    field = new DataSourceTextField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+                    field.setRequired(required);
+                    //field.setValidOperators(getBasicTextOperators());
+                    break;
+                }
+                field.setAttribute("friendlyName", friendlyName);
+                if (property.getMetadata().getPresentationAttributes().getValidationConfigurations().size() > 0) {
+                    field.setValidators(ValidationFactoryManager.getInstance().createValidators(property.getMetadata().getPresentationAttributes().getValidationConfigurations(), propertyName));
+                }
+                if (fieldType.equals(SupportedFieldType.ID.toString())) {
+                    field.setHidden(hidden);
+                    field.setAttribute("permanentlyHidden", hidden);
                     formHidden = FormHiddenEnum.VISIBLE;
-				} else if (hidden != null) {
-					field.setHidden(hidden);
-					field.setAttribute("permanentlyHidden", hidden);
-				} else if (field.getAttribute("permanentlyHidden")==null){
-					field.setHidden(false);
-					field.setAttribute("permanentlyHidden", false);
-				}
+                } else if (hidden != null) {
+                    field.setHidden(hidden);
+                    field.setAttribute("permanentlyHidden", hidden);
+                } else if (field.getAttribute("permanentlyHidden")==null){
+                    field.setHidden(false);
+                    field.setAttribute("permanentlyHidden", false);
+                }
 
-				if (securityLevel != null && !"".equals(securityLevel)){
-					String uniqueID = ceilingEntityFullyQualifiedClassname + field.getName();
-					SecurityManager.getInstance().registerField(uniqueID, securityLevel);
-					field.setAttribute("uniqueID", uniqueID);
-					field.setAttribute("securityLevel", securityLevel);
-				}
+                if (securityLevel != null && !"".equals(securityLevel)){
+                    String uniqueID = ceilingEntityFullyQualifiedClassname + field.getName();
+                    SecurityManager.getInstance().registerField(uniqueID, securityLevel);
+                    field.setAttribute("uniqueID", uniqueID);
+                    field.setAttribute("securityLevel", securityLevel);
+                }
                 field.setAttribute("formHidden", formHidden);
-				if (group != null) {
-					field.setAttribute("formGroup", group);
-				}
-				if (groupOrder != null) {
-					field.setAttribute("formGroupOrder", groupOrder);
-				}
+                if (group != null) {
+                    field.setAttribute("formGroup", group);
+                }
+                if (groupOrder != null) {
+                    field.setAttribute("formGroupOrder", groupOrder);
+                }
                 if (groupCollapsed != null) {
                     field.setAttribute("formGroupCollapsed", groupCollapsed);
                 }
-				if (largeEntry != null) {
-					field.setAttribute("largeEntry", largeEntry);
-				}
-				if (prominent != null) {
-					field.setAttribute("prominent", prominent);
-				}
-				if (order != null) {
-					field.setAttribute("presentationLayerOrder", order);
-				}
-				if (length != null) {
-					field.setLength(length.intValue());
-				}
-				if (columnWidth != null) {
-					field.setAttribute("columnWidth", columnWidth);
-				}
-				if (enumerationValues != null) {
-					field.setAttribute("enumerationValues", enumerationValues);
-				}
+                if (largeEntry != null) {
+                    field.setAttribute("largeEntry", largeEntry);
+                }
+                if (prominent != null) {
+                    field.setAttribute("prominent", prominent);
+                }
+                if (order != null) {
+                    field.setAttribute("presentationLayerOrder", order);
+                }
+                if (length != null) {
+                    field.setLength(length.intValue());
+                }
+                if (columnWidth != null) {
+                    field.setAttribute("columnWidth", columnWidth);
+                }
                 if (enumerationValues != null) {
-					field.setAttribute("enumerationValues", enumerationValues);
-				}
-				if (enumerationClass != null) {
-					field.setAttribute("enumerationClass", enumerationClass);
-				}
+                    field.setAttribute("enumerationValues", enumerationValues);
+                }
+                if (enumerationValues != null) {
+                    field.setAttribute("enumerationValues", enumerationValues);
+                }
+                if (enumerationClass != null) {
+                    field.setAttribute("enumerationClass", enumerationClass);
+                }
                 if (isDirty != null) {
                     field.setAttribute("isEdited", isDirty);
                 } else {
                     field.setAttribute("isEdited", false);
                 }
-				field.setAttribute("inheritedFromType", inheritedFromType);
-				field.setAttribute("availableToTypes", availableToTypes);
-				field.setAttribute("fieldType", fieldType);
-				field.setAttribute("secondaryFieldType", secondaryFieldType);
-				field.setAttribute("mergedPropertyType", mergedPropertyType);
-				field.setAttribute("rawName", rawName);
-				dataSource.addField(field);
-			}
-		}
-	}
+                field.setAttribute("inheritedFromType", inheritedFromType);
+                field.setAttribute("availableToTypes", availableToTypes);
+                field.setAttribute("fieldType", fieldType);
+                field.setAttribute("secondaryFieldType", secondaryFieldType);
+                field.setAttribute("mergedPropertyType", mergedPropertyType);
+                field.setAttribute("rawName", rawName);
+                dataSource.addField(field);
+            }
+        }
+    }
 
-	@Override
+    @Override
     public void setDataSource(AbstractDynamicDataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+        this.dataSource = dataSource;
+    }
 
-	@Override
+    @Override
     public String getCeilingEntityFullyQualifiedClassname() {
-		return ceilingEntityFullyQualifiedClassname;
-	}
-	
+        return ceilingEntityFullyQualifiedClassname;
+    }
+    
 }

@@ -25,18 +25,18 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
  */
 public final class Currency_CustomFieldSerializer {
 
-	public static void deserialize(SerializationStreamReader streamReader, Currency instance)
+    public static void deserialize(SerializationStreamReader streamReader, Currency instance)
     throws SerializationException {
-		//do nothing
-	}
+        //do nothing
+    }
 
-	public static void serialize(SerializationStreamWriter streamWriter, Currency instance)
+    public static void serialize(SerializationStreamWriter streamWriter, Currency instance)
     throws SerializationException {
-		streamWriter.writeString(instance.getCurrencyCode());
-	}
-	
-	public static Currency instantiate(SerializationStreamReader streamReader)
+        streamWriter.writeString(instance.getCurrencyCode());
+    }
+    
+    public static Currency instantiate(SerializationStreamReader streamReader)
     throws SerializationException {
-	    return Currency.getInstance(streamReader.readString());
-	}
+        return Currency.getInstance(streamReader.readString());
+    }
 }

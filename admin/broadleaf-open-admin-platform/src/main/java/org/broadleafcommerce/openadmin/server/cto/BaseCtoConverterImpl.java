@@ -33,30 +33,30 @@ import com.anasoft.os.daofusion.util.FilterValueConverters;
  *
  */
 public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter implements BaseCtoConverter {
-	
-	public static final FilterValueConverter<Long> NULL_AWARE_LONG = new FilterValueConverter<Long>() {
+    
+    public static final FilterValueConverter<Long> NULL_AWARE_LONG = new FilterValueConverter<Long>() {
         public Long convert(String stringValue) {
-        	if (stringValue == null || stringValue.equals("null")) {
-        		return null;
-        	}
+            if (stringValue == null || stringValue.equals("null")) {
+                return null;
+            }
             return Long.valueOf(stringValue);
         }
     };
     
     public static final FilterValueConverter<Integer> NULL_AWARE_INTEGER = new FilterValueConverter<Integer>() {
         public Integer convert(String stringValue) {
-        	if (stringValue == null || stringValue.equals("null")) {
-        		return null;
-        	}
+            if (stringValue == null || stringValue.equals("null")) {
+                return null;
+            }
             return Integer.valueOf(stringValue);
         }
     };
     
     public static final FilterValueConverter<BigDecimal> DECIMAL = new FilterValueConverter<BigDecimal>() {
         public BigDecimal convert(String stringValue) {
-        	if (stringValue == null) {
-        		return null;
-        	}
+            if (stringValue == null) {
+                return null;
+            }
             return new BigDecimal(stringValue);
         }
     };

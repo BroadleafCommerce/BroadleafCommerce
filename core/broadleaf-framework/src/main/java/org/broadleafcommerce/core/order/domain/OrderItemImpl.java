@@ -83,7 +83,7 @@ import java.util.List;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseOrderItem")
 public class OrderItemImpl implements OrderItem, Cloneable {
 
-	private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
+    private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -203,7 +203,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     public void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers) {
-    	this.candidateItemOffers = candidateItemOffers;
+        this.candidateItemOffers = candidateItemOffers;
     }
 
     public PersonalMessage getPersonalMessage() {
@@ -231,14 +231,14 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public boolean isInCategory(String categoryName) {
+    public boolean isInCategory(String categoryName) {
         Category currentCategory = category;
         if (currentCategory != null) {
             if (currentCategory.getName().equals(categoryName)) {
@@ -258,7 +258,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         return this.orderItemAdjustments;
     }
 
-    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {    	
+    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {       
         this.orderItemAdjustments = orderItemAdjustments;
     }
 
@@ -302,11 +302,11 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         }
     }
 
-	public boolean updatePrices() {
+    public boolean updatePrices() {
         return false;
     }
-	
-	public void assignFinalPrice() {
+    
+    public void assignFinalPrice() {
         setPrice(getCurrentPrice());
     }
     
@@ -314,7 +314,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         updatePrices();
         Money currentPrice = null;
         if (getPrice() != null) {
-        	currentPrice = getPrice();
+            currentPrice = getPrice();
         } else if (getSalePrice() != null) {
             currentPrice = getSalePrice();
         } else {
@@ -324,7 +324,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
     
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
-    	updatePrices();
+        updatePrices();
         Money currentPrice = null;
         if (getSalePrice() != null && allowSalesPrice) {
             currentPrice = getSalePrice();
@@ -351,62 +351,62 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
     
     public int removeAllAdjustments() {
-    	int removedAdjustmentCount = 0;
+        int removedAdjustmentCount = 0;
         if (getOrderItemAdjustments() != null) {
             for (OrderItemAdjustment adjustment : getOrderItemAdjustments()) {
                 adjustment.setOrderItem(null);
             }
-        	removedAdjustmentCount = getOrderItemAdjustments().size();
+            removedAdjustmentCount = getOrderItemAdjustments().size();
             getOrderItemAdjustments().clear();
         }
         assignFinalPrice();
         return removedAdjustmentCount;
     }
 
-	
-	public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-		Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});
-		if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
-			//subclass is not implementing the clone method
-			throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
-		}
-	}
-	
-	public OrderItem clone() {
-		//this is likely an extended class - instantiate from the fully qualified name via reflection
-		OrderItem orderItem;
-		try {
-			orderItem = (OrderItem) Class.forName(this.getClass().getName()).newInstance();
-			try {
-				checkCloneable(orderItem);
-			} catch (CloneNotSupportedException e) {
-				LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + orderItem.getClass().getName(), e);
-			}
-			if (getCandidateItemOffers() != null) {
-				for (CandidateItemOffer candidate : getCandidateItemOffers()) {
-					CandidateItemOffer clone = candidate.clone();
-					clone.setOrderItem(orderItem);
-					orderItem.getCandidateItemOffers().add(clone);
-				}
-			}
-			orderItem.setCategory(getCategory());
-			orderItem.setGiftWrapOrderItem(getGiftWrapOrderItem());
-			orderItem.setName(getName());
-			orderItem.setOrder(getOrder());
-			orderItem.setOrderItemType(getOrderItemType());
-			orderItem.setPersonalMessage(getPersonalMessage());
-			orderItem.setQuantity(getQuantity());
-			orderItem.setRetailPrice(getRetailPrice());
-			orderItem.setSalePrice(getSalePrice());
-			orderItem.setPrice(getPrice());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
- 		
- 		return orderItem;
-	}
+    
+    public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+        }
+    }
+    
+    public OrderItem clone() {
+        //this is likely an extended class - instantiate from the fully qualified name via reflection
+        OrderItem orderItem;
+        try {
+            orderItem = (OrderItem) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(orderItem);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + orderItem.getClass().getName(), e);
+            }
+            if (getCandidateItemOffers() != null) {
+                for (CandidateItemOffer candidate : getCandidateItemOffers()) {
+                    CandidateItemOffer clone = candidate.clone();
+                    clone.setOrderItem(orderItem);
+                    orderItem.getCandidateItemOffers().add(clone);
+                }
+            }
+            orderItem.setCategory(getCategory());
+            orderItem.setGiftWrapOrderItem(getGiftWrapOrderItem());
+            orderItem.setName(getName());
+            orderItem.setOrder(getOrder());
+            orderItem.setOrderItemType(getOrderItemType());
+            orderItem.setPersonalMessage(getPersonalMessage());
+            orderItem.setQuantity(getQuantity());
+            orderItem.setRetailPrice(getRetailPrice());
+            orderItem.setSalePrice(getSalePrice());
+            orderItem.setPrice(getPrice());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        
+        return orderItem;
+    }
 
-	public int hashCode() {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((category == null) ? 0 : category.hashCode());

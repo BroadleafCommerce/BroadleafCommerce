@@ -29,7 +29,7 @@ public class CatalogMultiplierController {
     @Resource(name="blCatalogMultiplier")
     protected CatalogMultiplier multiplier;
 
-	@RequestMapping(value = "/multiply.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/multiply.htm", method = RequestMethod.GET)
     public String multiply() {
         multiplier.init();
         return "redirect:/welcome.htm";

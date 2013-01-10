@@ -20,7 +20,7 @@
         <sec:intercept-url pattern="/images/**" filters="none"/>
         <sec:intercept-url pattern="/js/**" filters="none"/>
         <!--<sec:intercept-url pattern="/store" access="ROLE_USER"/>
-    	<sec:intercept-url pattern="/basket/**" access="ROLE_USER"/>-->
+        <sec:intercept-url pattern="/basket/**" access="ROLE_USER"/>-->
         <sec:form-login login-page='/registerCustomer/registerCustomer.htm'
                         default-target-url='/product.htm'
                         authentication-failure-url="/registerCustomer/registerCustomer.htm?error=true"
@@ -48,8 +48,8 @@
             id="blUserDetailsService"
             users-by-username-query="SELECT USER_NAME,PASSWORD,TRUE FROM BLC_CUSTOMER WHERE USER_NAME=?"
             authorities-by-username-query="SELECT c.USER_NAME,r.ROLE_NAME from BLC_CUSTOMER c
-	                                      JOIN BLC_CUSTOMER_ROLE cr ON c.CUSTOMER_ID = cr.CUSTOMER_ID 
-	                                      JOIN BLC_ROLE r ON cr.ROLE_ID = r.ROLE_ID 
-	                                      WHERE USER_NAME=?"
+                                          JOIN BLC_CUSTOMER_ROLE cr ON c.CUSTOMER_ID = cr.CUSTOMER_ID 
+                                          JOIN BLC_ROLE r ON cr.ROLE_ID = r.ROLE_ID 
+                                          WHERE USER_NAME=?"
             />
 </beans>

@@ -71,9 +71,9 @@ import java.util.Map;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "baseCategory")
 public class CategoryImpl implements Category {
-	
-	private static final long serialVersionUID = 1L;
-	private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
+    
+    private static final long serialVersionUID = 1L;
+    private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
 
     private static String buildLink(Category category, boolean ignoreTopLevel) {
         Category myCategory = category;
@@ -95,9 +95,9 @@ public class CategoryImpl implements Category {
     private static void fillInURLMapForCategory(Map<String, List<Long>> categoryUrlMap, Category category, String startingPath, List<Long> startingCategoryList) throws CacheFactoryException {
         String urlKey = category.getUrlKey();
         if (urlKey == null) {
-        	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
+            throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
         }
-    	String currentPath = startingPath + '/' + category.getUrlKey();
+        String currentPath = startingPath + '/' + category.getUrlKey();
         List<Long> newCategoryList = new ArrayList<Long>(startingCategoryList);
         newCategoryList.add(category.getId());
 
@@ -341,25 +341,25 @@ public class CategoryImpl implements Category {
 
     @Override
     public List<Category> getAllChildCategories(){
-    	return allChildCategories;
+        return allChildCategories;
     }
 
     @Override
     public boolean hasAllChildCategories(){
-    	return !allChildCategories.isEmpty();
+        return !allChildCategories.isEmpty();
     }
 
     @Override
     public void setAllChildCategories(List<Category> childCategories){
-    	allChildCategories.clear();
-    	for(Category category : childCategories){
-    		allChildCategories.add(category);
-    	}    	
+        allChildCategories.clear();
+        for(Category category : childCategories){
+            allChildCategories.add(category);
+        }       
     }
 
     @Override
     public List<Category> getChildCategories() {
-    	if (childCategories.isEmpty()) {
+        if (childCategories.isEmpty()) {
             for (Category category : allChildCategories) {
                 if (category.isActive()) {
                     childCategories.add(category);
@@ -377,9 +377,9 @@ public class CategoryImpl implements Category {
     @Override
     public void setChildCategories(List<Category> childCategories) {
         this.childCategories.clear();
-    	for(Category category : childCategories){
-    		this.childCategories.add(category);
-    	}
+        for(Category category : childCategories){
+            this.childCategories.add(category);
+        }
     }
 
     @Override
@@ -397,14 +397,14 @@ public class CategoryImpl implements Category {
     @Override
     @Deprecated
     public void setCategoryImages(Map<String, String> categoryImages) {
-    	this.categoryImages.clear();
-    	for(Map.Entry<String, String> me : categoryImages.entrySet()) {
-    		this.categoryImages.put(me.getKey(), me.getValue());
-    	}
+        this.categoryImages.clear();
+        for(Map.Entry<String, String> me : categoryImages.entrySet()) {
+            this.categoryImages.put(me.getKey(), me.getValue());
+        }
     }
 
     @Override
-	public Map<String, List<Long>> getChildCategoryURLMap() {
+    public Map<String, List<Long>> getChildCategoryURLMap() {
         if (childCategoryURLMap == null) {
             HydratedSetup.populateFromCache(this);
         }
@@ -412,13 +412,13 @@ public class CategoryImpl implements Category {
     }
 
     public Map<String, List<Long>> createChildCategoryURLMap() {
-    	try {
+        try {
             Map<String, List<Long>> newMap = new HashMap<String, List<Long>>(50);
             fillInURLMapForCategory(newMap, this, "", new ArrayList<Long>(10));
             return newMap;
-		} catch (CacheFactoryException e) {
-			throw new RuntimeException(e);
-		}
+        } catch (CacheFactoryException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setChildCategoryURLMap(Map<String, List<Long>> childCategoryURLMap) {
@@ -432,10 +432,10 @@ public class CategoryImpl implements Category {
 
     @Override
     public void setAllParentCategories(List<Category> allParentCategories) {
-    	this.allParentCategories.clear();
-    	for(Category category : allParentCategories){
-    		this.allParentCategories.add(category);
-    	}
+        this.allParentCategories.clear();
+        for(Category category : allParentCategories){
+            this.allParentCategories.add(category);
+        }
     }
 
     @Override
@@ -445,24 +445,24 @@ public class CategoryImpl implements Category {
 
     @Override
     public void setFeaturedProducts(List<FeaturedProduct> featuredProducts) {
-    	this.featuredProducts.clear();
-    	for(FeaturedProduct featuredProduct : featuredProducts){
-    		this.featuredProducts.add(featuredProduct);
-    	}
+        this.featuredProducts.clear();
+        for(FeaturedProduct featuredProduct : featuredProducts){
+            this.featuredProducts.add(featuredProduct);
+        }
     }
 
     @Override
     public List<Product> getAllProducts() {
-		return allProducts;
-	}
+        return allProducts;
+    }
 
     @Override
-	public void setAllProducts(List<Product> allProducts) {
-		this.allProducts.clear();
-    	for(Product product : allProducts){
-    		this.allProducts.add(product);
-    	}
-	}
+    public void setAllProducts(List<Product> allProducts) {
+        this.allProducts.clear();
+        for(Product product : allProducts){
+            this.allProducts.add(product);
+        }
+    }
 
     @Override
     public Map<String, Media> getCategoryMedia() {
@@ -471,10 +471,10 @@ public class CategoryImpl implements Category {
 
     @Override
     public void setCategoryMedia(Map<String, Media> categoryMedia) {
-    	this.categoryMedia.clear();
-    	for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
-    		this.categoryMedia.put(me.getKey(), me.getValue());
-    	}
+        this.categoryMedia.clear();
+        for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
+            this.categoryMedia.put(me.getKey(), me.getValue());
+        }
     }
     
     @Override

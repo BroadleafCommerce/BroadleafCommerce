@@ -21,24 +21,24 @@ import java.util.Set;
 
 public interface SandBox extends Serializable {
 
-	public Long getId();
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
     /**
-	 * The name of the sandbox.
-	 * Certain sandbox names are reserved in the system.    User created
-	 * sandboxes cannot start with "", "approve_", or "deploy_".
-	 *
-	 * @return String sandbox name
-	 */
-	public String getName();
+     * The name of the sandbox.
+     * Certain sandbox names are reserved in the system.    User created
+     * sandboxes cannot start with "", "approve_", or "deploy_".
+     *
+     * @return String sandbox name
+     */
+    public String getName();
 
-	public void setName(String name);
+    public void setName(String name);
 
-	public Set<SandBoxItem> getSandBoxItems();
+    public Set<SandBoxItem> getSandBoxItems();
 
-	public void setSandBoxItems(Set<SandBoxItem> sandBoxItems);
+    public void setSandBoxItems(Set<SandBoxItem> sandBoxItems);
 
     public SandBoxType getSandBoxType();
 
@@ -50,7 +50,7 @@ public interface SandBox extends Serializable {
 
     public Long getAuthor();
 
-	public void setAuthor(Long author);
+    public void setAuthor(Long author);
 }
 
 

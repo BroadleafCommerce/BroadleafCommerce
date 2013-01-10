@@ -18,6 +18,6 @@ package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.ch
 
 public interface ParameterConverter {
 
-	public Parameter convert(String value, Double factor, boolean applyFactor) throws ConversionException;
-	
+    public Parameter convert(String value, Double factor, boolean applyFactor) throws ConversionException;
+    
 }

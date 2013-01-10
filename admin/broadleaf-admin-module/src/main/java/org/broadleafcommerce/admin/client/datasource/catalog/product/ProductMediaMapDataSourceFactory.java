@@ -42,33 +42,33 @@ import com.smartgwt.client.data.DataSource;
  *
  */
 public class ProductMediaMapDataSourceFactory implements DataSourceFactory {
-	
-	public static final MapStructure MAPSTRUCTURE = new MapStructure(String.class.getName(), "key", "Key", EntityImplementations.MEDIA, "productMedia", true);
-	public static ComplexValueMapStructureDataSource dataSource = null;
-	
-	protected OneToOneProductSkuPresenter presenter;
-	
-	public ProductMediaMapDataSourceFactory(OneToOneProductSkuPresenter presenter) {
-		this.presenter = presenter;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.MAPSTRUCTURE, OperationType.MAPSTRUCTURE, OperationType.MAPSTRUCTURE, OperationType.MAPSTRUCTURE, OperationType.MAPSTRUCTURE);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.PRODUCT, null));
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new MapStructureClientModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY, presenter.getDisplay().getMediaDisplay().getGrid())
-			};
-			dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (LinkedHashMap<String, String>) additionalItems[0]);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    
+    public static final MapStructure MAPSTRUCTURE = new MapStructure(String.class.getName(), "key", "Key", EntityImplementations.MEDIA, "productMedia", true);
+    public static ComplexValueMapStructureDataSource dataSource = null;
+    
+    protected OneToOneProductSkuPresenter presenter;
+    
+    public ProductMediaMapDataSourceFactory(OneToOneProductSkuPresenter presenter) {
+        this.presenter = presenter;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.MAPSTRUCTURE, OperationType.MAPSTRUCTURE, OperationType.MAPSTRUCTURE, OperationType.MAPSTRUCTURE, OperationType.MAPSTRUCTURE);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.PRODUCT, null));
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new MapStructureClientModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY, presenter.getDisplay().getMediaDisplay().getGrid())
+            };
+            dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (LinkedHashMap<String, String>) additionalItems[0]);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

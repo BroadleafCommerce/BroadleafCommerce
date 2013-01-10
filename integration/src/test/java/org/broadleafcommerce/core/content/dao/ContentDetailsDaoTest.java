@@ -30,24 +30,24 @@ import org.testng.annotations.Test;
  */
 public class ContentDetailsDaoTest extends BaseTest {
 
-	@Resource
-	private ContentDetailsDao contentDetailsDao;
+    @Resource
+    private ContentDetailsDao contentDetailsDao;
 
-	private Integer contentDetailsId;
+    private Integer contentDetailsId;
 
-	@Test(groups = {"testSaveContentDetails"}, dataProvider = "basicContentDetails", dataProviderClass = ContentDetailsDaoProvider.class, dependsOnGroups = {"testSaveContent"})
-	public void testSaveContentDetails(ContentDetails contentDetails){
-		ContentDetails newContentDetails = contentDetailsDao.save(contentDetails);
-		assert newContentDetails != null;
-		assert newContentDetails.getId() != null;
-		contentDetailsId = newContentDetails.getId();
-	}
+    @Test(groups = {"testSaveContentDetails"}, dataProvider = "basicContentDetails", dataProviderClass = ContentDetailsDaoProvider.class, dependsOnGroups = {"testSaveContent"})
+    public void testSaveContentDetails(ContentDetails contentDetails){
+        ContentDetails newContentDetails = contentDetailsDao.save(contentDetails);
+        assert newContentDetails != null;
+        assert newContentDetails.getId() != null;
+        contentDetailsId = newContentDetails.getId();
+    }
 
-	@Test(groups = {"testReadContentDetailsById"}, dependsOnGroups = {"testSaveContentDetails"})
-	public void testReadContentDetailsById(){
-		ContentDetails contentDetails = contentDetailsDao.readContentDetailsById(contentDetailsId);
-		assert contentDetails != null;
-		assert contentDetails.getId() != null;
-		assert contentDetails.getXmlContent() != null;
-	}
+    @Test(groups = {"testReadContentDetailsById"}, dependsOnGroups = {"testSaveContentDetails"})
+    public void testReadContentDetailsById(){
+        ContentDetails contentDetails = contentDetailsDao.readContentDetailsById(contentDetailsId);
+        assert contentDetails != null;
+        assert contentDetails.getId() != null;
+        assert contentDetails.getXmlContent() != null;
+    }
 }

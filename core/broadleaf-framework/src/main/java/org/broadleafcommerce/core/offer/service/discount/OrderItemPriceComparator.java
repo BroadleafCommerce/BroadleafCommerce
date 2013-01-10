@@ -27,20 +27,20 @@ import org.broadleafcommerce.common.money.Money;
  *
  */
 public class OrderItemPriceComparator implements Comparator<PromotableOrderItem> {
-	
-	private boolean applyToSalePrice = false;
-	
-	public OrderItemPriceComparator(boolean applyToSalePrice) {
-		this.applyToSalePrice = applyToSalePrice;
-	}
+    
+    private boolean applyToSalePrice = false;
+    
+    public OrderItemPriceComparator(boolean applyToSalePrice) {
+        this.applyToSalePrice = applyToSalePrice;
+    }
 
-	public int compare(PromotableOrderItem c1, PromotableOrderItem c2) {
-		
-		Money price = c1.getPriceBeforeAdjustments(applyToSalePrice);
-		Money price2 = c2.getPriceBeforeAdjustments(applyToSalePrice);
-		
-		// highest amount first
-		return price2.compareTo(price);
-	}
+    public int compare(PromotableOrderItem c1, PromotableOrderItem c2) {
+        
+        Money price = c1.getPriceBeforeAdjustments(applyToSalePrice);
+        Money price2 = c2.getPriceBeforeAdjustments(applyToSalePrice);
+        
+        // highest amount first
+        return price2.compareTo(price);
+    }
 
 }

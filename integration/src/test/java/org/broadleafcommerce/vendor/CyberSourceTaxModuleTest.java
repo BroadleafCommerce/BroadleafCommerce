@@ -49,121 +49,121 @@ import org.testng.annotations.Test;
  */
 public class CyberSourceTaxModuleTest extends BaseTest {
 
-	@Resource
+    @Resource
     private CyberSourceServiceManager serviceManager;
-	
-	@Test(groups = { "testSuccessfulCyberSourceTaxModule" })
+    
+    @Test(groups = { "testSuccessfulCyberSourceTaxModule" })
     @Rollback(false)
     public void testSuccessfulCyberSourceTaxModule() throws Exception {
-		if (serviceManager.getMerchantId().equals("?")) {
+        if (serviceManager.getMerchantId().equals("?")) {
             return;
         }
-		
-		CyberSourceTaxModule module = new CyberSourceTaxModule();
-		module.setServiceManager(serviceManager);
-		ArrayList<String> nexus = new ArrayList<String>();
-		nexus.add("TX");
-		module.setNexus(nexus);
-		module.setOrderAcceptanceCity("Dallas");
-		module.setOrderAcceptanceCountry("US");
-		module.setOrderAcceptancePostalCode("75244");
-		module.setOrderAcceptanceState("TX");
-		
-		PaymentInfo paymentInfo = createPaymentInfo("8335 Westchester Drive", "Dallas", "US", "John", "Test", "75225", "TX");
-		Order order = new OrderImpl();
-		order.setEmailAddress("null@cybersource.com");
-		paymentInfo.setOrder(order);
-		order.getPaymentInfos().add(paymentInfo);
-		
-		DiscreteOrderItem item1 = new DiscreteOrderItemImpl();
-		Sku sku1 = new SkuImpl();
-		sku1.setName("a72345b");
-		sku1.setDescription("Test Description Product 1");
-		sku1.setTaxable(true);
-		item1.setSku(sku1);
-		item1.setPrice(new Money(10D));
-		
-		FulfillmentGroup fg1 = new FulfillmentGroupImpl();
-		fg1.setId(1L);
-		FulfillmentGroupItem fgi1 = new FulfillmentGroupItemImpl();
-		fgi1.setOrderItem(item1);
-		fgi1.setQuantity(2);
-		fg1.addFulfillmentGroupItem(fgi1);
-		fg1.setAddress(createDestinationAddress("14930 Midway Rd", "Dallas", "US", "John", "Test", "75001", "TX"));
-		order.getFulfillmentGroups().add(fg1);
-		
-		DiscreteOrderItem item2 = new DiscreteOrderItemImpl();
-		Sku sku2 = new SkuImpl();
-		sku2.setName("a72345c");
-		sku2.setDescription("Test Description Product 2");
-		sku2.setTaxable(true);
-		item2.setSku(sku2);
-		item2.setPrice(new Money(30D));
-		
-		FulfillmentGroup fg2 = new FulfillmentGroupImpl();
-		fg2.setId(2L);
-		FulfillmentGroupItem fgi2 = new FulfillmentGroupItemImpl();
-		fgi2.setOrderItem(item2);
-		fgi2.setQuantity(1);
-		fg2.addFulfillmentGroupItem(fgi2);
-		fg2.setAddress(createDestinationAddress("14999 Monfort Drive", "Dallas", "US", "John", "Test", "75254", "TX"));
-		order.getFulfillmentGroups().add(fg2);
-		order.setTotal(new Money(50D));
-		
-		assert(order.getTotalTax() == null);
-		order = module.calculateTaxForOrder(order);
-		assert(order.getTotalTax() != null && order.getTotalTax().greaterThan(new Money(0D)));
-		assert(order.getFulfillmentGroups().get(0).getTotalTax().add(order.getFulfillmentGroups().get(1).getTotalTax()).equals(order.getTotalTax()));
-	}
-	
-	private PaymentInfo createPaymentInfo(String line1, String city, final String country, String name, String lastName, String postalCode, final String state) {
-		PaymentInfo paymentInfo = new PaymentInfoImpl();
-		Address address = new AddressImpl();
-		address.setAddressLine1(line1);
-		address.setCity(city);
-		address.setCountry(new CountryImpl() {
-			@Override
-			public String getAbbreviation() {
-				return country;
-			}
-		}
-		);
-		address.setFirstName(name);
-		address.setLastName(lastName);
-		address.setPostalCode(postalCode);
-		address.setState(new StateImpl() {
-			@Override
-			public String getAbbreviation() {
-				return state;
-			}
-		});
-		paymentInfo.setAddress(address);
-		paymentInfo.setCustomerIpAddress("10.7.111.111");
-		
-		return paymentInfo;
-	}
-	
-	private Address createDestinationAddress(String line1, String city, final String country, String name, String lastName, String postalCode, final String state) {
-		Address address = new AddressImpl();
-		address.setAddressLine1(line1);
-		address.setCity(city);
-		address.setCountry(new CountryImpl() {
-			@Override
-			public String getAbbreviation() {
-				return country;
-			}
-		}
-		);
-		address.setFirstName(name);
-		address.setLastName(lastName);
-		address.setPostalCode(postalCode);
-		address.setState(new StateImpl() {
-			@Override
-			public String getAbbreviation() {
-				return state;
-			}
-		});
-		return address;
-	}
-	
+        
+        CyberSourceTaxModule module = new CyberSourceTaxModule();
+        module.setServiceManager(serviceManager);
+        ArrayList<String> nexus = new ArrayList<String>();
+        nexus.add("TX");
+        module.setNexus(nexus);
+        module.setOrderAcceptanceCity("Dallas");
+        module.setOrderAcceptanceCountry("US");
+        module.setOrderAcceptancePostalCode("75244");
+        module.setOrderAcceptanceState("TX");
+        
+        PaymentInfo paymentInfo = createPaymentInfo("8335 Westchester Drive", "Dallas", "US", "John", "Test", "75225", "TX");
+        Order order = new OrderImpl();
+        order.setEmailAddress("null@cybersource.com");
+        paymentInfo.setOrder(order);
+        order.getPaymentInfos().add(paymentInfo);
+        
+        DiscreteOrderItem item1 = new DiscreteOrderItemImpl();
+        Sku sku1 = new SkuImpl();
+        sku1.setName("a72345b");
+        sku1.setDescription("Test Description Product 1");
+        sku1.setTaxable(true);
+        item1.setSku(sku1);
+        item1.setPrice(new Money(10D));
+        
+        FulfillmentGroup fg1 = new FulfillmentGroupImpl();
+        fg1.setId(1L);
+        FulfillmentGroupItem fgi1 = new FulfillmentGroupItemImpl();
+        fgi1.setOrderItem(item1);
+        fgi1.setQuantity(2);
+        fg1.addFulfillmentGroupItem(fgi1);
+        fg1.setAddress(createDestinationAddress("14930 Midway Rd", "Dallas", "US", "John", "Test", "75001", "TX"));
+        order.getFulfillmentGroups().add(fg1);
+        
+        DiscreteOrderItem item2 = new DiscreteOrderItemImpl();
+        Sku sku2 = new SkuImpl();
+        sku2.setName("a72345c");
+        sku2.setDescription("Test Description Product 2");
+        sku2.setTaxable(true);
+        item2.setSku(sku2);
+        item2.setPrice(new Money(30D));
+        
+        FulfillmentGroup fg2 = new FulfillmentGroupImpl();
+        fg2.setId(2L);
+        FulfillmentGroupItem fgi2 = new FulfillmentGroupItemImpl();
+        fgi2.setOrderItem(item2);
+        fgi2.setQuantity(1);
+        fg2.addFulfillmentGroupItem(fgi2);
+        fg2.setAddress(createDestinationAddress("14999 Monfort Drive", "Dallas", "US", "John", "Test", "75254", "TX"));
+        order.getFulfillmentGroups().add(fg2);
+        order.setTotal(new Money(50D));
+        
+        assert(order.getTotalTax() == null);
+        order = module.calculateTaxForOrder(order);
+        assert(order.getTotalTax() != null && order.getTotalTax().greaterThan(new Money(0D)));
+        assert(order.getFulfillmentGroups().get(0).getTotalTax().add(order.getFulfillmentGroups().get(1).getTotalTax()).equals(order.getTotalTax()));
+    }
+    
+    private PaymentInfo createPaymentInfo(String line1, String city, final String country, String name, String lastName, String postalCode, final String state) {
+        PaymentInfo paymentInfo = new PaymentInfoImpl();
+        Address address = new AddressImpl();
+        address.setAddressLine1(line1);
+        address.setCity(city);
+        address.setCountry(new CountryImpl() {
+            @Override
+            public String getAbbreviation() {
+                return country;
+            }
+        }
+        );
+        address.setFirstName(name);
+        address.setLastName(lastName);
+        address.setPostalCode(postalCode);
+        address.setState(new StateImpl() {
+            @Override
+            public String getAbbreviation() {
+                return state;
+            }
+        });
+        paymentInfo.setAddress(address);
+        paymentInfo.setCustomerIpAddress("10.7.111.111");
+        
+        return paymentInfo;
+    }
+    
+    private Address createDestinationAddress(String line1, String city, final String country, String name, String lastName, String postalCode, final String state) {
+        Address address = new AddressImpl();
+        address.setAddressLine1(line1);
+        address.setCity(city);
+        address.setCountry(new CountryImpl() {
+            @Override
+            public String getAbbreviation() {
+                return country;
+            }
+        }
+        );
+        address.setFirstName(name);
+        address.setLastName(lastName);
+        address.setPostalCode(postalCode);
+        address.setState(new StateImpl() {
+            @Override
+            public String getAbbreviation() {
+                return state;
+            }
+        });
+        return address;
+    }
+    
 }

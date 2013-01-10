@@ -10,7 +10,7 @@ package ${package}.${artifactId}.client.datasource;
  *
  */
 public class EntityImplementations {
-	
-	public static final String PRODUCT = "${package}.core.catalog.domain.MyCompanyProductImpl";
+    
+    public static final String PRODUCT = "${package}.core.catalog.domain.MyCompanyProductImpl";
 
 }

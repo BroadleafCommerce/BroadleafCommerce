@@ -66,7 +66,7 @@ public class USPSShippingPriceErrorCode implements Serializable, BroadleafEnumer
     }
 
     public USPSShippingPriceErrorCode(final String type, final String friendlyType, final String message) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
         setMessage(message);
     }
@@ -76,10 +76,10 @@ public class USPSShippingPriceErrorCode implements Serializable, BroadleafEnumer
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

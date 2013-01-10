@@ -51,10 +51,10 @@
     </developers>
          <repositories>
             <repository>
-			<id>smartclient</id>
-			<name>smartclient.com</name>
-			<url>http://www.smartclient.com/maven2</url>
-		</repository>
+            <id>smartclient</id>
+            <name>smartclient.com</name>
+            <url>http://www.smartclient.com/maven2</url>
+        </repository>
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

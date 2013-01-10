@@ -109,7 +109,7 @@ public class PageImpl implements Page {
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "ORIG_SANDBOX_ID")
     @AdminPresentation(excluded = true)
-	protected SandBox originalSandBox;
+    protected SandBox originalSandBox;
 
     @Column (name = "DELETED_FLAG")
     @AdminPresentation(friendlyName="Deleted", order=2, group="Description", visibility = VisibilityEnum.HIDDEN_ALL)

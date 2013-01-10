@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>module</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.6.0-M1-32</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>broadleaf-cybersource-api</artifactId>
-	<name>BroadleafCommerce CyberSource API</name>
-	<properties>
-		<cybersource.version>1.49</cybersource.version>
-	</properties>
-	<description>BroadleafCommerce CyberSource API</description>
+    <parent>
+        <artifactId>module</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.6.0-M1-32</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>broadleaf-cybersource-api</artifactId>
+    <name>BroadleafCommerce CyberSource API</name>
+    <properties>
+        <cybersource.version>1.49</cybersource.version>
+    </properties>
+    <description>BroadleafCommerce CyberSource API</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
         <license>
@@ -49,44 +49,44 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>axistools-maven-plugin</artifactId>
-				<version>1.4</version>
-				<configuration>
-					<wsdlFiles>
-						<wsdlFile>CyberSourceTransaction_${cybersource.version}.wsdl</wsdlFile>
-					</wsdlFiles>
-					<mappings>
-						<mapping>
-							<namespace>urn:schemas-cybersource-com:transaction-data:TransactionProcessor</namespace>
-							<targetPackage>org.broadleafcommerce.vendor.cybersource.service.api</targetPackage>
-						</mapping>
-						<mapping>
-							<namespace>urn:schemas-cybersource-com:transaction-data-1.49</namespace>
-							<targetPackage>org.broadleafcommerce.vendor.cybersource.service.api</targetPackage>
-						</mapping>
-					</mappings>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>javax.mail</groupId>
-						<artifactId>mail</artifactId>
-						<version>1.4.4</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>axistools-maven-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <wsdlFiles>
+                        <wsdlFile>CyberSourceTransaction_${cybersource.version}.wsdl</wsdlFile>
+                    </wsdlFiles>
+                    <mappings>
+                        <mapping>
+                            <namespace>urn:schemas-cybersource-com:transaction-data:TransactionProcessor</namespace>
+                            <targetPackage>org.broadleafcommerce.vendor.cybersource.service.api</targetPackage>
+                        </mapping>
+                        <mapping>
+                            <namespace>urn:schemas-cybersource-com:transaction-data-1.49</namespace>
+                            <targetPackage>org.broadleafcommerce.vendor.cybersource.service.api</targetPackage>
+                        </mapping>
+                    </mappings>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
+                        <version>1.4.4</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
     <profiles>
         <profile>
             <id>blc-development</id>
@@ -113,38 +113,38 @@
             </build>
         </profile>
     </profiles>
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.axis</groupId>
-			<artifactId>axis</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>wss4j</groupId>
-			<artifactId>wss4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>xml-security</groupId>
-			<artifactId>xmlsec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-discovery</groupId>
-			<artifactId>commons-discovery</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-jaxrpc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-saaj</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-wsdl4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-ant</artifactId>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wss4j</groupId>
+            <artifactId>wss4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-security</groupId>
+            <artifactId>xmlsec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-saaj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-ant</artifactId>
+        </dependency>
+    </dependencies>
 </project>

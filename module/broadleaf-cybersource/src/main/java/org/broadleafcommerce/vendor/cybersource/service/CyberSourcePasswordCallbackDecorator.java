@@ -31,11 +31,11 @@ import org.broadleafcommerce.common.util.SpringAppContext;
  */
 public class CyberSourcePasswordCallbackDecorator implements CallbackHandler {
 
-	/**
+    /**
      * @see javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-    	CyberSourcePasswordCallback callback = (CyberSourcePasswordCallback) SpringAppContext.getApplicationContext().getBean("cyberSourcePasswordCallback");
-    	callback.handle(callbacks);
+        CyberSourcePasswordCallback callback = (CyberSourcePasswordCallback) SpringAppContext.getApplicationContext().getBean("cyberSourcePasswordCallback");
+        callback.handle(callbacks);
     }
 }

@@ -25,7 +25,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface UtilityServiceAsync {
     
-	void getWebAppContext(AsyncCallback<String> cb);
+    void getWebAppContext(AsyncCallback<String> cb);
 
     void getStoreFrontWebAppPrefix(AsyncCallback<String> cb);
 

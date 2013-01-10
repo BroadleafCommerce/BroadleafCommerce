@@ -40,174 +40,174 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name="BLC_SNDBX_OPERATION_TYPES")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class OperationTypesImpl implements OperationTypes {
-	
-	private static final long serialVersionUID = 1L;
-	
-	@Id
+    
+    private static final long serialVersionUID = 1L;
+    
+    @Id
     @GeneratedValue(generator = "OperationTypesId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "OperationTypesId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OperationTypesImpl", allocationSize = 50)
     @Column(name = "OPERATION_TYPES_ID")
     protected Long id;
-	
-	@Column(name = "FETCH_TYPE")
-	protected OperationType fetchType = OperationType.ENTITY;
-	
-	@Column(name = "REMOVE_TYPE")
-	protected OperationType removeType = OperationType.ENTITY;
-	
-	@Column(name = "ADD_TYPE")
-	protected OperationType addType = OperationType.ENTITY;
-	
-	@Column(name = "UPDATE_TYPE")
-	protected OperationType updateType = OperationType.ENTITY;
-	
-	@Column(name = "INSPECT_TYPE")
-	protected OperationType inspectType = OperationType.ENTITY;
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getRemoveType()
-	 */
-	@Override
-	public OperationType getRemoveType() {
-		return removeType;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setRemoveType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
-	 */
-	@Override
-	public void setRemoveType(OperationType removeType) {
-		this.removeType = removeType;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getAddType()
-	 */
-	@Override
-	public OperationType getAddType() {
-		return addType;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setAddType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
-	 */
-	@Override
-	public void setAddType(OperationType addType) {
-		this.addType = addType;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getUpdateType()
-	 */
-	@Override
-	public OperationType getUpdateType() {
-		return updateType;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setUpdateType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
-	 */
-	@Override
-	public void setUpdateType(OperationType updateType) {
-		this.updateType = updateType;
-	}
+    
+    @Column(name = "FETCH_TYPE")
+    protected OperationType fetchType = OperationType.ENTITY;
+    
+    @Column(name = "REMOVE_TYPE")
+    protected OperationType removeType = OperationType.ENTITY;
+    
+    @Column(name = "ADD_TYPE")
+    protected OperationType addType = OperationType.ENTITY;
+    
+    @Column(name = "UPDATE_TYPE")
+    protected OperationType updateType = OperationType.ENTITY;
+    
+    @Column(name = "INSPECT_TYPE")
+    protected OperationType inspectType = OperationType.ENTITY;
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getRemoveType()
+     */
+    @Override
+    public OperationType getRemoveType() {
+        return removeType;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setRemoveType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
+     */
+    @Override
+    public void setRemoveType(OperationType removeType) {
+        this.removeType = removeType;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getAddType()
+     */
+    @Override
+    public OperationType getAddType() {
+        return addType;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setAddType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
+     */
+    @Override
+    public void setAddType(OperationType addType) {
+        this.addType = addType;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getUpdateType()
+     */
+    @Override
+    public OperationType getUpdateType() {
+        return updateType;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setUpdateType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
+     */
+    @Override
+    public void setUpdateType(OperationType updateType) {
+        this.updateType = updateType;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getFetchType()
-	 */
-	@Override
-	public OperationType getFetchType() {
-		return fetchType;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getFetchType()
+     */
+    @Override
+    public OperationType getFetchType() {
+        return fetchType;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setFetchType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
-	 */
-	@Override
-	public void setFetchType(OperationType fetchTyper) {
-		this.fetchType = fetchTyper;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setFetchType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
+     */
+    @Override
+    public void setFetchType(OperationType fetchTyper) {
+        this.fetchType = fetchTyper;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getInspectType()
-	 */
-	@Override
-	public OperationType getInspectType() {
-		return inspectType;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getInspectType()
+     */
+    @Override
+    public OperationType getInspectType() {
+        return inspectType;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setInspectType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
-	 */
-	@Override
-	public void setInspectType(OperationType inspectType) {
-		this.inspectType = inspectType;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setInspectType(org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType)
+     */
+    @Override
+    public void setInspectType(OperationType inspectType) {
+        this.inspectType = inspectType;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getId()
-	 */
-	@Override
-	public Long getId() {
-		return id;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#getId()
+     */
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setId(java.lang.Long)
-	 */
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.OperationTypes#setId(java.lang.Long)
+     */
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((addType == null) ? 0 : addType.hashCode());
-		result = prime * result
-				+ ((fetchType == null) ? 0 : fetchType.hashCode());
-		result = prime * result
-				+ ((inspectType == null) ? 0 : inspectType.hashCode());
-		result = prime * result
-				+ ((removeType == null) ? 0 : removeType.hashCode());
-		result = prime * result
-				+ ((updateType == null) ? 0 : updateType.hashCode());
-		return result;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((addType == null) ? 0 : addType.hashCode());
+        result = prime * result
+                + ((fetchType == null) ? 0 : fetchType.hashCode());
+        result = prime * result
+                + ((inspectType == null) ? 0 : inspectType.hashCode());
+        result = prime * result
+                + ((removeType == null) ? 0 : removeType.hashCode());
+        result = prime * result
+                + ((updateType == null) ? 0 : updateType.hashCode());
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OperationTypesImpl other = (OperationTypesImpl) obj;
-		
-		if (id != null && other.id != null) {
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OperationTypesImpl other = (OperationTypesImpl) obj;
+        
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-		
-		if (addType != other.addType)
-			return false;
-		if (fetchType != other.fetchType)
-			return false;
-		if (inspectType != other.inspectType)
-			return false;
-		if (removeType != other.removeType)
-			return false;
-		if (updateType != other.updateType)
-			return false;
-		return true;
-	}
+        
+        if (addType != other.addType)
+            return false;
+        if (fetchType != other.fetchType)
+            return false;
+        if (inspectType != other.inspectType)
+            return false;
+        if (removeType != other.removeType)
+            return false;
+        if (updateType != other.updateType)
+            return false;
+        return true;
+    }
 
-	
+    
 }

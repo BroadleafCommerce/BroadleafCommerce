@@ -87,10 +87,10 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     }
 
     @Resource(name="blStaticAssetService")
-	protected StaticAssetService staticAssetService;
+    protected StaticAssetService staticAssetService;
 
     @Resource(name="blStaticAssetStorageService")
-	protected StaticAssetStorageService staticAssetStorageService;
+    protected StaticAssetStorageService staticAssetStorageService;
 
     @Resource(name="blImageArtifactProcessor")
     protected ImageArtifactProcessor imageArtifactProcessor;
@@ -154,7 +154,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         }
         MultipartFile upload = UploadedFile.getUpload().get("file");
         Entity entity  = persistencePackage.getEntity();
-		try {
+        try {
             StaticAsset adminInstance;
             try {
                 ImageMetadata metadata = imageArtifactProcessor.getImageMetadata(upload.getInputStream());
@@ -166,7 +166,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 adminInstance = new StaticAssetImpl();
             }
             Map<String, FieldMetadata> entityProperties = getMergedProperties();
-			adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
+            adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
 
             String fileName = getFileName(upload.getOriginalFilename());
             if (StringUtils.isEmpty(adminInstance.getName())) {
@@ -202,7 +202,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
             adminInstance = staticAssetService.addStaticAsset(adminInstance, getSandBox());
 
-			Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
             try {
                 StaticAssetStorage storage = staticAssetStorageService.create();
@@ -219,10 +219,10 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             }
 
             return addImageRecords(adminEntity);
-		} catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Unable to perform add for entity: "+entity.getType()[0], e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
@@ -252,15 +252,15 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             try {
                 PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
-			    Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
+                Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
                 Map<String, FieldMetadata> entityProperties = getForeignKeyReadyMergedProperties();
-			    Long primaryKey = Long.valueOf(entity.findProperty("idHolder").getValue());
-			    StaticAsset adminInstance = (StaticAsset) staticAssetService.findStaticAssetById(primaryKey);
+                Long primaryKey = Long.valueOf(entity.findProperty("idHolder").getValue());
+                StaticAsset adminInstance = (StaticAsset) staticAssetService.findStaticAssetById(primaryKey);
 
                 //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
                 adminInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
                 StaticAsset originalInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
-			    adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
+                adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
 
                 adminInstance.setFileSize(upload.getSize());
                 Collection mimeTypes = MimeUtil.getMimeTypes(upload.getOriginalFilename());
@@ -356,7 +356,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StaticAsset.class.getName(), getMergedProperties());
-			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StaticAsset.class.getName());
+            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StaticAsset.class.getName());
             PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), StaticAsset.class.getName());
             Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, StaticAsset.class);
             Criteria count = dynamicEntityDao.getCriteria(countCriteria, StaticAsset.class);
@@ -397,7 +397,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     }
 
     protected synchronized void createMergedProperties(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
-		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
         HashMap<String, FieldMetadata> originalProps = (HashMap<String, FieldMetadata>) dynamicEntityDao.getMergedProperties(
             StaticAsset.class.getName(),
@@ -489,25 +489,25 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         mergedProperties.put("idHolder", createHiddenField("idHolder"));
         mergedProperties.put("customCriteria", createHiddenField("customCriteria"));
         mergedProperties.put("csrfToken", createHiddenField("csrfToken"));
-	}
+    }
 
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
-		try {
-			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new EnumMap<MergedPropertyType, Map<String, FieldMetadata>>(MergedPropertyType.class);
+        try {
+            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new EnumMap<MergedPropertyType, Map<String, FieldMetadata>>(MergedPropertyType.class);
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAsset.class);
             if (getMergedProperties() == null) {
                 createMergedProperties(persistencePackage, dynamicEntityDao, entityClasses);
             }
 
-			allMergedProperties.put(MergedPropertyType.PRIMARY, getMergedProperties());
-			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
-			return new DynamicResultSet(mergedMetadata);
-		} catch (Exception e) {
+            allMergedProperties.put(MergedPropertyType.PRIMARY, getMergedProperties());
+            ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
+            return new DynamicResultSet(mergedMetadata);
+        } catch (Exception e) {
             ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
             throw ex;
-		}
+        }
     }
 
     protected FieldMetadata createHiddenField(String name) {

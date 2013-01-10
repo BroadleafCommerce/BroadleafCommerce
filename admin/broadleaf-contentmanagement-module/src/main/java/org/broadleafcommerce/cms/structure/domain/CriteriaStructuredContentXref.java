@@ -38,7 +38,7 @@ import java.io.Serializable;
 @Inheritance(strategy=InheritanceType.JOINED)
 public class CriteriaStructuredContentXref {
 
-	/** The Constant serialVersionUID. */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The category id. */
@@ -54,7 +54,7 @@ public class CriteriaStructuredContentXref {
     }
 
     public static class CriteriaStructuredContentXrefPK implements Serializable {
-    	
+        
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
@@ -83,35 +83,35 @@ public class CriteriaStructuredContentXref {
         }
 
         @Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((structuredContent == null) ? 0 : structuredContent.hashCode());
-			result = prime * result + ((structuredContentItemCriteria == null) ? 0 : structuredContentItemCriteria.hashCode());
-			return result;
-		}
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((structuredContent == null) ? 0 : structuredContent.hashCode());
+            result = prime * result + ((structuredContentItemCriteria == null) ? 0 : structuredContentItemCriteria.hashCode());
+            return result;
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
             CriteriaStructuredContentXrefPK other = (CriteriaStructuredContentXrefPK) obj;
-			if (structuredContent == null) {
-				if (other.structuredContent != null)
-					return false;
-			} else if (!structuredContent.equals(other.structuredContent))
-				return false;
-			if (structuredContentItemCriteria == null) {
-				if (other.structuredContentItemCriteria != null)
-					return false;
-			} else if (!structuredContentItemCriteria.equals(other.structuredContentItemCriteria))
-				return false;
-			return true;
-		}
+            if (structuredContent == null) {
+                if (other.structuredContent != null)
+                    return false;
+            } else if (!structuredContent.equals(other.structuredContent))
+                return false;
+            if (structuredContentItemCriteria == null) {
+                if (other.structuredContentItemCriteria != null)
+                    return false;
+            } else if (!structuredContentItemCriteria.equals(other.structuredContentItemCriteria))
+                return false;
+            return true;
+        }
 
     }
 }

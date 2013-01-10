@@ -81,8 +81,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setRetailPrice(prices.getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
         for (DiscreteOrderItemFeePrice fee : itemRequest.getDiscreteOrderItemFeePrices()) {
-        	item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
-        	item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
+            item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
+            item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
         }
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());

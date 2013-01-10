@@ -30,42 +30,42 @@ import org.broadleafcommerce.common.time.SystemTime;
  */
 public class DummyCreditCardModule extends AbstractModule {
 
-	public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
+    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         return createResponse(paymentContext);
     }
 
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
     
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
-	}
+        return createResponse(paymentContext);
+    }
 
-	private PaymentResponseItem createResponse(PaymentContext paymentContext) {
+    private PaymentResponseItem createResponse(PaymentContext paymentContext) {
         paymentContext.getPaymentInfo().setReferenceNumber("abc123");
-    	PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-		responseItem.setTransactionTimestamp(SystemTime.asDate());
-		responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
-		responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
-		responseItem.setTransactionSuccess(true);
-		responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
+        PaymentResponseItem responseItem = new PaymentResponseItemImpl();
+        responseItem.setTransactionTimestamp(SystemTime.asDate());
+        responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
+        responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
+        responseItem.setTransactionSuccess(true);
+        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
 
         return responseItem;
     }

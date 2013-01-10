@@ -38,62 +38,62 @@ import org.springframework.transaction.TransactionSystemException;
  */
 public class CompatibleGWTSecuredRPCServiceExporter extends GWTRPCServiceExporter {
 
-	/** serialVersionUID */
-	private static final long serialVersionUID = 2733022902422767233L;
-	private static Log LOGGER = LogFactory.getLog(CompatibleGWTSecuredRPCServiceExporter.class);
+    /** serialVersionUID */
+    private static final long serialVersionUID = 2733022902422767233L;
+    private static Log LOGGER = LogFactory.getLog(CompatibleGWTSecuredRPCServiceExporter.class);
 
-	@SuppressWarnings("rawtypes")
-	public void setServiceInterfaces(final Class[] serviceInterfaces) {
-		this.serviceInterfaces = serviceInterfaces;
-	}
+    @SuppressWarnings("rawtypes")
+    public void setServiceInterfaces(final Class[] serviceInterfaces) {
+        this.serviceInterfaces = serviceInterfaces;
+    }
 
-	@SuppressWarnings("rawtypes")
-	public Class[] getServiceInterfaces() {
-		return this.serviceInterfaces;
-	}
+    @SuppressWarnings("rawtypes")
+    public Class[] getServiceInterfaces() {
+        return this.serviceInterfaces;
+    }
 
-	public void setServletContext(final ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+    public void setServletContext(final ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
-	public ServletContext getServletContext() {
-		return this.servletContext;
-	}
+    public ServletContext getServletContext() {
+        return this.servletContext;
+    }
 
-	public void setCompressResponse(final int compressResponse) {
-		this.compressResponse = compressResponse;
-	}
+    public void setCompressResponse(final int compressResponse) {
+        this.compressResponse = compressResponse;
+    }
 
-	public int getCompressResponse() {
-		return this.compressResponse;
-	}
+    public int getCompressResponse() {
+        return this.compressResponse;
+    }
 
-	public void setDisableResponseCaching(final boolean disableResponseCaching) {
-		this.disableResponseCaching = disableResponseCaching;
-	}
+    public void setDisableResponseCaching(final boolean disableResponseCaching) {
+        this.disableResponseCaching = disableResponseCaching;
+    }
 
-	public boolean getDisableResponseCaching() {
-		return this.disableResponseCaching;
-	}
+    public boolean getDisableResponseCaching() {
+        return this.disableResponseCaching;
+    }
 
-	public void setMethodCache(final Map<Method, Method> methodCache) {
-		this.methodCache = methodCache;
-	}
+    public void setMethodCache(final Map<Method, Method> methodCache) {
+        this.methodCache = methodCache;
+    }
 
-	public Map<Method, Method> getMethodCache() {
-		return this.methodCache;
-	}
+    public Map<Method, Method> getMethodCache() {
+        return this.methodCache;
+    }
 
-	/**
-	 * Wrap the original method in order to detect a Spring Security specific exception and manage it the way we want.
-	 * @param payload 
-	 * @see org.gwtwidgets.server.spring.GWTRPCServiceExporter#processCall(java.lang.String)
-	 */
-	@Override
-	public String processCall(final String payload) throws SerializationException {
-		String response = null;
-		// reported as not working with GWT.1.6.4 : Issue 2
-//		final RPCRequest rpcRequest = RPC.decodeRequest(payload);
+    /**
+     * Wrap the original method in order to detect a Spring Security specific exception and manage it the way we want.
+     * @param payload 
+     * @see org.gwtwidgets.server.spring.GWTRPCServiceExporter#processCall(java.lang.String)
+     */
+    @Override
+    public String processCall(final String payload) throws SerializationException {
+        String response = null;
+        // reported as not working with GWT.1.6.4 : Issue 2
+//      final RPCRequest rpcRequest = RPC.decodeRequest(payload);
         final RPCRequest rpcRequest;
         try {
             rpcRequest = RPC.decodeRequest(payload, null, this);
@@ -101,35 +101,35 @@ public class CompatibleGWTSecuredRPCServiceExporter extends GWTRPCServiceExporte
             LOGGER.error("Could not decode the request", e);
             throw e;
         }
-		try {
-			response = super.processCall(payload);
-		} catch (final Throwable e) { // Security Exceptions (preciousException here) are wrapped into an UnexpectedException (cause1), which is wrapped into a RuntimeException (e)...
-			LOGGER.error("Problem processing call", e);
-			final Throwable cause1 = e.getCause();
-			if (cause1 != null && cause1 instanceof UnexpectedException) {
-				final Throwable preciousException = cause1.getCause();
-				if (preciousException != null && (preciousException instanceof AccessDeniedException || preciousException instanceof AuthenticationException)) {
-					return processException(preciousException, rpcRequest);
-				} else if (preciousException != null && (preciousException instanceof TransactionSystemException)) {
-					return processException(((TransactionSystemException) preciousException).getApplicationException(), rpcRequest);
-				}
-			}
-			return processException(e, rpcRequest);
-		}
-		return response;
-	}
-	
-	protected String processException(final Throwable e, final RPCRequest rpcRequest) throws SerializationException {
-		String failurePayload = null;
-		try {
-			failurePayload = RPC.encodeResponseForFailure(
-				rpcRequest.getMethod(),
-				SecurityExceptionFactory.get(e));
-		} catch (final UnexpectedException ue) {
-			LOGGER.error("You may have forgotten to add a 'throws ApplicationSecurityException' declaration to your service interface.");
-			throw ue;
-		}
-		return failurePayload;
-	}
-	
+        try {
+            response = super.processCall(payload);
+        } catch (final Throwable e) { // Security Exceptions (preciousException here) are wrapped into an UnexpectedException (cause1), which is wrapped into a RuntimeException (e)...
+            LOGGER.error("Problem processing call", e);
+            final Throwable cause1 = e.getCause();
+            if (cause1 != null && cause1 instanceof UnexpectedException) {
+                final Throwable preciousException = cause1.getCause();
+                if (preciousException != null && (preciousException instanceof AccessDeniedException || preciousException instanceof AuthenticationException)) {
+                    return processException(preciousException, rpcRequest);
+                } else if (preciousException != null && (preciousException instanceof TransactionSystemException)) {
+                    return processException(((TransactionSystemException) preciousException).getApplicationException(), rpcRequest);
+                }
+            }
+            return processException(e, rpcRequest);
+        }
+        return response;
+    }
+    
+    protected String processException(final Throwable e, final RPCRequest rpcRequest) throws SerializationException {
+        String failurePayload = null;
+        try {
+            failurePayload = RPC.encodeResponseForFailure(
+                rpcRequest.getMethod(),
+                SecurityExceptionFactory.get(e));
+        } catch (final UnexpectedException ue) {
+            LOGGER.error("You may have forgotten to add a 'throws ApplicationSecurityException' declaration to your service interface.");
+            throw ue;
+        }
+        return failurePayload;
+    }
+    
 }

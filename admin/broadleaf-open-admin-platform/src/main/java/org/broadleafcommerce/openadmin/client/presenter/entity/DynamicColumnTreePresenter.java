@@ -55,81 +55,81 @@ import java.util.Map;
  */
 public abstract class DynamicColumnTreePresenter extends AbstractEntityPresenter {
 
-	protected DynamicEditColumnTreeDisplay display;
-	protected ListGridRecord lastSelectedRecord = null;
-	protected Boolean loaded = false;
-	protected DynamicFormPresenter formPresenter;
-	
-	protected HandlerRegistration selectionChangedHandlerRegistration;
-	protected HandlerRegistration removeClickHandlerRegistration;
-	protected HandlerRegistration addClickHandlerRegistration;
-	protected HandlerRegistration entityTypeChangedHandlerRegistration;
-	protected HandlerRegistration cellSavedHandlerRegistration;
-	protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
-	
-	protected Boolean disabled = false;
+    protected DynamicEditColumnTreeDisplay display;
+    protected ListGridRecord lastSelectedRecord = null;
+    protected Boolean loaded = false;
+    protected DynamicFormPresenter formPresenter;
+    
+    protected HandlerRegistration selectionChangedHandlerRegistration;
+    protected HandlerRegistration removeClickHandlerRegistration;
+    protected HandlerRegistration addClickHandlerRegistration;
+    protected HandlerRegistration entityTypeChangedHandlerRegistration;
+    protected HandlerRegistration cellSavedHandlerRegistration;
+    protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
+    
+    protected Boolean disabled = false;
 
     private String newItemTitle = "Create new item";
     private Criteria fetchAfterAddCriteria = new Criteria();
     private String[] gridFields;
     protected Map<String, Object> initialValues = new HashMap<String, Object>();
-	
-	public void setStartState() {
-		if (!disabled) {
-			formPresenter.setStartState();
-			display.getListDisplay().getAddButton().enable();
-			display.getListDisplay().getGrid().enable();
-			display.getListDisplay().getRemoveButton().disable();
-		}
-	}
-	
-	public void enable() {
-		disabled = false;
-		formPresenter.enable();
-		display.getListDisplay().getAddButton().enable();
-		display.getListDisplay().getGrid().enable();
-		display.getListDisplay().getRemoveButton().enable();
-		display.getListDisplay().getToolBar().enable();
-	}
-	
-	public void disable() {
-		disabled = true;
-		formPresenter.disable();
-		display.getListDisplay().getAddButton().disable();
-		display.getListDisplay().getGrid().disable();
-		display.getListDisplay().getRemoveButton().disable();
-		display.getListDisplay().getToolBar().disable();
-	}
-	
-	public void setReadOnly(Boolean readOnly) {
-		if (readOnly) {
-			disable();
-			display.getListDisplay().getGrid().enable();
-		} else {
-			enable();
-		}
-	}
-	
-	public void bind() {
-		formPresenter.bind();
-		addClickHandlerRegistration = display.getListDisplay().getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					addClicked();
-				}
-			}
+    
+    public void setStartState() {
+        if (!disabled) {
+            formPresenter.setStartState();
+            display.getListDisplay().getAddButton().enable();
+            display.getListDisplay().getGrid().enable();
+            display.getListDisplay().getRemoveButton().disable();
+        }
+    }
+    
+    public void enable() {
+        disabled = false;
+        formPresenter.enable();
+        display.getListDisplay().getAddButton().enable();
+        display.getListDisplay().getGrid().enable();
+        display.getListDisplay().getRemoveButton().enable();
+        display.getListDisplay().getToolBar().enable();
+    }
+    
+    public void disable() {
+        disabled = true;
+        formPresenter.disable();
+        display.getListDisplay().getAddButton().disable();
+        display.getListDisplay().getGrid().disable();
+        display.getListDisplay().getRemoveButton().disable();
+        display.getListDisplay().getToolBar().disable();
+    }
+    
+    public void setReadOnly(Boolean readOnly) {
+        if (readOnly) {
+            disable();
+            display.getListDisplay().getGrid().enable();
+        } else {
+            enable();
+        }
+    }
+    
+    public void bind() {
+        formPresenter.bind();
+        addClickHandlerRegistration = display.getListDisplay().getAddButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    addClicked();
+                }
+            }
         });
-		removeClickHandlerRegistration = display.getListDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					removeClicked();
-				}
-			}
-		});
-		selectionChangedHandlerRegistration = display.getListDisplay().getGrid().addNodeSelectedHandler(new NodeSelectedHandler() {
-			@Override
+        removeClickHandlerRegistration = display.getListDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    removeClicked();
+                }
+            }
+        });
+        selectionChangedHandlerRegistration = display.getListDisplay().getGrid().addNodeSelectedHandler(new NodeSelectedHandler() {
+            @Override
             public void onNodeSelected(NodeSelectedEvent event) {
-				ListGridRecord selectedRecord = event.getNode();
+                ListGridRecord selectedRecord = event.getNode();
                 if (!selectedRecord.equals(lastSelectedRecord)) {
                     lastSelectedRecord = selectedRecord;
                     if (selectedRecord.getAttributeAsStringArray("_type") == null){
@@ -144,51 +144,51 @@ public abstract class DynamicColumnTreePresenter extends AbstractEntityPresenter
                     }
                     changeSelection(selectedRecord);
                 }
-			}
-		});
-		entityTypeChangedHandlerRegistration = display.getListDisplay().getEntityType().addChangedHandler(new ChangedHandler() {
-			public void onChanged(ChangedEvent event) {
-				((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).setDefaultNewEntityFullyQualifiedClassname((String) event.getItem().getValue());
-			}
+            }
         });
-	}
-	
-	public void postSetup(Canvas container) {
-		BLCMain.ISNEW = false;
-		if (containsDisplay(container)) {
-			display.show();
-		} else {
-			bind();
-			container.addChild(display.asCanvas());
-			loaded = true;
-		}
-		if (BLCMain.MODAL_PROGRESS.isActive()) {
-			BLCMain.MODAL_PROGRESS.stopProgress();
-		}
-		if (BLCMain.SPLASH_PROGRESS.isActive()) {
-			BLCMain.SPLASH_PROGRESS.stopProgress();
-		}
-	}
-	
-	protected Boolean containsDisplay(Canvas container) {
-		return container.contains(display.asCanvas());
-	}
-	
-	public DynamicEditColumnTreeDisplay getDisplay() {
-		return display;
-	}
-	
-	public void setDisplay(Display display) {
-		this.display = (DynamicEditColumnTreeDisplay) display;
-	}
-	
-	protected void setupDisplayItems(DataSource entityDataSource, DataSource... additionalDataSources) {
-		getDisplay().build(entityDataSource, additionalDataSources);
-		formPresenter = new DynamicFormPresenter(display.getDynamicFormDisplay());
-		((ColumnTreeDataSource) entityDataSource).setAssociatedGrid(display.getListDisplay().getGrid());
-	}
+        entityTypeChangedHandlerRegistration = display.getListDisplay().getEntityType().addChangedHandler(new ChangedHandler() {
+            public void onChanged(ChangedEvent event) {
+                ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).setDefaultNewEntityFullyQualifiedClassname((String) event.getItem().getValue());
+            }
+        });
+    }
+    
+    public void postSetup(Canvas container) {
+        BLCMain.ISNEW = false;
+        if (containsDisplay(container)) {
+            display.show();
+        } else {
+            bind();
+            container.addChild(display.asCanvas());
+            loaded = true;
+        }
+        if (BLCMain.MODAL_PROGRESS.isActive()) {
+            BLCMain.MODAL_PROGRESS.stopProgress();
+        }
+        if (BLCMain.SPLASH_PROGRESS.isActive()) {
+            BLCMain.SPLASH_PROGRESS.stopProgress();
+        }
+    }
+    
+    protected Boolean containsDisplay(Canvas container) {
+        return container.contains(display.asCanvas());
+    }
+    
+    public DynamicEditColumnTreeDisplay getDisplay() {
+        return display;
+    }
+    
+    public void setDisplay(Display display) {
+        this.display = (DynamicEditColumnTreeDisplay) display;
+    }
+    
+    protected void setupDisplayItems(DataSource entityDataSource, DataSource... additionalDataSources) {
+        getDisplay().build(entityDataSource, additionalDataSources);
+        formPresenter = new DynamicFormPresenter(display.getDynamicFormDisplay());
+        ((ColumnTreeDataSource) entityDataSource).setAssociatedGrid(display.getListDisplay().getGrid());
+    }
 
-	protected void changeSelection(Record selectedRecord) {
+    protected void changeSelection(Record selectedRecord) {
         // place holder
     }
 
@@ -206,67 +206,67 @@ public abstract class DynamicColumnTreePresenter extends AbstractEntityPresenter
         } else {
             addNewItem(newItemTitle);
         }
-	}
+    }
 
     protected void addNewItem(String newItemTitle) {
         initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
-			public void onItemEdited(ItemEdited event) {
+            public void onItemEdited(ItemEdited event) {
                 if (fetchAfterAddCriteria != null) {
-				    display.getListDisplay().getGrid().fetchData(fetchAfterAddCriteria);
+                    display.getListDisplay().getGrid().fetchData(fetchAfterAddCriteria);
                 }
-			}
-		}, null, null);
+            }
+        }, null, null);
     }
 
-	protected void addClicked() {
+    protected void addClicked() {
         addClicked(BLCMain.getMessageManager().getString("newItemTitle"));
     }
-	
-	protected void removeClicked() {
-		SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
-			public void execute(Boolean value) {
-				if (value) {
+    
+    protected void removeClicked() {
+        SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
+            public void execute(Boolean value) {
+                if (value) {
                     display.getListDisplay().getGrid().getDataSource().removeData(display.getListDisplay().getGrid().getSelectedRecord(), new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
                             //display.getListDisplay().getGrid().invalidateCache();
                             formPresenter.disable();
-					        display.getListDisplay().getRemoveButton().disable();
+                            display.getListDisplay().getRemoveButton().disable();
                         }
                     });
-				}
-			}
-		});
-	}
+                }
+            }
+        });
+    }
 
-	public HandlerRegistration getSelectionChangedHandlerRegistration() {
-		return selectionChangedHandlerRegistration;
-	}
+    public HandlerRegistration getSelectionChangedHandlerRegistration() {
+        return selectionChangedHandlerRegistration;
+    }
 
-	public HandlerRegistration getRemoveClickHandlerRegistration() {
-		return removeClickHandlerRegistration;
-	}
+    public HandlerRegistration getRemoveClickHandlerRegistration() {
+        return removeClickHandlerRegistration;
+    }
 
-	public HandlerRegistration getAddClickHandlerRegistration() {
-		return addClickHandlerRegistration;
-	}
+    public HandlerRegistration getAddClickHandlerRegistration() {
+        return addClickHandlerRegistration;
+    }
 
-	public HandlerRegistration getEntityTypeChangedHandlerRegistration() {
-		return entityTypeChangedHandlerRegistration;
-	}
+    public HandlerRegistration getEntityTypeChangedHandlerRegistration() {
+        return entityTypeChangedHandlerRegistration;
+    }
 
-	public HandlerRegistration getCellSavedHandlerRegistration() {
-		return cellSavedHandlerRegistration;
-	}
+    public HandlerRegistration getCellSavedHandlerRegistration() {
+        return cellSavedHandlerRegistration;
+    }
 
-	public PresenterSequenceSetupManager getPresenterSequenceSetupManager() {
-		return presenterSequenceSetupManager;
-	}
+    public PresenterSequenceSetupManager getPresenterSequenceSetupManager() {
+        return presenterSequenceSetupManager;
+    }
 
-	public Boolean getLoaded() {
-		return loaded;
-	}
+    public Boolean getLoaded() {
+        return loaded;
+    }
 
     public void setAddNewItemTitle(String newItemTitle) {
         this.newItemTitle = newItemTitle;

@@ -84,32 +84,32 @@ public interface OfferService {
 
     public CustomerOfferDao getCustomerOfferDao();
 
-	public void setCustomerOfferDao(CustomerOfferDao customerOfferDao);
+    public void setCustomerOfferDao(CustomerOfferDao customerOfferDao);
 
-	public OfferCodeDao getOfferCodeDao();
+    public OfferCodeDao getOfferCodeDao();
 
-	public void setOfferCodeDao(OfferCodeDao offerCodeDao);
+    public void setOfferCodeDao(OfferCodeDao offerCodeDao);
 
-	public OfferDao getOfferDao();
+    public OfferDao getOfferDao();
 
-	public void setOfferDao(OfferDao offerDao);
+    public void setOfferDao(OfferDao offerDao);
 
-	public OrderOfferProcessor getOrderOfferProcessor();
+    public OrderOfferProcessor getOrderOfferProcessor();
 
-	public void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor);
+    public void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor);
 
-	public ItemOfferProcessor getItemOfferProcessor();
+    public ItemOfferProcessor getItemOfferProcessor();
 
-	public void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor);
+    public void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor);
 
-	public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor();
+    public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor();
 
-	public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
-	
-	public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
+    
+    public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
-	public PromotableItemFactory getPromotableItemFactory();
+    public PromotableItemFactory getPromotableItemFactory();
 
-	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
-	
+    public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+    
 }

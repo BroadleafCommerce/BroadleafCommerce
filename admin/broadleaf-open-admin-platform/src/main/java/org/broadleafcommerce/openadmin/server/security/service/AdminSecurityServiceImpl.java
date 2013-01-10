@@ -58,7 +58,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     private static int PASSWORD_TOKEN_LENGTH = 12;
 
-	@Resource(name = "blAdminRoleDao")
+    @Resource(name = "blAdminRoleDao")
     protected AdminRoleDao adminRoleDao;
 
     @Resource(name = "blAdminUserDao")
@@ -115,14 +115,14 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     public AdminUser saveAdminUser(AdminUser user) {
-    	if (user.getUnencodedPassword() != null) {
+        if (user.getUnencodedPassword() != null) {
             user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), null));
         }
         return adminUserDao.saveAdminUser(user);
     }
 
     public AdminUser changePassword(PasswordChange passwordChange) {
-    	AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
+        AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
         user = saveAdminUser(user);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

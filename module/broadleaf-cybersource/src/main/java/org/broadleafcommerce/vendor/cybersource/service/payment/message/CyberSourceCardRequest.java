@@ -24,10 +24,10 @@ import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSource
  *
  */
 public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private java.lang.String fullName;
+    
+    private static final long serialVersionUID = 1L;
+    
+    private java.lang.String fullName;
     private java.lang.String accountNumber;
     private Integer expirationMonth;
     private Integer expirationYear;
@@ -40,27 +40,27 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
     private java.lang.String pin;
     private java.lang.String bin;
     protected String requestID;
-	protected String requestToken;
+    protected String requestToken;
 
-	public CyberSourceCardRequest() {
-		super(CyberSourceMethodType.CREDITCARD);
-	}
+    public CyberSourceCardRequest() {
+        super(CyberSourceMethodType.CREDITCARD);
+    }
 
-	public String getRequestID() {
-		return requestID;
-	}
-	
-	public void setRequestID(String requestID) {
-		this.requestID = requestID;
-	}
-	
-	public String getRequestToken() {
-		return requestToken;
-	}
-	
-	public void setRequestToken(String requestToken) {
-		this.requestToken = requestToken;
-	}
+    public String getRequestID() {
+        return requestID;
+    }
+    
+    public void setRequestID(String requestID) {
+        this.requestID = requestID;
+    }
+    
+    public String getRequestToken() {
+        return requestToken;
+    }
+    
+    public void setRequestToken(String requestToken) {
+        this.requestToken = requestToken;
+    }
 
     /**
      * Gets the fullName value for this Card.

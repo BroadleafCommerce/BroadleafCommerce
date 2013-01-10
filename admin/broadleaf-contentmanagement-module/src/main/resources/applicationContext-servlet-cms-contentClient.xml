@@ -15,22 +15,22 @@
 
     <!-- This was not getting picked up.  -->
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer">
-   		<property name="propertyLocations">
-   			<set>
-   				<value>classpath:config/bc/</value>
-   			</set>
-   		</property>
-   		<property name="environments">
-   			<set>
-   				<value>production</value>
-   				<value>staging</value>
-   				<value>integration</value>
-   				<value>development</value>
-   			</set>
-   		</property>
-   		<property name="defaultEnvironment" value="development"/>
-   		<property name="ignoreUnresolvablePlaceholders" value="true"/>
-   	</bean>
+        <property name="propertyLocations">
+            <set>
+                <value>classpath:config/bc/</value>
+            </set>
+        </property>
+        <property name="environments">
+            <set>
+                <value>production</value>
+                <value>staging</value>
+                <value>integration</value>
+                <value>development</value>
+            </set>
+        </property>
+        <property name="defaultEnvironment" value="development"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
 
     <context:component-scan base-package="org.broadleafcommerce.cms"/>
 

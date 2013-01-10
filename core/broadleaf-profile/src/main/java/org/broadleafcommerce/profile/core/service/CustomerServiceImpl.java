@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
-	
+    
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
@@ -105,13 +105,13 @@ public class CustomerServiceImpl implements CustomerService {
         customer = saveCustomer(customer);
         
         for (PasswordUpdatedHandler handler : passwordChangedHandlers) {
-        	handler.passwordChanged(passwordChange, customer, passwordChange.getNewPassword());
+            handler.passwordChanged(passwordChange, customer, passwordChange.getNewPassword());
         }
         
         return customer;
     }
     
-	public Customer resetPassword(PasswordReset passwordReset) {
+    public Customer resetPassword(PasswordReset passwordReset) {
         Customer customer = readCustomerByUsername(passwordReset.getUsername());
         String newPassword = PasswordUtils.generateTemporaryPassword(passwordReset.getPasswordLength());
         customer.setUnencodedPassword(newPassword);
@@ -119,7 +119,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer = saveCustomer(customer);
         
         for (PasswordUpdatedHandler handler : passwordResetHandlers) {
-        	handler.passwordChanged(passwordReset, customer, newPassword);
+            handler.passwordChanged(passwordReset, customer, newPassword);
         }
         
         return customer;
@@ -175,20 +175,20 @@ public class CustomerServiceImpl implements CustomerService {
         this.passwordEncoder = passwordEncoder;
     }
 
-	public List<PasswordUpdatedHandler> getPasswordResetHandlers() {
-		return passwordResetHandlers;
-	}
+    public List<PasswordUpdatedHandler> getPasswordResetHandlers() {
+        return passwordResetHandlers;
+    }
 
-	public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers) {
-		this.passwordResetHandlers = passwordResetHandlers;
-	}
+    public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers) {
+        this.passwordResetHandlers = passwordResetHandlers;
+    }
 
-	public List<PasswordUpdatedHandler> getPasswordChangedHandlers() {
-		return passwordChangedHandlers;
-	}
+    public List<PasswordUpdatedHandler> getPasswordChangedHandlers() {
+        return passwordChangedHandlers;
+    }
 
-	public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers) {
-		this.passwordChangedHandlers = passwordChangedHandlers;
-	}
+    public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers) {
+        this.passwordChangedHandlers = passwordChangedHandlers;
+    }
     
 }

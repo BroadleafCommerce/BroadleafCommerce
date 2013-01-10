@@ -30,16 +30,16 @@ import java.util.List;
  */
 public interface BaseCriteriaDao<T extends Serializable> {
 
-	public abstract List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
+    public abstract List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
 
-	public abstract int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
+    public abstract int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
 
-	public abstract EntityManager getStandardEntityManager();
-	
-	public abstract int count(PersistentEntityCriteria entityCriteria);
-	
-	public abstract List<T> query(PersistentEntityCriteria entityCriteria);
-	
-	public abstract Class<? extends Serializable> getEntityClass();
+    public abstract EntityManager getStandardEntityManager();
+    
+    public abstract int count(PersistentEntityCriteria entityCriteria);
+    
+    public abstract List<T> query(PersistentEntityCriteria entityCriteria);
+    
+    public abstract Class<? extends Serializable> getEntityClass();
 
 }

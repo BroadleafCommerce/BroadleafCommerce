@@ -26,12 +26,12 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  */
 public interface DynamicFormDisplay {
 
-	public ToolStrip getToolbar();
+    public ToolStrip getToolbar();
 
-	public ToolStripButton getSaveButton();
+    public ToolStripButton getSaveButton();
 
-	public ToolStripButton getRefreshButton();
+    public ToolStripButton getRefreshButton();
 
-	public FormOnlyDisplay getFormOnlyDisplay();
-	
+    public FormOnlyDisplay getFormOnlyDisplay();
+    
 }

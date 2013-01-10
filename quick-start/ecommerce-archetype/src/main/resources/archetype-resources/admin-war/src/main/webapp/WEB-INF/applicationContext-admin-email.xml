@@ -19,7 +19,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <!--
@@ -27,15 +27,15 @@
        http://www.aboutmyip.com/AboutMyXApp/DevNullSmtp.jsp and run the jar.
        The configuration below will work if you set the DevNullSmtp port to 30000.
      -->
-	<bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-    	<property name="host"><value>0.0.0.0</value></property>
-    	<property name="port"><value>30000</value></property>
-    	<property name="protocol"><value>smtp</value></property>
-    	<property name="javaMailProperties">
-			<props>
-				<prop key="mail.smtp.starttls.enable">true</prop>
-				<prop key="mail.smtp.timeout">25000</prop>
-			</props>
-		</property>
-	</bean>
+    <bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host"><value>0.0.0.0</value></property>
+        <property name="port"><value>30000</value></property>
+        <property name="protocol"><value>smtp</value></property>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.timeout">25000</prop>
+            </props>
+        </property>
+    </bean>
 </beans>

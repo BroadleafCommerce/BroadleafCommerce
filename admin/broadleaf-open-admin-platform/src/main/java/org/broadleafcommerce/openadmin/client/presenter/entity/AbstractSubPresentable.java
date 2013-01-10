@@ -38,7 +38,7 @@ public abstract class AbstractSubPresentable implements SubPresentable {
     protected String[] availableToTypes;
 
     protected Record associatedRecord;
-	protected AbstractDynamicDataSource abstractDynamicDataSource;
+    protected AbstractDynamicDataSource abstractDynamicDataSource;
     protected boolean readOnly = false;
 
     public AbstractSubPresentable(GridStructureDisplay display, String[] availableToTypes) {
@@ -51,36 +51,36 @@ public abstract class AbstractSubPresentable implements SubPresentable {
     }
 
     public void setStartState() {
-		if (!disabled) {
-			display.getAddButton().enable();
-			display.getGrid().enable();
-			display.getRemoveButton().disable();
-		}
-	}
+        if (!disabled) {
+            display.getAddButton().enable();
+            display.getGrid().enable();
+            display.getRemoveButton().disable();
+        }
+    }
 
     public void enable() {
-		disabled = false;
-		display.getAddButton().enable();
-		display.getGrid().enable();
-		display.getRemoveButton().enable();
-		display.getToolBar().enable();
-	}
+        disabled = false;
+        display.getAddButton().enable();
+        display.getGrid().enable();
+        display.getRemoveButton().enable();
+        display.getToolBar().enable();
+    }
 
     public void disable() {
-		disabled = true;
-		display.getAddButton().disable();
-		display.getGrid().disable();
-		display.getRemoveButton().disable();
-		display.getToolBar().disable();
-	}
+        disabled = true;
+        display.getAddButton().disable();
+        display.getGrid().disable();
+        display.getRemoveButton().disable();
+        display.getToolBar().disable();
+    }
     
     public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource) {
         return load(associatedRecord, abstractDynamicDataSource, null);
     }
 
     public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
-		this.associatedRecord = associatedRecord;
-		this.abstractDynamicDataSource = abstractDynamicDataSource;
+        this.associatedRecord = associatedRecord;
+        this.abstractDynamicDataSource = abstractDynamicDataSource;
         ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
         String[] types = associatedRecord.getAttributeAsStringArray("_type");
         boolean shouldLoad = availableToTypes == null;
@@ -117,22 +117,22 @@ public abstract class AbstractSubPresentable implements SubPresentable {
         }
 
         return shouldLoad;
-	}
+    }
 
     public void setReadOnly(Boolean readOnly) {
-		if (readOnly) {
-			disable();
-			display.getGrid().enable();
-		} else {
-			enable();
-		}
+        if (readOnly) {
+            disable();
+            display.getGrid().enable();
+        } else {
+            enable();
+        }
         this.readOnly = readOnly;
-	}
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.permanentlyShowFields(gridFields);
-		dataSource.setupGridFields(gridFields, editable);
-	}
+        display.getGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getGrid());
+        dataSource.permanentlyShowFields(gridFields);
+        dataSource.setupGridFields(gridFields, editable);
+    }
 }
