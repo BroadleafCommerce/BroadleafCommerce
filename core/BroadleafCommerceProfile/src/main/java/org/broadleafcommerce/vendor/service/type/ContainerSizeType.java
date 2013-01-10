@@ -53,7 +53,7 @@ public class ContainerSizeType implements Serializable {
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-        	throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
         }
     }
 

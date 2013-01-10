@@ -45,9 +45,9 @@ public class OrderItemDaoImpl implements OrderItemDao {
     }
 
     public void delete(OrderItem orderItem) {
-    	if (!em.contains(orderItem)) {
-    		orderItem = readOrderItemById(orderItem.getId());
-    	}
+        if (!em.contains(orderItem)) {
+            orderItem = readOrderItemById(orderItem.getId());
+        }
         if (GiftWrapOrderItem.class.isAssignableFrom(orderItem.getClass())) {
             final GiftWrapOrderItem giftItem = (GiftWrapOrderItem) orderItem;
             for (OrderItem wrappedItem : giftItem.getWrappedItems()) {

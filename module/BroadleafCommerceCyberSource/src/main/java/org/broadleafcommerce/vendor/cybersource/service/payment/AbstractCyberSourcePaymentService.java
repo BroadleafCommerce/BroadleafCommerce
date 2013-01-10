@@ -21,9 +21,9 @@ import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentRequest;
 
 public abstract class AbstractCyberSourcePaymentService extends AbstractCyberSourceService {
-	
-	protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
-		RequestMessage request = new RequestMessage();
+    
+    protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
+        RequestMessage request = new RequestMessage();
         request.setMerchantID(getMerchantId());
         request.setMerchantReferenceCode(getIdGenerationService().findNextId("org.broadleafcommerce.vendor.cybersource.service.CyberSourcePaymentService").toString());
         request.setClientLibrary("Java Axis WSS4J");
@@ -38,11 +38,11 @@ public abstract class AbstractCyberSourcePaymentService extends AbstractCyberSou
         PurchaseTotals purchaseTotals = new PurchaseTotals();
         purchaseTotals.setCurrency(paymentRequest.getCurrency());
         if (paymentRequest.getGrandTotal() != null && paymentRequest.getUseGrandTotal().booleanValue()) {
-        	purchaseTotals.setGrandTotalAmount(paymentRequest.getGrandTotal().toString());
+            purchaseTotals.setGrandTotalAmount(paymentRequest.getGrandTotal().toString());
         }
         request.setPurchaseTotals(purchaseTotals);
         
         return request;
-	}
+    }
 
 }

@@ -55,9 +55,9 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     }
 
     public void delete(FulfillmentGroup fulfillmentGroup) {
-    	if (!em.contains(fulfillmentGroup)) {
-    		fulfillmentGroup = readFulfillmentGroupById(fulfillmentGroup.getId());
-    	}
+        if (!em.contains(fulfillmentGroup)) {
+            fulfillmentGroup = readFulfillmentGroupById(fulfillmentGroup.getId());
+        }
         em.remove(fulfillmentGroup);
     }
 

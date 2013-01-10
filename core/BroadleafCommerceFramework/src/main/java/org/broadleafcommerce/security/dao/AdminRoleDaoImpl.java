@@ -38,9 +38,9 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public void deleteAdminRole(AdminRole role) {
-    	if (!em.contains(role)) {
-    		role = readAdminRoleById(role.getId());
-    	}
+        if (!em.contains(role)) {
+            role = readAdminRoleById(role.getId());
+        }
         em.remove(role);
     }
 

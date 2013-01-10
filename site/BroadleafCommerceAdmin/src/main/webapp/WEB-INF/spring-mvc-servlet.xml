@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:flex="http://www.springframework.org/schema/flex"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:flex="http://www.springframework.org/schema/flex"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.directwebremoting.org/schema/spring-dwr
        http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-2.5.xsd
-	   http://www.springframework.org/schema/flex
-	   http://www.springframework.org/schema/flex/spring-flex-1.0.xsd"
+       http://www.springframework.org/schema/flex
+       http://www.springframework.org/schema/flex/spring-flex-1.0.xsd"
     >
 
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/jsp/"></property>
-		<property name="suffix" value=".jsp"></property>
-	</bean>
+    <bean id="viewResolver"
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
 
 
-	<!-- lets use the Commons-based implementation of the MultipartResolver interface -->
+    <!-- lets use the Commons-based implementation of the MultipartResolver interface -->
     <bean id="multipartResolver"
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
 
@@ -32,42 +32,42 @@
         <property name="successView" value="fileUploadConfirmation"/>
     </bean>
 
-	<!--
-		Root directory relative to web application
-		This location must exist on the file system.
-		e.g. C:\servers\apache-tomcat-6.0.18\webapps\broadleafadmin\content\admin
-	-->
+    <!--
+        Root directory relative to web application
+        This location must exist on the file system.
+        e.g. C:\servers\apache-tomcat-6.0.18\webapps\broadleafadmin\content\admin
+    -->
     <bean id="listDirectoryController" class="org.broadleafcommerce.admin.util.controllers.ListDirectoryController">
         <property name="rootDirectory" value="/content/admin"/>
     </bean>
 
     <bean id="makeDirectoryController" class="org.broadleafcommerce.admin.util.controllers.MakeDirectoryController">
-    	<property name="commandClass" value="org.broadleafcommerce.admin.util.domain.DirectoryFileBean"/>
-    	<property name="formView" value="mkDirForm"/>
+        <property name="commandClass" value="org.broadleafcommerce.admin.util.domain.DirectoryFileBean"/>
+        <property name="formView" value="mkDirForm"/>
         <property name="successView" value="fileConfirmation"/>
     </bean>
 
     <bean id="removeFileController" class="org.broadleafcommerce.admin.util.controllers.RemoveFileController">
-    	<property name="commandClass" value="org.broadleafcommerce.admin.util.domain.DirectoryFileBean"/>
-    	<property name="formView" value="rmForm"/>
+        <property name="commandClass" value="org.broadleafcommerce.admin.util.domain.DirectoryFileBean"/>
+        <property name="formView" value="rmForm"/>
         <property name="successView" value="fileConfirmation"/>
     </bean>
 
-	<!--  If you want to change the location of the services-config.xml uncomment the following bean
-	<flex:message-broker services-config-path="classpath*:services-config.xml" />
-	-->
+    <!--  If you want to change the location of the services-config.xml uncomment the following bean
+    <flex:message-broker services-config-path="classpath*:services-config.xml" />
+    -->
 
-	<!-- Maps request paths at /* to the BlazeDS MessageBroker -->
-	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="mappings">
-        	<props>
-        		<prop key="/upload">fileUploadController</prop>
-        		<prop key="/ls">listDirectoryController</prop>
-        		<prop key="/mkDir">makeDirectoryController</prop>
-        		<prop key="/rm">removeFileController</prop>
-        		<!--   prop key="/*">_messageBroker</prop -->
-        	</props>
-		</property>
-	</bean>
+    <!-- Maps request paths at /* to the BlazeDS MessageBroker -->
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/upload">fileUploadController</prop>
+                <prop key="/ls">listDirectoryController</prop>
+                <prop key="/mkDir">makeDirectoryController</prop>
+                <prop key="/rm">removeFileController</prop>
+                <!--   prop key="/*">_messageBroker</prop -->
+            </props>
+        </property>
+    </bean>
 
 </beans>

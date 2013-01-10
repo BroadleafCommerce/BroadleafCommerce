@@ -52,9 +52,9 @@ public class SearchSynonymProvider implements SynonymLookupProvider, LuceneAnaly
 
     public void configure(CompassSettings settings) throws CompassException {
         if (searchSynonymDao == null) {
-	        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
-	        if (context == null) return;
-	        searchSynonymDao = (SearchSynonymDao)context.getBean("blSearchSynonymDao");
+            ApplicationContext context = ApplicationContextHolder.getApplicationContext();
+            if (context == null) return;
+            searchSynonymDao = (SearchSynonymDao)context.getBean("blSearchSynonymDao");
         }
         synonymMap = new HashMap<String, String[]>();
         List<SearchSynonym> synonyms = searchSynonymDao.getAllSynonyms();

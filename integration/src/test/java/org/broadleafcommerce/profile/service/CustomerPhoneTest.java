@@ -70,7 +70,7 @@ public class CustomerPhoneTest extends BaseTest {
     @Test(groups = "readCustomerPhone", dependsOnGroups = "createCustomerPhone")
     @Transactional
     public void readDeafultCustomerPhoneByUserId() {
-    	CustomerPhone customerPhone = customerPhoneService.findDefaultCustomerPhone(userId);
-		assert customerPhone != null;
+        CustomerPhone customerPhone = customerPhoneService.findDefaultCustomerPhone(userId);
+        assert customerPhone != null;
     }
 }

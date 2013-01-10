@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
@@ -14,31 +14,31 @@
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
            
     <!-- Entity mappings - override for extensibility -->
-	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl" scope="prototype">
-		<property name="country">
-			<bean class="org.broadleafcommerce.profile.domain.CountryImpl">
-				<property name="abbreviation" value="US"/>
-				<property name="name" value="United States"/>
-			</bean>
-		</property>
-	</bean>
-	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.domain.CustomerAddress" class="org.broadleafcommerce.profile.domain.CustomerAddressImpl" scope="prototype">
-		<property name="address" ref="org.broadleafcommerce.profile.domain.Address"/>
-	</bean>
-	<bean id="org.broadleafcommerce.profile.domain.CustomerPhone" class="org.broadleafcommerce.profile.domain.CustomerPhoneImpl" scope="prototype">
-		<property name="phone" ref="org.broadleafcommerce.profile.domain.Phone"/>
-	</bean>
-	<bean id="org.broadleafcommerce.profile.domain.IdGeneration" class="org.broadleafcommerce.profile.domain.IdGenerationImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.domain.Phone" class="org.broadleafcommerce.profile.domain.PhoneImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.domain.Role" class="org.broadleafcommerce.profile.domain.RoleImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.domain.State" class="org.broadleafcommerce.profile.domain.StateImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.UserImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.email.domain.EmailTarget" class="org.broadleafcommerce.email.domain.EmailTargetImpl" scope="prototype"/>
-	
+    <bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl" scope="prototype">
+        <property name="country">
+            <bean class="org.broadleafcommerce.profile.domain.CountryImpl">
+                <property name="abbreviation" value="US"/>
+                <property name="name" value="United States"/>
+            </bean>
+        </property>
+    </bean>
+    <bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.domain.CustomerAddress" class="org.broadleafcommerce.profile.domain.CustomerAddressImpl" scope="prototype">
+        <property name="address" ref="org.broadleafcommerce.profile.domain.Address"/>
+    </bean>
+    <bean id="org.broadleafcommerce.profile.domain.CustomerPhone" class="org.broadleafcommerce.profile.domain.CustomerPhoneImpl" scope="prototype">
+        <property name="phone" ref="org.broadleafcommerce.profile.domain.Phone"/>
+    </bean>
+    <bean id="org.broadleafcommerce.profile.domain.IdGeneration" class="org.broadleafcommerce.profile.domain.IdGenerationImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.domain.Phone" class="org.broadleafcommerce.profile.domain.PhoneImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.domain.Role" class="org.broadleafcommerce.profile.domain.RoleImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.domain.State" class="org.broadleafcommerce.profile.domain.StateImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.UserImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.email.domain.EmailTarget" class="org.broadleafcommerce.email.domain.EmailTargetImpl" scope="prototype"/>
+    
 </beans>

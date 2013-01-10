@@ -28,13 +28,13 @@ import org.easymock.classextension.EasyMock;
 import org.testng.annotations.Test;
 
 public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
-	
+    
     private GetProductsByCategoryIdTag getProductsByCategoryIdTag;
 
     @SuppressWarnings("unchecked")
     @Test
     public void test_GetProductsByCategoryIdTag() throws JspException {
-    	//TODO Fix this test - there are expectation failures
+        //TODO Fix this test - there are expectation failures
         /*getProductsByCategoryIdTag.setJspContext(pageContext);
         getProductsByCategoryIdTag.setCatalogService(catalogService);
 
@@ -70,8 +70,8 @@ public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
         super.verifyBaseMockObjects();*/
     }
 
-	@Override
-	public void setup() {
-		getProductsByCategoryIdTag = new GetProductsByCategoryIdTag();
-	}
+    @Override
+    public void setup() {
+        getProductsByCategoryIdTag = new GetProductsByCategoryIdTag();
+    }
 }

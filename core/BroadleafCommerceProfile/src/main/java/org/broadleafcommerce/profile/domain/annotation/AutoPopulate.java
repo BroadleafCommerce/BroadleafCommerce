@@ -25,5 +25,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AutoPopulate {
-	boolean autoUpdateValue() default false;
+    boolean autoUpdateValue() default false;
 }

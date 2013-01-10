@@ -312,7 +312,7 @@ public class OfferServiceImpl implements OfferService {
                     List<CandidateOrderOffer> finalQualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
                     order.removeAllOrderAdjustments();
                     for (CandidateOrderOffer condidateOrderOffer : qualifiedOrderOffers) {
-                    	// recheck the list of order offers and verify if they still apply with the new subtotal
+                        // recheck the list of order offers and verify if they still apply with the new subtotal
                         if (couldOfferApplyToOrder(condidateOrderOffer.getOffer(), order)) {
                             finalQualifiedOrderOffers.add(condidateOrderOffer);
                         }
@@ -496,14 +496,14 @@ public class OfferServiceImpl implements OfferService {
         // isCombinableWithOtherOffers - not combinable with any offers in the order
         // isStackable - cannot be stack on top of an existing item offer back, other offers can be stack of top of it
         //
-    	boolean itemOffersApplied = false;
+        boolean itemOffersApplied = false;
         int appliedItemOffersCount = 0;
         for (CandidateItemOffer itemOffer : itemOffers) {
             OrderItem orderItem = itemOffer.getOrderItem();
             if (!orderItem.isNotCombinableOfferApplied()) {
                 if ((itemOffer.getOffer().isCombinableWithOtherOffers() && itemOffer.getOffer().isStackable()) || !orderItem.isHasOrderItemAdjustments()) {
-                	// check if not combinable offer is better than sale price; if no, remove the not combinable offer so 
-                	// that another offer may be applied to the item
+                    // check if not combinable offer is better than sale price; if no, remove the not combinable offer so 
+                    // that another offer may be applied to the item
                     applyOrderItemOffer(itemOffer);
                     if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {                    
                         Money itemPrice = itemOffer.getOrderItem().getRetailPrice();
@@ -537,7 +537,7 @@ public class OfferServiceImpl implements OfferService {
             }
         }
         if (appliedItemOffersCount > 0) {
-        	itemOffersApplied = true;
+            itemOffersApplied = true;
         }
         return itemOffersApplied;
     }
@@ -574,15 +574,15 @@ public class OfferServiceImpl implements OfferService {
                 applyOrderOffer(orderOffer);
                 orderOffersApplied = true;
                 if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
-                	if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
-                		// item offer is better; remove not combinable order offer and process other order offers
-                		order.removeAllOrderAdjustments();
+                    if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
+                        // item offer is better; remove not combinable order offer and process other order offers
+                        order.removeAllOrderAdjustments();
                         orderOffersApplied = false;
-                	} else {
-                		// not combinable order offer is better; remove all item offers
-                		order.removeAllItemAdjustments();
-                		break;
-                	}
+                    } else {
+                        // not combinable order offer is better; remove all item offers
+                        order.removeAllItemAdjustments();
+                        break;
+                    }
                 }
             }
         }

@@ -54,14 +54,14 @@ public class CategoryProductImpl implements Serializable {
       CategoryProductXrefPk categoryProductXref;
 
     public CategoryProductXrefPk getCategoryProductXref() {
-		return categoryProductXref;
-	}
+        return categoryProductXref;
+    }
     
     public void setCategoryProductXref(CategoryProductXrefPk categoryProductXref) {
-		this.categoryProductXref = categoryProductXref;
-	}
+        this.categoryProductXref = categoryProductXref;
+    }
 
-	/** The display order. */
+    /** The display order. */
     @Column(name = "DISPLAY_ORDER")
     protected Integer displayOrder;
 
@@ -92,37 +92,37 @@ public class CategoryProductImpl implements Serializable {
         @JoinColumn(name = "PRODUCT_ID")
         protected Product product;
 
-		public Category getCategory() {
-			return category;
-		}
+        public Category getCategory() {
+            return category;
+        }
 
-		public void setCategory(Category category) {
-			this.category = category;
-		}
+        public void setCategory(Category category) {
+            this.category = category;
+        }
 
-		public Product getProduct() {
-			return product;
-		}
+        public Product getProduct() {
+            return product;
+        }
 
-		public void setProduct(Product product) {
-			this.product = product;
-		}
+        public void setProduct(Product product) {
+            this.product = product;
+        }
 
-		@Override
-		public int hashCode() {
-			return category.hashCode() + product.hashCode();
-		}
+        @Override
+        public int hashCode() {
+            return category.hashCode() + product.hashCode();
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-	        if (obj == null) return false;
-	        else if (!(obj instanceof CategoryProductXrefPk)) return false;
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) return false;
+            else if (!(obj instanceof CategoryProductXrefPk)) return false;
 
-	        return category.getId().equals(((CategoryProductXrefPk) obj).category.getId())
-	        && product.getId().equals(((CategoryProductXrefPk) obj).product.getId());
-		}
-		
-		
+            return category.getId().equals(((CategoryProductXrefPk) obj).category.getId())
+            && product.getId().equals(((CategoryProductXrefPk) obj).product.getId());
+        }
+        
+        
         
     }
 

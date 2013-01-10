@@ -36,89 +36,89 @@ import org.testng.annotations.Test;
  */
 public class ContentServiceTest extends BaseTest {
 
-	@Resource
-	private ContentService contentService;
+    @Resource
+    private ContentService contentService;
 
-	@Resource
-	private ContentDao contentDao;
+    @Resource
+    private ContentDao contentDao;
 
-	@Resource
-	private ContentDetailsDao contentDetailsDao;
+    @Resource
+    private ContentDetailsDao contentDetailsDao;
 
-	private Integer contentId;
-	private Integer checkedOutContentId;
-	private String readyForApprovalSandbox;
+    private Integer contentId;
+    private Integer checkedOutContentId;
+    private String readyForApprovalSandbox;
 
-	@Test(groups = {"testContentService"})
-	public void testCanary() {
-		assert contentService != null;
-	}
+    @Test(groups = {"testContentService"})
+    public void testCanary() {
+        assert contentService != null;
+    }
 
-	@Test(groups = {"testSaveContent"}, dataProvider = "basicContentAndDetail", dataProviderClass = ContentDaoDataProvider.class)
-	@Transactional
-	@Rollback(false)
-	public void testSaveContent(Content content, ContentDetails contentDetails){
-		Content contentCreated = contentDao.saveContent(content);
-		assert contentCreated.getId() != null;
+    @Test(groups = {"testSaveContent"}, dataProvider = "basicContentAndDetail", dataProviderClass = ContentDaoDataProvider.class)
+    @Transactional
+    @Rollback(false)
+    public void testSaveContent(Content content, ContentDetails contentDetails){
+        Content contentCreated = contentDao.saveContent(content);
+        assert contentCreated.getId() != null;
 
-		contentDetails.setId(contentCreated.getId());
-		ContentDetails contentDetailsCreated = contentDetailsDao.save(contentDetails);
+        contentDetails.setId(contentCreated.getId());
+        ContentDetails contentDetailsCreated = contentDetailsDao.save(contentDetails);
 
-		Content contentFromDB = contentDao.readContentById(contentCreated.getId());
-		ContentDetails contentDetailsFromDB = contentDetailsDao.readContentDetailsById(contentCreated.getId());
+        Content contentFromDB = contentDao.readContentById(contentCreated.getId());
+        ContentDetails contentDetailsFromDB = contentDetailsDao.readContentDetailsById(contentCreated.getId());
 
-		assert contentFromDB != null;
-		assert contentDetailsFromDB != null;
+        assert contentFromDB != null;
+        assert contentDetailsFromDB != null;
 
-		contentId = contentCreated.getId();
-	}
+        contentId = contentCreated.getId();
+    }
 
-	@Test(groups = {"testCheckoutContentToSandbox"}, dependsOnGroups = {"testSaveContent"})
-	@Transactional
-	@Rollback(false)
-	public void testCheckoutContentToSandbox() {
-		List<Integer> contentIds = new ArrayList<Integer>();
-		contentIds.add(contentId);
+    @Test(groups = {"testCheckoutContentToSandbox"}, dependsOnGroups = {"testSaveContent"})
+    @Transactional
+    @Rollback(false)
+    public void testCheckoutContentToSandbox() {
+        List<Integer> contentIds = new ArrayList<Integer>();
+        contentIds.add(contentId);
 
-		List<Content> newContent = contentService.checkoutContentToSandbox(contentIds, "UserSandBox");
+        List<Content> newContent = contentService.checkoutContentToSandbox(contentIds, "UserSandBox");
 
-		assert newContent != null && !(newContent.isEmpty());
-		assert newContent.get(0).getId() != null;
+        assert newContent != null && !(newContent.isEmpty());
+        assert newContent.get(0).getId() != null;
 
-		checkedOutContentId = newContent.get(0).getId();
-	}
+        checkedOutContentId = newContent.get(0).getId();
+    }
 
-	@Test(groups = {"testSubmitContent"}, dependsOnGroups = {"testCheckoutContentToSandbox"})
-	@Transactional
-	@Rollback(false)
-	public void testSubmitContent() {
-		assert checkedOutContentId != null;
-		assert checkedOutContentId != contentId;
+    @Test(groups = {"testSubmitContent"}, dependsOnGroups = {"testCheckoutContentToSandbox"})
+    @Transactional
+    @Rollback(false)
+    public void testSubmitContent() {
+        assert checkedOutContentId != null;
+        assert checkedOutContentId != contentId;
 
-		List<Integer> contentIds = new ArrayList<Integer>();
-		contentIds.add(checkedOutContentId);
+        List<Integer> contentIds = new ArrayList<Integer>();
+        contentIds.add(checkedOutContentId);
 
-		contentService.submitContentFromSandbox(contentIds, "UserSandBox", "NumeroUno", "NoteTest");
+        contentService.submitContentFromSandbox(contentIds, "UserSandBox", "NumeroUno", "NoteTest");
 
-		List<Content> awaitingApproval = contentDao.readContentAwaitingApproval();
-		assert awaitingApproval != null && !awaitingApproval.isEmpty();
+        List<Content> awaitingApproval = contentDao.readContentAwaitingApproval();
+        assert awaitingApproval != null && !awaitingApproval.isEmpty();
 
-		readyForApprovalSandbox = awaitingApproval.get(0).getSandbox();
-	}
+        readyForApprovalSandbox = awaitingApproval.get(0).getSandbox();
+    }
 
-	@Test(groups = {"testApproveContent"}, dependsOnGroups = {"testSubmitContent"})
-	@Transactional
-	public void testApproveContent() {
-		List<Content> awaitingApproval = contentDao.readContentAwaitingApproval();
-		assert awaitingApproval != null && !awaitingApproval.isEmpty();
+    @Test(groups = {"testApproveContent"}, dependsOnGroups = {"testSubmitContent"})
+    @Transactional
+    public void testApproveContent() {
+        List<Content> awaitingApproval = contentDao.readContentAwaitingApproval();
+        assert awaitingApproval != null && !awaitingApproval.isEmpty();
 
-		List<Integer> contentIds = new ArrayList<Integer>();
-		contentIds.add(checkedOutContentId);
+        List<Integer> contentIds = new ArrayList<Integer>();
+        contentIds.add(checkedOutContentId);
 
-		contentService.approveContent(contentIds, readyForApprovalSandbox, "NumeroUno");
+        contentService.approveContent(contentIds, readyForApprovalSandbox, "NumeroUno");
 
-		awaitingApproval = contentDao.readContentAwaitingApproval();
-		assert awaitingApproval == null || awaitingApproval.isEmpty();
-	}
+        awaitingApproval = contentDao.readContentAwaitingApproval();
+        assert awaitingApproval == null || awaitingApproval.isEmpty();
+    }
 
 }

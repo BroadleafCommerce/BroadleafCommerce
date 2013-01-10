@@ -74,22 +74,22 @@ public class CategoryXref implements Serializable {
         protected Category subCategory;
 
         public Category getCategory() {
-			return category;
-		}
+            return category;
+        }
 
-		public void setCategory(final Category category) {
-			this.category = category;
-		}
+        public void setCategory(final Category category) {
+            this.category = category;
+        }
 
-		public Category getSubCategory() {
-			return subCategory;
-		}
+        public Category getSubCategory() {
+            return subCategory;
+        }
 
-		public void setSubCategory(final Category subCategory) {
-			this.subCategory = subCategory;
-		}
+        public void setSubCategory(final Category subCategory) {
+            this.subCategory = subCategory;
+        }
 
-		@Override
+        @Override
         public boolean equals(final Object obj) {
             if (obj == null) return false;
             else if (!(obj instanceof CategoryXrefPK)) return false;
@@ -97,11 +97,11 @@ public class CategoryXref implements Serializable {
             return category.getId().equals(((CategoryXrefPK) obj).getCategory().getId())
             && subCategory.getId().equals(((CategoryXrefPK) obj).getSubCategory().getId());
         }
-		
+        
 
         @Override
         public int hashCode() {
-        	return category.hashCode() + subCategory.hashCode();
+            return category.hashCode() + subCategory.hashCode();
         }
 
 

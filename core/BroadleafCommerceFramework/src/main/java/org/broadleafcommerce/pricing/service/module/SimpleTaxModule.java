@@ -60,7 +60,7 @@ public class SimpleTaxModule implements TaxModule {
     }
     
     protected Money getFulfillmentGroupFeeTotal(Order order) {
-    	Money feeSubtotal = order.getSubTotal();
+        Money feeSubtotal = order.getSubTotal();
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
                 if (fulfillmentGroupFee.isTaxable()) {

@@ -23,9 +23,9 @@ import net.sf.ehcache.Cache;
  *
  */
 public interface ServiceResponseCacheable {
-	
-	public void clearCache();
-	
-	public Cache getCache();
+    
+    public void clearCache();
+    
+    public Cache getCache();
 
 }

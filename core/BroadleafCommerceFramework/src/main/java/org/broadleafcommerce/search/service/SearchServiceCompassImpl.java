@@ -42,8 +42,8 @@ import org.springframework.stereotype.Service;
 @Service("blSearchService")
 public class SearchServiceCompassImpl implements SearchService {
 
-	private static final Logger LOG = Logger.getLogger(SearchServiceCompassImpl.class);
-	
+    private static final Logger LOG = Logger.getLogger(SearchServiceCompassImpl.class);
+    
     @CompassContext
     protected Compass compass;
 

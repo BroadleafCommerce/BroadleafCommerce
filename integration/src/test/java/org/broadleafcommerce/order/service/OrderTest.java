@@ -501,7 +501,7 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "testAddSkuToOrder" })
     @Transactional
     public void testAddSkuToOrder() throws PricingException {
-    	Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
 
         Category category = new CategoryImpl();
         category.setName("Pants");
@@ -541,7 +541,7 @@ public class OrderTest extends OrderBaseTest {
                 null, category.getId(), 2);
         OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
                 newProduct.getId(), null, 2);
-    	
+        
         assert orderItem != null;
         assert skuNullOrderItem == null;
         assert quantityNullOrderItem == null;
@@ -653,43 +653,43 @@ public class OrderTest extends OrderBaseTest {
     public void testAddFulfillmentGroupToOrder(ShippingRate shippingRate, ShippingRate sr2) throws PricingException, ItemNotFoundException{
         shippingRate = shippingRateService.save(shippingRate);
         sr2 = shippingRateService.save(sr2);
-    	Customer customer = createCustomerWithAddresses();
-    	Order order = setUpExistingCart(customer);
-    	CustomerAddress customerAddress = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0);
-    	
-    	FulfillmentGroupRequest fgRequest = new FulfillmentGroupRequest();
-    	
-    	List<FulfillmentGroupItemRequest> fgiRequests = new ArrayList<FulfillmentGroupItemRequest>();
+        Customer customer = createCustomerWithAddresses();
+        Order order = setUpExistingCart(customer);
+        CustomerAddress customerAddress = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0);
+        
+        FulfillmentGroupRequest fgRequest = new FulfillmentGroupRequest();
+        
+        List<FulfillmentGroupItemRequest> fgiRequests = new ArrayList<FulfillmentGroupItemRequest>();
 
-    	for (OrderItem orderItem : order.getOrderItems()) {
-    		FulfillmentGroupItemRequest fgiRequest = new FulfillmentGroupItemRequest();
-    		fgiRequest.setOrderItem(orderItem);
-    		fgiRequest.setQuantity(1);
-    		fgiRequests.add(fgiRequest);
-    	}
-    	
-    	fgRequest.setAddress(customerAddress.getAddress());
-    	fgRequest.setFulfillmentGroupItemRequests(fgiRequests);
-    	fgRequest.setOrder(cartService.findCartForCustomer(customer));
-    	fgRequest.setMethod("standard");
-    	fgRequest.setService(ShippingServiceType.BANDED_SHIPPING.getType());
-    	orderService.addFulfillmentGroupToOrder(fgRequest);
-    	
-    	Order resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 1;
-    	assert resultOrder.getFulfillmentGroups().get(0).getFulfillmentGroupItems().size() == 2;
-    	
-    	orderService.removeAllFulfillmentGroupsFromOrder(order, false);
-    	resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 0;
-    	
-    	FulfillmentGroup defaultFg = orderService.createDefaultFulfillmentGroup(order, customerAddress.getAddress());
-    	defaultFg.setMethod("standard");
-    	defaultFg.setService(ShippingServiceType.BANDED_SHIPPING.getType());
-    	assert defaultFg.isPrimary();
-    	orderService.addFulfillmentGroupToOrder(order, defaultFg);
-    	resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 1;
+        for (OrderItem orderItem : order.getOrderItems()) {
+            FulfillmentGroupItemRequest fgiRequest = new FulfillmentGroupItemRequest();
+            fgiRequest.setOrderItem(orderItem);
+            fgiRequest.setQuantity(1);
+            fgiRequests.add(fgiRequest);
+        }
+        
+        fgRequest.setAddress(customerAddress.getAddress());
+        fgRequest.setFulfillmentGroupItemRequests(fgiRequests);
+        fgRequest.setOrder(cartService.findCartForCustomer(customer));
+        fgRequest.setMethod("standard");
+        fgRequest.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+        orderService.addFulfillmentGroupToOrder(fgRequest);
+        
+        Order resultOrder = orderService.findOrderById(order.getId());
+        assert resultOrder.getFulfillmentGroups().size() == 1;
+        assert resultOrder.getFulfillmentGroups().get(0).getFulfillmentGroupItems().size() == 2;
+        
+        orderService.removeAllFulfillmentGroupsFromOrder(order, false);
+        resultOrder = orderService.findOrderById(order.getId());
+        assert resultOrder.getFulfillmentGroups().size() == 0;
+        
+        FulfillmentGroup defaultFg = orderService.createDefaultFulfillmentGroup(order, customerAddress.getAddress());
+        defaultFg.setMethod("standard");
+        defaultFg.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+        assert defaultFg.isPrimary();
+        orderService.addFulfillmentGroupToOrder(order, defaultFg);
+        resultOrder = orderService.findOrderById(order.getId());
+        assert resultOrder.getFulfillmentGroups().size() == 1;
     }
     
 }

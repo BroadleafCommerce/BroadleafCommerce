@@ -139,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
-    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true);
+        return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true);
     }
 
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
@@ -173,7 +173,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
-    	return addDiscreteItemToOrder(order, itemRequest, true);
+        return addDiscreteItemToOrder(order, itemRequest, true);
     }
 
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
@@ -182,7 +182,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException {
-    	return addGiftWrapItemToOrder(order, itemRequest, true);
+        return addGiftWrapItemToOrder(order, itemRequest, true);
     }
 
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
@@ -191,7 +191,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException {
-    	return addBundleItemToOrder(order, itemRequest, true);
+        return addBundleItemToOrder(order, itemRequest, true);
     }
 
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
@@ -200,7 +200,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException {
-    	return removeItemFromOrder(orderId, itemId, true);
+        return removeItemFromOrder(orderId, itemId, true);
     }
 
     public Order removeItemFromOrder(Long orderId, Long itemId, boolean priceOrder) throws PricingException {
@@ -211,7 +211,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException {
-    	return removeItemFromOrder(order, item, true);
+        return removeItemFromOrder(order, item, true);
     }
 
     public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException {
@@ -224,16 +224,16 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public Order moveItemToOrder(Order originalOrder, Order destinationOrder, OrderItem item) throws PricingException {
-    	return moveItemToOrder(originalOrder, destinationOrder, item, true);
+        return moveItemToOrder(originalOrder, destinationOrder, item, true);
     }
     
     public Order moveItemToOrder(Order originalOrder, Order destinationOrder, OrderItem item, boolean priceOrder) throws PricingException {
-    	removeOrderItemFromFullfillmentGroup(originalOrder, item);
-    	OrderItem itemFromOrder = originalOrder.getOrderItems().remove(originalOrder.getOrderItems().indexOf(item));
-    	itemFromOrder.setOrder(null);
-    	originalOrder = updateOrder(originalOrder, priceOrder);
-    	addOrderItemToOrder(destinationOrder, item, priceOrder);
-    	return destinationOrder;
+        removeOrderItemFromFullfillmentGroup(originalOrder, item);
+        OrderItem itemFromOrder = originalOrder.getOrderItems().remove(originalOrder.getOrderItems().indexOf(item));
+        itemFromOrder.setOrder(null);
+        originalOrder = updateOrder(originalOrder, priceOrder);
+        addOrderItemToOrder(destinationOrder, item, priceOrder);
+        return destinationOrder;
     }
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
@@ -279,7 +279,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException {
-    	return addFulfillmentGroupToOrder(fulfillmentGroupRequest, true);
+        return addFulfillmentGroupToOrder(fulfillmentGroupRequest, true);
     }
 
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException {
@@ -297,7 +297,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
-    	return addFulfillmentGroupToOrder(order, fulfillmentGroup, true);
+        return addFulfillmentGroupToOrder(order, fulfillmentGroup, true);
     }
 
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
@@ -334,7 +334,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException {
-    	return addItemToFulfillmentGroup(item, fulfillmentGroup, quantity, true);
+        return addItemToFulfillmentGroup(item, fulfillmentGroup, quantity, true);
     }
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
@@ -369,7 +369,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException {
-    	return addItemToFulfillmentGroup(item, fulfillmentGroup, true);
+        return addItemToFulfillmentGroup(item, fulfillmentGroup, true);
     }
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
@@ -381,7 +381,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
-    	updateItemQuantity(order, item, true);
+        updateItemQuantity(order, item, true);
     }
 
     public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException {
@@ -414,7 +414,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
-    	removeFulfillmentGroupFromOrder(order, fulfillmentGroup, true);
+        removeFulfillmentGroupFromOrder(order, fulfillmentGroup, true);
     }
 
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
@@ -424,7 +424,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException {
-    	return removeAllOffersFromOrder(order, true);
+        return removeAllOffersFromOrder(order, true);
     }
 
     public Order removeOfferFromOrder(Order order, Offer offer, boolean priceOrder) throws PricingException {
@@ -435,7 +435,7 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public Order removeAllOffersFromOrder(Order order) throws PricingException {
-    	return removeAllOffersFromOrder(order, true);
+        return removeAllOffersFromOrder(order, true);
     }
 
     public Order removeAllOffersFromOrder(Order order, boolean priceOrder) throws PricingException {
@@ -466,9 +466,9 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
-    	return addOrderItemToOrder(order, newOrderItem, true);
+        return addOrderItemToOrder(order, newOrderItem, true);
     }
-    	
+        
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
         int orderItemIndex;
         List<OrderItem> orderItems = order.getOrderItems();
@@ -569,10 +569,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected Order updateOrder(Order order, Boolean priceOrder) throws PricingException {
-    	order = persistOrder(order);
-    	if (priceOrder) {
-    		pricingExecutionManager.executePricing(order);
-    	}
+        order = persistOrder(order);
+        if (priceOrder) {
+            pricingExecutionManager.executePricing(order);
+        }
         return order;
     }
 

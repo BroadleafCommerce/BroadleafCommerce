@@ -132,7 +132,7 @@ public class CategoryImpl implements Category {
     @BatchSize(size = 50)
     protected List<Category> allChildCategories = new ArrayList<Category>();
 
-    /** The all parent categories. */	
+    /** The all parent categories. */   
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
@@ -273,10 +273,10 @@ public class CategoryImpl implements Category {
         }
         
         String lLink;
-    	if (link == null) {
-    		lLink = category.getUrlKey();
+        if (link == null) {
+            lLink = category.getUrlKey();
         } else {
-        	lLink = category.getUrlKey() + "/" + link;
+            lLink = category.getUrlKey() + "/" + link;
         }
         return buildLink(lLink, category.getDefaultParentCategory(), ignoreTopLevel);
     }
@@ -381,7 +381,7 @@ public class CategoryImpl implements Category {
      * @return the child categories
      */
     public List<Category> getAllChildCategories(){
-    	return allChildCategories;
+        return allChildCategories;
     }
 
     /**
@@ -390,7 +390,7 @@ public class CategoryImpl implements Category {
      * @return true, if successful
      */
     public boolean hasAllChildCategories(){
-    	return !allChildCategories.isEmpty();
+        return !allChildCategories.isEmpty();
     }
 
     /**
@@ -399,10 +399,10 @@ public class CategoryImpl implements Category {
      * @param allChildCategories the new all child categories
      */
     public void setAllChildCategories(final List<Category> childCategories){
-    	this.allChildCategories.clear();
-    	for(Category category : childCategories){
-    		this.allChildCategories.add(category);
-    	}    	
+        this.allChildCategories.clear();
+        for(Category category : childCategories){
+            this.allChildCategories.add(category);
+        }       
     }
 
 
@@ -412,7 +412,7 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
-    	if (childCategories.isEmpty()) {
+        if (childCategories.isEmpty()) {
             for (Category category : allChildCategories) {
                 if (category.isActive()) {
                     childCategories.add(category);
@@ -438,9 +438,9 @@ public class CategoryImpl implements Category {
      */
     public void setChildCategories(final List<Category> childCategories) {
         this.childCategories.clear();
-    	for(Category category : childCategories){
-    		this.childCategories.add(category);
-    	}
+        for(Category category : childCategories){
+            this.childCategories.add(category);
+        }
     }
 
     /*
@@ -468,13 +468,13 @@ public class CategoryImpl implements Category {
      * util.Map)
      */
     public void setCategoryImages(final Map<String, String> categoryImages) {
-    	this.categoryImages.clear();
-//    	for(String key : categoryImages.keySet()){
-//    		this.categoryImages.put(key, categoryImages.get(key));
-//    	}
-    	for(Map.Entry<String, String> me : categoryImages.entrySet()) {
-    		this.categoryImages.put(me.getKey(), me.getValue());
-    	}
+        this.categoryImages.clear();
+//      for(String key : categoryImages.keySet()){
+//          this.categoryImages.put(key, categoryImages.get(key));
+//      }
+        for(Map.Entry<String, String> me : categoryImages.entrySet()) {
+            this.categoryImages.put(me.getKey(), me.getValue());
+        }
     }
 
     /*
@@ -501,31 +501,31 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
     @SuppressWarnings("unchecked")
-	public Map<String, List<Category>> getChildCategoryURLMap() {
-    	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
-    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
-    	if (hydratedItem != null) {
-    		return (Map<String, List<Category>>) hydratedItem;
-    	}
-    	childCategoryURLMap = createChildCategoryURLMap();
-    	((HydratedCacheManager) manager).addHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
+    public Map<String, List<Category>> getChildCategoryURLMap() {
+        HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
+        Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
+        if (hydratedItem != null) {
+            return (Map<String, List<Category>>) hydratedItem;
+        }
+        childCategoryURLMap = createChildCategoryURLMap();
+        ((HydratedCacheManager) manager).addHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
         return childCategoryURLMap;
     }
     
     public void setChildCategoryURLMap(final Map<String, List<Category>> cachedChildCategoryUrlMap) {
-    	this.childCategoryURLMap = cachedChildCategoryUrlMap;
+        this.childCategoryURLMap = cachedChildCategoryUrlMap;
     }
     
     public Map<String, List<Category>> createChildCategoryURLMap() {
-    	try {
-    	childCategoryURLMap = new HashMap<String, List<Category>>();
+        try {
+        childCategoryURLMap = new HashMap<String, List<Category>>();
         final Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
         fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
         childCategoryURLMap = newMap;
         return childCategoryURLMap;
-		} catch (CacheFactoryException e) {
-			throw new RuntimeException(e);
-		}
+        } catch (CacheFactoryException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -538,9 +538,9 @@ public class CategoryImpl implements Category {
     private void fillInURLMapForCategory(final Map<String, List<Category>> categoryUrlMap, final Category category, final String startingPath, final List<Category> startingCategoryList) throws CacheFactoryException {
         final String urlKey = category.getUrlKey();
         if (urlKey == null) {
-        	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
+            throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
         }
-    	final String currentPath = startingPath + "/" + category.getUrlKey();
+        final String currentPath = startingPath + "/" + category.getUrlKey();
         final List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
 
@@ -567,10 +567,10 @@ public class CategoryImpl implements Category {
     }
 
     public void setAllParentCategories(final List<Category> allParentCategories) {
-    	this.allParentCategories.clear();
-    	for(Category category : allParentCategories){
-    		this.allParentCategories.add(category);
-    	}
+        this.allParentCategories.clear();
+        for(Category category : allParentCategories){
+            this.allParentCategories.add(category);
+        }
     }
 
     public List<FeaturedProduct> getFeaturedProducts() {
@@ -578,10 +578,10 @@ public class CategoryImpl implements Category {
     }
 
     public void setFeaturedProducts(final List<FeaturedProduct> featuredProducts) {
-    	this.featuredProducts.clear();
-    	for(FeaturedProduct featuredProduct : featuredProducts){
-    		this.featuredProducts.add(featuredProduct);
-    	}
+        this.featuredProducts.clear();
+        for(FeaturedProduct featuredProduct : featuredProducts){
+            this.featuredProducts.add(featuredProduct);
+        }
     }
 
     /*
@@ -597,10 +597,10 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#setCategoryMedia(java.util.Map)
      */
     public void setCategoryMedia(final Map<String, Media> categoryMedia) {
-    	this.categoryMedia.clear();
-    	for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
-    		this.categoryMedia.put(me.getKey(), me.getValue());
-    	}
+        this.categoryMedia.clear();
+        for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
+            this.categoryMedia.put(me.getKey(), me.getValue());
+        }
     }
 
     @Override

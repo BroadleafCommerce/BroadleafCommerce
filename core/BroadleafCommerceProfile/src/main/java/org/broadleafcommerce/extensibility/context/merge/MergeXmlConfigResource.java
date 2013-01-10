@@ -88,13 +88,13 @@ public class MergeXmlConfigResource {
             pair[1] = sources[j];
             response = mergeItems(pair);
             if (LOG.isDebugEnabled()) {
-            	try {
-					byte[] itemArray = buildArrayFromStream(response);
-					LOG.debug("merged sources - stage["+j+"]" + serialize(new ByteArrayInputStream(itemArray)));
-					response = new ByteArrayInputStream(itemArray);
-				} catch (IOException e) {
-					throw new MergeException(e);
-				}
+                try {
+                    byte[] itemArray = buildArrayFromStream(response);
+                    LOG.debug("merged sources - stage["+j+"]" + serialize(new ByteArrayInputStream(itemArray)));
+                    response = new ByteArrayInputStream(itemArray);
+                } catch (IOException e) {
+                    throw new MergeException(e);
+                }
             }
             try{
                 pair[0].close();

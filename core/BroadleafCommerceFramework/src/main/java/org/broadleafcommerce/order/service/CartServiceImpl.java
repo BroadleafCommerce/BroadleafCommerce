@@ -66,7 +66,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     }
     
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-    	return addAllItemsToCartFromNamedOrder(namedOrder, true);
+        return addAllItemsToCartFromNamedOrder(namedOrder, true);
     }
 
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
@@ -76,19 +76,19 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         }
         List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
         for (int i = 0; i < items.size(); i++) {
-			OrderItem orderItem = items.get(i);
-			if (moveNamedOrderItems) {
-				moveItemToOrder(namedOrder, cartOrder, orderItem, priceOrder);
-			} else {
-				addOrderItemToOrder(cartOrder, orderItem, priceOrder);
-			}
-			
-		}
+            OrderItem orderItem = items.get(i);
+            if (moveNamedOrderItems) {
+                moveItemToOrder(namedOrder, cartOrder, orderItem, priceOrder);
+            } else {
+                addOrderItemToOrder(cartOrder, orderItem, priceOrder);
+            }
+            
+        }
         return cartOrder;
     }
     
     public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException {
-    	return moveItemToCartFromNamedOrder(customerId, orderName, orderItemId, quantity, true);
+        return moveItemToCartFromNamedOrder(customerId, orderName, orderItemId, quantity, true);
     }
 
     public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity, boolean priceOrder) throws PricingException {
@@ -99,7 +99,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     }
     
     public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem) throws PricingException {
-    	return moveItemToCartFromNamedOrder(namedOrder, orderItem, true);
+        return moveItemToCartFromNamedOrder(namedOrder, orderItem, true);
     }
 
     public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws PricingException {
@@ -113,14 +113,14 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                 cancelOrder(namedOrder);
             }
         } else {
-        	orderItem = addOrderItemToOrder(cartOrder, orderItem, priceOrder);
+            orderItem = addOrderItemToOrder(cartOrder, orderItem, priceOrder);
         }
         
         return orderItem;
     }
     
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-    	return moveAllItemsToCartFromNamedOrder(namedOrder, true);
+        return moveAllItemsToCartFromNamedOrder(namedOrder, true);
     }
 
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
@@ -132,7 +132,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     }
 
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {
-    	return mergeCart(customer, anonymousCart, true);
+        return mergeCart(customer, anonymousCart, true);
     }
     
     /*
@@ -236,7 +236,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     }
     
     public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
-    	return reconstructCart(customer, true);
+        return reconstructCart(customer, true);
     }
 
     /*
@@ -245,48 +245,48 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
      * org.broadleafcommerce.order.service.OrderService#reconstructCart(org.
      * broadleafcommerce.profile.domain.Customer)
      */
-	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
-		ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
-		Order customerCart = findCartForCustomer(customer);
-		if (customerCart != null) {
-			List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
-			for (OrderItem orderItem : customerCart.getOrderItems()) {
-				 if (orderItem instanceof DiscreteOrderItem) {
-					DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-					if (!discreteOrderItem.getSku().isActive(
-							discreteOrderItem.getProduct(),
-							orderItem.getCategory())) {
-						itemsToRemove.add(orderItem);
-					}
-				} else if (orderItem instanceof BundleOrderItem) {
-					BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-					boolean removeBundle = false;
-					for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
-							.getDiscreteOrderItems()) {
-						if (!discreteOrderItem.getSku().isActive(
-								discreteOrderItem.getProduct(),
-								orderItem.getCategory())) {
-							/*
-							 * Bundle has an inactive item in it -- remove the
-							 * whole bundle
-							 */
-							removeBundle = true;
-							break;
-						}
-					}
-					if (removeBundle) {
-						itemsToRemove.add(orderItem);
-					}
-				}
-			}
-			for (OrderItem item : itemsToRemove) {
-				removeItemFromOrder(customerCart, item, priceOrder);
-			}
-			reconstructCartResponse.setRemovedItems(itemsToRemove);
-		}
-		reconstructCartResponse.setOrder(customerCart);
-		return reconstructCartResponse;
-	}
+    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
+        ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
+        Order customerCart = findCartForCustomer(customer);
+        if (customerCart != null) {
+            List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
+            for (OrderItem orderItem : customerCart.getOrderItems()) {
+                 if (orderItem instanceof DiscreteOrderItem) {
+                    DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+                    if (!discreteOrderItem.getSku().isActive(
+                            discreteOrderItem.getProduct(),
+                            orderItem.getCategory())) {
+                        itemsToRemove.add(orderItem);
+                    }
+                } else if (orderItem instanceof BundleOrderItem) {
+                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                    boolean removeBundle = false;
+                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
+                            .getDiscreteOrderItems()) {
+                        if (!discreteOrderItem.getSku().isActive(
+                                discreteOrderItem.getProduct(),
+                                orderItem.getCategory())) {
+                            /*
+                             * Bundle has an inactive item in it -- remove the
+                             * whole bundle
+                             */
+                            removeBundle = true;
+                            break;
+                        }
+                    }
+                    if (removeBundle) {
+                        itemsToRemove.add(orderItem);
+                    }
+                }
+            }
+            for (OrderItem item : itemsToRemove) {
+                removeItemFromOrder(customerCart, item, priceOrder);
+            }
+            reconstructCartResponse.setRemovedItems(itemsToRemove);
+        }
+        reconstructCartResponse.setOrder(customerCart);
+        return reconstructCartResponse;
+    }
 
     @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
     public boolean isMoveNamedOrderItems() {

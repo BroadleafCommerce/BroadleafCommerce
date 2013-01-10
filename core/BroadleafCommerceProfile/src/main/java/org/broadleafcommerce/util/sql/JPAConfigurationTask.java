@@ -39,76 +39,76 @@ import org.xml.sax.EntityResolver;
  */
 public class JPAConfigurationTask extends ConfigurationTask {
 
-	private String persistenceUnit;
-	private String dialect;
-	
-	public JPAConfigurationTask() {
-		setDescription("JPA Configuration");
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected Configuration createConfiguration(MergeClassPathXMLApplicationContext mergeContext) {
-		try {
-			PersistenceUnitInfo unitInfo = (PersistenceUnitInfo) ((MergePersistenceUnitManager) mergeContext.getBean("blPersistenceUnitManager")).obtainPersistenceUnitInfo(persistenceUnit);
-			
-			Map overrides = new HashMap();
-			Properties p = getProperties();
-			
-			if(p!=null) {
-				overrides.putAll( p );
-			}
-			
-			overrides.put("hibernate.dialect",dialect);
-			
-			Class clazz = ReflectHelper.classForName("org.hibernate.ejb.Ejb3Configuration", JPAConfigurationTask.class);
-			Object ejb3cfg = clazz.newInstance();
-			
-			if(entityResolver!=null) {
-				Class resolver = ReflectHelper.classForName(entityResolver, this.getClass());
-				Object object = resolver.newInstance();
-				Method method = clazz.getMethod("setEntityResolver", new Class[] { EntityResolver.class });
-				method.invoke(ejb3cfg, new Object[] { object } );
-			}
-			
-			Method method = clazz.getMethod("configure", new Class[] { PersistenceUnitInfo.class, Map.class });
-			if ( method.invoke(ejb3cfg, new Object[] { unitInfo, overrides } ) == null ) {
-				throw new BuildException("Persistence unit not found: '" + persistenceUnit + "'.");
-			}
-			
-			method = clazz.getMethod("getHibernateConfiguration", new Class[0]);
-			return (Configuration) method.invoke(ejb3cfg, (Object[])null);
-		} 
-		catch(HibernateException he) {
-			throw new BuildException(he);
-		}
-		catch(BuildException be) {
-			throw be;
-		}
-		catch(Exception t) {
-			throw new BuildException("Problems in creating a configuration for JPA. Have you remembered to add hibernate EntityManager jars to the classpath ?",t);			
-		}
-	}
-	
-	protected void doConfiguration(Configuration configuration) {
-	}
-	
-	protected void validateParameters() throws BuildException {
-	}
+    private String persistenceUnit;
+    private String dialect;
+    
+    public JPAConfigurationTask() {
+        setDescription("JPA Configuration");
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected Configuration createConfiguration(MergeClassPathXMLApplicationContext mergeContext) {
+        try {
+            PersistenceUnitInfo unitInfo = (PersistenceUnitInfo) ((MergePersistenceUnitManager) mergeContext.getBean("blPersistenceUnitManager")).obtainPersistenceUnitInfo(persistenceUnit);
+            
+            Map overrides = new HashMap();
+            Properties p = getProperties();
+            
+            if(p!=null) {
+                overrides.putAll( p );
+            }
+            
+            overrides.put("hibernate.dialect",dialect);
+            
+            Class clazz = ReflectHelper.classForName("org.hibernate.ejb.Ejb3Configuration", JPAConfigurationTask.class);
+            Object ejb3cfg = clazz.newInstance();
+            
+            if(entityResolver!=null) {
+                Class resolver = ReflectHelper.classForName(entityResolver, this.getClass());
+                Object object = resolver.newInstance();
+                Method method = clazz.getMethod("setEntityResolver", new Class[] { EntityResolver.class });
+                method.invoke(ejb3cfg, new Object[] { object } );
+            }
+            
+            Method method = clazz.getMethod("configure", new Class[] { PersistenceUnitInfo.class, Map.class });
+            if ( method.invoke(ejb3cfg, new Object[] { unitInfo, overrides } ) == null ) {
+                throw new BuildException("Persistence unit not found: '" + persistenceUnit + "'.");
+            }
+            
+            method = clazz.getMethod("getHibernateConfiguration", new Class[0]);
+            return (Configuration) method.invoke(ejb3cfg, (Object[])null);
+        } 
+        catch(HibernateException he) {
+            throw new BuildException(he);
+        }
+        catch(BuildException be) {
+            throw be;
+        }
+        catch(Exception t) {
+            throw new BuildException("Problems in creating a configuration for JPA. Have you remembered to add hibernate EntityManager jars to the classpath ?",t);         
+        }
+    }
+    
+    protected void doConfiguration(Configuration configuration) {
+    }
+    
+    protected void validateParameters() throws BuildException {
+    }
 
-	public String getPersistenceUnit() {
-		return persistenceUnit;
-	}
+    public String getPersistenceUnit() {
+        return persistenceUnit;
+    }
 
-	public void setPersistenceUnit(String persistenceUnit) {
-		this.persistenceUnit = persistenceUnit;
-	}
+    public void setPersistenceUnit(String persistenceUnit) {
+        this.persistenceUnit = persistenceUnit;
+    }
 
-	public String getDialect() {
-		return dialect;
-	}
+    public String getDialect() {
+        return dialect;
+    }
 
-	public void setDialect(String dialect) {
-		this.dialect = dialect;
-	}
-	
+    public void setDialect(String dialect) {
+        this.dialect = dialect;
+    }
+    
 }

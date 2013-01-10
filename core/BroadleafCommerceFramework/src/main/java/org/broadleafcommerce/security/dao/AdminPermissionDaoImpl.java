@@ -28,7 +28,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blAdminPermissionDao")
 public class AdminPermissionDaoImpl implements AdminPermissionDao {
-	
+    
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
@@ -38,9 +38,9 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public void deleteAdminPermission(AdminPermission permission) {
-    	if (!em.contains(permission)) {
-    		permission = readAdminPermissionById(permission.getId());
-    	}
+        if (!em.contains(permission)) {
+            permission = readAdminPermissionById(permission.getId());
+        }
         em.remove(permission);
     }
 

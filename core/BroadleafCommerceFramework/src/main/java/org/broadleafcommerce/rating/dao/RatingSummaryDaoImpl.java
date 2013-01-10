@@ -43,11 +43,11 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     @SuppressWarnings("unchecked")
-	public void deleteRatingSummary(final RatingSummary summary) {
-    	RatingSummary lSummary = summary;
-    	if (!em.contains(lSummary)) {
-    		lSummary = (RatingSummary) em.find(entityConfiguration.lookupEntityClass(RatingSummary.class.getName()), lSummary.getId());
-    	}
+    public void deleteRatingSummary(final RatingSummary summary) {
+        RatingSummary lSummary = summary;
+        if (!em.contains(lSummary)) {
+            lSummary = (RatingSummary) em.find(entityConfiguration.lookupEntityClass(RatingSummary.class.getName()), lSummary.getId());
+        }
         em.remove(lSummary);
     }
 

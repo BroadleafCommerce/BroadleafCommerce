@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>BroadleafCommerce</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.1.2-SNAPSHOT</version>
-	</parent>
-	<groupId>org.broadleafcommerce</groupId>
-	<artifactId>core</artifactId>
-	<version>1.1.2-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>core</name>
-	<modules>
-		<module>BroadleafCommerceProfile</module>
-		<module>BroadleafCommerceProfileWeb</module>
-		<module>BroadleafCommerceFramework</module>
-		<module>BroadleafCommerceFrameworkWeb</module>
-	</modules>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>BroadleafCommerce</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.1.2-SNAPSHOT</version>
+    </parent>
+    <groupId>org.broadleafcommerce</groupId>
+    <artifactId>core</artifactId>
+    <version>1.1.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>core</name>
+    <modules>
+        <module>BroadleafCommerceProfile</module>
+        <module>BroadleafCommerceProfileWeb</module>
+        <module>BroadleafCommerceFramework</module>
+        <module>BroadleafCommerceFrameworkWeb</module>
+    </modules>
 </project>

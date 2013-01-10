@@ -7,16 +7,16 @@
         <service-include file-path="messaging-config.xml" />        
     </services -->
 
-	<services>
-		    <default-channels>
-	            <channel ref="my-amf"/>
-	        </default-channels>		
-	</services>
+    <services>
+            <default-channels>
+                <channel ref="my-amf"/>
+            </default-channels>     
+    </services>
 
     <security>
         <!-- Uncomment the correct app server
         <login-command class="flex.messaging.security.TomcatLoginCommand" server="JBoss">
-		<login-command class="flex.messaging.security.JRunLoginCommand" server="JRun"/>        
+        <login-command class="flex.messaging.security.JRunLoginCommand" server="JRun"/>        
         <login-command class="flex.messaging.security.WeblogicLoginCommand" server="Weblogic"/>
         <login-command class="flex.messaging.security.WebSphereLoginCommand" server="WebSphere"/>
         -->
@@ -41,9 +41,9 @@
             <!-- 
              -->
             <properties>
-	            <serialization>
-	            	<legacy-map>true</legacy-map>
-	            </serialization>
+                <serialization>
+                    <legacy-map>true</legacy-map>
+                </serialization>
             
             </properties>
         </channel-definition>

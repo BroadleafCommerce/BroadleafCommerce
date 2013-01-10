@@ -20,7 +20,7 @@ package org.broadleafcommerce.vendor.service.cache;
  *
  */
 public interface CacheItemRequest {
-	
-	public int key();
+    
+    public int key();
 
 }

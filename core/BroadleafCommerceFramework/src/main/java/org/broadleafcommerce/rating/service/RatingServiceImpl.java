@@ -142,7 +142,7 @@ public class RatingServiceImpl implements RatingService {
         if (ratingDetail == null) {
             ratingDetail = new RatingDetailImpl(ratingSummary, rating, SystemTime.asDate(), customer);
         } else {
-            ratingDetail.setRating(rating);        	
+            ratingDetail.setRating(rating);         
         }
 
         ratingSummary.getRatings().add(ratingDetail);
@@ -152,7 +152,7 @@ public class RatingServiceImpl implements RatingService {
         if (reviewDetail == null) {
             reviewDetail = new ReviewDetailImpl(customer, SystemTime.asDate(), ratingDetail, reviewText, ratingSummary);
         } else {
-            reviewDetail.setReviewText(reviewText);        	
+            reviewDetail.setReviewText(reviewText);         
         }
 
         ratingSummary.getReviews().add(reviewDetail);

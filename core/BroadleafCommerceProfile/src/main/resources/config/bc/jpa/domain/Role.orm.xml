@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<named-query name="BC_READ_CUSTOMER_ROLES_BY_CUSTOMER_ID" >
-		<query>SELECT customerRole FROM org.broadleafcommerce.profile.domain.CustomerRole customerRole
-		WHERE customerRole.customer.id = :customerId</query>
-	</named-query>
+    <named-query name="BC_READ_CUSTOMER_ROLES_BY_CUSTOMER_ID" >
+        <query>SELECT customerRole FROM org.broadleafcommerce.profile.domain.CustomerRole customerRole
+        WHERE customerRole.customer.id = :customerId</query>
+    </named-query>
 
-	<named-query name="BC_READ_ROLE_BY_NAME" >
-		<query>SELECT role FROM org.broadleafcommerce.profile.domain.Role role
-		WHERE role.roleName = :name</query>
-	</named-query>
+    <named-query name="BC_READ_ROLE_BY_NAME" >
+        <query>SELECT role FROM org.broadleafcommerce.profile.domain.Role role
+        WHERE role.roleName = :name</query>
+    </named-query>
 
 </entity-mappings>

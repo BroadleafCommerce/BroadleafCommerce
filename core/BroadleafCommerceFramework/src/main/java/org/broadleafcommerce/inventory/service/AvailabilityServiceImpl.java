@@ -93,6 +93,6 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     }
     
     public void save(SkuAvailability skuAvailability) {
-    	availabilityDao.save(skuAvailability);
+        availabilityDao.save(skuAvailability);
     }
 }

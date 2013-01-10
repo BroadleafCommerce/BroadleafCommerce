@@ -104,17 +104,17 @@ public class USPSServiceResponseType implements Serializable {
     }
 
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
+    public void setName(String name) {
+        this.name = name;
         if (!NAMEDTYPES.containsKey(name)) {
-        	NAMEDTYPES.put(name, this);
+            NAMEDTYPES.put(name, this);
         }
-	}
+    }
 
-	public String getDescription() {
+    public String getDescription() {
         return description;
     }
 

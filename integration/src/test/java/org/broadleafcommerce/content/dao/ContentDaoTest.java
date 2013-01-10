@@ -35,135 +35,135 @@ import org.testng.annotations.Test;
  */
 public class ContentDaoTest extends BaseTest {
 
-	@Resource
-	private ContentDao contentDao;
+    @Resource
+    private ContentDao contentDao;
 
-	@Resource
-	private ContentDetailsDao contentDetailsDao;
+    @Resource
+    private ContentDetailsDao contentDetailsDao;
 
-	private Integer contentId;
+    private Integer contentId;
 
-	@Test(groups = {"testSaveContent"}, dataProvider = "basicContent", dataProviderClass = ContentDaoDataProvider.class)
-	@Rollback(false)
-	@Transactional
-	public void testSaveContent(Content content){
-		assert content.getId() == null;
-		Content newContent = contentDao.saveContent(content);
-		assert newContent.getId() != null;
-		assert (newContent.getActiveEndDate() == null && content.getActiveEndDate() == null) || newContent.getActiveEndDate().equals(content.getActiveEndDate());
-		assert (newContent.getActiveStartDate() == null && content.getActiveStartDate() == null) || newContent.getActiveStartDate().equals(content.getActiveStartDate());
-		assert (newContent.getTitle() == null && content.getTitle() == null) || newContent.getTitle().equals(content.getTitle());
-		assert (newContent.getDisplayRule() == null && content.getDisplayRule() == null) || newContent.getDisplayRule().equals(content.getDisplayRule());
-		assert (newContent.getSandbox() == null && content.getSandbox() == null) || newContent.getSandbox().equals(content.getSandbox());
-		assert (newContent.getContentType() == null && content.getContentType() == null) || newContent.getContentType().equals(content.getContentType());
-		contentId = newContent.getId();
-	}
+    @Test(groups = {"testSaveContent"}, dataProvider = "basicContent", dataProviderClass = ContentDaoDataProvider.class)
+    @Rollback(false)
+    @Transactional
+    public void testSaveContent(Content content){
+        assert content.getId() == null;
+        Content newContent = contentDao.saveContent(content);
+        assert newContent.getId() != null;
+        assert (newContent.getActiveEndDate() == null && content.getActiveEndDate() == null) || newContent.getActiveEndDate().equals(content.getActiveEndDate());
+        assert (newContent.getActiveStartDate() == null && content.getActiveStartDate() == null) || newContent.getActiveStartDate().equals(content.getActiveStartDate());
+        assert (newContent.getTitle() == null && content.getTitle() == null) || newContent.getTitle().equals(content.getTitle());
+        assert (newContent.getDisplayRule() == null && content.getDisplayRule() == null) || newContent.getDisplayRule().equals(content.getDisplayRule());
+        assert (newContent.getSandbox() == null && content.getSandbox() == null) || newContent.getSandbox().equals(content.getSandbox());
+        assert (newContent.getContentType() == null && content.getContentType() == null) || newContent.getContentType().equals(content.getContentType());
+        contentId = newContent.getId();
+    }
 
-	@Test(groups = {"testReadContentById"}, dependsOnGroups = {"testSaveContent"})
-	@Transactional
-	public void testReadContentById(){
-		Content content = contentDao.readContentById(contentId);
-		assert content != null;
-		assert content.getId() == contentId;
-	}
+    @Test(groups = {"testReadContentById"}, dependsOnGroups = {"testSaveContent"})
+    @Transactional
+    public void testReadContentById(){
+        Content content = contentDao.readContentById(contentId);
+        assert content != null;
+        assert content.getId() == contentId;
+    }
 
-	@Test(groups = {"testReadContentByVersionSandboxFile"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
-	@Transactional
-	public void testReadContentByVersionSandboxFile(Content content){
-		List<Content> newContents = contentDao.readContentSpecified(content.getSandbox(), content.getContentType(), SystemTime.asDate());
-		assert newContents != null && !newContents.isEmpty();
-		Content newContent = newContents.get(0);
+    @Test(groups = {"testReadContentByVersionSandboxFile"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
+    @Transactional
+    public void testReadContentByVersionSandboxFile(Content content){
+        List<Content> newContents = contentDao.readContentSpecified(content.getSandbox(), content.getContentType(), SystemTime.asDate());
+        assert newContents != null && !newContents.isEmpty();
+        Content newContent = newContents.get(0);
 
-		assert newContent != null;
-		assert newContent.getId() != null;
-		assert newContent.getId().equals(contentId);
-	}
+        assert newContent != null;
+        assert newContent.getId() != null;
+        assert newContent.getId().equals(contentId);
+    }
 
-	@Test(groups = {"testUpdateContent"}, dependsOnGroups = {"testSaveContent"})
-	@Transactional
-	public void testUpdateContent(){
-		String title = "/new/file/path";
-		Content content = contentDao.readContentById(contentId);
-		String oldtitle = content.getTitle();
-		content.setTitle(title);
-		contentDao.saveContent(content);
-		Content newContent = contentDao.readContentById(contentId);
-		assert newContent != null;
-		assert newContent.getId().equals(content.getId());
-		assert !newContent.getTitle().equals(oldtitle);
-		assert newContent.getTitle().equals(title);
-	}
+    @Test(groups = {"testUpdateContent"}, dependsOnGroups = {"testSaveContent"})
+    @Transactional
+    public void testUpdateContent(){
+        String title = "/new/file/path";
+        Content content = contentDao.readContentById(contentId);
+        String oldtitle = content.getTitle();
+        content.setTitle(title);
+        contentDao.saveContent(content);
+        Content newContent = contentDao.readContentById(contentId);
+        assert newContent != null;
+        assert newContent.getId().equals(content.getId());
+        assert !newContent.getTitle().equals(oldtitle);
+        assert newContent.getTitle().equals(title);
+    }
 
-	@Test(groups = {"testRreadContentByIdsAndSandbox"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
-	@Transactional
-	public void testReadContentByIdsAndSandbox(Content content) {
-		List<Integer> contentIds = new ArrayList<Integer>();
-		contentIds.add(contentId);
-		List<Content> contentList = contentDao.readContentByIdsAndSandbox(contentIds, content.getSandbox());
+    @Test(groups = {"testRreadContentByIdsAndSandbox"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
+    @Transactional
+    public void testReadContentByIdsAndSandbox(Content content) {
+        List<Integer> contentIds = new ArrayList<Integer>();
+        contentIds.add(contentId);
+        List<Content> contentList = contentDao.readContentByIdsAndSandbox(contentIds, content.getSandbox());
 
-		assert contentList != null && !contentList.isEmpty();
-	}
+        assert contentList != null && !contentList.isEmpty();
+    }
 
-	@Test(groups = {"testReadContentBySandbox"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
-	@Transactional
-	public void testReadContentBySandbox(Content content) {
-		List<Content> newContents = contentDao.readContentBySandbox(content.getSandbox());
-		assert newContents != null && !newContents.isEmpty();
-		Content newContent = newContents.get(0);
+    @Test(groups = {"testReadContentBySandbox"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
+    @Transactional
+    public void testReadContentBySandbox(Content content) {
+        List<Content> newContents = contentDao.readContentBySandbox(content.getSandbox());
+        assert newContents != null && !newContents.isEmpty();
+        Content newContent = newContents.get(0);
 
-		assert newContent != null;
-		assert newContent.getId() != null;
-		assert newContent.getId().equals(contentId);
-	}
+        assert newContent != null;
+        assert newContent.getId() != null;
+        assert newContent.getId().equals(contentId);
+    }
 
 
-	@Test(groups = {"testReadContentBySandbox"}, dependsOnGroups = {"testSaveContent"})
-	@Transactional
+    @Test(groups = {"testReadContentBySandbox"}, dependsOnGroups = {"testSaveContent"})
+    @Transactional
     public void testReadContentAwaitingApproval() {
-		List<Content> newContents = contentDao.readContentAwaitingApproval();
-		assert newContents != null && !newContents.isEmpty();
-		Content newContent = newContents.get(0);
+        List<Content> newContents = contentDao.readContentAwaitingApproval();
+        assert newContents != null && !newContents.isEmpty();
+        Content newContent = newContents.get(0);
 
-		assert newContent != null;
-		assert newContent.getApprovedBy() == null;
-		assert newContent.getApprovedDate() == null;
+        assert newContent != null;
+        assert newContent.getApprovedBy() == null;
+        assert newContent.getApprovedDate() == null;
     }
 
-	@Test(groups = {"testReadContentBySandboxAndType"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
-	@Transactional
+    @Test(groups = {"testReadContentBySandboxAndType"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
+    @Transactional
     public void testReadContentBySandboxAndType(Content content) {
-		List<Content> newContents = contentDao.readContentBySandboxAndType(content.getSandbox(), content.getContentType());
-		assert newContents != null && !newContents.isEmpty();
-		Content newContent = newContents.get(0);
+        List<Content> newContents = contentDao.readContentBySandboxAndType(content.getSandbox(), content.getContentType());
+        assert newContents != null && !newContents.isEmpty();
+        Content newContent = newContents.get(0);
 
-		assert newContent != null;
-		assert newContent.getSandbox().equals(content.getSandbox());
-		assert newContent.getContentType().equals(content.getContentType());
+        assert newContent != null;
+        assert newContent.getSandbox().equals(content.getSandbox());
+        assert newContent.getContentType().equals(content.getContentType());
     }
 
-	@Test(groups = {"testDeleteContent"}, dependsOnGroups = {"testSaveContent"})
-	@Transactional
+    @Test(groups = {"testDeleteContent"}, dependsOnGroups = {"testSaveContent"})
+    @Transactional
     public void testDeleteContent() {
-		Content content = contentDao.readContentById(contentId);
-		contentDao.delete(content);
+        Content content = contentDao.readContentById(contentId);
+        contentDao.delete(content);
 
-		Content newContent = contentDao.readContentById(contentId);
+        Content newContent = contentDao.readContentById(contentId);
 
-		assert newContent == null;
+        assert newContent == null;
 
-		ContentDetails contentDetails = contentDetailsDao.readContentDetailsById(contentId);
-		assert contentDetails == null;
+        ContentDetails contentDetails = contentDetailsDao.readContentDetailsById(contentId);
+        assert contentDetails == null;
     }
 
-	@Test(groups = {"testDeleteContent"}, dependsOnGroups = {"testSaveContent"})
-	@Transactional
-	public void testReadStagedContent() {
-		Content content = contentDao.readContentById(contentId);
-		content.setSandbox(null);
-		contentDao.saveContent(content);
+    @Test(groups = {"testDeleteContent"}, dependsOnGroups = {"testSaveContent"})
+    @Transactional
+    public void testReadStagedContent() {
+        Content content = contentDao.readContentById(contentId);
+        content.setSandbox(null);
+        contentDao.saveContent(content);
 
-		List<Content> newContents = contentDao.readStagedContent();
+        List<Content> newContents = contentDao.readStagedContent();
 
-		assert newContents != null && !newContents.isEmpty();
-	}
+        assert newContents != null && !newContents.isEmpty();
+    }
 }

@@ -443,22 +443,22 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
 
     public Boolean isShippingPriceTaxable() {
-		return isShippingPriceTaxable;
-	}
+        return isShippingPriceTaxable;
+    }
 
-	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
-		this.isShippingPriceTaxable = isShippingPriceTaxable;
-	}
+    public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
+        this.isShippingPriceTaxable = isShippingPriceTaxable;
+    }
 
-	public String getService() {
-		return service;
-	}
+    public String getService() {
+        return service;
+    }
 
-	public void setService(String service) {
-		this.service = service;
-	}
+    public void setService(String service) {
+        this.service = service;
+    }
 
-	public int hashCode() {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((address == null) ? 0 : address.hashCode());

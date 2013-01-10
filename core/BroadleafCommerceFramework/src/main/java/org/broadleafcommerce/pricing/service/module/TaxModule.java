@@ -19,11 +19,11 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.service.exception.TaxException;
 
 public interface TaxModule {
-	
-	public String getName();
-	
-	public void setName(String name);
-	
-	public Order calculateTaxForOrder(Order order) throws TaxException;
-	
+    
+    public String getName();
+    
+    public void setName(String name);
+    
+    public Order calculateTaxForOrder(Order order) throws TaxException;
+    
 }

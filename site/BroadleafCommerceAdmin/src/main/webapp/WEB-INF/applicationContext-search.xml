@@ -4,23 +4,23 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:compass="http://www.compass-project.org/schema/spring-core-config"
        xsi:schemaLocation="
-		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.compass-project.org/schema/spring-core-config
-		http://www.compass-project.org/schema/spring-compass-core-config-2.2.xsd">
+        http://www.compass-project.org/schema/spring-compass-core-config-2.2.xsd">
 
     <compass:compass name="compass" txManager="blTransactionManager" >
         <compass:connection>
-        	<compass:ram path="/compass-index" />
-        	<!-- Using an in memory map is fast and easily configurable  -->
-        	<!-- Using something on the filesystem is probably better in real circumstances (storing a large index
-        			in memory is less than ideal on the same machine as the app server
-        	<compass:file path="/tmp/compass-index" />
-        	 -->
+            <compass:ram path="/compass-index" />
+            <!-- Using an in memory map is fast and easily configurable  -->
+            <!-- Using something on the filesystem is probably better in real circumstances (storing a large index
+                    in memory is less than ideal on the same machine as the app server
+            <compass:file path="/tmp/compass-index" />
+             -->
         </compass:connection>
         <compass:searchEngine></compass:searchEngine>
         <compass:osem /><compass:mappings>
-	<compass:scan basePackage="org.broadleafcommerce.catalog.domain" /></compass:mappings>
+    <compass:scan basePackage="org.broadleafcommerce.catalog.domain" /></compass:mappings>
     </compass:compass>
   
     <compass:session id="sess" />
@@ -28,35 +28,35 @@
     <compass:context />
     
     <!--  This job rebuilds the search index  -->
-	<bean id="indexCreationJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="blSearchService" />
-		<property name="targetMethod" value="rebuildProductIndex" />
-		<property name="concurrent" value="false" />
-	</bean>
-	
-	<!--  For development purposes the index is rebuilt on server startup and repeated every hour -->
-	<bean id="indexCreationDevelopmentTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-	    <property name="jobDetail" ref="indexCreationJob" />
-	    <property name="startDelay" value="10" />
-	    <!-- repeat interval is given in milliseconds -->
-	    <property name="repeatInterval" value="3600000" />
-	</bean>
-	        
-	<!-- In a production context, the index should be rebuilt during low load times and less frequently -->
+    <bean id="indexCreationJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="blSearchService" />
+        <property name="targetMethod" value="rebuildProductIndex" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <!--  For development purposes the index is rebuilt on server startup and repeated every hour -->
+    <bean id="indexCreationDevelopmentTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="indexCreationJob" />
+        <property name="startDelay" value="10" />
+        <!-- repeat interval is given in milliseconds -->
+        <property name="repeatInterval" value="3600000" />
+    </bean>
+            
+    <!-- In a production context, the index should be rebuilt during low load times and less frequently -->
     <!-- this example runs every morning at 3 AM -->
-	<bean id="indexCreationProductionTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="indexCreationJob" />
-	    <property name="cronExpression" value="0 0 3 * * ?" />
-	</bean>
-	  
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref bean="indexCreationDevelopmentTrigger" />
-				<!-- 
-				<ref bean="indexCreationProductionTrigger" />
-				 -->
-			</list>
-		</property>
-	</bean>
+    <bean id="indexCreationProductionTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="indexCreationJob" />
+        <property name="cronExpression" value="0 0 3 * * ?" />
+    </bean>
+      
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="indexCreationDevelopmentTrigger" />
+                <!-- 
+                <ref bean="indexCreationProductionTrigger" />
+                 -->
+            </list>
+        </property>
+    </bean>
 </beans>

@@ -31,14 +31,14 @@ import org.springframework.context.ApplicationContextAware;
  *
  */
 public class SpringAppContext implements ApplicationContextAware {
-	
-	private static ApplicationContext appContext;
+    
+    private static ApplicationContext appContext;
 
-	public void setApplicationContext(ApplicationContext appContext) throws BeansException {
-		this.appContext = appContext;
-	}
+    public void setApplicationContext(ApplicationContext appContext) throws BeansException {
+        this.appContext = appContext;
+    }
 
-	public static ApplicationContext getApplicationContext() {
-		return appContext;
-	}
+    public static ApplicationContext getApplicationContext() {
+        return appContext;
+    }
 }

@@ -77,14 +77,14 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         temp.setJtaDataSource(newPU.getJtaDataSource());
         temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
         if (temp.getProperties() == null) {
-        	temp.setProperties(newPU.getProperties());
+            temp.setProperties(newPU.getProperties());
         } else {
-        	Properties props = newPU.getProperties();
-        	if (props != null) {
-        		for (Object key : props.keySet()) {
-        			temp.getProperties().setProperty((String) key, props.getProperty((String) key)); 
-        		}
-        	}
+            Properties props = newPU.getProperties();
+            if (props != null) {
+                for (Object key : props.keySet()) {
+                    temp.getProperties().setProperty((String) key, props.getProperty((String) key)); 
+                }
+            }
         }
         temp.setTransactionType(newPU.getTransactionType());
     }

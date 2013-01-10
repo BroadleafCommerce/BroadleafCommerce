@@ -1,68 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:flex="http://www.springframework.org/schema/flex"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:flex="http://www.springframework.org/schema/flex"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.directwebremoting.org/schema/spring-dwr
        http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-2.5.xsd
-	   http://www.springframework.org/schema/flex
-	   http://www.springframework.org/schema/flex/spring-flex-1.0.xsd"
+       http://www.springframework.org/schema/flex
+       http://www.springframework.org/schema/flex/spring-flex-1.0.xsd"
     >
 
-	<bean id="resourceBundleExtensionPoint"
-		class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint" />
+    <bean id="resourceBundleExtensionPoint"
+        class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint" />
 
-	<bean id="messageSource"
-		class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
-		<constructor-arg>
-			<list>
-				<value>registrationMessages</value>
-				<value>messages</value>
-			</list>
-		</constructor-arg>
-		<constructor-arg ref="resourceBundleExtensionPoint" />
-	</bean>
-
-
-	<!--  If you want to change the location of the services-config.xml uncomment the following bean
-	<flex:message-broker services-config-path="classpath*:services-config.xml" />
-	-->
-
-	<!--
-	<bean id="_messageBroker" class="org.springframework.flex.core.MessageBrokerFactoryBean" />
-	The below is valid in later versions of spring, but not with 2.5.4
-	-->
-	<flex:message-broker>
-		<flex:secured />
-	</flex:message-broker>
-
-	<!-- Maps request paths at /* to the BlazeDS MessageBroker -->
-	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="mappings">
-        	<props>
-        		<prop key="/*">_messageBroker</prop>
-        	</props>
-		</property>
-	</bean>
-
-	<!-- Dispatches requests mapped to a MessageBroker -->
-	<bean id ="messageBrokerHandler" class="org.springframework.flex.servlet.MessageBrokerHandlerAdapter"/>
+    <bean id="messageSource"
+        class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
+        <constructor-arg>
+            <list>
+                <value>registrationMessages</value>
+                <value>messages</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="resourceBundleExtensionPoint" />
+    </bean>
 
 
+    <!--  If you want to change the location of the services-config.xml uncomment the following bean
+    <flex:message-broker services-config-path="classpath*:services-config.xml" />
+    -->
 
-	<!-- Expose the Service beans for BlazeDS remoting
-	-->
-	<flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />
-	<flex:remoting-destination ref="blAdminSecurityService"/>
-	<flex:remoting-destination ref="blOfferService" />
-	<flex:remoting-destination ref="blCodeTypeService"/>
-	<flex:remoting-destination ref="blSearchService"/>
-	<flex:remoting-destination ref="blContentService"/>
+    <!--
+    <bean id="_messageBroker" class="org.springframework.flex.core.MessageBrokerFactoryBean" />
+    The below is valid in later versions of spring, but not with 2.5.4
+    -->
+    <flex:message-broker>
+        <flex:secured />
+    </flex:message-broker>
+
+    <!-- Maps request paths at /* to the BlazeDS MessageBroker -->
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/*">_messageBroker</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- Dispatches requests mapped to a MessageBroker -->
+    <bean id ="messageBrokerHandler" class="org.springframework.flex.servlet.MessageBrokerHandlerAdapter"/>
+
+
+
+    <!-- Expose the Service beans for BlazeDS remoting
+    -->
+    <flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />
+    <flex:remoting-destination ref="blAdminSecurityService"/>
+    <flex:remoting-destination ref="blOfferService" />
+    <flex:remoting-destination ref="blCodeTypeService"/>
+    <flex:remoting-destination ref="blSearchService"/>
+    <flex:remoting-destination ref="blContentService"/>
 
 </beans>

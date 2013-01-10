@@ -1,267 +1,267 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>BroadleafCommerce</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.1.2-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.broadleafcommerce</groupId>
-	<artifactId>integration</artifactId>
-	<name>integration</name>
-	<version>1.1.2-SNAPSHOT</version>
-	<url>http://maven.apache.org</url>
-	<build>
-		<plugins>
-			<plugin>
-		       <groupId>org.apache.maven.plugins</groupId>
-		       <artifactId>maven-jar-plugin</artifactId>
-		       <version>2.2</version>
-		       <executions>
-		         <execution>
-		           <goals>
-		             <goal>test-jar</goal>
-		           </goals>
-		         </execution>
-		       </executions>
-		    </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-					<!-- this ant script runs testng natively -->
-					<execution>
-						<id>testng</id>
-						<phase>test</phase>
-						<configuration>
-							<tasks unless="maven.test.skip">
-								<property name="framework" location="../core/BroadleafCommerceFramework" />
-								<property name="frameworkWeb" location="../core/BroadleafCommerceFrameworkWeb" />
-								<property name="profile" location="../core/BroadleafCommerceProfile" />
-								<property name="profileWeb" location="../core/BroadleafCommerceProfileWeb" />
-								<property name="usps" location="../module/BroadleafCommerceUSPS" />
-								<property name="cybersource" location="../module/BroadleafCommerceCyberSource" />
-								<path id="test.path">
-									<pathelement location="${framework}/target/instrumented" />
-									<pathelement location="${frameworkWeb}/target/instrumented" />
-									<pathelement location="${profile}/target/instrumented" />
-									<pathelement location="${profileWeb}/target/instrumented" />
-									<pathelement location="${usps}/target/instrumented" />
-									<pathelement location="${cybersource}/target/instrumented" />
-									<path refid="maven.test.classpath" />
-									<pathelement location="../../BroadleafCommerceConfig/src" />
-								</path>
-								<taskdef resource="testngtasks" classpath="testng.jar" classpathref="test.path" />
-								<taskdef classpathref="test.path" resource="tasks.properties" />
-								<copy file="${framework}/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser" />
-								<cobertura-merge datafile="target/instrumented/cobertura.ser">
-									<fileset dir="${frameworkWeb}/target/instrumented">
-										<include name="cobertura.ser" />
-									</fileset>
-									<fileset dir="${profile}/target/instrumented">
-										<include name="cobertura.ser" />
-									</fileset>
-									<fileset dir="${profileWeb}/target/instrumented">
-										<include name="cobertura.ser" />
-									</fileset>
-									<fileset dir="${usps}/target/instrumented">
-										<include name="cobertura.ser" />
-									</fileset>
-									<fileset dir="${cybersource}/target/instrumented">
-										<include name="cobertura.ser" />
-									</fileset>
-								</cobertura-merge>
-								<testng classpathref="test.path" outputdir="target/test-reports" haltonfailure="true">
-									<jvmarg value="-Xmx512M" />
-									<sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/cobertura.ser" />
-									<xmlfileset dir="src/test/resources" includes="*testng.xml" />
-								</testng>
-								<mkdir dir="target/surefire-reports" />
-								<junitreport todir="target/surefire-reports">
-									<fileset dir="target/test-reports">
-										<include name="**/*.xml" />
-									</fileset>
-									<report format="noframes" todir="target/surefire-reports" />
-								</junitreport>
-								<cobertura-report format="html" destdir="target/cobertura-reports" datafile="target/instrumented/cobertura.ser">
-									<fileset dir="${framework}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${frameworkWeb}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${profile}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${profileWeb}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${usps}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${cybersource}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-								</cobertura-report>
-								<cobertura-report format="xml" destdir="target/cobertura-reports" datafile="target/instrumented/cobertura.ser">
-									<fileset dir="${framework}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${frameworkWeb}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${profile}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${profileWeb}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${usps}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-									<fileset dir="${cybersource}/src/main/java">
-										<include name="**/*.java" />
-										<exclude name="**/*.xml" />
-									</fileset>
-								</cobertura-report>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>ant</groupId>
-						<artifactId>ant-junit</artifactId>
-						<version>1.6.2</version>
-					</dependency>
-					<dependency>
-						<groupId>cobertura</groupId>
-						<artifactId>cobertura</artifactId>
-						<version>1.8</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.ant</groupId>
-						<artifactId>ant-jsch</artifactId>
-						<version>1.7.1</version>
-						<exclusions>
-							<exclusion>
-								<groupId>com.jcraft</groupId>
-								<artifactId>jsch</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-					<dependency>
-						<groupId>com.jcraft</groupId>
-						<artifactId>jsch</artifactId>
-						<version>0.1.42</version>
-					</dependency>
-					<dependency>
-						<groupId>ant-contrib</groupId>
-						<artifactId>ant-contrib</artifactId>
-						<version>1.0b3</version>
-						<exclusions>
-							<exclusion>
-								<groupId>ant</groupId>
-								<artifactId>ant</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-framework-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-framework</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-profile</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-profile-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-usps</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-cybersource</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.icegreen</groupId>
-			<artifactId>greenmail</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymock</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymockclassextension</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<type>jar</type>
-			<classifier>jdk15</classifier>
-		</dependency>
-		<dependency>
-			<groupId>cobertura</groupId>
-			<artifactId>cobertura</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-	</dependencies>
+    <parent>
+        <artifactId>BroadleafCommerce</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.1.2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.broadleafcommerce</groupId>
+    <artifactId>integration</artifactId>
+    <name>integration</name>
+    <version>1.1.2-SNAPSHOT</version>
+    <url>http://maven.apache.org</url>
+    <build>
+        <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-jar-plugin</artifactId>
+               <version>2.2</version>
+               <executions>
+                 <execution>
+                   <goals>
+                     <goal>test-jar</goal>
+                   </goals>
+                 </execution>
+               </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <!-- this ant script runs testng natively -->
+                    <execution>
+                        <id>testng</id>
+                        <phase>test</phase>
+                        <configuration>
+                            <tasks unless="maven.test.skip">
+                                <property name="framework" location="../core/BroadleafCommerceFramework" />
+                                <property name="frameworkWeb" location="../core/BroadleafCommerceFrameworkWeb" />
+                                <property name="profile" location="../core/BroadleafCommerceProfile" />
+                                <property name="profileWeb" location="../core/BroadleafCommerceProfileWeb" />
+                                <property name="usps" location="../module/BroadleafCommerceUSPS" />
+                                <property name="cybersource" location="../module/BroadleafCommerceCyberSource" />
+                                <path id="test.path">
+                                    <pathelement location="${framework}/target/instrumented" />
+                                    <pathelement location="${frameworkWeb}/target/instrumented" />
+                                    <pathelement location="${profile}/target/instrumented" />
+                                    <pathelement location="${profileWeb}/target/instrumented" />
+                                    <pathelement location="${usps}/target/instrumented" />
+                                    <pathelement location="${cybersource}/target/instrumented" />
+                                    <path refid="maven.test.classpath" />
+                                    <pathelement location="../../BroadleafCommerceConfig/src" />
+                                </path>
+                                <taskdef resource="testngtasks" classpath="testng.jar" classpathref="test.path" />
+                                <taskdef classpathref="test.path" resource="tasks.properties" />
+                                <copy file="${framework}/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser" />
+                                <cobertura-merge datafile="target/instrumented/cobertura.ser">
+                                    <fileset dir="${frameworkWeb}/target/instrumented">
+                                        <include name="cobertura.ser" />
+                                    </fileset>
+                                    <fileset dir="${profile}/target/instrumented">
+                                        <include name="cobertura.ser" />
+                                    </fileset>
+                                    <fileset dir="${profileWeb}/target/instrumented">
+                                        <include name="cobertura.ser" />
+                                    </fileset>
+                                    <fileset dir="${usps}/target/instrumented">
+                                        <include name="cobertura.ser" />
+                                    </fileset>
+                                    <fileset dir="${cybersource}/target/instrumented">
+                                        <include name="cobertura.ser" />
+                                    </fileset>
+                                </cobertura-merge>
+                                <testng classpathref="test.path" outputdir="target/test-reports" haltonfailure="true">
+                                    <jvmarg value="-Xmx512M" />
+                                    <sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/cobertura.ser" />
+                                    <xmlfileset dir="src/test/resources" includes="*testng.xml" />
+                                </testng>
+                                <mkdir dir="target/surefire-reports" />
+                                <junitreport todir="target/surefire-reports">
+                                    <fileset dir="target/test-reports">
+                                        <include name="**/*.xml" />
+                                    </fileset>
+                                    <report format="noframes" todir="target/surefire-reports" />
+                                </junitreport>
+                                <cobertura-report format="html" destdir="target/cobertura-reports" datafile="target/instrumented/cobertura.ser">
+                                    <fileset dir="${framework}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${frameworkWeb}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${profile}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${profileWeb}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${usps}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${cybersource}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                </cobertura-report>
+                                <cobertura-report format="xml" destdir="target/cobertura-reports" datafile="target/instrumented/cobertura.ser">
+                                    <fileset dir="${framework}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${frameworkWeb}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${profile}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${profileWeb}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${usps}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                    <fileset dir="${cybersource}/src/main/java">
+                                        <include name="**/*.java" />
+                                        <exclude name="**/*.xml" />
+                                    </fileset>
+                                </cobertura-report>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-junit</artifactId>
+                        <version>1.6.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>cobertura</groupId>
+                        <artifactId>cobertura</artifactId>
+                        <version>1.8</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant-jsch</artifactId>
+                        <version>1.7.1</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>com.jcraft</groupId>
+                                <artifactId>jsch</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.jcraft</groupId>
+                        <artifactId>jsch</artifactId>
+                        <version>0.1.42</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>1.0b3</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>ant</groupId>
+                                <artifactId>ant</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-framework-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-framework</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-profile</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-profile-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-usps</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-cybersource</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymockclassextension</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <type>jar</type>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+            <groupId>cobertura</groupId>
+            <artifactId>cobertura</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
 </project>

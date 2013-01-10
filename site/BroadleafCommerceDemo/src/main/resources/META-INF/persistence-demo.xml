@@ -5,20 +5,20 @@
              version="1.0">
              
     <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
-		<non-jta-data-source>jdbc/web</non-jta-data-source>
-		<exclude-unlisted-classes/>
-		<properties>
+        <non-jta-data-source>jdbc/web</non-jta-data-source>
+        <exclude-unlisted-classes/>
+        <properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
-	</persistence-unit>
-	
-	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
-		<non-jta-data-source>jdbc/webSecure</non-jta-data-source>
-		<exclude-unlisted-classes/>
-		<properties>
+    </persistence-unit>
+    
+    <persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+        <non-jta-data-source>jdbc/webSecure</non-jta-data-source>
+        <exclude-unlisted-classes/>
+        <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
-	</persistence-unit>
+    </persistence-unit>
 </persistence>

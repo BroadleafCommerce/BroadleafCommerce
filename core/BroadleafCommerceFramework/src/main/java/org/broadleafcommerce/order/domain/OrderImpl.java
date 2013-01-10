@@ -311,7 +311,7 @@ public class OrderImpl implements Order {
     }
 
     public void removeAllCandidateOffers() {
-    	removeAllCandidateOrderOffers();
+        removeAllCandidateOrderOffers();
         if (getOrderItems() != null) {
             for (OrderItem item : getOrderItems()) {
                 item.removeAllCandidateItemOffers();
@@ -431,7 +431,7 @@ public class OrderImpl implements Order {
         adjustmentPrice = adjustmentPrice.subtract(orderAdjustment.getValue().getAmount());
         this.orderAdjustments.add(orderAdjustment);
         if (!orderAdjustment.getOffer().isCombinableWithOtherOffers()) {
-        	notCombinableOfferApplied = true;
+            notCombinableOfferApplied = true;
         }
         hasOrderAdjustments = true;
     }
@@ -447,7 +447,7 @@ public class OrderImpl implements Order {
             orderAdjustments.clear();
         }
         adjustmentPrice = null;
-    	notCombinableOfferApplied = false;
+        notCombinableOfferApplied = false;
         hasOrderAdjustments = false;
    }
 
@@ -591,14 +591,14 @@ public class OrderImpl implements Order {
     }
 
     public boolean isNotCombinableOfferApplied() {
-		return notCombinableOfferApplied;
-	}
+        return notCombinableOfferApplied;
+    }
 
-	public boolean isHasOrderAdjustments() {
-		return hasOrderAdjustments;
-	}
-	
-	public boolean updatePrices() {
+    public boolean isHasOrderAdjustments() {
+        return hasOrderAdjustments;
+    }
+    
+    public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
             if (orderItem.updatePrices()) {
@@ -608,13 +608,13 @@ public class OrderImpl implements Order {
         return updated;
     }
 
-	public boolean equals(Object obj) {
-	   	if (this == obj)
-	        return true;
-	    if (obj == null)
-	        return false;
-	    if (getClass() != obj.getClass())
-	        return false;
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
         OrderImpl other = (OrderImpl) obj;
 
         if (id != null && other.id != null) {

@@ -1,21 +1,21 @@
  $(document).ready(function(){
-	 verifyCheckbox();
-	 
-	 function verifyCheckbox() {
-	   if ($("#sameShippingInfo").attr("checked") == false) {
-		   $("#checkoutContactInfo").removeClass("displayNone");
-	   }
-	   else {
-		   $("#checkoutContactInfo").addClass("displayNone");
-	   }
-	 }
-	 
+     verifyCheckbox();
+     
+     function verifyCheckbox() {
+       if ($("#sameShippingInfo").attr("checked") == false) {
+           $("#checkoutContactInfo").removeClass("displayNone");
+       }
+       else {
+           $("#checkoutContactInfo").addClass("displayNone");
+       }
+     }
+     
    $("#sameShippingInfo").click(function () {   
-	   verifyCheckbox();
+       verifyCheckbox();
    });
    
    $("#shipping").change(function () {
-	  document.cartForm.submit();
+      document.cartForm.submit();
    });
    
  });

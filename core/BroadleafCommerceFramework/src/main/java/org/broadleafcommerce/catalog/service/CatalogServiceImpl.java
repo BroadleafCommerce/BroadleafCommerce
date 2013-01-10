@@ -70,7 +70,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
     
     public void removeCategory(Category category){
-    	categoryDao.delete(category);
+        categoryDao.delete(category);
     }
 
     public List<Category> findAllCategories() {

@@ -36,14 +36,14 @@ import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
 public abstract class AbstractCyberSourcePaymentService implements ServiceStatusDetectable {
-	
-	private String merchantId;
-	private String serverUrl;
-	private String libVersion;
-	protected Integer failureReportingThreshold;
+    
+    private String merchantId;
+    private String serverUrl;
+    private String libVersion;
+    protected Integer failureReportingThreshold;
     protected Integer failureCount = 0;
     protected Boolean isUp = true;
-	private IdGenerationService idGenerationService;
+    private IdGenerationService idGenerationService;
     
     protected void clearStatus() {
         synchronized(failureCount) {
@@ -61,74 +61,74 @@ public abstract class AbstractCyberSourcePaymentService implements ServiceStatus
             }
         }
     }
-	
-	public Integer getFailureReportingThreshold() {
-		return failureReportingThreshold;
-	}
+    
+    public Integer getFailureReportingThreshold() {
+        return failureReportingThreshold;
+    }
 
-	public String getMerchantId() {
-		return merchantId;
-	}
+    public String getMerchantId() {
+        return merchantId;
+    }
 
-	public String getServerUrl() {
-		return serverUrl;
-	}
-	
-	public String getLibVersion() {
-		return libVersion;
-	}
+    public String getServerUrl() {
+        return serverUrl;
+    }
+    
+    public String getLibVersion() {
+        return libVersion;
+    }
 
-	public String getServiceName() {
-		return getClass().getName();
-	}
+    public String getServiceName() {
+        return getClass().getName();
+    }
 
-	public ServiceStatusType getServiceStatus() {
-		synchronized(failureCount) {
+    public ServiceStatusType getServiceStatus() {
+        synchronized(failureCount) {
             if (isUp) {
                 return ServiceStatusType.UP;
             } else {
                 return ServiceStatusType.DOWN;
             }
         }
-	}
+    }
 
-	public void setFailureReportingThreshold(Integer failureReportingThreshold) {
-		this.failureReportingThreshold = failureReportingThreshold;
-	}
+    public void setFailureReportingThreshold(Integer failureReportingThreshold) {
+        this.failureReportingThreshold = failureReportingThreshold;
+    }
 
-	public void setMerchantId(String merchantId) {
-		this.merchantId = merchantId;
-	}
+    public void setMerchantId(String merchantId) {
+        this.merchantId = merchantId;
+    }
 
-	public void setServerUrl(String serverUrl) {
-		this.serverUrl = serverUrl;
-	}
-	
-	public void setLibVersion(String libVersion) {
-		this.libVersion = libVersion;
-	}
-	
-	public IdGenerationService getIdGenerationService() {
-		return idGenerationService;
-	}
-	
-	public void setIdGenerationService(IdGenerationService idGenerationService) {
-		this.idGenerationService = idGenerationService;
-	}
-	
-	protected ReplyMessage sendRequest(RequestMessage request) throws AxisFault, MalformedURLException, RemoteException, ServiceException {
-		EngineConfiguration config = new FileProvider("CyberSourceDeploy.wsdd");
-		TransactionProcessorLocator service = new TransactionProcessorLocator(config);
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
+    
+    public void setLibVersion(String libVersion) {
+        this.libVersion = libVersion;
+    }
+    
+    public IdGenerationService getIdGenerationService() {
+        return idGenerationService;
+    }
+    
+    public void setIdGenerationService(IdGenerationService idGenerationService) {
+        this.idGenerationService = idGenerationService;
+    }
+    
+    protected ReplyMessage sendRequest(RequestMessage request) throws AxisFault, MalformedURLException, RemoteException, ServiceException {
+        EngineConfiguration config = new FileProvider("CyberSourceDeploy.wsdd");
+        TransactionProcessorLocator service = new TransactionProcessorLocator(config);
         URL endpoint = new URL(serverUrl);
         ITransactionProcessorStub stub = (ITransactionProcessorStub) service.getportXML(endpoint);
         stub._setProperty(WSHandlerConstants.USER, request.getMerchantID());
         ReplyMessage reply = stub.runTransaction(request);
         
         return reply;
-	}
-	
-	protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
-		RequestMessage request = new RequestMessage();
+    }
+    
+    protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
+        RequestMessage request = new RequestMessage();
         request.setMerchantID(merchantId);
         request.setMerchantReferenceCode(idGenerationService.findNextId("org.broadleafcommerce.vendor.cybersource.service.CyberSourceService").toString());
         request.setClientLibrary("Java Axis WSS4J");
@@ -145,6 +145,6 @@ public abstract class AbstractCyberSourcePaymentService implements ServiceStatus
         request.setPurchaseTotals(purchaseTotals);
         
         return request;
-	}
+    }
 
 }

@@ -79,10 +79,10 @@ public class CheckoutTest extends BaseTest {
     private OrderItemService orderItemService;
 
     @SuppressWarnings("serial")
-	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
-	@Transactional
+    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
+    @Transactional
     public void testCheckout() throws Exception {
-    	String userName = "customer1";
+        String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Order order = cartService.createNewCartForCustomer(customer);
         
@@ -152,62 +152,62 @@ public class CheckoutTest extends BaseTest {
 
         CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
 
-			public String getCvvCode() {
-				return "123";
-			}
+            public String getCvvCode() {
+                return "123";
+            }
 
-			public Integer getExpirationMonth() {
-				return 11;
-			}
+            public Integer getExpirationMonth() {
+                return 11;
+            }
 
-			public Integer getExpirationYear() {
-				return 2011;
-			}
+            public Integer getExpirationYear() {
+                return 2011;
+            }
 
-			public Long getId() {
-				return null;
-			}
+            public Long getId() {
+                return null;
+            }
 
-			public String getPan() {
-				return "1111111111111111";
-			}
+            public String getPan() {
+                return "1111111111111111";
+            }
 
-			public void setCvvCode(String cvvCode) {
-				//do nothing
-			}
+            public void setCvvCode(String cvvCode) {
+                //do nothing
+            }
 
-			public void setExpirationMonth(Integer expirationMonth) {
-				//do nothing
-			}
+            public void setExpirationMonth(Integer expirationMonth) {
+                //do nothing
+            }
 
-			public void setExpirationYear(Integer expirationYear) {
-				//do nothing
-			}
+            public void setExpirationYear(Integer expirationYear) {
+                //do nothing
+            }
 
-			public void setId(Long id) {
-				//do nothing
-			}
+            public void setId(Long id) {
+                //do nothing
+            }
 
-			public void setPan(String pan) {
-				//do nothing
-			}
+            public void setPan(String pan) {
+                //do nothing
+            }
 
-			public EncryptionModule getEncryptionModule() {
-				return encryptionModule;
-			}
+            public EncryptionModule getEncryptionModule() {
+                return encryptionModule;
+            }
 
-			public String getReferenceNumber() {
-				return "1234";
-			}
+            public String getReferenceNumber() {
+                return "1234";
+            }
 
-			public void setEncryptionModule(EncryptionModule encryptionModule) {
-				//do nothing
-			}
+            public void setEncryptionModule(EncryptionModule encryptionModule) {
+                //do nothing
+            }
 
-			public void setReferenceNumber(String referenceNumber) {
-				//do nothing
-			}
-        	
+            public void setReferenceNumber(String referenceNumber) {
+                //do nothing
+            }
+            
         };
 
         Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();

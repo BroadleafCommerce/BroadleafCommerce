@@ -25,7 +25,7 @@ public class CustomerAddressDataProvider {
 
     @DataProvider(name = "setupCustomerAddress")
     public static Object[][] createCustomerAddress() {
-    	CustomerAddress ca1 = new CustomerAddressImpl();
+        CustomerAddress ca1 = new CustomerAddressImpl();
         Address address1 = new AddressImpl();
         address1.setAddressLine1("1234 Merit Drive");
         address1.setCity("Bozeman");

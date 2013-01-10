@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<named-query name="BC_READ_SKU_AVAILABILITIES_BY_SKU_IDS" >
-		<query>SELECT skuAvailability FROM org.broadleafcommerce.inventory.domain.SkuAvailability skuAvailability
-		       WHERE  skuAvailability.skuId in (:skuIds) AND
-		              skuAvailability.locationId is null
-		</query>
-	</named-query>
+    <named-query name="BC_READ_SKU_AVAILABILITIES_BY_SKU_IDS" >
+        <query>SELECT skuAvailability FROM org.broadleafcommerce.inventory.domain.SkuAvailability skuAvailability
+               WHERE  skuAvailability.skuId in (:skuIds) AND
+                      skuAvailability.locationId is null
+        </query>
+    </named-query>
 
-	<named-query name="BC_READ_SKU_AVAILABILITIES_BY_LOCATION_ID_AND_SKU_IDS" >
-		<query>SELECT skuAvailability FROM org.broadleafcommerce.inventory.domain.SkuAvailability skuAvailability
-		       WHERE  skuAvailability.skuId in (:skuIds) AND
-		              skuAvailability.locationId = :locationId
-		</query>
-	</named-query>
+    <named-query name="BC_READ_SKU_AVAILABILITIES_BY_LOCATION_ID_AND_SKU_IDS" >
+        <query>SELECT skuAvailability FROM org.broadleafcommerce.inventory.domain.SkuAvailability skuAvailability
+               WHERE  skuAvailability.skuId in (:skuIds) AND
+                      skuAvailability.locationId = :locationId
+        </query>
+    </named-query>
 </entity-mappings>

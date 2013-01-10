@@ -61,7 +61,7 @@ public class WishlistController extends CartController {
     @RequestMapping(method =  {RequestMethod.POST}, params="addToWishlist")
     public String addToWishlist(ModelMap model, HttpServletRequest request, @ModelAttribute WishlistRequest wishlistRequest, BindingResult errors) {
         if (wishlistRequest.getWishlistName() != null && wishlistRequest.getWishlistName().length() > 0) {
-        	Order wishlist = cartService.findNamedOrderForCustomer(wishlistRequest.getWishlistName(), customerState.getCustomer(request));
+            Order wishlist = cartService.findNamedOrderForCustomer(wishlistRequest.getWishlistName(), customerState.getCustomer(request));
             AddToCartItem addToCartItem = new AddToCartItem();
             addToCartItem.setCategoryId(wishlistRequest.getAddCategoryId());
             addToCartItem.setOrderId(wishlist.getId());
@@ -90,7 +90,7 @@ public class WishlistController extends CartController {
         CartSummary cartSummary = new CartSummary();
         
         if (wishlist == null) {
-        	return "redirect:/basket/currentCart.htm";
+            return "redirect:/basket/currentCart.htm";
         }
 
         if (wishlist.getOrderItems() != null ) {
@@ -109,20 +109,20 @@ public class WishlistController extends CartController {
     
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public String createWishlist(ModelMap model, HttpServletRequest request, @ModelAttribute WishlistRequest wishlistRequest) {
-    	boolean wishlistCreated = false;
-    	Order wishlistOrder = new OrderImpl();
-    	
-    	if (wishlistRequest.getWishlistName() != null && wishlistRequest.getWishlistName().length() > 0) {
-    		wishlistOrder = createWishlistCart(request, wishlistRequest.getWishlistName());
-    		wishlistCreated = true;
-    	}
-    	if (wishlistCreated == false) {
-    		model.addAttribute("wishlistError", "Please enter a valid wishlist name.");
-    		return "wishlist/createWishlistName";
-    	}
+        boolean wishlistCreated = false;
+        Order wishlistOrder = new OrderImpl();
+        
+        if (wishlistRequest.getWishlistName() != null && wishlistRequest.getWishlistName().length() > 0) {
+            wishlistOrder = createWishlistCart(request, wishlistRequest.getWishlistName());
+            wishlistCreated = true;
+        }
+        if (wishlistCreated == false) {
+            model.addAttribute("wishlistError", "Please enter a valid wishlist name.");
+            return "wishlist/createWishlistName";
+        }
         
         if (wishlistRequest.getAddSkuId() != null && wishlistRequest.getAddCategoryId() != null && 
-        		wishlistRequest.getAddProductId() != null && wishlistRequest.getQuantity() != null && wishlistCreated == true ) {
+                wishlistRequest.getAddProductId() != null && wishlistRequest.getQuantity() != null && wishlistCreated == true ) {
             try {
                 cartService.addSkuToOrder(wishlistOrder.getId(), wishlistRequest.getAddSkuId(), wishlistRequest.getAddProductId(),
                         wishlistRequest.getAddCategoryId(), wishlistRequest.getQuantity());
@@ -136,14 +136,14 @@ public class WishlistController extends CartController {
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public String createWishlistName(ModelMap model, HttpServletRequest request) {
-    	WishlistRequest wishlistRequest = (WishlistRequest) model.get("wishlistRequest");
-    	
-    	if (wishlistRequest != null) {
-    		model.addAttribute("wishlistRequest", model.get("wishlistRequest"));
-    	}
-    	else {
-    		model.addAttribute("wishlistRequest", new WishlistRequest());
-    	}
+        WishlistRequest wishlistRequest = (WishlistRequest) model.get("wishlistRequest");
+        
+        if (wishlistRequest != null) {
+            model.addAttribute("wishlistRequest", model.get("wishlistRequest"));
+        }
+        else {
+            model.addAttribute("wishlistRequest", new WishlistRequest());
+        }
         
         return "wishlist/createWishlistName";
     }
@@ -156,13 +156,13 @@ public class WishlistController extends CartController {
     
     @RequestMapping(method = {RequestMethod.GET})
     public String removeWishlistItem(@RequestParam long orderItemId, @RequestParam long orderId, ModelMap model, HttpServletRequest request) {
-    	Order wishlist = cartService.findOrderById(orderId);
-    	try {
+        Order wishlist = cartService.findOrderById(orderId);
+        try {
             wishlist = cartService.removeItemFromOrder(wishlist.getId(), orderItemId);
         } catch (PricingException e) {
             LOG.error("An error occurred while removing an item from the cart: ("+orderItemId+")", e);
         }
-    	
+        
         return viewWishlist(model, request, wishlist.getId());
     }
 
@@ -172,7 +172,7 @@ public class WishlistController extends CartController {
 
         try {
             cartService.moveItemToCartFromNamedOrder(customerState.getCustomer(request).getId(), 
-					wishlistOrder.getName(), orderItemId, new Integer(1));
+                    wishlistOrder.getName(), orderItemId, new Integer(1));
         } catch (Exception e) {
             LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
             //TODO: handle this properly from a UI perspective

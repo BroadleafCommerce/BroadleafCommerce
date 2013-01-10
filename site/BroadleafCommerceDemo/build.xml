@@ -5,79 +5,79 @@
 <!-- ====================================================================== -->
 
 <project name="BroadleafCommerceDemo" default="launch-demo" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-	
-	<path id="maven-ant-tasks.classpath" path="../../lib/maven-ant-tasks-2.0.10.jar" />
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
-	<property file="../../build.properties" />
+    
+    <path id="maven-ant-tasks.classpath" path="../../lib/maven-ant-tasks-2.0.10.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+    <property file="../../build.properties" />
 
-	<artifact:pom id="mypom" file="pom.xml"/>
-	<artifact:dependencies filesetId="mydeps" pomRefId="mypom" useScope="runtime"/>
-	<path id="build.runtime.classpath">
-		<fileset refid="mydeps"/>
-	</path>
-	
-	<macrodef name="maven-launch">
-		<attribute name="options" default="" />
-		<attribute name="goal" />
-		<attribute name="basedir" />
-		<attribute name="resultproperty" default="maven.result" />
-		<element name="args" implicit="true" optional="true" />
-		<sequential>
-			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
-				<jvmarg value="-Xdebug"/>
-				<jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
-				<jvmarg value="-Xmx512m" />
-				<jvmarg value="-XX:MaxPermSize=512M" />
-				<jvmarg value="-Dcom.sun.management.jmxremote=true" />
-		    	<jvmarg value="-Dcom.sun.management.jmxremote.port=1616" />
-		    	<jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
-		    	<jvmarg value="-Dcom.sun.management.jmxremote.ssl=false" />
-				<classpath>
-					<fileset dir="${maven.home}/boot">
-						<include name="*.jar" />
-					</fileset>
-					<fileset dir="${maven.home}/lib">
-						<include name="*.jar" />
-					</fileset>
-				</classpath>
-				<sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-				<sysproperty key="maven.home" value="${maven.home}" />
-				<arg line="--batch-mode @{options} @{goal}" />
-			</java>
-		</sequential>
-	</macrodef>
-	
-	<macrodef name="maven-stop">
-		<attribute name="options" default="" />
-		<attribute name="goal" />
-		<attribute name="basedir" />
-		<attribute name="resultproperty" default="maven.result" />
-		<element name="args" implicit="true" optional="true" />
-		<sequential>
-			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
-				<classpath>
-					<fileset dir="${maven.home}/boot">
-						<include name="*.jar" />
-					</fileset>
-					<fileset dir="${maven.home}/lib">
-						<include name="*.jar" />
-					</fileset>
-				</classpath>
-				<sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-				<sysproperty key="maven.home" value="${maven.home}" />
-				<arg line="--batch-mode @{options} @{goal}" />
-			</java>
-		</sequential>
-	</macrodef>
-	
-	<target name="start-db">  
+    <artifact:pom id="mypom" file="pom.xml"/>
+    <artifact:dependencies filesetId="mydeps" pomRefId="mypom" useScope="runtime"/>
+    <path id="build.runtime.classpath">
+        <fileset refid="mydeps"/>
+    </path>
+    
+    <macrodef name="maven-launch">
+        <attribute name="options" default="" />
+        <attribute name="goal" />
+        <attribute name="basedir" />
+        <attribute name="resultproperty" default="maven.result" />
+        <element name="args" implicit="true" optional="true" />
+        <sequential>
+            <java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
+                <jvmarg value="-Xdebug"/>
+                <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
+                <jvmarg value="-Xmx512m" />
+                <jvmarg value="-XX:MaxPermSize=512M" />
+                <jvmarg value="-Dcom.sun.management.jmxremote=true" />
+                <jvmarg value="-Dcom.sun.management.jmxremote.port=1616" />
+                <jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
+                <jvmarg value="-Dcom.sun.management.jmxremote.ssl=false" />
+                <classpath>
+                    <fileset dir="${maven.home}/boot">
+                        <include name="*.jar" />
+                    </fileset>
+                    <fileset dir="${maven.home}/lib">
+                        <include name="*.jar" />
+                    </fileset>
+                </classpath>
+                <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                <sysproperty key="maven.home" value="${maven.home}" />
+                <arg line="--batch-mode @{options} @{goal}" />
+            </java>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="maven-stop">
+        <attribute name="options" default="" />
+        <attribute name="goal" />
+        <attribute name="basedir" />
+        <attribute name="resultproperty" default="maven.result" />
+        <element name="args" implicit="true" optional="true" />
+        <sequential>
+            <java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
+                <classpath>
+                    <fileset dir="${maven.home}/boot">
+                        <include name="*.jar" />
+                    </fileset>
+                    <fileset dir="${maven.home}/lib">
+                        <include name="*.jar" />
+                    </fileset>
+                </classpath>
+                <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                <sysproperty key="maven.home" value="${maven.home}" />
+                <arg line="--batch-mode @{options} @{goal}" />
+            </java>
+        </sequential>
+    </macrodef>
+    
+    <target name="start-db">  
         <echo message="Starting Data Base..." />  
         <java fork="true"  spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath">  
             <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>  
         </java>  
     </target>
-	
-	<target name="stop-db">  
+    
+    <target name="stop-db">  
         <echo message="Execute SQL on new Data Base..." />  
         <sql  
             autocommit="true"  
@@ -92,21 +92,21 @@
         <echo message="SQL Executed on data base..." />  
     </target>
 
-	<target name="launch-demo" depends="start-db">
-		<delete>
-			<fileset dir="src/main/webapp/WEB-INF/lib" includes="*.*"/>
-	  	</delete>
-		<maven-launch basedir="${basedir}" goal="clean compile war:inplace jetty:run" resultproperty="maven.build.result"/>
-	</target>
-	
-	<target name="stop-demo" depends="stop-db">
-		<maven-stop basedir="${basedir}" goal="jetty:stop" resultproperty="maven.build.result"/>
-	</target>
-	
-	<target name="clean">
-		<maven-stop basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
-		<delete>
-			<fileset dir="src/main/webapp/WEB-INF/lib" includes="*.*"/>
-	  	</delete>
-	</target>
+    <target name="launch-demo" depends="start-db">
+        <delete>
+            <fileset dir="src/main/webapp/WEB-INF/lib" includes="*.*"/>
+        </delete>
+        <maven-launch basedir="${basedir}" goal="clean compile war:inplace jetty:run" resultproperty="maven.build.result"/>
+    </target>
+    
+    <target name="stop-demo" depends="stop-db">
+        <maven-stop basedir="${basedir}" goal="jetty:stop" resultproperty="maven.build.result"/>
+    </target>
+    
+    <target name="clean">
+        <maven-stop basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
+        <delete>
+            <fileset dir="src/main/webapp/WEB-INF/lib" includes="*.*"/>
+        </delete>
+    </target>
 </project>

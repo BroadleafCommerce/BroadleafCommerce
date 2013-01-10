@@ -200,7 +200,7 @@ public class OfferImpl implements Offer {
     }
 
     public boolean getStackable(){
-    	return stackable;
+        return stackable;
     }
     
     public String getTargetSystem() {
@@ -240,7 +240,7 @@ public class OfferImpl implements Offer {
     }
 
     public boolean getApplyDiscountToMarkedItems() {
-    	return applyDiscountToMarkedItems;
+        return applyDiscountToMarkedItems;
     }
     
     public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems) {
@@ -266,7 +266,7 @@ public class OfferImpl implements Offer {
     }
 
     public boolean getCombinableWithOtherOffers() {
-    	return combinableWithOtherOffers;
+        return combinableWithOtherOffers;
     }
     
     public OfferDeliveryType getDeliveryType() {

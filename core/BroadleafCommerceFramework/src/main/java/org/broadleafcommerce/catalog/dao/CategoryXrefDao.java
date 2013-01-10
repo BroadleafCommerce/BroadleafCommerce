@@ -24,6 +24,6 @@ public interface CategoryXrefDao {
     public List<CategoryXref> readXrefsByCategoryId(Long categoryId);
     public List<CategoryXref> readXrefsBySubCategoryId(Long subCategoryId);
     public CategoryXref readXrefByIds(Long categoryId, Long subCategoryId);
-    public CategoryXref save(CategoryXref categoryXref);	
+    public CategoryXref save(CategoryXref categoryXref);    
     public void delete(CategoryXref categoryXref);
 }

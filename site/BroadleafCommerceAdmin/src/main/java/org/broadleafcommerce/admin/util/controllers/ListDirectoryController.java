@@ -31,24 +31,24 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public class ListDirectoryController extends AbstractController {
 
-	private String rootDirectory;
+    private String rootDirectory;
 
-	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		XmlDirectoryListing dirs = new XmlDirectoryListing();
-		response.setContentType("text/xml");
-		dirs.setDateFormat("MMM DD, yyyy");
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        XmlDirectoryListing dirs = new XmlDirectoryListing();
+        response.setContentType("text/xml");
+        dirs.setDateFormat("MMM DD, yyyy");
 
-		String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf("ls"));
-		dirs.generateXmlDirectoryListing(new File(basepath + rootDirectory), response.getOutputStream());
+        String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf("ls"));
+        dirs.generateXmlDirectoryListing(new File(basepath + rootDirectory), response.getOutputStream());
 
-		return null;
-	}
+        return null;
+    }
 
-	public String getRootDirectory() {
-		return rootDirectory;
-	}
+    public String getRootDirectory() {
+        return rootDirectory;
+    }
 
-	public void setRootDirectory(String rootDirectory) {
-		this.rootDirectory = rootDirectory;
-	}
+    public void setRootDirectory(String rootDirectory) {
+        this.rootDirectory = rootDirectory;
+    }
 }

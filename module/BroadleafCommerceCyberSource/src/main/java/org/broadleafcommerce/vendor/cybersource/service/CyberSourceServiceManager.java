@@ -6,22 +6,22 @@ import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceReque
 
 public interface CyberSourceServiceManager {
 
-	public abstract List<CyberSourceService> getRegisteredServices();
+    public abstract List<CyberSourceService> getRegisteredServices();
 
-	public abstract void setRegisteredServices(List<CyberSourceService> registeredServices);
+    public abstract void setRegisteredServices(List<CyberSourceService> registeredServices);
 
-	public abstract String getMerchantId();
+    public abstract String getMerchantId();
 
-	public abstract void setMerchantId(String merchantId);
+    public abstract void setMerchantId(String merchantId);
 
-	public abstract String getServerUrl();
+    public abstract String getServerUrl();
 
-	public abstract void setServerUrl(String serverUrl);
+    public abstract void setServerUrl(String serverUrl);
 
-	public abstract String getLibVersion();
+    public abstract String getLibVersion();
 
-	public abstract void setLibVersion(String libVersion);
+    public abstract void setLibVersion(String libVersion);
 
-	public abstract CyberSourceService getValidService(CyberSourceRequest request);
+    public abstract CyberSourceService getValidService(CyberSourceRequest request);
 
 }

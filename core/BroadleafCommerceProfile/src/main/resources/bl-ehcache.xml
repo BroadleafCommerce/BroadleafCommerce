@@ -1,27 +1,27 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<diskStore path="java.io.tmpdir"/>
-	
+    <diskStore path="java.io.tmpdir"/>
+    
     <defaultCache
         maxElementsInMemory="100000"
         eternal="true"
         overflowToDisk="true">
-    	<cacheEventListenerFactory class="org.broadleafcommerce.cache.HydratedCacheEventListenerFactory"/>
-   	</defaultCache>
+        <cacheEventListenerFactory class="org.broadleafcommerce.cache.HydratedCacheEventListenerFactory"/>
+    </defaultCache>
         
     <cache
-    	name="org.hibernate.cache.StandardQueryCache"
-    	maxElementsInMemory="100000"
-    	eternal="true"
-    	overflowToDisk="true">
+        name="org.hibernate.cache.StandardQueryCache"
+        maxElementsInMemory="100000"
+        eternal="true"
+        overflowToDisk="true">
     </cache>
-    	
-   	<cache
-    	name="blOrderElements"
-    	maxElementsInMemory="1000000"
-    	eternal="false"
-    	overflowToDisk="true"
-    	timeToLiveSeconds="600"
-    	timeToIdleSeconds="300"/>
-    	
+        
+    <cache
+        name="blOrderElements"
+        maxElementsInMemory="1000000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="600"
+        timeToIdleSeconds="300"/>
+        
 </ehcache>

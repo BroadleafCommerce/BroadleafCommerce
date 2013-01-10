@@ -31,7 +31,7 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_SEARCH_INTERCEPT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SearchInterceptImpl implements SearchIntercept {
-	
+    
     @Id
     @GeneratedValue(generator = "SearchInterceptId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SearchInterceptId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchInterceptImpl", allocationSize = 50)

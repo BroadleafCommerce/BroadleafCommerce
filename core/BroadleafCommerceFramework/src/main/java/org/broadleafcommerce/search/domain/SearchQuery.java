@@ -17,13 +17,13 @@ package org.broadleafcommerce.search.domain;
 
 public class SearchQuery {
 
-	private String queryString;
+    private String queryString;
 
-	public String getQueryString() {
-		return queryString;
-	}
+    public String getQueryString() {
+        return queryString;
+    }
 
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
 }

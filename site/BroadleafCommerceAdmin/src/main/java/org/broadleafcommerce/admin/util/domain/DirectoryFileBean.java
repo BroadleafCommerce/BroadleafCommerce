@@ -20,19 +20,19 @@ package org.broadleafcommerce.admin.util.domain;
  *
  */
 public class DirectoryFileBean {
-	private String absolutePath;
-	private String name;
+    private String absolutePath;
+    private String name;
 
-	public String getAbsolutePath() {
-		return absolutePath;
-	}
-	public void setAbsolutePath(String absolutePath) {
-		this.absolutePath = absolutePath;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getAbsolutePath() {
+        return absolutePath;
+    }
+    public void setAbsolutePath(String absolutePath) {
+        this.absolutePath = absolutePath;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 }

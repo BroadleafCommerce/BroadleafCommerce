@@ -83,10 +83,10 @@ public class CategoryDaoImpl implements CategoryDao {
     }
     
     public void delete(Category category){
-    	if (!em.contains(category)) {
-    		category = readCategoryById(category.getId());
-    	}
-        em.remove(category);    	
+        if (!em.contains(category)) {
+            category = readCategoryById(category.getId());
+        }
+        em.remove(category);        
     }
     
 }

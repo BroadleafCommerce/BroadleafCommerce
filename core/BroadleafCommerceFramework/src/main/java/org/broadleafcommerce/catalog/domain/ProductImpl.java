@@ -346,7 +346,7 @@ public class ProductImpl implements Product {
     public void setAllSkus(List<Sku> skus) {
         this.allSkus.clear();
         for(Sku sku : skus){
-        	this.allSkus.add(sku);
+            this.allSkus.add(sku);
         }
         //this.skus.clear();
     }
@@ -378,11 +378,11 @@ public class ProductImpl implements Product {
     public void setProductImages(Map<String, String> productImages) {
         this.productImages.clear();
 //        for(String key : productImages.keySet()){
-//        	this.productImages.put(key, productImages.get(key));
+//          this.productImages.put(key, productImages.get(key));
 //        }
-    	for(Map.Entry<String, String> me : productImages.entrySet()) {
-    		this.productImages.put(me.getKey(), me.getValue());
-    	}
+        for(Map.Entry<String, String> me : productImages.entrySet()) {
+            this.productImages.put(me.getKey(), me.getValue());
+        }
     }
 
     /*
@@ -399,9 +399,9 @@ public class ProductImpl implements Product {
 
     public void setProductMedia(Map<String, Media> productMedia) {
         this.productMedia.clear();
-    	for(Map.Entry<String, Media> me : productMedia.entrySet()) {
-    		this.productMedia.put(me.getKey(), me.getValue());
-    	}
+        for(Map.Entry<String, Media> me : productMedia.entrySet()) {
+            this.productMedia.put(me.getKey(), me.getValue());
+        }
     }
 
     /*
@@ -417,10 +417,10 @@ public class ProductImpl implements Product {
         return allParentCategories;
     }
 
-    public void setAllParentCategories(List<Category> allParentCategories) {    	
+    public void setAllParentCategories(List<Category> allParentCategories) {        
         this.allParentCategories.clear();
         for(Category category : allParentCategories){
-        	this.allParentCategories.add(category);
+            this.allParentCategories.add(category);
         }
     }
 
@@ -431,8 +431,8 @@ public class ProductImpl implements Product {
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
         this.crossSaleProducts.clear();
         for(RelatedProduct relatedProduct : crossSaleProducts){
-        	this.crossSaleProducts.add(relatedProduct);
-        }    	
+            this.crossSaleProducts.add(relatedProduct);
+        }       
     }
 
     public String getModel() {
@@ -456,7 +456,7 @@ public class ProductImpl implements Product {
     }
 
     public void setDimension(ProductDimension dimension) {
-    	this.dimension = dimension;
+        this.dimension = dimension;
     }
 
     public BigDecimal getWidth() {
@@ -522,7 +522,7 @@ public class ProductImpl implements Product {
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
         this.upSaleProducts.clear();
         for(RelatedProduct relatedProduct : upSaleProducts){
-        	this.upSaleProducts.add(relatedProduct);
+            this.upSaleProducts.add(relatedProduct);
         }
         this.upSaleProducts = upSaleProducts;
     }

@@ -105,26 +105,26 @@ public class CartController {
         CartSummary cartSummary = new CartSummary();
 
         if (cart.getOrderItems() != null ) {
-	        for (OrderItem orderItem : cart.getOrderItems()) {
-	            if (orderItem instanceof DiscreteOrderItem) {
-	                Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
-	                if (!(sku.getSalePrice().equals(((DiscreteOrderItem) orderItem).getSalePrice()))) {
-	                    orderItem.setSalePrice(sku.getSalePrice());
-	                }
-	                if (!(sku.getRetailPrice().equals(((DiscreteOrderItem) orderItem).getRetailPrice()))) {
-	                    orderItem.setRetailPrice(sku.getRetailPrice());
-	                }
-	
-	                if (orderItem.getSalePrice() != orderItem.getRetailPrice()) {
-	                    orderItem.setPrice(orderItem.getSalePrice());
-	                }
-	                else {
-	                    orderItem.setPrice(orderItem.getRetailPrice());
-	                }
-	
-	                orderItem.getPrice();
-	            }
-	        }
+            for (OrderItem orderItem : cart.getOrderItems()) {
+                if (orderItem instanceof DiscreteOrderItem) {
+                    Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
+                    if (!(sku.getSalePrice().equals(((DiscreteOrderItem) orderItem).getSalePrice()))) {
+                        orderItem.setSalePrice(sku.getSalePrice());
+                    }
+                    if (!(sku.getRetailPrice().equals(((DiscreteOrderItem) orderItem).getRetailPrice()))) {
+                        orderItem.setRetailPrice(sku.getRetailPrice());
+                    }
+    
+                    if (orderItem.getSalePrice() != orderItem.getRetailPrice()) {
+                        orderItem.setPrice(orderItem.getSalePrice());
+                    }
+                    else {
+                        orderItem.setPrice(orderItem.getRetailPrice());
+                    }
+    
+                    orderItem.getPrice();
+                }
+            }
         }
 
         if (cart.getOrderItems() != null ) {
@@ -314,12 +314,12 @@ public class CartController {
     protected Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
         FulfillmentGroup fg = cartSummary.getFulfillmentGroup();
         if (fg.getId() == null) {
-	        cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
-	        for(CartOrderItem item : cartSummary.getRows()) {
-	            item.getOrderItem().setOrder(currentCartOrder);
-	            fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity(), false);
-	        }
-	        cartSummary.setFulfillmentGroup(fg);
+            cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
+            for(CartOrderItem item : cartSummary.getRows()) {
+                item.getOrderItem().setOrder(currentCartOrder);
+                fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity(), false);
+            }
+            cartSummary.setFulfillmentGroup(fg);
         }
         return cartService.save(currentCartOrder, true);
     }

@@ -6,87 +6,87 @@
 
 <project name="BroadleafCommerceAdmin" default="launch-admin" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
-	<path id="maven-ant-tasks.classpath" path="../../lib/maven-ant-tasks-2.0.10.jar" />
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
-	<taskdef resource="flexTasks.tasks" classpath="lib/flexTasks.jar" />
-	
-	<artifact:pom id="mypom" file="pom.xml"/>
-	<artifact:dependencies filesetId="mydeps" pomRefId="mypom" useScope="runtime"/>
-	<path id="build.runtime.classpath">
-		<fileset refid="mydeps"/>
-	</path>
-	
-	<property file="../../build.properties" />
-	<property file="build.properties" />
-	<property name="FLEX_HOME" value="${flex.sdk.dir}" />
-	<property name="flex.home" value="${flex.sdk.dir}" />
-	<property name="maven.build.dir" location="src/main/webapp" />
-	<property name="app.name" value="broadleafadmin" />
+    <path id="maven-ant-tasks.classpath" path="../../lib/maven-ant-tasks-2.0.10.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+    <taskdef resource="flexTasks.tasks" classpath="lib/flexTasks.jar" />
+    
+    <artifact:pom id="mypom" file="pom.xml"/>
+    <artifact:dependencies filesetId="mydeps" pomRefId="mypom" useScope="runtime"/>
+    <path id="build.runtime.classpath">
+        <fileset refid="mydeps"/>
+    </path>
+    
+    <property file="../../build.properties" />
+    <property file="build.properties" />
+    <property name="FLEX_HOME" value="${flex.sdk.dir}" />
+    <property name="flex.home" value="${flex.sdk.dir}" />
+    <property name="maven.build.dir" location="src/main/webapp" />
+    <property name="app.name" value="broadleafadmin" />
 
-	<macrodef name="maven-launch">
-		<attribute name="options" default="" />
-		<attribute name="goal" />
-		<attribute name="basedir" />
-		<attribute name="resultproperty" default="maven.result" />
-		<element name="args" implicit="true" optional="true" />
-		<sequential>
-			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
-				<jvmarg value="-Xdebug" />
-				<jvmarg value="-Xnoagent" />
-				<jvmarg value="-Djava.compiler=NONE" />
-				<jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" />
-				<jvmarg value="-Xmx768m" />
-				<jvmarg value="-XX:MaxPermSize=512M" />
-				<jvmarg value="-Dcom.sun.management.jmxremote=true" />
-				<jvmarg value="-Dcom.sun.management.jmxremote.port=1616" />
-				<jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
-				<jvmarg value="-Dcom.sun.management.jmxremote.ssl=false" />
-				<classpath>
-					<fileset dir="${maven.home}/boot">
-						<include name="*.jar" />
-					</fileset>
-					<fileset dir="${maven.home}/lib">
-						<include name="*.jar" />
-					</fileset>
-				</classpath>
-				<sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-				<sysproperty key="maven.home" value="${maven.home}" />
-				<arg line="--batch-mode @{options} @{goal}" />
-			</java>
-		</sequential>
-	</macrodef>
+    <macrodef name="maven-launch">
+        <attribute name="options" default="" />
+        <attribute name="goal" />
+        <attribute name="basedir" />
+        <attribute name="resultproperty" default="maven.result" />
+        <element name="args" implicit="true" optional="true" />
+        <sequential>
+            <java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
+                <jvmarg value="-Xdebug" />
+                <jvmarg value="-Xnoagent" />
+                <jvmarg value="-Djava.compiler=NONE" />
+                <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" />
+                <jvmarg value="-Xmx768m" />
+                <jvmarg value="-XX:MaxPermSize=512M" />
+                <jvmarg value="-Dcom.sun.management.jmxremote=true" />
+                <jvmarg value="-Dcom.sun.management.jmxremote.port=1616" />
+                <jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
+                <jvmarg value="-Dcom.sun.management.jmxremote.ssl=false" />
+                <classpath>
+                    <fileset dir="${maven.home}/boot">
+                        <include name="*.jar" />
+                    </fileset>
+                    <fileset dir="${maven.home}/lib">
+                        <include name="*.jar" />
+                    </fileset>
+                </classpath>
+                <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                <sysproperty key="maven.home" value="${maven.home}" />
+                <arg line="--batch-mode @{options} @{goal}" />
+            </java>
+        </sequential>
+    </macrodef>
 
-	<macrodef name="minimal-maven-launch">
-		<attribute name="options" default="" />
-		<attribute name="goal" />
-		<attribute name="basedir" />
-		<attribute name="resultproperty" default="maven.result" />
-		<element name="args" implicit="true" optional="true" />
-		<sequential>
-			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
-				<classpath>
-					<fileset dir="${maven.home}/boot">
-						<include name="*.jar" />
-					</fileset>
-					<fileset dir="${maven.home}/lib">
-						<include name="*.jar" />
-					</fileset>
-				</classpath>
-				<sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-				<sysproperty key="maven.home" value="${maven.home}" />
-				<arg line="--batch-mode @{options} @{goal}" />
-			</java>
-		</sequential>
-	</macrodef>
-	
-	<target name="start-db">  
+    <macrodef name="minimal-maven-launch">
+        <attribute name="options" default="" />
+        <attribute name="goal" />
+        <attribute name="basedir" />
+        <attribute name="resultproperty" default="maven.result" />
+        <element name="args" implicit="true" optional="true" />
+        <sequential>
+            <java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
+                <classpath>
+                    <fileset dir="${maven.home}/boot">
+                        <include name="*.jar" />
+                    </fileset>
+                    <fileset dir="${maven.home}/lib">
+                        <include name="*.jar" />
+                    </fileset>
+                </classpath>
+                <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                <sysproperty key="maven.home" value="${maven.home}" />
+                <arg line="--batch-mode @{options} @{goal}" />
+            </java>
+        </sequential>
+    </macrodef>
+    
+    <target name="start-db">  
         <echo message="Starting Data Base..." />  
         <java fork="true"  spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath">  
             <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>  
         </java>  
     </target>
-	
-	<target name="stop-db">  
+    
+    <target name="stop-db">  
         <echo message="Execute SQL on new Data Base..." />  
         <sql  
             autocommit="true"  
@@ -101,104 +101,104 @@
         <echo message="SQL Executed on data base..." />  
     </target> 
 
-	<target name="launch-admin" depends="start-db">
-		<delete quiet="true" failonerror="false">
-			<fileset dir="${maven.build.dir}/WEB-INF/lib" includes="*.*"/>
-	  	</delete>
-		<minimal-maven-launch basedir="${basedir}/../BroadleafCommerceDemo" goal="clean compile war:inplace" resultproperty="maven.build.result" />
-		<maven-launch basedir="${basedir}" goal="clean compile war:inplace jetty:run" resultproperty="maven.build.result" />
-	</target>
+    <target name="launch-admin" depends="start-db">
+        <delete quiet="true" failonerror="false">
+            <fileset dir="${maven.build.dir}/WEB-INF/lib" includes="*.*"/>
+        </delete>
+        <minimal-maven-launch basedir="${basedir}/../BroadleafCommerceDemo" goal="clean compile war:inplace" resultproperty="maven.build.result" />
+        <maven-launch basedir="${basedir}" goal="clean compile war:inplace jetty:run" resultproperty="maven.build.result" />
+    </target>
 
-	<target name="stop-admin" depends="stop-db">
-		<minimal-maven-launch basedir="${basedir}" goal="jetty:stop" resultproperty="maven.build.result" />
-	</target>
-	
-	<target name="clean">
-		<minimal-maven-launch basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
-		<delete dir="${maven.build.dir}/assets"/>
-		<delete dir="${maven.build.dir}/content"/>
-		<delete dir="${maven.build.dir}/forms"/>
-		<delete dir="${maven.build.dir}/history"/>
-		<delete dir="${maven.build.dir}/modules"/>
-		<delete dir="${maven.build.dir}/images"/>
-		<delete>
-	    	<fileset dir="${maven.build.dir}" includes="*.*"/>
-			<fileset dir="${maven.build.dir}/WEB-INF/lib" includes="*.*"/>
-	  	</delete>
-	</target>
+    <target name="stop-admin" depends="stop-db">
+        <minimal-maven-launch basedir="${basedir}" goal="jetty:stop" resultproperty="maven.build.result" />
+    </target>
+    
+    <target name="clean">
+        <minimal-maven-launch basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
+        <delete dir="${maven.build.dir}/assets"/>
+        <delete dir="${maven.build.dir}/content"/>
+        <delete dir="${maven.build.dir}/forms"/>
+        <delete dir="${maven.build.dir}/history"/>
+        <delete dir="${maven.build.dir}/modules"/>
+        <delete dir="${maven.build.dir}/images"/>
+        <delete>
+            <fileset dir="${maven.build.dir}" includes="*.*"/>
+            <fileset dir="${maven.build.dir}/WEB-INF/lib" includes="*.*"/>
+        </delete>
+    </target>
 
-	<target name=".build-module">
-		<mxmlc file="src/main/flex/${module.dir}/${module}.mxml" output="${maven.build.dir}/${module.dir}/${module}.swf" incremental="true" services="src/main/webapp/WEB-INF/flex/services-config.xml" context-root="/${app.name}" fork="true" maxmemory="512m">
-			<load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml" />
-			<source-path path-element="${flex.sdk.dir}/frameworks" />
-			<source-path path-element="src/main/flex" />
-			<include-libraries file="lib/*.swc" />
-			<load-externs>src/main/flex/flex-link-report.xml</load-externs>
-		</mxmlc>
-	</target>
+    <target name=".build-module">
+        <mxmlc file="src/main/flex/${module.dir}/${module}.mxml" output="${maven.build.dir}/${module.dir}/${module}.swf" incremental="true" services="src/main/webapp/WEB-INF/flex/services-config.xml" context-root="/${app.name}" fork="true" maxmemory="512m">
+            <load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml" />
+            <source-path path-element="${flex.sdk.dir}/frameworks" />
+            <source-path path-element="src/main/flex" />
+            <include-libraries file="lib/*.swc" />
+            <load-externs>src/main/flex/flex-link-report.xml</load-externs>
+        </mxmlc>
+    </target>
 
-	<target name="compile-flex">
-		<echo message="Flex Home: ${FLEX_HOME}"/>
-		<mxmlc file="src/main/flex/BroadleafCommerceAdmin.mxml" output="${maven.build.dir}/BroadleafCommerceAdmin.swf" incremental="true" services="src/main/webapp/WEB-INF/flex/services-config.xml" context-root="/${app.name}" fork="true" maxmemory="512m">
-			<load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml" />
-			<source-path path-element="${flex.sdk.dir}/frameworks" />
-			<include-libraries file="lib/*.swc" />
-			<link-report>src/main/flex/flex-link-report.xml</link-report>
-			<fonts>
-				<manager class="flash.fonts.AFEFontManager" />
-			</fonts>
-		</mxmlc>
+    <target name="compile-flex">
+        <echo message="Flex Home: ${FLEX_HOME}"/>
+        <mxmlc file="src/main/flex/BroadleafCommerceAdmin.mxml" output="${maven.build.dir}/BroadleafCommerceAdmin.swf" incremental="true" services="src/main/webapp/WEB-INF/flex/services-config.xml" context-root="/${app.name}" fork="true" maxmemory="512m">
+            <load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml" />
+            <source-path path-element="${flex.sdk.dir}/frameworks" />
+            <include-libraries file="lib/*.swc" />
+            <link-report>src/main/flex/flex-link-report.xml</link-report>
+            <fonts>
+                <manager class="flash.fonts.AFEFontManager" />
+            </fonts>
+        </mxmlc>
 
-		<antcall target=".build-module">
-			<param name="module.dir" value="modules/catalog" />
-			<param name="module" value="CatalogModule" />
-		</antcall>
+        <antcall target=".build-module">
+            <param name="module.dir" value="modules/catalog" />
+            <param name="module" value="CatalogModule" />
+        </antcall>
 
-		<antcall target=".build-module">
-			<param name="module.dir" value="modules/offers" />
-			<param name="module" value="OfferModule" />
-		</antcall>
+        <antcall target=".build-module">
+            <param name="module.dir" value="modules/offers" />
+            <param name="module" value="OfferModule" />
+        </antcall>
 
-		<antcall target=".build-module">
-			<param name="module.dir" value="modules/search" />
-			<param name="module" value="SearchModule" />
-		</antcall>
+        <antcall target=".build-module">
+            <param name="module.dir" value="modules/search" />
+            <param name="module" value="SearchModule" />
+        </antcall>
 
-		<antcall target=".build-module">
-			<param name="module.dir" value="modules/security" />
-			<param name="module" value="SecurityModule" />
-		</antcall>
+        <antcall target=".build-module">
+            <param name="module.dir" value="modules/security" />
+            <param name="module" value="SecurityModule" />
+        </antcall>
 
-		<antcall target=".build-module">
-			<param name="module.dir" value="modules/tools" />
-			<param name="module" value="ToolsModule" />
-		</antcall>
+        <antcall target=".build-module">
+            <param name="module.dir" value="modules/tools" />
+            <param name="module" value="ToolsModule" />
+        </antcall>
 
-		<antcall target=".build-module">
-			<param name="module.dir" value="modules/cms" />
-			<param name="module" value="ContentModule" />
-		</antcall>
+        <antcall target=".build-module">
+            <param name="module.dir" value="modules/cms" />
+            <param name="module" value="ContentModule" />
+        </antcall>
 
-		<html-wrapper swf="BroadleafCommerceAdmin" title="Broadleaf Commerce Admin" file="BroadleafCommerceAdmin.html" template="client-side-detection" height="100%" width="100%" output="${maven.build.dir}" history="true" />
+        <html-wrapper swf="BroadleafCommerceAdmin" title="Broadleaf Commerce Admin" file="BroadleafCommerceAdmin.html" template="client-side-detection" height="100%" width="100%" output="${maven.build.dir}" history="true" />
 
-		<copy todir="${maven.build.dir}/assets">
-			<fileset dir="src/main/flex/assets" />
-		</copy>
+        <copy todir="${maven.build.dir}/assets">
+            <fileset dir="src/main/flex/assets" />
+        </copy>
 
-		<copy todir="${maven.build.dir}/forms">
-			<fileset dir="src/main/flex/forms" />
-		</copy>
+        <copy todir="${maven.build.dir}/forms">
+            <fileset dir="src/main/flex/forms" />
+        </copy>
 
-		<copy todir="${maven.build.dir}/content">
-			<fileset dir="src/main/flex/content" />
-		</copy>
+        <copy todir="${maven.build.dir}/content">
+            <fileset dir="src/main/flex/content" />
+        </copy>
 
-		<copy todir="${maven.build.dir}/modules">
-			<fileset dir="src/main/flex/modules">
-				<exclude name="**/*.mxml" />
-				<exclude name="**/*.as" />
-			</fileset>
-		</copy>
-	</target>
+        <copy todir="${maven.build.dir}/modules">
+            <fileset dir="src/main/flex/modules">
+                <exclude name="**/*.mxml" />
+                <exclude name="**/*.as" />
+            </fileset>
+        </copy>
+    </target>
 
 </project>

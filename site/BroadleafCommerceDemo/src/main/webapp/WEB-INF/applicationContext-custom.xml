@@ -3,7 +3,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="blPersistenceUnitManager"
@@ -23,13 +23,13 @@
     </bean>
     
     <bean id="blDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true" />
-		<property name="username" value="sa" />
-		<property name="password" value="" />
-	</bean>
-	
-	<bean id="blCacheManager"
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="url" value="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
+    
+    <bean id="blCacheManager"
           class="org.broadleafcommerce.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
         <property name="shared" value="true"/>
         <property name="configLocations">
@@ -38,5 +38,5 @@
             </list>
         </property>
     </bean>
-	
+    
 </beans>

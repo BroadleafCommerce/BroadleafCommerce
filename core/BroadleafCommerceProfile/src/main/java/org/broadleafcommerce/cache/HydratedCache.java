@@ -38,16 +38,16 @@ public class HydratedCache extends Hashtable<String, Object> {
     }
 
     public HydratedCacheElement getCacheElement(String cacheName, Serializable key) {
-    	return (HydratedCacheElement) get(cacheName + "_" + key);
+        return (HydratedCacheElement) get(cacheName + "_" + key);
     }
     
     public HydratedCacheElement removeCacheElement(String cacheName, Serializable key) {
-    	String myKey = cacheName + "_" + key;
-     	return (HydratedCacheElement) remove(myKey);
+        String myKey = cacheName + "_" + key;
+        return (HydratedCacheElement) remove(myKey);
     }
     
     public void addCacheElement(String cacheName, Serializable key, Object value) {
-    	String myKey = cacheName + "_" + key;
-     	put(myKey, value);
+        String myKey = cacheName + "_" + key;
+        put(myKey, value);
     }
 }

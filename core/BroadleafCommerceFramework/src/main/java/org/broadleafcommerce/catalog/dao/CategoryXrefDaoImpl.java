@@ -38,36 +38,36 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
 
     @SuppressWarnings("unchecked")
     public List<CategoryXref> readXrefsByCategoryId(Long categoryId){
-    	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_CATEGORYID");
-    	query.setParameter("categoryId", categoryId);
-    	return query.getResultList();
-    	
+        Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_CATEGORYID");
+        query.setParameter("categoryId", categoryId);
+        return query.getResultList();
+        
     }
     
     @SuppressWarnings("unchecked")
     public List<CategoryXref> readXrefsBySubCategoryId(Long subCategoryId){
-    	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID");
-    	query.setParameter("subCategoryId", subCategoryId);
-    	return query.getResultList();
+        Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID");
+        query.setParameter("subCategoryId", subCategoryId);
+        return query.getResultList();
     }
     
     public CategoryXref readXrefByIds(Long categoryId, Long subCategoryId){
-    	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_IDS");
-    	query.setParameter("categoryId", categoryId);
-    	query.setParameter("subCategoryId", subCategoryId);
-    	return (CategoryXref)query.getSingleResult();
+        Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_IDS");
+        query.setParameter("categoryId", categoryId);
+        query.setParameter("subCategoryId", subCategoryId);
+        return (CategoryXref)query.getSingleResult();
     }
     
     public CategoryXref save(CategoryXref categoryXref){
-    	return em.merge(categoryXref);
+        return em.merge(categoryXref);
     }
     
     public void delete(CategoryXref categoryXref){
-    	if (!em.contains(categoryXref)) {
-    		categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(),
-    				                     categoryXref.getCategoryXrefPK().getSubCategory().getId());
-    	}
-        em.remove(categoryXref);     	
+        if (!em.contains(categoryXref)) {
+            categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(),
+                                         categoryXref.getCategoryXrefPK().getSubCategory().getId());
+        }
+        em.remove(categoryXref);        
     }
     
     public String getQueryCacheableKey() {

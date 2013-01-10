@@ -1,252 +1,252 @@
 global
 {
-	fontFamily:					  Verdana;
-	fontSize:                     10;
-	themeColor:                   #dddddd;
-	adminLogo:		  Embed(source="/assets/images/broadleaf-commerce-300dpi-transparent.png");
-	adminLogoHeight:  60;
-	adminLogoHAlign:  right; 
-	adminLogoWidth:   160;
-	background-color: #FFFFFF;
+    fontFamily:                   Verdana;
+    fontSize:                     10;
+    themeColor:                   #dddddd;
+    adminLogo:        Embed(source="/assets/images/broadleaf-commerce-300dpi-transparent.png");
+    adminLogoHeight:  60;
+    adminLogoHAlign:  right; 
+    adminLogoWidth:   160;
+    background-color: #FFFFFF;
 }
 
 Application
 {
-	bgColor:					  #FFFFFF;
-	backgroundColor:			  #FFFFFF;
-	background-color:			  #FFFFFF;
-	font-family: Arial;
-	font-size: 12;
+    bgColor:                      #FFFFFF;
+    backgroundColor:              #FFFFFF;
+    background-color:             #FFFFFF;
+    font-family: Arial;
+    font-size: 12;
 }
 
 ViewStack
 {
-	background-alpha:	0;
-	width:				1400;
+    background-alpha:   0;
+    width:              1400;
 }
 
 TabBar
 {
-	background-color: white;
-	background-disabled-color:white;
-	tabStyleName: selectedTabStyle;	
+    background-color: white;
+    background-disabled-color:white;
+    tabStyleName: selectedTabStyle; 
 }
 
 .selectedTabStyle
 {
-	backgroundColor:white;
+    backgroundColor:white;
 }
 
 OfferCanvas,CatalogCanvas
 {
-	background-alpha:	0;
-	radius:			  10;
-	background-color: #EFFA8F;	
+    background-alpha:   0;
+    radius:           10;
+    background-color: #EFFA8F;  
 }
 
 /* NewOfferWizard
 {
-	background-alpha:	0;
+    background-alpha:   0;
 } */
 
 OfferWhat
 {
-	background-alpha:	1;
-	background-color: 	#FFFFFF;
-	border-style:		solid;
-	cornerRadius:		10;
-	
+    background-alpha:   1;
+    background-color:   #FFFFFF;
+    border-style:       solid;
+    cornerRadius:       10;
+    
 }
 
 OfferWhen
 {
-	background-alpha:	1;
-	background-color: 	#FFFFFF;
-	border-style:		solid;
-	cornerRadius:		10;
-	
+    background-alpha:   1;
+    background-color:   #FFFFFF;
+    border-style:       solid;
+    cornerRadius:       10;
+    
 }
 
 OfferWhich
 {
-	background-alpha:	1;
-	background-color: 	#FFFFFF;
-	border-style:		solid;
-	cornerRadius:		10;
+    background-alpha:   1;
+    background-color:   #FFFFFF;
+    border-style:       solid;
+    cornerRadius:       10;
 }
 OfferWho
 {
-	background-alpha:	1;
-	background-color: 	#FFFFFF;
-	border-style:		solid;
-	cornerRadius:		10;
+    background-alpha:   1;
+    background-color:   #FFFFFF;
+    border-style:       solid;
+    cornerRadius:       10;
 }
 
 .fieldLabel
 {
-	horizontal-align: right;	
+    horizontal-align: right;    
 }
 
 .offerEditorFormGridRow
 {
-	padding-top: 10;	
+    padding-top: 10;    
 }
 
 .gridRowSpacing
 {
-	padding-top:10;	
+    padding-top:10; 
 }
 
 TextInput
 {
-	theme-color: #94B12D;	
+    theme-color: #94B12D;   
 }
 
 .dataGridHeaderStyle
 {
-	color: #FFFFFF;	
-	font-weight: bold;
+    color: #FFFFFF; 
+    font-weight: bold;
 }
 
 .catalogHeading
 {
-	font-weight: bold;
-	font-size: 16;
+    font-weight: bold;
+    font-size: 16;
 }
 
 .panelTitle
 {
-	color: #FFFFFF;
-	font-weight: bold;
+    color: #FFFFFF;
+    font-weight: bold;
 }
 
 BroadleafCommerceDateField
 {
-	header-colors: #666666, #000000;
-	header-style-name: "broadleafCommerceHeaderStyle";	
+    header-colors: #666666, #000000;
+    header-style-name: "broadleafCommerceHeaderStyle";  
 }
 
 .broadleafCommerceHeaderStyle
 {
-	color: #FFFFFF;	
-	font-weight: bold;
+    color: #FFFFFF; 
+    font-weight: bold;
 }
 
 .formLabel
 {
-	padding-left: 1;
-	padding-top: 2;	
+    padding-left: 1;
+    padding-top: 2; 
 }
 
 Tree
 {
-	roll-over-color: #DEE7C0;
-	selection-color: #9AB12A;
+    roll-over-color: #DEE7C0;
+    selection-color: #9AB12A;
 }
 
 DateChooser
 {
-	header-colors: #666666, #000000;
-	header-style-name: "broadleafCommerceHeaderStyle";
+    header-colors: #666666, #000000;
+    header-style-name: "broadleafCommerceHeaderStyle";
 }
 
 LinkButton
 {
-	font-weight: normal;
-	text-decoration: underline;
-	selectionColor: #00cc66;;
-	skin: ClassReference("org.broadleafcommerce.util.ToggleLinkButtonSkin");	
+    font-weight: normal;
+    text-decoration: underline;
+    selectionColor: #00cc66;;
+    skin: ClassReference("org.broadleafcommerce.util.ToggleLinkButtonSkin");    
 }
 
 DataGrid
 {
-	header-colors: #666666, #000000;
-	header-style-name: "dataGridHeaderStyle";	
-	roll-over-color: #DEE7C0;
-	text-roll-over-color: #000000;
-	horizontal-grid-lines: true;
-	vertical-grid-lines: false;
-	selectionColor: #9AB12A;
+    header-colors: #666666, #000000;
+    header-style-name: "dataGridHeaderStyle";   
+    roll-over-color: #DEE7C0;
+    text-roll-over-color: #000000;
+    horizontal-grid-lines: true;
+    vertical-grid-lines: false;
+    selectionColor: #9AB12A;
 }
 
 GridRow
 {
-	vertical-align: middle;	
+    vertical-align: middle; 
 }
 
 GridItem
 {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 
 Panel
 {
-	corner-radius: 0;
-	border-thickness-left: 1;
-	border-thickness-right: 1;
-	border-thickness-bottom: 1;
-	drop-shadow-enabled: true;
-	header-height: 23;
-	shadow-direction: right;
-	shadow-distance: 5;
-	border-alpha: 1;
-	header-colors: #666666, #000000;
-	footer-colors: #000000, #666666;
-	title-style-name: "panelTitle";
+    corner-radius: 0;
+    border-thickness-left: 1;
+    border-thickness-right: 1;
+    border-thickness-bottom: 1;
+    drop-shadow-enabled: true;
+    header-height: 23;
+    shadow-direction: right;
+    shadow-distance: 5;
+    border-alpha: 1;
+    header-colors: #666666, #000000;
+    footer-colors: #000000, #666666;
+    title-style-name: "panelTitle";
 }
 
 ComboBox
 {
-	font-weight: normal;
-	theme-color: #94B12D;	
+    font-weight: normal;
+    theme-color: #94B12D;   
 }
 
 Button
 {
-/* 	color: #FFFFFF;
-	corner-radius: 4;
-	fill-alphas: 1, 0.50;
-	fill-colors: #000000, #000000, #000000, #000000; */
-	theme-color: #94B12D;		
+/*  color: #FFFFFF;
+    corner-radius: 4;
+    fill-alphas: 1, 0.50;
+    fill-colors: #000000, #000000, #000000, #000000; */
+    theme-color: #94B12D;       
 }
 
 DateField
 {
-	theme-color: #94B12D;	
+    theme-color: #94B12D;   
 }
 
 List
 {
-	roll-over-color: #9AB12A;	
+    roll-over-color: #9AB12A;   
 }
 
 Canvas
 {
-	background-alpha:	0;
+    background-alpha:   0;
 }
 
 TitleWindow
 {
-	alpha: 1.0;
-	backgroundAlpha: 1.0;
-	/* backgroundColor: #94B12D; */
-	borderAlpha: 100;
-	borderColor: #3F3F3F;
-	borderStyle: solid;
-	borderThickness: 3;
-	dropShadowColor: #000000; 
-	dropShadowEnabled: true;
-	modalTransparencyBlur: 0;
-	modalTransparencyColor: #FFFFFF;
-	/* modal-transparency: 0; */
-	rounded-bottom-corners: true;
-	shadowDirection: right;
-	shadowDistance: 5;
-	color: #000000;
+    alpha: 1.0;
+    backgroundAlpha: 1.0;
+    /* backgroundColor: #94B12D; */
+    borderAlpha: 100;
+    borderColor: #3F3F3F;
+    borderStyle: solid;
+    borderThickness: 3;
+    dropShadowColor: #000000; 
+    dropShadowEnabled: true;
+    modalTransparencyBlur: 0;
+    modalTransparencyColor: #FFFFFF;
+    /* modal-transparency: 0; */
+    rounded-bottom-corners: true;
+    shadowDirection: right;
+    shadowDistance: 5;
+    color: #000000;
 }
 
 .headerLabel
 {
-	font-size: 16;
-	font-weight: bold;
-}	
+    font-size: 16;
+    font-weight: bold;
+}   

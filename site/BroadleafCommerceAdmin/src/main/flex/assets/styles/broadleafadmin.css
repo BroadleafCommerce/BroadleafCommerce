@@ -15,18 +15,18 @@
     font-weight: bold;
 }
 global {
-	adminLogo: Embed(source="/assets/images/broadleaf_logo.png");
+    adminLogo: Embed(source="/assets/images/broadleaf_logo.png");
 }
 Application {
-	font-family: main;
-	color: #333333;
-	font-size: 11;
-	theme-color: #006699;
-	background-image: Embed("/assets/images/broadleaf_skin.png",
-			scaleGridLeft="5",
-			scaleGridRight="10",
-			scaleGridTop="70",
-			scaleGridBottom="85");
+    font-family: main;
+    color: #333333;
+    font-size: 11;
+    theme-color: #006699;
+    background-image: Embed("/assets/images/broadleaf_skin.png",
+            scaleGridLeft="5",
+            scaleGridRight="10",
+            scaleGridTop="70",
+            scaleGridBottom="85");
 }
 VRule {
    strokeColor: #bbbbbb;
@@ -41,32 +41,32 @@ ButtonBar {
    lastButtonStyleName: "mybuttonBarLastButtonStyle";
 }
 TitleWindow {
-	font-family: main;
-	color: #333333;
-	font-size: 12;
-   	borderStyle: solid;
-   	borderAlpha: 0.57;
-   	borderThickness: 1;
-   	borderThicknessLeft: 0;
-   	borderThicknessTop: 0;
-   	borderThicknessBottom: 0;
-   	borderThicknessRight: 0;
-   	roundedBottomCorners: false;
-   	cornerRadius: 5;
-   	headerHeight: 27;
-   	backgroundAlpha: 1;
-   	highlightAlphas: 0.48, 0;
-   	headerColors: #efefef, #dcdcdc;
-   	backgroundColor: #d9d9d9;
-   	dropShadowEnabled: true;
-   	shadowDistance: 4;
-   	shadowDirection: right;
+    font-family: main;
+    color: #333333;
+    font-size: 12;
+    borderStyle: solid;
+    borderAlpha: 0.57;
+    borderThickness: 1;
+    borderThicknessLeft: 0;
+    borderThicknessTop: 0;
+    borderThicknessBottom: 0;
+    borderThicknessRight: 0;
+    roundedBottomCorners: false;
+    cornerRadius: 5;
+    headerHeight: 27;
+    backgroundAlpha: 1;
+    highlightAlphas: 0.48, 0;
+    headerColors: #efefef, #dcdcdc;
+    backgroundColor: #d9d9d9;
+    dropShadowEnabled: true;
+    shadowDistance: 4;
+    shadowDirection: right;
 }
 LinkButton
 {
-	font-weight: bold;
-	selectionColor: #7fb2cc;;
-	skin: ClassReference("org.broadleafcommerce.util.ToggleLinkButtonSkin");
+    font-weight: bold;
+    selectionColor: #7fb2cc;;
+    skin: ClassReference("org.broadleafcommerce.util.ToggleLinkButtonSkin");
 }
 .mybuttonBarButtonStyle {
    highlightAlphas: 0.23, 0;
@@ -114,52 +114,52 @@ ToggleButtonBar {
 }
 
 .title {
-	color:#666666;
+    color:#666666;
     font-family: main;
     font-size: 14pt;
     font-weight: bold;
 }
 
 .addButton {
-	cornerRadius: 2;
-	icon: Embed(source='/assets/images/add.png');
+    cornerRadius: 2;
+    icon: Embed(source='/assets/images/add.png');
 }
 
 .viewEditButton {
-	cornerRadius: 2;
-	icon: Embed(source='/assets/images/zoom.png');
+    cornerRadius: 2;
+    icon: Embed(source='/assets/images/zoom.png');
 }
 
 .deleteButton {
-	cornerRadius: 2;
-	icon: Embed(source='/assets/images/cross.png');
+    cornerRadius: 2;
+    icon: Embed(source='/assets/images/cross.png');
 }
 .previewButton {
-	cornerRadius: 2;
-	icon: Embed(source='/assets/images/eye.png');
+    cornerRadius: 2;
+    icon: Embed(source='/assets/images/eye.png');
 }
 .folderNewButton {
-	cornerRadius: 2;
-	icon: Embed(source='/assets/images/folder_add.png');
+    cornerRadius: 2;
+    icon: Embed(source='/assets/images/folder_add.png');
 }
 .folderUploadButton {
-	cornerRadius: 2;
-	icon: Embed(source='/assets/images/folder_go.png');
+    cornerRadius: 2;
+    icon: Embed(source='/assets/images/folder_go.png');
 }
 .folderDeleteButton {
-	cornerRadius: 2;
-	icon: Embed(source='/assets/images/folder_delete.png');
+    cornerRadius: 2;
+    icon: Embed(source='/assets/images/folder_delete.png');
 }
 .padding10 {
-	paddingLeft: 10;
-	paddingRight: 10;
-	paddingTop: 10;
-	paddingBottom: 10;
+    paddingLeft: 10;
+    paddingRight: 10;
+    paddingTop: 10;
+    paddingBottom: 10;
 }
 
 .padding25 {
-	paddingLeft: 25;
-	paddingRight: 25;
-	paddingTop: 25;
-	paddingBottom: 25;
+    paddingLeft: 25;
+    paddingRight: 25;
+    paddingTop: 25;
+    paddingBottom: 25;
 }

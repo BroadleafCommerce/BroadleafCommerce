@@ -1,44 +1,44 @@
 /* Global and structural styles */
 body {
-	background: #a98b69 url("/broadleafdemo/images/coffeeTopTile.jpg") repeat-x top center;
-	margin: 0;
-	padding: 0;
-	color: #666666;
-	font-size: 12px;
-	font-family: arial, helvetica, sans-serif;
+    background: #a98b69 url("/broadleafdemo/images/coffeeTopTile.jpg") repeat-x top center;
+    margin: 0;
+    padding: 0;
+    color: #666666;
+    font-size: 12px;
+    font-family: arial, helvetica, sans-serif;
 }
 
 .bodyWrapper {
-	width: 990px;
-	margin: 0 auto;
-	padding: 0;
+    width: 990px;
+    margin: 0 auto;
+    padding: 0;
 }
 
 .contentWrapper {
-	padding: 0px 8px;
-	background: #e5e5e5;
+    padding: 0px 8px;
+    background: #e5e5e5;
 }
 
 .container {
-	background: #f2e8ce url("/broadleafdemo/images/containerTop.gif") repeat-x top center;
-	width:880px;
+    background: #f2e8ce url("/broadleafdemo/images/containerTop.gif") repeat-x top center;
+    width:880px;
 }
 
 .navGradientBg {
-	background: url("/broadleafdemo/images/navGradient.gif") repeat-x
-		bottom center;
+    background: url("/broadleafdemo/images/navGradient.gif") repeat-x
+        bottom center;
 }
 
 .mainContent {
-	background: #fff;
-	padding: 8px;
-	border-right: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
+    background: #fff;
+    padding: 8px;
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
 
 img {
-	border: 0;
+    border: 0;
 }
 
 .columns:after {
@@ -52,103 +52,103 @@ img {
 .columns {display: block;}
 
 .blueBorder {
-	border-width: 1px;
-	border-style: solid;
-	border-color: #C9E1F4;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #C9E1F4;
 }
 
 input.helpTextVisible {
-	color: #666;
+    color: #666;
 }
 
 .strikethrough {
-	text-decoration: line-through;
+    text-decoration: line-through;
 }
 
 .breadcrumb {
-	margin: 0 0 10px 9px; 
+    margin: 0 0 10px 9px; 
 }
 
 a, a:visited {
-	color:#992400;
+    color:#992400;
 }
 a:hover {
-	text-decoration:underline;
-	color:#992400;
+    text-decoration:underline;
+    color:#992400;
 }
 
 
 .productResults a {
-	font-size:12px;
+    font-size:12px;
 }
 
 .breadcrumb a,
 .breadcrumb a:visited {
-/*	color:#862204;
-	color:#693F2D;*/
-	color:#992400;
-	text-decoration: none;
+/*  color:#862204;
+    color:#693F2D;*/
+    color:#992400;
+    text-decoration: none;
 }
 .breadcrumb a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 .noTextUnderline {
-	text-decoration: none;
+    text-decoration: none;
 }
 .displayNone {
-	display: none;
+    display: none;
 }
 
 .alignRight {
-	text-align: right;
+    text-align: right;
 }
 
 .alignCenter {
-	text-align: center;
+    text-align: center;
 }
 
 .pageTitle {
-	margin-top: 10px;
-	color:#566F32;
+    margin-top: 10px;
+    color:#566F32;
 }
 .bottomRule {
-	padding-bottom: 15px;
-	background: url("/broadleafdemo/images/drawnLineHorizontal.gif") repeat-x bottom left;
-	margin-bottom: 10px;
+    padding-bottom: 15px;
+    background: url("/broadleafdemo/images/drawnLineHorizontal.gif") repeat-x bottom left;
+    margin-bottom: 10px;
 }
 
 .topRule {
-	padding-top: 10px;
-	background: url("/broadleafdemo/images/drawnLineHorizontal.gif") repeat-x top right;
-	margin-top: 15px;
+    padding-top: 10px;
+    background: url("/broadleafdemo/images/drawnLineHorizontal.gif") repeat-x top right;
+    margin-top: 15px;
 }
 
 .rightRule {
-	padding-right: 13px;
-	background: url("/broadleafdemo/images/drawnLineVertical.gif") repeat-y top right;
+    padding-right: 13px;
+    background: url("/broadleafdemo/images/drawnLineVertical.gif") repeat-y top right;
 }
 .leftRule {
-	padding-left: 10px;
-	background: url("/broadleafdemo/images/drawnLineVertical.gif") repeat-y top left;
+    padding-left: 10px;
+    background: url("/broadleafdemo/images/drawnLineVertical.gif") repeat-y top left;
 }
 
 button {
-	border:0;
-	background: url("/broadleafdemo/images/greenBtnGradient.gif") repeat-x bottom center;
-	font-weight:bold;
-	font-size:18px;
-	color:#fff;
-	font-family:arial,sans-serif;
-	padding:6px;
-	cursor:pointer;
-	margin-left:18px;
-	border:1px solid #85a300;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	-moz-box-shadow: 0 1px 3px #999;
-	-webkit-box-shadow: 0 1px 3px #999;
+    border:0;
+    background: url("/broadleafdemo/images/greenBtnGradient.gif") repeat-x bottom center;
+    font-weight:bold;
+    font-size:18px;
+    color:#fff;
+    font-family:arial,sans-serif;
+    padding:6px;
+    cursor:pointer;
+    margin-left:18px;
+    border:1px solid #85a300;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -moz-box-shadow: 0 1px 3px #999;
+    -webkit-box-shadow: 0 1px 3px #999;
 }
 button:hover {
-	background-position:top center;
+    background-position:top center;
 }

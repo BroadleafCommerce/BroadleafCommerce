@@ -18,10 +18,10 @@ package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 import org.broadleafcommerce.util.money.Money;
 
 public class CyberSourceCaptureResponse implements java.io.Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private java.math.BigInteger reasonCode;
+    
+    private static final long serialVersionUID = 1L;
+    
+    private java.math.BigInteger reasonCode;
     private java.lang.String requestDateTime;
     private Money amount;
     private java.lang.String reconciliationID;

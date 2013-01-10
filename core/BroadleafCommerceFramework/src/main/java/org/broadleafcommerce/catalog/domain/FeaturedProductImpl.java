@@ -86,7 +86,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     }
     
     public Long getSequence() {
-    	return this.sequence;
+        return this.sequence;
     }
 
     public String getPromotionMessage() {

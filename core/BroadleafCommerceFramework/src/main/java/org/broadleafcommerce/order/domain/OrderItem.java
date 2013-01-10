@@ -123,8 +123,8 @@ public interface OrderItem extends Serializable {
 
     public boolean isNotCombinableOfferApplied();
 
-	public boolean isHasOrderItemAdjustments();
-	
-	public boolean updatePrices();
-	
+    public boolean isHasOrderItemAdjustments();
+    
+    public boolean updatePrices();
+    
 }

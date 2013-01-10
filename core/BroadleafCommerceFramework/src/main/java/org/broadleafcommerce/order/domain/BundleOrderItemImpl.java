@@ -70,9 +70,9 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public int removeAllAdjustments() {
-    	int removedAdjustmentCount = 0;
+        int removedAdjustmentCount = 0;
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-        	removedAdjustmentCount = removedAdjustmentCount + discreteOrderItem.removeAllAdjustments();
+            removedAdjustmentCount = removedAdjustmentCount + discreteOrderItem.removeAllAdjustments();
         }
         return removedAdjustmentCount;
     }

@@ -38,8 +38,8 @@ import org.w3c.dom.NodeList;
  *
  */
 public class NodeReplaceInsert extends BaseHandler {
-	
-	private static final Log LOG = LogFactory.getLog(NodeReplaceInsert.class);
+    
+    private static final Log LOG = LogFactory.getLog(NodeReplaceInsert.class);
 
     public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
         if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
@@ -98,24 +98,24 @@ public class NodeReplaceInsert extends BaseHandler {
         while(itr.hasNext()) {
             Node node = itr.next();
             if (Element.class.isAssignableFrom(node.getClass()) && Arrays.binarySearch(tempNodes, node, hashCompare) < 0) {
-            	
-            	if(LOG.isDebugEnabled()) {
-            		StringBuffer sb = new StringBuffer();
-            		sb.append("matching node for replacement: ");
-            		sb.append(node.getNodeName());
-            		int attrLength = node.getAttributes().getLength();
-            		for (int j=0;j<attrLength;j++){
-            			sb.append(" : (");
-            			sb.append(node.getAttributes().item(j).getNodeName());
-            			sb.append("/");
-            			sb.append(node.getAttributes().item(j).getNodeValue());
-            			sb.append(")");
-            		}
-            		LOG.debug(sb.toString());
-            	}
-            	if (!checkNode(usedNodes, primaryNodes, node)) {
+                
+                if(LOG.isDebugEnabled()) {
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("matching node for replacement: ");
+                    sb.append(node.getNodeName());
+                    int attrLength = node.getAttributes().getLength();
+                    for (int j=0;j<attrLength;j++){
+                        sb.append(" : (");
+                        sb.append(node.getAttributes().item(j).getNodeName());
+                        sb.append("/");
+                        sb.append(node.getAttributes().item(j).getNodeValue());
+                        sb.append(")");
+                    }
+                    LOG.debug(sb.toString());
+                }
+                if (!checkNode(usedNodes, primaryNodes, node)) {
                     //simply append the node if all the above fails
-            		Node newNode = ownerDocument.importNode(node.cloneNode(true), true);
+                    Node newNode = ownerDocument.importNode(node.cloneNode(true), true);
                     parentNode.appendChild(newNode);
                     usedNodes.add(node);
                 }
@@ -143,7 +143,7 @@ public class NodeReplaceInsert extends BaseHandler {
     protected boolean exactNodeExists(Node[] primaryNodes, Node testNode, List<Node> usedNodes) {
         for (int j=0;j<primaryNodes.length;j++){
             if (primaryNodes[j].isEqualNode(testNode)) {
-            	usedNodes.add(primaryNodes[j]);
+                usedNodes.add(primaryNodes[j]);
                 return true;
             }
         }
@@ -176,7 +176,7 @@ public class NodeReplaceInsert extends BaseHandler {
         Arrays.sort(filtered, idCompare);
         int pos = Arrays.binarySearch(filtered, testNode, idCompare);
         if (pos >= 0) {
-        	Node newNode = filtered[pos].getOwnerDocument().importNode(testNode.cloneNode(true), true);
+            Node newNode = filtered[pos].getOwnerDocument().importNode(testNode.cloneNode(true), true);
             filtered[pos].getParentNode().replaceChild(newNode, filtered[pos]);
             usedNodes.add(testNode);
             return true;

@@ -30,47 +30,47 @@ import org.broadleafcommerce.content.domain.ContentXmlData;
  */
 public interface ContentService {
 
-	public Content findContentById(Integer id);
+    public Content findContentById(Integer id);
 
-	public ContentDetails findContentDetailsById(Integer id);
+    public ContentDetails findContentDetailsById(Integer id);
 
-	public String findContentDetailsXmlById(Integer id);
+    public String findContentDetailsXmlById(Integer id);
 
-	public Map<String, Object> findContentDetailsMapById(Integer id) throws Exception;
+    public Map<String, Object> findContentDetailsMapById(Integer id) throws Exception;
 
-	public List<ContentXmlData> findContentDetailsListById(Integer id) throws Exception;
+    public List<ContentXmlData> findContentDetailsListById(Integer id) throws Exception;
 
-	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters);
+    public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters);
 
-	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate);
+    public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate);
 
-	public List<Content> findContent(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate);
+    public List<Content> findContent(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate);
 
-	public String renderedContentDetails(String styleSheet, List<ContentDetails> contentDetails) throws Exception;
+    public String renderedContentDetails(String styleSheet, List<ContentDetails> contentDetails) throws Exception;
 
-	public String renderedContentDetails(String styleSheetString, List<ContentDetails> contentDetails, int rowCount) throws Exception;
+    public String renderedContentDetails(String styleSheetString, List<ContentDetails> contentDetails, int rowCount) throws Exception;
 
-	public String renderedContent(String styleSheetString, List<Content> contentList, int rowCount) throws Exception;
-	
-	public List<Content> checkoutContentToSandbox(List<Integer> contentIds, String sandboxName);
+    public String renderedContent(String styleSheetString, List<Content> contentList, int rowCount) throws Exception;
+    
+    public List<Content> checkoutContentToSandbox(List<Integer> contentIds, String sandboxName);
 
-	public void submitContentFromSandbox(List<Integer> contentIds, String sandboxName, String username, String note);
+    public void submitContentFromSandbox(List<Integer> contentIds, String sandboxName, String username, String note);
 
-	public void approveContent(List<Integer> contentIds,  String sandboxName, String username);
+    public void approveContent(List<Integer> contentIds,  String sandboxName, String username);
 
-	public void removeContentFromSandbox(List<Integer> contentIds, String sandbox);
+    public void removeContentFromSandbox(List<Integer> contentIds, String sandbox);
 
-	public void rejectContent(List<Integer> contentIds, String sandbox, String username);
+    public void rejectContent(List<Integer> contentIds, String sandbox, String username);
 
-	public List<Content> readContentForSandbox(String sandbox);
+    public List<Content> readContentForSandbox(String sandbox);
 
-	public List<Content> readContentForSandboxAndType(String sandbox, String contentType);
+    public List<Content> readContentForSandboxAndType(String sandbox, String contentType);
 
-	public List<Content> readContentAwaitingApproval();
+    public List<Content> readContentAwaitingApproval();
 
-	public Content saveContent(Content content, List<ContentXmlData> details);
+    public Content saveContent(Content content, List<ContentXmlData> details);
 
-	public List<ContentPageInfo> readAllContentPageInfos();
+    public List<ContentPageInfo> readAllContentPageInfos();
 
-	public Map<Integer, String> constructParentUrlMap();
+    public Map<Integer, String> constructParentUrlMap();
 }

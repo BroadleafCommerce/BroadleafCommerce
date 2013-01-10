@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:p="http://www.springframework.org/schema/p"
     xmlns:sec="http://www.springframework.org/schema/security"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -9,64 +9,64 @@
 
 
     <sec:http auto-config="true" >
-    	<sec:intercept-url pattern="/wishlist/**" access="ROLE_USER"/>
+        <sec:intercept-url pattern="/wishlist/**" access="ROLE_USER"/>
         <sec:form-login login-page="/registerCustomer/registerCustomer.htm"
-        				authentication-failure-handler-ref="broadleafAuthenticationFailureHandler"
-        				authentication-success-handler-ref="springAuthenticationSuccessHandler"
-        				login-processing-url="/login_post.htm"
-        				 />
-   		<sec:logout logout-url="/logout.htm"/>
-   		<sec:remember-me services-ref="blRememberMeServices"/>
-   		<sec:custom-filter after="REMEMBER_ME_FILTER" ref="blCustomerStateFilter"/>
+                        authentication-failure-handler-ref="broadleafAuthenticationFailureHandler"
+                        authentication-success-handler-ref="springAuthenticationSuccessHandler"
+                        login-processing-url="/login_post.htm"
+                         />
+        <sec:logout logout-url="/logout.htm"/>
+        <sec:remember-me services-ref="blRememberMeServices"/>
+        <sec:custom-filter after="REMEMBER_ME_FILTER" ref="blCustomerStateFilter"/>
     </sec:http>
     
     <bean id="broadleafAuthenticationFailureHandler"
-    	class="org.broadleafcommerce.profile.web.security.BroadleafAuthenticationFailureHandler">
-    	<constructor-arg value="/registerCustomer/registerCustomer.htm?error=true"/>
-    	<property name="redirectStrategy" ref="redirectStrategy"/>
+        class="org.broadleafcommerce.profile.web.security.BroadleafAuthenticationFailureHandler">
+        <constructor-arg value="/registerCustomer/registerCustomer.htm?error=true"/>
+        <property name="redirectStrategy" ref="redirectStrategy"/>
     </bean>
     
     <bean id="springAuthenticationSuccessHandler"
-    	class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-    	<property name="redirectStrategy" ref="redirectStrategy"/>
-    	<property name="defaultTargetUrl" value="/welcome.htm"/>
-    	<property name="alwaysUseDefaultTargetUrl" value="true"/>
+        class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+        <property name="redirectStrategy" ref="redirectStrategy"/>
+        <property name="defaultTargetUrl" value="/welcome.htm"/>
+        <property name="alwaysUseDefaultTargetUrl" value="true"/>
     </bean>
     
     <bean id="redirectStrategy" class="org.broadleafcommerce.profile.web.security.LocalRedirectStrategy">
-    	<property name="enforcePortMatch" value="true"/>
+        <property name="enforcePortMatch" value="true"/>
     </bean>
     
     <!--  bean id="passwordEncoder" class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/ -->    
 
     <!--=============================================================================================== -->
-	<!--  Override the authentication provider to use the JDBC authentication defined below.                                                -->
+    <!--  Override the authentication provider to use the JDBC authentication defined below.                                                -->
     <!--=============================================================================================== -->
-	<sec:authentication-manager alias="blAuthenticationManager">
-		<sec:authentication-provider user-service-ref="blUserDetailsService" >
-			<sec:password-encoder ref="blPasswordEncoder"/>
-		</sec:authentication-provider>
-		<sec:authentication-provider ref="blRememberMeAuthenticationProvider"/>
-	</sec:authentication-manager>
-	
-	<bean id="blRememberMeServices" class="org.broadleafcommerce.profile.web.security.EnhancedTokenBasedRememberMeServices">
-		<property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
-	</bean>
+    <sec:authentication-manager alias="blAuthenticationManager">
+        <sec:authentication-provider user-service-ref="blUserDetailsService" >
+            <sec:password-encoder ref="blPasswordEncoder"/>
+        </sec:authentication-provider>
+        <sec:authentication-provider ref="blRememberMeAuthenticationProvider"/>
+    </sec:authentication-manager>
+    
+    <bean id="blRememberMeServices" class="org.broadleafcommerce.profile.web.security.EnhancedTokenBasedRememberMeServices">
+        <property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
+    </bean>
 
-	<bean id="blRememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
-		<property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
-	</bean>
-	
-	<sec:jdbc-user-service 
-			data-source-ref="blDS"
-		    id="blUserDetailsService" 
-	        users-by-username-query="SELECT USER_NAME,PASSWORD,TRUE FROM BLC_CUSTOMER WHERE USER_NAME=?"
-	        authorities-by-username-query="SELECT c.USER_NAME,r.ROLE_NAME from BLC_CUSTOMER c 
-	                                      JOIN BLC_CUSTOMER_ROLE cr ON c.CUSTOMER_ID = cr.CUSTOMER_ID 
-	                                      JOIN BLC_ROLE r ON cr.ROLE_ID = r.ROLE_ID 
-	                                      WHERE USER_NAME=?"
-	 /> 
+    <bean id="blRememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+        <property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
+    </bean>
+    
+    <sec:jdbc-user-service 
+            data-source-ref="blDS"
+            id="blUserDetailsService" 
+            users-by-username-query="SELECT USER_NAME,PASSWORD,TRUE FROM BLC_CUSTOMER WHERE USER_NAME=?"
+            authorities-by-username-query="SELECT c.USER_NAME,r.ROLE_NAME from BLC_CUSTOMER c 
+                                          JOIN BLC_CUSTOMER_ROLE cr ON c.CUSTOMER_ID = cr.CUSTOMER_ID 
+                                          JOIN BLC_ROLE r ON cr.ROLE_ID = r.ROLE_ID 
+                                          WHERE USER_NAME=?"
+     /> 
                              
-	<bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.security.CustomerStateFilter"/>
+    <bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.security.CustomerStateFilter"/>
                                                                           
 </beans>

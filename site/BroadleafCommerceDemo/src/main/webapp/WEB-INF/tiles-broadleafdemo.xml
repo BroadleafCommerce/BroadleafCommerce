@@ -4,9 +4,9 @@
        "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
 
 <tiles-definitions>
-	<definition name="baseNoSide" template="/WEB-INF/jsp/layouts/baseLayoutNoSide.jsp">
-		<put-attribute name="headContent" value="/WEB-INF/jsp/layouts/headContent.jsp" />
-		<put-attribute name="navigation" value="/WEB-INF/jsp/snippets/navigation.jsp" />
-		<put-attribute name="footer" value="/WEB-INF/jsp/layouts/footer.jsp" />
-	</definition>
+    <definition name="baseNoSide" template="/WEB-INF/jsp/layouts/baseLayoutNoSide.jsp">
+        <put-attribute name="headContent" value="/WEB-INF/jsp/layouts/headContent.jsp" />
+        <put-attribute name="navigation" value="/WEB-INF/jsp/snippets/navigation.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/jsp/layouts/footer.jsp" />
+    </definition>
 </tiles-definitions>

@@ -77,7 +77,7 @@ public interface Customer extends Serializable {
 
     public void setAuditable(Auditable auditable);
     
-	public void setCookied(boolean cookied);
+    public void setCookied(boolean cookied);
     
     public boolean isCookied();
 

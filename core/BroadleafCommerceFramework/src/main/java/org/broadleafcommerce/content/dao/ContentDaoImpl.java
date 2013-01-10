@@ -34,7 +34,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("blContentDao")
 public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
-	
+    
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
     @PersistenceContext(unitName = "blPU")
@@ -86,12 +86,12 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentByIds(java.util.List)
      */
     public List<Content> readContentByIdsAndSandbox(List<Integer> ids, String sandbox) {
-    	Query query;
+        Query query;
 
-    	if (sandbox == null) {
-    		query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_WHERE_SANDBOX_IS_NULL");
+        if (sandbox == null) {
+            query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_WHERE_SANDBOX_IS_NULL");
         } else {
-        	query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_AND_SANDBOX");
+            query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_AND_SANDBOX");
             query.setParameter("sandbox", sandbox);
         }
 
@@ -120,13 +120,13 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentBySandboxAndType(java.lang.String, java.lang.String)
      */
     public List<Content> readContentBySandboxAndType(String sandbox, String contentType) {
-    	Query query = null;
-    	if (sandbox == null){
-    		query = em.createNamedQuery("BC_READ_CONTENT_BY_NULL_SANDBOX_AND_CONTENT_TYPE");
-    	} else {
-    		query = em.createNamedQuery("BC_READ_CONTENT_BY_SANDBOX_AND_CONTENT_TYPE");
+        Query query = null;
+        if (sandbox == null){
+            query = em.createNamedQuery("BC_READ_CONTENT_BY_NULL_SANDBOX_AND_CONTENT_TYPE");
+        } else {
+            query = em.createNamedQuery("BC_READ_CONTENT_BY_SANDBOX_AND_CONTENT_TYPE");
             query.setParameter("sandbox", sandbox);
-    	}
+        }
 
         query.setParameter("contentType", contentType);
         query.setHint(getQueryCacheableKey(), true);
@@ -170,19 +170,19 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
         this.queryCacheableKey = queryCacheableKey;
     }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.content.dao.ContentDao#readStagedContent()
-	 */
-	public List<Content> readStagedContent() {
-		Query query = em.createNamedQuery("BC_READ_STAGED_CONTENT");
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#readStagedContent()
+     */
+    public List<Content> readStagedContent() {
+        Query query = em.createNamedQuery("BC_READ_STAGED_CONTENT");
 
         return (List<Content>) query.getResultList();
-	}
+    }
 
-	public List<Content> readAllContent() {
-		Query query = em.createNamedQuery("BC_READ_ALL_CONTENT");
+    public List<Content> readAllContent() {
+        Query query = em.createNamedQuery("BC_READ_ALL_CONTENT");
 
         return (List<Content>) query.getResultList();
-	}
+    }
 
 }

@@ -11,10 +11,10 @@
         <param-value>blAdmin.root</param-value>
     </context-param>
 
-	<context-param>
-		<param-name>flex.class.path</param-name>
-		<param-value>/WEB-INF/flex/hotfixes,/WEB-INF/flex/jars</param-value>
-	</context-param>
+    <context-param>
+        <param-name>flex.class.path</param-name>
+        <param-value>/WEB-INF/flex/hotfixes,/WEB-INF/flex/jars</param-value>
+    </context-param>
     <context-param>
         <param-name>patchConfigLocation</param-name>
         <param-value>
@@ -53,8 +53,8 @@
     </listener>
 
     <!-- The following listener and context-param are used to bootstrap our
-	Spring Application Contexts.  The web application context is loaded
-	via the scprofile servlet defined below -->
+    Spring Application Contexts.  The web application context is loaded
+    via the scprofile servlet defined below -->
     <listener>
         <listener-class>org.broadleafcommerce.extensibility.web.MergeContextLoaderListener</listener-class>
     </listener>
@@ -76,40 +76,40 @@
         <welcome-file>BroadleafCommerceAdmin.html</welcome-file>
     </welcome-file-list>
 
-	<servlet>
-	    <servlet-name>spring-mvc</servlet-name>
-	    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-	    <init-param>
-	    	<param-name>contextConfigLocation</param-name>
-	    	<param-value>/WEB-INF/spring-mvc-servlet.xml</param-value>
-	    </init-param>
-	    <load-on-startup>1</load-on-startup>
-	</servlet>
-	
-	<servlet-mapping>
-	    <servlet-name>spring-mvc</servlet-name>
-	    <url-pattern>/spring/*</url-pattern>
-	</servlet-mapping> 
+    <servlet>
+        <servlet-name>spring-mvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring-mvc-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>spring-mvc</servlet-name>
+        <url-pattern>/spring/*</url-pattern>
+    </servlet-mapping> 
 
-	<!-- Map all /messagbroker requests to the DispatcherServlet for handling -->
-	<servlet-mapping>
-		<servlet-name>blAdmin</servlet-name>
-		<url-pattern>/messagebroker/*</url-pattern>
-	</servlet-mapping>
-	<!-- for WebSphere deployment, please uncomment -->
-	<!--
-		<resource-ref>
-		<description>Flex Messaging WorkManager</description>
-		<res-ref-name>wm/MessagingWorkManager</res-ref-name>
-		<res-type>com.ibm.websphere.asynchbeans.WorkManager</res-type>
-		<res-auth>Container</res-auth>
-		<res-sharing-scope>Shareable</res-sharing-scope>
-	</resource-ref>
-	-->	
+    <!-- Map all /messagbroker requests to the DispatcherServlet for handling -->
+    <servlet-mapping>
+        <servlet-name>blAdmin</servlet-name>
+        <url-pattern>/messagebroker/*</url-pattern>
+    </servlet-mapping>
+    <!-- for WebSphere deployment, please uncomment -->
+    <!--
+        <resource-ref>
+        <description>Flex Messaging WorkManager</description>
+        <res-ref-name>wm/MessagingWorkManager</res-ref-name>
+        <res-type>com.ibm.websphere.asynchbeans.WorkManager</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
+    --> 
 
-	<env-entry>
-	    <env-entry-name>appName</env-entry-name>
-	    <env-entry-type>java.lang.String</env-entry-type>
-	    <env-entry-value>broadleafadmin</env-entry-value>
-	</env-entry>
+    <env-entry>
+        <env-entry-name>appName</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>broadleafadmin</env-entry-value>
+    </env-entry>
 </web-app>

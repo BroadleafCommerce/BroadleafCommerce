@@ -21,33 +21,33 @@ package org.broadleafcommerce.pricing.service.exception;
  */
 public class TaxException extends Exception {
 
-	/**
-	 * 
-	 */
-	public TaxException() {
-		super();
-	}
+    /**
+     * 
+     */
+    public TaxException() {
+        super();
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public TaxException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public TaxException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
-	 * @param message
-	 */
-	public TaxException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public TaxException(String message) {
+        super(message);
+    }
 
-	/**
-	 * @param cause
-	 */
-	public TaxException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param cause
+     */
+    public TaxException(Throwable cause) {
+        super(cause);
+    }
 
 }

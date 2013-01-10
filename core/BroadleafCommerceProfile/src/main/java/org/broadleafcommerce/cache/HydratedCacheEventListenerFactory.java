@@ -28,8 +28,8 @@ import net.sf.ehcache.event.CacheEventListenerFactory;
 public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory {
 
     @Override
-	public CacheEventListener createCacheEventListener(Properties props) {
+    public CacheEventListener createCacheEventListener(Properties props) {
         return (CacheEventListener) HydratedCacheManagerImpl.getInstance();
-	}
+    }
 
 }

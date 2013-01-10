@@ -42,12 +42,12 @@
     </Set>
     
     <Array id="plusConfig" type="java.lang.String">
-	  <Item>org.mortbay.jetty.webapp.WebInfConfiguration</Item>
-	  <Item>org.mortbay.jetty.plus.webapp.EnvConfiguration</Item>
-	  <Item>org.mortbay.jetty.plus.webapp.Configuration</Item>
-	  <Item>org.mortbay.jetty.webapp.JettyWebXmlConfiguration</Item>
-	  <Item>org.mortbay.jetty.webapp.TagLibConfiguration</Item>
-	</Array>
+      <Item>org.mortbay.jetty.webapp.WebInfConfiguration</Item>
+      <Item>org.mortbay.jetty.plus.webapp.EnvConfiguration</Item>
+      <Item>org.mortbay.jetty.plus.webapp.Configuration</Item>
+      <Item>org.mortbay.jetty.webapp.JettyWebXmlConfiguration</Item>
+      <Item>org.mortbay.jetty.webapp.TagLibConfiguration</Item>
+    </Array>
     
     <New class="org.mortbay.jetty.webapp.WebAppContext">
         <Arg><Ref id="Contexts"/></Arg>

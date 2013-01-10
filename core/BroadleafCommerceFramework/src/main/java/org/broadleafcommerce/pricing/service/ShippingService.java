@@ -19,7 +19,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 
 public interface ShippingService {
-	
+    
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
     
 }

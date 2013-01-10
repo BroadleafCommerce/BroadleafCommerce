@@ -3,22 +3,22 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
              version="1.0">
-	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
-		<mapping-file>config/bc/jpa/domain/Address.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/ChallengeQuestion.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/Country.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/Customer.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/CustomerAddress.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/CustomerPhone.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/IdGeneration.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/Phone.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/Role.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/State.orm.xml</mapping-file>
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/Address.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ChallengeQuestion.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Country.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Customer.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CustomerAddress.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CustomerPhone.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/IdGeneration.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Phone.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Role.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/State.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/User.orm.xml</mapping-file>
-		<class>org.broadleafcommerce.email.domain.EmailTrackingClicksImpl</class>
-		<class>org.broadleafcommerce.email.domain.EmailTrackingImpl</class>
-		<class>org.broadleafcommerce.email.domain.EmailTrackingOpensImpl</class>
-		<class>org.broadleafcommerce.profile.domain.AddressImpl</class>
+        <class>org.broadleafcommerce.email.domain.EmailTrackingClicksImpl</class>
+        <class>org.broadleafcommerce.email.domain.EmailTrackingImpl</class>
+        <class>org.broadleafcommerce.email.domain.EmailTrackingOpensImpl</class>
+        <class>org.broadleafcommerce.profile.domain.AddressImpl</class>
         <class>org.broadleafcommerce.profile.domain.ChallengeQuestionImpl</class>
         <class>org.broadleafcommerce.profile.domain.CountryImpl</class>
         <class>org.broadleafcommerce.profile.domain.CustomerAddressImpl</class>
@@ -31,8 +31,8 @@
         <class>org.broadleafcommerce.profile.domain.StateImpl</class>
         <class>org.broadleafcommerce.profile.domain.UserImpl</class>
         <class>org.broadleafcommerce.profile.domain.UserRoleImpl</class>
-		<exclude-unlisted-classes/>
-		<properties>
+        <exclude-unlisted-classes/>
+        <properties>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.transaction.flush_before_completion" value="false"/>
             <property name="hibernate.connection.autocommit" value="false"/>
@@ -43,5 +43,5 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
-	</persistence-unit>
+    </persistence-unit>
 </persistence>

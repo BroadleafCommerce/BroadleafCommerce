@@ -239,8 +239,8 @@ public interface Order extends Serializable {
 
     public boolean isNotCombinableOfferApplied();
 
-	public boolean isHasOrderAdjustments();
+    public boolean isHasOrderAdjustments();
 
-	public boolean updatePrices();
-	
+    public boolean updatePrices();
+    
 }

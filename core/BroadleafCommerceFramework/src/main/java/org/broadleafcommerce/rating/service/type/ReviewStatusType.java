@@ -47,7 +47,7 @@ public class ReviewStatusType {
     private void setType(String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
-        	TYPES.put(type, this);
+            TYPES.put(type, this);
         }
     }
 

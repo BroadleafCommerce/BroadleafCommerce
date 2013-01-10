@@ -18,10 +18,10 @@ package org.broadleafcommerce.vendor.cybersource.service.tax.message;
 import org.broadleafcommerce.util.money.Money;
 
 public class CyberSourceTaxItemResponse implements java.io.Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private Money cityTaxAmount;
+    
+    private static final long serialVersionUID = 1L;
+    
+    private Money cityTaxAmount;
     private Money countyTaxAmount;
     private Money districtTaxAmount;
     private Money stateTaxAmount;

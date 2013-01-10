@@ -35,7 +35,7 @@ public class InsertItems extends BaseHandler {
         }
         Node node1Parent = nodeList1.item(0).getParentNode();
         for (int j=0;j<nodeList2.getLength();j++) {
-        	Node tempNode = node1Parent.getOwnerDocument().importNode(nodeList2.item(j).cloneNode(true), true);
+            Node tempNode = node1Parent.getOwnerDocument().importNode(nodeList2.item(j).cloneNode(true), true);
             node1Parent.appendChild(tempNode);
         }
 

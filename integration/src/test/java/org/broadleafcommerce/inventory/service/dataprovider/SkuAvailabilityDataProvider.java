@@ -26,29 +26,29 @@ public class SkuAvailabilityDataProvider {
 
     @DataProvider(name = "setupSkuAvailability")
     public static Object[][] createSkuAvailabilityRecords() {
-    	Object[][] paramArray = new Object[10][1];
-    	Date AVAILABLE_TODAY = SystemTime.asDate();
-    	Date AVAILABLE_NULL = null;
-    	Long LOCATION_NULL = null;
-    	Long LOCATION_ONE = 1L;
-    	Long SKU_ID_1 = 1L;
-    	Long SKU_ID_2 = 2L;
-    	Long SKU_ID_3 = 3L;
-    	Long SKU_ID_4 = 4L;
-    	Long SKU_ID_5 = 5L;
+        Object[][] paramArray = new Object[10][1];
+        Date AVAILABLE_TODAY = SystemTime.asDate();
+        Date AVAILABLE_NULL = null;
+        Long LOCATION_NULL = null;
+        Long LOCATION_ONE = 1L;
+        Long SKU_ID_1 = 1L;
+        Long SKU_ID_2 = 2L;
+        Long SKU_ID_3 = 3L;
+        Long SKU_ID_4 = 4L;
+        Long SKU_ID_5 = 5L;
 
-    	long recordCount = 0;
+        long recordCount = 0;
 
-   		paramArray[0][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_1, LOCATION_NULL, AVAILABLE_TODAY, "available", null, new Integer(1));
-   		paramArray[1][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_1, LOCATION_ONE, AVAILABLE_TODAY, "available", null, new Integer(1));
-   		paramArray[2][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_2, LOCATION_NULL, AVAILABLE_TODAY, null, new Integer(5), new Integer(1));
-   		paramArray[3][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_2, LOCATION_ONE, AVAILABLE_TODAY, null, new Integer(5), new Integer(1));
-   		paramArray[4][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_3, LOCATION_NULL, AVAILABLE_TODAY, null, new Integer(0), new Integer(1));
-   		paramArray[5][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_3, LOCATION_ONE, AVAILABLE_TODAY, null, new Integer(0), new Integer(1));
-   		paramArray[6][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_4, LOCATION_NULL, AVAILABLE_NULL, "backordered", new Integer(0), new Integer(1));
-   		paramArray[7][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_4, LOCATION_ONE, AVAILABLE_NULL, "backordered", new Integer(0), new Integer(1));
-   		paramArray[8][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_5, LOCATION_NULL, AVAILABLE_NULL, null, new Integer(5), null);
-   		paramArray[9][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_5, LOCATION_ONE, AVAILABLE_NULL, null, new Integer(5), null);
+        paramArray[0][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_1, LOCATION_NULL, AVAILABLE_TODAY, "available", null, new Integer(1));
+        paramArray[1][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_1, LOCATION_ONE, AVAILABLE_TODAY, "available", null, new Integer(1));
+        paramArray[2][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_2, LOCATION_NULL, AVAILABLE_TODAY, null, new Integer(5), new Integer(1));
+        paramArray[3][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_2, LOCATION_ONE, AVAILABLE_TODAY, null, new Integer(5), new Integer(1));
+        paramArray[4][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_3, LOCATION_NULL, AVAILABLE_TODAY, null, new Integer(0), new Integer(1));
+        paramArray[5][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_3, LOCATION_ONE, AVAILABLE_TODAY, null, new Integer(0), new Integer(1));
+        paramArray[6][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_4, LOCATION_NULL, AVAILABLE_NULL, "backordered", new Integer(0), new Integer(1));
+        paramArray[7][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_4, LOCATION_ONE, AVAILABLE_NULL, "backordered", new Integer(0), new Integer(1));
+        paramArray[8][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_5, LOCATION_NULL, AVAILABLE_NULL, null, new Integer(5), null);
+        paramArray[9][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_5, LOCATION_ONE, AVAILABLE_NULL, null, new Integer(5), null);
 
         return paramArray;
     }

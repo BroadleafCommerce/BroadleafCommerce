@@ -25,24 +25,24 @@ import org.hibernate.util.StringHelper;
  */
 public class MySQLInnoDBDialect extends org.hibernate.dialect.MySQLInnoDBDialect{
 
-	@Override
-	public String getAddForeignKeyConstraintString(
-			String constraintName, 
-			String[] foreignKey, 
-			String referencedTable, 
-			String[] primaryKey, boolean referencesPrimaryKey
-	) {
-		String cols = StringHelper.join(", ", foreignKey);
-		return new StringBuffer(30)
-			.append(" add constraint ")
-			.append(constraintName)
-			.append(" foreign key (")
-			.append(cols)
-			.append(") references ")
-			.append(referencedTable)
-			.append(" (")
-			.append( StringHelper.join(", ", primaryKey) )
-			.append(')')
-			.toString();
-	}
+    @Override
+    public String getAddForeignKeyConstraintString(
+            String constraintName, 
+            String[] foreignKey, 
+            String referencedTable, 
+            String[] primaryKey, boolean referencesPrimaryKey
+    ) {
+        String cols = StringHelper.join(", ", foreignKey);
+        return new StringBuffer(30)
+            .append(" add constraint ")
+            .append(constraintName)
+            .append(" foreign key (")
+            .append(cols)
+            .append(") references ")
+            .append(referencedTable)
+            .append(" (")
+            .append( StringHelper.join(", ", primaryKey) )
+            .append(')')
+            .toString();
+    }
 }

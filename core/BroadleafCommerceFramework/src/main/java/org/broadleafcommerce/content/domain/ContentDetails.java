@@ -21,16 +21,16 @@ package org.broadleafcommerce.content.domain;
  */
 public interface ContentDetails {
 
-	public Integer getId();
+    public Integer getId();
 
-	public void setId(Integer id);
+    public void setId(Integer id);
 
-	public String getContentHash();
+    public String getContentHash();
 
-	public void setContentHash(String contentHash);
+    public void setContentHash(String contentHash);
 
-	public String getXmlContent();
+    public String getXmlContent();
 
-	public void setXmlContent(String xmlContent);
+    public void setXmlContent(String xmlContent);
 
 }

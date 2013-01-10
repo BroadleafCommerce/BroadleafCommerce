@@ -32,14 +32,14 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
  */
 public class RemoveFileController extends SimpleFormController {
 
-	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
 
-		DirectoryFileBean bean = (DirectoryFileBean) command;
-		checkDirectory(bean.getAbsolutePath());
+        DirectoryFileBean bean = (DirectoryFileBean) command;
+        checkDirectory(bean.getAbsolutePath());
 
-		response.setStatus(HttpServletResponse.SC_OK);
-		return super.onSubmit(request, response, command, errors);
-	}
+        response.setStatus(HttpServletResponse.SC_OK);
+        return super.onSubmit(request, response, command, errors);
+    }
 
     private void checkDirectory(String basepath) {
         FileSystemResource dirResource = new FileSystemResource(basepath);

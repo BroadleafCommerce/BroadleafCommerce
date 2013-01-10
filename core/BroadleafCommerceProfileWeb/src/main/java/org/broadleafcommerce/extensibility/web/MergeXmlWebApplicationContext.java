@@ -89,7 +89,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
         for (String location : broadleafConfigLocations) {
             InputStream source = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(location);
             if (source != null) {
-            	sources.add(source);
+                sources.add(source);
             }
         }
         InputStream[] filteredSources = new InputStream[]{};

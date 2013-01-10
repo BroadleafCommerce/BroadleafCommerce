@@ -1,5 +1,5 @@
  $(document).ready(function(){
    $("#catalogSort").change(function () {
-	  document.sortForm.submit();
+      document.sortForm.submit();
    });
  });

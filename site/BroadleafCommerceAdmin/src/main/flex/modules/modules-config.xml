@@ -1,10 +1,10 @@
 <xml>
     <menuitem label="Security" swf="modules/security/SecurityModule.swf" displayOrder="6" authRoles="ROLE_ADMIN" />
-	<menuitem label="Catalog" swf="modules/catalog/CatalogModule.swf" displayOrder="2" authRoles="ROLE_ADMIN,asdfsdf" />
-	<menuitem label="Search" swf="modules/search/SearchModule.swf" displayOrder="6" authRoles="ROLE_ADMIN" />
-	<menuitem label="Offers" swf="modules/offers/OfferModule.swf" displayOrder="5" authRoles="ROLE_ADMIN" />
-	<menuitem label="Tools" swf="modules/tools/ToolsModule.swf" displayOrder="10" authRoles="ROLE_ADMIN" />
-	<menuitem label="Content" swf="modules/cms/ContentModule.swf" displayOrder="7" authRoles="ROLE_ADMIN,ROLE_CONTENT_APPROVER,ROLE_CONTENT_DEPLOYER,ROLE_CONTENT_EDITOR" />
+    <menuitem label="Catalog" swf="modules/catalog/CatalogModule.swf" displayOrder="2" authRoles="ROLE_ADMIN,asdfsdf" />
+    <menuitem label="Search" swf="modules/search/SearchModule.swf" displayOrder="6" authRoles="ROLE_ADMIN" />
+    <menuitem label="Offers" swf="modules/offers/OfferModule.swf" displayOrder="5" authRoles="ROLE_ADMIN" />
+    <menuitem label="Tools" swf="modules/tools/ToolsModule.swf" displayOrder="10" authRoles="ROLE_ADMIN" />
+    <menuitem label="Content" swf="modules/cms/ContentModule.swf" displayOrder="7" authRoles="ROLE_ADMIN,ROLE_CONTENT_APPROVER,ROLE_CONTENT_DEPLOYER,ROLE_CONTENT_EDITOR" />
     <!--
-	-->
+    -->
 </xml>

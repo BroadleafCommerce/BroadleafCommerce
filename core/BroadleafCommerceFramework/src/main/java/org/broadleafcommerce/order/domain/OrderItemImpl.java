@@ -191,7 +191,7 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers) {
-    	this.candidateItemOffers = candidateItemOffers;
+        this.candidateItemOffers = candidateItemOffers;
     }
 
     public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
@@ -285,15 +285,15 @@ public class OrderItemImpl implements OrderItem {
         adjustmentPrice = adjustmentPrice.subtract(orderItemAdjustment.getValue().getAmount());
         this.orderItemAdjustments.add(orderItemAdjustment);
         if (!orderItemAdjustment.getOffer().isCombinableWithOtherOffers()) {
-        	notCombinableOfferApplied = true;
+            notCombinableOfferApplied = true;
         }
         hasOrderItemAdjustments = true;
     }
 
     public int removeAllAdjustments() {
-    	int removedAdjustmentCount = 0;
+        int removedAdjustmentCount = 0;
         if (orderItemAdjustments != null) {
-        	removedAdjustmentCount = orderItemAdjustments.size();
+            removedAdjustmentCount = orderItemAdjustments.size();
             orderItemAdjustments.clear();
         }
         adjustmentPrice = null;
@@ -302,18 +302,18 @@ public class OrderItemImpl implements OrderItem {
         return removedAdjustmentCount;
     }
 
-    protected void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {    	
+    protected void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {        
         this.orderItemAdjustments = orderItemAdjustments;
         if ((orderItemAdjustments == null) || (orderItemAdjustments.size() == 0)) {
-        	removeAllAdjustments();
+            removeAllAdjustments();
         } else {
-        	for (OrderItemAdjustment orderItemAdjustment : orderItemAdjustments) {
-        		if (!notCombinableOfferApplied) {
-        			addOrderItemAdjustment(orderItemAdjustment);
-        		} else {
-        			break;
-        		}
-        	}
+            for (OrderItemAdjustment orderItemAdjustment : orderItemAdjustments) {
+                if (!notCombinableOfferApplied) {
+                    addOrderItemAdjustment(orderItemAdjustment);
+                } else {
+                    break;
+                }
+            }
         }
     }
 
@@ -358,18 +358,18 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public boolean isNotCombinableOfferApplied() {
-		return notCombinableOfferApplied;
-	}
+        return notCombinableOfferApplied;
+    }
 
-	public boolean isHasOrderItemAdjustments() {
-		return hasOrderItemAdjustments;
-	}
-	
-	public boolean updatePrices() {
+    public boolean isHasOrderItemAdjustments() {
+        return hasOrderItemAdjustments;
+    }
+    
+    public boolean updatePrices() {
         return false;
     }
 
-	public int hashCode() {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((adjustmentPrice == null) ? 0 : adjustmentPrice.hashCode());

@@ -22,6 +22,6 @@ import org.broadleafcommerce.vendor.service.exception.TaxException;
 
 public interface CyberSourceTaxService extends CyberSourceService {
 
-	public CyberSourceTaxResponse process(CyberSourceTaxRequest taxRequest) throws TaxException;
+    public CyberSourceTaxResponse process(CyberSourceTaxRequest taxRequest) throws TaxException;
     
 }

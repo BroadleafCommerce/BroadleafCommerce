@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="BroadleafCommerceStandaloneDemo" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-	
-	<path id="build.runtime.classpath">
-		<fileset dir="libs" includes="*.*"/>
-	</path>
-	
-	<macrodef name="jetty-start">
-	    <attribute name="arg1" default=""/>
-	    <attribute name="arg2" default=""/>
-		<attribute name="arg3" default=""/>
-	    <sequential>
-	        <java fork="true" classname="org.mortbay.start.Main" classpathref="build.runtime.classpath" dir="./">
-	            <jvmarg value="-Dfile.encoding=UTF-8"/>
-	            <jvmarg value="-DSTOP.PORT=8079"/>
-	            <jvmarg value="-DSTOP.KEY=secret"/>
-	            <jvmarg value="@{arg1}"/>
-	        	<jvmarg value="@{arg2}"/>
-	        	<arg value="@{arg3}"/>
-	        </java>
-	    </sequential>
-	</macrodef>
+    
+    <path id="build.runtime.classpath">
+        <fileset dir="libs" includes="*.*"/>
+    </path>
+    
+    <macrodef name="jetty-start">
+        <attribute name="arg1" default=""/>
+        <attribute name="arg2" default=""/>
+        <attribute name="arg3" default=""/>
+        <sequential>
+            <java fork="true" classname="org.mortbay.start.Main" classpathref="build.runtime.classpath" dir="./">
+                <jvmarg value="-Dfile.encoding=UTF-8"/>
+                <jvmarg value="-DSTOP.PORT=8079"/>
+                <jvmarg value="-DSTOP.KEY=secret"/>
+                <jvmarg value="@{arg1}"/>
+                <jvmarg value="@{arg2}"/>
+                <arg value="@{arg3}"/>
+            </java>
+        </sequential>
+    </macrodef>
 
-	<target name="jetty-check-status">
-	    <condition property="jetty.started">
-	        <socket server="localhost" port="8080"/>
-	    </condition>
-	</target>
+    <target name="jetty-check-status">
+        <condition property="jetty.started">
+            <socket server="localhost" port="8080"/>
+        </condition>
+    </target>
 
-	<target name="jetty-start" depends="start-db">
-		<property name="temp" refid="build.runtime.classpath"/>
-		<echo message="${temp}"/>
-		<jetty-start
-	        arg1="-Xmx1024M"
-			arg2="-XX:MaxPermSize=512M"
-	        arg3="jetty.xml"/>
-	</target>
+    <target name="jetty-start" depends="start-db">
+        <property name="temp" refid="build.runtime.classpath"/>
+        <echo message="${temp}"/>
+        <jetty-start
+            arg1="-Xmx1024M"
+            arg2="-XX:MaxPermSize=512M"
+            arg3="jetty.xml"/>
+    </target>
 
-	<target name="jetty-stop" depends="jetty-check-status, stop-db" if="jetty.started">
-		<java fork="true" classname="org.mortbay.start.Main" classpathref="build.runtime.classpath" dir="./">
-	        <jvmarg value="-DSTOP.PORT=8079"/>
-	        <jvmarg value="-DSTOP.KEY=secret"/>
-	        <arg value="--stop"/>
-	    </java>
-	    <sleep seconds="2"/>
-	</target>
-	
-	<target name="start-db">  
+    <target name="jetty-stop" depends="jetty-check-status, stop-db" if="jetty.started">
+        <java fork="true" classname="org.mortbay.start.Main" classpathref="build.runtime.classpath" dir="./">
+            <jvmarg value="-DSTOP.PORT=8079"/>
+            <jvmarg value="-DSTOP.KEY=secret"/>
+            <arg value="--stop"/>
+        </java>
+        <sleep seconds="2"/>
+    </target>
+    
+    <target name="start-db">  
         <echo message="Starting Data Base..." />  
         <java fork="true"  spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath">  
             <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>  
         </java>  
     </target>
-	
-	<target name="stop-db">  
+    
+    <target name="stop-db">  
         <echo message="Execute SQL on new Data Base..." />  
         <sql  
             autocommit="true"  
@@ -66,5 +66,5 @@
         </sql>  
         <echo message="SQL Executed on data base..." />  
     </target>
-	
+    
 </project>

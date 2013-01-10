@@ -31,7 +31,7 @@ public class AddressTest extends CommonSetupBaseTest {
 
     @Test(groups = "createCountry")
     public void createCountry() {
-    	super.createCountry();
+        super.createCountry();
     }
 
     @Test(groups = "findCountries", dependsOnGroups = "createCountry")

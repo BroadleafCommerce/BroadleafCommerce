@@ -7,9 +7,9 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
-		http://www.springframework.org/schema/jee
-		http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
-		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+        http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd
@@ -35,15 +35,15 @@
     </bean>
     
     <bean id="webDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true" />
-		<property name="username" value="sa" />
-		<property name="password" value="" />
-	</bean>
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="url" value="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
 
-	<aop:config>
-	    <aop:pointcut id="blAdminCatalogServiceOperation" expression="execution(* org.broadleafcommerce.admin.catalog.service.AdminCatalogService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminCatalogServiceOperation"/>
-	</aop:config>
+    <aop:config>
+        <aop:pointcut id="blAdminCatalogServiceOperation" expression="execution(* org.broadleafcommerce.admin.catalog.service.AdminCatalogService.*(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminCatalogServiceOperation"/>
+    </aop:config>
 
 </beans>

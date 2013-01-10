@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <contentItems>
-	<content type="Article" isPage="true">
-		<field>
-			<displayName>Summary</displayName>
-			<description>The topmost text section briefly describing the page content</description>
-			<type>text/html</type>
-			<tagName>summary</tagName>
-			<required>true</required>
-		</field>
-		<field>
-			<displayName>Body</displayName>
-			<description>The center main body content of the page</description>
-			<type>text/html</type>
-			<tagName>body</tagName>
-			<required>true</required>
-		</field>
-		<field>
-			<displayName>Supporting Info</displayName>
-			<description>The grey bar on the right side of the screen often containing Related Links</description>
-			<type>text/html</type>
-			<tagName>supportingInfo</tagName>
-			<required>false</required>
-		</field>
-	</content>
-	
-	<content type="Press Release" isPage="false">
-		<field>
-			<displayName>Press Release Title</displayName>
-			<description>A one line description of the press release</description>
-			<type>text</type>
-			<tagName>title</tagName>
-			<required>true</required>
-		</field>
-		<field>
-			<displayName>Date</displayName>
-			<description>The date of the press release</description>
-			<type>date</type>
-			<tagName>date</tagName>
-			<required>true</required>
-		</field>
-		<field>
-			<displayName>Summary</displayName>
-			<description>The topmost text section briefly describing the release</description>
-			<type>text/html</type>
-			<tagName>summary</tagName>
-			<required>false</required>
-			<default><![CDATA[<strong>Location - </strong> Date]]></default>
-		</field>
-		<field>
-			<displayName>Body</displayName>
-			<description>The center main body content of the page</description>
-			<type>text/html</type>
-			<tagName>body</tagName>
-			<required>true</required>
-		</field>
-		<field>
-			<displayName>PDF Url</displayName>
-			<description>The relative url to a pdf version of the press release</description>
-			<type>text</type>
-			<tagName>pdfUrl</tagName>
-			<required>false</required>
-		</field>
-	</content>
+    <content type="Article" isPage="true">
+        <field>
+            <displayName>Summary</displayName>
+            <description>The topmost text section briefly describing the page content</description>
+            <type>text/html</type>
+            <tagName>summary</tagName>
+            <required>true</required>
+        </field>
+        <field>
+            <displayName>Body</displayName>
+            <description>The center main body content of the page</description>
+            <type>text/html</type>
+            <tagName>body</tagName>
+            <required>true</required>
+        </field>
+        <field>
+            <displayName>Supporting Info</displayName>
+            <description>The grey bar on the right side of the screen often containing Related Links</description>
+            <type>text/html</type>
+            <tagName>supportingInfo</tagName>
+            <required>false</required>
+        </field>
+    </content>
+    
+    <content type="Press Release" isPage="false">
+        <field>
+            <displayName>Press Release Title</displayName>
+            <description>A one line description of the press release</description>
+            <type>text</type>
+            <tagName>title</tagName>
+            <required>true</required>
+        </field>
+        <field>
+            <displayName>Date</displayName>
+            <description>The date of the press release</description>
+            <type>date</type>
+            <tagName>date</tagName>
+            <required>true</required>
+        </field>
+        <field>
+            <displayName>Summary</displayName>
+            <description>The topmost text section briefly describing the release</description>
+            <type>text/html</type>
+            <tagName>summary</tagName>
+            <required>false</required>
+            <default><![CDATA[<strong>Location - </strong> Date]]></default>
+        </field>
+        <field>
+            <displayName>Body</displayName>
+            <description>The center main body content of the page</description>
+            <type>text/html</type>
+            <tagName>body</tagName>
+            <required>true</required>
+        </field>
+        <field>
+            <displayName>PDF Url</displayName>
+            <description>The relative url to a pdf version of the press release</description>
+            <type>text</type>
+            <tagName>pdfUrl</tagName>
+            <required>false</required>
+        </field>
+    </content>
                 
 </contentItems>

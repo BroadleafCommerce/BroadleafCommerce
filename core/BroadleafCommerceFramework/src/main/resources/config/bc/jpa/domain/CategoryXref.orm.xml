@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
-	version="1.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
+    version="1.0">
 
-	<named-query name="BC_READ_CATEGORY_XREF_BY_CATEGORYID">
-		<query>
-			SELECT categoryXref FROM org.broadleafcommerce.catalog.domain.CategoryXref categoryXref
-			 WHERE CATEGORY_ID = :categoryId
-		</query>
-	</named-query>
+    <named-query name="BC_READ_CATEGORY_XREF_BY_CATEGORYID">
+        <query>
+            SELECT categoryXref FROM org.broadleafcommerce.catalog.domain.CategoryXref categoryXref
+             WHERE CATEGORY_ID = :categoryId
+        </query>
+    </named-query>
 
-	<named-query name="BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID">
-		<query>
-			SELECT categoryXref FROM org.broadleafcommerce.catalog.domain.CategoryXref categoryXref
-			 WHERE SUB_CATEGORY_ID = :subCategoryId
-		</query>
-	</named-query>
+    <named-query name="BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID">
+        <query>
+            SELECT categoryXref FROM org.broadleafcommerce.catalog.domain.CategoryXref categoryXref
+             WHERE SUB_CATEGORY_ID = :subCategoryId
+        </query>
+    </named-query>
 
-	<named-query name="BC_READ_CATEGORY_XREF_BY_IDS">
-		<query>
-			SELECT categoryXref FROM org.broadleafcommerce.catalog.domain.CategoryXref categoryXref
-			 WHERE CATEGORY_ID = :categoryId
-			   AND SUB_CATEGORY_ID = :subCategoryId
-		</query>
-	</named-query>
+    <named-query name="BC_READ_CATEGORY_XREF_BY_IDS">
+        <query>
+            SELECT categoryXref FROM org.broadleafcommerce.catalog.domain.CategoryXref categoryXref
+             WHERE CATEGORY_ID = :categoryId
+               AND SUB_CATEGORY_ID = :subCategoryId
+        </query>
+    </named-query>
 
 </entity-mappings>

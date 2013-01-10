@@ -30,41 +30,41 @@ import javax.servlet.ServletContextListener;
  */
 public class MergeContextLoaderListener implements ServletContextListener {
 
-	private MergeContextLoader contextLoader;
+    private MergeContextLoader contextLoader;
 
 
-	/**
-	 * Initialize the root web application context.
-	 */
-	public void contextInitialized(ServletContextEvent event) {
-		this.contextLoader = createContextLoader();
-		this.contextLoader.initWebApplicationContext(event.getServletContext());
-	}
+    /**
+     * Initialize the root web application context.
+     */
+    public void contextInitialized(ServletContextEvent event) {
+        this.contextLoader = createContextLoader();
+        this.contextLoader.initWebApplicationContext(event.getServletContext());
+    }
 
-	/**
-	 * Create the ContextLoader to use. Can be overridden in subclasses.
-	 * @return the new ContextLoader
-	 */
-	protected MergeContextLoader createContextLoader() {
-		return new MergeContextLoader();
-	}
+    /**
+     * Create the ContextLoader to use. Can be overridden in subclasses.
+     * @return the new ContextLoader
+     */
+    protected MergeContextLoader createContextLoader() {
+        return new MergeContextLoader();
+    }
 
-	/**
-	 * Return the ContextLoader used by this listener.
-	 * @return the current ContextLoader
-	 */
-	public MergeContextLoader getContextLoader() {
-		return this.contextLoader;
-	}
+    /**
+     * Return the ContextLoader used by this listener.
+     * @return the current ContextLoader
+     */
+    public MergeContextLoader getContextLoader() {
+        return this.contextLoader;
+    }
 
 
-	/**
-	 * Close the root web application context.
-	 */
-	public void contextDestroyed(ServletContextEvent event) {
-		if (this.contextLoader != null) {
-			this.contextLoader.closeWebApplicationContext(event.getServletContext());
-		}
-	}
+    /**
+     * Close the root web application context.
+     */
+    public void contextDestroyed(ServletContextEvent event) {
+        if (this.contextLoader != null) {
+            this.contextLoader.closeWebApplicationContext(event.getServletContext());
+        }
+    }
 
 }

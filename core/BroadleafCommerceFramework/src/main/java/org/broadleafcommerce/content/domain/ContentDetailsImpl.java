@@ -44,65 +44,65 @@ public class ContentDetailsImpl implements ContentDetails {
 
     @Id
     @Column(name = "ID")
-	@OneToOne(targetEntity = ContentImpl.class, mappedBy="ID")
-	@JoinColumn(name = "ID", unique=true, nullable=false, updatable=false)
-	@Index(name = "CONTENT_DETAILS_INDEX", columnNames={"ID"})
-	protected Integer id;
+    @OneToOne(targetEntity = ContentImpl.class, mappedBy="ID")
+    @JoinColumn(name = "ID", unique=true, nullable=false, updatable=false)
+    @Index(name = "CONTENT_DETAILS_INDEX", columnNames={"ID"})
+    protected Integer id;
     @Column(name = "CONTENT_HASH")
     protected String contentHash;
     @Lob
-	@Column(name = "XML_CONTENT")
-	protected String xmlContent;
+    @Column(name = "XML_CONTENT")
+    protected String xmlContent;
 
-	public ContentDetailsImpl() {}
+    public ContentDetailsImpl() {}
 
-	public ContentDetailsImpl(ContentDetails cnt, Integer id) {
-		this.contentHash = cnt.getContentHash();
-		this.xmlContent = cnt.getXmlContent();
-		this.id = id;
-	}
+    public ContentDetailsImpl(ContentDetails cnt, Integer id) {
+        this.contentHash = cnt.getContentHash();
+        this.xmlContent = cnt.getXmlContent();
+        this.id = id;
+    }
 
 
-	/**
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
+    /**
+     * @return the id
+     */
+    public Integer getId() {
+        return id;
+    }
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    /**
+     * @param id the id to set
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return the hash
-	 */
-	public String getContentHash() {
-		return contentHash;
-	}
+    /**
+     * @return the hash
+     */
+    public String getContentHash() {
+        return contentHash;
+    }
 
-	/**
-	 * @param contentHash the hash to set
-	 */
-	public void setContentHash(String contentHash) {
-		this.contentHash = contentHash;
-	}
+    /**
+     * @param contentHash the hash to set
+     */
+    public void setContentHash(String contentHash) {
+        this.contentHash = contentHash;
+    }
 
-	/**
-	 * @return the xmlContent
-	 */
-	public String getXmlContent() {
-		return xmlContent;
-	}
+    /**
+     * @return the xmlContent
+     */
+    public String getXmlContent() {
+        return xmlContent;
+    }
 
-	/**
-	 * @param xmlContent the xmlContent to set
-	 */
-	public void setXmlContent(String xmlContent) {
-		this.xmlContent = xmlContent;
-	}
+    /**
+     * @param xmlContent the xmlContent to set
+     */
+    public void setXmlContent(String xmlContent) {
+        this.xmlContent = xmlContent;
+    }
 
 }

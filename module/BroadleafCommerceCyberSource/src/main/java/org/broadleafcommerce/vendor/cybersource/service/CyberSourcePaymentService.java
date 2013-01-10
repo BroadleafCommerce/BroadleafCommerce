@@ -21,6 +21,6 @@ import org.broadleafcommerce.vendor.service.exception.PaymentException;
 
 public interface CyberSourcePaymentService extends CyberSourceService {
 
-	public CyberSourcePaymentResponse process(CyberSourcePaymentRequest paymentRequest) throws PaymentException;
+    public CyberSourcePaymentResponse process(CyberSourcePaymentRequest paymentRequest) throws PaymentException;
     
 }

@@ -48,9 +48,9 @@ public class CodeTypeDaoImpl implements CodeTypeDao {
 
     @SuppressWarnings("unchecked")
     public void delete(CodeType codeType) {
-    	if (!em.contains(codeType)) {
-        	codeType = (CodeType) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.util.domain.CodeType"), codeType.getId());
-    	}
+        if (!em.contains(codeType)) {
+            codeType = (CodeType) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.util.domain.CodeType"), codeType.getId());
+        }
         em.remove(codeType);
     }
 

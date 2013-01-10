@@ -32,7 +32,7 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_SEARCH_SYNONYM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SearchSynonymImpl implements SearchSynonym {
-	
+    
     @Id
     @GeneratedValue(generator = "SearchSynonymId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SearchSynonymId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchSynonymImpl", allocationSize = 50)

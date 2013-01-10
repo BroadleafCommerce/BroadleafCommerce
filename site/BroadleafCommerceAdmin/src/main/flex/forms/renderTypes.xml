@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <renderItems>
-	<render type="Article">
-		<name>Article</name>
-		<jspTemplate>article.jsp</jspTemplate>
-	</render>
+    <render type="Article">
+        <name>Article</name>
+        <jspTemplate>article.jsp</jspTemplate>
+    </render>
 
-	<render type="Article">
-		<name>Article Service</name>
-		<jspTemplate>article_service.jsp</jspTemplate>
-	</render>
+    <render type="Article">
+        <name>Article Service</name>
+        <jspTemplate>article_service.jsp</jspTemplate>
+    </render>
 
-	<render type="Article">
-		<name>Article Left Nav</name>
-		<jspTemplate>articleLeftNav.jsp</jspTemplate>
-		<renderFields>
-			<field>
-				<displayName>Left Navigation Override</displayName>
-				<description>An override of the left navigation element</description>
-				<type>text/html</type>
-				<tagName>leftNav</tagName>
-				<required>true</required>
-			</field>
-		</renderFields>
-	</render>
+    <render type="Article">
+        <name>Article Left Nav</name>
+        <jspTemplate>articleLeftNav.jsp</jspTemplate>
+        <renderFields>
+            <field>
+                <displayName>Left Navigation Override</displayName>
+                <description>An override of the left navigation element</description>
+                <type>text/html</type>
+                <tagName>leftNav</tagName>
+                <required>true</required>
+            </field>
+        </renderFields>
+    </render>
 </renderItems>
