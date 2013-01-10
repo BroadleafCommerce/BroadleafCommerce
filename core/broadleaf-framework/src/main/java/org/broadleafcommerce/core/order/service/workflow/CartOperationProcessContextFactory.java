@@ -29,9 +29,9 @@ import org.broadleafcommerce.core.workflow.WorkflowException;
  */
 public class CartOperationProcessContextFactory implements ProcessContextFactory {
 
-	/**
-	 * Creates the necessary context for cart operations
-	 */
+    /**
+     * Creates the necessary context for cart operations
+     */
     public ProcessContext createContext(Object seedData) throws WorkflowException {
         if (!(seedData instanceof CartOperationRequest)){
             throw new WorkflowException("Seed data instance is incorrect. " +

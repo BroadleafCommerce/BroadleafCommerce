@@ -26,9 +26,9 @@ import java.io.Serializable;
  */
 public class LogFactory implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static Log getLog(Class<?> logClass) {
-		return new Log();
-	}
+    public static Log getLog(Class<?> logClass) {
+        return new Log();
+    }
 }

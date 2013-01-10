@@ -35,42 +35,42 @@ import java.util.List;
  */
 public class CategoriesProcessor extends AbstractModelVariableModifierProcessor {
 
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
-	public CategoriesProcessor() {
-		super("categories");
-	}
-	
-	@Override
-	public int getPrecedence() {
-		return 10000;
-	}
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
+    public CategoriesProcessor() {
+        super("categories");
+    }
+    
+    @Override
+    public int getPrecedence() {
+        return 10000;
+    }
 
-	@Override
-	protected void modifyModelAttributes(Arguments arguments, Element element) {
-		CatalogService catalogService = ProcessorUtils.getCatalogService(arguments);
-		
-		String resultVar = element.getAttributeValue("resultVar");
-		String parentCategory = element.getAttributeValue("parentCategory");
-		String unparsedMaxResults = element.getAttributeValue("maxResults");
-		
-		// TODO: Potentially write an algorithm that will pick the minimum depth category
-		// instead of the first category in the list
-		List<Category> categories = catalogService.findCategoriesByName(parentCategory);
-		if (categories != null && categories.size() > 0) {
-			// gets child categories in order ONLY if they are in the xref table and active
-			List<Category> subcategories = categories.get(0).getChildCategories();
-			if (subcategories != null && !subcategories.isEmpty()) {
-				if (StringUtils.isNotEmpty(unparsedMaxResults)) {
-					int maxResults = Integer.parseInt(unparsedMaxResults);
-					if (subcategories.size() > maxResults) {
-						subcategories = subcategories.subList(0, maxResults);
-					}
-				}
-			}
-			
-			addToModel(arguments, resultVar, subcategories);
-		}
-	}
+    @Override
+    protected void modifyModelAttributes(Arguments arguments, Element element) {
+        CatalogService catalogService = ProcessorUtils.getCatalogService(arguments);
+        
+        String resultVar = element.getAttributeValue("resultVar");
+        String parentCategory = element.getAttributeValue("parentCategory");
+        String unparsedMaxResults = element.getAttributeValue("maxResults");
+        
+        // TODO: Potentially write an algorithm that will pick the minimum depth category
+        // instead of the first category in the list
+        List<Category> categories = catalogService.findCategoriesByName(parentCategory);
+        if (categories != null && categories.size() > 0) {
+            // gets child categories in order ONLY if they are in the xref table and active
+            List<Category> subcategories = categories.get(0).getChildCategories();
+            if (subcategories != null && !subcategories.isEmpty()) {
+                if (StringUtils.isNotEmpty(unparsedMaxResults)) {
+                    int maxResults = Integer.parseInt(unparsedMaxResults);
+                    if (subcategories.size() > maxResults) {
+                        subcategories = subcategories.subList(0, maxResults);
+                    }
+                }
+            }
+            
+            addToModel(arguments, resultVar, subcategories);
+        }
+    }
 }

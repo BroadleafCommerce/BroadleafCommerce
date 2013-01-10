@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
-	<aop:config/>
-	
-	<bean id="blCartControllerREST" class="org.broadleafcommerce.core.web.controller.cart.DefaultCartControllerRest">
+    <aop:config/>
+    
+    <bean id="blCartControllerREST" class="org.broadleafcommerce.core.web.controller.cart.DefaultCartControllerRest">
         <property name="cartView" value="shoppingCart/cartSummary"/>
         <property name="cartViewRedirect" value="false"/>
         <property name="addItemView" value="../currentCart.htm"/>
         <property name="addItemViewRedirect" value="true"/>
         <property name="removeItemView" value="currentCart.htm"/>
         <property name="removeItemViewRedirect" value="true"/>
-	</bean>
-	
-	<bean id="urlMapping"
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="order" value="0" />
-		<property name="alwaysUseFullPath" value="true" />
-		<property name="mappings">
-			<props>
-				<prop key="/basket/*">blCartControllerREST</prop>
-			</props>
-		</property>
-	</bean>
-	
-	<bean id="beanNameUrlMapping"
-		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
-		<property name="order" value="1" />
-	</bean>
+    </bean>
+    
+    <bean id="urlMapping"
+        class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order" value="0" />
+        <property name="alwaysUseFullPath" value="true" />
+        <property name="mappings">
+            <props>
+                <prop key="/basket/*">blCartControllerREST</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="beanNameUrlMapping"
+        class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+        <property name="order" value="1" />
+    </bean>
 
-	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver"/> 
-	
-	<bean class="org.broadleafcommerce.core.web.WrappingViewResolver">
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver"/> 
+    
+    <bean class="org.broadleafcommerce.core.web.WrappingViewResolver">
       <constructor-arg>
          <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
-	       <constructor-arg>
-	          <bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
-	       </constructor-arg>
-	    </bean>
+           <constructor-arg>
+              <bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
+           </constructor-arg>
+        </bean>
       </constructor-arg>
-	</bean>
-	
+    </bean>
+    
 </beans>

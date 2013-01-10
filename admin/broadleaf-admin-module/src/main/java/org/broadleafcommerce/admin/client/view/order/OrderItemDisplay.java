@@ -28,12 +28,12 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  */
 public interface OrderItemDisplay extends DynamicFormDisplay {
 
-	public ToolStripButton getAddButton();
-	
-	public ListGrid getGrid();
-	
-	public ToolStripButton getRemoveButton();
-	
-	public ListGrid getExpansionGrid();
-	
+    public ToolStripButton getAddButton();
+    
+    public ListGrid getGrid();
+    
+    public ToolStripButton getRemoveButton();
+    
+    public ListGrid getExpansionGrid();
+    
 }

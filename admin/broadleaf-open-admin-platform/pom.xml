@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>admin</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>2.0.6-SNAPSHOT</version>
-	</parent>
-	<artifactId>broadleaf-open-admin-platform</artifactId>
-	<packaging>jar</packaging>
-	<name>BroadleafCommerce Open Admin Platform</name>
-	<description>BroadleafCommerce Open Admin Platform</description>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>admin</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>2.0.6-SNAPSHOT</version>
+    </parent>
+    <artifactId>broadleaf-open-admin-platform</artifactId>
+    <packaging>jar</packaging>
+    <name>BroadleafCommerce Open Admin Platform</name>
+    <description>BroadleafCommerce Open Admin Platform</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
         <license>
@@ -47,22 +47,22 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<build>
-		<plugins>
-			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-source-plugin</artifactId>
-		        <version>2.1.2</version>
-		        <executions>
-		          <execution>
-		            <id>attach-sources</id>
-		            <phase>verify</phase>
-		            <goals>
-		              <goal>jar-no-fork</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-		    </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                  <execution>
+                    <id>attach-sources</id>
+                    <phase>verify</phase>
+                    <goals>
+                      <goal>jar-no-fork</goal>
+                    </goals>
+                  </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -80,7 +80,7 @@
                     </execution>
                 </executions>
             </plugin>
-	    </plugins>
+        </plugins>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -91,43 +91,43 @@
             </resource>
         </resources>
         <pluginManagement>
-        	<plugins>
-        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        		<plugin>
-        			<groupId>org.eclipse.m2e</groupId>
-        			<artifactId>lifecycle-mapping</artifactId>
-        			<version>1.0.0</version>
-        			<configuration>
-        				<lifecycleMappingMetadata>
-        					<pluginExecutions>
-        						<pluginExecution>
-        							<pluginExecutionFilter>
-        								<groupId>
-        									org.codehaus.mojo
-        								</groupId>
-        								<artifactId>
-        									build-helper-maven-plugin
-        								</artifactId>
-        								<versionRange>
-        									[1.7,)
-        								</versionRange>
-        								<goals>
-        									<goal>
-        										timestamp-property
-        									</goal>
-        								</goals>
-        							</pluginExecutionFilter>
-        							<action>
-        								<ignore />
-        							</action>
-        						</pluginExecution>
-        					</pluginExecutions>
-        				</lifecycleMappingMetadata>
-        			</configuration>
-        		</plugin>
-        	</plugins>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            build-helper-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.7,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>
+                                                timestamp-property
+                                            </goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
         </pluginManagement>
-	</build>
+    </build>
     <profiles>
         <profile>
             <id>blc-development</id>
@@ -151,23 +151,23 @@
             </build>
         </profile>
     </profiles>
-	<dependencies>
+    <dependencies>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
         </dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gwt-math</groupId>
-			<artifactId>gwt-math</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gwt-math</groupId>
+            <artifactId>gwt-math</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
@@ -176,7 +176,7 @@
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>com.smartgwt</groupId>
             <artifactId>smartgwt</artifactId>
         </dependency>
@@ -185,37 +185,37 @@
             <artifactId>smartgwt-skins</artifactId>
         </dependency>
         <dependency>
-			<groupId>com.anasoft.os</groupId>
-			<artifactId>daofusion-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.anasoft.os</groupId>
-			<artifactId>daofusion-core</artifactId>
-			<classifier>sources</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.gwtincubator</groupId>
+            <groupId>com.anasoft.os</groupId>
+            <artifactId>daofusion-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.anasoft.os</groupId>
+            <artifactId>daofusion-core</artifactId>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.gwtincubator</groupId>
             <artifactId>gwt-incubator-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.gwt-widget</groupId>
-			<artifactId>gwt-sl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.transmorph</groupId>
-			<artifactId>transmorph</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.gwt-widget</groupId>
+            <artifactId>gwt-sl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.transmorph</groupId>
+            <artifactId>transmorph</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+        </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
         </dependency>
-	</dependencies>
+    </dependencies>
 </project>

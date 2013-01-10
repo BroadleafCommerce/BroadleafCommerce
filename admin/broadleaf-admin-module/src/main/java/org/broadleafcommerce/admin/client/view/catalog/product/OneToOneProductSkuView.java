@@ -46,37 +46,37 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public class OneToOneProductSkuView extends HLayout implements Instantiable, OneToOneProductSkuDisplay {
-	
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
-	protected GridStructureView allCategoriesDisplay;
-	protected ExpandableGridStructureView productOptionsDisplay;
-	protected ToolStripButton generateSkusButton;
-	protected SubItemView skusDisplay;
-	protected GridStructureView bundleItemsDisplay;
-	protected ToolStripButton cloneProductButton;
-	protected ToolStripButton exportProductsButton;
     
-	public OneToOneProductSkuView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	@Override
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected GridStructureView allCategoriesDisplay;
+    protected ExpandableGridStructureView productOptionsDisplay;
+    protected ToolStripButton generateSkusButton;
+    protected SubItemView skusDisplay;
+    protected GridStructureView bundleItemsDisplay;
+    protected ToolStripButton cloneProductButton;
+    protected ToolStripButton exportProductsButton;
+    
+    public OneToOneProductSkuView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("productSkuLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("productSkuLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productsListTitle"), entityDataSource);
-		cloneProductButton = new ToolStripButton(BLCMain.getMessageManager().getString("cloneButtonTitle"));
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productsListTitle"), entityDataSource);
+        cloneProductButton = new ToolStripButton(BLCMain.getMessageManager().getString("cloneButtonTitle"));
         cloneProductButton.disable();
-		exportProductsButton = new ToolStripButton(BLCMain.getMessageManager().getString("exportProductsButtonTitle"));
-		listDisplay.getToolBar().addButton(cloneProductButton);
-		listDisplay.getToolBar().addButton(exportProductsButton);
-		leftVerticalLayout.addMember(listDisplay);
+        exportProductsButton = new ToolStripButton(BLCMain.getMessageManager().getString("exportProductsButtonTitle"));
+        listDisplay.getToolBar().addButton(cloneProductButton);
+        listDisplay.getToolBar().addButton(exportProductsButton);
+        leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet(); 
         topTabSet.setID("productSkuTopTabSet");
@@ -162,56 +162,56 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	@Override
+    @Override
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	@Override
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	@Override
+        return dynamicFormDisplay;
+    }
+    
+    @Override
     public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+        return listDisplay;
+    }
 
-	@Override
+    @Override
     public GridStructureDisplay getAllCategoriesDisplay() {
-		return allCategoriesDisplay;
-	}
+        return allCategoriesDisplay;
+    }
 
-	@Override
+    @Override
     public ExpandableGridStructureDisplay getProductOptionsDisplay() {
-	    return productOptionsDisplay;
-	}
-	
-	@Override
+        return productOptionsDisplay;
+    }
+    
+    @Override
     public ToolStripButton getGenerateSkusButton() {
-	    return generateSkusButton;
-	}
-	
-	@Override
+        return generateSkusButton;
+    }
+    
+    @Override
     public SubItemDisplay getSkusDisplay() {
         return skusDisplay;
     }
-	
-	@Override
+    
+    @Override
     public GridStructureDisplay getBundleItemsDisplay() {
-	    return bundleItemsDisplay;
-	}
-	
-	@Override
-	public ToolStripButton getCloneProductButton() {
-	    return cloneProductButton;
-	}
-	
-	@Override
-	public ToolStripButton getExportProductsButton() {
-	    return exportProductsButton;
-	}
+        return bundleItemsDisplay;
+    }
+    
+    @Override
+    public ToolStripButton getCloneProductButton() {
+        return cloneProductButton;
+    }
+    
+    @Override
+    public ToolStripButton getExportProductsButton() {
+        return exportProductsButton;
+    }
 
 }

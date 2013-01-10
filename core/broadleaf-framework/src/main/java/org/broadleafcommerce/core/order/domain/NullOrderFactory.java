@@ -23,7 +23,7 @@ package org.broadleafcommerce.core.order.domain;
  * @author apazzolini
  */
 public interface NullOrderFactory {
-	
-	public Order getNullOrder();
-	
+    
+    public Order getNullOrder();
+    
 }

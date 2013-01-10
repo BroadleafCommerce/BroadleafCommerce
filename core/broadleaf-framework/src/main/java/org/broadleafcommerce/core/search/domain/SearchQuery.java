@@ -18,18 +18,18 @@ package org.broadleafcommerce.core.search.domain;
 
 public class SearchQuery {
 
-	private String queryString;
-	
-	public SearchQuery() { }
-	public SearchQuery(String queryString) {
-		setQueryString(queryString);
-	}
+    private String queryString;
+    
+    public SearchQuery() { }
+    public SearchQuery(String queryString) {
+        setQueryString(queryString);
+    }
 
-	public String getQueryString() {
-		return queryString;
-	}
+    public String getQueryString() {
+        return queryString;
+    }
 
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
 }

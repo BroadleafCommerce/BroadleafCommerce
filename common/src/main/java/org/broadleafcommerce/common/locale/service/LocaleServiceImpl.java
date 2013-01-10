@@ -66,7 +66,7 @@ public class LocaleServiceImpl implements LocaleService {
     
     @Override
     public Locale save(Locale locale) {
-    	return localeDao.save(locale);
+        return localeDao.save(locale);
     }
     
 }

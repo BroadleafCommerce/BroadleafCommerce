@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface PromotableOrderItem {
-	 
-	 /**
+     
+     /**
      * Adds the adjustment to the order item's adjustment list and discounts the
      * order item's adjustment price by the value of the adjustment.
      * @param orderItemAdjustment
@@ -74,58 +74,58 @@ public interface PromotableOrderItem {
     public int getQuantityAvailableToBeUsedAsTarget(Offer promotion);
     
     public void addPromotionQualifier(PromotableCandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity);
-	
-	public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, Set<OfferItemCriteria> itemCriteria, int quantity);
-	
-	public void clearAllNonFinalizedQuantities();
-	
-	public void clearAllDiscount();
-	
-	public void clearAllQualifiers();
-	
-	public void finalizeQuantities();
-	
-	public List<PromotableOrderItem> split();
-	
-	public DiscreteOrderItem getDelegate();
+    
+    public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, Set<OfferItemCriteria> itemCriteria, int quantity);
+    
+    public void clearAllNonFinalizedQuantities();
+    
+    public void clearAllDiscount();
+    
+    public void clearAllQualifiers();
+    
+    public void finalizeQuantities();
+    
+    public List<PromotableOrderItem> split();
+    
+    public DiscreteOrderItem getDelegate();
 
     public void setDelegate(DiscreteOrderItem discreteOrderItem);
-	
-	public void reset();
-	
-	public PromotionQualifier lookupOrCreatePromotionQualifier(PromotableCandidateItemOffer candidatePromotion);
-	
-	public PromotionDiscount lookupOrCreatePromotionDiscount(PromotableCandidateItemOffer candidatePromotion);
-	
-	public void clearAllNonFinalizedDiscounts();
-	
-	public void clearAllNonFinalizedQualifiers();
-	
-	public int getPromotionDiscountMismatchQuantity();
-	
-	public void computeAdjustmentPrice();
-	
-	public int removeAllAdjustments();
-	
-	public void assignFinalPrice();
-	
-	public Money getCurrentPrice();
-	
-	public int getQuantity();
-	
-	public void setQuantity(int quantity);
-	
-	public Sku getSku();
-	
-	public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
-	
-	public Money getSalePrice();
-	
-	public Money getRetailPrice();
-	
-	public void addCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer);
-	
-	public PromotableOrderItem clone();
+    
+    public void reset();
+    
+    public PromotionQualifier lookupOrCreatePromotionQualifier(PromotableCandidateItemOffer candidatePromotion);
+    
+    public PromotionDiscount lookupOrCreatePromotionDiscount(PromotableCandidateItemOffer candidatePromotion);
+    
+    public void clearAllNonFinalizedDiscounts();
+    
+    public void clearAllNonFinalizedQualifiers();
+    
+    public int getPromotionDiscountMismatchQuantity();
+    
+    public void computeAdjustmentPrice();
+    
+    public int removeAllAdjustments();
+    
+    public void assignFinalPrice();
+    
+    public Money getCurrentPrice();
+    
+    public int getQuantity();
+    
+    public void setQuantity(int quantity);
+    
+    public Sku getSku();
+    
+    public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
+    
+    public Money getSalePrice();
+    
+    public Money getRetailPrice();
+    
+    public void addCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer);
+    
+    public PromotableOrderItem clone();
 
     /**
      * Removes all zero based adjustments and sets the adjusted price on the delegate.

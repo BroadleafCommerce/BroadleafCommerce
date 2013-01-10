@@ -25,26 +25,26 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspective
  */
 public class AdornedTargetList implements PersistencePerspectiveItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String collectionFieldName;
-	private String linkedObjectPath;
-	private String targetObjectPath;
-	private String adornedTargetEntityClassname;
+    private String collectionFieldName;
+    private String linkedObjectPath;
+    private String targetObjectPath;
+    private String adornedTargetEntityClassname;
     private String adornedTargetEntityPolymorphicType;
-	private String sortField;
-	private Boolean sortAscending;
-	private String linkedIdProperty;
-	private String targetIdProperty;
-	private Boolean inverse = Boolean.FALSE;
-	
-	public AdornedTargetList() {
-		//do nothing
-	}
-	
-	public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname) {
-		this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, null);
-	}
+    private String sortField;
+    private Boolean sortAscending;
+    private String linkedIdProperty;
+    private String targetIdProperty;
+    private Boolean inverse = Boolean.FALSE;
+    
+    public AdornedTargetList() {
+        //do nothing
+    }
+    
+    public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname) {
+        this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, null);
+    }
     
     public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType) {
         this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, adornedTargetEntityPolymorphicType, null, null);
@@ -53,92 +53,92 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
     public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String sortField, Boolean sortAscending) {
         this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, sortField, sortAscending);
     }
-	
-	public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType, String sortField, Boolean sortAscending) {
-		this.collectionFieldName = collectionFieldName;
-		this.linkedObjectPath = linkedObjectPath;
-		this.targetObjectPath = targetObjectPath;
-		this.adornedTargetEntityClassname = adornedTargetEntityClassname;
+    
+    public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType, String sortField, Boolean sortAscending) {
+        this.collectionFieldName = collectionFieldName;
+        this.linkedObjectPath = linkedObjectPath;
+        this.targetObjectPath = targetObjectPath;
+        this.adornedTargetEntityClassname = adornedTargetEntityClassname;
         this.adornedTargetEntityPolymorphicType = adornedTargetEntityPolymorphicType;
-		this.sortField = sortField;
-		this.sortAscending = sortAscending;
-		this.linkedIdProperty = linkedIdProperty;
-		this.targetIdProperty = targetIdProperty;
-	}
-	
-	public String getCollectionFieldName() {
-		return collectionFieldName;
-	}
-	
-	public void setCollectionFieldName(String manyToField) {
-		this.collectionFieldName = manyToField;
-	}
+        this.sortField = sortField;
+        this.sortAscending = sortAscending;
+        this.linkedIdProperty = linkedIdProperty;
+        this.targetIdProperty = targetIdProperty;
+    }
+    
+    public String getCollectionFieldName() {
+        return collectionFieldName;
+    }
+    
+    public void setCollectionFieldName(String manyToField) {
+        this.collectionFieldName = manyToField;
+    }
 
-	public String getLinkedObjectPath() {
-		return linkedObjectPath;
-	}
+    public String getLinkedObjectPath() {
+        return linkedObjectPath;
+    }
 
-	public void setLinkedObjectPath(String linkedPropertyPath) {
-		this.linkedObjectPath = linkedPropertyPath;
-	}
+    public void setLinkedObjectPath(String linkedPropertyPath) {
+        this.linkedObjectPath = linkedPropertyPath;
+    }
 
-	public String getTargetObjectPath() {
-		return targetObjectPath;
-	}
+    public String getTargetObjectPath() {
+        return targetObjectPath;
+    }
 
-	public void setTargetObjectPath(String targetObjectPath) {
-		this.targetObjectPath = targetObjectPath;
-	}
+    public void setTargetObjectPath(String targetObjectPath) {
+        this.targetObjectPath = targetObjectPath;
+    }
 
-	public String getAdornedTargetEntityClassname() {
-		return adornedTargetEntityClassname;
-	}
+    public String getAdornedTargetEntityClassname() {
+        return adornedTargetEntityClassname;
+    }
 
-	public void setAdornedTargetEntityClassname(String adornedTargetEntityClassname) {
-		this.adornedTargetEntityClassname = adornedTargetEntityClassname;
-	}
+    public void setAdornedTargetEntityClassname(String adornedTargetEntityClassname) {
+        this.adornedTargetEntityClassname = adornedTargetEntityClassname;
+    }
 
-	public String getSortField() {
-		return sortField;
-	}
+    public String getSortField() {
+        return sortField;
+    }
 
-	public void setSortField(String sortField) {
-		this.sortField = sortField;
-	}
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
 
-	public Boolean getSortAscending() {
-		return sortAscending;
-	}
+    public Boolean getSortAscending() {
+        return sortAscending;
+    }
 
-	public void setSortAscending(Boolean sortAscending) {
-		this.sortAscending = sortAscending;
-	}
+    public void setSortAscending(Boolean sortAscending) {
+        this.sortAscending = sortAscending;
+    }
 
-	public String getLinkedIdProperty() {
-		return linkedIdProperty;
-	}
+    public String getLinkedIdProperty() {
+        return linkedIdProperty;
+    }
 
-	public void setLinkedIdProperty(String linkedIdProperty) {
-		this.linkedIdProperty = linkedIdProperty;
-	}
+    public void setLinkedIdProperty(String linkedIdProperty) {
+        this.linkedIdProperty = linkedIdProperty;
+    }
 
-	public String getTargetIdProperty() {
-		return targetIdProperty;
-	}
+    public String getTargetIdProperty() {
+        return targetIdProperty;
+    }
 
-	public void setTargetIdProperty(String targetIdProperty) {
-		this.targetIdProperty = targetIdProperty;
-	}
+    public void setTargetIdProperty(String targetIdProperty) {
+        this.targetIdProperty = targetIdProperty;
+    }
 
-	public Boolean getInverse() {
-		return inverse;
-	}
+    public Boolean getInverse() {
+        return inverse;
+    }
 
-	public void setInverse(Boolean inverse) {
-		this.inverse = inverse;
-	}
-	
-	public void accept(PersistencePerspectiveItemVisitor visitor) {
+    public void setInverse(Boolean inverse) {
+        this.inverse = inverse;
+    }
+    
+    public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
     }
 

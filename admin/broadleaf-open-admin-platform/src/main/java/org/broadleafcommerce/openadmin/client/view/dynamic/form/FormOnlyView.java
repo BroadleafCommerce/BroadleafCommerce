@@ -32,20 +32,20 @@ import com.smartgwt.client.widgets.layout.VLayout;
  *
  */
 public class FormOnlyView extends VLayout implements FormOnlyDisplay {
-	
-	protected DynamicForm form;
-	
-	public FormOnlyView() {
-		this(null);
-	}
+    
+    protected DynamicForm form;
+    
+    public FormOnlyView() {
+        this(null);
+    }
 
     public FormOnlyView(DataSource dataSource) {
         this(dataSource, null, null, null);
     }
-	
-	public FormOnlyView(DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId) {
-		super();
-		
+    
+    public FormOnlyView(DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId) {
+        super();
+        
         setWidth100();
         setBackgroundColor("#eaeaea");
         form = new DynamicForm(); 
@@ -59,7 +59,7 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form.disable();
         form.setBackgroundColor("#eaeaea");
         if (dataSource != null) {
-        	buildFields(dataSource, showDisabedState==null?true:showDisabedState, canEdit==null?false:canEdit, showId==null?false:showId, null);
+            buildFields(dataSource, showDisabedState==null?true:showDisabedState, canEdit==null?false:canEdit, showId==null?false:showId, null);
         }
         addMember(form);
         setOverflow(Overflow.AUTO);
@@ -77,16 +77,16 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
                 }
             }
         });
-	}
-	
-	@Override
+    }
+    
+    @Override
     public void buildFields(final DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId, Record currentRecord) {
-		FormBuilder.buildForm(dataSource, form, showDisabedState, canEdit, showId, currentRecord);
-	}
+        FormBuilder.buildForm(dataSource, form, showDisabedState, canEdit, showId, currentRecord);
+    }
 
-	@Override
+    @Override
     public DynamicForm getForm() {
-		return form;
-	}
-	
+        return form;
+    }
+    
 }

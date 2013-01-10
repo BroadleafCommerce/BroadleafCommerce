@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
-	<!-- http://code.google.com/webtoolkit/doc/latest/DevGuideOrganizingProjects.html#DevGuideModuleXml -->
-	<inherits name="com.google.gwt.user.User" />
-	<inherits name="com.smartgwt.debug.SmartGwtDebug" />
-	<inherits name="com.smartgwt.tools.SmartGwtTools" />
-	<super-source path="override" />
-	<inherits name="com.anasoft.os.daofusion.cto.daofusion" />
-	<inherits name="com.gwtincubator.security.IncubatorSecurity" />
-	<inherits name="com.google.gwt.i18n.I18N" />
+    <!-- http://code.google.com/webtoolkit/doc/latest/DevGuideOrganizingProjects.html#DevGuideModuleXml -->
+    <inherits name="com.google.gwt.user.User" />
+    <inherits name="com.smartgwt.debug.SmartGwtDebug" />
+    <inherits name="com.smartgwt.tools.SmartGwtTools" />
+    <super-source path="override" />
+    <inherits name="com.anasoft.os.daofusion.cto.daofusion" />
+    <inherits name="com.gwtincubator.security.IncubatorSecurity" />
+    <inherits name="com.google.gwt.i18n.I18N" />
     <inherits name="org.broadleafcommerce.common.common"/>
 
-	<source path="client" />
-	<generate-with class="org.broadleafcommerce.openadmin.generator.FactoryGenerator">
-		<when-type-assignable
-			class="org.broadleafcommerce.openadmin.client.reflection.FactoryWrapper" />
-	</generate-with>
-	
-	<entry-point class="org.broadleafcommerce.openadmin.client.BLCMain" />
+    <source path="client" />
+    <generate-with class="org.broadleafcommerce.openadmin.generator.FactoryGenerator">
+        <when-type-assignable
+            class="org.broadleafcommerce.openadmin.client.reflection.FactoryWrapper" />
+    </generate-with>
+    
+    <entry-point class="org.broadleafcommerce.openadmin.client.BLCMain" />
 </module>

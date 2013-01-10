@@ -49,7 +49,7 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
 
     @ManyToOne(targetEntity = AdminPermissionImpl.class)
     @JoinColumn(name = "ADMIN_PERMISSION_ID")
-	protected AdminPermission adminPermission;
+    protected AdminPermission adminPermission;
 
     @Override
     public Long getId() {

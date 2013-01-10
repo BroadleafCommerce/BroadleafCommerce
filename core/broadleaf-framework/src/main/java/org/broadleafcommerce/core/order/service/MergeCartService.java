@@ -55,7 +55,7 @@ public interface MergeCartService {
      * @throws PricingException
      * @throws RemoveFromCartException 
      */
-	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException, RemoveFromCartException;
+    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException, RemoveFromCartException;
     
     /**
      * Reconstruct the cart using previous stored state taking into
@@ -65,10 +65,10 @@ public interface MergeCartService {
      * @return the response containing the cart and any items removed from the cart
      * @throws RemoveFromCartException
      */
-	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException, RemoveFromCartException;
-	
-	/**
-	 * 
+    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException, RemoveFromCartException;
+    
+    /**
+     * 
      * Delegates to reconstructCart(Customer, boolean) with priceOrder set to true
      * 
      * Reconstruct the cart using previous stored state taking into
@@ -76,9 +76,9 @@ public interface MergeCartService {
      * 
      * @param customer the customer whose cart is to be reconstructed
      * @return the response containing the cart and any items removed from the cart
-	 * @throws PricingException
-	 * @throws RemoveFromCartException 
-	 */
-	public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException, RemoveFromCartException;
+     * @throws PricingException
+     * @throws RemoveFromCartException 
+     */
+    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException, RemoveFromCartException;
 
 }

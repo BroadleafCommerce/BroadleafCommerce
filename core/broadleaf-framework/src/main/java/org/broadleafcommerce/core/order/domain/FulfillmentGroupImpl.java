@@ -246,9 +246,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     
     @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
-    	List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
+        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
-        	OrderItem orderItem = fgItem.getOrderItem();
+            OrderItem orderItem = fgItem.getOrderItem();
             if (orderItem instanceof BundleOrderItemImpl) {
                 BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
@@ -361,9 +361,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
-    	Money adjustmentsValue = new Money(0);
+        Money adjustmentsValue = new Money(0);
         for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
-        	adjustmentsValue = adjustmentsValue.add(adjustment.getValue());
+            adjustmentsValue = adjustmentsValue.add(adjustment.getValue());
         }
         return adjustmentsValue;
     }
@@ -425,35 +425,35 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     
     @Override
     public Money getTotalItemTax() {
-		return totalItemTax == null ? null : new Money(totalItemTax);
-	}
+        return totalItemTax == null ? null : new Money(totalItemTax);
+    }
 
-	@Override
+    @Override
     public void setTotalItemTax(Money totalItemTax) {
-		this.totalItemTax = Money.toAmount(totalItemTax);
-	}
+        this.totalItemTax = Money.toAmount(totalItemTax);
+    }
 
-	@Override
+    @Override
     public Money getTotalFeeTax() {
-		return totalFeeTax == null ? null : new Money(totalFeeTax);
-	}
+        return totalFeeTax == null ? null : new Money(totalFeeTax);
+    }
 
-	@Override
+    @Override
     public void setTotalFeeTax(Money totalFeeTax) {
-		this.totalFeeTax = Money.toAmount(totalFeeTax);
-	}
+        this.totalFeeTax = Money.toAmount(totalFeeTax);
+    }
 
-	@Override
+    @Override
     public Money getTotalFulfillmentGroupTax() {
-		return totalFulfillmentGroupTax == null ? null : new Money(totalFulfillmentGroupTax);
-	}
+        return totalFulfillmentGroupTax == null ? null : new Money(totalFulfillmentGroupTax);
+    }
 
-	@Override
+    @Override
     public void setTotalFulfillmentGroupTax(Money totalFulfillmentGroupTax) {
-		this.totalFulfillmentGroupTax = Money.toAmount(totalFulfillmentGroupTax);
-	}
+        this.totalFulfillmentGroupTax = Money.toAmount(totalFulfillmentGroupTax);
+    }
 
-	@Override
+    @Override
     public String getDeliveryInstruction() {
         return deliveryInstruction;
     }
@@ -540,27 +540,27 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Boolean isShippingPriceTaxable() {
-		return isShippingPriceTaxable;
-	}
+        return isShippingPriceTaxable;
+    }
 
-	@Override
+    @Override
     public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
-		this.isShippingPriceTaxable = isShippingPriceTaxable;
-	}
+        this.isShippingPriceTaxable = isShippingPriceTaxable;
+    }
 
-	@Override
-	@Deprecated
+    @Override
+    @Deprecated
     public String getService() {
-		return service;
-	}
+        return service;
+    }
 
-	@Override
-	@Deprecated
+    @Override
+    @Deprecated
     public void setService(String service) {
-		this.service = service;
-	}
+        this.service = service;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

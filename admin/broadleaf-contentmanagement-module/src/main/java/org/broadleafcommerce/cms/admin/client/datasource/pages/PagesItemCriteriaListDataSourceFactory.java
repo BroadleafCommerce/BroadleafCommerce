@@ -38,25 +38,25 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  *
  */
 public class PagesItemCriteriaListDataSourceFactory implements DataSourceFactory {
-	
-	public static final String foreignKeyName = "page";
-	public static DynamicEntityDataSource dataSource = null;
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.PAGEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "fullUrl"));
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new StructuredContentItemCriteriaListModule(CeilingEntities.PAGEITEMCRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new DynamicEntityDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    
+    public static final String foreignKeyName = "page";
+    public static DynamicEntityDataSource dataSource = null;
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.PAGEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "fullUrl"));
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new StructuredContentItemCriteriaListModule(CeilingEntities.PAGEITEMCRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new DynamicEntityDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

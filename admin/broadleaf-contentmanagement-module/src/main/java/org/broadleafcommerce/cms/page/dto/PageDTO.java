@@ -116,13 +116,13 @@ public class PageDTO implements Serializable {
         this.itemCriteriaDTOList = itemCriteriaDTOList;
     }
 
-	public Integer getPriority() {
-		return priority;
-	}
+    public Integer getPriority() {
+        return priority;
+    }
 
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}   
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }   
     
 }
 

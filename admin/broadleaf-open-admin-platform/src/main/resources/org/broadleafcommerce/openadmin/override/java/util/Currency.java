@@ -27,19 +27,19 @@ import java.io.Serializable;
  */
 public class Currency implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	public static Currency getInstance(String currencyCode) {
-		Currency currency = new Currency();
-		currency.currencyCode = currencyCode;
-		return currency;
-	}
-	
-	private String currencyCode;
+    private static final long serialVersionUID = 1L;
+    
+    public static Currency getInstance(String currencyCode) {
+        Currency currency = new Currency();
+        currency.currencyCode = currencyCode;
+        return currency;
+    }
+    
+    private String currencyCode;
 
     @XmlValue
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
 }

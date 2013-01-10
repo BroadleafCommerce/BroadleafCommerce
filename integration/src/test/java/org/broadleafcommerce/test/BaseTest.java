@@ -32,27 +32,27 @@ import java.lang.management.ManagementFactory;
 @TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})
 public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 
-	private static MergeClassPathXMLApplicationContext mergeContext = null;
-	
-	public static MergeClassPathXMLApplicationContext getContext() {
-			
-		try {
-			if (mergeContext == null) {
-				String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-				
-				String[] additionalContexts = (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) 
-						? new String[]{"bl-applicationContext-test-legacy.xml"} 
-						: new String[]{};
-				
-				mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return mergeContext;
-	}
-	
-	@PersistenceContext(unitName = "blPU")
+    private static MergeClassPathXMLApplicationContext mergeContext = null;
+    
+    public static MergeClassPathXMLApplicationContext getContext() {
+            
+        try {
+            if (mergeContext == null) {
+                String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
+                
+                String[] additionalContexts = (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) 
+                        ? new String[]{"bl-applicationContext-test-legacy.xml"} 
+                        : new String[]{};
+                
+                mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return mergeContext;
+    }
+    
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
 }

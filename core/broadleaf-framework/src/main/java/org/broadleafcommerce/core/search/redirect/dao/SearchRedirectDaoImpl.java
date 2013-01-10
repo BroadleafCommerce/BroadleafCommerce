@@ -32,11 +32,11 @@ import org.springframework.stereotype.Repository;
 @Repository("blSearchRedirectDao")
 public class SearchRedirectDaoImpl implements SearchRedirectDao {
 
-	@PersistenceContext(unitName = "blPU")
-	protected EntityManager em;
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
 
-	@Override
-	public SearchRedirect findSearchRedirectBySearchTerm(String searchTerm) {
+    @Override
+    public SearchRedirect findSearchRedirectBySearchTerm(String searchTerm) {
         Query query;
         query = em.createNamedQuery("BC_READ_SEARCH_URL");
         query.setParameter("searchTerm", searchTerm);
@@ -49,6 +49,6 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
         } else {
             return null;
         }
-	}
+    }
 
 }

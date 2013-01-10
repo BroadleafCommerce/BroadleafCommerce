@@ -103,12 +103,12 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
                 }
 
                 for (Product p: productList) {
-                	ProductWrapper productWrapper;
-                	if (p instanceof ProductBundle) {
-                		productWrapper = (ProductWrapper) context.getBean(ProductBundleWrapper.class.getName());
-                	} else {
-                		productWrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
-                	}
+                    ProductWrapper productWrapper;
+                    if (p instanceof ProductBundle) {
+                        productWrapper = (ProductWrapper) context.getBean(ProductBundleWrapper.class.getName());
+                    } else {
+                        productWrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+                    }
                     productWrapper.wrap(p, request);
                     products.add(productWrapper);
                 }

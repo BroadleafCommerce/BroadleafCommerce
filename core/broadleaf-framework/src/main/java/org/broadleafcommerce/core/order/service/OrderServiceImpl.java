@@ -64,11 +64,11 @@ import java.util.List;
 @ManagedResource(objectName="org.broadleafcommerce:name=OrderService", description="Order Service", currencyTimeLimit=15)
 public class OrderServiceImpl implements OrderService {
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
-	
+    
     /* DAOs */
-	@Resource(name = "blPaymentInfoDao")
+    @Resource(name = "blPaymentInfoDao")
     protected PaymentInfoDao paymentInfoDao;
-	
+    
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
     
@@ -113,12 +113,12 @@ public class OrderServiceImpl implements OrderService {
     protected boolean deleteEmptyNamedOrders = true;
     protected boolean automaticallyMergeLikeItems = true; 
 
-	@Override
-	public Order createNewCartForCustomer(Customer customer) {
+    @Override
+    public Order createNewCartForCustomer(Customer customer) {
         return orderDao.createNewCartForCustomer(customer);
-	}
-	
-	@Override
+    }
+    
+    @Override
     @Transactional("blTransactionManager")
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
@@ -128,47 +128,47 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.save(namedOrder); // No need to price here
     }
 
-	@Override
+    @Override
     public Order findNamedOrderForCustomer(String name, Customer customer) {
         return orderDao.readNamedOrderForCustomer(customer, name);
     }
 
-	@Override
-	public Order findOrderById(Long orderId) {
+    @Override
+    public Order findOrderById(Long orderId) {
         return orderDao.readOrderById(orderId);
-	}
+    }
 
-	@Override
-	public Order getNullOrder() {
-    	return nullOrderFactory.getNullOrder();
-	}
+    @Override
+    public Order getNullOrder() {
+        return nullOrderFactory.getNullOrder();
+    }
 
-	@Override
-	public Order findCartForCustomer(Customer customer) {
+    @Override
+    public Order findCartForCustomer(Customer customer) {
         return orderDao.readCartForCustomer(customer);
-	}
+    }
 
-	@Override
-	public List<Order> findOrdersForCustomer(Customer customer) {
+    @Override
+    public List<Order> findOrdersForCustomer(Customer customer) {
         return orderDao.readOrdersForCustomer(customer.getId());
-	}
+    }
 
-	@Override
-	public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status) {
+    @Override
+    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status) {
         return orderDao.readOrdersForCustomer(customer, status);
-	}
+    }
 
-	@Override
-	public Order findOrderByOrderNumber(String orderNumber) {
+    @Override
+    public Order findOrderByOrderNumber(String orderNumber) {
         return orderDao.readOrderByOrderNumber(orderNumber);
-	}
+    }
 
-	@Override
-	public List<PaymentInfo> findPaymentInfosForOrder(Order order) {
+    @Override
+    public List<PaymentInfo> findPaymentInfosForOrder(Order order) {
         return paymentInfoDao.readPaymentInfosForOrder(order);
-	}
-	
-	@Override
+    }
+    
+    @Override
     @Transactional("blTransactionManager")
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo) {
         payment.setOrder(order);
@@ -183,30 +183,30 @@ public class OrderServiceImpl implements OrderService {
         return order.getPaymentInfos().get(paymentIndex);
     }
 
-	@Override
+    @Override
     @Transactional(value = "blTransactionManager")
-	public Order save(Order order, Boolean priceOrder) throws PricingException {
+    public Order save(Order order, Boolean priceOrder) throws PricingException {
         if (priceOrder) {
             order = pricingService.executePricing(order);
         }
         return persist(order);
-	}
-	
-	// This method exists to provide OrderService methods the ability to save an order
-	// without having to worry about a PricingException being thrown.
-	protected Order persist(Order order) {
+    }
+    
+    // This method exists to provide OrderService methods the ability to save an order
+    // without having to worry about a PricingException being thrown.
+    protected Order persist(Order order) {
         return orderDao.save(order);
-	}
+    }
 
-	@Override
+    @Override
     @Transactional("blTransactionManager")
-	public void cancelOrder(Order order) {
+    public void cancelOrder(Order order) {
         orderDao.delete(order);
-	}
+    }
 
-	@Override
+    @Override
     @Transactional("blTransactionManager")
-	public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
         if( !order.getAddedOfferCodes().contains(offerCode)) {
             if (! offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode.getOffer())) {
                 throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
@@ -214,32 +214,32 @@ public class OrderServiceImpl implements OrderService {
             order.getAddedOfferCodes().add(offerCode);
             order = save(order, priceOrder);
         }
-        return order;	
+        return order;   
     }
 
-	@Override
+    @Override
     @Transactional("blTransactionManager")
-	public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
+    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
         order.getAddedOfferCodes().remove(offerCode);
         order = save(order, priceOrder);
-        return order;	
+        return order;   
     }
 
-	@Override
+    @Override
     @Transactional("blTransactionManager")
-	public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
-		 order.getAddedOfferCodes().clear();
-		 order = save(order, priceOrder);
-		 return order;	
-	}
+    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
+         order.getAddedOfferCodes().clear();
+         order = save(order, priceOrder);
+         return order;  
+    }
 
     @Override
     @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
     public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
         this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }
-	
-	@Override
+    
+    @Override
     public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId) {
         if (order.getOrderItems() != null) {
             for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
@@ -268,13 +268,13 @@ public class OrderServiceImpl implements OrderService {
         }
         return null;
     }
-	
-	@Override
+    
+    @Override
     @Transactional("blTransactionManager")
     public Order confirmOrder(Order order) {
         return orderDao.submitOrder(order);
     }
-	
+    
     @Override
     @Transactional("blTransactionManager")
     public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
@@ -284,12 +284,12 @@ public class OrderServiceImpl implements OrderService {
         }
         List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
         for (OrderItem item : items) {
-        	if (moveNamedOrderItems) {
-        		removeItem(namedOrder.getId(), item.getId(), false);
-        	}
-        	
-        	OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
-        	cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+            if (moveNamedOrderItems) {
+                removeItem(namedOrder.getId(), item.getId(), false);
+            }
+            
+            OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+            cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
         }
         
         if (deleteEmptyNamedOrders) {
@@ -307,28 +307,28 @@ public class OrderServiceImpl implements OrderService {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
         }
         
-    	if (moveNamedOrderItems) {
-    		removeItem(namedOrder.getId(), item.getId(), false);
-    	}
-        	
-    	OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
-    	cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
-    	
+        if (moveNamedOrderItems) {
+            removeItem(namedOrder.getId(), item.getId(), false);
+        }
+            
+        OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+        cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+        
         if (namedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
             cancelOrder(namedOrder);
         }
-        	
+            
         return cartOrder;
     }
     
     @Override
     @Transactional("blTransactionManager")
     public Order addItemFromNamedOrder(Order namedOrder, OrderItem item, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException {
-    	// Validate that the quantity requested makes sense
+        // Validate that the quantity requested makes sense
         if (quantity < 1 || quantity > item.getQuantity()) {
-        	throw new IllegalArgumentException("Cannot move 0 or less quantity");
+            throw new IllegalArgumentException("Cannot move 0 or less quantity");
         } else if (quantity == item.getQuantity()) {
-        	return addItemFromNamedOrder(namedOrder, item, priceOrder);
+            return addItemFromNamedOrder(namedOrder, item, priceOrder);
         }
         
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
@@ -336,22 +336,22 @@ public class OrderServiceImpl implements OrderService {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
         }
         
-    	if (moveNamedOrderItems) {
-	        // Update the old item to its new quantity only if we're moving items
-	        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-	        orderItemRequestDTO.setOrderItemId(item.getId());
-	        orderItemRequestDTO.setQuantity(item.getQuantity() - quantity);
-	        updateItemQuantity(namedOrder.getId(), orderItemRequestDTO, false);
-    	}
-        	
-    	OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
-    	orderItemRequest.setQuantity(quantity);
-    	cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
-        	
+        if (moveNamedOrderItems) {
+            // Update the old item to its new quantity only if we're moving items
+            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+            orderItemRequestDTO.setOrderItemId(item.getId());
+            orderItemRequestDTO.setQuantity(item.getQuantity() - quantity);
+            updateItemQuantity(namedOrder.getId(), orderItemRequestDTO, false);
+        }
+            
+        OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+        orderItemRequest.setQuantity(quantity);
+        cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+            
         return cartOrder;
     }
     
-	@Override
+    @Override
     @Transactional("blTransactionManager")
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
@@ -367,55 +367,55 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
-    	try {
-    		CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-    		CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
-    		return context.getSeedData().getOrder();
-    	} catch (WorkflowException e) {
-    		throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
-    	}
+        try {
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
+            return context.getSeedData().getOrder();
+        } catch (WorkflowException e) {
+            throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
+        }
     }
 
-	@Override
+    @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
-		if (orderItemRequestDTO.getQuantity() == 0) {
-			return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
-		}
-		
-    	try {
-    		CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-    		CartOperationContext context = (CartOperationContext) updateItemWorkflow.doActivities(cartOpRequest);
-    		return context.getSeedData().getOrder();
-    	} catch (WorkflowException e) {
-    		throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
-    	}
-	}
+    public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
+        if (orderItemRequestDTO.getQuantity() == 0) {
+            return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
+        }
+        
+        try {
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            CartOperationContext context = (CartOperationContext) updateItemWorkflow.doActivities(cartOpRequest);
+            return context.getSeedData().getOrder();
+        } catch (WorkflowException e) {
+            throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
+        }
+    }
 
-	@Override
+    @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
-	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
-    	try {
-    		OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-    		orderItemRequestDTO.setOrderItemId(orderItemId);
-    		CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-    		CartOperationContext context = (CartOperationContext) removeItemWorkflow.doActivities(cartOpRequest);
-    		return context.getSeedData().getOrder();
-    	} catch (WorkflowException e) {
-    		throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
-    	}
-	}
+    public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
+        try {
+            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+            orderItemRequestDTO.setOrderItemId(orderItemId);
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            CartOperationContext context = (CartOperationContext) removeItemWorkflow.doActivities(cartOpRequest);
+            return context.getSeedData().getOrder();
+        } catch (WorkflowException e) {
+            throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
+        }
+    }
 
-	@Override
-	public boolean getAutomaticallyMergeLikeItems() {
-		return automaticallyMergeLikeItems;
-	}
+    @Override
+    public boolean getAutomaticallyMergeLikeItems() {
+        return automaticallyMergeLikeItems;
+    }
 
-	@Override
-	public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
-		this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
-	}
-	
+    @Override
+    public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
+        this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
+    }
+    
     @Override
     @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
     public boolean isMoveNamedOrderItems() {
@@ -462,28 +462,28 @@ public class OrderServiceImpl implements OrderService {
             paymentInfoDao.delete(paymentInfo);
         }
     }
-	
-	/**
-	 * This method will return the exception that is immediately below the deepest 
-	 * WorkflowException in the current stack trace.
-	 * 
-	 * @param e the workflow exception that contains the requested root cause
-	 * @return the root cause of the workflow exception
-	 */
-	protected Throwable getCartOperationExceptionRootCause(WorkflowException e) {
-		Throwable cause = e.getCause();
-		if (cause == null) {
-			return e;
-		}
-		
-		Throwable currentCause = cause;
-		while (currentCause.getCause() != null) {
-			currentCause = currentCause.getCause();
-			if (currentCause instanceof WorkflowException) {
-				cause = currentCause.getCause();
-			}
-		}
-		
-		return cause;
-	}
+    
+    /**
+     * This method will return the exception that is immediately below the deepest 
+     * WorkflowException in the current stack trace.
+     * 
+     * @param e the workflow exception that contains the requested root cause
+     * @return the root cause of the workflow exception
+     */
+    protected Throwable getCartOperationExceptionRootCause(WorkflowException e) {
+        Throwable cause = e.getCause();
+        if (cause == null) {
+            return e;
+        }
+        
+        Throwable currentCause = cause;
+        while (currentCause.getCause() != null) {
+            currentCause = currentCause.getCause();
+            if (currentCause instanceof WorkflowException) {
+                cause = currentCause.getCause();
+            }
+        }
+        
+        return cause;
+    }
 }

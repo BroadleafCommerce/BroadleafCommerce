@@ -76,9 +76,9 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     
     @Override
     public boolean isOnSale() {
-    	Money retailPrice = getRetailPrice();
-    	Money salePrice = getSalePrice();
-    	return (salePrice != null && !salePrice.isZero() && salePrice.lessThan(retailPrice));
+        Money retailPrice = getRetailPrice();
+        Money salePrice = getSalePrice();
+        return (salePrice != null && !salePrice.isZero() && salePrice.lessThan(retailPrice));
     }
 
     @Override

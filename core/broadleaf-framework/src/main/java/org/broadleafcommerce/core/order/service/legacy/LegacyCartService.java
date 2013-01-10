@@ -58,7 +58,7 @@ public interface LegacyCartService extends LegacyOrderService {
      *         and any items removed from the cart
      */
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException;
-	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
+    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
     
     /**
      * Reconstruct the cart using previous stored state taking into
@@ -67,7 +67,7 @@ public interface LegacyCartService extends LegacyOrderService {
      * @return the response containing the cart and any items removed from the
      *         cart
      */
-	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
-	public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
+    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
+    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
 
 }

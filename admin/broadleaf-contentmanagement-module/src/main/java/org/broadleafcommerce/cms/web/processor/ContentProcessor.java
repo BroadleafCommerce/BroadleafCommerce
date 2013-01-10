@@ -63,66 +63,66 @@ import java.util.Map;
  * </ul>
  */
 public class ContentProcessor extends AbstractModelVariableModifierProcessor {
-	
+    
     public static final String REQUEST_DTO = "blRequestDTO";
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
     
     private StructuredContentService structuredContentService;
     private StaticAssetService staticAssetService;        
     
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
-	public ContentProcessor() {
-		super("content");
-	}
-	
-	@Override
-	public int getPrecedence() {
-		return 10000;
-	}
-	
-	/**
-	 * Returns a default name
-	 * @param element
-	 * @param valueName
-	 * @return
-	 */
-	private String getAttributeValue(Element element, String valueName, String defaultValue) {
-		String returnValue = element.getAttributeValue(valueName);
-		if (returnValue == null) {
-			return defaultValue;
-		} else {
-			return returnValue;
-		}
-	}	
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
+    public ContentProcessor() {
+        super("content");
+    }
+    
+    @Override
+    public int getPrecedence() {
+        return 10000;
+    }
+    
+    /**
+     * Returns a default name
+     * @param element
+     * @param valueName
+     * @return
+     */
+    private String getAttributeValue(Element element, String valueName, String defaultValue) {
+        String returnValue = element.getAttributeValue(valueName);
+        if (returnValue == null) {
+            return defaultValue;
+        } else {
+            return returnValue;
+        }
+    }   
 
-	@Override
-	protected void modifyModelAttributes(Arguments arguments, Element element) {		
-		String contentType = element.getAttributeValue("contentType");
-		String contentName = element.getAttributeValue("contentName");
-		String maxResultsStr = element.getAttributeValue("maxResults");
-		Integer maxResults = null;
-		if (maxResultsStr != null) {
-			maxResults = Ints.tryParse(maxResultsStr);
-		}
-		if (maxResults == null) {
-			maxResults = Integer.MAX_VALUE;
-		}
-		
-		String contentListVar = getAttributeValue(element, "contentListVar", "contentList");
-		String contentItemVar = getAttributeValue(element, "contentItemVar", "contentItem");
-		String numResultsVar = getAttributeValue(element, "numResultsVar", "numResults");
-		
-		// TODO: Handle product.  Can we pass in a structure?  If not, how do we get access to a Product 
-		// and maintain our loose coupling?
-		
-		initServices(arguments);
-				
-		IWebContext context = (IWebContext) arguments.getContext();		
-		HttpServletRequest request = context.getHttpServletRequest();	
-		BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
-		
+    @Override
+    protected void modifyModelAttributes(Arguments arguments, Element element) {        
+        String contentType = element.getAttributeValue("contentType");
+        String contentName = element.getAttributeValue("contentName");
+        String maxResultsStr = element.getAttributeValue("maxResults");
+        Integer maxResults = null;
+        if (maxResultsStr != null) {
+            maxResults = Ints.tryParse(maxResultsStr);
+        }
+        if (maxResults == null) {
+            maxResults = Integer.MAX_VALUE;
+        }
+        
+        String contentListVar = getAttributeValue(element, "contentListVar", "contentList");
+        String contentItemVar = getAttributeValue(element, "contentItemVar", "contentItem");
+        String numResultsVar = getAttributeValue(element, "numResultsVar", "numResults");
+        
+        // TODO: Handle product.  Can we pass in a structure?  If not, how do we get access to a Product 
+        // and maintain our loose coupling?
+        
+        initServices(arguments);
+                
+        IWebContext context = (IWebContext) arguments.getContext();     
+        HttpServletRequest request = context.getHttpServletRequest();   
+        BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
+        
         Map<String, Object> mvelParameters = buildMvelParameters(request);
         SandBox currentSandbox = blcContext.getSandbox();
 
@@ -130,7 +130,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
 
         Locale locale = blcContext.getLocale();
-	        
+            
 
         if (structuredContentType == null) {
             contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
@@ -141,25 +141,25 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                 contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, maxResults, mvelParameters, isSecure(request));
             }
         }                       
-	                	    
-	    if (contentItems.size() > 0) {
-	    	List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();	    	
+                            
+        if (contentItems.size() > 0) {
+            List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();          
             
-	    	for(StructuredContentDTO item : contentItems) {
+            for(StructuredContentDTO item : contentItems) {
                 contentItemFields.add(item.getValues());
             }
-	    	addToModel(arguments, contentItemVar, contentItemFields.get(0));
-	    	addToModel(arguments, contentListVar, contentItemFields);
-	    	addToModel(arguments, numResultsVar, contentItems.size());
-	    } else {
+            addToModel(arguments, contentItemVar, contentItemFields.get(0));
+            addToModel(arguments, contentListVar, contentItemFields);
+            addToModel(arguments, numResultsVar, contentItems.size());
+        } else {
             System.out.println("**************************The contentItems is null*************************");
-	    	addToModel(arguments, contentItemVar, null);
-	    	addToModel(arguments, contentListVar, null);
-	    	addToModel(arguments, numResultsVar, 0);
-	    }    	
-	}
-	
-	/**
+            addToModel(arguments, contentItemVar, null);
+            addToModel(arguments, contentListVar, null);
+            addToModel(arguments, numResultsVar, 0);
+        }       
+    }
+    
+    /**
      * MVEL is used to process the content targeting rules.
      *
      * @param request
@@ -174,7 +174,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         mvelParameters.put("request", requestDto);
 
         @SuppressWarnings("unchecked")
-		Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
+        Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
         if (blcRuleMap != null) {
             for (String mapKey : blcRuleMap.keySet()) {
                 mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
@@ -182,11 +182,11 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         }
 
         return mvelParameters;
-    }	
+    }   
     
     protected void initServices(Arguments arguments) {
         if (structuredContentService == null || staticAssetService == null) {
-        	final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();            
+            final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();            
             structuredContentService = (StructuredContentService) applicationContext.getBean("blStructuredContentService");
             staticAssetService = (StaticAssetService) applicationContext.getBean("blStaticAssetService");
         }
@@ -199,5 +199,5 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         }
         return secure;
     }
-	
+    
 }

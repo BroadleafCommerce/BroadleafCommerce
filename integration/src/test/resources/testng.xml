@@ -16,26 +16,26 @@
 
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="BroadleafCommerce Test Suite" verbose="2" parallel="false">
-	<test name="commerce-integrationtest">
+    <test name="commerce-integrationtest">
         <packages>
-        	<package name="org.broadleafcommerce.core.catalog.dao"></package>
-        	<package name="org.broadleafcommerce.core.catalog.service"></package>
-        	<package name="org.broadleafcommerce.core.checkout.service"></package>
-        	<package name="org.broadleafcommerce.common.email.service"></package>
-        	<package name="org.broadleafcommerce.profile.extensibility"></package>
-        	<package name="org.broadleafcommerce.core.inventory.service"></package>
-        	<package name="org.broadleafcommerce.layout"></package>
-        	<package name="org.broadleafcommerce.core.offer.service"></package>
-        	<package name="org.broadleafcommerce.core.order.dao"></package>
-        	<package name="org.broadleafcommerce.core.order.service"></package>
-        	<package name="org.broadleafcommerce.core.payment.service"></package>
-        	<package name="org.broadleafcommerce.core.pricing.service"></package>
-        	<package name="org.broadleafcommerce.profile.web.core.service"></package>
-        	<package name="org.broadleafcommerce.profile.web.core.controller"></package>
-        	<package name="org.broadleafcommerce.security.service"></package>
-        	<package name="org.broadleafcommerce.taglib"></package>
-        	<package name="org.broadleafcommerce.test"></package>
-        	<package name="org.broadleafcommerce.common.time.time"></package>
+            <package name="org.broadleafcommerce.core.catalog.dao"></package>
+            <package name="org.broadleafcommerce.core.catalog.service"></package>
+            <package name="org.broadleafcommerce.core.checkout.service"></package>
+            <package name="org.broadleafcommerce.common.email.service"></package>
+            <package name="org.broadleafcommerce.profile.extensibility"></package>
+            <package name="org.broadleafcommerce.core.inventory.service"></package>
+            <package name="org.broadleafcommerce.layout"></package>
+            <package name="org.broadleafcommerce.core.offer.service"></package>
+            <package name="org.broadleafcommerce.core.order.dao"></package>
+            <package name="org.broadleafcommerce.core.order.service"></package>
+            <package name="org.broadleafcommerce.core.payment.service"></package>
+            <package name="org.broadleafcommerce.core.pricing.service"></package>
+            <package name="org.broadleafcommerce.profile.web.core.service"></package>
+            <package name="org.broadleafcommerce.profile.web.core.controller"></package>
+            <package name="org.broadleafcommerce.security.service"></package>
+            <package name="org.broadleafcommerce.taglib"></package>
+            <package name="org.broadleafcommerce.test"></package>
+            <package name="org.broadleafcommerce.common.time.time"></package>
         </packages>
     </test>
 </suite>

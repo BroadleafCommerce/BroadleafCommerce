@@ -78,7 +78,7 @@ public class LocaleDaoImpl implements LocaleDao {
     
     @Override
     public Locale save(Locale locale){
-    	return em.merge(locale);
+        return em.merge(locale);
     }
     
 }

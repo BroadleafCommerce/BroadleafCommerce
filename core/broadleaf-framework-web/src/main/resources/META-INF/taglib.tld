@@ -13,17 +13,17 @@
         <tag-class>org.broadleafcommerce.core.web.layout.tags.ProductLookupTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up a product by productId</description>
-       	<attribute>
-			<name>var</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the result is set to</description>
-		</attribute>
-       	<attribute>
-			<name>productId</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the result is set to</description>
+        </attribute>
+        <attribute>
+            <name>productId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
     <tag>
@@ -31,17 +31,17 @@
         <tag-class>org.broadleafcommerce.core.web.layout.tags.SkuLookupTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up a sku by skuId</description>
-       	<attribute>
-			<name>var</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the result is set to</description>
-		</attribute>
-       	<attribute>
-			<name>skuId</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the result is set to</description>
+        </attribute>
+        <attribute>
+            <name>skuId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
     <tag>
@@ -49,36 +49,36 @@
         <tag-class>org.broadleafcommerce.core.web.layout.tags.OrderLookupTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up an order by customerId, orderId, or orderName.  Can also provide the total quantity of items in the cart.</description>
-       	<attribute>
-			<name>customerId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Customer to lookup order for.  If no customerId is provided, the currently logged in user's customerId is used.</description>
-		</attribute>
-       	<attribute>
-			<name>orderId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Specifies a specific order to lookup.  orderName attribute cannot be used if orderId is provided. If no orderName or orderId is provided, the current cart is looked up.</description>
-		</attribute>
-       	<attribute>
-			<name>orderName</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Named order to lookup.  orderId attribute cannot be used if orderName is provided.  If no orderName or orderId is provided, the current cart is looked up.</description>
-		</attribute>
-       	<attribute>
-			<name>orderVar</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the order is set to</description>
-		</attribute>
-       	<attribute>
-			<name>totalQuantityVar</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the order items count is set to. The order items count is a sum of the quantity of each item in the order.</description>
-		</attribute>
+        <attribute>
+            <name>customerId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Customer to lookup order for.  If no customerId is provided, the currently logged in user's customerId is used.</description>
+        </attribute>
+        <attribute>
+            <name>orderId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Specifies a specific order to lookup.  orderName attribute cannot be used if orderId is provided. If no orderName or orderId is provided, the current cart is looked up.</description>
+        </attribute>
+        <attribute>
+            <name>orderName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Named order to lookup.  orderId attribute cannot be used if orderName is provided.  If no orderName or orderId is provided, the current cart is looked up.</description>
+        </attribute>
+        <attribute>
+            <name>orderVar</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the order is set to</description>
+        </attribute>
+        <attribute>
+            <name>totalQuantityVar</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the order items count is set to. The order items count is a sum of the quantity of each item in the order.</description>
+        </attribute>
     </tag>
     
     <tag>
@@ -86,94 +86,94 @@
         <tag-class>org.broadleafcommerce.core.web.layout.tags.ContentDisplayTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up a content display by name and type</description>
-       	<attribute>
-			<name>varList</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the List result is set to</description>
-		</attribute>
-       	<attribute>
-			<name>varFirstItem</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the first result is set to</description>
-		</attribute>
-       	<attribute>
-			<name>contentKey</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>contentType</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>varList</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the List result is set to</description>
+        </attribute>
+        <attribute>
+            <name>varFirstItem</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the first result is set to</description>
+        </attribute>
+        <attribute>
+            <name>contentKey</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>contentType</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     <tag>
         <name>contentSpecified</name>
         <tag-class>org.broadleafcommerce.core.web.layout.tags.ContentSpecifiedTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up content by contentType and parameter map objects to evaluate MVEL expressions against</description>
-       	<attribute>
-			<name>contentType</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>xslt</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Stylesheet used to style XML</description>
-		</attribute>
-       	<attribute>
-			<name>parameterMap</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Parameter Map contains the objects to evaluate the MVEL expressions against</description>
-		</attribute>
-       	<attribute>
-			<name>escapeXml</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>rowCount</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>contentType</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>xslt</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Stylesheet used to style XML</description>
+        </attribute>
+        <attribute>
+            <name>parameterMap</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Parameter Map contains the objects to evaluate the MVEL expressions against</description>
+        </attribute>
+        <attribute>
+            <name>escapeXml</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>rowCount</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     <tag>
         <name>contentDisplayRandom</name>
         <tag-class>org.broadleafcommerce.core.web.layout.tags.RandomContentDisplayTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up a content display by name and type</description>
-       	<attribute>
-			<name>varList</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the result is set to</description>
-		</attribute>
-       	<attribute>
-			<name>varFirstItem</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the first result is set to</description>
-		</attribute>
-       	<attribute>
-			<name>contentKey</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>contentType</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>numItems</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>varList</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the result is set to</description>
+        </attribute>
+        <attribute>
+            <name>varFirstItem</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the first result is set to</description>
+        </attribute>
+        <attribute>
+            <name>contentKey</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>contentType</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>numItems</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     
 </taglib>

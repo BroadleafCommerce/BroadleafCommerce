@@ -44,48 +44,48 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
     
     @Override
     public List<SearchFacet> readAllSearchFacets() {
-    	CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaQuery<SearchFacet> criteria = builder.createQuery(SearchFacet.class);
-		
-		Root<SearchFacetImpl> facet = criteria.from(SearchFacetImpl.class);
-		
-		criteria.select(facet);
-		criteria.where(
-			builder.equal(facet.get("showOnSearch").as(Boolean.class), true)
-		);
-    	
-		return em.createQuery(criteria).getResultList();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<SearchFacet> criteria = builder.createQuery(SearchFacet.class);
+        
+        Root<SearchFacetImpl> facet = criteria.from(SearchFacetImpl.class);
+        
+        criteria.select(facet);
+        criteria.where(
+            builder.equal(facet.get("showOnSearch").as(Boolean.class), true)
+        );
+        
+        return em.createQuery(criteria).getResultList();
     }
     
-	@Override
-	public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass) {
-    	CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaQuery<T> criteria = builder.createQuery(fieldValueClass);
-		
-		Root<ProductImpl> product = criteria.from(ProductImpl.class);
-		Path<Sku> sku = product.get("defaultSku");
-		
-		Path<?> pathToUse;
-		if (fieldName.contains("defaultSku.")) {
-			pathToUse = sku;
-			fieldName = fieldName.substring("defaultSku.".length());
-		} else if (fieldName.contains("productAttributes.")) {
-			pathToUse = product.join("productAttributes");
-			
-			fieldName = fieldName.substring("productAttributes.".length());
-			criteria.where(builder.equal(
-				builder.lower(pathToUse.get("name").as(String.class)), fieldName.toLowerCase()));
-			
-			fieldName = "value";
-		} else if (fieldName.contains("product.")) {
-			pathToUse = product;
-			fieldName = fieldName.substring("product.".length());
-		} else {
-			throw new IllegalArgumentException("Invalid facet fieldName specified: " + fieldName);
-		}
-		criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
-		
-		return em.createQuery(criteria).getResultList();
-	}
+    @Override
+    public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<T> criteria = builder.createQuery(fieldValueClass);
+        
+        Root<ProductImpl> product = criteria.from(ProductImpl.class);
+        Path<Sku> sku = product.get("defaultSku");
+        
+        Path<?> pathToUse;
+        if (fieldName.contains("defaultSku.")) {
+            pathToUse = sku;
+            fieldName = fieldName.substring("defaultSku.".length());
+        } else if (fieldName.contains("productAttributes.")) {
+            pathToUse = product.join("productAttributes");
+            
+            fieldName = fieldName.substring("productAttributes.".length());
+            criteria.where(builder.equal(
+                builder.lower(pathToUse.get("name").as(String.class)), fieldName.toLowerCase()));
+            
+            fieldName = "value";
+        } else if (fieldName.contains("product.")) {
+            pathToUse = product;
+            fieldName = fieldName.substring("product.".length());
+        } else {
+            throw new IllegalArgumentException("Invalid facet fieldName specified: " + fieldName);
+        }
+        criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
+        
+        return em.createQuery(criteria).getResultList();
+    }
 
 }

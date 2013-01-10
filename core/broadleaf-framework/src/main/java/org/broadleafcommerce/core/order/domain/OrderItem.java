@@ -93,25 +93,25 @@ public interface OrderItem extends Serializable {
 
     public boolean getIsDiscounted();
 
-	public boolean updatePrices();
-	
-	public String getName();
+    public boolean updatePrices();
+    
+    public String getName();
 
-	public void setName(String name);
+    public void setName(String name);
 
-	public OrderItem clone();
+    public OrderItem clone();
 
-	public void assignFinalPrice();
-	
-	public Money getCurrentPrice();
-	
-	public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
-	
-	public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer);
-	
-	public void removeAllCandidateItemOffers();
-	
-	/**
+    public void assignFinalPrice();
+    
+    public Money getCurrentPrice();
+    
+    public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
+    
+    public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer);
+    
+    public void removeAllCandidateItemOffers();
+    
+    /**
      * Removes all adjustment for this order item and reset the adjustment price.
      */
     public int removeAllAdjustments();

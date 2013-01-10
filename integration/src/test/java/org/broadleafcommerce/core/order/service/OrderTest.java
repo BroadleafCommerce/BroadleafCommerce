@@ -161,7 +161,7 @@ public class OrderTest extends OrderBaseTest {
 
         // re-price the order without automatically merging.
         orderService.setAutomaticallyMergeLikeItems(false);
-    	numOrderItems++;
+        numOrderItems++;
         
         itemRequest = new OrderItemRequestDTO();
         itemRequest.setQuantity(1);
@@ -185,7 +185,7 @@ public class OrderTest extends OrderBaseTest {
         assert fg.getFulfillmentGroupItems().size() == 2;
         
         for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-	        assert fgi.getQuantity() == fgi.getOrderItem().getQuantity();
+            assert fgi.getQuantity() == fgi.getOrderItem().getQuantity();
         }
     }
     
@@ -195,28 +195,28 @@ public class OrderTest extends OrderBaseTest {
         Order order = orderService.findOrderById(orderId);
         assert order != null;
         
-    	Product activeProduct = addTestProduct("mug", "cups", true);
-    	Product inactiveProduct = addTestProduct("cup", "cups", false);
-    	
-    	// Inactive skus should not be added
+        Product activeProduct = addTestProduct("mug", "cups", true);
+        Product inactiveProduct = addTestProduct("cup", "cups", false);
+        
+        // Inactive skus should not be added
         OrderItemRequestDTO itemRequest = new OrderItemRequestDTO().setQuantity(1).setSkuId(inactiveProduct.getDefaultSku().getId());
         boolean addSuccessful = true;
         try {
-        	order = orderService.addItem(orderId, itemRequest, true);
+            order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
-        	addSuccessful = false;
-        	assert e.getCause() instanceof InventoryUnavailableException;
+            addSuccessful = false;
+            assert e.getCause() instanceof InventoryUnavailableException;
         }
         assert !addSuccessful;
         
-    	// Products that have SKUs marked as inactive should not be added either
+        // Products that have SKUs marked as inactive should not be added either
         itemRequest = new OrderItemRequestDTO().setQuantity(1).setProductId(inactiveProduct.getId());
         addSuccessful = true;
         try {
-        	order = orderService.addItem(orderId, itemRequest, true);
+            order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
-        	addSuccessful = false;
-        	assert e.getCause() instanceof InventoryUnavailableException;
+            addSuccessful = false;
+            assert e.getCause() instanceof InventoryUnavailableException;
         }
         assert !addSuccessful;
         
@@ -224,10 +224,10 @@ public class OrderTest extends OrderBaseTest {
         itemRequest = new OrderItemRequestDTO().setQuantity(-1).setSkuId(activeProduct.getDefaultSku().getId());
         addSuccessful = true;
         try {
-        	order = orderService.addItem(orderId, itemRequest, true);
+            order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
-        	addSuccessful = false;
-        	assert e.getCause() instanceof IllegalArgumentException;
+            addSuccessful = false;
+            assert e.getCause() instanceof IllegalArgumentException;
         }
         assert !addSuccessful;
         
@@ -235,10 +235,10 @@ public class OrderTest extends OrderBaseTest {
         itemRequest = new OrderItemRequestDTO().setQuantity(1).setSkuId(activeProduct.getDefaultSku().getId());
         addSuccessful = true;
         try {
-        	order = orderService.addItem(-1L, itemRequest, true);
+            order = orderService.addItem(-1L, itemRequest, true);
         } catch (AddToCartException e) {
-        	addSuccessful = false;
-        	assert e.getCause() instanceof IllegalArgumentException;
+            addSuccessful = false;
+            assert e.getCause() instanceof IllegalArgumentException;
         }
         assert !addSuccessful;
         
@@ -246,10 +246,10 @@ public class OrderTest extends OrderBaseTest {
         itemRequest = new OrderItemRequestDTO().setQuantity(1).setProductId(-1L);
         addSuccessful = true;
         try {
-        	order = orderService.addItem(orderId, itemRequest, true);
+            order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
-        	addSuccessful = false;
-        	assert e.getCause() instanceof IllegalArgumentException;
+            addSuccessful = false;
+            assert e.getCause() instanceof IllegalArgumentException;
         }
         assert !addSuccessful;
         
@@ -257,10 +257,10 @@ public class OrderTest extends OrderBaseTest {
         itemRequest = new OrderItemRequestDTO().setQuantity(1).setSkuId(-1L);
         addSuccessful = true;
         try {
-        	order = orderService.addItem(orderId, itemRequest, true);
+            order = orderService.addItem(orderId, itemRequest, true);
         } catch (AddToCartException e) {
-        	addSuccessful = false;
-        	assert e.getCause() instanceof IllegalArgumentException;
+            addSuccessful = false;
+            assert e.getCause() instanceof IllegalArgumentException;
         }
         assert !addSuccessful;
         
@@ -282,8 +282,8 @@ public class OrderTest extends OrderBaseTest {
         orderItemRequestDTO.setSkuId(bundleItem.getDefaultSku().getId());
         orderItemRequestDTO.setQuantity(1);
         
-    	order = orderService.addItem(order.getId(), orderItemRequestDTO, true);
-    	BundleOrderItem item = (BundleOrderItem) orderService.findLastMatchingItem(order, bundleItem.getDefaultSku().getId(), null);
+        order = orderService.addItem(order.getId(), orderItemRequestDTO, true);
+        BundleOrderItem item = (BundleOrderItem) orderService.findLastMatchingItem(order, bundleItem.getDefaultSku().getId(), null);
         bundleOrderItemId = item.getId();
         assert item != null;
         assert item.getQuantity() == 1;
@@ -319,7 +319,7 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "testManyToOneFGItemToOrderItem" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
     public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException {
-    	// Grab the order and the first OrderItem
+        // Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
@@ -342,9 +342,9 @@ public class OrderTest extends OrderBaseTest {
         assert fg.getFulfillmentGroupItems().size() == 2;
         FulfillmentGroupItem fgItem = null;
         for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-        	if (fgi.getOrderItem().equals(updatedItem)) {
-        		fgItem = fgi;
-        	}
+            if (fgi.getOrderItem().equals(updatedItem)) {
+                fgItem = fgi;
+            }
         }
         
         assert fgItem != null;
@@ -376,11 +376,11 @@ public class OrderTest extends OrderBaseTest {
         assert order.getFulfillmentGroups().size() == 2;
         int fgItemQuantity = 0;
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-	        for (FulfillmentGroupItem fgi : fulfillmentGroup.getFulfillmentGroupItems()) {
-	        	if (fgi.getOrderItem().equals(updatedItem)) {
-	        		fgItemQuantity += fgi.getQuantity();
-	        	}
-	        }
+            for (FulfillmentGroupItem fgi : fulfillmentGroup.getFulfillmentGroupItems()) {
+                if (fgi.getOrderItem().equals(updatedItem)) {
+                    fgItemQuantity += fgi.getQuantity();
+                }
+            }
         }
         assert fgItemQuantity == 15;
         
@@ -399,13 +399,13 @@ public class OrderTest extends OrderBaseTest {
         assert order.getFulfillmentGroups().size() == 2;
         boolean fgItemFound = false;
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-	        for (FulfillmentGroupItem fgi : fulfillmentGroup.getFulfillmentGroupItems()) {
-	        	if (fgi.getOrderItem().equals(updatedItem)) {
-	        		assert fgItemFound == false;
-	        		assert fgi.getQuantity() == 3;
-	        		fgItemFound = true;
-	        	}
-	        }
+            for (FulfillmentGroupItem fgi : fulfillmentGroup.getFulfillmentGroupItems()) {
+                if (fgi.getOrderItem().equals(updatedItem)) {
+                    assert fgItemFound == false;
+                    assert fgi.getQuantity() == 3;
+                    fgItemFound = true;
+                }
+            }
         }
         assert fgItemFound;
     }
@@ -413,7 +413,7 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
     public void updateItemsInOrder() throws UpdateCartException, RemoveFromCartException {
-    	// Grab the order and the first OrderItem
+        // Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
@@ -436,10 +436,10 @@ public class OrderTest extends OrderBaseTest {
         assert fg.getFulfillmentGroupItems().size() == 2;
         boolean fgItemUpdated = false;
         for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-        	if (fgi.getOrderItem().equals(updatedItem)) {
-        		assert fgi.getQuantity() == 10;
-        		fgItemUpdated = true;
-        	}
+            if (fgi.getOrderItem().equals(updatedItem)) {
+                assert fgi.getQuantity() == 10;
+                fgItemUpdated = true;
+            }
         }
         assert fgItemUpdated;
         
@@ -460,10 +460,10 @@ public class OrderTest extends OrderBaseTest {
         assert fg.getFulfillmentGroupItems().size() == 2;
         fgItemUpdated = false;
         for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-        	if (fgi.getOrderItem().equals(updatedItem)) {
-        		assert fgi.getQuantity() == 5;
-        		fgItemUpdated = true;
-        	}
+            if (fgi.getOrderItem().equals(updatedItem)) {
+                assert fgi.getQuantity() == 5;
+                fgItemUpdated = true;
+            }
         }
         assert fgItemUpdated;
         
@@ -485,9 +485,9 @@ public class OrderTest extends OrderBaseTest {
         assert fg.getFulfillmentGroupItems().size() == startingSize - 1;
         boolean fgItemRemoved = true;
         for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-        	if (fgi.getOrderItem().equals(updatedItem)) {
-        		fgItemRemoved = false;
-        	}
+            if (fgi.getOrderItem().equals(updatedItem)) {
+                fgItemRemoved = false;
+            }
         }
         assert fgItemRemoved;
     }
@@ -495,7 +495,7 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
     public void removeItemFromOrder() throws RemoveFromCartException {
-    	// Grab the order and the first OrderItem
+        // Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;

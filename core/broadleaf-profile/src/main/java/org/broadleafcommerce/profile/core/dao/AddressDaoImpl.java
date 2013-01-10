@@ -47,9 +47,9 @@ public class AddressDaoImpl implements AddressDao {
     }
 
     public void delete(Address address) {
-    	if (!em.contains(address)) {
-    		address = readAddressById(address.getId());
-    	}
+        if (!em.contains(address)) {
+            address = readAddressById(address.getId());
+        }
         em.remove(address);
     }
 }

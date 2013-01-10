@@ -54,7 +54,7 @@ import java.util.Calendar;
 
 public abstract class LegacyCommonSetupBaseTest extends BaseTest {
     
-	@Resource
+    @Resource
     protected CountryService countryService;
     
     @Resource
@@ -95,8 +95,8 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
     }
     
     public Customer createCustomer() {
-    	Customer customer = customerService.createCustomerFromId(null);
-    	return customer;
+        Customer customer = customerService.createCustomerFromId(null);
+        return customer;
     }
     
     /**
@@ -104,9 +104,9 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
      * @return customer created
      */
     public Customer createCustomerWithAddresses() {
-    	createCountry();
-    	createState();
-    	CustomerAddress ca1 = new CustomerAddressImpl();
+        createCountry();
+        createState();
+        CustomerAddress ca1 = new CustomerAddressImpl();
         Address address1 = new AddressImpl();
         address1.setAddressLine1("1234 Merit Drive");
         address1.setCity("Bozeman");
@@ -137,8 +137,8 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
      * @return customer created
      */
     public CustomerAddress createCustomerWithAddress(CustomerAddress customerAddress) {
-    	createCountry();
-    	createState();
+        createCountry();
+        createState();
         Customer customer = createCustomer();
         customer.setUsername(String.valueOf(customer.getId()));
         customerAddress.setCustomer(customer);
@@ -150,23 +150,23 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
      * @param customerAddress
      */
     public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress) {
-    	State state = stateService.findStateByAbbreviation("KY");
+        State state = stateService.findStateByAbbreviation("KY");
         customerAddress.getAddress().setState(state);
         Country country = countryService.findCountryByAbbreviation("US");
         customerAddress.getAddress().setCountry(country);
-    	return customerAddressService.saveCustomerAddress(customerAddress);
+        return customerAddressService.saveCustomerAddress(customerAddress);
     }
     
     /**
      * Create a state, country, and customer with a basic order and some addresses
      */
     public Customer createCustomerWithBasicOrderAndAddresses() {
-    	Customer customer = createCustomerWithAddresses();
+        Customer customer = createCustomerWithAddresses();
         Order order = new OrderImpl();
         order.setStatus(OrderStatus.IN_PROCESS);
         order.setTotal(new Money(BigDecimal.valueOf(1000)));
         
-    	assert order.getId() == null;
+        assert order.getId() == null;
         order.setCustomer(customer);
         order = orderDao.save(order);
         assert order.getId() != null;
@@ -175,17 +175,17 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
     }
     
     public Product addTestProduct(String productName, String categoryName) {
-    	return addTestProduct(productName, categoryName, true);
+        return addTestProduct(productName, categoryName, true);
     }
     
     public Product addTestProduct(String productName, String categoryName, boolean active) {
-    	Calendar activeStartCal = Calendar.getInstance();
-    	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
         
         Calendar activeEndCal = Calendar.getInstance();
         activeEndCal.add(Calendar.DAY_OF_YEAR, -1);
         
-    	Category category = new CategoryImpl();
+        Category category = new CategoryImpl();
         category.setName(categoryName);
         category.setActiveStartDate(activeStartCal.getTime());
         category = catalogService.saveCategory(category);

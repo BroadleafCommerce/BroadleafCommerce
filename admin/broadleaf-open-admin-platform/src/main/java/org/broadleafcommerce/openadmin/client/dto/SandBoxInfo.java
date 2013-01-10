@@ -22,10 +22,10 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class SandBoxInfo implements IsSerializable, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	protected Long sandBox;
-	protected boolean commitImmediately = true;
+    private static final long serialVersionUID = 1L;
+    
+    protected Long sandBox;
+    protected boolean commitImmediately = true;
     protected Long siteId;
     protected String name;
 
@@ -38,12 +38,12 @@ public class SandBoxInfo implements IsSerializable, Serializable {
     }
 
     public boolean isCommitImmediately() {
-		return commitImmediately;
-	}
-	
-	public void setCommitImmediately(boolean commitImmediately) {
-		this.commitImmediately = commitImmediately;
-	}
+        return commitImmediately;
+    }
+    
+    public void setCommitImmediately(boolean commitImmediately) {
+        this.commitImmediately = commitImmediately;
+    }
 
     public Long getSiteId() {
         return siteId;

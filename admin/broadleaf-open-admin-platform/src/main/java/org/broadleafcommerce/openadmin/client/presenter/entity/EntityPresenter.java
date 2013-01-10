@@ -29,21 +29,21 @@ import com.smartgwt.client.widgets.Canvas;
  */
 public interface EntityPresenter {
 
-	public void setup();
-	
-	public void postSetup(Canvas container);
+    public void setup();
+    
+    public void postSetup(Canvas container);
 
-	public HandlerManager getEventBus();
+    public HandlerManager getEventBus();
 
-	public void setEventBus(HandlerManager eventBus);
+    public void setEventBus(HandlerManager eventBus);
 
-	public Display getDisplay();
+    public Display getDisplay();
 
-	public void setDisplay(Display display);
+    public void setDisplay(Display display);
 
-	public PresenterSequenceSetupManager getPresenterSequenceSetupManager();
-	
-	public Boolean getLoaded();
+    public PresenterSequenceSetupManager getPresenterSequenceSetupManager();
+    
+    public Boolean getLoaded();
 
     /**
      * For Entity presenters that support loading a default item, setting this value prior
@@ -60,5 +60,5 @@ public interface EntityPresenter {
      * @return
      */
     public String getDefaultItemId();
-	
+    
 }

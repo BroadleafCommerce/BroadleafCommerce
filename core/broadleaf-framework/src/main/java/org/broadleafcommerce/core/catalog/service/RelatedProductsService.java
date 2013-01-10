@@ -28,15 +28,15 @@ import java.util.List;
  * @author bpolster
  *
  */
-public interface RelatedProductsService {	
-	
-	/**
-	 * Uses the data in the passed in DTO to return a list of relatedProducts.
-	 * 
-	 * For example, upSale, crossSale, or featured products.
-	 * 
-	 * @param relatedProductDTO
-	 * @return
-	 */
-	public List<? extends PromotableProduct> findRelatedProducts(RelatedProductDTO relatedProductDTO);
+public interface RelatedProductsService {   
+    
+    /**
+     * Uses the data in the passed in DTO to return a list of relatedProducts.
+     * 
+     * For example, upSale, crossSale, or featured products.
+     * 
+     * @param relatedProductDTO
+     * @return
+     */
+    public List<? extends PromotableProduct> findRelatedProducts(RelatedProductDTO relatedProductDTO);
 }

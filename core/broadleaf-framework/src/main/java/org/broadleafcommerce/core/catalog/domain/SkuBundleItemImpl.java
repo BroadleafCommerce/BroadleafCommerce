@@ -102,19 +102,19 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     protected Money getDynamicSalePrice(Sku sku, BigDecimal salePrice) {
         if (
             SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null &&
-       		SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
-       		SkuPricingConsiderationContext.getSkuPricingService() != null
-       	) {
+            SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
+            SkuPricingConsiderationContext.getSkuPricingService() != null
+        ) {
             if (sku == null) {
                 throw new IllegalArgumentException("Unable to price bundle item.   DynamicPricing is enabled but no default sku is associated with the ProductBundle.");
             }
 
-       		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
-       		Sku proxy = (Sku) Proxy.newProxyInstance(sku.getClass().getClassLoader(), sku.getClass().getInterfaces(), handler);
-       		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-       		handler.reset();
-       		return dynamicPrices.getSalePrice();
-       	}
+            DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
+            Sku proxy = (Sku) Proxy.newProxyInstance(sku.getClass().getClassLoader(), sku.getClass().getInterfaces(), handler);
+            dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+            handler.reset();
+            return dynamicPrices.getSalePrice();
+        }
         return salePrice == null ? null : new Money(salePrice);
     }
 

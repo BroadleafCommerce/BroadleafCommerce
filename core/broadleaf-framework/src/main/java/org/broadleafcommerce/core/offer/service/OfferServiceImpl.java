@@ -48,7 +48,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("blOfferService")
 public class OfferServiceImpl implements OfferService {
-	
+    
     // should be called outside of Offer service after Offer service is executed
     @Resource(name="blCustomerOfferDao")
     protected CustomerOfferDao customerOfferDao;
@@ -268,8 +268,8 @@ public class OfferServiceImpl implements OfferService {
             }
         }
     }
-	
-	@Override
+    
+    @Override
     public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
@@ -308,80 +308,80 @@ public class OfferServiceImpl implements OfferService {
         return true;
     }        
 
-	@Override
+    @Override
     public CustomerOfferDao getCustomerOfferDao() {
-		return customerOfferDao;
-	}
+        return customerOfferDao;
+    }
 
-	@Override
+    @Override
     public void setCustomerOfferDao(CustomerOfferDao customerOfferDao) {
-		this.customerOfferDao = customerOfferDao;
-	}
+        this.customerOfferDao = customerOfferDao;
+    }
 
-	@Override
+    @Override
     public OfferCodeDao getOfferCodeDao() {
-		return offerCodeDao;
-	}
+        return offerCodeDao;
+    }
 
-	@Override
+    @Override
     public void setOfferCodeDao(OfferCodeDao offerCodeDao) {
-		this.offerCodeDao = offerCodeDao;
-	}
+        this.offerCodeDao = offerCodeDao;
+    }
 
-	@Override
+    @Override
     public OfferDao getOfferDao() {
-		return offerDao;
-	}
+        return offerDao;
+    }
 
-	@Override
+    @Override
     public void setOfferDao(OfferDao offerDao) {
-		this.offerDao = offerDao;
-	}
+        this.offerDao = offerDao;
+    }
 
-	@Override
+    @Override
     public OrderOfferProcessor getOrderOfferProcessor() {
-		return orderOfferProcessor;
-	}
+        return orderOfferProcessor;
+    }
 
-	@Override
+    @Override
     public void setOrderOfferProcessor(OrderOfferProcessor orderOfferProcessor) {
-		this.orderOfferProcessor = orderOfferProcessor;
-	}
+        this.orderOfferProcessor = orderOfferProcessor;
+    }
 
-	@Override
+    @Override
     public ItemOfferProcessor getItemOfferProcessor() {
-		return itemOfferProcessor;
-	}
+        return itemOfferProcessor;
+    }
 
-	@Override
+    @Override
     public void setItemOfferProcessor(ItemOfferProcessor itemOfferProcessor) {
-		this.itemOfferProcessor = itemOfferProcessor;
-	}
+        this.itemOfferProcessor = itemOfferProcessor;
+    }
 
-	@Override
+    @Override
     public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor() {
-		return fulfillmentGroupOfferProcessor;
-	}
+        return fulfillmentGroupOfferProcessor;
+    }
 
-	@Override
+    @Override
     public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor) {
-		this.fulfillmentGroupOfferProcessor = fulfillmentGroupOfferProcessor;
-	}
+        this.fulfillmentGroupOfferProcessor = fulfillmentGroupOfferProcessor;
+    }
 
-	@Override
+    @Override
     public PromotableItemFactory getPromotableItemFactory() {
-		return promotableItemFactory;
-	}
+        return promotableItemFactory;
+    }
 
-	@Override
+    @Override
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
-		this.promotableItemFactory = promotableItemFactory;
-	}
+        this.promotableItemFactory = promotableItemFactory;
+    }
 
-	@Override
-	public OfferCode findOfferCodeById(Long id) {
-		return offerCodeDao.readOfferCodeById(id);
-	}
+    @Override
+    public OfferCode findOfferCodeById(Long id) {
+        return offerCodeDao.readOfferCodeById(id);
+    }
 
     @Override
     public OrderItemMergeService getOrderItemMergeService() {

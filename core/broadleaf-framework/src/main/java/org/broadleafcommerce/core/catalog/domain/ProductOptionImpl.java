@@ -87,7 +87,7 @@ public class ProductOptionImpl implements ProductOption {
     @AdminPresentation(friendlyName = "Display Order")
     protected Integer displayOrder;
     
-	@OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value = "displayOrder")
     protected List<ProductOptionValue> allowedValues = new ArrayList<ProductOptionValue>();
@@ -149,12 +149,12 @@ public class ProductOptionImpl implements ProductOption {
     }
 
     public Integer getDisplayOrder() {
-		return displayOrder;
-	}
+        return displayOrder;
+    }
 
-	public void setDisplayOrder(Integer displayOrder) {
-		this.displayOrder = displayOrder;
-	}
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
+    }
 
     @Override
     public List<Product> getProducts() {

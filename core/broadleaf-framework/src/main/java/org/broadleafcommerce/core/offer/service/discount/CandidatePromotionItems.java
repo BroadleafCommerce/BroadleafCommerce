@@ -29,47 +29,47 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
  *
  */
 public class CandidatePromotionItems {
-	
-	protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
-	protected boolean isMatchedQualifier = false;
-	protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
-	protected boolean isMatchedTarget = false;
-	
-	public void addQualifier(OfferItemCriteria criteria, PromotableOrderItem item) {
-		List<PromotableOrderItem> itemList = candidateQualifiersMap.get(criteria);
-		if (itemList == null) {
-			itemList = new ArrayList<PromotableOrderItem>();
-			candidateQualifiersMap.put(criteria, itemList);
-		}
-		itemList.add(item);
-	}
+    
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+    protected boolean isMatchedQualifier = false;
+    protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
+    protected boolean isMatchedTarget = false;
+    
+    public void addQualifier(OfferItemCriteria criteria, PromotableOrderItem item) {
+        List<PromotableOrderItem> itemList = candidateQualifiersMap.get(criteria);
+        if (itemList == null) {
+            itemList = new ArrayList<PromotableOrderItem>();
+            candidateQualifiersMap.put(criteria, itemList);
+        }
+        itemList.add(item);
+    }
 
-	public boolean isMatchedQualifier() {
-		return isMatchedQualifier;
-	}
+    public boolean isMatchedQualifier() {
+        return isMatchedQualifier;
+    }
 
-	public void setMatchedQualifier(boolean isMatchedCandidate) {
-		this.isMatchedQualifier = isMatchedCandidate;
-	}
+    public void setMatchedQualifier(boolean isMatchedCandidate) {
+        this.isMatchedQualifier = isMatchedCandidate;
+    }
 
-	public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
-		return candidateQualifiersMap;
-	}
-	
-	public void addTarget(PromotableOrderItem item) {
-		candidateTargets.add(item);
-	}
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
+        return candidateQualifiersMap;
+    }
+    
+    public void addTarget(PromotableOrderItem item) {
+        candidateTargets.add(item);
+    }
 
-	public boolean isMatchedTarget() {
-		return isMatchedTarget;
-	}
+    public boolean isMatchedTarget() {
+        return isMatchedTarget;
+    }
 
-	public void setMatchedTarget(boolean isMatchedCandidate) {
-		this.isMatchedTarget = isMatchedCandidate;
-	}
+    public void setMatchedTarget(boolean isMatchedCandidate) {
+        this.isMatchedTarget = isMatchedCandidate;
+    }
 
-	public List<PromotableOrderItem> getCandidateTargets() {
-		return candidateTargets;
-	}
+    public List<PromotableOrderItem> getCandidateTargets() {
+        return candidateTargets;
+    }
 
 }

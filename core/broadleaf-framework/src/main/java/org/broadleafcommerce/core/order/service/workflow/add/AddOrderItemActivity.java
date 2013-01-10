@@ -60,7 +60,7 @@ public class AddOrderItemActivity extends BaseActivity {
         
         Product product = null;
         if (orderItemRequestDTO.getProductId() != null) {
-        	product = catalogService.findProductById(orderItemRequestDTO.getProductId());
+            product = catalogService.findProductById(orderItemRequestDTO.getProductId());
         }
         
         Category category = null;
@@ -74,22 +74,22 @@ public class AddOrderItemActivity extends BaseActivity {
 
         OrderItem item;
         if (product == null || !(product instanceof ProductBundle)) {
-        	DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
-        	itemRequest.setCategory(category);
-	        itemRequest.setProduct(product);
-	        itemRequest.setSku(sku);
-	        itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
-	        itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
-        	item = orderItemService.createDiscreteOrderItem(itemRequest);
+            DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+            itemRequest.setCategory(category);
+            itemRequest.setProduct(product);
+            itemRequest.setSku(sku);
+            itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
+            itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+            item = orderItemService.createDiscreteOrderItem(itemRequest);
         } else {
-        	ProductBundleOrderItemRequest bundleItemRequest = new ProductBundleOrderItemRequest();
-        	bundleItemRequest.setCategory(category);
-        	bundleItemRequest.setProductBundle((ProductBundle) product);
-        	bundleItemRequest.setSku(sku);
-        	bundleItemRequest.setQuantity(orderItemRequestDTO.getQuantity());
-        	bundleItemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
-        	bundleItemRequest.setName(product.getName());
-        	item = orderItemService.createBundleOrderItem(bundleItemRequest);
+            ProductBundleOrderItemRequest bundleItemRequest = new ProductBundleOrderItemRequest();
+            bundleItemRequest.setCategory(category);
+            bundleItemRequest.setProductBundle((ProductBundle) product);
+            bundleItemRequest.setSku(sku);
+            bundleItemRequest.setQuantity(orderItemRequestDTO.getQuantity());
+            bundleItemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+            bundleItemRequest.setName(product.getName());
+            item = orderItemService.createBundleOrderItem(bundleItemRequest);
         }
         
         item.setOrder(order);

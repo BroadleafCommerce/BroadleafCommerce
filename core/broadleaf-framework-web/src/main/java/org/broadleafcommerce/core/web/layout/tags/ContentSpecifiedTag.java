@@ -45,13 +45,13 @@ public class ContentSpecifiedTag extends BodyTagSupport {
     private int rowCount;
     
     public ContentSpecifiedTag(){
-    	super();
-    	init();
+        super();
+        init();
     }
     
     private void init(){
-    	escapeXml = true;
-    	rowCount = -1;
+        escapeXml = true;
+        rowCount = -1;
     }
     
     
@@ -63,61 +63,61 @@ public class ContentSpecifiedTag extends BodyTagSupport {
     }
 
     /**
-	 * @return the parameterMap
-	 */
-	public Map<String, Object> getParameterMap() {
-		return parameterMap;
-	}
-	/**
-	 * @param parameterMap the parameterMap to set
-	 */
-	public void setParameterMap(Map<String, Object> parameterMap) {
-		this.parameterMap = parameterMap;
-	}
-	
-	/**
-	 * @return the xslt
-	 */
-	public Object getXslt() {
-		return xslt;
-	}
-	/**
-	 * @param xslt the xslt to set
-	 */
-	public void setXslt(Object xslt) {
-		this.xslt = xslt;
-	}
-	
-	/**
-	 * @return the escapeXml
-	 */
-	public boolean isEscapeXml() {
-		return escapeXml;
-	}
-	/**
-	 * @param escapeXml the escapeXml to set
-	 */
-	public void setEscapeXml(boolean escapeXml) {
-		this.escapeXml = escapeXml;
-	}
-	
-	/**
-	 * @return the rowCount
-	 */
-	public int getRowCount() {
-		return rowCount;
-	}
+     * @return the parameterMap
+     */
+    public Map<String, Object> getParameterMap() {
+        return parameterMap;
+    }
+    /**
+     * @param parameterMap the parameterMap to set
+     */
+    public void setParameterMap(Map<String, Object> parameterMap) {
+        this.parameterMap = parameterMap;
+    }
+    
+    /**
+     * @return the xslt
+     */
+    public Object getXslt() {
+        return xslt;
+    }
+    /**
+     * @param xslt the xslt to set
+     */
+    public void setXslt(Object xslt) {
+        this.xslt = xslt;
+    }
+    
+    /**
+     * @return the escapeXml
+     */
+    public boolean isEscapeXml() {
+        return escapeXml;
+    }
+    /**
+     * @param escapeXml the escapeXml to set
+     */
+    public void setEscapeXml(boolean escapeXml) {
+        this.escapeXml = escapeXml;
+    }
+    
+    /**
+     * @return the rowCount
+     */
+    public int getRowCount() {
+        return rowCount;
+    }
 
-	/**
-	 * @param rowCount the rowCount to set
-	 */
-	public void setRowCount(int rowCount) {
-		this.rowCount = rowCount;
-	}
+    /**
+     * @param rowCount the rowCount to set
+     */
+    public void setRowCount(int rowCount) {
+        this.rowCount = rowCount;
+    }
 
-	@Override
+    @Override
     public int doStartTag() throws JspException {
-//        PageContext pageContext = (PageContext)getJspContext();    	
+//        PageContext pageContext = (PageContext)getJspContext();       
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         ContentService contentService = (ContentService) applicationContext.getBean("blContentService");
         List<Content> contentObjs;
@@ -126,46 +126,46 @@ public class ContentSpecifiedTag extends BodyTagSupport {
 
         HttpSession session = pageContext.getSession();
         if(session != null){
-        	
-	        String newSandbox = (String)session.getAttribute("BLC_CONTENT_SANDBOX");
-	        String displayDateString = (String)session.getAttribute("BLC_CONTENT_DATE_TIME");
-	        
-	        if(newSandbox != null && newSandbox != ""){
-	        	sandbox = newSandbox;
-	        }
-	        
-	        if(displayDateString != null && displayDateString != ""){
-	        	try{
-	        		
-	        		displayDate = new SimpleDateFormat("MM-dd-yyyy").parse(displayDateString);
-	        	}catch (ParseException exp){
-	        		throw new JspException();
-	        	}
-	        }
+            
+            String newSandbox = (String)session.getAttribute("BLC_CONTENT_SANDBOX");
+            String displayDateString = (String)session.getAttribute("BLC_CONTENT_DATE_TIME");
+            
+            if(newSandbox != null && newSandbox != ""){
+                sandbox = newSandbox;
+            }
+            
+            if(displayDateString != null && displayDateString != ""){
+                try{
+                    
+                    displayDate = new SimpleDateFormat("MM-dd-yyyy").parse(displayDateString);
+                }catch (ParseException exp){
+                    throw new JspException();
+                }
+            }
         }
         
         if(displayDate == null){
-        	contentObjs = contentService.findContent(sandbox, contentType, parameterMap, SystemTime.asDate());
+            contentObjs = contentService.findContent(sandbox, contentType, parameterMap, SystemTime.asDate());
         }else{
-        	contentObjs = contentService.findContent(sandbox, contentType, parameterMap, displayDate);
+            contentObjs = contentService.findContent(sandbox, contentType, parameterMap, displayDate);
         }
 
         JspWriter out = pageContext.getOut();
         try{
-        	String renderedText = contentService.renderedContent((String)xslt, contentObjs, rowCount); 
-        	if(!escapeXml){
-        		out.write(renderedText);        	        		
-        	}else{
-        		writeEscapedXml(renderedText.toCharArray(), renderedText.length(), out);
-        	}
+            String renderedText = contentService.renderedContent((String)xslt, contentObjs, rowCount); 
+            if(!escapeXml){
+                out.write(renderedText);                            
+            }else{
+                writeEscapedXml(renderedText.toCharArray(), renderedText.length(), out);
+            }
         }catch (Exception e){
-        	throw new JspException();
+            throw new JspException();
         }
         
         return EVAL_PAGE;
         //        pageContext.setAttribute(contentDetailsProperty, contentXmls);
     }
-	
+    
     private static void writeEscapedXml(char[] buffer, int length, JspWriter w) throws IOException{
         int start = 0;
 

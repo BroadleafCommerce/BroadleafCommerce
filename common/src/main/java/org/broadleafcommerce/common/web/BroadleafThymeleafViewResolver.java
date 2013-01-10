@@ -90,7 +90,7 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
         if (viewName.startsWith(AJAX_REDIRECT_URL_PREFIX)) {
             LOG.trace("[THYMELEAF] View {" + viewName + "} is an ajax redirect, and will be handled directly by BroadleafThymeleafViewResolver");
             String redirectUrl = viewName.substring(AJAX_REDIRECT_URL_PREFIX.length());
-        	return loadAjaxRedirectView(redirectUrl, locale);
+            return loadAjaxRedirectView(redirectUrl, locale);
         }
         
         return super.createView(viewName, locale);
@@ -106,55 +106,55 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
      * @throws Exception
      */
     protected View loadAjaxRedirectView(String redirectUrl, final Locale locale) throws Exception {
-    	if (isAjaxRequest()) {
-    		String viewName = "utility/blcRedirect";
-    		addStaticVariable(BroadleafControllerUtility.BLC_REDIRECT_ATTRIBUTE, redirectUrl);
-    		return super.loadView(viewName, locale);
-    	} else {
+        if (isAjaxRequest()) {
+            String viewName = "utility/blcRedirect";
+            addStaticVariable(BroadleafControllerUtility.BLC_REDIRECT_ATTRIBUTE, redirectUrl);
+            return super.loadView(viewName, locale);
+        } else {
             return new RedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
-    	}
+        }
     }
     
     @Override
     protected View loadView(final String originalViewName, final Locale locale) throws Exception {
-    	String viewName = originalViewName;
-    	
-    	if (!isAjaxRequest()) {
-    		String longestPrefix = "";
-    		
-    		for (Entry<String, String> entry : layoutMap.entrySet()) {
-    			String viewPrefix = entry.getKey();
-    			String viewLayout = entry.getValue();
-    			
-    			if (viewPrefix.length() > longestPrefix.length()) {
-	    	    	if (originalViewName.startsWith(viewPrefix)) {
-	    	    		longestPrefix = viewPrefix;
-	    	    		
-	    	    		if (!"NONE".equals(viewLayout)) {
-	    	    			viewName = viewLayout;
-	    	    		}
-	    	    	}
-    			}
-    		}  
-    		
-    		if (longestPrefix.equals("")) {
-    			viewName = getFullPageLayout();
-    		}
-    	}
-    	
-    	AbstractThymeleafView view = (AbstractThymeleafView) super.loadView(viewName, locale);
-    	
-    	if (!isAjaxRequest()) {
-    	    view.addStaticVariable("templateName", originalViewName);
-    	}
-    	
-    	return view;
+        String viewName = originalViewName;
+        
+        if (!isAjaxRequest()) {
+            String longestPrefix = "";
+            
+            for (Entry<String, String> entry : layoutMap.entrySet()) {
+                String viewPrefix = entry.getKey();
+                String viewLayout = entry.getValue();
+                
+                if (viewPrefix.length() > longestPrefix.length()) {
+                    if (originalViewName.startsWith(viewPrefix)) {
+                        longestPrefix = viewPrefix;
+                        
+                        if (!"NONE".equals(viewLayout)) {
+                            viewName = viewLayout;
+                        }
+                    }
+                }
+            }  
+            
+            if (longestPrefix.equals("")) {
+                viewName = getFullPageLayout();
+            }
+        }
+        
+        AbstractThymeleafView view = (AbstractThymeleafView) super.loadView(viewName, locale);
+        
+        if (!isAjaxRequest()) {
+            view.addStaticVariable("templateName", originalViewName);
+        }
+        
+        return view;
     }
     
     protected boolean isIFrameRequest() {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-    	String iFrameParameter = request.getParameter("blcIFrame");
-    	return  (iFrameParameter != null && "true".equals(iFrameParameter));
+        String iFrameParameter = request.getParameter("blcIFrame");
+        return  (iFrameParameter != null && "true".equals(iFrameParameter));
     }
     
     protected boolean isAjaxRequest() {
@@ -168,50 +168,50 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
      * 
      * @return the layout map
      */
-	public Map<String, String> getLayoutMap() {
-		return layoutMap;
-	}
+    public Map<String, String> getLayoutMap() {
+        return layoutMap;
+    }
 
-	/**
-	 * @see #getLayoutMap()
-	 * @param layoutMap
-	 */
-	public void setLayoutMap(Map<String, String> layoutMap) {
-		this.layoutMap = layoutMap;
-	}
+    /**
+     * @see #getLayoutMap()
+     * @param layoutMap
+     */
+    public void setLayoutMap(Map<String, String> layoutMap) {
+        this.layoutMap = layoutMap;
+    }
 
-	/**
-	 * The default layout to use if there is no specifc entry in the layout map
-	 * 
-	 * @return the full page layout
-	 */
-	public String getFullPageLayout() {
-		return fullPageLayout;
-	}
+    /**
+     * The default layout to use if there is no specifc entry in the layout map
+     * 
+     * @return the full page layout
+     */
+    public String getFullPageLayout() {
+        return fullPageLayout;
+    }
 
-	/**
-	 * @see #getFullPageLayout()
-	 * @param fullPageLayout
-	 */
-	public void setFullPageLayout(String fullPageLayout) {
-		this.fullPageLayout = fullPageLayout;
-	}
+    /**
+     * @see #getFullPageLayout()
+     * @param fullPageLayout
+     */
+    public void setFullPageLayout(String fullPageLayout) {
+        this.fullPageLayout = fullPageLayout;
+    }
 
-	/**
-	 * The layout to use for iframe requests
-	 * 
-	 * @return the iframe layout
-	 */
-	public String getIframeLayout() {
-		return iframeLayout;
-	}
+    /**
+     * The layout to use for iframe requests
+     * 
+     * @return the iframe layout
+     */
+    public String getIframeLayout() {
+        return iframeLayout;
+    }
 
-	/**
-	 * @see #getIframeLayout()
-	 * @param iframeLayout
-	 */
-	public void setIframeLayout(String iframeLayout) {
-		this.iframeLayout = iframeLayout;
-	}
+    /**
+     * @see #getIframeLayout()
+     * @param iframeLayout
+     */
+    public void setIframeLayout(String iframeLayout) {
+        this.iframeLayout = iframeLayout;
+    }
     
 }

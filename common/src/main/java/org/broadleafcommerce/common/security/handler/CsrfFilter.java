@@ -48,16 +48,16 @@ import java.util.List;
  */
 public class CsrfFilter extends GenericFilterBean {
     protected static final Log LOG = LogFactory.getLog(CsrfFilter.class);
-	
+    
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
     protected List<String> excludedRequestPatterns;
 
-	@Override
-	public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest) baseRequest;
-		HttpServletResponse response = (HttpServletResponse) baseResponse;
+    @Override
+    public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) baseRequest;
+        HttpServletResponse response = (HttpServletResponse) baseResponse;
 
         boolean excludedRequestFound = false;
         if (excludedRequestPatterns != null && excludedRequestPatterns.size() > 0) {
@@ -70,18 +70,18 @@ public class CsrfFilter extends GenericFilterBean {
             }
         }
 
-		// We only validate CSRF tokens on POST
+        // We only validate CSRF tokens on POST
         if (request.getMethod().equals("POST") && !excludedRequestFound) {
-			String requestToken = request.getParameter(exploitProtectionService.getCsrfTokenParameter());
-			try {
-				exploitProtectionService.compareToken(requestToken);
-			} catch (ServiceException e) {
-				throw new ServletException(e);
-			}
-		}
+            String requestToken = request.getParameter(exploitProtectionService.getCsrfTokenParameter());
+            try {
+                exploitProtectionService.compareToken(requestToken);
+            } catch (ServiceException e) {
+                throw new ServletException(e);
+            }
+        }
         
         chain.doFilter(request, response);
-	}
+    }
 
     public List<String> getExcludedRequestPatterns() {
         return excludedRequestPatterns;

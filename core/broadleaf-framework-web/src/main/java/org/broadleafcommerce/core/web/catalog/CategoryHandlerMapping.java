@@ -37,18 +37,18 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
  * @see CataService
  */
 public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
-	
-	private String controllerName="blCategoryController";
-	
+    
+    private String controllerName="blCategoryController";
+    
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
     
     public static final String CURRENT_CATEGORY_ATTRIBUTE_NAME = "category";
 
-	@Override
-	protected Object getHandlerInternal(HttpServletRequest request)
-			throws Exception {		
-		BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+    @Override
+    protected Object getHandlerInternal(HttpServletRequest request)
+            throws Exception {      
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
             Category category = catalogService.findCategoryByURI(context.getRequestURIWithoutContext());
 
@@ -58,5 +58,5 @@ public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
             }
         }
         return null;
-	}
+    }
 }

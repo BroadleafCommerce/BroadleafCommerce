@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
-	version="2.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
 
-	<named-query name="BC_FIND_ZIP_CODE_BY_ZIP_CODE" >
-		<query>SELECT zip FROM org.broadleafcommerce.core.store.domain.ZipCode zip WHERE zip.zipcode = :zipCode</query>
-	</named-query>
+    <named-query name="BC_FIND_ZIP_CODE_BY_ZIP_CODE" >
+        <query>SELECT zip FROM org.broadleafcommerce.core.store.domain.ZipCode zip WHERE zip.zipcode = :zipCode</query>
+    </named-query>
 
 </entity-mappings>

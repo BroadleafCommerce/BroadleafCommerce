@@ -39,7 +39,7 @@ import javax.persistence.Table;
 @Inheritance(strategy=InheritanceType.JOINED)
 public class CriteriaOfferXref {
 
-	/** The Constant serialVersionUID. */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The category id. */
@@ -55,7 +55,7 @@ public class CriteriaOfferXref {
     }
 
     public static class CriteriaOfferXrefPK implements Serializable {
-    	
+        
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
@@ -67,52 +67,52 @@ public class CriteriaOfferXref {
         @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID")
         protected OfferItemCriteria offerCriteria = new OfferItemCriteriaImpl();
 
-		public Offer getOffer() {
-			return offer;
-		}
+        public Offer getOffer() {
+            return offer;
+        }
 
-		public void setOffer(Offer offer) {
-			this.offer = offer;
-		}
+        public void setOffer(Offer offer) {
+            this.offer = offer;
+        }
 
-		public OfferItemCriteria getOfferCriteria() {
-			return offerCriteria;
-		}
+        public OfferItemCriteria getOfferCriteria() {
+            return offerCriteria;
+        }
 
-		public void setOfferCriteria(OfferItemCriteria offerCriteria) {
-			this.offerCriteria = offerCriteria;
-		}
+        public void setOfferCriteria(OfferItemCriteria offerCriteria) {
+            this.offerCriteria = offerCriteria;
+        }
 
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((offer == null) ? 0 : offer.hashCode());
-			result = prime * result + ((offerCriteria == null) ? 0 : offerCriteria.hashCode());
-			return result;
-		}
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((offer == null) ? 0 : offer.hashCode());
+            result = prime * result + ((offerCriteria == null) ? 0 : offerCriteria.hashCode());
+            return result;
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			CriteriaOfferXrefPK other = (CriteriaOfferXrefPK) obj;
-			if (offer == null) {
-				if (other.offer != null)
-					return false;
-			} else if (!offer.equals(other.offer))
-				return false;
-			if (offerCriteria == null) {
-				if (other.offerCriteria != null)
-					return false;
-			} else if (!offerCriteria.equals(other.offerCriteria))
-				return false;
-			return true;
-		}
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            CriteriaOfferXrefPK other = (CriteriaOfferXrefPK) obj;
+            if (offer == null) {
+                if (other.offer != null)
+                    return false;
+            } else if (!offer.equals(other.offer))
+                return false;
+            if (offerCriteria == null) {
+                if (other.offerCriteria != null)
+                    return false;
+            } else if (!offerCriteria.equals(other.offerCriteria))
+                return false;
+            return true;
+        }
 
     }
 }

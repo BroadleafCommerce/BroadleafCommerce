@@ -33,16 +33,16 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 public class NonResourceWebContentInterceptor extends WebContentInterceptor {
-	
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) 
-			throws ServletException {
-		
-		if (ResourceHttpRequestHandler.class.isAssignableFrom(handler.getClass())) {
-		    return true;
-		} else {
-			return super.preHandle(request, response, handler);
-		}
-	}
+    
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) 
+            throws ServletException {
+        
+        if (ResourceHttpRequestHandler.class.isAssignableFrom(handler.getClass())) {
+            return true;
+        } else {
+            return super.preHandle(request, response, handler);
+        }
+    }
 
 }

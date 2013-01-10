@@ -41,7 +41,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "BLC_CAT_SEARCH_FACET_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable {
-	
+    
     /**
      * 
      */
@@ -53,11 +53,11 @@ public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable
     @Column(name = "CATEGORY_SEARCH_FACET_ID")
     protected Long id;
     
-	@ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category;
     
-	@ManyToOne(targetEntity = SearchFacetImpl.class)
+    @ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
     protected SearchFacet searchFacet;
     
@@ -65,44 +65,44 @@ public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable
     @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence", prominent=true)
     protected Long sequence;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public Category getCategory() {
-		return category;
-	}
+    @Override
+    public Category getCategory() {
+        return category;
+    }
 
-	@Override
-	public void setCategory(Category category) {
-		this.category = category;
-	}
+    @Override
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
-	@Override
-	public SearchFacet getSearchFacet() {
-		return searchFacet;
-	}
+    @Override
+    public SearchFacet getSearchFacet() {
+        return searchFacet;
+    }
 
-	@Override
-	public void setSearchFacet(SearchFacet searchFacet) {
-		this.searchFacet = searchFacet;
-	}
+    @Override
+    public void setSearchFacet(SearchFacet searchFacet) {
+        this.searchFacet = searchFacet;
+    }
 
-	@Override
-	public Long getSequence() {
-		return sequence;
-	}
+    @Override
+    public Long getSequence() {
+        return sequence;
+    }
 
-	@Override
-	public void setSequence(Long sequence) {
-		this.sequence = sequence;
-	}
+    @Override
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
+    }
     
 }

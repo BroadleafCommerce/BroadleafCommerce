@@ -144,7 +144,7 @@ public interface Order extends Serializable {
      * @param sku The sku to check for
      * @return whether or not the given SKU exists in the cart
      */
-	public boolean containsSku(Sku sku);
+    public boolean containsSku(Sku sku);
 
     public List<OfferCode> getAddedOfferCodes();
 
@@ -188,14 +188,14 @@ public interface Order extends Serializable {
      */
     public Money getTotalAdjustmentsValue();
 
-	public boolean updatePrices();
-	
-	public Money getFulfillmentGroupAdjustmentsValue();
-	
-	public void addOfferCode(OfferCode addedOfferCode);
-	
-	@Deprecated
-	public void addAddedOfferCode(OfferCode offerCode);
+    public boolean updatePrices();
+    
+    public Money getFulfillmentGroupAdjustmentsValue();
+    
+    public void addOfferCode(OfferCode addedOfferCode);
+    
+    @Deprecated
+    public void addAddedOfferCode(OfferCode offerCode);
 
     /**
      * A list of arbitrary attributes added to this order.

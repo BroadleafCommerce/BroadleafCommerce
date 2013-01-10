@@ -23,13 +23,13 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface CustomerOfferDao {
 
-	public CustomerOffer readCustomerOfferById(Long customerOfferId);
+    public CustomerOffer readCustomerOfferById(Long customerOfferId);
 
     public List<CustomerOffer> readCustomerOffersByCustomer(Customer customer);
 
-	public CustomerOffer save(CustomerOffer customerOffer);
+    public CustomerOffer save(CustomerOffer customerOffer);
 
-	public void delete(CustomerOffer customerOffer);
+    public void delete(CustomerOffer customerOffer);
 
-	public CustomerOffer create();
+    public CustomerOffer create();
 }

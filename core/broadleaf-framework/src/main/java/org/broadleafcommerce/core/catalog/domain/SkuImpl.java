@@ -94,8 +94,8 @@ import java.util.Map;
 @Table(name="BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SkuImpl implements Sku {
-	
-	private static final Log LOG = LogFactory.getLog(SkuImpl.class);
+    
+    private static final Log LOG = LogFactory.getLog(SkuImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
@@ -280,9 +280,9 @@ public class SkuImpl implements Sku {
 
     @Override
     public boolean isOnSale() {
-    	Money retailPrice = getRetailPrice();
-    	Money salePrice = getSalePrice();
-    	return (salePrice != null && !salePrice.isZero() && salePrice.lessThan(retailPrice));
+        Money retailPrice = getRetailPrice();
+        Money salePrice = getSalePrice();
+        return (salePrice != null && !salePrice.isZero() && salePrice.lessThan(retailPrice));
     }
 
     private boolean hasDefaultSku() {
@@ -319,26 +319,26 @@ public class SkuImpl implements Sku {
             return lookupDefaultSku().getSalePrice();
         }
 
-    	if (dynamicPrices != null) {
-    		return dynamicPrices.getSalePrice();
-    	}
-    	if (
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
-    			SkuPricingConsiderationContext.getSkuPricingService() != null
-    	) {
-    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
-    		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-    		
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-    		handler.reset();
-    		return dynamicPrices.getSalePrice();
-    	} else {
-    	    if (getProductOptionValueAdjustments() == null) {
-    	        return salePrice == null ? null : new Money(salePrice);
-    	    } else {
-    	        return salePrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(salePrice));
-    	    }
+        if (dynamicPrices != null) {
+            return dynamicPrices.getSalePrice();
+        }
+        if (
+                SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
+                SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
+                SkuPricingConsiderationContext.getSkuPricingService() != null
+        ) {
+            DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
+            Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+            
+            dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+            handler.reset();
+            return dynamicPrices.getSalePrice();
+        } else {
+            if (getProductOptionValueAdjustments() == null) {
+                return salePrice == null ? null : new Money(salePrice);
+            } else {
+                return salePrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(salePrice));
+            }
         }
     }
 
@@ -353,22 +353,22 @@ public class SkuImpl implements Sku {
             return lookupDefaultSku().getRetailPrice();
         }
 
-    	if (dynamicPrices != null) {
-    		return dynamicPrices.getRetailPrice();
-    	}
-    	if (
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
-    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
-    			SkuPricingConsiderationContext.getSkuPricingService() != null
-    	) {
-    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
-    		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-    		
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-    		handler.reset();
-    		return dynamicPrices.getRetailPrice();
-    	}
-    	if (getProductOptionValueAdjustments() == null) {
+        if (dynamicPrices != null) {
+            return dynamicPrices.getRetailPrice();
+        }
+        if (
+                SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
+                SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
+                SkuPricingConsiderationContext.getSkuPricingService() != null
+        ) {
+            DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
+            Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+            
+            dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+            handler.reset();
+            return dynamicPrices.getRetailPrice();
+        }
+        if (getProductOptionValueAdjustments() == null) {
             return retailPrice == null ? null : new Money(retailPrice);
         } else {
             return retailPrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(retailPrice));
@@ -494,7 +494,7 @@ public class SkuImpl implements Sku {
 
     @Override
     public Boolean getAvailable() {
-    	return isAvailable();
+        return isAvailable();
     }
 
     @Override
@@ -564,9 +564,9 @@ public class SkuImpl implements Sku {
 
     @Override
     public boolean isActive() {
-    	if (activeStartDate == null && activeEndDate == null && hasDefaultSku()) {
-    		return lookupDefaultSku().isActive();
-    	}
+        if (activeStartDate == null && activeEndDate == null && hasDefaultSku()) {
+            return lookupDefaultSku().isActive();
+        }
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
                 LOG.debug("sku, " + id + ", inactive due to date");
@@ -625,27 +625,27 @@ public class SkuImpl implements Sku {
     }
     
     @Override
-	public List<SkuAttribute> getSkuAttributes() {
-		return skuAttributes;
-	}
+    public List<SkuAttribute> getSkuAttributes() {
+        return skuAttributes;
+    }
     
     @Override
     public SkuAttribute getSkuAttributeByName(String name) {
-    	for (SkuAttribute attribute : getSkuAttributes()) {
-    		if (attribute.getName().equals(name)) {
-    			return attribute;
-    		}
-    	}
-    	return null;
+        for (SkuAttribute attribute : getSkuAttributes()) {
+            if (attribute.getName().equals(name)) {
+                return attribute;
+            }
+        }
+        return null;
     }
     
     @Override
     public Map<String, SkuAttribute> getMappedSkuAttributes() {
-    	Map<String, SkuAttribute> map = new HashMap<String, SkuAttribute>();
-    	for (SkuAttribute attr : getSkuAttributes()) {
-    		map.put(attr.getName(), attr);
-    	}
-    	return map;
+        Map<String, SkuAttribute> map = new HashMap<String, SkuAttribute>();
+        for (SkuAttribute attr : getSkuAttributes()) {
+            map.put(attr.getName(), attr);
+        }
+        return map;
     }
 
     @Override
@@ -659,13 +659,13 @@ public class SkuImpl implements Sku {
     }
 
     @Override
-	public void setSkuAttributes(List<SkuAttribute> skuAttributes) {
-		this.skuAttributes = skuAttributes;
-	}
+    public void setSkuAttributes(List<SkuAttribute> skuAttributes) {
+        this.skuAttributes = skuAttributes;
+    }
 
     @Override
     public Boolean isMachineSortable() {
-    	 if (isMachineSortable == null && hasDefaultSku()) {
+         if (isMachineSortable == null && hasDefaultSku()) {
              return lookupDefaultSku().isMachineSortable();
          }
         return isMachineSortable;
@@ -706,7 +706,7 @@ public class SkuImpl implements Sku {
         this.excludedFulfillmentOptions = excludedFulfillmentOptions;
     }
     
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

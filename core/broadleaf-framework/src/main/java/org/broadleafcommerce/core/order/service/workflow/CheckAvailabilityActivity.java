@@ -44,20 +44,20 @@ public class CheckAvailabilityActivity extends BaseActivity {
         
         Sku sku = null;
         if (request.getItemRequest().getSkuId() != null) {
-        	sku = catalogService.findSkuById(request.getItemRequest().getSkuId());
+            sku = catalogService.findSkuById(request.getItemRequest().getSkuId());
         } else { 
-        	OrderItem orderItem = orderItemService.readOrderItemById(request.getItemRequest().getOrderItemId());
-        	if (orderItem instanceof DiscreteOrderItem) {
-        		sku = ((DiscreteOrderItem) orderItem).getSku();
-        		request.getItemRequest().setSkuId(sku.getId());
-        	} else if (orderItem instanceof BundleOrderItem) {
-        	    sku = ((BundleOrderItem) orderItem).getSku();
-        		request.getItemRequest().setSkuId(sku.getId());
-        	}
+            OrderItem orderItem = orderItemService.readOrderItemById(request.getItemRequest().getOrderItemId());
+            if (orderItem instanceof DiscreteOrderItem) {
+                sku = ((DiscreteOrderItem) orderItem).getSku();
+                request.getItemRequest().setSkuId(sku.getId());
+            } else if (orderItem instanceof BundleOrderItem) {
+                sku = ((BundleOrderItem) orderItem).getSku();
+                request.getItemRequest().setSkuId(sku.getId());
+            }
         }
         
         if (sku == null || !sku.isActive()) {
-        	throw new InventoryUnavailableException("The requested SKU is no longer active");
+            throw new InventoryUnavailableException("The requested SKU is no longer active");
         }
         
         return context;

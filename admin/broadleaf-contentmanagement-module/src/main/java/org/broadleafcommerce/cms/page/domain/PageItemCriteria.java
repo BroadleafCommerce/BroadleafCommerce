@@ -52,13 +52,13 @@ public interface PageItemCriteria extends Serializable {
      *
      * @return
      */
-	public Integer getQuantity();
+    public Integer getQuantity();
 
     /**
      *
      * @param quantity
      */
-	public void setQuantity(Integer quantity);
+    public void setQuantity(Integer quantity);
 
     /**
      * Returns the MVEL rule to apply against an order to determine if
@@ -66,14 +66,14 @@ public interface PageItemCriteria extends Serializable {
      *
      * @return the rule as an MVEL string
      */
-	public String getOrderItemMatchRule();
+    public String getOrderItemMatchRule();
 
     /**
      * An valid MVEL syntax rule to be used to process the
      *
      * @param orderItemMatchRule
      */
-	public void setOrderItemMatchRule(String orderItemMatchRule);
+    public void setOrderItemMatchRule(String orderItemMatchRule);
 
     /**
      * Returns the parent <code>Page</code> to which this
@@ -98,5 +98,5 @@ public interface PageItemCriteria extends Serializable {
      */
     @Nonnull
     public PageItemCriteria cloneEntity();
-	
+    
 }

@@ -29,35 +29,35 @@ public class VelocityMessageCreator extends MessageCreator {
     private HashMap<String, Object> additionalConfigItems;
     
     public VelocityMessageCreator(VelocityEngine velocityEngine, JavaMailSender mailSender, HashMap<String, Object> additionalConfigItems) {
-    	super(mailSender);
-    	this.additionalConfigItems = additionalConfigItems;
+        super(mailSender);
+        this.additionalConfigItems = additionalConfigItems;
         this.velocityEngine = velocityEngine;        
     }
 
-	@Override
-	public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
-		@SuppressWarnings("unchecked")
-		HashMap<String,Object> propsCopy = (HashMap<String, Object>) props.clone();
+    @Override
+    public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
+        @SuppressWarnings("unchecked")
+        HashMap<String,Object> propsCopy = (HashMap<String, Object>) props.clone();
         if (additionalConfigItems != null) {
-        	propsCopy.putAll(additionalConfigItems);
+            propsCopy.putAll(additionalConfigItems);
         }
-		return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, info.getEmailTemplate(), propsCopy);
-	}
+        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, info.getEmailTemplate(), propsCopy);
+    }
 
-	public VelocityEngine getVelocityEngine() {
-		return velocityEngine;
-	}
+    public VelocityEngine getVelocityEngine() {
+        return velocityEngine;
+    }
 
-	public void setVelocityEngine(VelocityEngine velocityEngine) {
-		this.velocityEngine = velocityEngine;
-	}
+    public void setVelocityEngine(VelocityEngine velocityEngine) {
+        this.velocityEngine = velocityEngine;
+    }
 
-	public HashMap<String, Object> getAdditionalConfigItems() {
-		return additionalConfigItems;
-	}
+    public HashMap<String, Object> getAdditionalConfigItems() {
+        return additionalConfigItems;
+    }
 
-	public void setAdditionalConfigItems(
-			HashMap<String, Object> additionalConfigItems) {
-		this.additionalConfigItems = additionalConfigItems;
-	}	
+    public void setAdditionalConfigItems(
+            HashMap<String, Object> additionalConfigItems) {
+        this.additionalConfigItems = additionalConfigItems;
+    }   
 }

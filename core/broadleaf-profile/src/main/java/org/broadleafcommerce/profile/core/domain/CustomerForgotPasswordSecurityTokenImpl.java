@@ -78,14 +78,14 @@ public class CustomerForgotPasswordSecurityTokenImpl implements CustomerForgotPa
     }
 
     public Long getCustomerId() {
-		return customerId;
-	}
+        return customerId;
+    }
 
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
-	}
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
 
-	public boolean isTokenUsedFlag() {
+    public boolean isTokenUsedFlag() {
         return tokenUsedFlag;
     }
 

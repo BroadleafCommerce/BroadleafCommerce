@@ -101,7 +101,7 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     }
     
     public void setDiscountedPrice(Money discountedPrice) {
-    	this.discountedPrice = discountedPrice.getAmount();
+        this.discountedPrice = discountedPrice.getAmount();
     }
 
     public Order getOrder() {

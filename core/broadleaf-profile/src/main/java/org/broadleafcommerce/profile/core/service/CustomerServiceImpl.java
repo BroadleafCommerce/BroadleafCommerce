@@ -50,8 +50,8 @@ import java.util.List;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
-	private static final Log LOG = LogFactory.getLog(CustomerServiceImpl.class);
-	
+    private static final Log LOG = LogFactory.getLog(CustomerServiceImpl.class);
+    
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
@@ -89,7 +89,7 @@ public class CustomerServiceImpl implements CustomerService {
     
     protected int tokenExpiredMinutes = 30;
     protected int passwordTokenLength = 20;   
-    		 
+             
     protected final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
     protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<PasswordUpdatedHandler>();
     protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<PasswordUpdatedHandler>();
@@ -131,7 +131,7 @@ public class CustomerServiceImpl implements CustomerService {
         createRegisteredCustomerRoles(retCustomer);
         
         HashMap<String, Object> vars = new HashMap<String, Object>();
-		vars.put("customer", retCustomer);
+        vars.put("customer", retCustomer);
         
         emailService.sendTemplateEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);        
         notifyPostRegisterListeners(retCustomer);
@@ -164,13 +164,13 @@ public class CustomerServiceImpl implements CustomerService {
         customer = saveCustomer(customer);
         
         for (PasswordUpdatedHandler handler : passwordChangedHandlers) {
-        	handler.passwordChanged(passwordChange, customer, passwordChange.getNewPassword());
+            handler.passwordChanged(passwordChange, customer, passwordChange.getNewPassword());
         }
         
         return customer;
     }
     
-	@Override
+    @Override
     public Customer resetPassword(PasswordReset passwordReset) {
         Customer customer = readCustomerByUsername(passwordReset.getUsername());
         String newPassword = PasswordUtils.generateTemporaryPassword(passwordReset.getPasswordLength());
@@ -179,7 +179,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer = saveCustomer(customer);
         
         for (PasswordUpdatedHandler handler : passwordResetHandlers) {
-        	handler.passwordChanged(passwordReset, customer, newPassword);
+            handler.passwordChanged(passwordReset, customer, newPassword);
         }
         
         return customer;
@@ -277,104 +277,104 @@ public class CustomerServiceImpl implements CustomerService {
         this.salt = salt;
     }
 
-	@Override
+    @Override
     public List<PasswordUpdatedHandler> getPasswordResetHandlers() {
-		return passwordResetHandlers;
-	}
+        return passwordResetHandlers;
+    }
 
-	@Override
+    @Override
     public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers) {
-		this.passwordResetHandlers = passwordResetHandlers;
-	}
+        this.passwordResetHandlers = passwordResetHandlers;
+    }
 
-	@Override
+    @Override
     public List<PasswordUpdatedHandler> getPasswordChangedHandlers() {
-		return passwordChangedHandlers;
-	}
+        return passwordChangedHandlers;
+    }
 
-	@Override
+    @Override
     public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers) {
-		this.passwordChangedHandlers = passwordChangedHandlers;
-	}
-	
-	@Override
+        this.passwordChangedHandlers = passwordChangedHandlers;
+    }
+    
+    @Override
     public GenericResponse sendForgotUsernameNotification(String emailAddress) {
-		GenericResponse response = new GenericResponse();
-		List<Customer> customers = null;
-		if (emailAddress != null) {
-			customers = customerDao.readCustomersByEmail(emailAddress);
-		}
+        GenericResponse response = new GenericResponse();
+        List<Customer> customers = null;
+        if (emailAddress != null) {
+            customers = customerDao.readCustomersByEmail(emailAddress);
+        }
 
-		if (customers == null || customers.isEmpty()) {
-			response.addErrorCode("notFound");
-		} else {
-			List<String> activeUsernames = new ArrayList<String>();
-			for (Customer customer: customers) {
-				if (! customer.isDeactivated()) {
-					activeUsernames.add(customer.getUsername());
-				}
-			}
+        if (customers == null || customers.isEmpty()) {
+            response.addErrorCode("notFound");
+        } else {
+            List<String> activeUsernames = new ArrayList<String>();
+            for (Customer customer: customers) {
+                if (! customer.isDeactivated()) {
+                    activeUsernames.add(customer.getUsername());
+                }
+            }
 
-			if (activeUsernames.size() > 0) {
-				HashMap<String, Object> vars = new HashMap<String, Object>();
-				vars.put("userNames", activeUsernames);
-				emailService.sendTemplateEmail(emailAddress, getForgotUsernameEmailInfo(), vars);
-			} else {
-				// send inactive username found email.
-				response.addErrorCode("inactiveUser");
-			}
-		}
-		return response;
-	}
+            if (activeUsernames.size() > 0) {
+                HashMap<String, Object> vars = new HashMap<String, Object>();
+                vars.put("userNames", activeUsernames);
+                emailService.sendTemplateEmail(emailAddress, getForgotUsernameEmailInfo(), vars);
+            } else {
+                // send inactive username found email.
+                response.addErrorCode("inactiveUser");
+            }
+        }
+        return response;
+    }
 
-	@Override
+    @Override
     public GenericResponse sendForgotPasswordNotification(String username, String resetPasswordUrl) {
-		GenericResponse response = new GenericResponse();
-		Customer customer = null;
+        GenericResponse response = new GenericResponse();
+        Customer customer = null;
 
-		if (username != null) {
-			customer = customerDao.readCustomerByUsername(username);
-		}
+        if (username != null) {
+            customer = customerDao.readCustomerByUsername(username);
+        }
 
-		checkCustomer(customer,response);
+        checkCustomer(customer,response);
 
-		if (! response.getHasErrors()) {        
-			String token = PasswordUtils.generateTemporaryPassword(getPasswordTokenLength());
-			token = token.toLowerCase();
+        if (! response.getHasErrors()) {        
+            String token = PasswordUtils.generateTemporaryPassword(getPasswordTokenLength());
+            token = token.toLowerCase();
 
-			CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
-			fpst.setCustomerId(customer.getId());
-			fpst.setToken(passwordEncoder.encodePassword(token, null));
-			fpst.setCreateDate(SystemTime.asDate());
-			customerForgotPasswordSecurityTokenDao.saveToken(fpst);
+            CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
+            fpst.setCustomerId(customer.getId());
+            fpst.setToken(passwordEncoder.encodePassword(token, null));
+            fpst.setCreateDate(SystemTime.asDate());
+            customerForgotPasswordSecurityTokenDao.saveToken(fpst);
 
-			HashMap<String, Object> vars = new HashMap<String, Object>();
-			vars.put("token", token);
-			if (!StringUtils.isEmpty(resetPasswordUrl)) {
-				if (resetPasswordUrl.contains("?")) {
-					resetPasswordUrl=resetPasswordUrl+"&token="+token;
-				} else {
-					resetPasswordUrl=resetPasswordUrl+"?token="+token;
-				}
-			}
-			vars.put("resetPasswordUrl", resetPasswordUrl); 
-			emailService.sendTemplateEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
-		}
-		return response;
-	}
-	
-	@Override
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("token", token);
+            if (!StringUtils.isEmpty(resetPasswordUrl)) {
+                if (resetPasswordUrl.contains("?")) {
+                    resetPasswordUrl=resetPasswordUrl+"&token="+token;
+                } else {
+                    resetPasswordUrl=resetPasswordUrl+"?token="+token;
+                }
+            }
+            vars.put("resetPasswordUrl", resetPasswordUrl); 
+            emailService.sendTemplateEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
+        }
+        return response;
+    }
+    
+    @Override
     public GenericResponse checkPasswordResetToken(String token) {
-		GenericResponse response = new GenericResponse();
+        GenericResponse response = new GenericResponse();
         checkPasswordResetToken(token, response);               
         return response;
-	}
-	
-	private CustomerForgotPasswordSecurityToken checkPasswordResetToken(String token, GenericResponse response) {
-		if (token == null || "".equals(token)) {
+    }
+    
+    private CustomerForgotPasswordSecurityToken checkPasswordResetToken(String token, GenericResponse response) {
+        if (token == null || "".equals(token)) {
             response.addErrorCode("invalidToken");
         }
-		
+        
         CustomerForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
@@ -386,9 +386,9 @@ public class CustomerServiceImpl implements CustomerService {
             } else if (isTokenExpired(fpst)) {
                 response.addErrorCode("tokenExpired");
             }
-        }		
+        }       
         return fpst;
-	}
+    }
     
     @Override
     public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
@@ -402,12 +402,12 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerForgotPasswordSecurityToken fpst = checkPasswordResetToken(token, response);
         
         if (! response.getHasErrors()) {
-        	if (! customer.getId().equals(fpst.getCustomerId())) {
-        		if (LOG.isWarnEnabled()) {
-        			LOG.warn("Password reset attempt tried with mismatched customer and token " + customer.getId() + ", " + token);
-        		}
-        		response.addErrorCode("invalidToken");
-        	}
+            if (! customer.getId().equals(fpst.getCustomerId())) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Password reset attempt tried with mismatched customer and token " + customer.getId() + ", " + token);
+                }
+                response.addErrorCode("invalidToken");
+            }
         }
 
         if (! response.getHasErrors()) {
@@ -417,11 +417,11 @@ public class CustomerServiceImpl implements CustomerService {
             customerForgotPasswordSecurityTokenDao.saveToken(fpst);
         }
 
-        return response;    	
+        return response;        
     }
     
     protected void checkCustomer(Customer customer, GenericResponse response) {       
-        if (customer == null) {        	
+        if (customer == null) {         
             response.addErrorCode("invalidCustomer");
         } else if (customer.getEmailAddress() == null || "".equals(customer.getEmailAddress())) {
             response.addErrorCode("emailNotFound");
@@ -462,35 +462,35 @@ public class CustomerServiceImpl implements CustomerService {
         this.passwordTokenLength = passwordTokenLength;
     }
 
-	public EmailInfo getForgotPasswordEmailInfo() {
-		return forgotPasswordEmailInfo;
-	}
+    public EmailInfo getForgotPasswordEmailInfo() {
+        return forgotPasswordEmailInfo;
+    }
 
-	public void setForgotPasswordEmailInfo(EmailInfo forgotPasswordEmailInfo) {
-		this.forgotPasswordEmailInfo = forgotPasswordEmailInfo;
-	}
+    public void setForgotPasswordEmailInfo(EmailInfo forgotPasswordEmailInfo) {
+        this.forgotPasswordEmailInfo = forgotPasswordEmailInfo;
+    }
 
-	public EmailInfo getForgotUsernameEmailInfo() {
-		return forgotUsernameEmailInfo;
-	}
+    public EmailInfo getForgotUsernameEmailInfo() {
+        return forgotUsernameEmailInfo;
+    }
 
-	public void setForgotUsernameEmailInfo(EmailInfo forgotUsernameEmailInfo) {
-		this.forgotUsernameEmailInfo = forgotUsernameEmailInfo;
-	}
+    public void setForgotUsernameEmailInfo(EmailInfo forgotUsernameEmailInfo) {
+        this.forgotUsernameEmailInfo = forgotUsernameEmailInfo;
+    }
 
-	public EmailInfo getRegistrationEmailInfo() {
-		return registrationEmailInfo;
-	}
+    public EmailInfo getRegistrationEmailInfo() {
+        return registrationEmailInfo;
+    }
 
-	public void setRegistrationEmailInfo(EmailInfo registrationEmailInfo) {
-		this.registrationEmailInfo = registrationEmailInfo;
-	}
+    public void setRegistrationEmailInfo(EmailInfo registrationEmailInfo) {
+        this.registrationEmailInfo = registrationEmailInfo;
+    }
 
-	public EmailInfo getChangePasswordEmailInfo() {
-		return changePasswordEmailInfo;
-	}
+    public EmailInfo getChangePasswordEmailInfo() {
+        return changePasswordEmailInfo;
+    }
 
-	public void setChangePasswordEmailInfo(EmailInfo changePasswordEmailInfo) {
-		this.changePasswordEmailInfo = changePasswordEmailInfo;
-	}
+    public void setChangePasswordEmailInfo(EmailInfo changePasswordEmailInfo) {
+        this.changePasswordEmailInfo = changePasswordEmailInfo;
+    }
 }

@@ -47,34 +47,34 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public class CategoryView extends HLayout implements Instantiable, CategoryDisplay {
-	
-	protected DynamicEntityTreeView listDisplay;
-	protected DynamicFormView dynamicFormDisplay;
-	protected GridStructureView mediaDisplay;
-	protected GridStructureView featuredDisplay;
-	protected GridStructureView allCategoriesDisplay;
-	protected GridStructureView allProductsDisplay;
-	protected GridStructureView crossSaleDisplay;
-	protected GridStructureView upSaleDisplay;
-	protected ToolStripButton removeOrphanedButton;
-	protected ToolStripButton insertOrphanButton;
-	protected ListGrid orphanedCategoryGrid;
-	protected TabSet topTabSet;
-	public CategoryView() {
-		setHeight100();
-		setWidth100();
-	}
     
-	@Override
+    protected DynamicEntityTreeView listDisplay;
+    protected DynamicFormView dynamicFormDisplay;
+    protected GridStructureView mediaDisplay;
+    protected GridStructureView featuredDisplay;
+    protected GridStructureView allCategoriesDisplay;
+    protected GridStructureView allProductsDisplay;
+    protected GridStructureView crossSaleDisplay;
+    protected GridStructureView upSaleDisplay;
+    protected ToolStripButton removeOrphanedButton;
+    protected ToolStripButton insertOrphanButton;
+    protected ListGrid orphanedCategoryGrid;
+    protected TabSet topTabSet;
+    public CategoryView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("categoryLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
-		
-		listDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("categoryListTitle"), entityDataSource);
-		listDisplay.setShowResizeBar(true);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("categoryLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
+        
+        listDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("categoryListTitle"), entityDataSource);
+        listDisplay.setShowResizeBar(true);
         leftVerticalLayout.addMember(listDisplay);
         
         VLayout abandonedCategoryVerticalLayout = new VLayout();
@@ -185,64 +185,64 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	@Override
+    @Override
     public Canvas asCanvas() {
-		return this;
-	}
-	
-	@Override
+        return this;
+    }
+    
+    @Override
     public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
-	
-	@Override
+        return listDisplay;
+    }
+    
+    @Override
     public GridStructureDisplay getMediaDisplay() {
-		return mediaDisplay;
-	}
+        return mediaDisplay;
+    }
 
-	@Override
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	@Override
+        return dynamicFormDisplay;
+    }
+    
+    @Override
     public GridStructureDisplay getFeaturedDisplay() {
-		return featuredDisplay;
-	}
+        return featuredDisplay;
+    }
 
-	@Override
+    @Override
     public ToolStripButton getRemoveOrphanedButton() {
-		return removeOrphanedButton;
-	}
+        return removeOrphanedButton;
+    }
 
-	@Override
+    @Override
     public ListGrid getOrphanedCategoryGrid() {
-		return orphanedCategoryGrid;
-	}
+        return orphanedCategoryGrid;
+    }
 
-	@Override
+    @Override
     public ToolStripButton getInsertOrphanButton() {
-		return insertOrphanButton;
-	}
+        return insertOrphanButton;
+    }
 
-	@Override
+    @Override
     public GridStructureDisplay getAllCategoriesDisplay() {
-		return allCategoriesDisplay;
-	}
+        return allCategoriesDisplay;
+    }
 
-	@Override
+    @Override
     public GridStructureView getAllProductsDisplay() {
-		return allProductsDisplay;
-	}
-	@Override
+        return allProductsDisplay;
+    }
+    @Override
     public GridStructureDisplay getCrossSaleDisplay() {
-		return crossSaleDisplay;
-	}
+        return crossSaleDisplay;
+    }
 
-	@Override
+    @Override
     public GridStructureDisplay getUpSaleDisplay() {
-		return upSaleDisplay;
-	}
+        return upSaleDisplay;
+    }
 }

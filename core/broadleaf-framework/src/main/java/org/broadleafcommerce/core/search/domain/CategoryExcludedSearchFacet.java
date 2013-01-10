@@ -23,47 +23,47 @@ import org.broadleafcommerce.core.catalog.domain.Category;
  */
 public interface CategoryExcludedSearchFacet {
 
-	/**
-	 * Gets the internal id
-	 * 
-	 * @return the internal id
-	 */
-	public Long getId();
+    /**
+     * Gets the internal id
+     * 
+     * @return the internal id
+     */
+    public Long getId();
 
-	/** 
-	 * Sets the internal id
-	 * 
-	 * @param id
-	 */
-	public void setId(Long id);
+    /** 
+     * Sets the internal id
+     * 
+     * @param id
+     */
+    public void setId(Long id);
 
-	/**
-	 * Gets the associated category
-	 * 
-	 * @return the associated category
-	 */
-	public Category getCategory();
+    /**
+     * Gets the associated category
+     * 
+     * @return the associated category
+     */
+    public Category getCategory();
 
-	/**
-	 * Sets the associated category
-	 * 
-	 * @param category
-	 */
-	public void setCategory(Category category);
+    /**
+     * Sets the associated category
+     * 
+     * @param category
+     */
+    public void setCategory(Category category);
 
-	/**
-	 * Gets the associated search facet
-	 * 
-	 * @return the associated search facet
-	 */
-	public SearchFacet getSearchFacet();
+    /**
+     * Gets the associated search facet
+     * 
+     * @return the associated search facet
+     */
+    public SearchFacet getSearchFacet();
 
-	/**
-	 * Sets the associated search facet
-	 * 
-	 * @param searchFacet
-	 */
-	public void setSearchFacet(SearchFacet searchFacet);
+    /**
+     * Sets the associated search facet
+     * 
+     * @param searchFacet
+     */
+    public void setSearchFacet(SearchFacet searchFacet);
 
 
 

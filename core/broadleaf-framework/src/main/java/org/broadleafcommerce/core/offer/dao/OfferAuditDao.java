@@ -19,13 +19,13 @@ package org.broadleafcommerce.core.offer.dao;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 
 public interface OfferAuditDao {
-	public OfferAudit readAuditById(Long offerAuditId);
-	
-	public OfferAudit save(OfferAudit offerAudit);
-	
-	public void delete(OfferAudit offerAudit);
-	
-	public OfferAudit create();
+    public OfferAudit readAuditById(Long offerAuditId);
+    
+    public OfferAudit save(OfferAudit offerAudit);
+    
+    public void delete(OfferAudit offerAudit);
+    
+    public OfferAudit create();
     
     public Long countUsesByCustomer(Long customerId, Long offerId);
 }

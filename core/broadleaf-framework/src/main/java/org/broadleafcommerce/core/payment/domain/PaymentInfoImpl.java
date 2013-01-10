@@ -159,28 +159,28 @@ public class PaymentInfoImpl implements PaymentInfo {
     }
 
     public List<AmountItem> getAmountItems() {
-		return amountItems;
-	}
+        return amountItems;
+    }
 
-	public void setAmountItems(List<AmountItem> amountItems) {
-		this.amountItems = amountItems;
-	}
+    public void setAmountItems(List<AmountItem> amountItems) {
+        this.amountItems = amountItems;
+    }
 
-	public String getCustomerIpAddress() {
-		return customerIpAddress;
-	}
+    public String getCustomerIpAddress() {
+        return customerIpAddress;
+    }
 
-	public void setCustomerIpAddress(String customerIpAddress) {
-		this.customerIpAddress = customerIpAddress;
-	}
+    public void setCustomerIpAddress(String customerIpAddress) {
+        this.customerIpAddress = customerIpAddress;
+    }
 
-	public Map<String, String> getAdditionalFields() {
-		return additionalFields;
-	}
+    public Map<String, String> getAdditionalFields() {
+        return additionalFields;
+    }
 
-	public void setAdditionalFields(Map<String, String> additionalFields) {
-		this.additionalFields = additionalFields;
-	}
+    public void setAdditionalFields(Map<String, String> additionalFields) {
+        this.additionalFields = additionalFields;
+    }
 
     public Map<String, String[]> getRequestParameterMap() {
         return requestParameterMap;

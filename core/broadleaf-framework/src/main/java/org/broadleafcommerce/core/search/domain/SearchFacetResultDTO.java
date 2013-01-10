@@ -22,74 +22,74 @@ import java.math.BigDecimal;
  * @author Andre Azzolini (apazzolini)
  */
 public class SearchFacetResultDTO {
-	
-	protected SearchFacet facet;
-	
-	protected String value;
-	
-	protected BigDecimal minValue;
-	protected BigDecimal maxValue;
-	
-	protected Integer quantity;
-	
-	protected boolean active;
-	
-	public SearchFacet getFacet() {
-		return facet;
-	}
+    
+    protected SearchFacet facet;
+    
+    protected String value;
+    
+    protected BigDecimal minValue;
+    protected BigDecimal maxValue;
+    
+    protected Integer quantity;
+    
+    protected boolean active;
+    
+    public SearchFacet getFacet() {
+        return facet;
+    }
 
-	public void setFacet(SearchFacet facet) {
-		this.facet = facet;
-	}
+    public void setFacet(SearchFacet facet) {
+        this.facet = facet;
+    }
 
-	public String getValue() {
-		return value;
-	}
-	
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public String getValue() {
+        return value;
+    }
+    
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public BigDecimal getMinValue() {
-		return minValue;
-	}
+    public BigDecimal getMinValue() {
+        return minValue;
+    }
 
-	public void setMinValue(BigDecimal minValue) {
-		this.minValue = minValue;
-	}
+    public void setMinValue(BigDecimal minValue) {
+        this.minValue = minValue;
+    }
 
-	public BigDecimal getMaxValue() {
-		return maxValue;
-	}
+    public BigDecimal getMaxValue() {
+        return maxValue;
+    }
 
-	public void setMaxValue(BigDecimal maxValue) {
-		this.maxValue = maxValue;
-	}
+    public void setMaxValue(BigDecimal maxValue) {
+        this.maxValue = maxValue;
+    }
 
-	public Integer getQuantity() {
-		return quantity;
-	}
-	
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
+    public Integer getQuantity() {
+        return quantity;
+    }
+    
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-	
-	public String getValueKey() {
-		String value = getValue();
-		
-		if (value == null) {
-			value = "range[" + getMinValue() + ":" + getMaxValue() + "]";
-		}
-		
-		return value;
-	}
-	
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    
+    public String getValueKey() {
+        String value = getValue();
+        
+        if (value == null) {
+            value = "range[" + getMinValue() + ":" + getMaxValue() + "]";
+        }
+        
+        return value;
+    }
+    
 }

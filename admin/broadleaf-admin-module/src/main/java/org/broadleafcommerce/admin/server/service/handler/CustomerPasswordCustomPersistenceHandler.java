@@ -35,34 +35,34 @@ import javax.annotation.Resource;
  *
  */
 public class CustomerPasswordCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-	
-	@Resource(name="blCustomerService")
-	protected CustomerService customerService;
+    
+    @Resource(name="blCustomerService")
+    protected CustomerService customerService;
 
-	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-		String[] customCriteria = persistencePackage.getCustomCriteria();
-		return customCriteria != null && customCriteria.length > 0 && customCriteria[0].equals("passwordUpdate");
-	}
+    public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+        String[] customCriteria = persistencePackage.getCustomCriteria();
+        return customCriteria != null && customCriteria.length > 0 && customCriteria[0].equals("passwordUpdate");
+    }
 
-	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		Entity entity = persistencePackage.getEntity();
-		Customer customer = customerService.readCustomerByUsername(entity.findProperty("username").getValue());
-		if (StringUtils.isEmpty(customer.getEmailAddress())) {
-			throw new ServiceException("Unable to update password because an email address is not available for this customer. An email address is required to send the customer the new system generated password.");
-		}
-		
-		PasswordReset passwordReset = new PasswordReset();
-		passwordReset.setUsername(entity.findProperty("username").getValue());
-		passwordReset.setPasswordChangeRequired(false);
-		passwordReset.setEmail(customer.getEmailAddress());
-		passwordReset.setPasswordLength(22);
-		passwordReset.setSendResetEmailReliableAsync(false);
-		
-		customer = customerService.resetPassword(passwordReset);
-		
-		return entity;
-	}
-	
-	
-	
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        Customer customer = customerService.readCustomerByUsername(entity.findProperty("username").getValue());
+        if (StringUtils.isEmpty(customer.getEmailAddress())) {
+            throw new ServiceException("Unable to update password because an email address is not available for this customer. An email address is required to send the customer the new system generated password.");
+        }
+        
+        PasswordReset passwordReset = new PasswordReset();
+        passwordReset.setUsername(entity.findProperty("username").getValue());
+        passwordReset.setPasswordChangeRequired(false);
+        passwordReset.setEmail(customer.getEmailAddress());
+        passwordReset.setPasswordLength(22);
+        passwordReset.setSendResetEmailReliableAsync(false);
+        
+        customer = customerService.resetPassword(passwordReset);
+        
+        return entity;
+    }
+    
+    
+    
 }

@@ -31,48 +31,48 @@ import org.thymeleaf.processor.element.AbstractElementProcessor;
  * @author apazzolini
  */
 public class FormProcessor extends AbstractElementProcessor {
-	
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
-	public FormProcessor() {
-		super("form");
-	}
-	
-	/**
-	 * We need this replacement to execute as early as possible to allow subsequent processors to act
-	 * on this element as if it were a normal form instead of a blc:form
-	 */
-	@Override
-	public int getPrecedence() {
-		return 1;
-	}
+    
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
+    public FormProcessor() {
+        super("form");
+    }
+    
+    /**
+     * We need this replacement to execute as early as possible to allow subsequent processors to act
+     * on this element as if it were a normal form instead of a blc:form
+     */
+    @Override
+    public int getPrecedence() {
+        return 1;
+    }
 
-	@Override
-	protected ProcessorResult processElement(Arguments arguments, Element element) {
-		// If the form will be not be submitted with a GET, we must add the CSRF token
-		// We do this instead of checking for a POST because post is default if nothing is specified
-		if (!"GET".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("method"))) {
-			try {
-				ExploitProtectionService eps = ProcessorUtils.getExploitProtectionService(arguments);
-				String csrfToken = eps.getCSRFToken();
-				Element csrfNode = new Element("input");
-				csrfNode.setAttribute("type", "hidden");
-				csrfNode.setAttribute("name", eps.getCsrfTokenParameter());
-				csrfNode.setAttribute("value", csrfToken);
-		        element.addChild(csrfNode);
-			} catch (ServiceException e) {
-				throw new RuntimeException("Could not get a CSRF token for this session", e);
-			}
-		}
-		
-		// Convert the <blc:form> node to a normal <form> node
-		Element newElement = element.cloneElementNodeWithNewName(element.getParent(), "form", false);
-		newElement.setRecomputeProcessorsImmediately(true);
-		element.getParent().insertAfter(element, newElement);
-		element.getParent().removeChild(element);
+    @Override
+    protected ProcessorResult processElement(Arguments arguments, Element element) {
+        // If the form will be not be submitted with a GET, we must add the CSRF token
+        // We do this instead of checking for a POST because post is default if nothing is specified
+        if (!"GET".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("method"))) {
+            try {
+                ExploitProtectionService eps = ProcessorUtils.getExploitProtectionService(arguments);
+                String csrfToken = eps.getCSRFToken();
+                Element csrfNode = new Element("input");
+                csrfNode.setAttribute("type", "hidden");
+                csrfNode.setAttribute("name", eps.getCsrfTokenParameter());
+                csrfNode.setAttribute("value", csrfToken);
+                element.addChild(csrfNode);
+            } catch (ServiceException e) {
+                throw new RuntimeException("Could not get a CSRF token for this session", e);
+            }
+        }
         
-		return ProcessorResult.OK;
-	}
-	
+        // Convert the <blc:form> node to a normal <form> node
+        Element newElement = element.cloneElementNodeWithNewName(element.getParent(), "form", false);
+        newElement.setRecomputeProcessorsImmediately(true);
+        element.getParent().insertAfter(element, newElement);
+        element.getParent().removeChild(element);
+        
+        return ProcessorResult.OK;
+    }
+    
 }

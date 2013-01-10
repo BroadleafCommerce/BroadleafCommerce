@@ -27,18 +27,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class BroadleafRequestContext {
-	
-	private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();	
-	
-	public static BroadleafRequestContext getBroadleafRequestContext() {
-		return BROADLEAF_REQUEST_CONTEXT.get();
-	}
-	
-	public static void setBroadleafRequestContext(BroadleafRequestContext broadleafRequestContext) {
-		BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
-	}
-	
-	private HttpServletRequest request;
+    
+    private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();   
+    
+    public static BroadleafRequestContext getBroadleafRequestContext() {
+        return BROADLEAF_REQUEST_CONTEXT.get();
+    }
+    
+    public static void setBroadleafRequestContext(BroadleafRequestContext broadleafRequestContext) {
+        BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
+    }
+    
+    private HttpServletRequest request;
     private HttpServletResponse response;
     private SandBox sandbox;
     private Locale locale;
@@ -63,14 +63,14 @@ public class BroadleafRequestContext {
     }
 
     public Site getSite() {
-		return site;
-	}
+        return site;
+    }
 
-	public void setSite(Site site) {
-		this.site = site;
-	}
+    public void setSite(Site site) {
+        this.site = site;
+    }
 
-	public SandBox getSandbox() {
+    public SandBox getSandbox() {
         return sandbox;
     }
 
@@ -87,10 +87,10 @@ public class BroadleafRequestContext {
      * @return
      */
     public java.util.Locale getJavaLocale() {
-    	if (this.javaLocale == null) {
-    		this.javaLocale = convertLocaleToJavaLocale();
-    	}
-    	return this.javaLocale;
+        if (this.javaLocale == null) {
+            this.javaLocale = convertLocaleToJavaLocale();
+        }
+        return this.javaLocale;
     }
 
     public void setLocale(Locale locale) {
@@ -99,7 +99,7 @@ public class BroadleafRequestContext {
     }
 
     public String getRequestURIWithoutContext() {
-    	String requestURIWithoutContext = null;
+        String requestURIWithoutContext = null;
 
         if (request.getRequestURI() != null) {
             if (request.getContextPath() != null) {
@@ -116,25 +116,25 @@ public class BroadleafRequestContext {
         }
         
         return requestURIWithoutContext;
-    	
-    	
+        
+        
     }
     
-    private java.util.Locale convertLocaleToJavaLocale() {    	
-    	if (locale == null || locale.getLocaleCode() == null) {
-    		return null;
+    private java.util.Locale convertLocaleToJavaLocale() {      
+        if (locale == null || locale.getLocaleCode() == null) {
+            return null;
         } else {
-        	String localeString = locale.getLocaleCode();
-	        String[] components = localeString.split("_");
-        	if (components.length == 1) {
-        		return new java.util.Locale(components[0]);
-        	} else if (components.length == 2) {
-        		return new java.util.Locale(components[0], components[1]);
-        	} else if (components.length == 3) {
-        		return new java.util.Locale(components[0], components[1], components[2]);
-        	}
-    		return null;	    	
-    	}
+            String localeString = locale.getLocaleCode();
+            String[] components = localeString.split("_");
+            if (components.length == 1) {
+                return new java.util.Locale(components[0]);
+            } else if (components.length == 2) {
+                return new java.util.Locale(components[0], components[1]);
+            } else if (components.length == 3) {
+                return new java.util.Locale(components[0], components[1], components[2]);
+            }
+            return null;            
+        }
     }
     
     public boolean isSecure() {

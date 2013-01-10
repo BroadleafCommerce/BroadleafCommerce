@@ -32,75 +32,75 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.cha
 
 public class GaussianBlur extends BaseFilter {
 
-	public static final int NUM_KERNELS = 16;
-	public static final float[][] GAUSSIAN_BLUR_KERNELS = generateGaussianBlurKernels(NUM_KERNELS);
-	
-	public static float[][] generateGaussianBlurKernels(int level) {
-		float[][] pascalsTriangle = generatePascalsTriangle(level);
-		float[][] gaussianTriangle = new float[pascalsTriangle.length][];
+    public static final int NUM_KERNELS = 16;
+    public static final float[][] GAUSSIAN_BLUR_KERNELS = generateGaussianBlurKernels(NUM_KERNELS);
+    
+    public static float[][] generateGaussianBlurKernels(int level) {
+        float[][] pascalsTriangle = generatePascalsTriangle(level);
+        float[][] gaussianTriangle = new float[pascalsTriangle.length][];
 
-		for (int i = 0; i < gaussianTriangle.length; i++) {
-			float total = 0.0f;
-			gaussianTriangle[i] = new float[pascalsTriangle[i].length];
+        for (int i = 0; i < gaussianTriangle.length; i++) {
+            float total = 0.0f;
+            gaussianTriangle[i] = new float[pascalsTriangle[i].length];
 
-			for (int j = 0; j < pascalsTriangle[i].length; j++) {
-				total += pascalsTriangle[i][j];
-			}
+            for (int j = 0; j < pascalsTriangle[i].length; j++) {
+                total += pascalsTriangle[i][j];
+            }
 
-			float coefficient = 1 / total;
-			for (int j = 0; j < pascalsTriangle[i].length; j++) {
-				gaussianTriangle[i][j] = coefficient * pascalsTriangle[i][j];
-			}
+            float coefficient = 1 / total;
+            for (int j = 0; j < pascalsTriangle[i].length; j++) {
+                gaussianTriangle[i][j] = coefficient * pascalsTriangle[i][j];
+            }
 
-			float checksum = 0.0f;
-			for (int j = 0; j < gaussianTriangle[i].length; j++) {
-				checksum += gaussianTriangle[i][j];
+            float checksum = 0.0f;
+            for (int j = 0; j < gaussianTriangle[i].length; j++) {
+                checksum += gaussianTriangle[i][j];
 
-			}
+            }
 
-			if (checksum == 1.0) {
-				// hurrah
-			}
-		}
+            if (checksum == 1.0) {
+                // hurrah
+            }
+        }
 
-		return gaussianTriangle;
-	}
+        return gaussianTriangle;
+    }
 
-	public static float[][] generatePascalsTriangle(int level) {
-		if (level < 2) {
-			level = 2;
-		}
+    public static float[][] generatePascalsTriangle(int level) {
+        if (level < 2) {
+            level = 2;
+        }
 
-		float[][] triangle = new float[level][];
-		triangle[0] = new float[1];
-		triangle[1] = new float[2];
-		triangle[0][0] = 1.0f;
-		triangle[1][0] = 1.0f;
-		triangle[1][1] = 1.0f;
+        float[][] triangle = new float[level][];
+        triangle[0] = new float[1];
+        triangle[1] = new float[2];
+        triangle[0][0] = 1.0f;
+        triangle[1][0] = 1.0f;
+        triangle[1][1] = 1.0f;
 
-		for (int i = 2; i < level; i++) {
-			triangle[i] = new float[i + 1];
-			triangle[i][0] = 1.0f;
-			triangle[i][i] = 1.0f;
-			for (int j = 1; j < triangle[i].length - 1; j++) {
-				triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
-			}
-		}
+        for (int i = 2; i < level; i++) {
+            triangle[i] = new float[i + 1];
+            triangle[i][0] = 1.0f;
+            triangle[i][i] = 1.0f;
+            for (int j = 1; j < triangle[i].length - 1; j++) {
+                triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
+            }
+        }
 
-		return triangle;
-	}
-	
-	private int kernelSize;
-	private int numOfPasses;
+        return triangle;
+    }
+    
+    private int kernelSize;
+    private int numOfPasses;
 
     public GaussianBlur() {
         //do nothing
     }
 
-	public GaussianBlur(int kernelSize, int numOfPasses, RenderingHints hints) {
-		this.kernelSize = kernelSize;
-		this.numOfPasses = numOfPasses;
-	}
+    public GaussianBlur(int kernelSize, int numOfPasses, RenderingHints hints) {
+        this.kernelSize = kernelSize;
+        this.numOfPasses = numOfPasses;
+    }
 
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
@@ -133,16 +133,16 @@ public class GaussianBlur extends BaseFilter {
         return operation;
     }
 
-	public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-		if (kernelSize < 1 || kernelSize > NUM_KERNELS) {
-			return src;
-		}
+    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
+        if (kernelSize < 1 || kernelSize > NUM_KERNELS) {
+            return src;
+        }
 
-		if (numOfPasses < 1) {
-			return src;
-		}
-		
-		if (src == null) {
+        if (numOfPasses < 1) {
+            return src;
+        }
+        
+        if (src == null) {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
@@ -181,38 +181,38 @@ public class GaussianBlur extends BaseFilter {
         
         float[] matrix = GAUSSIAN_BLUR_KERNELS[kernelSize - 1];
 
-		Kernel gaussianBlur1 = new Kernel(matrix.length, 1, matrix);
-		Kernel gaussianBlur2 = new Kernel(1, matrix.length, matrix);
-		ConvolveOp gaussianOp1 = new ConvolveOp(gaussianBlur1, ConvolveOp.EDGE_NO_OP, null);
-		ConvolveOp gaussianOp2 = new ConvolveOp(gaussianBlur2, ConvolveOp.EDGE_NO_OP, null);
+        Kernel gaussianBlur1 = new Kernel(matrix.length, 1, matrix);
+        Kernel gaussianBlur2 = new Kernel(1, matrix.length, matrix);
+        ConvolveOp gaussianOp1 = new ConvolveOp(gaussianBlur1, ConvolveOp.EDGE_NO_OP, null);
+        ConvolveOp gaussianOp2 = new ConvolveOp(gaussianBlur2, ConvolveOp.EDGE_NO_OP, null);
 
-		BufferedImage tempImage = new BufferedImage(src.getWidth(),
-				src.getHeight(), src.getType());
-		dst = new BufferedImage(src.getWidth(),
-				src.getHeight(), src.getType());
+        BufferedImage tempImage = new BufferedImage(src.getWidth(),
+                src.getHeight(), src.getType());
+        dst = new BufferedImage(src.getWidth(),
+                src.getHeight(), src.getType());
 
-		BufferedImage nextSource = src;
+        BufferedImage nextSource = src;
 
-		for (int i = 0; i < numOfPasses; i++) {
-			tempImage = gaussianOp1.filter(nextSource, tempImage);
-			dst = gaussianOp2.filter(tempImage, dst);
+        for (int i = 0; i < numOfPasses; i++) {
+            tempImage = gaussianOp1.filter(nextSource, tempImage);
+            dst = gaussianOp2.filter(tempImage, dst);
 
-			nextSource = dst;
-		}
+            nextSource = dst;
+        }
 
-		if (needToConvert) {
+        if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
         }
         else if (origDst != dst) {
             java.awt.Graphics2D g = origDst.createGraphics();
-	    try {
+        try {
             g.drawImage(dst, 0, 0, null);
-	    } finally {
-	        g.dispose();
-	    }
+        } finally {
+            g.dispose();
+        }
         }
 
         return origDst;
-	}
+    }
 }

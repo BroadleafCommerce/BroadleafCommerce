@@ -65,23 +65,23 @@ public class FileUploadDialog extends Window {
         uploadProgressWindow.setProgressBar(progressBar);
     }
 
-	protected DynamicForm dynamicForm;
-	protected ItemEditedHandler handler;
+    protected DynamicForm dynamicForm;
+    protected ItemEditedHandler handler;
     protected IButton saveButton;
     protected IButton cancelButton;
 
-	public FileUploadDialog() {
-		setIsModal(true);
-		setShowModalMask(true);
-		setShowMinimizeButton(false);
-		setAutoSize(true);
-		setCanDragResize(true);
-		setOverflow(Overflow.HIDDEN);
-		
-		VStack stack = new VStack();
+    public FileUploadDialog() {
+        setIsModal(true);
+        setShowModalMask(true);
+        setShowMinimizeButton(false);
+        setAutoSize(true);
+        setCanDragResize(true);
+        setOverflow(Overflow.HIDDEN);
+        
+        VStack stack = new VStack();
         stack.setWidth(630);
         stack.setHeight(300);
-		dynamicForm = new DynamicForm();
+        dynamicForm = new DynamicForm();
         dynamicForm.setEncoding(Encoding.MULTIPART);
         dynamicForm.setTarget("hidden_frame");
         //dynamicForm.setAction("cms.upload.service");
@@ -92,14 +92,14 @@ public class FileUploadDialog extends Window {
         cancelButton = new IButton("Cancel");
         cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	hide();
+                hide();
             }
         });
 
         saveButton = new IButton("Upload");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {  
-            	if (dynamicForm.validate()) {
+                if (dynamicForm.validate()) {
                     String callbackName = JavaScriptMethodHelper.registerCallbackFunction(new JavaScriptMethodCallback() {
                         public void execute(String jsObj) {
                             try {
@@ -153,7 +153,7 @@ public class FileUploadDialog extends Window {
                     dynamicForm.submitForm();
                     saveButton.disable();
                     cancelButton.disable();
-            	}
+                }
             }
         });
         
@@ -171,43 +171,43 @@ public class FileUploadDialog extends Window {
         addItem(stack);
         
         NamedFrame frame = new NamedFrame("hidden_frame");
-		frame.setWidth("1");
-		frame.setHeight("1");
-		frame.setVisible(false);
+        frame.setWidth("1");
+        frame.setHeight("1");
+        frame.setVisible(false);
         
         addItem(frame);
-	}
+    }
 
-	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
-		editNewRecord(null, dataSource, initialValues, handler, null, fieldNames, null);
-	}
+    public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
+        editNewRecord(null, dataSource, initialValues, handler, null, fieldNames, null);
+    }
 
     public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
         editNewRecord(title, dataSource, initialValues, null, handler, heightOverride, fieldNames, ignoreFields);
     }
 
-	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, Map<String, String> hints, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
-		initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
-		this.handler = handler;
-		if (heightOverride != null) {
-			setHeight(heightOverride);
-		}
-		if (fieldNames != null && fieldNames.length > 0) {
-			dataSource.resetVisibilityOnly(fieldNames);
-		} else {
-			dataSource.resetPermanentFieldVisibility();
-		}
-		if (ignoreFields != null) {
-			for (String fieldName : ignoreFields) {
-				dataSource.getField(fieldName).setHidden(true);
-			}
-		}
-		if (title != null) {
-		    setTitle(title);
-		} else {
-			setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
-		}
-		buildFields(dataSource, dynamicForm);
+    public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, Map<String, String> hints, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
+        initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
+        this.handler = handler;
+        if (heightOverride != null) {
+            setHeight(heightOverride);
+        }
+        if (fieldNames != null && fieldNames.length > 0) {
+            dataSource.resetVisibilityOnly(fieldNames);
+        } else {
+            dataSource.resetPermanentFieldVisibility();
+        }
+        if (ignoreFields != null) {
+            for (String fieldName : ignoreFields) {
+                dataSource.getField(fieldName).setHidden(true);
+            }
+        }
+        if (title != null) {
+            setTitle(title);
+        } else {
+            setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
+        }
+        buildFields(dataSource, dynamicForm);
         if (hints != null) {
             for (Map.Entry<String, String> entry : hints.entrySet()) {
                 dynamicForm.getField(entry.getKey()).setHint(entry.getValue());
@@ -215,12 +215,12 @@ public class FileUploadDialog extends Window {
         }
         dynamicForm.editNewRecord(initialValues);
         centerInPage();
-		show();
+        show();
         saveButton.enable();
         cancelButton.enable();
-	}
-	
-	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {
-		FormBuilder.buildForm(dataSource, dynamicForm, false, null);
-	}
+    }
+    
+    protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {
+        FormBuilder.buildForm(dataSource, dynamicForm, false, null);
+    }
 }

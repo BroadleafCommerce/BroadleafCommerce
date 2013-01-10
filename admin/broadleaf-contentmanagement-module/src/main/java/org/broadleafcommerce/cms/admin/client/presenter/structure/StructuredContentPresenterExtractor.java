@@ -48,66 +48,66 @@ import java.util.logging.Level;
 public class StructuredContentPresenterExtractor {
 
     private static Map<FilterType, String> MVELKEYWORDMAP = new HashMap<FilterType, String>();
-	static {
-		MVELKEYWORDMAP.put(FilterType.PRODUCT, "product");
-		MVELKEYWORDMAP.put(FilterType.ORDER_ITEM, "discreteOrderItem");
-		MVELKEYWORDMAP.put(FilterType.REQUEST, "request");
-		MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
+    static {
+        MVELKEYWORDMAP.put(FilterType.PRODUCT, "product");
+        MVELKEYWORDMAP.put(FilterType.ORDER_ITEM, "discreteOrderItem");
+        MVELKEYWORDMAP.put(FilterType.REQUEST, "request");
+        MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
         MVELKEYWORDMAP.put(FilterType.TIME, "time");
-	}
+    }
 
-	private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
-	
-	protected StructuredContentPresenter presenter;
+    private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
+    
+    protected StructuredContentPresenter presenter;
     protected List<ItemBuilderDisplay> removedItemQualifiers = new ArrayList<ItemBuilderDisplay>();
-	
-	public StructuredContentPresenterExtractor(StructuredContentPresenter presenter) {
-		this.presenter = presenter;
-	}
+    
+    public StructuredContentPresenterExtractor(StructuredContentPresenter presenter) {
+        this.presenter = presenter;
+    }
 
-	protected StructuredContentDisplay getDisplay() {
-		return presenter.getDisplay();
-	}
-	
-	public void removeItemQualifer(final ItemBuilderDisplay builder) {
-		if (builder.getRecord() != null) {
-			presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
-				@Override
-				public void execute(DSResponse response, Object rawData, DSRequest request) {
-					getDisplay().removeItemBuilder(builder);
-				}
-			});
-		} else {
-			getDisplay().removeItemBuilder(builder);
-		}
-	}
+    protected StructuredContentDisplay getDisplay() {
+        return presenter.getDisplay();
+    }
+    
+    public void removeItemQualifer(final ItemBuilderDisplay builder) {
+        if (builder.getRecord() != null) {
+            presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
+                @Override
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    getDisplay().removeItemBuilder(builder);
+                }
+            });
+        } else {
+            getDisplay().removeItemBuilder(builder);
+        }
+    }
 
     protected void extractData(final Record selectedRecord, Map<String, Object> dirtyValues, String property, FilterBuilder filterBuilder, String keyWord) throws IncompatibleMVELTranslationException {
-		setData(selectedRecord, property, TRANSLATOR.createMVEL(keyWord, filterBuilder.getCriteria(), filterBuilder.getDataSource()), dirtyValues);
-	}
-	
-	protected void setData(Record record, String fieldName, Object value, Map<String, Object> dirtyValues) {
+        setData(selectedRecord, property, TRANSLATOR.createMVEL(keyWord, filterBuilder.getCriteria(), filterBuilder.getDataSource()), dirtyValues);
+    }
+    
+    protected void setData(Record record, String fieldName, Object value, Map<String, Object> dirtyValues) {
         String attr = record.getAttribute(fieldName);
         String val = value==null?null:String.valueOf(value);
-		if (attr != val && (attr == null || val == null || !attr.equals(val))) {
-			record.setAttribute(fieldName, value);
-			dirtyValues.put(fieldName, value);
-		}
-	}
-	
-	public void applyData(final Record selectedRecord) {
-		try {
-			final Map<String, Object> dirtyValues = new HashMap<String, Object>();
+        if (attr != val && (attr == null || val == null || !attr.equals(val))) {
+            record.setAttribute(fieldName, value);
+            dirtyValues.put(fieldName, value);
+        }
+    }
+    
+    public void applyData(final Record selectedRecord) {
+        try {
+            final Map<String, Object> dirtyValues = new HashMap<String, Object>();
 
             extractData(selectedRecord, dirtyValues, StructuredContentRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(FilterType.CUSTOMER));
             extractData(selectedRecord, dirtyValues, StructuredContentRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(FilterType.PRODUCT));
             extractData(selectedRecord, dirtyValues, StructuredContentRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.REQUEST), getDisplay().getRequestFilterBuilder(), MVELKEYWORDMAP.get(FilterType.REQUEST));
             extractData(selectedRecord, dirtyValues, StructuredContentRuleBasedPresenterInitializer.ATTRIBUTEMAP.get(FilterType.TIME), getDisplay().getTimeFilterBuilder(), MVELKEYWORDMAP.get(FilterType.TIME));
 
-			extractQualifierData(null, true, dirtyValues);
+            extractQualifierData(null, true, dirtyValues);
 
-			DSRequest requestProperties = new DSRequest();
-			//requestProperties.setAttribute("dirtyValues", dirtyValues);
+            DSRequest requestProperties = new DSRequest();
+            //requestProperties.setAttribute("dirtyValues", dirtyValues);
 
             for (String key : dirtyValues.keySet()) {
                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));
@@ -163,11 +163,11 @@ public class StructuredContentPresenterExtractor {
                     }
                 }
             }, requestProperties);
-		} catch (IncompatibleMVELTranslationException e) {
-			SC.warn(e.getMessage());
-			java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
-		}
-	}
+        } catch (IncompatibleMVELTranslationException e) {
+            SC.warn(e.getMessage());
+            java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
+        }
+    }
 
     protected void resetButtonState() {
         getDisplay().getDynamicFormDisplay().getSaveButton().disable();
@@ -175,9 +175,9 @@ public class StructuredContentPresenterExtractor {
         getDisplay().getRulesSaveButton().disable();
         getDisplay().getRulesRefreshButton().disable();
     }
-	
-	protected void extractQualifierData(final String id, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
-		for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
+    
+    protected void extractQualifierData(final String id, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
+        for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
             if (builder.getDirty()) {
                 String temper = builder.getItemQuantity().getValue().toString();
                 Integer quantity = Integer.parseInt(temper);
@@ -188,7 +188,7 @@ public class StructuredContentPresenterExtractor {
                         setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
                             @Override
-			    public void execute(DSResponse response, Object rawData, DSRequest request) {
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 resetButtonState();
                             }
@@ -202,8 +202,8 @@ public class StructuredContentPresenterExtractor {
                         temp.setAttribute("id", "");
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").setLinkedValue(id);
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").addData(temp, new DSCallback() {
-			            @Override
-			            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                        @Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 builder.setRecord(temp);
                                 resetButtonState();
@@ -221,7 +221,7 @@ public class StructuredContentPresenterExtractor {
         if (getDisplay().getItemBuilderViews().size() == 0) {
             resetButtonState();
         }
-	}
+    }
 
     public List<ItemBuilderDisplay> getRemovedItemQualifiers() {
         return removedItemQualifiers;

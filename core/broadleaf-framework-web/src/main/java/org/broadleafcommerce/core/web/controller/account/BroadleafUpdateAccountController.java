@@ -69,11 +69,11 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
     }
     
     public String getAccountRedirectView() {
-    	return accountRedirectView;
+        return accountRedirectView;
     }
     
     public String getAccountUpdatedMessage() {
-    	return accountUpdatedMessage;
+        return accountUpdatedMessage;
     }
 
 }

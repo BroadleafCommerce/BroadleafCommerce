@@ -41,28 +41,28 @@ import com.smartgwt.client.data.DataSource;
  */
 public class CategoryTreeDataSourceFactory implements DataSourceFactory {
 
-	public static final String hasChildrenProperty = "hasAllChildCategories";
-	public static final String foreignKeyName = "allParentCategories";
-	public static final String defaultParentCategoryForeignKey = "defaultParentCategory";
-	public static CategoryTreeDataSource dataSource = null;
+    public static final String hasChildrenProperty = "hasAllChildCategories";
+    public static final String foreignKeyName = "allParentCategories";
+    public static final String defaultParentCategoryForeignKey = "defaultParentCategory";
+    public static CategoryTreeDataSource dataSource = null;
 
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.NONDESTRUCTIVEREMOVE, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {hasChildrenProperty}, new ForeignKey[]{new ForeignKey(defaultParentCategoryForeignKey, EntityImplementations.CATEGORY, null)});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.CATEGORY, null));
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, new AdornedTargetList(foreignKeyName, "categoryXrefPK.category", "id", "categoryXrefPK.subCategory", "id", EntityImplementations.CATEGORY_XREF, "displayOrder", true));
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new CategoryTreeEntityModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY),
-				new CategoryTreeAdornedTargetListModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new CategoryTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (String) additionalItems[0], (String) additionalItems[1]);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.NONDESTRUCTIVEREMOVE, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {hasChildrenProperty}, new ForeignKey[]{new ForeignKey(defaultParentCategoryForeignKey, EntityImplementations.CATEGORY, null)});
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.CATEGORY, null));
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, new AdornedTargetList(foreignKeyName, "categoryXrefPK.category", "id", "categoryXrefPK.subCategory", "id", EntityImplementations.CATEGORY_XREF, "displayOrder", true));
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new CategoryTreeEntityModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY),
+                new CategoryTreeAdornedTargetListModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new CategoryTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (String) additionalItems[0], (String) additionalItems[1]);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

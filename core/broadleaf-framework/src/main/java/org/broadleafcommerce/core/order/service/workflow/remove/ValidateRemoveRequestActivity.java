@@ -39,12 +39,12 @@ public class ValidateRemoveRequestActivity extends BaseActivity {
 
         // Throw an exception if the user did not specify an orderItemId
         if (orderItemRequestDTO.getOrderItemId() == null) {
-        	throw new IllegalArgumentException("OrderItemId must be specified when removing from order");
+            throw new IllegalArgumentException("OrderItemId must be specified when removing from order");
         }
 
-    	// Throw an exception if the user did not specify an order to add the item to
+        // Throw an exception if the user did not specify an order to add the item to
         if (request.getOrder() == null) {
-    		throw new IllegalArgumentException("Order is required when updating item quantities");
+            throw new IllegalArgumentException("Order is required when updating item quantities");
         }
         
         // Throw an exception if the user is trying to remove an order item that is part of a bundle
