@@ -74,10 +74,10 @@ public class UrlRewriteTag extends TagSupport {
             pageContext.setAttribute(var, returnValue);
         } else {
             try {
-        	    pageContext.getOut().print(returnValue);
-        	} catch (IOException ioe) {
-        		throw new JspTagException(ioe.toString(), ioe);
-        	}
+                pageContext.getOut().print(returnValue);
+            } catch (IOException ioe) {
+                throw new JspTagException(ioe.toString(), ioe);
+            }
         }
 
         return EVAL_PAGE;

@@ -30,17 +30,17 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.cha
 
 public class Rotate extends BaseFilter {
 
-	private RenderingHints hints;
-	private double amount;
+    private RenderingHints hints;
+    private double amount;
 
     public Rotate() {
         //do nothing
     }
 
-	public Rotate(double amount, RenderingHints hints) {
-		this.hints = hints;
-		this.amount = amount;
-	}
+    public Rotate(double amount, RenderingHints hints) {
+        this.hints = hints;
+        this.amount = amount;
+    }
 
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
@@ -66,11 +66,11 @@ public class Rotate extends BaseFilter {
         return operation;
     }
 
-	/* (non-Javadoc)
-	 * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
-	 */
-	public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-		if (src == null) {
+    /* (non-Javadoc)
+     * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
+     */
+    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
+        if (src == null) {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
@@ -94,7 +94,7 @@ public class Rotate extends BaseFilter {
         int w = src.getWidth();
         int h = src.getHeight();
         if (dst == null) {
-        	 double sin = Math.abs(Math.sin(Math.toRadians(amount))), cos = Math.abs(Math.cos(Math.toRadians(amount)));
+             double sin = Math.abs(Math.sin(Math.toRadians(amount))), cos = Math.abs(Math.cos(Math.toRadians(amount)));
              neww = (int)Math.floor(w*cos+h*sin);
              newh = (int)Math.floor(h*cos+w*sin);
              dst = createCompatibleDestImage(src, null, neww, newh);
@@ -124,20 +124,20 @@ public class Rotate extends BaseFilter {
         g.dispose();
         origDst = dst;
 
-	    if (needToConvert) {
+        if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
         }
         else if (origDst != dst) {
             Graphics2D g2 = origDst.createGraphics();
-	    try {
+        try {
             g2.drawImage(dst, 0, 0, null);
-	    } finally {
-	        g2.dispose();
-	    }
+        } finally {
+            g2.dispose();
+        }
         }
 
         return origDst;
-	}
+    }
 
 }

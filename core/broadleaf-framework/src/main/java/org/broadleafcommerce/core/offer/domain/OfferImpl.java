@@ -314,7 +314,7 @@ public class OfferImpl implements Offer {
     @Deprecated
     @JsonIgnore
     public boolean getStackable(){
-    	return stackable;
+        return stackable;
     }
     
     public String getTargetSystem() {
@@ -353,7 +353,7 @@ public class OfferImpl implements Offer {
         this.appliesToCustomerRules = appliesToCustomerRules;
     }
 
-	@Deprecated
+    @Deprecated
     public boolean isApplyDiscountToMarkedItems() {
         return applyDiscountToMarkedItems;
     }
@@ -361,7 +361,7 @@ public class OfferImpl implements Offer {
     @Deprecated
     @JsonIgnore
     public boolean getApplyDiscountToMarkedItems() {
-    	return applyDiscountToMarkedItems;
+        return applyDiscountToMarkedItems;
     }
     
     @Deprecated
@@ -390,7 +390,7 @@ public class OfferImpl implements Offer {
     @Deprecated
     @JsonIgnore
     public boolean getCombinableWithOtherOffers() {
-    	return combinableWithOtherOffers;
+        return combinableWithOtherOffers;
     }
     
     public OfferDeliveryType getDeliveryType() {
@@ -437,49 +437,49 @@ public class OfferImpl implements Offer {
     }
 
     public Set<OfferItemCriteria> getQualifyingItemCriteria() {
-		return qualifyingItemCriteria;
-	}
+        return qualifyingItemCriteria;
+    }
 
-	public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
-		this.qualifyingItemCriteria = qualifyingItemCriteria;
-	}
+    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
+        this.qualifyingItemCriteria = qualifyingItemCriteria;
+    }
 
-	public OfferItemCriteria getTargetItemCriteria() {
-		return targetItemCriteria;
-	}
+    public OfferItemCriteria getTargetItemCriteria() {
+        return targetItemCriteria;
+    }
 
-	public void setTargetItemCriteria(OfferItemCriteria targetItemCriteria) {
-		this.targetItemCriteria = targetItemCriteria;
-	}
+    public void setTargetItemCriteria(OfferItemCriteria targetItemCriteria) {
+        this.targetItemCriteria = targetItemCriteria;
+    }
 
-	public Boolean isTotalitarianOffer() {
-		return totalitarianOffer;
-	}
+    public Boolean isTotalitarianOffer() {
+        return totalitarianOffer;
+    }
 
-	public void setTotalitarianOffer(Boolean totalitarianOffer) {
-		this.totalitarianOffer = totalitarianOffer;
-	}
+    public void setTotalitarianOffer(Boolean totalitarianOffer) {
+        this.totalitarianOffer = totalitarianOffer;
+    }
 
-	public Map<String, OfferRule> getOfferMatchRules() {
-		if (offerMatchRules == null) {
-			offerMatchRules = new HashMap<String, OfferRule>();
-		}
-		return offerMatchRules;
-	}
+    public Map<String, OfferRule> getOfferMatchRules() {
+        if (offerMatchRules == null) {
+            offerMatchRules = new HashMap<String, OfferRule>();
+        }
+        return offerMatchRules;
+    }
 
-	public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules) {
-		this.offerMatchRules = offerMatchRules;
-	}
+    public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules) {
+        this.offerMatchRules = offerMatchRules;
+    }
 
-	public Boolean getTreatAsNewFormat() {
-		return treatAsNewFormat;
-	}
+    public Boolean getTreatAsNewFormat() {
+        return treatAsNewFormat;
+    }
 
-	public void setTreatAsNewFormat(Boolean treatAsNewFormat) {
-		this.treatAsNewFormat = treatAsNewFormat;
-	}
+    public void setTreatAsNewFormat(Boolean treatAsNewFormat) {
+        this.treatAsNewFormat = treatAsNewFormat;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

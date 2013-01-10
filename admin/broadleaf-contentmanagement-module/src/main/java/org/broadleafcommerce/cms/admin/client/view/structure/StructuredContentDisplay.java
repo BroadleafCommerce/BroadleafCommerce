@@ -83,9 +83,9 @@ public interface StructuredContentDisplay extends DynamicEditDisplay {
 
     public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource);
 
-	public void removeItemBuilder(ItemBuilderDisplay itemBuilder);
+    public void removeItemBuilder(ItemBuilderDisplay itemBuilder);
 
-	public void removeAllItemBuilders();
+    public void removeAllItemBuilders();
 
     public Label getCustomerLabel();
 

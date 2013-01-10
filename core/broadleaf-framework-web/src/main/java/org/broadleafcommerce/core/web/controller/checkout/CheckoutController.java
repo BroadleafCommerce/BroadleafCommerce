@@ -143,7 +143,7 @@ public class CheckoutController {
 
         List<FulfillmentGroup> groups = order.getFulfillmentGroups();
         if(groups.size() < 1){
-        	return "redirect:/basket/viewCart.htm";
+            return "redirect:/basket/viewCart.htm";
         }
         FulfillmentGroup group = groups.get(0);
         group.setOrder(order);

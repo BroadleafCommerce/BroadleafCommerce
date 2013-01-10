@@ -20,13 +20,13 @@ import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 
 public interface EntitySandBoxItem extends SandBoxItem {
 
-	public abstract Entity getEntity();
+    public abstract Entity getEntity();
 
-	public abstract void setEntity(Entity entity);
+    public abstract void setEntity(Entity entity);
 
-	public abstract PersistencePerspective getPersistencePerspective();
+    public abstract PersistencePerspective getPersistencePerspective();
 
-	public abstract void setPersistencePerspective(PersistencePerspective persistencePerspective);
+    public abstract void setPersistencePerspective(PersistencePerspective persistencePerspective);
 
     public String getCeilingEntityFullyQualifiedClassname();
 

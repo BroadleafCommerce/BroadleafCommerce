@@ -39,24 +39,24 @@ import com.smartgwt.client.data.DataSource;
  */
 public class BundledOrderItemListDataSourceFactory implements DataSourceFactory {
 
-	public static final String foreignKeyName = "bundleOrderItem";
-	public static ListGridDataSource dataSource = null;
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.BUNDLE_ORDER_ITEM, null));
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.ORDER_ITEM, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    public static final String foreignKeyName = "bundleOrderItem";
+    public static ListGridDataSource dataSource = null;
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.BUNDLE_ORDER_ITEM, null));
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new BasicClientEntityModule(CeilingEntities.ORDER_ITEM, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

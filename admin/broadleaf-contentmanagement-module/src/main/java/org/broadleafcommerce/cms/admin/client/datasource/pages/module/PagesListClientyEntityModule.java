@@ -45,20 +45,20 @@ public class PagesListClientyEntityModule extends BasicClientEntityModule {
 
     @Override
     public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-    	BLCMain.NON_MODAL_PROGRESS.startProgress();
-		JavaScriptObject data = request.getData();
+        BLCMain.NON_MODAL_PROGRESS.startProgress();
+        JavaScriptObject data = request.getData();
         final TreeNode originalRecord = new TreeNode(data);
         Entity entity = buildEntity(originalRecord, request);
-		String componentId = request.getComponentId();
+        String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
-            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-            	entity.setType(type);
+                String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
+                entity.setType(type);
             }
         }
         service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
-			public void onSuccess(Entity result) {
-				super.onSuccess(null);
+            public void onSuccess(Entity result) {
+                super.onSuccess(null);
                 if (processResult(result, requestId, response, dataSource)) {
                     TreeNode record = (TreeNode) buildRecord(result, false);
                     response.setAttribute("newId", record.getAttribute("id"));
@@ -71,31 +71,31 @@ public class PagesListClientyEntityModule extends BasicClientEntityModule {
                     }
                     dataSource.processResponse(requestId, response);
                 }
-			}
+            }
 
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-		});
-	}
+            @Override
+            protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                super.onError(opType, requestId, request, response, caught);
+                if (cb != null) {
+                    cb.onFailure(caught);
+                }
+            }
+        });
+    }
 }

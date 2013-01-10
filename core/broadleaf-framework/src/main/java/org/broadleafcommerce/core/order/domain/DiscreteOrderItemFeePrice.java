@@ -20,25 +20,25 @@ import org.broadleafcommerce.common.money.Money;
 
 public interface DiscreteOrderItemFeePrice {
 
-	public abstract Long getId();
+    public abstract Long getId();
 
-	public abstract void setId(Long id);
+    public abstract void setId(Long id);
 
-	public DiscreteOrderItem getDiscreteOrderItem();
+    public DiscreteOrderItem getDiscreteOrderItem();
 
-	public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem);
+    public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem);
 
-	public abstract Money getAmount();
+    public abstract Money getAmount();
 
-	public abstract void setAmount(Money amount);
+    public abstract void setAmount(Money amount);
 
-	public abstract String getName();
+    public abstract String getName();
 
-	public abstract void setName(String name);
+    public abstract void setName(String name);
 
-	public abstract String getReportingCode();
+    public abstract String getReportingCode();
 
-	public abstract void setReportingCode(String reportingCode);
+    public abstract void setReportingCode(String reportingCode);
 
     public DiscreteOrderItemFeePrice clone();
 

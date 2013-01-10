@@ -70,7 +70,7 @@ import java.util.*;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 public class ProductImpl implements Product {
 
-	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
+    private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
@@ -159,7 +159,7 @@ public class ProductImpl implements Product {
     @Transient
     protected String promoMessage;
 
-	@OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
@@ -355,7 +355,7 @@ public class ProductImpl implements Product {
     }
 
     public void setDimension(ProductDimension dimension) {
-    	this.dimension = dimension;
+        this.dimension = dimension;
     }
 
     public BigDecimal getWidth() {
@@ -438,20 +438,20 @@ public class ProductImpl implements Product {
         this.weight = weight;
     }
 
-	/**
-	 * @return the promoMessage
-	 */
-	public String getPromoMessage() {
-		return promoMessage;
-	}
+    /**
+     * @return the promoMessage
+     */
+    public String getPromoMessage() {
+        return promoMessage;
+    }
 
-	/**
-	 * @param promoMessage the promoMessage to set
-	 */
-	public void setPromoMessage(String promoMessage) {
-		this.promoMessage = promoMessage;
-	}
-	
+    /**
+     * @param promoMessage the promoMessage to set
+     */
+    public void setPromoMessage(String promoMessage) {
+        this.promoMessage = promoMessage;
+    }
+    
     /**
      * Gets the all skus.
      * @return the all skus
@@ -484,7 +484,7 @@ public class ProductImpl implements Product {
     public void setAllSkus(List<Sku> skus) {
         this.allSkus.clear();
         for(Sku sku : skus){
-        	this.allSkus.add(sku);
+            this.allSkus.add(sku);
         }
         //this.skus.clear();
     }
@@ -519,11 +519,11 @@ public class ProductImpl implements Product {
     public void setProductImages(Map<String, String> productImages) {
         this.productImages.clear();
 //        for(String key : productImages.keySet()){
-//        	this.productImages.put(key, productImages.get(key));
+//          this.productImages.put(key, productImages.get(key));
 //        }
-    	for(Map.Entry<String, String> me : productImages.entrySet()) {
-    		this.productImages.put(me.getKey(), me.getValue());
-    	}
+        for(Map.Entry<String, String> me : productImages.entrySet()) {
+            this.productImages.put(me.getKey(), me.getValue());
+        }
     }
 
     /*
@@ -540,9 +540,9 @@ public class ProductImpl implements Product {
 
     public void setProductMedia(Map<String, Media> productMedia) {
         this.productMedia.clear();
-    	for(Map.Entry<String, Media> me : productMedia.entrySet()) {
-    		this.productMedia.put(me.getKey(), me.getValue());
-    	}
+        for(Map.Entry<String, Media> me : productMedia.entrySet()) {
+            this.productMedia.put(me.getKey(), me.getValue());
+        }
     }
 
     /*
@@ -558,10 +558,10 @@ public class ProductImpl implements Product {
         return allParentCategories;
     }
 
-    public void setAllParentCategories(List<Category> allParentCategories) {    	
+    public void setAllParentCategories(List<Category> allParentCategories) {        
         this.allParentCategories.clear();
         for(Category category : allParentCategories){
-        	this.allParentCategories.add(category);
+            this.allParentCategories.add(category);
         }
     }
 
@@ -572,8 +572,8 @@ public class ProductImpl implements Product {
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
         this.crossSaleProducts.clear();
         for(RelatedProduct relatedProduct : crossSaleProducts){
-        	this.crossSaleProducts.add(relatedProduct);
-        }    	
+            this.crossSaleProducts.add(relatedProduct);
+        }       
     }
 
     public List<RelatedProduct> getUpSaleProducts() {
@@ -583,20 +583,20 @@ public class ProductImpl implements Product {
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
         this.upSaleProducts.clear();
         for(RelatedProduct relatedProduct : upSaleProducts){
-        	this.upSaleProducts.add(relatedProduct);
+            this.upSaleProducts.add(relatedProduct);
         }
         this.upSaleProducts = upSaleProducts;
     }
 
     public List<ProductAttribute> getProductAttributes() {
-		return productAttributes;
-	}
+        return productAttributes;
+    }
 
-	public void setProductAttributes(List<ProductAttribute> productAttributes) {
-		this.productAttributes = productAttributes;
-	}
+    public void setProductAttributes(List<ProductAttribute> productAttributes) {
+        this.productAttributes = productAttributes;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

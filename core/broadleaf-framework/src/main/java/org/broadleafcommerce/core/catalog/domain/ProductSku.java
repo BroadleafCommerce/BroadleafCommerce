@@ -25,18 +25,18 @@ package org.broadleafcommerce.core.catalog.domain;
  */
 public interface ProductSku extends Product {
 
-	/**
-	 * Retrieve the sku
-	 * 
-	 * @return sku
-	 */
-	public Sku getSku();
+    /**
+     * Retrieve the sku
+     * 
+     * @return sku
+     */
+    public Sku getSku();
 
-	/**
-	 * Set the sku
-	 * 
-	 * @param sku
-	 */
-	public void setSku(Sku sku);
+    /**
+     * Set the sku
+     * 
+     * @param sku
+     */
+    public void setSku(Sku sku);
 
 }

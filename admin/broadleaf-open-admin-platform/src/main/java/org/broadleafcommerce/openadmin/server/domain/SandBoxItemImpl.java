@@ -53,7 +53,7 @@ import java.util.List;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseSandBoxItem")
 public class SandBoxItemImpl implements SandBoxItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "SandBoxItemId", strategy = GenerationType.TABLE)
@@ -68,12 +68,12 @@ public class SandBoxItemImpl implements SandBoxItem {
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "SANDBOX_ID")
-	protected SandBox sandBox;
+    protected SandBox sandBox;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "ORIG_SANDBOX_ID")
     @Index(name="ORIG_SANDBOX_ID_INDEX", columnNames={"ORIG_SANDBOX_ID"})
-	protected SandBox originalSandBox;
+    protected SandBox originalSandBox;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
     @AdminPresentation(friendlyName="Item Type", order=2, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
@@ -111,35 +111,35 @@ public class SandBoxItemImpl implements SandBoxItem {
     )
     protected List<SandBoxAction> sandBoxActions;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
     @Override
-	public SandBox getSandBox() {
-		return sandBox;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Override
-	public void setSandBox(SandBox sandBox) {
-		this.sandBox = sandBox;
-	}
+    public SandBox getSandBox() {
+        return sandBox;
+    }
 
     @Override
-	public SandBox getOriginalSandBox() {
-		return originalSandBox;
-	}
+    public void setSandBox(SandBox sandBox) {
+        this.sandBox = sandBox;
+    }
 
     @Override
-	public void setOriginalSandBox(SandBox originalSandBox) {
-		this.originalSandBox = originalSandBox;
-	}
+    public SandBox getOriginalSandBox() {
+        return originalSandBox;
+    }
+
+    @Override
+    public void setOriginalSandBox(SandBox originalSandBox) {
+        this.originalSandBox = originalSandBox;
+    }
 
     @Override
     public SandBoxItemType getSandBoxItemType() {
@@ -239,28 +239,28 @@ public class SandBoxItemImpl implements SandBoxItem {
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SandBoxItemImpl other = (SandBoxItemImpl) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SandBoxItemImpl other = (SandBoxItemImpl) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
 
 }

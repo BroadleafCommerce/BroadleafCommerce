@@ -25,26 +25,26 @@ public class SandBoxEntityManagerPoolFactoryBean implements FactoryBean<EntityMa
 
     protected KeyedEntityManagerPool sandboxPool;
 
-	@Override
-	public EntityManager getObject() throws Exception {
+    @Override
+    public EntityManager getObject() throws Exception {
         String sandBoxName = SandBoxContext.getSandBoxContext().getSandBoxName();
-		return (EntityManager) sandboxPool.borrowObject(sandBoxName);
-	}
+        return (EntityManager) sandboxPool.borrowObject(sandBoxName);
+    }
 
     public void returnObject(Object obj) throws Exception {
         String sandBoxName = SandBoxContext.getSandBoxContext().getSandBoxName();
         getSandboxPool().returnObject(sandBoxName, obj);
     }
 
-	@Override
-	public Class<?> getObjectType() {
-		return EntityManager.class;
-	}
+    @Override
+    public Class<?> getObjectType() {
+        return EntityManager.class;
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return false;
-	}
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
 
     public KeyedEntityManagerPool getSandboxPool() {
         return sandboxPool;

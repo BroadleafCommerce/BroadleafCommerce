@@ -31,7 +31,7 @@ import org.w3c.dom.Node;
  */
 public class NodeReplace extends NodeReplaceInsert {
 
-	@Override
+    @Override
     protected boolean checkNode(List<Node> usedNodes, Node[] primaryNodes, Node node) {
         if (replaceNode(primaryNodes, node, usedNodes)) {
             return true;

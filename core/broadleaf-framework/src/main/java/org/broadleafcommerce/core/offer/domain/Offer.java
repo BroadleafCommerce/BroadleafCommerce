@@ -163,22 +163,22 @@ public interface Offer extends Serializable {
 
     public Set<OfferItemCriteria> getQualifyingItemCriteria();
 
-	public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
+    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
 
-	public OfferItemCriteria getTargetItemCriteria();
+    public OfferItemCriteria getTargetItemCriteria();
 
-	public void setTargetItemCriteria(OfferItemCriteria targetItemCriteria);
-	
-	public Boolean isTotalitarianOffer();
+    public void setTargetItemCriteria(OfferItemCriteria targetItemCriteria);
+    
+    public Boolean isTotalitarianOffer();
 
-	public void setTotalitarianOffer(Boolean totalitarianOffer);
-	
-	public Map<String, OfferRule> getOfferMatchRules();
+    public void setTotalitarianOffer(Boolean totalitarianOffer);
+    
+    public Map<String, OfferRule> getOfferMatchRules();
 
-	public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
-	
-	public Boolean getTreatAsNewFormat();
+    public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
+    
+    public Boolean getTreatAsNewFormat();
 
-	public void setTreatAsNewFormat(Boolean treatAsNewFormat);
-	
+    public void setTreatAsNewFormat(Boolean treatAsNewFormat);
+    
 }

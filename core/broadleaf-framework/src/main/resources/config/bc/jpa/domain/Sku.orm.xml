@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
-	<named-query name="BC_READ_FIRST_SKU" >
-		<query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku WHERE sku.id = (SELECT MIN(smallSku.id) FROM org.broadleafcommerce.core.catalog.domain.Sku smallSku)</query>
-	</named-query>
+    <named-query name="BC_READ_FIRST_SKU" >
+        <query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku WHERE sku.id = (SELECT MIN(smallSku.id) FROM org.broadleafcommerce.core.catalog.domain.Sku smallSku)</query>
+    </named-query>
 
-	<named-query name="BC_READ_ALL_SKUS">
-		<query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku</query>
-	</named-query>
+    <named-query name="BC_READ_ALL_SKUS">
+        <query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku</query>
+    </named-query>
 
-	<named-query name="BC_READ_SKUS_BY_ID">
-		<query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku
-		WHERE sku.id IN (:skuIds)</query>
-	</named-query>
+    <named-query name="BC_READ_SKUS_BY_ID">
+        <query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku
+        WHERE sku.id IN (:skuIds)</query>
+    </named-query>
 </entity-mappings>

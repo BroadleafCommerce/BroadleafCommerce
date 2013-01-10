@@ -25,7 +25,7 @@ import java.util.Set;
  *
  */
 public interface AdminRole extends Serializable {
-	
+    
     public Long getId();
     public String getName();
     public void setName(String name);

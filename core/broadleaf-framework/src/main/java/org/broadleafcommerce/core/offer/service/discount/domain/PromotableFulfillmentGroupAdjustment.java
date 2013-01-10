@@ -21,15 +21,15 @@ import org.broadleafcommerce.common.money.Money;
 
 public interface PromotableFulfillmentGroupAdjustment {
 
-	public void reset();
+    public void reset();
 
-	public FulfillmentGroupAdjustment getDelegate();
+    public FulfillmentGroupAdjustment getDelegate();
 
-	/*
-	 * Calculates the value of the adjustment
-	 */
-	public void computeAdjustmentValue();
+    /*
+     * Calculates the value of the adjustment
+     */
+    public void computeAdjustmentValue();
 
-	public Money getValue();
-	
+    public Money getValue();
+    
 }

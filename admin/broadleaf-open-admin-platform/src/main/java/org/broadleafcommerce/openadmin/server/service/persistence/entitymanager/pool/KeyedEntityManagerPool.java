@@ -37,8 +37,8 @@ public class KeyedEntityManagerPool {
 
     public KeyedEntityManagerPool(DefaultEntityManagerPool defaultPool) {
         this.defaultPool = defaultPool;
-		sandboxPool = new GenericKeyedObjectPool(new PoolableSandBoxFactory());
-	}
+        sandboxPool = new GenericKeyedObjectPool(new PoolableSandBoxFactory());
+    }
 
     public Object borrowObject(Object key) throws Exception {
         return sandboxPool.borrowObject(key);
@@ -146,31 +146,31 @@ public class KeyedEntityManagerPool {
 
     private class PoolableSandBoxFactory implements KeyedPoolableObjectFactory {
 
-		@Override
-		public Object makeObject(Object key) throws Exception {
-			return defaultPool.borrowObject();
-		}
+        @Override
+        public Object makeObject(Object key) throws Exception {
+            return defaultPool.borrowObject();
+        }
 
-		@Override
-		public void destroyObject(Object key, Object obj) throws Exception {
-			defaultPool.invalidateObject(obj);
-		}
+        @Override
+        public void destroyObject(Object key, Object obj) throws Exception {
+            defaultPool.invalidateObject(obj);
+        }
 
-		@Override
-		public boolean validateObject(Object key, Object obj) {
-			//TODO add a generic connection validation
-			return true;
-		}
+        @Override
+        public boolean validateObject(Object key, Object obj) {
+            //TODO add a generic connection validation
+            return true;
+        }
 
-		@Override
-		public void activateObject(Object key, Object obj) throws Exception {
-			//do nothing
-		}
+        @Override
+        public void activateObject(Object key, Object obj) throws Exception {
+            //do nothing
+        }
 
-		@Override
-		public void passivateObject(Object key, Object obj) throws Exception {
-			//do nothing
-		}
+        @Override
+        public void passivateObject(Object key, Object obj) throws Exception {
+            //do nothing
+        }
 
-	}
+    }
 }

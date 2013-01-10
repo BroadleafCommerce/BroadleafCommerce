@@ -30,21 +30,21 @@ import java.util.Map;
 
 public class AlterRGB extends BaseFilter {
 
-	private RenderingHints hints;
-	private int red;
-	private int green;
-	private int blue;
+    private RenderingHints hints;
+    private int red;
+    private int green;
+    private int blue;
 
     public AlterRGB() {
         //do nothing
     }
 
-	public AlterRGB(int red, int green, int blue, RenderingHints hints) {
-		this.hints = hints;
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
-	}
+    public AlterRGB(int red, int green, int blue, RenderingHints hints) {
+        this.hints = hints;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+    }
 
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
@@ -84,11 +84,11 @@ public class AlterRGB extends BaseFilter {
         return operation;
     }
 
-	/* (non-Javadoc)
-	 * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
-	 */
-	public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-		if (src == null) {
+    /* (non-Javadoc)
+     * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
+     */
+    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
+        if (src == null) {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
@@ -128,53 +128,53 @@ public class AlterRGB extends BaseFilter {
         }
         
         int[] originalPixels = ImageConverter.getPixels(src);
-		int imageWidth = dst.getWidth();
-		int imageHeight = dst.getHeight();
-		
-		int r=0;
-		int g=0;
-		int b=0;
-		
-		int index=0;
-		for (int y=0;y<imageHeight;y++){
-			for (int x=0;x<imageWidth;x++){
-				r = (originalPixels[index] >> 16) & 0xff;
-				g = (originalPixels[index] >> 8) & 0xff;
-				b = (originalPixels[index] >> 0) & 0xff;
+        int imageWidth = dst.getWidth();
+        int imageHeight = dst.getHeight();
+        
+        int r=0;
+        int g=0;
+        int b=0;
+        
+        int index=0;
+        for (int y=0;y<imageHeight;y++){
+            for (int x=0;x<imageWidth;x++){
+                r = (originalPixels[index] >> 16) & 0xff;
+                g = (originalPixels[index] >> 8) & 0xff;
+                b = (originalPixels[index] >> 0) & 0xff;
 
-				r+=red;
-				g+=green;
-				b+=blue;
+                r+=red;
+                g+=green;
+                b+=blue;
 
-				// fix overflows
-				if (r > 255) r = 255;
-				if (r < 0) r = 0;
-				if (g > 255) g = 255;
-				if (g < 0) g = 0;
-				if (b > 255) b = 255;
-				if (b < 0) b = 0;
+                // fix overflows
+                if (r > 255) r = 255;
+                if (r < 0) r = 0;
+                if (g > 255) g = 255;
+                if (g < 0) g = 0;
+                if (b > 255) b = 255;
+                if (b < 0) b = 0;
 
-				originalPixels[index] = (originalPixels[index] & 0xff000000)  | (r << 16) | (g << 8) | (b << 0);
-				index++;
-			}
-		}
-		
-		dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
-	     
-	    if (needToConvert) {
+                originalPixels[index] = (originalPixels[index] & 0xff000000)  | (r << 16) | (g << 8) | (b << 0);
+                index++;
+            }
+        }
+        
+        dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
+         
+        if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
         }
         else if (origDst != dst) {
             java.awt.Graphics2D g2 = origDst.createGraphics();
-	    try {
+        try {
             g2.drawImage(dst, 0, 0, null);
-	    } finally {
-	        g2.dispose();
-	    }
+        } finally {
+            g2.dispose();
+        }
         }
 
         return origDst;
-	}
+    }
 
 }

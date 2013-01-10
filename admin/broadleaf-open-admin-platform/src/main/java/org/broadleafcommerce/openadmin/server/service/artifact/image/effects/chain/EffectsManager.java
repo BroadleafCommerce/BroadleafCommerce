@@ -39,8 +39,8 @@ import java.util.Map;
 public class EffectsManager {
 
     @Resource(name="blImageConversionManager")
-	protected ConversionManager conversionManager;
-	protected Map<String, OperationBuilder> filters = new HashMap<String, OperationBuilder>();
+    protected ConversionManager conversionManager;
+    protected Map<String, OperationBuilder> filters = new HashMap<String, OperationBuilder>();
 
     public EffectsManager() {
         filters.put(FilterTypeEnum.ALTERHSB.toString().toLowerCase(), new AlterHSB());
@@ -65,14 +65,14 @@ public class EffectsManager {
         return operations.toArray(new Operation[]{});
     }
 
-	public BufferedImage renderEffect(String effectName, Double factor, UnmarshalledParameter[] parameters, BufferedImage src) throws Exception {
-		/*
-		 * retrieve the injected filter, instantiate the filter instance using reflection and execute the operation
-		 */
-		Object filterObject = filters.get(effectName);
-		if (filterObject == null) {
-			throw new FilterNotFoundException("An effects filter was not found for the name: " + effectName);
-		}
+    public BufferedImage renderEffect(String effectName, Double factor, UnmarshalledParameter[] parameters, BufferedImage src) throws Exception {
+        /*
+         * retrieve the injected filter, instantiate the filter instance using reflection and execute the operation
+         */
+        Object filterObject = filters.get(effectName);
+        if (filterObject == null) {
+            throw new FilterNotFoundException("An effects filter was not found for the name: " + effectName);
+        }
         Class filterClass = filterObject.getClass();
 
         Class[] types = new Class[1];
@@ -90,42 +90,42 @@ public class EffectsManager {
                 args[j] = marshalledParameters[j].getParameterInstance();
             }
         }
-		types[types.length-1] = RenderingHints.class;
-		args[types.length-1] = null;
-		Constructor constructor = filterClass.getConstructor(types);
-		Object filterInstance = constructor.newInstance(args);
-		
-		Method filterMethod = filterClass.getMethod("filter", new Class[]{BufferedImage.class, BufferedImage.class});
-		Object result = filterMethod.invoke(filterInstance, new Object[]{src, null});
-		
-		return (BufferedImage) result;
-	}
+        types[types.length-1] = RenderingHints.class;
+        args[types.length-1] = null;
+        Constructor constructor = filterClass.getConstructor(types);
+        Object filterInstance = constructor.newInstance(args);
+        
+        Method filterMethod = filterClass.getMethod("filter", new Class[]{BufferedImage.class, BufferedImage.class});
+        Object result = filterMethod.invoke(filterInstance, new Object[]{src, null});
+        
+        return (BufferedImage) result;
+    }
 
-	/**
-	 * @return the filters
-	 */
-	public Map<String, OperationBuilder> getFilters() {
-		return filters;
-	}
+    /**
+     * @return the filters
+     */
+    public Map<String, OperationBuilder> getFilters() {
+        return filters;
+    }
 
-	/**
-	 * @param filters the filters to set
-	 */
-	public void setFilters(Map<String, OperationBuilder> filters) {
-		this.filters.putAll(filters);
-	}
+    /**
+     * @param filters the filters to set
+     */
+    public void setFilters(Map<String, OperationBuilder> filters) {
+        this.filters.putAll(filters);
+    }
 
-	/**
-	 * @return the parameterConverter
-	 */
-	public ConversionManager getConversionManager() {
-		return conversionManager;
-	}
+    /**
+     * @return the parameterConverter
+     */
+    public ConversionManager getConversionManager() {
+        return conversionManager;
+    }
 
-	/**
-	 * @param parameterConverter the parameterConverter to set
-	 */
-	public void setConversionManager(ConversionManager conversionManager) {
-		this.conversionManager = conversionManager;
-	}
+    /**
+     * @param parameterConverter the parameterConverter to set
+     */
+    public void setConversionManager(ConversionManager conversionManager) {
+        this.conversionManager = conversionManager;
+    }
 }

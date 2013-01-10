@@ -20,11 +20,11 @@ import org.broadleafcommerce.openadmin.server.domain.*;
 
 public interface SandBoxEntityDao {
 
-	public abstract SandBox persist(SandBox entity);
+    public abstract SandBox persist(SandBox entity);
 
-	public abstract SandBox merge(SandBox entity);
+    public abstract SandBox merge(SandBox entity);
 
-	public abstract SandBox retrieve(Long id);
+    public abstract SandBox retrieve(Long id);
 
     public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
 

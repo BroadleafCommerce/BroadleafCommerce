@@ -302,7 +302,7 @@ setupClause : function () {
 
         if (selectedFieldName) {
             //var field = this.field || this.getField(selectedFieldName);
-        	var field = this.getField(selectedFieldName);
+            var field = this.getField(selectedFieldName);
             var valueMap = field ? this.getFieldOperatorMap(field, false, "criteria", true) : null;
 
             operatorItem.valueMap = valueMap;

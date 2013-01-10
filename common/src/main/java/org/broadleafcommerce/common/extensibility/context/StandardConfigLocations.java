@@ -53,10 +53,10 @@ public class StandardConfigLocations {
             
             String extraConfigFiles = System.getProperty(EXTRACONFIGLOCATIONSKEY);
             if (extraConfigFiles != null) {
-            	String[] files = extraConfigFiles.split(" ");
-            	for (String file : files) {
-            		addContextFile(contextType, items, file);
-            	}
+                String[] files = extraConfigFiles.split(" ");
+                for (String file : files) {
+                    addContextFile(contextType, items, file);
+                }
             }
             
             response = new String[]{};
@@ -72,18 +72,18 @@ public class StandardConfigLocations {
         return response;
     }
 
-	private static void addContextFile(int contextType, ArrayList<String> items, String temp) {
-		if (!temp.startsWith("#") && temp.trim().length() > 0 && StandardConfigLocations.class.getClassLoader().getResource(temp.trim()) != null) {
-			if (
-					contextType == ALLCONTEXTTYPE  ||
-					((contextType == WEBCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") >= 0) ||
-					((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") < 0 && temp.indexOf("-test") < 0 && temp.indexOf("-admin-") < 0) ||
-					((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-admin-applicationContext-persistence") >= 0) ||
-					(contextType == TESTCONTEXTTYPE && (temp.indexOf("-test") >= 0 || temp.indexOf("-admin-") >= 0))
-			){
-				items.add(temp.trim());
-			}
-		}
-	}
+    private static void addContextFile(int contextType, ArrayList<String> items, String temp) {
+        if (!temp.startsWith("#") && temp.trim().length() > 0 && StandardConfigLocations.class.getClassLoader().getResource(temp.trim()) != null) {
+            if (
+                    contextType == ALLCONTEXTTYPE  ||
+                    ((contextType == WEBCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") >= 0) ||
+                    ((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") < 0 && temp.indexOf("-test") < 0 && temp.indexOf("-admin-") < 0) ||
+                    ((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-admin-applicationContext-persistence") >= 0) ||
+                    (contextType == TESTCONTEXTTYPE && (temp.indexOf("-test") >= 0 || temp.indexOf("-admin-") >= 0))
+            ){
+                items.add(temp.trim());
+            }
+        }
+    }
 
 }

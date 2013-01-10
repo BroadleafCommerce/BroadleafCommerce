@@ -30,9 +30,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface AdminPresentationOverrides {
 
-	/**
-	 * 
-	 * @return one or more AdminPresentationOverride
-	 */
-	AdminPresentationOverride[] value() default {};
+    /**
+     * 
+     * @return one or more AdminPresentationOverride
+     */
+    AdminPresentationOverride[] value() default {};
 }

@@ -26,20 +26,20 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class SearchItemSelected {
 
-	private ListGridRecord record;
-	private DataSource dataSource;
+    private ListGridRecord record;
+    private DataSource dataSource;
 
-	public SearchItemSelected(ListGridRecord record, DataSource dataSource) {
-		this.record = record;
-		this.dataSource = dataSource;
-	}
+    public SearchItemSelected(ListGridRecord record, DataSource dataSource) {
+        this.record = record;
+        this.dataSource = dataSource;
+    }
 
-	public ListGridRecord getRecord() {
-		return record;
-	}
-	
-	public DataSource getDataSource() {
-		return dataSource;
-	}
+    public ListGridRecord getRecord() {
+        return record;
+    }
+    
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 
 }

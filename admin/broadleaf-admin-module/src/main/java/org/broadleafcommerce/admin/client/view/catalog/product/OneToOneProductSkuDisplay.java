@@ -26,14 +26,14 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDis
  */
 public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
 
-	public GridStructureDisplay getCrossSaleDisplay();
-	
-	public GridStructureDisplay getUpSaleDisplay();
-	
-	public GridStructureDisplay getMediaDisplay();
-	
-	public GridStructureDisplay getAttributesDisplay();
-	
-	public GridStructureDisplay getAllCategoriesDisplay();
-	
+    public GridStructureDisplay getCrossSaleDisplay();
+    
+    public GridStructureDisplay getUpSaleDisplay();
+    
+    public GridStructureDisplay getMediaDisplay();
+    
+    public GridStructureDisplay getAttributesDisplay();
+    
+    public GridStructureDisplay getAllCategoriesDisplay();
+    
 }

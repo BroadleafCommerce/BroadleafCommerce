@@ -41,35 +41,35 @@ import java.util.Map;
  */
 public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
-	public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
+    public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
 
     public ClassTree getClassTreeFromCeiling(Class<?> ceilingClass);
 
     public ClassTree getClassTree(Class<?>[] polymorphicClasses);
-	
-	public abstract Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
-	
-	public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
-	
-	public abstract Serializable persist(Serializable entity);
-	
-	public abstract Serializable merge(Serializable entity);
+    
+    public abstract Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+    
+    public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+    
+    public abstract Serializable persist(Serializable entity);
+    
+    public abstract Serializable merge(Serializable entity);
 
-	public abstract Serializable retrieve(Class<?> entityClass, Object primaryKey);
-	
-	public abstract void remove(Serializable entity);
-	
-	public abstract void clear();
-	
-	public void flush();
-	
-	public void detach(Serializable entity);
-	
-	public void refresh(Serializable entity);
-	
-	public EntityManager getStandardEntityManager();
-	
-	public void setStandardEntityManager(EntityManager entityManager);
+    public abstract Serializable retrieve(Class<?> entityClass, Object primaryKey);
+    
+    public abstract void remove(Serializable entity);
+    
+    public abstract void clear();
+    
+    public void flush();
+    
+    public void detach(Serializable entity);
+    
+    public void refresh(Serializable entity);
+    
+    public EntityManager getStandardEntityManager();
+    
+    public void setStandardEntityManager(EntityManager entityManager);
 
     /**
      * Get the Hibernate PersistentClass instance associated with the fully-qualified
@@ -78,9 +78,9 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
      * @param targetClassName
      * @return The PersistentClass instance
      */
-	public PersistentClass getPersistentClass(String targetClassName);
-	
-	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
+    public PersistentClass getPersistentClass(String targetClassName);
+    
+    public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
 
     public FieldManager getFieldManager();
 

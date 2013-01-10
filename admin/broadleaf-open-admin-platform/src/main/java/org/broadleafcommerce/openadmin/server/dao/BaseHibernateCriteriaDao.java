@@ -35,39 +35,39 @@ import java.util.List;
  * @param <T>
  */
 public abstract class BaseHibernateCriteriaDao<T extends Serializable> implements BaseCriteriaDao<T> {
-	
-	private static final Log LOG = LogFactory.getLog(BaseHibernateCriteriaDao.class);
-	
-	public Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass) {
-		/*
-		 * TODO this method should return a proxied Criteria instance that will return a mixed list
-		 */
-		//Criteria criteria = ((DualEntityManager) getStandardEntityManager()).getStandardManager().getSession().createCriteria(entityClass);
+    
+    private static final Log LOG = LogFactory.getLog(BaseHibernateCriteriaDao.class);
+    
+    public Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass) {
+        /*
+         * TODO this method should return a proxied Criteria instance that will return a mixed list
+         */
+        //Criteria criteria = ((DualEntityManager) getStandardEntityManager()).getStandardManager().getSession().createCriteria(entityClass);
         Criteria criteria = createCriteria(entityClass);
         entityCriteria.apply(criteria);
         
         return criteria;
     }
-	
-	@SuppressWarnings("unchecked")
-	public List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass) {
-		return getCriteria(entityCriteria, targetEntityClass).list();
-	}
-	
-	public List<T> query(PersistentEntityCriteria entityCriteria) {
-		return query(entityCriteria, getEntityClass());
-	}
-	
-	public int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass) {
+    
+    @SuppressWarnings("unchecked")
+    public List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass) {
+        return getCriteria(entityCriteria, targetEntityClass).list();
+    }
+    
+    public List<T> query(PersistentEntityCriteria entityCriteria) {
+        return query(entityCriteria, getEntityClass());
+    }
+    
+    public int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass) {
         Criteria criteria = getCriteria(entityCriteria, targetEntityClass);
         return rowCount(criteria);
-	}
-	
-	public int count(PersistentEntityCriteria entityCriteria) {
-		return count(entityCriteria, getEntityClass());
-	}
-	
-	protected int rowCount(Criteria criteria) {
+    }
+    
+    public int count(PersistentEntityCriteria entityCriteria) {
+        return count(entityCriteria, getEntityClass());
+    }
+    
+    protected int rowCount(Criteria criteria) {
         criteria.setProjection(Projections.rowCount());
         
         List<?> projectionResults = criteria.list();
@@ -87,8 +87,8 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
         return ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
     }
     
-	public abstract EntityManager getStandardEntityManager();
-	
-	public abstract Class<? extends Serializable> getEntityClass();
+    public abstract EntityManager getStandardEntityManager();
+    
+    public abstract Class<? extends Serializable> getEntityClass();
 
 }

@@ -27,32 +27,32 @@ import java.math.BigDecimal;
  */
 public interface AmountItem {
 
-	public abstract Long getId();
+    public abstract Long getId();
 
-	public abstract void setId(Long id);
+    public abstract void setId(Long id);
 
-	public abstract String getShortDescription();
+    public abstract String getShortDescription();
 
-	public abstract void setShortDescription(String shortDescription);
+    public abstract void setShortDescription(String shortDescription);
 
-	public abstract String getDescription();
+    public abstract String getDescription();
 
-	public abstract void setDescription(String description);
+    public abstract void setDescription(String description);
 
-	public abstract BigDecimal getUnitPrice();
+    public abstract BigDecimal getUnitPrice();
 
-	public abstract void setUnitPrice(BigDecimal unitPrice);
+    public abstract void setUnitPrice(BigDecimal unitPrice);
 
-	public abstract Long getQuantity();
+    public abstract Long getQuantity();
 
-	public abstract void setQuantity(Long quantity);
+    public abstract void setQuantity(Long quantity);
 
-	public abstract PaymentInfo getPaymentInfo();
+    public abstract PaymentInfo getPaymentInfo();
 
-	public abstract void setPaymentInfo(PaymentInfo paymentInfo);
+    public abstract void setPaymentInfo(PaymentInfo paymentInfo);
 
     public abstract String getSystemId();
 
     public abstract void setSystemId(String systemId);
-	
+    
 }

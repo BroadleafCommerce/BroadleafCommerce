@@ -48,32 +48,32 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public class CategoryView extends HLayout implements Instantiable, CategoryDisplay {
-	
-	protected DynamicEntityTreeView listDisplay;
-	protected DynamicFormView dynamicFormDisplay;
-	protected GridStructureView mediaDisplay;
-	protected GridStructureView featuredDisplay;
-	protected GridStructureView allCategoriesDisplay;
-	protected GridStructureView allProductsDisplay;
-	
-	protected ToolStripButton removeOrphanedButton;
-	protected ToolStripButton insertOrphanButton;
-	protected ListGrid orphanedCategoryGrid;
-	
-	public CategoryView() {
-		setHeight100();
-		setWidth100();
-	}
     
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("categoryLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
-		
-		listDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("categoryListTitle"), entityDataSource);
-		listDisplay.setShowResizeBar(true);
+    protected DynamicEntityTreeView listDisplay;
+    protected DynamicFormView dynamicFormDisplay;
+    protected GridStructureView mediaDisplay;
+    protected GridStructureView featuredDisplay;
+    protected GridStructureView allCategoriesDisplay;
+    protected GridStructureView allProductsDisplay;
+    
+    protected ToolStripButton removeOrphanedButton;
+    protected ToolStripButton insertOrphanButton;
+    protected ListGrid orphanedCategoryGrid;
+    
+    public CategoryView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("categoryLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
+        
+        listDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("categoryListTitle"), entityDataSource);
+        listDisplay.setShowResizeBar(true);
         leftVerticalLayout.addMember(listDisplay);
         
         VLayout abandonedCategoryVerticalLayout = new VLayout();
@@ -166,46 +166,46 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	public Canvas asCanvas() {
-		return this;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
-	
-	public GridStructureDisplay getMediaDisplay() {
-		return mediaDisplay;
-	}
+    public Canvas asCanvas() {
+        return this;
+    }
+    
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
+    
+    public GridStructureDisplay getMediaDisplay() {
+        return mediaDisplay;
+    }
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public GridStructureDisplay getFeaturedDisplay() {
-		return featuredDisplay;
-	}
+    public DynamicFormDisplay getDynamicFormDisplay() {
+        return dynamicFormDisplay;
+    }
+    
+    public GridStructureDisplay getFeaturedDisplay() {
+        return featuredDisplay;
+    }
 
-	public ToolStripButton getRemoveOrphanedButton() {
-		return removeOrphanedButton;
-	}
+    public ToolStripButton getRemoveOrphanedButton() {
+        return removeOrphanedButton;
+    }
 
-	public ListGrid getOrphanedCategoryGrid() {
-		return orphanedCategoryGrid;
-	}
+    public ListGrid getOrphanedCategoryGrid() {
+        return orphanedCategoryGrid;
+    }
 
-	public ToolStripButton getInsertOrphanButton() {
-		return insertOrphanButton;
-	}
+    public ToolStripButton getInsertOrphanButton() {
+        return insertOrphanButton;
+    }
 
-	public GridStructureDisplay getAllCategoriesDisplay() {
-		return allCategoriesDisplay;
-	}
+    public GridStructureDisplay getAllCategoriesDisplay() {
+        return allCategoriesDisplay;
+    }
 
-	public GridStructureView getAllProductsDisplay() {
-		return allProductsDisplay;
-	}
-	
+    public GridStructureView getAllProductsDisplay() {
+        return allProductsDisplay;
+    }
+    
 }

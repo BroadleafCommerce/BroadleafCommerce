@@ -40,27 +40,27 @@ import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler
  *
  */
 public class EntitySearchDialog extends Window {
-		
-	protected ListGrid searchGrid;
-	protected IButton saveButton;
-	protected SearchItemSelectedHandler handler;
+        
+    protected ListGrid searchGrid;
+    protected IButton saveButton;
+    protected SearchItemSelectedHandler handler;
 
     public EntitySearchDialog(ListGridDataSource dataSource) {
         this(dataSource, false);
     }
-	
-	public EntitySearchDialog(ListGridDataSource dataSource, boolean autoFetch) {
-		super();
-		this.setIsModal(true);
-		this.setShowModalMask(true);
-		this.setShowMinimizeButton(false);
-		this.setWidth(600);
-		this.setHeight(300);
-		this.setCanDragResize(true);
-		this.setOverflow(Overflow.AUTO);
-		this.setVisible(false);
+    
+    public EntitySearchDialog(ListGridDataSource dataSource, boolean autoFetch) {
+        super();
+        this.setIsModal(true);
+        this.setShowModalMask(true);
+        this.setShowMinimizeButton(false);
+        this.setWidth(600);
+        this.setHeight(300);
+        this.setCanDragResize(true);
+        this.setOverflow(Overflow.AUTO);
+        this.setVisible(false);
         
-		searchGrid = new ListGrid();
+        searchGrid = new ListGrid();
         searchGrid.setAutoFetchData(autoFetch);
         searchGrid.setAlternateRecordStyles(true);
         searchGrid.setSelectionType(SelectionStyle.SINGLE);
@@ -73,15 +73,15 @@ public class EntitySearchDialog extends Window {
         searchGrid.setCanGroupBy(false);
 
         dataSource.setAssociatedGrid(searchGrid);
-		dataSource.setupGridFields(new String[]{}, new Boolean[]{});
+        dataSource.setupGridFields(new String[]{}, new Boolean[]{});
         searchGrid.setDataSource(dataSource);
         
         searchGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
+            public void onSelectionChanged(SelectionEvent event) {
                 if (searchGrid.anySelected()) {
-				    saveButton.enable();
+                    saveButton.enable();
                 }
-			}
+            }
         });
         
         addItem(searchGrid);
@@ -89,16 +89,16 @@ public class EntitySearchDialog extends Window {
         saveButton = new IButton("Ok");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	Record selectedRecord = searchGrid.getSelectedRecord();
+                Record selectedRecord = searchGrid.getSelectedRecord();
                 EntitySearchDialog.this.handler.onSearchItemSelected(new SearchItemSelected((ListGridRecord) selectedRecord, searchGrid.getDataSource()));
-            	hide();
+                hide();
             }
         });
 
         IButton cancelButton = new IButton("Cancel");  
         cancelButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
-            	hide();
+                hide();
             }  
         });
         
@@ -110,16 +110,16 @@ public class EntitySearchDialog extends Window {
         hLayout.setLayoutBottomMargin(10);
         
         addItem(hLayout);
-	}
-	
-	public void search(String title, SearchItemSelectedHandler handler) {
-		this.setTitle(title);
-		this.handler = handler;
-		centerInPage();
-		saveButton.disable();
-		searchGrid.deselectAllRecords();
-		show();
-	}
+    }
+    
+    public void search(String title, SearchItemSelectedHandler handler) {
+        this.setTitle(title);
+        this.handler = handler;
+        centerInPage();
+        saveButton.disable();
+        searchGrid.deselectAllRecords();
+        show();
+    }
 
     public SearchItemSelectedHandler getHandler() {
         return handler;

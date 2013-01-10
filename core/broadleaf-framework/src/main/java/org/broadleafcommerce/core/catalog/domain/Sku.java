@@ -220,5 +220,5 @@ public interface Sku extends Serializable {
     
     List<SkuAttribute> getSkuAttributes();
 
-	void setSkuAttributes(List<SkuAttribute> skuAttributes);
+    void setSkuAttributes(List<SkuAttribute> skuAttributes);
 }

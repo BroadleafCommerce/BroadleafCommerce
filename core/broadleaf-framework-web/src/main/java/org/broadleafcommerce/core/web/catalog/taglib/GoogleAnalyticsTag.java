@@ -39,7 +39,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class GoogleAnalyticsTag extends SimpleTagSupport {
     
     private static final Log LOG = LogFactory.getLog(GoogleAnalyticsTag.class);
-	
+    
     @Value("${googleAnalytics.webPropertyId}")
     private String webPropertyId;
     
@@ -58,13 +58,13 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
         JspWriter out = getJspContext().getOut();
         
         if (webPropertyId == null) {
-	        ServletContext sc = ((PageContext) getJspContext()).getServletContext();
-	        ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(sc);
-	        context.getAutowireCapableBeanFactory().autowireBeanProperties(this, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, false);
+            ServletContext sc = ((PageContext) getJspContext()).getServletContext();
+            ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(sc);
+            context.getAutowireCapableBeanFactory().autowireBeanProperties(this, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, false);
         }
         
         if (webPropertyId.equals("UA-XXXXXXX-X")) {
-        	LOG.warn("googleAnalytics.webPropertyId has not been overridden in a custom property file. Please set this in order to properly use the Google Analytics tag");
+            LOG.warn("googleAnalytics.webPropertyId has not been overridden in a custom property file. Please set this in order to properly use the Google Analytics tag");
         }
         
         out.println(analytics(webPropertyId, order));
@@ -103,7 +103,7 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
 
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                 for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                	DiscreteOrderItem orderItem = (DiscreteOrderItem) fulfillmentGroupItem.getOrderItem();
+                    DiscreteOrderItem orderItem = (DiscreteOrderItem) fulfillmentGroupItem.getOrderItem();
                     sb.append("_gaq.push(['_addItem','" + order.getId() + "'");
                     sb.append(",'" + orderItem.getSku().getId() + "'");
                     sb.append(",'" + orderItem.getSku().getName() + "'");
@@ -117,10 +117,10 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
         }
         
         sb.append(" (function() {"
-				+ "var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;"
-				+ "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';"
-				+ "var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);"
-				+ "})();");
+                + "var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;"
+                + "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';"
+                + "var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);"
+                + "})();");
         sb.append("</script>");
 
         return sb.toString();

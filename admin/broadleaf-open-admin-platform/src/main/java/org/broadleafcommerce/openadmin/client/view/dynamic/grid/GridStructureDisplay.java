@@ -27,13 +27,13 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  */
 public interface GridStructureDisplay {
 
-	public ToolStripButton getAddButton();
-	
-	public ListGrid getGrid();
-	
-	public ToolStripButton getRemoveButton();
+    public ToolStripButton getAddButton();
+    
+    public ListGrid getGrid();
+    
+    public ToolStripButton getRemoveButton();
 
-	public ToolStrip getToolBar();
+    public ToolStrip getToolBar();
 
     public Boolean getCanEdit();
 

@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>core</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.6.3-SNAPSHOT</version>
-	</parent>
-	<artifactId>broadleaf-instrument</artifactId>
-	<name>BroadleafCommerce Instrument</name>
-	<description>BroadleafCommerce Instrument</description>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>core</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.6.3-SNAPSHOT</version>
+    </parent>
+    <artifactId>broadleaf-instrument</artifactId>
+    <name>BroadleafCommerce Instrument</name>
+    <description>BroadleafCommerce Instrument</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
         <license>
@@ -46,25 +46,25 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<index>true</index>
-						<manifestEntries>
-							<Premain-Class>org.broadleafcommerce.instrument.BroadleafInstrumentationSavingAgent</Premain-Class>
-							<Can-Redefine-Classes>true</Can-Redefine-Classes>
-							<Can-Retransform-Classes>true</Can-Retransform-Classes>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifestEntries>
+                            <Premain-Class>org.broadleafcommerce.instrument.BroadleafInstrumentationSavingAgent</Premain-Class>
+                            <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                            <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

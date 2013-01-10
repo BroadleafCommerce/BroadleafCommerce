@@ -26,9 +26,9 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureVie
  *
  */
 public interface CustomerDisplay extends DynamicEditDisplay {
-	
-	public ToolStripButton getUpdateLoginButton();
+    
+    public ToolStripButton getUpdateLoginButton();
 
     public GridStructureView getCustomerAddressDisplay();
-	
+    
 }

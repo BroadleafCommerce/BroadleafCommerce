@@ -22,18 +22,18 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class PersistencePackage implements IsSerializable, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	protected String ceilingEntityFullyQualifiedClassname;
+    private static final long serialVersionUID = 1L;
+    
+    protected String ceilingEntityFullyQualifiedClassname;
     protected String fetchTypeFullyQualifiedClassname;
-	protected PersistencePerspective persistencePerspective;
-	protected String[] customCriteria;
-	protected Entity entity;
+    protected PersistencePerspective persistencePerspective;
+    protected String[] customCriteria;
+    protected Entity entity;
     protected String csrfToken;
-	
-	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
-		this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
-	}
+    
+    public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
+        this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
+    }
     
     public PersistencePackage(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
@@ -43,44 +43,44 @@ public class PersistencePackage implements IsSerializable, Serializable {
         this.customCriteria = customCriteria;
         this.csrfToken = csrfToken;
     }
-	
-	public PersistencePackage() {
-		//do nothing
-	}
-	
-	public String getCeilingEntityFullyQualifiedClassname() {
-		return ceilingEntityFullyQualifiedClassname;
-	}
-	
-	public void setCeilingEntityFullyQualifiedClassname(
-			String ceilingEntityFullyQualifiedClassname) {
-		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
-	}
-	
-	public PersistencePerspective getPersistencePerspective() {
-		return persistencePerspective;
-	}
-	
-	public void setPersistencePerspective(
-			PersistencePerspective persistencePerspective) {
-		this.persistencePerspective = persistencePerspective;
-	}
-	
-	public String[] getCustomCriteria() {
-		return customCriteria;
-	}
-	
-	public void setCustomCriteria(String[] customCriteria) {
-		this.customCriteria = customCriteria;
-	}
-	
-	public Entity getEntity() {
-		return entity;
-	}
-	
-	public void setEntity(Entity entity) {
-		this.entity = entity;
-	}
+    
+    public PersistencePackage() {
+        //do nothing
+    }
+    
+    public String getCeilingEntityFullyQualifiedClassname() {
+        return ceilingEntityFullyQualifiedClassname;
+    }
+    
+    public void setCeilingEntityFullyQualifiedClassname(
+            String ceilingEntityFullyQualifiedClassname) {
+        this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
+    }
+    
+    public PersistencePerspective getPersistencePerspective() {
+        return persistencePerspective;
+    }
+    
+    public void setPersistencePerspective(
+            PersistencePerspective persistencePerspective) {
+        this.persistencePerspective = persistencePerspective;
+    }
+    
+    public String[] getCustomCriteria() {
+        return customCriteria;
+    }
+    
+    public void setCustomCriteria(String[] customCriteria) {
+        this.customCriteria = customCriteria;
+    }
+    
+    public Entity getEntity() {
+        return entity;
+    }
+    
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
 
     public String getCsrfToken() {
         return csrfToken;

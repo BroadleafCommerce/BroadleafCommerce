@@ -36,25 +36,25 @@ public class SimpleTaxModule implements TaxModule {
     protected Double factor;
 
     public Order calculateTaxForOrder(Order order) throws TaxException {
-    	Money subTotal = order.calculateOrderItemsFinalPrice(false);
-    	
-    	for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+        Money subTotal = order.calculateOrderItemsFinalPrice(false);
+        
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
                 if (fulfillmentGroupFee.isTaxable()) {
-                	subTotal = subTotal.add(fulfillmentGroupFee.getAmount());
+                    subTotal = subTotal.add(fulfillmentGroupFee.getAmount());
                 }
             }
         }
-    	
+        
         Money totalTax = subTotal.multiply(factor);
 
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-        	Money fgTotalTax;
-        	if (fulfillmentGroup.isShippingPriceTaxable() == null || fulfillmentGroup.isShippingPriceTaxable()) {
-	            fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);
-        	} else {
-        		fgTotalTax = new Money(0D);
-        	}
+            Money fgTotalTax;
+            if (fulfillmentGroup.isShippingPriceTaxable() == null || fulfillmentGroup.isShippingPriceTaxable()) {
+                fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);
+            } else {
+                fgTotalTax = new Money(0D);
+            }
             fulfillmentGroup.setTotalTax(fgTotalTax);
             fulfillmentGroup.setCityTax(new Money(0D));
             fulfillmentGroup.setStateTax(new Money(0D));

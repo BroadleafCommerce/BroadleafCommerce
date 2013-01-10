@@ -55,7 +55,7 @@ import org.broadleafcommerce.profile.core.service.StateService;
 
 public abstract class CommonSetupBaseTest extends BaseTest {
     
-	@Resource
+    @Resource
     protected CountryService countryService;
     
     @Resource
@@ -96,8 +96,8 @@ public abstract class CommonSetupBaseTest extends BaseTest {
     }
     
     public Customer createCustomer() {
-    	Customer customer = customerService.createCustomerFromId(null);
-    	return customer;
+        Customer customer = customerService.createCustomerFromId(null);
+        return customer;
     }
     
     /**
@@ -105,9 +105,9 @@ public abstract class CommonSetupBaseTest extends BaseTest {
      * @return customer created
      */
     public Customer createCustomerWithAddresses() {
-    	createCountry();
-    	createState();
-    	CustomerAddress ca1 = new CustomerAddressImpl();
+        createCountry();
+        createState();
+        CustomerAddress ca1 = new CustomerAddressImpl();
         Address address1 = new AddressImpl();
         address1.setAddressLine1("1234 Merit Drive");
         address1.setCity("Bozeman");
@@ -138,8 +138,8 @@ public abstract class CommonSetupBaseTest extends BaseTest {
      * @return customer created
      */
     public CustomerAddress createCustomerWithAddress(CustomerAddress customerAddress) {
-    	createCountry();
-    	createState();
+        createCountry();
+        createState();
         Customer customer = createCustomer();
         customer.setUsername(String.valueOf(customer.getId()));
         customerAddress.setCustomer(customer);
@@ -152,11 +152,11 @@ public abstract class CommonSetupBaseTest extends BaseTest {
      * @return
      */
     public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress) {
-    	State state = stateService.findStateByAbbreviation("KY");
+        State state = stateService.findStateByAbbreviation("KY");
         customerAddress.getAddress().setState(state);
         Country country = countryService.findCountryByAbbreviation("US");
         customerAddress.getAddress().setCountry(country);
-    	return customerAddressService.saveCustomerAddress(customerAddress);
+        return customerAddressService.saveCustomerAddress(customerAddress);
     }
     
     /**
@@ -164,12 +164,12 @@ public abstract class CommonSetupBaseTest extends BaseTest {
      * @return
      */
     public Customer createCustomerWithBasicOrderAndAddresses() {
-    	Customer customer = createCustomerWithAddresses();
+        Customer customer = createCustomerWithAddresses();
         Order order = new OrderImpl();
         order.setStatus(OrderStatus.IN_PROCESS);
         order.setTotal(new Money(BigDecimal.valueOf(1000)));
         
-    	assert order.getId() == null;
+        assert order.getId() == null;
         order.setCustomer(customer);
         order = orderDao.save(order);
         assert order.getId() != null;
@@ -178,14 +178,14 @@ public abstract class CommonSetupBaseTest extends BaseTest {
     }
     
     public Sku addTestSku(String skuName, String productName, String categoryName) {
-    	return addTestSku(skuName, productName, categoryName, true);
+        return addTestSku(skuName, productName, categoryName, true);
     }
     
     public Sku addTestSku(String skuName, String productName, String categoryName, boolean active) {
-    	Calendar activeStartCal = Calendar.getInstance();
-    	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
 
-    	Category category = new CategoryImpl();
+        Category category = new CategoryImpl();
         category.setName(categoryName);
         category.setActiveStartDate(activeStartCal.getTime());
         category = catalogService.saveCategory(category);
@@ -208,7 +208,7 @@ public abstract class CommonSetupBaseTest extends BaseTest {
         newSku.setActiveStartDate(activeStartCal.getTime());
         
         if (!active) {
-        	newSku.setActiveEndDate(activeEndCal.getTime());
+            newSku.setActiveEndDate(activeEndCal.getTime());
         }
         newSku.setDiscountable(true);
         newSku = catalogService.saveSku(newSku);

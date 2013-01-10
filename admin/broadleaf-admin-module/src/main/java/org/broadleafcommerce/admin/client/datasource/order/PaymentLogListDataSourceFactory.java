@@ -38,22 +38,22 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  */
 public class PaymentLogListDataSourceFactory implements DataSourceFactory {
 
-	public static ListGridDataSource dataSource = null;
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.PAYMENT_LOG, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    public static ListGridDataSource dataSource = null;
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new BasicClientEntityModule(CeilingEntities.PAYMENT_LOG, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

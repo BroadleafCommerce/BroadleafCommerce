@@ -29,7 +29,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDa
  */
 public class SearchFormItem extends StaticTextItem {
 
-	public SearchFormItem() {  
+    public SearchFormItem() {  
         //use default trigger icon here. User can customize.  
         //[SKIN]/DynamicForm/default_formItem_icon.gif  
         FormItemIcon formItemIcon = new FormItemIcon();
@@ -37,10 +37,10 @@ public class SearchFormItem extends StaticTextItem {
         
         addIconClickHandler(new IconClickHandler() {  
             public void onIconClick(IconClickEvent event) {  
-            	final String formItemName = event.getItem().getName();
-            	((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName).execute(event.getItem());
+                final String formItemName = event.getItem().getName();
+                ((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName).execute(event.getItem());
             }  
         });
-	}
+    }
     
 }

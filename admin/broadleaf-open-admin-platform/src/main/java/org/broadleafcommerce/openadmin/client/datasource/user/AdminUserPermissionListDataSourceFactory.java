@@ -32,7 +32,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType
  */
 public class AdminUserPermissionListDataSourceFactory extends SimpleDataSourceFactory {
 
-	public static final String foreignKeyName = "allUsers";
+    public static final String foreignKeyName = "allUsers";
 
     public AdminUserPermissionListDataSourceFactory() {
         super(CeilingEntities.ADMIN_PERMISSION);

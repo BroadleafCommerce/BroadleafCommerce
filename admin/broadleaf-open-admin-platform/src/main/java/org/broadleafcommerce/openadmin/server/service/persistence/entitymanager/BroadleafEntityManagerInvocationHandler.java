@@ -44,18 +44,18 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
     private static final Log LOG = LogFactory.getLog(BroadleafEntityManagerInvocationHandler.class);
 
     protected final HibernateEntityManager standardManager;
-	protected final HibernateEntityManager sandboxManager;
+    protected final HibernateEntityManager sandboxManager;
     protected final PlatformTransactionManager standardTransactionManager;
     protected final PlatformTransactionManager sandboxTransactionManager;
     protected final HibernateCleaner cleaner;
 
-	public BroadleafEntityManagerInvocationHandler(HibernateEntityManager standardManager, HibernateEntityManager sandboxManager, HibernateCleaner cleaner) {
-		this.standardManager = standardManager;
-		this.sandboxManager = sandboxManager;
+    public BroadleafEntityManagerInvocationHandler(HibernateEntityManager standardManager, HibernateEntityManager sandboxManager, HibernateCleaner cleaner) {
+        this.standardManager = standardManager;
+        this.sandboxManager = sandboxManager;
         standardTransactionManager = new org.springframework.orm.jpa.JpaTransactionManager(standardManager.getEntityManagerFactory());
         sandboxTransactionManager = new org.springframework.orm.jpa.JpaTransactionManager(sandboxManager.getEntityManagerFactory());
         this.cleaner = cleaner;
-	}
+    }
 
     protected Object executeInTransaction(Executable executable, PlatformTransactionManager txManager) throws Throwable {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
