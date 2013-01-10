@@ -28,9 +28,9 @@ import javax.annotation.Resource;
  * @author apazzolini
  */
 public abstract class AbstractCatalogController extends BroadleafAbstractController {
-	
-	@Resource(name = "blCatalogService")
-	protected CatalogService catalogService;
-	
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+    
 
 }

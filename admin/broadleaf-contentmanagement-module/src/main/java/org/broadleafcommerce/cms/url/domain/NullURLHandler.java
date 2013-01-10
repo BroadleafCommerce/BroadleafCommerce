@@ -29,43 +29,43 @@ import org.broadleafcommerce.cms.url.type.URLRedirectType;
  * @author bpolster
  */
 public class NullURLHandler implements URLHandler,java.io.Serializable {
-	 private static final long serialVersionUID = 1L;
+     private static final long serialVersionUID = 1L;
 
-	@Override
-	public Long getId() {
-		return null;
-	}
+    @Override
+    public Long getId() {
+        return null;
+    }
 
-	@Override
-	public void setId(Long id) {
-	}
+    @Override
+    public void setId(Long id) {
+    }
 
-	@Override
-	public String getIncomingURL() {
-		return null;
-	}
+    @Override
+    public String getIncomingURL() {
+        return null;
+    }
 
-	@Override
-	public void setIncomingURL(String incomingURL) {
-	}
+    @Override
+    public void setIncomingURL(String incomingURL) {
+    }
 
-	@Override
-	public String getNewURL() {
-		return null;
-	}
+    @Override
+    public String getNewURL() {
+        return null;
+    }
 
-	@Override
-	public void setNewURL(String newURL) {
-	}
+    @Override
+    public void setNewURL(String newURL) {
+    }
 
-	@Override
-	public URLRedirectType getUrlRedirectType() {
-		return null;
-	}
+    @Override
+    public URLRedirectType getUrlRedirectType() {
+        return null;
+    }
 
-	@Override
-	public void setUrlRedirectType(URLRedirectType redirectType) {
-	}
+    @Override
+    public void setUrlRedirectType(URLRedirectType redirectType) {
+    }
 
-	 
+     
 }

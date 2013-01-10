@@ -26,13 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 @Component("blCartState")
 public class CartState {
 
-	/**
-	 * Gets the current cart based on the current servlet request
-	 * 
-	 * @return the current customer's cart
-	 */
+    /**
+     * Gets the current cart based on the current servlet request
+     * 
+     * @return the current customer's cart
+     */
     public static Order getCart() {
-    	HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         return (Order) request.getAttribute(CartStateFilter.getCartRequestAttributeName());
     }
     
@@ -42,7 +42,7 @@ public class CartState {
      * @param cart the new cart to set
      */
     public static void setCart(Order cart) {
-    	HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         request.setAttribute(CartStateFilter.getCartRequestAttributeName(), cart);
     }
     

@@ -82,12 +82,12 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
         getMySandBoxDisplay().getPendingPreviewButton().enable();
     }
 
-	public void pendingEnable() {
+    public void pendingEnable() {
         getMySandBoxDisplay().getReclaimAllButton().enable();
         getMySandBoxDisplay().getReclaimSelectionButton().disable();
         getMySandBoxDisplay().getReleaseAllButton().enable();
         getMySandBoxDisplay().getReleaseSelectionButton().disable();
-	}
+    }
 
     protected String getPendingSelectedRecords() {
         ListGridRecord[] records = getMySandBoxDisplay().getPendingGrid().getSelection();
@@ -144,7 +144,7 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
                 }
             }
         });
-		reclaimSelectionClickHandlerRegistration = getMySandBoxDisplay().getReclaimSelectionButton().addClickHandler(new ClickHandler() {
+        reclaimSelectionClickHandlerRegistration = getMySandBoxDisplay().getReclaimSelectionButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("pendingSandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"reclaimSelected", getPendingSelectedRecords(), "", "pending"});
@@ -159,17 +159,17 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
                 }
             }
         });
-		pendingSelectionChangedHandlerRegistration = getMySandBoxDisplay().getPendingGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				ListGridRecord selectedRecord = event.getSelectedRecord();
-				if (event.getState() && selectedRecord != null) {
+        pendingSelectionChangedHandlerRegistration = getMySandBoxDisplay().getPendingGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                ListGridRecord selectedRecord = event.getSelectedRecord();
+                if (event.getState() && selectedRecord != null) {
                     getMySandBoxDisplay().getReclaimSelectionButton().enable();
                     getMySandBoxDisplay().getReleaseSelectionButton().enable();
                     getMySandBoxDisplay().getPendingPreviewButton().enable();
-				}
-			}
-		});
-		releaseAllClickHandlerRegistration = getMySandBoxDisplay().getReleaseAllButton().addClickHandler(new ClickHandler() {
+                }
+            }
+        });
+        releaseAllClickHandlerRegistration = getMySandBoxDisplay().getReleaseAllButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("pendingSandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"releaseAll", "", "", "pending"});
@@ -178,7 +178,7 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
                 }
             }
         });
-		releaseSelectionClickHandlerRegistration = getMySandBoxDisplay().getReleaseSelectionButton().addClickHandler(new ClickHandler() {
+        releaseSelectionClickHandlerRegistration = getMySandBoxDisplay().getReleaseSelectionButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("pendingSandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey, "releaseSelected", getPendingSelectedRecords(), "", "pending"});

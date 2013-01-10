@@ -18,16 +18,16 @@ package org.broadleafcommerce.core.offer.service;
 
 
 public class OfferContext {
-	
-	private static final ThreadLocal<OfferContext> OFFERCONTEXT = new ThreadLocal<OfferContext>();
-	
-	public static OfferContext getOfferContext() {
-		return OFFERCONTEXT.get();
-	}
-	
-	public static void setOfferContext(OfferContext offerContext) {
+    
+    private static final ThreadLocal<OfferContext> OFFERCONTEXT = new ThreadLocal<OfferContext>();
+    
+    public static OfferContext getOfferContext() {
+        return OFFERCONTEXT.get();
+    }
+    
+    public static void setOfferContext(OfferContext offerContext) {
         OFFERCONTEXT.set(offerContext);
-	}
+    }
 
     protected Boolean executePromotionCalculation = true;
 

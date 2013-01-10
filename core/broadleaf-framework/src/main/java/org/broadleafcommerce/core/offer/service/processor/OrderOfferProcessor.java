@@ -33,14 +33,14 @@ import java.util.Map;
  */
 public interface OrderOfferProcessor extends BaseProcessor {
 
-	public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer);
+    public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer);
 
-	public OfferDao getOfferDao();
+    public OfferDao getOfferDao();
 
-	public void setOfferDao(OfferDao offerDao);
-	
-	public Boolean executeExpression(String expression, Map<String, Object> vars);
-	
+    public void setOfferDao(OfferDao offerDao);
+    
+    public Boolean executeExpression(String expression, Map<String, Object> vars);
+    
     /**
      * Executes the appliesToOrderRules in the Offer to determine if this offer
      * can be applied to the Order, OrderItem, or FulfillmentGroup.
@@ -49,10 +49,10 @@ public interface OrderOfferProcessor extends BaseProcessor {
      * @param order
      * @return true if offer can be applied, otherwise false
      */
-	public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order);
-	
-	public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers);
-	
+    public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order);
+    
+    public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers);
+    
     /**
      * Takes a list of sorted CandidateOrderOffers and determines if each offer can be
      * applied based on the restrictions (stackable and/or combinable) on that offer.  OrderAdjustments
@@ -64,13 +64,13 @@ public interface OrderOfferProcessor extends BaseProcessor {
      * @param order       the Order to apply the CandidateOrderOffers
      * @return true if order offer applied; otherwise false
      */
-	public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order);
-	
-	public void compileOrderTotal(PromotableOrder order);
-	
-	public PromotableItemFactory getPromotableItemFactory();
+    public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order);
+    
+    public void compileOrderTotal(PromotableOrder order);
+    
+    public PromotableItemFactory getPromotableItemFactory();
 
-	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+    public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
 
     public OrderItemMergeService getOrderItemMergeService();
 

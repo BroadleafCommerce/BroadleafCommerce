@@ -29,19 +29,19 @@ import java.util.HashMap;
  */
 public class NullEmailServiceImpl implements EmailService {
 
-	@Override
-	public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, HashMap<String, Object> props) {
-		return true;
-	}
+    @Override
+    public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, HashMap<String, Object> props) {
+        return true;
+    }
 
-	@Override
-	public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String, Object> props) {
-		return true;
-	}
+    @Override
+    public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String, Object> props) {
+        return true;
+    }
 
-	@Override
-	public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap<String, Object> props) {
-		return true;
-	}
+    @Override
+    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap<String, Object> props) {
+        return true;
+    }
 
 }

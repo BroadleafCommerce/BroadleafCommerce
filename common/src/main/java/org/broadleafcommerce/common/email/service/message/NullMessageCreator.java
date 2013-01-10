@@ -25,21 +25,21 @@ import org.springframework.mail.javamail.JavaMailSender;
 import java.util.HashMap;
 
 public class NullMessageCreator extends MessageCreator {
-	
-	private static final Log LOG = LogFactory.getLog(NullMessageCreator.class);
-	
+    
+    private static final Log LOG = LogFactory.getLog(NullMessageCreator.class);
+    
     public NullMessageCreator(JavaMailSender mailSender) {
-    	super(mailSender);  
+        super(mailSender);  
     }
     
-	@Override
-	public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
-		return info.getEmailTemplate();
-	}
-	
-	@Override
-    public void sendMessage(final HashMap<String,Object> props) throws MailException {
-		LOG.warn("NullMessageCreator is defined -- specify a real message creator to send emails");
+    @Override
+    public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
+        return info.getEmailTemplate();
     }
-	
+    
+    @Override
+    public void sendMessage(final HashMap<String,Object> props) throws MailException {
+        LOG.warn("NullMessageCreator is defined -- specify a real message creator to send emails");
+    }
+    
 }

@@ -28,11 +28,11 @@ import java.util.Arrays;
  *
  */
 public abstract class FieldMetadata implements IsSerializable, Serializable {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 
-	private String inheritedFromType;
-	private String[] availableToTypes;
+    private String inheritedFromType;
+    private String[] availableToTypes;
     private Boolean excluded;
     private String friendlyName;
     private String securityLevel;
@@ -46,22 +46,22 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     private String prefix;
     private String fieldName;
 
-	public String[] getAvailableToTypes() {
-		return availableToTypes;
-	}
+    public String[] getAvailableToTypes() {
+        return availableToTypes;
+    }
 
-	public void setAvailableToTypes(String[] availableToTypes) {
-		Arrays.sort(availableToTypes);
-		this.availableToTypes = availableToTypes;
-	}
+    public void setAvailableToTypes(String[] availableToTypes) {
+        Arrays.sort(availableToTypes);
+        this.availableToTypes = availableToTypes;
+    }
 
-	public String getInheritedFromType() {
-		return inheritedFromType;
-	}
+    public String getInheritedFromType() {
+        return inheritedFromType;
+    }
 
-	public void setInheritedFromType(String inheritedFromType) {
-		this.inheritedFromType = inheritedFromType;
-	}
+    public void setInheritedFromType(String inheritedFromType) {
+        this.inheritedFromType = inheritedFromType;
+    }
 
     public Boolean getExcluded() {
         return excluded;

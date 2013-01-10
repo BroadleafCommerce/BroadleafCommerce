@@ -55,7 +55,7 @@ public class RemoveOrderItemActivity extends BaseActivity {
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
         // Find the OrderItem from the database based on its ID
-		Order order = request.getOrder();
+        Order order = request.getOrder();
 
         orderItemMergeService.gatherSplitItemsInBundles(order);
 

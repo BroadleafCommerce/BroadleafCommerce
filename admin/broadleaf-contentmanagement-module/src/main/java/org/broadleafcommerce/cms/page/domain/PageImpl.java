@@ -117,7 +117,7 @@ public class PageImpl implements Page {
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "ORIG_SANDBOX_ID")
     @AdminPresentation(excluded = true)
-	protected SandBox originalSandBox;
+    protected SandBox originalSandBox;
 
     @Column (name = "DELETED_FLAG")
     @AdminPresentation(friendlyName = "PageImpl_Deleted", order=2, group = "PageImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
@@ -305,9 +305,9 @@ public class PageImpl implements Page {
 
     @Override
     public Integer getPriority() {
-    	if (priority == null) {
-    		return ZERO;
-    	}
+        if (priority == null) {
+            return ZERO;
+        }
         return priority;
     }
 

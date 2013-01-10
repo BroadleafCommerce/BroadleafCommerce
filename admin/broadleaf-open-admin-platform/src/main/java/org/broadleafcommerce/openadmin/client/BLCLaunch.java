@@ -56,14 +56,14 @@ public class BLCLaunch implements EntryPoint {
          });
 }
 
-	public void onModuleLoad2() {
-		if (BLCMain.SPLASH_PROGRESS != null) {
-			BLCMain.SPLASH_PROGRESS.startProgress();
-		}
+    public void onModuleLoad2() {
+        if (BLCMain.SPLASH_PROGRESS != null) {
+            BLCMain.SPLASH_PROGRESS.startProgress();
+        }
 
                String currentModulePage = History.getToken();
                BLCMain.drawCurrentState(getSelectedModule(currentModulePage), getSelectedPage(currentModulePage));
-	}
+    }
     
     private static String getSelectedString(String currentModulePage, String fragment) {
         String returnParam = null;

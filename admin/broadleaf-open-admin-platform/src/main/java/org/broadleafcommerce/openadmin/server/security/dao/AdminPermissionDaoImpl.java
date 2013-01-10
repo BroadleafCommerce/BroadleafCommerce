@@ -36,7 +36,7 @@ import java.util.List;
  */
 @Repository("blAdminPermissionDao")
 public class AdminPermissionDaoImpl implements AdminPermissionDao {
-	
+    
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
@@ -44,9 +44,9 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     protected EntityConfiguration entityConfiguration;
 
     public void deleteAdminPermission(AdminPermission permission) {
-    	if (!em.contains(permission)) {
-    		permission = readAdminPermissionById(permission.getId());
-    	}
+        if (!em.contains(permission)) {
+            permission = readAdminPermissionById(permission.getId());
+        }
         em.remove(permission);
     }
 

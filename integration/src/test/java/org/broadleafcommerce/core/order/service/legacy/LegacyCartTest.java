@@ -33,130 +33,130 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testMoveAllItemsToCartFromNamedOrder() throws PricingException {
-    	Order namedOrder = setUpNamedOrder();
-    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
-    	namedOrderItems.addAll(namedOrder.getOrderItems());
-    	Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
-    	cart = cartService.moveAllItemsToCartFromNamedOrder(namedOrder);
-    	assert namedOrderItems.equals(cart.getOrderItems());
-    	assert namedOrder.getOrderItems().size() == 0;
+        Order namedOrder = setUpNamedOrder();
+        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        namedOrderItems.addAll(namedOrder.getOrderItems());
+        Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
+        cart = cartService.moveAllItemsToCartFromNamedOrder(namedOrder);
+        assert namedOrderItems.equals(cart.getOrderItems());
+        assert namedOrder.getOrderItems().size() == 0;
     }
     
     @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testAddAllItemsToCartFromNamedOrder() throws PricingException {
-    	Order namedOrder = setUpNamedOrder();
-    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
-    	namedOrderItems.addAll(namedOrder.getOrderItems());
-    	Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
-    	cartService.setMoveNamedOrderItems(false);
-    	cart = cartService.addAllItemsToCartFromNamedOrder(namedOrder);
-    	assert namedOrderItems.equals(cart.getOrderItems());
-    	cartService.setMoveNamedOrderItems(true);
+        Order namedOrder = setUpNamedOrder();
+        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        namedOrderItems.addAll(namedOrder.getOrderItems());
+        Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
+        cartService.setMoveNamedOrderItems(false);
+        cart = cartService.addAllItemsToCartFromNamedOrder(namedOrder);
+        assert namedOrderItems.equals(cart.getOrderItems());
+        cartService.setMoveNamedOrderItems(true);
     }
 
     @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testAddAllItemsToCartFromNamedOrderWithoutExistingCart() throws PricingException {
-    	Order namedOrder = setUpNamedOrder();
-    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
-    	namedOrderItems.addAll(namedOrder.getOrderItems());
-    	cartService.setMoveNamedOrderItems(false);
-    	Order cart = cartService.addAllItemsToCartFromNamedOrder(namedOrder);
-    	assert namedOrderItems.equals(cart.getOrderItems());
-    	cartService.setMoveNamedOrderItems(true);
+        Order namedOrder = setUpNamedOrder();
+        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        namedOrderItems.addAll(namedOrder.getOrderItems());
+        cartService.setMoveNamedOrderItems(false);
+        Order cart = cartService.addAllItemsToCartFromNamedOrder(namedOrder);
+        assert namedOrderItems.equals(cart.getOrderItems());
+        cartService.setMoveNamedOrderItems(true);
     }
 
     @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testAddItemToCartFromNamedOrder() throws PricingException {
-    	Order namedOrder = setUpNamedOrder();
-    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
-    	namedOrderItems.addAll(namedOrder.getOrderItems());
-    	Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
-    	cartService.setMoveNamedOrderItems(false);
-    	OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder, namedOrderItems.get(0));
-    	cartService.setMoveNamedOrderItems(true);
-    	assert movedItem != null;
-    	assert cart.getOrderItems().size() == 1;
+        Order namedOrder = setUpNamedOrder();
+        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        namedOrderItems.addAll(namedOrder.getOrderItems());
+        Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
+        cartService.setMoveNamedOrderItems(false);
+        OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder, namedOrderItems.get(0));
+        cartService.setMoveNamedOrderItems(true);
+        assert movedItem != null;
+        assert cart.getOrderItems().size() == 1;
     }
 
     @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testMoveItemToCartFromNamedOrder() throws PricingException {
-    	Order namedOrder = setUpNamedOrder();
-    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
-    	namedOrderItems.addAll(namedOrder.getOrderItems());
-    	Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
-    	OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder, namedOrderItems.get(0));
-    	
-    	List<Order> customerNamedOrders = cartService.findOrdersForCustomer(namedOrder.getCustomer(), OrderStatus.NAMED);
-    	assert customerNamedOrders.size() == 0;
-    	assert movedItem != null;
-    	assert cart.getOrderItems().size() == 1;
-    	assert namedOrder.getOrderItems().size() == 0;
+        Order namedOrder = setUpNamedOrder();
+        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        namedOrderItems.addAll(namedOrder.getOrderItems());
+        Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
+        OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder, namedOrderItems.get(0));
+        
+        List<Order> customerNamedOrders = cartService.findOrdersForCustomer(namedOrder.getCustomer(), OrderStatus.NAMED);
+        assert customerNamedOrders.size() == 0;
+        assert movedItem != null;
+        assert cart.getOrderItems().size() == 1;
+        assert namedOrder.getOrderItems().size() == 0;
     }
 
     @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testMoveItemToCartFromNamedOrderWithoutExistingCart() throws PricingException {
-    	Order namedOrder = setUpNamedOrder();
-    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
-    	namedOrderItems.addAll(namedOrder.getOrderItems());
-    	OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder, namedOrderItems.get(0));
-    	List<Order> customerNamedOrders = cartService.findOrdersForCustomer(namedOrder.getCustomer(), OrderStatus.NAMED);
+        Order namedOrder = setUpNamedOrder();
+        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        namedOrderItems.addAll(namedOrder.getOrderItems());
+        OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder, namedOrderItems.get(0));
+        List<Order> customerNamedOrders = cartService.findOrdersForCustomer(namedOrder.getCustomer(), OrderStatus.NAMED);
 
-    	Order cart = cartService.findCartForCustomer(namedOrder.getCustomer());
-    	assert customerNamedOrders.size() == 0;
-    	assert movedItem != null;
-    	assert cart.getOrderItems().size() == 1;
-    	assert namedOrder.getOrderItems().size() == 0;
+        Order cart = cartService.findCartForCustomer(namedOrder.getCustomer());
+        assert customerNamedOrders.size() == 0;
+        assert movedItem != null;
+        assert cart.getOrderItems().size() == 1;
+        assert namedOrder.getOrderItems().size() == 0;
     }
 
     @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testMoveItemToCartFromNamedOrderByIds() throws PricingException {
-    	Order namedOrder = setUpNamedOrder();
-    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
-    	namedOrderItems.addAll(namedOrder.getOrderItems());
-    	OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder.getCustomer().getId(), 
-    			namedOrder.getName(), namedOrderItems.get(0).getId(), namedOrderItems.get(0).getQuantity());
-    	List<Order> customerNamedOrders = cartService.findOrdersForCustomer(namedOrder.getCustomer(), OrderStatus.NAMED);
-    	
-    	Order cart = cartService.findCartForCustomer(namedOrder.getCustomer());
-    	assert customerNamedOrders.size() == 0;
-    	assert movedItem != null;
-    	assert cart.getOrderItems().size() == 1;
-    	assert namedOrder.getOrderItems().size() == 0;
+        Order namedOrder = setUpNamedOrder();
+        List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+        namedOrderItems.addAll(namedOrder.getOrderItems());
+        OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder.getCustomer().getId(), 
+                namedOrder.getName(), namedOrderItems.get(0).getId(), namedOrderItems.get(0).getQuantity());
+        List<Order> customerNamedOrders = cartService.findOrdersForCustomer(namedOrder.getCustomer(), OrderStatus.NAMED);
+        
+        Order cart = cartService.findCartForCustomer(namedOrder.getCustomer());
+        assert customerNamedOrders.size() == 0;
+        assert movedItem != null;
+        assert cart.getOrderItems().size() == 1;
+        assert namedOrder.getOrderItems().size() == 0;
     }
 
     @Transactional
     @Test(groups = { "testMergeCartLegacy" }) 
     public void testMergeToEmptyCart() throws PricingException {
-    	Order anonymousCart = setUpAnonymousCartWithInactiveSku();
-    	Customer customer = customerService.saveCustomer(createNamedCustomer());
-    	MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
-    	assert response.getAddedItems().size() == 2;
-    	assert response.getOrder().getOrderItems().size() == 2;
-    	assert response.isMerged() == false;
-    	assert response.getRemovedItems().size() == 2;
+        Order anonymousCart = setUpAnonymousCartWithInactiveSku();
+        Customer customer = customerService.saveCustomer(createNamedCustomer());
+        MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
+        assert response.getAddedItems().size() == 2;
+        assert response.getOrder().getOrderItems().size() == 2;
+        assert response.isMerged() == false;
+        assert response.getRemovedItems().size() == 2;
     }
     
     @Transactional
     @Test(groups = { "testMergeCartLegacy" }) 
     public void testMergeToExistingCart() throws PricingException {
-    	//sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
-    	Order anonymousCart = setUpAnonymousCartWithInactiveSku();
-    	Customer customer = customerService.saveCustomer(createNamedCustomer());
-    	
-    	//sets up existing cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
-    	initializeExistingCartWithInactiveSkuAndInactiveBundle(customer);
-    	MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
-    	
-    	assert response.getAddedItems().size() == 2;
-    	assert response.getOrder().getOrderItems().size() == 4;
-    	assert response.isMerged();
-    	assert response.getRemovedItems().size() == 4;
+        //sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
+        Order anonymousCart = setUpAnonymousCartWithInactiveSku();
+        Customer customer = customerService.saveCustomer(createNamedCustomer());
+        
+        //sets up existing cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
+        initializeExistingCartWithInactiveSkuAndInactiveBundle(customer);
+        MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
+        
+        assert response.getAddedItems().size() == 2;
+        assert response.getOrder().getOrderItems().size() == 4;
+        assert response.isMerged();
+        assert response.getRemovedItems().size() == 4;
     }
 
     @Transactional

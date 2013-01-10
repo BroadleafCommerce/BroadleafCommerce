@@ -34,7 +34,7 @@ import javax.persistence.TableGenerator;
 @Deprecated
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SearchInterceptImpl implements SearchIntercept {
-	
+    
     @Id
     @GeneratedValue(generator = "SearchInterceptId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SearchInterceptId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchInterceptImpl", allocationSize = 50)

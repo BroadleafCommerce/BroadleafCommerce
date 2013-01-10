@@ -140,12 +140,12 @@ public interface CategoryDao {
      * <p>
      * {@code
      *     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
-	 *	        <property name="entityContexts">
-	 *		        <list>
-	 *			        <value>classpath:myCompany-applicationContext-entity.xml</value>
-	 *		        </list>
-	 *	        </property>
-	 *      </bean>
+     *          <property name="entityContexts">
+     *              <list>
+     *                  <value>classpath:myCompany-applicationContext-entity.xml</value>
+     *              </list>
+     *          </property>
+     *      </bean>
      * }
      * </p>
      * Declare the same key for your desired entity in your entity xml that is used in the Broadleaf entity xml, but change the value to the fully
@@ -198,7 +198,7 @@ public interface CategoryDao {
      *
      * @param currentDateResolution the value in milliseconds for how long the current date/time is cached
      */
-	public void setCurrentDateResolution(@Nonnull  Long currentDateResolution);
-	@Nonnull
-	Category findCategoryByURI(String uri);
+    public void setCurrentDateResolution(@Nonnull  Long currentDateResolution);
+    @Nonnull
+    Category findCategoryByURI(String uri);
 }

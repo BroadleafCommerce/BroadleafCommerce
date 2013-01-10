@@ -19,11 +19,11 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 import javax.servlet.jsp.JspException;
 
 public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
-	
+    
     private GetProductsByCategoryIdTag getProductsByCategoryIdTag;
 
     public void test_GetProductsByCategoryIdTag() throws JspException {
-    	//TODO Fix this test - there are expectation failures
+        //TODO Fix this test - there are expectation failures
         /*getProductsByCategoryIdTag.setJspContext(pageContext);
         getProductsByCategoryIdTag.setCatalogService(catalogService);
 
@@ -59,8 +59,8 @@ public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
         super.verifyBaseMockObjects();*/
     }
 
-	@Override
-	public void setup() {
-		getProductsByCategoryIdTag = new GetProductsByCategoryIdTag();
-	}
+    @Override
+    public void setup() {
+        getProductsByCategoryIdTag = new GetProductsByCategoryIdTag();
+    }
 }

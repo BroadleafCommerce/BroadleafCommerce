@@ -32,69 +32,69 @@ import java.util.Map;
  *
  */
 public class PersistencePerspective implements IsSerializable, Serializable {
-	 
-	private static final long serialVersionUID = 1L;
-	
-	protected String[] additionalNonPersistentProperties = new String[]{};
-	protected ForeignKey[] additionalForeignKeys = new ForeignKey[]{};
-	protected Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>();
-	protected OperationTypes operationTypes = new OperationTypes();
-	protected Boolean populateToOneFields = false;
-	protected String[] excludeFields = new String[]{};
-	protected String[] includeFields = new String[]{};
+     
+    private static final long serialVersionUID = 1L;
+    
+    protected String[] additionalNonPersistentProperties = new String[]{};
+    protected ForeignKey[] additionalForeignKeys = new ForeignKey[]{};
+    protected Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>();
+    protected OperationTypes operationTypes = new OperationTypes();
+    protected Boolean populateToOneFields = false;
+    protected String[] excludeFields = new String[]{};
+    protected String[] includeFields = new String[]{};
     protected String configurationKey;
     protected Boolean showArchivedFields = false;
-	
-	public PersistencePerspective() {
-	}
-	
-	public PersistencePerspective(OperationTypes operationTypes, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignKeys) {
-		setAdditionalNonPersistentProperties(additionalNonPersistentProperties);
-		setAdditionalForeignKeys(additionalForeignKeys);
-		this.operationTypes = operationTypes;
-	}
+    
+    public PersistencePerspective() {
+    }
+    
+    public PersistencePerspective(OperationTypes operationTypes, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignKeys) {
+        setAdditionalNonPersistentProperties(additionalNonPersistentProperties);
+        setAdditionalForeignKeys(additionalForeignKeys);
+        this.operationTypes = operationTypes;
+    }
 
-	public String[] getAdditionalNonPersistentProperties() {
-		return additionalNonPersistentProperties;
-	}
+    public String[] getAdditionalNonPersistentProperties() {
+        return additionalNonPersistentProperties;
+    }
 
-	public void setAdditionalNonPersistentProperties(String[] additionalNonPersistentProperties) {
-		this.additionalNonPersistentProperties = additionalNonPersistentProperties;
-		Arrays.sort(this.additionalNonPersistentProperties);
-	}
+    public void setAdditionalNonPersistentProperties(String[] additionalNonPersistentProperties) {
+        this.additionalNonPersistentProperties = additionalNonPersistentProperties;
+        Arrays.sort(this.additionalNonPersistentProperties);
+    }
 
-	public ForeignKey[] getAdditionalForeignKeys() {
-		return additionalForeignKeys;
-	}
+    public ForeignKey[] getAdditionalForeignKeys() {
+        return additionalForeignKeys;
+    }
 
-	public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
-		this.additionalForeignKeys = additionalForeignKeys;
-		Arrays.sort(this.additionalForeignKeys, new Comparator<ForeignKey>() {
-			public int compare(ForeignKey o1, ForeignKey o2) {
-				return o1.getManyToField().compareTo(o2.getManyToField());
-			}
-		});
-	}
+    public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
+        this.additionalForeignKeys = additionalForeignKeys;
+        Arrays.sort(this.additionalForeignKeys, new Comparator<ForeignKey>() {
+            public int compare(ForeignKey o1, ForeignKey o2) {
+                return o1.getManyToField().compareTo(o2.getManyToField());
+            }
+        });
+    }
 
-	public OperationTypes getOperationTypes() {
-		return operationTypes;
-	}
+    public OperationTypes getOperationTypes() {
+        return operationTypes;
+    }
 
-	public void setOperationTypes(OperationTypes operationTypes) {
-		this.operationTypes = operationTypes;
-	}
-	
-	public void addPersistencePerspectiveItem(PersistencePerspectiveItemType type, PersistencePerspectiveItem item) {
-		persistencePerspectiveItems.put(type, item);
-	}
+    public void setOperationTypes(OperationTypes operationTypes) {
+        this.operationTypes = operationTypes;
+    }
+    
+    public void addPersistencePerspectiveItem(PersistencePerspectiveItemType type, PersistencePerspectiveItem item) {
+        persistencePerspectiveItems.put(type, item);
+    }
 
-	public Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> getPersistencePerspectiveItems() {
-		return persistencePerspectiveItems;
-	}
+    public Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> getPersistencePerspectiveItems() {
+        return persistencePerspectiveItems;
+    }
 
-	public void setPersistencePerspectiveItems(Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems) {
-		this.persistencePerspectiveItems = persistencePerspectiveItems;
-	}
+    public void setPersistencePerspectiveItems(Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems) {
+        this.persistencePerspectiveItems = persistencePerspectiveItems;
+    }
 
     /**
      * Retrieves whether or not ManyToOne and OneToOne field boundaries
@@ -105,9 +105,9 @@ public class PersistencePerspective implements IsSerializable, Serializable {
      * @return Whether or not ManyToOne and OneToOne field boundaries will be crossed.
      */
     @Deprecated
-	public Boolean getPopulateToOneFields() {
-		return populateToOneFields;
-	}
+    public Boolean getPopulateToOneFields() {
+        return populateToOneFields;
+    }
 
     /**
      * Sets whether or not ManyToOne and OneToOne field boundaries
@@ -118,9 +118,9 @@ public class PersistencePerspective implements IsSerializable, Serializable {
      * @return Whether or not ManyToOne and OneToOne field boundaries will be crossed.
      */
     @Deprecated
-	public void setPopulateToOneFields(Boolean populateToOneFields) {
-		this.populateToOneFields = populateToOneFields;
-	}
+    public void setPopulateToOneFields(Boolean populateToOneFields) {
+        this.populateToOneFields = populateToOneFields;
+    }
 
     /**
      * Retrieve the list of fields to exclude from the admin presentation.
@@ -134,9 +134,9 @@ public class PersistencePerspective implements IsSerializable, Serializable {
      * @return list of fields to exclude from the admin
      */
     @Deprecated
-	public String[] getExcludeFields() {
-		return excludeFields;
-	}
+    public String[] getExcludeFields() {
+        return excludeFields;
+    }
 
     /**
      * Set the list of fields to exclude from the admin presentation.
@@ -150,10 +150,10 @@ public class PersistencePerspective implements IsSerializable, Serializable {
      * @param excludeManyToOneFields
      */
     @Deprecated
-	public void setExcludeFields(String[] excludeManyToOneFields) {
-		this.excludeFields = excludeManyToOneFields;
-		Arrays.sort(this.excludeFields);
-	}
+    public void setExcludeFields(String[] excludeManyToOneFields) {
+        this.excludeFields = excludeManyToOneFields;
+        Arrays.sort(this.excludeFields);
+    }
 
     /**
      * Get the list of fields to include in the admin presentation.
@@ -162,9 +162,9 @@ public class PersistencePerspective implements IsSerializable, Serializable {
      * @return list of fields to include in the admin
      */
     @Deprecated
-	public String[] getIncludeFields() {
-		return includeFields;
-	}
+    public String[] getIncludeFields() {
+        return includeFields;
+    }
 
     /**
      * Set the list of fields to include in the admin presentation.
@@ -173,10 +173,10 @@ public class PersistencePerspective implements IsSerializable, Serializable {
      * @param includeManyToOneFields
      */
     @Deprecated
-	public void setIncludeFields(String[] includeManyToOneFields) {
-		this.includeFields = includeManyToOneFields;
-		Arrays.sort(this.includeFields);
-	}
+    public void setIncludeFields(String[] includeManyToOneFields) {
+        this.includeFields = includeManyToOneFields;
+        Arrays.sort(this.includeFields);
+    }
 
     public String getConfigurationKey() {
         return configurationKey;

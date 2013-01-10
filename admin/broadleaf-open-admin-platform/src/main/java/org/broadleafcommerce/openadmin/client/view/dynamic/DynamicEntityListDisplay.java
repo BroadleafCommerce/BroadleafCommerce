@@ -28,15 +28,15 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  */
 public interface DynamicEntityListDisplay {
 
-	public abstract ToolStripButton getAddButton();
+    public abstract ToolStripButton getAddButton();
 
-	public abstract ToolStripButton getRemoveButton();
+    public abstract ToolStripButton getRemoveButton();
 
-	public abstract ComboBoxItem getEntityType();
+    public abstract ComboBoxItem getEntityType();
 
-	public abstract ListGrid getGrid();
-	
-	public abstract ToolStrip getToolBar();
+    public abstract ListGrid getGrid();
+    
+    public abstract ToolStrip getToolBar();
 
     public abstract ToolStripButton getShowArchivedButton();
 

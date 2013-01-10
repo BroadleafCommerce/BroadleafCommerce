@@ -360,7 +360,7 @@ public class OfferImpl implements Offer, Status {
     @Deprecated
     @JsonIgnore
     public boolean getStackable(){
-    	return stackable;
+        return stackable;
     }
     
     @Override
@@ -407,7 +407,7 @@ public class OfferImpl implements Offer, Status {
         this.appliesToCustomerRules = appliesToCustomerRules;
     }
 
-	@Override
+    @Override
     @Deprecated
     public boolean isApplyDiscountToMarkedItems() {
         return applyDiscountToMarkedItems;
@@ -416,7 +416,7 @@ public class OfferImpl implements Offer, Status {
     @Deprecated
     @JsonIgnore
     public boolean getApplyDiscountToMarkedItems() {
-    	return applyDiscountToMarkedItems;
+        return applyDiscountToMarkedItems;
     }
     
     @Override
@@ -448,7 +448,7 @@ public class OfferImpl implements Offer, Status {
     @Deprecated
     @JsonIgnore
     public boolean getCombinableWithOtherOffers() {
-    	return combinableWithOtherOffers;
+        return combinableWithOtherOffers;
     }
     
     @Override
@@ -504,13 +504,13 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public Set<OfferItemCriteria> getQualifyingItemCriteria() {
-		return qualifyingItemCriteria;
-	}
+        return qualifyingItemCriteria;
+    }
 
-	@Override
+    @Override
     public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
-		this.qualifyingItemCriteria = qualifyingItemCriteria;
-	}
+        this.qualifyingItemCriteria = qualifyingItemCriteria;
+    }
 
     public Set<OfferItemCriteria> getTargetItemCriteria() {
         return targetItemCriteria;
@@ -520,38 +520,38 @@ public class OfferImpl implements Offer, Status {
         this.targetItemCriteria = targetItemCriteria;
     }
 
-	@Override
+    @Override
     public Boolean isTotalitarianOffer() {
-		return totalitarianOffer;
-	}
+        return totalitarianOffer;
+    }
 
-	@Override
+    @Override
     public void setTotalitarianOffer(Boolean totalitarianOffer) {
-		this.totalitarianOffer = totalitarianOffer;
-	}
+        this.totalitarianOffer = totalitarianOffer;
+    }
 
-	@Override
+    @Override
     public Map<String, OfferRule> getOfferMatchRules() {
-		if (offerMatchRules == null) {
-			offerMatchRules = new HashMap<String, OfferRule>();
-		}
-		return offerMatchRules;
-	}
+        if (offerMatchRules == null) {
+            offerMatchRules = new HashMap<String, OfferRule>();
+        }
+        return offerMatchRules;
+    }
 
-	@Override
+    @Override
     public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules) {
-		this.offerMatchRules = offerMatchRules;
-	}
+        this.offerMatchRules = offerMatchRules;
+    }
 
-	@Override
+    @Override
     public Boolean getTreatAsNewFormat() {
-		return treatAsNewFormat;
-	}
+        return treatAsNewFormat;
+    }
 
-	@Override
+    @Override
     public void setTreatAsNewFormat(Boolean treatAsNewFormat) {
-		this.treatAsNewFormat = treatAsNewFormat;
-	}
+        this.treatAsNewFormat = treatAsNewFormat;
+    }
 
     @Override
     public Character getArchived() {

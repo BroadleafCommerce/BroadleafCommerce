@@ -72,306 +72,306 @@ import com.sun.jersey.spi.inject.Injectable;
 @Component
 @Provider
 @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-		MediaType.TEXT_XML })
+        MediaType.TEXT_XML })
 @Consumes(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-		MediaType.TEXT_XML })
+        MediaType.TEXT_XML })
 public class BroadleafMessageBodyReaderWriter implements
-		MessageBodyReader<Object>, MessageBodyWriter<Object>, ContextResolver<JAXBContext>,
-		ApplicationContextAware {
+        MessageBodyReader<Object>, MessageBodyWriter<Object>, ContextResolver<JAXBContext>,
+        ApplicationContextAware {
 
-	protected ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
 
-	@Context
-	protected Providers ps;
+    @Context
+    protected Providers ps;
 
-	@Context
-	protected Injectable<XMLInputFactory> xif;
+    @Context
+    protected Injectable<XMLInputFactory> xif;
 
-	@Context
-	protected Injectable<SAXParserFactory> spf;
-	
-	protected JAXBContext jaxbContext = null;
-	protected HashMap<String, Class<?>> typeMap = null;
+    @Context
+    protected Injectable<SAXParserFactory> spf;
+    
+    protected JAXBContext jaxbContext = null;
+    protected HashMap<String, Class<?>> typeMap = null;
 
-	protected XMLListElementProvider.App xmlListProvider;
-	protected JSONListElementProvider.App jsonListProvider;
-	protected XMLRootElementProvider.App xmlRootElementProvider;
-	protected JSONRootElementProvider.App jsonRootElementProvider;
+    protected XMLListElementProvider.App xmlListProvider;
+    protected JSONListElementProvider.App jsonListProvider;
+    protected XMLRootElementProvider.App xmlRootElementProvider;
+    protected JSONRootElementProvider.App jsonRootElementProvider;
 
-	@Override
-	public boolean isReadable(Class<?> type, Type genericType,
-			Annotation[] annotations, MediaType mediaType) {
-		return isWriteable(type, genericType, annotations, mediaType);
-	}
+    @Override
+    public boolean isReadable(Class<?> type, Type genericType,
+            Annotation[] annotations, MediaType mediaType) {
+        return isWriteable(type, genericType, annotations, mediaType);
+    }
 
-	@Override
-	public boolean isWriteable(Class<?> type, Type genericType,
-			Annotation[] annotations, MediaType mediaType) {
-		Type lookupType = getLookupType(type, genericType);
+    @Override
+    public boolean isWriteable(Class<?> type, Type genericType,
+            Annotation[] annotations, MediaType mediaType) {
+        Type lookupType = getLookupType(type, genericType);
 
-		if (getApiWrapper(type, lookupType) != null) {
-			return true;
-		}
+        if (getApiWrapper(type, lookupType) != null) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public Object readFrom(Class<Object> type, Type genericType,
-			Annotation[] annotations, MediaType mediaType,
-			MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
-			throws IOException, WebApplicationException {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    public Object readFrom(Class<Object> type, Type genericType,
+            Annotation[] annotations, MediaType mediaType,
+            MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
+            throws IOException, WebApplicationException {
 
-		initializeProviders();
+        initializeProviders();
 
-		Type lookupType = getLookupType(type, genericType);
+        Type lookupType = getLookupType(type, genericType);
 
-		if (getApiWrapper(type, lookupType) != null) {
-			genericType = getApiWrapper(type, lookupType);
-		}
+        if (getApiWrapper(type, lookupType) != null) {
+            genericType = getApiWrapper(type, lookupType);
+        }
 
-		if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
-			if (Collection.class.isAssignableFrom(type)) {
-				return jsonListProvider.readFrom(type, genericType,
-						annotations, mediaType, httpHeaders, entityStream);
-			} else if (type.isArray()) {
-				// Since we've replaced the genericType param with the correct
-				// implementation, we have to pass that as the first argument as
-				// well because
-				// if it's an array, the default list provider checks the
-				// componentType of only the first argument
-				return jsonListProvider.readFrom((Class) genericType,
-						genericType, annotations, mediaType, httpHeaders,
-						entityStream);
-			} else {
-				// Since we've replaced the genericType param with the correct
-				// implementation, we have to pass that as the first argument as
-				// well because
-				// the default root element providers don't actually use
-				// genericType in their implementations.
-				return jsonRootElementProvider.readFrom((Class) genericType,
-						genericType, annotations, mediaType, httpHeaders,
-						entityStream);
-			}
-		} else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)
-				|| mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) {
-			if (Collection.class.isAssignableFrom(type)) {
-				return xmlListProvider.readFrom(type, genericType, annotations,
-						mediaType, httpHeaders, entityStream);
-			} else if (type.isArray()) {
-				// Since we've replaced the genericType param with the correct
-				// implementation, we have to pass that as the first argument as
-				// well because
-				// if it's an array, the default list provider checks the
-				// componentType of only the first argument
-				return xmlListProvider.readFrom((Class) genericType,
-						genericType, annotations, mediaType, httpHeaders,
-						entityStream);
-			} else {
-				// Since we've replaced the genericType param with the correct
-				// implementation, we have to pass that as the first argument as
-				// well because
-				// the default root element providers don't actually use
-				// genericType in their implementations.
-				return xmlRootElementProvider.readFrom((Class) genericType,
-						genericType, annotations, mediaType, httpHeaders,
-						entityStream);
-			}
-		}
+        if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
+            if (Collection.class.isAssignableFrom(type)) {
+                return jsonListProvider.readFrom(type, genericType,
+                        annotations, mediaType, httpHeaders, entityStream);
+            } else if (type.isArray()) {
+                // Since we've replaced the genericType param with the correct
+                // implementation, we have to pass that as the first argument as
+                // well because
+                // if it's an array, the default list provider checks the
+                // componentType of only the first argument
+                return jsonListProvider.readFrom((Class) genericType,
+                        genericType, annotations, mediaType, httpHeaders,
+                        entityStream);
+            } else {
+                // Since we've replaced the genericType param with the correct
+                // implementation, we have to pass that as the first argument as
+                // well because
+                // the default root element providers don't actually use
+                // genericType in their implementations.
+                return jsonRootElementProvider.readFrom((Class) genericType,
+                        genericType, annotations, mediaType, httpHeaders,
+                        entityStream);
+            }
+        } else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)
+                || mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) {
+            if (Collection.class.isAssignableFrom(type)) {
+                return xmlListProvider.readFrom(type, genericType, annotations,
+                        mediaType, httpHeaders, entityStream);
+            } else if (type.isArray()) {
+                // Since we've replaced the genericType param with the correct
+                // implementation, we have to pass that as the first argument as
+                // well because
+                // if it's an array, the default list provider checks the
+                // componentType of only the first argument
+                return xmlListProvider.readFrom((Class) genericType,
+                        genericType, annotations, mediaType, httpHeaders,
+                        entityStream);
+            } else {
+                // Since we've replaced the genericType param with the correct
+                // implementation, we have to pass that as the first argument as
+                // well because
+                // the default root element providers don't actually use
+                // genericType in their implementations.
+                return xmlRootElementProvider.readFrom((Class) genericType,
+                        genericType, annotations, mediaType, httpHeaders,
+                        entityStream);
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public long getSize(Object t, Class<?> type, Type genericType,
-			Annotation[] annotations, MediaType mediaType) {
-		return -1;
-	}
+    @Override
+    public long getSize(Object t, Class<?> type, Type genericType,
+            Annotation[] annotations, MediaType mediaType) {
+        return -1;
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void writeTo(Object t, Class<?> type, Type genericType,
-			Annotation annotations[], MediaType mediaType,
-			MultivaluedMap<String, Object> httpHeaders,
-			OutputStream entityStream) throws IOException {
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void writeTo(Object t, Class<?> type, Type genericType,
+            Annotation annotations[], MediaType mediaType,
+            MultivaluedMap<String, Object> httpHeaders,
+            OutputStream entityStream) throws IOException {
 
-		initializeProviders();
+        initializeProviders();
 
-		Type lookupType = getLookupType(type, genericType);
+        Type lookupType = getLookupType(type, genericType);
 
-		if (getApiWrapper(type, lookupType) != null) {
-			genericType = getApiWrapper(type, lookupType);
-		}
+        if (getApiWrapper(type, lookupType) != null) {
+            genericType = getApiWrapper(type, lookupType);
+        }
 
-		if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
-			if (Collection.class.isAssignableFrom(type)) {
-				jsonListProvider.writeTo(t, type, genericType, annotations,
-						mediaType, httpHeaders, entityStream);
-			} else if (type.isArray()) {
-				// Since we've replaced the genericType param with the correct
-				// implementation, we have to pass that as the first argument as
-				// well because
-				// if it's an array, the default list provider checks the
-				// componentType of only the first argument
-				jsonListProvider.writeTo(t, (Class) genericType, genericType,
-						annotations, mediaType, httpHeaders, entityStream);
-			} else {
-				jsonRootElementProvider.writeTo(t, type, genericType,
-						annotations, mediaType, httpHeaders, entityStream);
-			}
-		} else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)
-				|| mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) {
-			if (Collection.class.isAssignableFrom(type)) {
-				xmlListProvider.writeTo(t, type, genericType, annotations,
-						mediaType, httpHeaders, entityStream);
-			} else if (type.isArray()) {
-				// Since we've replaced the genericType param with the correct
-				// implementation, we have to pass that as the first argument as
-				// well because
-				// if it's an array, the default list provider checks the
-				// componentType of only the first argument
-				xmlListProvider.writeTo(t, (Class) genericType, genericType,
-						annotations, mediaType, httpHeaders, entityStream);
-			} else {
-				xmlRootElementProvider.writeTo(t, type, genericType,
-						annotations, mediaType, httpHeaders, entityStream);
-			}
-		}
-	}
+        if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
+            if (Collection.class.isAssignableFrom(type)) {
+                jsonListProvider.writeTo(t, type, genericType, annotations,
+                        mediaType, httpHeaders, entityStream);
+            } else if (type.isArray()) {
+                // Since we've replaced the genericType param with the correct
+                // implementation, we have to pass that as the first argument as
+                // well because
+                // if it's an array, the default list provider checks the
+                // componentType of only the first argument
+                jsonListProvider.writeTo(t, (Class) genericType, genericType,
+                        annotations, mediaType, httpHeaders, entityStream);
+            } else {
+                jsonRootElementProvider.writeTo(t, type, genericType,
+                        annotations, mediaType, httpHeaders, entityStream);
+            }
+        } else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)
+                || mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) {
+            if (Collection.class.isAssignableFrom(type)) {
+                xmlListProvider.writeTo(t, type, genericType, annotations,
+                        mediaType, httpHeaders, entityStream);
+            } else if (type.isArray()) {
+                // Since we've replaced the genericType param with the correct
+                // implementation, we have to pass that as the first argument as
+                // well because
+                // if it's an array, the default list provider checks the
+                // componentType of only the first argument
+                xmlListProvider.writeTo(t, (Class) genericType, genericType,
+                        annotations, mediaType, httpHeaders, entityStream);
+            } else {
+                xmlRootElementProvider.writeTo(t, type, genericType,
+                        annotations, mediaType, httpHeaders, entityStream);
+            }
+        }
+    }
 
-	private void initializeProviders() {
-		if (jsonListProvider == null) {
-			jsonListProvider = new JSONListElementProvider.App(ps);
-		}
+    private void initializeProviders() {
+        if (jsonListProvider == null) {
+            jsonListProvider = new JSONListElementProvider.App(ps);
+        }
 
-		if (xmlListProvider == null) {
-			xmlListProvider = new XMLListElementProvider.App(xif, ps);
-		}
+        if (xmlListProvider == null) {
+            xmlListProvider = new XMLListElementProvider.App(xif, ps);
+        }
 
-		if (xmlRootElementProvider == null) {
-			xmlRootElementProvider = new XMLRootElementProvider.App(spf, ps);
-		}
+        if (xmlRootElementProvider == null) {
+            xmlRootElementProvider = new XMLRootElementProvider.App(spf, ps);
+        }
 
-		if (jsonRootElementProvider == null) {
-			jsonRootElementProvider = new JSONRootElementProvider.App(ps);
-		}
-	}
+        if (jsonRootElementProvider == null) {
+            jsonRootElementProvider = new JSONRootElementProvider.App(ps);
+        }
+    }
 
-	protected Type getLookupType(Class<?> type, Type genericType) {
-		Type lookupType = genericType;
-		if (Collection.class.isAssignableFrom(type)) {
-			final ParameterizedType pt = (ParameterizedType) genericType;
-			lookupType = pt.getActualTypeArguments()[0];
-		} else if (type.isArray()) {
-			lookupType = type.getComponentType();
-		}
+    protected Type getLookupType(Class<?> type, Type genericType) {
+        Type lookupType = genericType;
+        if (Collection.class.isAssignableFrom(type)) {
+            final ParameterizedType pt = (ParameterizedType) genericType;
+            lookupType = pt.getActualTypeArguments()[0];
+        } else if (type.isArray()) {
+            lookupType = type.getComponentType();
+        }
 
-		return lookupType;
-	}
+        return lookupType;
+    }
 
-	/**
-	 * 
-	 * Via the ApplicationContext we can look up exactly what implementation
-	 * corresponds to the parameterized domain interface and determine if that
-	 * is annotated with proper JAXB annotations for serialization. We then
-	 * return the correct implementing Class in case of a root element, a new
-	 * ParameterizedType in case of a collection, or a new Array in case of an
-	 * array The default providers can then handle the actual serialization of
-	 * the List or Root element safely.
-	 * 
-	 */
-	@SuppressWarnings("rawtypes")
-	protected Type getApiWrapper(Class<?> type, Type lookupType) {
-		initializeTypeMap();
-		if (lookupType instanceof Class) {
-			Class<?> clz = typeMap.get(((Class)lookupType).getName());
-			if (clz == null) {
-				return null;
-			}
-			if (Collection.class.isAssignableFrom(type)) {
-				Type[] paramType = { clz };
-				return new ParameterizedTypeImpl(paramType, type, null);
-			} else if (type.isArray()) {
-				return Array
-						.newInstance(clz, 0)
-						.getClass();
-			} else {
-				return clz.getClass();
-			}
-		}
-		
-		return null;
-	}
+    /**
+     * 
+     * Via the ApplicationContext we can look up exactly what implementation
+     * corresponds to the parameterized domain interface and determine if that
+     * is annotated with proper JAXB annotations for serialization. We then
+     * return the correct implementing Class in case of a root element, a new
+     * ParameterizedType in case of a collection, or a new Array in case of an
+     * array The default providers can then handle the actual serialization of
+     * the List or Root element safely.
+     * 
+     */
+    @SuppressWarnings("rawtypes")
+    protected Type getApiWrapper(Class<?> type, Type lookupType) {
+        initializeTypeMap();
+        if (lookupType instanceof Class) {
+            Class<?> clz = typeMap.get(((Class)lookupType).getName());
+            if (clz == null) {
+                return null;
+            }
+            if (Collection.class.isAssignableFrom(type)) {
+                Type[] paramType = { clz };
+                return new ParameterizedTypeImpl(paramType, type, null);
+            } else if (type.isArray()) {
+                return Array
+                        .newInstance(clz, 0)
+                        .getClass();
+            } else {
+                return clz.getClass();
+            }
+        }
+        
+        return null;
+    }
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
-	/*
-	 * This is based on the Sun / Oracle implementation of a similar class
-	 */
-	private class ParameterizedTypeImpl implements ParameterizedType {
+    /*
+     * This is based on the Sun / Oracle implementation of a similar class
+     */
+    private class ParameterizedTypeImpl implements ParameterizedType {
 
-		private Type[] actualTypeArguments;
-		private Class<?> rawType;
-		private Type ownerType;
+        private Type[] actualTypeArguments;
+        private Class<?> rawType;
+        private Type ownerType;
 
-		public ParameterizedTypeImpl(Type[] actualTypeArguments,
-				Class<?> rawType, Type ownerType) {
-			this.actualTypeArguments = actualTypeArguments;
-			this.rawType = rawType;
-			if (ownerType != null) {
-				this.ownerType = ownerType;
-			} else {
-				this.ownerType = rawType.getDeclaringClass();
-			}
-		}
+        public ParameterizedTypeImpl(Type[] actualTypeArguments,
+                Class<?> rawType, Type ownerType) {
+            this.actualTypeArguments = actualTypeArguments;
+            this.rawType = rawType;
+            if (ownerType != null) {
+                this.ownerType = ownerType;
+            } else {
+                this.ownerType = rawType.getDeclaringClass();
+            }
+        }
 
-		@Override
-		public Type getRawType() {
-			return rawType;
-		}
+        @Override
+        public Type getRawType() {
+            return rawType;
+        }
 
-		@Override
-		public Type getOwnerType() {
-			return ownerType;
-		}
+        @Override
+        public Type getOwnerType() {
+            return ownerType;
+        }
 
-		@Override
-		public Type[] getActualTypeArguments() {
-			return actualTypeArguments.clone();
-		}
-	}
+        @Override
+        public Type[] getActualTypeArguments() {
+            return actualTypeArguments.clone();
+        }
+    }
 
-	@Override
-	public JAXBContext getContext(final Class<?> ignored) {
-		if (jaxbContext == null) {
-			synchronized(this) {
-				initializeTypeMap();
-				if (! typeMap.isEmpty()) {
-					try {
-						jaxbContext = JAXBContext.newInstance(typeMap.values().toArray(new Class<?>[typeMap.size()]));
-					} catch (JAXBException e) {
-						throw new RuntimeException("Error creating a JAXBContext", e);
-					}
-				}
-			}
-		}
-		return jaxbContext;
-	}
-	
-	protected void initializeTypeMap() {
-		if (this.typeMap == null) {
-			synchronized(this) {
-				this.typeMap = new HashMap<String, Class<?>>();
-				Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
-				for (Object obj : apiWrappers.values()) {
-					this.typeMap.put(obj.getClass().getName(), obj.getClass());
-				}
-			}
-		}
-	}
+    @Override
+    public JAXBContext getContext(final Class<?> ignored) {
+        if (jaxbContext == null) {
+            synchronized(this) {
+                initializeTypeMap();
+                if (! typeMap.isEmpty()) {
+                    try {
+                        jaxbContext = JAXBContext.newInstance(typeMap.values().toArray(new Class<?>[typeMap.size()]));
+                    } catch (JAXBException e) {
+                        throw new RuntimeException("Error creating a JAXBContext", e);
+                    }
+                }
+            }
+        }
+        return jaxbContext;
+    }
+    
+    protected void initializeTypeMap() {
+        if (this.typeMap == null) {
+            synchronized(this) {
+                this.typeMap = new HashMap<String, Class<?>>();
+                Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
+                for (Object obj : apiWrappers.values()) {
+                    this.typeMap.put(obj.getClass().getName(), obj.getClass());
+                }
+            }
+        }
+    }
 }

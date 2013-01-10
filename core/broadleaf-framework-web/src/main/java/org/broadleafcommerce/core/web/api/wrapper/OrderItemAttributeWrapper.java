@@ -32,26 +32,26 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 @XmlRootElement(name = "orderItemAttribute")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class OrderItemAttributeWrapper extends BaseWrapper implements
-		APIWrapper<OrderItemAttribute> {
-	
-	@XmlElement
-	protected Long id;
-	
-	@XmlElement
-	protected String name;
-	
-	@XmlElement
-	protected String value;
-	
-	@XmlElement
-	protected Long orderItemId;
+        APIWrapper<OrderItemAttribute> {
+    
+    @XmlElement
+    protected Long id;
+    
+    @XmlElement
+    protected String name;
+    
+    @XmlElement
+    protected String value;
+    
+    @XmlElement
+    protected Long orderItemId;
 
-	@Override
-	public void wrap(OrderItemAttribute model, HttpServletRequest request) {
-		this.id = model.getId();
-		this.name = model.getName();
-		this.value = model.getValue();
-		this.orderItemId = model.getOrderItem().getId();
-	}
-	
+    @Override
+    public void wrap(OrderItemAttribute model, HttpServletRequest request) {
+        this.id = model.getId();
+        this.name = model.getName();
+        this.value = model.getValue();
+        this.orderItemId = model.getOrderItem().getId();
+    }
+    
 }

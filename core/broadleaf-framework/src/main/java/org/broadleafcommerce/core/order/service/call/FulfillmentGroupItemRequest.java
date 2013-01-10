@@ -22,28 +22,28 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 
 public class FulfillmentGroupItemRequest {
 
-	protected Order order;
-	protected FulfillmentGroup fulfillmentGroup;
+    protected Order order;
+    protected FulfillmentGroup fulfillmentGroup;
     protected OrderItem orderItem;
     protected int quantity;
     
     public Order getOrder() {
-		return order;
-	}
+        return order;
+    }
 
-	public void setOrder(Order order) {
-		this.order = order;
-	}
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 
-	public FulfillmentGroup getFulfillmentGroup() {
-		return fulfillmentGroup;
-	}
+    public FulfillmentGroup getFulfillmentGroup() {
+        return fulfillmentGroup;
+    }
 
-	public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-		this.fulfillmentGroup = fulfillmentGroup;
-	}
+    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+        this.fulfillmentGroup = fulfillmentGroup;
+    }
 
-	public OrderItem getOrderItem() {
+    public OrderItem getOrderItem() {
         return orderItem;
     }
 

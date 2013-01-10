@@ -42,7 +42,7 @@ public class PassthroughEntityPresenter implements EntityPresenter, Instantiable
 
     @Override
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("passthroughEntityPresenter", null, new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("passthroughEntityPresenter", null, new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource top) {
                 getDisplay().build(top);
             }
@@ -52,23 +52,23 @@ public class PassthroughEntityPresenter implements EntityPresenter, Instantiable
     @Override
     public void postSetup(Canvas container) {
         BLCMain.ISNEW = false;
-		if (containsDisplay(container)) {
-			display.show();
-		} else {
-			container.addChild(display.asCanvas());
-			loaded = true;
-		}
-		if (BLCMain.MODAL_PROGRESS.isActive()) {
-			BLCMain.MODAL_PROGRESS.stopProgress();
-		}
-		if (BLCMain.SPLASH_PROGRESS.isActive()) {
-			BLCMain.SPLASH_PROGRESS.stopProgress();
-		}
+        if (containsDisplay(container)) {
+            display.show();
+        } else {
+            container.addChild(display.asCanvas());
+            loaded = true;
+        }
+        if (BLCMain.MODAL_PROGRESS.isActive()) {
+            BLCMain.MODAL_PROGRESS.stopProgress();
+        }
+        if (BLCMain.SPLASH_PROGRESS.isActive()) {
+            BLCMain.SPLASH_PROGRESS.stopProgress();
+        }
     }
 
     protected Boolean containsDisplay(Canvas container) {
-		return container.contains(display.asCanvas());
-	}
+        return container.contains(display.asCanvas());
+    }
 
     @Override
     public HandlerManager getEventBus() {

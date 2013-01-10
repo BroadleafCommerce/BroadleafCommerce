@@ -46,7 +46,7 @@ public class RegisterCustomerValidator implements Validator {
     }
     
     public void validate(Object obj, Errors errors) {
-    	validate(obj, errors, false);
+        validate(obj, errors, false);
     }
     
     /*
@@ -88,11 +88,11 @@ public class RegisterCustomerValidator implements Validator {
         Customer customerFromDb = customerService.readCustomerByUsername(form.getCustomer().getUsername());
 
         if (customerFromDb != null) {
-        	if (useEmailForUsername) {
-        		errors.rejectValue("customer.emailAddress", "emailAddress.used", null, null);
-        	} else {
-        		errors.rejectValue("customer.username", "username.used", null, null);
-        	}
+            if (useEmailForUsername) {
+                errors.rejectValue("customer.emailAddress", "emailAddress.used", null, null);
+            } else {
+                errors.rejectValue("customer.username", "username.used", null, null);
+            }
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "password.required");
@@ -121,11 +121,11 @@ public class RegisterCustomerValidator implements Validator {
         }
     }
 
-	public String getValidatePasswordExpression() {
-		return validatePasswordExpression;
-	}
+    public String getValidatePasswordExpression() {
+        return validatePasswordExpression;
+    }
 
-	public void setValidatePasswordExpression(String validatePasswordExpression) {
-		this.validatePasswordExpression = validatePasswordExpression;
-	}        
+    public void setValidatePasswordExpression(String validatePasswordExpression) {
+        this.validatePasswordExpression = validatePasswordExpression;
+    }        
 }

@@ -31,7 +31,7 @@ public class AppServices {
     public static final DynamicEntityServiceAsync DYNAMIC_ENTITY = GWT.create(DynamicEntityService.class);
     public static final UtilityServiceAsync UTILITY = GWT.create(UtilityService.class);
     static {
-    	ServiceDefTarget endpoint = (ServiceDefTarget) DYNAMIC_ENTITY;
+        ServiceDefTarget endpoint = (ServiceDefTarget) DYNAMIC_ENTITY;
         endpoint.setServiceEntryPoint("admin/dynamic.entity.service");
         
         ServiceDefTarget endpoint2 = (ServiceDefTarget) SECURITY;

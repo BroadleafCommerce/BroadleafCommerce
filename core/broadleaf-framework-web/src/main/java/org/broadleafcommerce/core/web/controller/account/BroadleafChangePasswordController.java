@@ -66,11 +66,11 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
     }
     
     public String getChangePasswordRedirect() {
-    	return changePasswordRedirect;
+        return changePasswordRedirect;
     }
     
     public String getPasswordChangedMessage() {
-    	return passwordChangedMessage;
+        return passwordChangedMessage;
     }
     
 }

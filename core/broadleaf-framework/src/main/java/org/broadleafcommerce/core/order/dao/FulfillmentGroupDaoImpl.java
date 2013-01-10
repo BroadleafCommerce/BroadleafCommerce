@@ -54,15 +54,15 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         final Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         @SuppressWarnings("unchecked")
-		List<FulfillmentGroupImpl> fulfillmentGroups = query.getResultList();
+        List<FulfillmentGroupImpl> fulfillmentGroups = query.getResultList();
         return fulfillmentGroups == null || fulfillmentGroups.isEmpty() ? null : fulfillmentGroups.get(0);
     }
 
     @Override
     public void delete(FulfillmentGroup fulfillmentGroup) {
-    	if (!em.contains(fulfillmentGroup)) {
-    		fulfillmentGroup = readFulfillmentGroupById(fulfillmentGroup.getId());
-    	}
+        if (!em.contains(fulfillmentGroup)) {
+            fulfillmentGroup = readFulfillmentGroupById(fulfillmentGroup.getId());
+        }
         em.remove(fulfillmentGroup);
     }
 

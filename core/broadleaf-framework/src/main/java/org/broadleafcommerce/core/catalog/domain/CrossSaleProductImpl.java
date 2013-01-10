@@ -39,9 +39,9 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CrossSaleProductImpl implements RelatedProduct {
 
-	protected static final long serialVersionUID = 1L;
+    protected static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
     @GeneratedValue(generator= "CrossSaleProductId")
     @GenericGenerator(
         name="CrossSaleProductId",
@@ -57,20 +57,20 @@ public class CrossSaleProductImpl implements RelatedProduct {
     )
     @Column(name = "CROSS_SALE_PRODUCT_ID")
     protected Long id;
-	
-	@Column(name = "PROMOTION_MESSAGE")
+    
+    @Column(name = "PROMOTION_MESSAGE")
     @AdminPresentation(friendlyName = "CrossSaleProductImpl_Cross_Sale_Promotion_Message", largeEntry=true)
     protected String promotionMessage;
 
     @Column(name = "SEQUENCE")
     protected Long sequence;
     
-	@ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="CROSSSALE_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product;
-	
-	@ManyToOne(targetEntity = CategoryImpl.class)
+    
+    @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="CROSSSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category;
@@ -113,14 +113,14 @@ public class CrossSaleProductImpl implements RelatedProduct {
     }
     
     public Category getCategory() {
-		return category;
-	}
+        return category;
+    }
 
-	public void setCategory(Category category) {
-		this.category = category;
-	}
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
-	public Product getRelatedProduct() {
+    public Product getRelatedProduct() {
         return relatedSaleProduct;
     }
 

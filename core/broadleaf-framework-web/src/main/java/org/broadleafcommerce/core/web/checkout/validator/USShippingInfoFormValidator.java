@@ -29,7 +29,7 @@ public class USShippingInfoFormValidator extends ShippingInfoFormValidator {
     }
 
     public void validate(Object obj, Errors errors) {
-    	super.validate(obj, errors);
+        super.validate(obj, errors);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.state", "state.required");
     }
 }

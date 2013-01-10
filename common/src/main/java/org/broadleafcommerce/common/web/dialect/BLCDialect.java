@@ -23,26 +23,26 @@ import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
 
 public class BLCDialect extends AbstractDialect {
-	
-	private Set<IProcessor> processors = new HashSet<IProcessor>();
+    
+    private Set<IProcessor> processors = new HashSet<IProcessor>();
 
-	@Override
-	public String getPrefix() {
-		return "blc";
-	}
+    @Override
+    public String getPrefix() {
+        return "blc";
+    }
 
-	@Override
-	public boolean isLenient() {
-		return true;
-	}
-	
-	@Override 
+    @Override
+    public boolean isLenient() {
+        return true;
+    }
+    
+    @Override 
     public Set<IProcessor> getProcessors() {        
         return processors; 
     } 
-	
-	public void setProcessors(Set<IProcessor> processors) {
-		this.processors = processors;
-	}
+    
+    public void setProcessors(Set<IProcessor> processors) {
+        this.processors = processors;
+    }
 
 }

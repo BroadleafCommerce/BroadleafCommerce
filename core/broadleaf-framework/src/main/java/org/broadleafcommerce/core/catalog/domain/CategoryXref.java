@@ -20,16 +20,16 @@ import java.io.Serializable;
 
 public interface CategoryXref extends Serializable {
 
-	public Long getDisplayOrder();
+    public Long getDisplayOrder();
 
     public void setDisplayOrder(final Long displayOrder);
     
     public Category getCategory();
 
-	public void setCategory(final Category category);
+    public void setCategory(final Category category);
 
-	public Category getSubCategory();
+    public Category getSubCategory();
 
-	public void setSubCategory(final Category subCategory);
-	
+    public void setSubCategory(final Category subCategory);
+    
 }

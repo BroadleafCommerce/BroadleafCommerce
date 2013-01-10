@@ -76,13 +76,13 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
 
     @Override
     public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox) {
-    	try {
-			fullUrl = URLDecoder.decode(fullUrl, "UTF-8");
-			//strip out the jsessionid if it's there
-			fullUrl = fullUrl.replaceAll(";jsessionid=.*?(?=\\?|$)", "");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
-		}
+        try {
+            fullUrl = URLDecoder.decode(fullUrl, "UTF-8");
+            //strip out the jsessionid if it's there
+            fullUrl = fullUrl.replaceAll(";jsessionid=.*?(?=\\?|$)", "");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
+        }
         return staticAssetDao.readStaticAssetByFullUrl(fullUrl, targetSandBox);
     }
 

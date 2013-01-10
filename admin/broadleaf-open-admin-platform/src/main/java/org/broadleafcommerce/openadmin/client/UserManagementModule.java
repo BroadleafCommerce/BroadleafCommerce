@@ -25,46 +25,46 @@ import java.util.List;
  *
  */
 public class UserManagementModule extends AbstractModule {
-	
-	public void onModuleLoad() {
-		setModuleTitle(BLCMain.getMessageManager().getString("userAdminModuleTitle"));
-		setModuleKey("BLCOpenAdmin");
-		
-		List<String> userManagementPermissions = new ArrayList<String>();
-		userManagementPermissions.add("PERMISSION_CREATE_ADMIN_USER");
+    
+    public void onModuleLoad() {
+        setModuleTitle(BLCMain.getMessageManager().getString("userAdminModuleTitle"));
+        setModuleKey("BLCOpenAdmin");
+        
+        List<String> userManagementPermissions = new ArrayList<String>();
+        userManagementPermissions.add("PERMISSION_CREATE_ADMIN_USER");
         userManagementPermissions.add("PERMISSION_UPDATE_ADMIN_USER");
         userManagementPermissions.add("PERMISSION_DELETE_ADMIN_USER");
         userManagementPermissions.add("PERMISSION_READ_ADMIN_USER");
         
-		setSection(
+        setSection(
             BLCMain.getMessageManager().getString("userManagementMainTitle"),
-			"user",
-			"org.broadleafcommerce.openadmin.client.view.user.UserManagementView",
-			"userPresenter",
-			"org.broadleafcommerce.openadmin.client.presenter.user.UserManagementPresenter",
-			userManagementPermissions
-		);
+            "user",
+            "org.broadleafcommerce.openadmin.client.view.user.UserManagementView",
+            "userPresenter",
+            "org.broadleafcommerce.openadmin.client.presenter.user.UserManagementPresenter",
+            userManagementPermissions
+        );
 
         setSection(
             BLCMain.getMessageManager().getString("roleManagementMainTitle"),
-			"role",
-			"org.broadleafcommerce.openadmin.client.view.user.RoleManagementView",
-			"rolePresenter",
-			"org.broadleafcommerce.openadmin.client.presenter.user.RoleManagementPresenter",
-			userManagementPermissions
-		);
-		
+            "role",
+            "org.broadleafcommerce.openadmin.client.view.user.RoleManagementView",
+            "rolePresenter",
+            "org.broadleafcommerce.openadmin.client.presenter.user.RoleManagementPresenter",
+            userManagementPermissions
+        );
+        
         setSection(
             BLCMain.getMessageManager().getString("permissionManagementMainTitle"),
-			"permission",
-			"org.broadleafcommerce.openadmin.client.view.user.PermissionManagementView",
-			"permissionPresenter",
-			"org.broadleafcommerce.openadmin.client.presenter.user.PermissionManagementPresenter",
-			userManagementPermissions
-		);
+            "permission",
+            "org.broadleafcommerce.openadmin.client.view.user.PermissionManagementView",
+            "permissionPresenter",
+            "org.broadleafcommerce.openadmin.client.presenter.user.PermissionManagementPresenter",
+            userManagementPermissions
+        );
 
         setOrder(250);
-		
-		registerModule();
-	}
+        
+        registerModule();
+    }
 }

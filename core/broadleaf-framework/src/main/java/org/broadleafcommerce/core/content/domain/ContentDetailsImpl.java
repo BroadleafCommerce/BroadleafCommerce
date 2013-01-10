@@ -36,7 +36,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CONTENT_DETAILS")
 public class ContentDetailsImpl extends ContentImpl implements ContentDetails {
-	
+    
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
     
     /** The Constant serialVersionUID.  */
@@ -47,43 +47,43 @@ public class ContentDetailsImpl extends ContentImpl implements ContentDetails {
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-	@Column(name = "XML_CONTENT")
-	protected String xmlContent;
+    @Column(name = "XML_CONTENT")
+    protected String xmlContent;
 
-	public ContentDetailsImpl() {}
+    public ContentDetailsImpl() {}
 
-	public ContentDetailsImpl(ContentDetails cnt, Integer id) {
-		this.contentHash = cnt.getContentHash();
-		this.xmlContent = cnt.getXmlContent();
-		this.id = id;
-	}
+    public ContentDetailsImpl(ContentDetails cnt, Integer id) {
+        this.contentHash = cnt.getContentHash();
+        this.xmlContent = cnt.getXmlContent();
+        this.id = id;
+    }
 
-	/**
-	 * @return the hash
-	 */
-	public String getContentHash() {
-		return contentHash;
-	}
+    /**
+     * @return the hash
+     */
+    public String getContentHash() {
+        return contentHash;
+    }
 
-	/**
-	 * @param contentHash the hash to set
-	 */
-	public void setContentHash(String contentHash) {
-		this.contentHash = contentHash;
-	}
+    /**
+     * @param contentHash the hash to set
+     */
+    public void setContentHash(String contentHash) {
+        this.contentHash = contentHash;
+    }
 
-	/**
-	 * @return the xmlContent
-	 */
-	public String getXmlContent() {
-		return xmlContent;
-	}
+    /**
+     * @return the xmlContent
+     */
+    public String getXmlContent() {
+        return xmlContent;
+    }
 
-	/**
-	 * @param xmlContent the xmlContent to set
-	 */
-	public void setXmlContent(String xmlContent) {
-		this.xmlContent = xmlContent;
-	}
+    /**
+     * @param xmlContent the xmlContent to set
+     */
+    public void setXmlContent(String xmlContent) {
+        this.xmlContent = xmlContent;
+    }
 
 }

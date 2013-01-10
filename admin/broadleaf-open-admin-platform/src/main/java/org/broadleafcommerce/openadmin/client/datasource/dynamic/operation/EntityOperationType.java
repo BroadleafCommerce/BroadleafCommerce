@@ -22,5 +22,5 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic.operation;
  *
  */
 public enum EntityOperationType {
-	FETCH, ADD, UPDATE, REMOVE, INSPECT
+    FETCH, ADD, UPDATE, REMOVE, INSPECT
 }

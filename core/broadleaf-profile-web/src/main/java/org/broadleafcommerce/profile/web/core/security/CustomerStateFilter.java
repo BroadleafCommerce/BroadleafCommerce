@@ -72,10 +72,10 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
     public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME="_blc_anonymousCustomer";
     private static final String LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME="_blc_lastPublishedEvent";
 
-	@Override
+    @Override
     public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest) baseRequest;
-		HttpServletResponse response = (HttpServletResponse) baseResponse;
+        HttpServletRequest request = (HttpServletRequest) baseRequest;
+        HttpServletResponse response = (HttpServletResponse) baseResponse;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Customer customer = null;
         if ((authentication != null) && !(authentication instanceof AnonymousAuthenticationToken)) {
@@ -91,34 +91,34 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
             if (customer != null) {
                 ApplicationEvent lastPublishedEvent = (ApplicationEvent) request.getSession(true).getAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME);
                 if (authentication instanceof RememberMeAuthenticationToken) {
-                	// set transient property of customer
-                	customer.setCookied(true);
-                	boolean publishRememberMeEvent = true;
-                	if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerAuthenticatedFromCookieEvent) {
-                		CustomerAuthenticatedFromCookieEvent cookieEvent = (CustomerAuthenticatedFromCookieEvent) lastPublishedEvent;
-                		if (userName.equals(cookieEvent.getCustomer().getUsername())) {
-                			publishRememberMeEvent = false;
-                		}
-                	}
-                	if (publishRememberMeEvent) {
-                		CustomerAuthenticatedFromCookieEvent cookieEvent = new CustomerAuthenticatedFromCookieEvent(customer, this.getClass().getName()); 
-                		eventPublisher.publishEvent(cookieEvent);
-                		request.getSession().setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, cookieEvent);
-                	}                    	
+                    // set transient property of customer
+                    customer.setCookied(true);
+                    boolean publishRememberMeEvent = true;
+                    if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerAuthenticatedFromCookieEvent) {
+                        CustomerAuthenticatedFromCookieEvent cookieEvent = (CustomerAuthenticatedFromCookieEvent) lastPublishedEvent;
+                        if (userName.equals(cookieEvent.getCustomer().getUsername())) {
+                            publishRememberMeEvent = false;
+                        }
+                    }
+                    if (publishRememberMeEvent) {
+                        CustomerAuthenticatedFromCookieEvent cookieEvent = new CustomerAuthenticatedFromCookieEvent(customer, this.getClass().getName()); 
+                        eventPublisher.publishEvent(cookieEvent);
+                        request.getSession().setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, cookieEvent);
+                    }                       
                 } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
                     customer.setLoggedIn(true);
                     boolean publishLoggedInEvent = true;
-                	if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerLoggedInEvent) {
-                		CustomerLoggedInEvent loggedInEvent = (CustomerLoggedInEvent) lastPublishedEvent;
-                		if (userName.equals(loggedInEvent.getCustomer().getUsername())) {
-                			publishLoggedInEvent= false;
-                		}
-                	}
-                	if (publishLoggedInEvent) {
-                		CustomerLoggedInEvent loggedInEvent = new CustomerLoggedInEvent(customer, this.getClass().getName()); 
-                		eventPublisher.publishEvent(loggedInEvent);
-                		request.getSession().setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, loggedInEvent);
-                	}                        
+                    if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerLoggedInEvent) {
+                        CustomerLoggedInEvent loggedInEvent = (CustomerLoggedInEvent) lastPublishedEvent;
+                        if (userName.equals(loggedInEvent.getCustomer().getUsername())) {
+                            publishLoggedInEvent= false;
+                        }
+                    }
+                    if (publishLoggedInEvent) {
+                        CustomerLoggedInEvent loggedInEvent = new CustomerLoggedInEvent(customer, this.getClass().getName()); 
+                        eventPublisher.publishEvent(loggedInEvent);
+                        request.getSession().setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, loggedInEvent);
+                    }                        
                 } else {
                     customer = null;
                 }
@@ -129,7 +129,7 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
         if (customer == null) {
             // This is an anonymous customer.
             // TODO: Handle a custom cookie (different than remember me) that is just for anonymous users.  
-        	// This can be used to remember their cart from a previous visit.
+            // This can be used to remember their cart from a previous visit.
             // Cookie logic probably needs to be configurable - with TCS as the exception.
 
             customer = resolveAnonymousCustomer(request);
@@ -174,9 +174,9 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
 
     @Override
     public int getOrder() {
-    	//FilterChainOrder has been dropped from Spring Security 3
+        //FilterChainOrder has been dropped from Spring Security 3
         //return FilterChainOrder.REMEMBER_ME_FILTER+1;
-    	return 1501;
+        return 1501;
     }
 
     @Override
@@ -184,12 +184,12 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
         this.eventPublisher = eventPublisher;
     }
 
-	public static String getCustomerRequestAttributeName() {
-		return customerRequestAttributeName;
-	}
+    public static String getCustomerRequestAttributeName() {
+        return customerRequestAttributeName;
+    }
 
-	public static void setCustomerRequestAttributeName(
-			String customerRequestAttributeName) {
-		CustomerStateFilter.customerRequestAttributeName = customerRequestAttributeName;
-	}
+    public static void setCustomerRequestAttributeName(
+            String customerRequestAttributeName) {
+        CustomerStateFilter.customerRequestAttributeName = customerRequestAttributeName;
+    }
 }

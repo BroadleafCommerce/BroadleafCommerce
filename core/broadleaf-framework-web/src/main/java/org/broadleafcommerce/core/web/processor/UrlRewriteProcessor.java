@@ -40,18 +40,18 @@ import java.util.Map;
 @Component("blUrlRewriteProcessor")
 public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor {
 
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
-	public UrlRewriteProcessor() {
-		super("src");
-	}
-	
-	@Override
-	public int getPrecedence() {
-		return 1000;
-	}
-	
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
+    public UrlRewriteProcessor() {
+        super("src");
+    }
+    
+    @Override
+    public int getPrecedence() {
+        return 1000;
+    }
+    
     /**
      * @return true if the current request.scheme = HTTPS or if the request.isSecure value is true.
      */
@@ -59,52 +59,52 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
         return ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
     } 
 
-	
-	@Override
-	protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-		Map<String, String> attrs = new HashMap<String, String>();
-		HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-		StaticAssetService staticAssetService = ProcessorUtils.getStaticAssetService(arguments);
-		
-		boolean secureRequest = isRequestSecure(request);
-		String assetPath = (String) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		//String assetPath = element.getAttributeValue(attributeName);
-		
-		assetPath = staticAssetService.convertAssetPath(assetPath, request.getContextPath(), secureRequest);
-		
-		attrs.put("src", assetPath);
-		
-		
-		/*
-		SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		String value = result.getFacet().getSearchFacet().getFieldName() + "[RESULT-VALUE]";
-		if (result.getValue() != null) {
-			value = value.replace("RESULT-VALUE", result.getValue());
-		} else {
-			value = value.replace("RESULT-VALUE", result.getMinValue() + "-" + result.getMaxValue());
-		}
-		*/
-		
-		/*
-		attrs.put("id", value);
-		attrs.put("name", value);
-		*/
-		
-		return attrs;
-	}
+    
+    @Override
+    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
+        Map<String, String> attrs = new HashMap<String, String>();
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        StaticAssetService staticAssetService = ProcessorUtils.getStaticAssetService(arguments);
+        
+        boolean secureRequest = isRequestSecure(request);
+        String assetPath = (String) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        //String assetPath = element.getAttributeValue(attributeName);
+        
+        assetPath = staticAssetService.convertAssetPath(assetPath, request.getContextPath(), secureRequest);
+        
+        attrs.put("src", assetPath);
+        
+        
+        /*
+        SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        String value = result.getFacet().getSearchFacet().getFieldName() + "[RESULT-VALUE]";
+        if (result.getValue() != null) {
+            value = value.replace("RESULT-VALUE", result.getValue());
+        } else {
+            value = value.replace("RESULT-VALUE", result.getMinValue() + "-" + result.getMaxValue());
+        }
+        */
+        
+        /*
+        attrs.put("id", value);
+        attrs.put("name", value);
+        */
+        
+        return attrs;
+    }
 
-	@Override
-	protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-		return ModificationType.SUBSTITUTION;
-	}
+    @Override
+    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
+        return ModificationType.SUBSTITUTION;
+    }
 
-	@Override
-	protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-		return true;
-	}
+    @Override
+    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
+        return true;
+    }
 
-	@Override
-	protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-		return false;
-	}
+    @Override
+    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
+        return false;
+    }
 }

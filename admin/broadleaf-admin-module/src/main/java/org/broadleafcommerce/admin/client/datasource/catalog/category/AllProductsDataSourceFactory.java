@@ -40,29 +40,29 @@ import com.smartgwt.client.data.DataSource;
  */
 public class AllProductsDataSourceFactory implements DataSourceFactory {
 
-	public static final String symbolName = "allChildCategories";
-	public static final String linkedObjectPath = "categoryProductXref.category";
-	public static final String linkedIdProperty = "id";
-	public static final String targetObjectPath = "categoryProductXref.product";
-	public static final String targetIdProperty = "id";
-	public static final String sortField = "displayOrder";
-	public static ListGridDataSource dataSource = null;
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, new AdornedTargetList(symbolName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, EntityImplementations.CATEGORY_PRODUCT, sortField, true));
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY),
-				new AdornedTargetListClientModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    public static final String symbolName = "allChildCategories";
+    public static final String linkedObjectPath = "categoryProductXref.category";
+    public static final String linkedIdProperty = "id";
+    public static final String targetObjectPath = "categoryProductXref.product";
+    public static final String targetIdProperty = "id";
+    public static final String sortField = "displayOrder";
+    public static ListGridDataSource dataSource = null;
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, new AdornedTargetList(symbolName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, EntityImplementations.CATEGORY_PRODUCT, sortField, true));
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new BasicClientEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY),
+                new AdornedTargetListClientModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

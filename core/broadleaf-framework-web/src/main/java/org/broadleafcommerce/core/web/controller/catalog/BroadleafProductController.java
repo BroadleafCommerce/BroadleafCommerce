@@ -33,32 +33,32 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 public class BroadleafProductController extends BroadleafAbstractController implements Controller {
-	
+    
     protected String defaultProductView = "catalog/product";
     protected static String MODEL_ATTRIBUTE_NAME = "product";    
 
-	@Override
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView model = new ModelAndView();
-		Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-		assert(product != null);
-		
-		model.addObject(MODEL_ATTRIBUTE_NAME, product);
+    @Override
+    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ModelAndView model = new ModelAndView();
+        Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
+        assert(product != null);
+        
+        model.addObject(MODEL_ATTRIBUTE_NAME, product);
 
-		if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
-			model.setViewName(product.getDisplayTemplate());	
-		} else {
-			model.setViewName(getDefaultProductView());
-		}
-		return model;
-	}
+        if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
+            model.setViewName(product.getDisplayTemplate());    
+        } else {
+            model.setViewName(getDefaultProductView());
+        }
+        return model;
+    }
 
-	public String getDefaultProductView() {
-		return defaultProductView;
-	}
+    public String getDefaultProductView() {
+        return defaultProductView;
+    }
 
-	public void setDefaultProductView(String defaultProductView) {
-		this.defaultProductView = defaultProductView;
-	}
-	
+    public void setDefaultProductView(String defaultProductView) {
+        this.defaultProductView = defaultProductView;
+    }
+    
 }

@@ -80,7 +80,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     protected EntityConfiguration entityConfiguration;
 
     @Resource(name="blStructuredContentService")
-	protected StructuredContentService structuredContentService;
+    protected StructuredContentService structuredContentService;
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
@@ -249,26 +249,26 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
-		try {
+        try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 
             if (getModifiedProperties() == null) {
                 createModifiedProperties(dynamicEntityDao, helper, persistencePerspective);
             }
             Map<String, FieldMetadata> originalProps = getModifiedProperties();
 
-			allMergedProperties.put(MergedPropertyType.PRIMARY, originalProps);
+            allMergedProperties.put(MergedPropertyType.PRIMARY, originalProps);
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
-			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
-			DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
+            ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
+            DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
 
-			return results;
-		} catch (Exception e) {
+            return results;
+        } catch (Exception e) {
             ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
             throw ex;
-		}
+        }
     }
 
     @Override
@@ -295,7 +295,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StructuredContent.class.getName(), originalProps);
-			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StructuredContent.class.getName());
+            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StructuredContent.class.getName());
             PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), StructuredContent.class.getName());
             Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, StructuredContent.class);
             Criteria count = dynamicEntityDao.getCriteria(countCriteria, StructuredContent.class);
@@ -366,20 +366,20 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			StructuredContent adminInstance = (StructuredContent) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
-			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            StructuredContent adminInstance = (StructuredContent) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
+            adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             addRule(entity, adminInstance, "customerRule", StructuredContentRuleType.CUSTOMER);
-			addRule(entity, adminInstance, "productRule", StructuredContentRuleType.PRODUCT);
-			addRule(entity, adminInstance, "requestRule", StructuredContentRuleType.REQUEST);
+            addRule(entity, adminInstance, "productRule", StructuredContentRuleType.PRODUCT);
+            addRule(entity, adminInstance, "requestRule", StructuredContentRuleType.REQUEST);
             addRule(entity, adminInstance, "timeRule", StructuredContentRuleType.TIME);
 
             adminInstance = structuredContentService.addStructuredContent(adminInstance, getSandBox());
 
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
             if (adminEntity.findProperty("structuredContentType") != null) {
                 Property property = new Property();
@@ -390,31 +390,31 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             addRulesToEntity(adminInstance, adminEntity);
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             updateRule(entity, adminInstance, "customerRule", StructuredContentRuleType.CUSTOMER);
-			updateRule(entity, adminInstance, "productRule", StructuredContentRuleType.PRODUCT);
-			updateRule(entity, adminInstance, "requestRule", StructuredContentRuleType.REQUEST);
+            updateRule(entity, adminInstance, "productRule", StructuredContentRuleType.PRODUCT);
+            updateRule(entity, adminInstance, "requestRule", StructuredContentRuleType.REQUEST);
             updateRule(entity, adminInstance, "timeRule", StructuredContentRuleType.TIME);
 
             adminInstance = structuredContentService.updateStructuredContent(adminInstance, getSandBox());
 
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
             if (adminEntity.findProperty("structuredContentType") != null) {
                 Property property = new Property();
@@ -425,55 +425,55 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             addRulesToEntity(adminInstance, adminEntity);
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		Entity entity = persistencePackage.getEntity();
+        Entity entity = persistencePackage.getEntity();
         try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
             structuredContentService.deleteStructuredContent(adminInstance, getSandBox());
-		} catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
+        }
     }
 
     protected void addRule(Entity entity, StructuredContent structuredContentInstance, String propertyName, StructuredContentRuleType type) {
-		Property ruleProperty = entity.findProperty(propertyName);
-		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+        Property ruleProperty = entity.findProperty(propertyName);
+        if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
             ruleProperty.setValue(ruleProperty.getRawValue());
-			StructuredContentRule rule = (StructuredContentRule) entityConfiguration.createEntityInstance(StructuredContentRule.class.getName());
-			rule.setMatchRule(ruleProperty.getValue());
-			structuredContentInstance.getStructuredContentMatchRules().put(type.getType(), rule);
-		}
-	}
+            StructuredContentRule rule = (StructuredContentRule) entityConfiguration.createEntityInstance(StructuredContentRule.class.getName());
+            rule.setMatchRule(ruleProperty.getValue());
+            structuredContentInstance.getStructuredContentMatchRules().put(type.getType(), rule);
+        }
+    }
 
-	protected void updateRule(Entity entity, StructuredContent structuredContentInstance, String propertyName, StructuredContentRuleType type) {
-		Property ruleProperty = entity.findProperty(propertyName);
-		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+    protected void updateRule(Entity entity, StructuredContent structuredContentInstance, String propertyName, StructuredContentRuleType type) {
+        Property ruleProperty = entity.findProperty(propertyName);
+        if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
             ruleProperty.setValue(ruleProperty.getRawValue());
-			StructuredContentRule rule = structuredContentInstance.getStructuredContentMatchRules().get(type.getType());
-			if (rule == null) {
-				rule = (StructuredContentRule) entityConfiguration.createEntityInstance(StructuredContentRule.class.getName());
-			}
-			rule.setMatchRule(ruleProperty.getValue());
-			structuredContentInstance.getStructuredContentMatchRules().put(type.getType(), rule);
-		} else {
-			structuredContentInstance.getStructuredContentMatchRules().remove(type.getType());
-		}
-	}
+            StructuredContentRule rule = structuredContentInstance.getStructuredContentMatchRules().get(type.getType());
+            if (rule == null) {
+                rule = (StructuredContentRule) entityConfiguration.createEntityInstance(StructuredContentRule.class.getName());
+            }
+            rule.setMatchRule(ruleProperty.getValue());
+            structuredContentInstance.getStructuredContentMatchRules().put(type.getType(), rule);
+        } else {
+            structuredContentInstance.getStructuredContentMatchRules().remove(type.getType());
+        }
+    }
 }

@@ -23,31 +23,31 @@ package org.broadleafcommerce.admin.client.datasource;
  *
  */
 public class EntityImplementations {
-	
-	public static final String CATEGORY = "org.broadleafcommerce.core.catalog.domain.CategoryImpl";
-	public static final String CATEGORY_XREF = "org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl";
-	public static final String FEATUREDPRODUCT = "org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl";
-	public static final String PRODUCT = "org.broadleafcommerce.core.catalog.domain.ProductImpl";
-	public static final String PRODUCT_BUNDLE = "org.broadleafcommerce.core.catalog.domain.ProductBundleImpl";
-	public static final String SKU = "org.broadleafcommerce.core.catalog.domain.SkuImpl";
-	public static final String SKU_BUNDLE_ITEM = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl";
-	public static final String MEDIA = "org.broadleafcommerce.core.media.domain.MediaImpl";
-	public static final String CROSSSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl";
-	public static final String UPSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl";
-	public static final String PRODUCT_ATTRIBUTE = "org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl";
-	public static final String PRODUCT_OPTION = "org.broadleafcommerce.core.catalog.domain.ProductOptionImpl";
-	public static final String PRODUCT_OPTION_VALUE = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl";
-	public static final String CATEGORY_PRODUCT = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl";
-	public static final String ORDER = "org.broadleafcommerce.core.order.domain.OrderImpl";
-	public static final String ORDER_ITEM = "org.broadleafcommerce.core.order.domain.OrderItemImpl";
-	public static final String FULFILLMENT_GROUP = "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl";
-	public static final String BUNDLE_ORDER_ITEM = "org.broadleafcommerce.core.order.domain.BundleOrderItemImpl";
-	public static final String STATE = "org.broadleafcommerce.profile.core.domain.StateImpl";
-	public static final String COUNTRY = "org.broadleafcommerce.profile.core.domain.CountryImpl";
-	public static final String PAYMENT_INFO = "org.broadleafcommerce.core.payment.domain.PaymentInfoImpl";
-	public static final String OFFER_CODE = "org.broadleafcommerce.core.offer.domain.OfferCodeImpl";
-	public static final String CHALLENGE_QUESTION = "org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl";
-	public static final String OFFER = "org.broadleafcommerce.core.offer.domain.OfferImpl";
+    
+    public static final String CATEGORY = "org.broadleafcommerce.core.catalog.domain.CategoryImpl";
+    public static final String CATEGORY_XREF = "org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl";
+    public static final String FEATUREDPRODUCT = "org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl";
+    public static final String PRODUCT = "org.broadleafcommerce.core.catalog.domain.ProductImpl";
+    public static final String PRODUCT_BUNDLE = "org.broadleafcommerce.core.catalog.domain.ProductBundleImpl";
+    public static final String SKU = "org.broadleafcommerce.core.catalog.domain.SkuImpl";
+    public static final String SKU_BUNDLE_ITEM = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl";
+    public static final String MEDIA = "org.broadleafcommerce.core.media.domain.MediaImpl";
+    public static final String CROSSSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl";
+    public static final String UPSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl";
+    public static final String PRODUCT_ATTRIBUTE = "org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl";
+    public static final String PRODUCT_OPTION = "org.broadleafcommerce.core.catalog.domain.ProductOptionImpl";
+    public static final String PRODUCT_OPTION_VALUE = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl";
+    public static final String CATEGORY_PRODUCT = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl";
+    public static final String ORDER = "org.broadleafcommerce.core.order.domain.OrderImpl";
+    public static final String ORDER_ITEM = "org.broadleafcommerce.core.order.domain.OrderItemImpl";
+    public static final String FULFILLMENT_GROUP = "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl";
+    public static final String BUNDLE_ORDER_ITEM = "org.broadleafcommerce.core.order.domain.BundleOrderItemImpl";
+    public static final String STATE = "org.broadleafcommerce.profile.core.domain.StateImpl";
+    public static final String COUNTRY = "org.broadleafcommerce.profile.core.domain.CountryImpl";
+    public static final String PAYMENT_INFO = "org.broadleafcommerce.core.payment.domain.PaymentInfoImpl";
+    public static final String OFFER_CODE = "org.broadleafcommerce.core.offer.domain.OfferCodeImpl";
+    public static final String CHALLENGE_QUESTION = "org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl";
+    public static final String OFFER = "org.broadleafcommerce.core.offer.domain.OfferImpl";
     public static final String DISCRETEORDERITEMFEEPRICE = "org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl";
     public static final String DISCRETEORDERITEM = "org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl";
     public static final String LOCALE = "org.broadleafcommerce.common.locale.domain.LocaleImpl";

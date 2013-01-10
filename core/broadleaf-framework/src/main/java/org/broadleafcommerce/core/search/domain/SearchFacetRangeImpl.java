@@ -41,7 +41,7 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_SEARCH_FACET_RANGE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
-	
+    
     /**
      * 
      */
@@ -53,7 +53,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     @Column(name = "SEARCH_FACET_RANGE_ID")
     protected Long id;
     
-	@ManyToOne(targetEntity = SearchFacetImpl.class, optional = false)
+    @ManyToOne(targetEntity = SearchFacetImpl.class, optional = false)
     @JoinColumn(name = "SEARCH_FACET_ID")
     @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
     protected SearchFacet searchFacet = new SearchFacetImpl();
@@ -66,44 +66,44 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     @AdminPresentation(friendlyName = "SearchFacetRangeImpl_MAX_VALUE", order=1, group = "SearchFacetRangeImpl_Description", prominent=true)
     protected BigDecimal maxValue;
     
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	@Override
-	public SearchFacet getSearchFacet() {
-		return searchFacet;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    @Override
+    public SearchFacet getSearchFacet() {
+        return searchFacet;
+    }
 
-	@Override
-	public void setSearchFacet(SearchFacet searchFacet) {
-		this.searchFacet = searchFacet;
-	}
+    @Override
+    public void setSearchFacet(SearchFacet searchFacet) {
+        this.searchFacet = searchFacet;
+    }
 
-	@Override
-	public BigDecimal getMinValue() {
-		return minValue;
-	}
+    @Override
+    public BigDecimal getMinValue() {
+        return minValue;
+    }
 
-	@Override
-	public void setMinValue(BigDecimal minValue) {
-		this.minValue = minValue;
-	}
+    @Override
+    public void setMinValue(BigDecimal minValue) {
+        this.minValue = minValue;
+    }
 
-	@Override
-	public BigDecimal getMaxValue() {
-		return maxValue;
-	}
+    @Override
+    public BigDecimal getMaxValue() {
+        return maxValue;
+    }
 
-	@Override
-	public void setMaxValue(BigDecimal maxValue) {
-		this.maxValue = maxValue;
-	}
-	
+    @Override
+    public void setMaxValue(BigDecimal maxValue) {
+        this.maxValue = maxValue;
+    }
+    
 }

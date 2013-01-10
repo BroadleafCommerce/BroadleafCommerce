@@ -33,14 +33,14 @@ import org.springframework.stereotype.Repository;
 @Repository("blURLHandlerDao")
 public class URlHandlerDaoImpl implements URLHandlerDao {
 
-	@PersistenceContext(unitName = "blPU")
-	protected EntityManager em;
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
 
-	@Resource(name = "blEntityConfiguration")
-	protected EntityConfiguration entityConfiguration;
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
 
-	@Override
-	public URLHandler findURLHandlerByURI(String uri) {
+    @Override
+    public URLHandler findURLHandlerByURI(String uri) {
         Query query;
         query = em.createNamedQuery("BC_READ_OUTGOING_URL");
         query.setParameter("incomingURL", uri);
@@ -52,6 +52,6 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
         } else {
             return null;
         }
-	}
+    }
 
 }

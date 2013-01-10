@@ -35,7 +35,7 @@ import org.broadleafcommerce.common.money.util.CurrencyAdapter;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
-	
+    
     private static final long serialVersionUID = 1L;
 
     private BigDecimal amount;
@@ -110,9 +110,9 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         }
         this.currency = currency;
         if (amount.compareTo(new BigDecimal(".01")) > -1) {
-        	this.amount = BankersRounding.setScale(amount);
+            this.amount = BankersRounding.setScale(amount);
         } else {
-        	this.amount = amount;
+            this.amount = amount;
         }
     }
     
@@ -136,36 +136,36 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money add(Money other) {
-    	if (!other.getCurrency().equals(getCurrency())) {
-    		if (
-	            CurrencyConversionContext.getCurrencyConversionContext() != null &&
-	            CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
-	            CurrencyConversionContext.getCurrencyConversionService() != null
-    	        ) {
-    			other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
-    		} else {
-    			throw new UnsupportedOperationException("No currency conversion service is registered, cannot add different currency " +
-    					"types together (" + getCurrency().getCurrencyCode() + " " + other.getCurrency().getCurrencyCode() + ")");
-    		}
-    	}
-    	
-		return new Money(amount.add(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
+        if (!other.getCurrency().equals(getCurrency())) {
+            if (
+                CurrencyConversionContext.getCurrencyConversionContext() != null &&
+                CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
+                CurrencyConversionContext.getCurrencyConversionService() != null
+                ) {
+                other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
+            } else {
+                throw new UnsupportedOperationException("No currency conversion service is registered, cannot add different currency " +
+                        "types together (" + getCurrency().getCurrencyCode() + " " + other.getCurrency().getCurrencyCode() + ")");
+            }
+        }
+        
+        return new Money(amount.add(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
     }
 
     public Money subtract(Money other) {
-    	if (!other.getCurrency().equals(getCurrency())) {
-    		if (
-	            CurrencyConversionContext.getCurrencyConversionContext() != null &&
-	            CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
-	            CurrencyConversionContext.getCurrencyConversionService() != null
-    	        ) {
-    			other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
-    		} else {
-    			throw new UnsupportedOperationException("No currency conversion service is registered, cannot subtract different currency " +
-    					"types (" + getCurrency().getCurrencyCode() + ", " + other.getCurrency().getCurrencyCode() + ")");
-    		}
-    	}
-    	
+        if (!other.getCurrency().equals(getCurrency())) {
+            if (
+                CurrencyConversionContext.getCurrencyConversionContext() != null &&
+                CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
+                CurrencyConversionContext.getCurrencyConversionService() != null
+                ) {
+                other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
+            } else {
+                throw new UnsupportedOperationException("No currency conversion service is registered, cannot subtract different currency " +
+                        "types (" + getCurrency().getCurrencyCode() + ", " + other.getCurrency().getCurrencyCode() + ")");
+            }
+        }
+        
         return new Money(amount.subtract(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
     }
 

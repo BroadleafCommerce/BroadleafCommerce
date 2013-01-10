@@ -35,8 +35,8 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  *
  */
 public class ProductListDataSourceFactory implements DataSourceFactory {
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
         operationTypes = new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
         PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
         DataSourceModule[] modules = new DataSourceModule[]{
@@ -44,6 +44,6 @@ public class ProductListDataSourceFactory implements DataSourceFactory {
         };
         ListGridDataSource dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
         dataSource.buildFields(null, false, cb);
-	}
+    }
 
 }

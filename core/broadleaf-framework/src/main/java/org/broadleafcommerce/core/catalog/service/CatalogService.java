@@ -58,17 +58,17 @@ public interface CatalogService {
      * @param searchCriteria
      * @return the matching products
      */
-	public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
-	
-	/**
-	 * Given a search query and a ProductSearchCriteria, returns the appropriate matching products
-	 * 
-	 * @param query
-	 * @param currentDate
-	 * @param searchCriteria
-	 * @return the matching products
-	 */
-	public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
+    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
+    
+    /**
+     * Given a search query and a ProductSearchCriteria, returns the appropriate matching products
+     * 
+     * @param query
+     * @param currentDate
+     * @param searchCriteria
+     * @return the matching products
+     */
+    public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
 
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 

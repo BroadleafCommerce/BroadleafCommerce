@@ -63,19 +63,19 @@ import java.util.Map;
 @Scope("prototype")
 public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
-	private static final Log LOG = LogFactory.getLog(PersistenceManagerImpl.class);
+    private static final Log LOG = LogFactory.getLog(PersistenceManagerImpl.class);
 
     @Resource(name="blDynamicEntityDao")
-	protected DynamicEntityDao dynamicEntityDao;
+    protected DynamicEntityDao dynamicEntityDao;
 
     @Resource(name="blCustomPersistenceHandlers")
-	protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
+    protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
 
     @Resource(name="blCustomPersistenceHandlerFilters")
     protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<CustomPersistenceHandlerFilter>();
 
     @Resource(name="blTargetEntityManagers")
-	protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
+    protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
 
     @Resource(name="blAdminSecurityRemoteService")
     protected AdminSecurityServiceRemote adminRemoteSecurityService;
@@ -93,19 +93,19 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
     }
 
-//	public void close() throws Exception {
+//  public void close() throws Exception {
 //        //do nothing
-//	}
+//  }
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
-	@Override
-	public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
-		return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingClass);
-	}
+    @Override
+    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
+        return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingClass);
+    }
 
     public Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException {
         return getUpDownInheritance(Class.forName(testClassname));
@@ -132,40 +132,40 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return temp.toArray(new Class<?>[temp.size()]);
     }
 
-	@Override
-	public Class<?>[] getPolymorphicEntities(String ceilingEntityFullyQualifiedClassname) throws ClassNotFoundException {
-		Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
-		return entities;
-	}
+    @Override
+    public Class<?>[] getPolymorphicEntities(String ceilingEntityFullyQualifiedClassname) throws ClassNotFoundException {
+        Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
+        return entities;
+    }
 
-	@Override
-	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective);
-	}
+    @Override
+    public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+        return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective);
+    }
 
-	@Override
-	public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException {
-		ClassMetadata classMetadata = new ClassMetadata();
-		classMetadata.setPolymorphicEntities(dynamicEntityDao.getClassTree(entities));
+    @Override
+    public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException {
+        ClassMetadata classMetadata = new ClassMetadata();
+        classMetadata.setPolymorphicEntities(dynamicEntityDao.getClassTree(entities));
 
-		List<Property> propertiesList = new ArrayList<Property>();
-		for (PersistenceModule module : modules) {
-			module.extractProperties(mergedProperties, propertiesList);
-		}
-		/*
-		 * Insert inherited fields whose order has been specified
-		 */
-		for (int i = 0; i < entities.length - 1; i++) {
-			for (Property myProperty : propertiesList) {
-				if (myProperty.getMetadata().getInheritedFromType().equals(entities[i].getName()) && myProperty.getMetadata().getOrder() != null) {
-					for (Property property : propertiesList) {
-						if (!property.getMetadata().getInheritedFromType().equals(entities[i].getName()) && property.getMetadata().getOrder() != null && property.getMetadata().getOrder() >= myProperty.getMetadata().getOrder()) {
-							property.getMetadata().setOrder(property.getMetadata().getOrder() + 1);
-						}
-					}
-				}
-			}
-		}
+        List<Property> propertiesList = new ArrayList<Property>();
+        for (PersistenceModule module : modules) {
+            module.extractProperties(mergedProperties, propertiesList);
+        }
+        /*
+         * Insert inherited fields whose order has been specified
+         */
+        for (int i = 0; i < entities.length - 1; i++) {
+            for (Property myProperty : propertiesList) {
+                if (myProperty.getMetadata().getInheritedFromType().equals(entities[i].getName()) && myProperty.getMetadata().getOrder() != null) {
+                    for (Property property : propertiesList) {
+                        if (!property.getMetadata().getInheritedFromType().equals(entities[i].getName()) && property.getMetadata().getOrder() != null && property.getMetadata().getOrder() >= myProperty.getMetadata().getOrder()) {
+                            property.getMetadata().setOrder(property.getMetadata().getOrder() + 1);
+                        }
+                    }
+                }
+            }
+        }
         Property[] properties = new Property[propertiesList.size()];
         properties = propertiesList.toArray(properties);
         Arrays.sort(properties, new Comparator<Property>() {
@@ -205,41 +205,41 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 return c;
             }
         });
-		classMetadata.setProperties(properties);
+        classMetadata.setProperties(properties);
         classMetadata.setCurrencyCode(Money.defaultCurrency().getCurrencyCode());
 
-		return classMetadata;
-	}
+        return classMetadata;
+    }
 
-	@Override
-	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException {
-		// check to see if there is a custom handler registered
-		for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
-			if (handler.canHandleInspect(persistencePackage)) {
+    @Override
+    public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException {
+        // check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleInspect(persistencePackage)) {
                 if (!handler.willHandleSecurity(persistencePackage)) {
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.INSPECT);
                 }
-				DynamicResultSet results = handler.inspect(persistencePackage, dynamicEntityDao, this);
+                DynamicResultSet results = handler.inspect(persistencePackage, dynamicEntityDao, this);
 
-				return results;
-			}
-		}
+                return results;
+            }
+        }
 
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.INSPECT);
-		Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
-		Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
-		for (PersistenceModule module : modules) {
-			module.updateMergedProperties(persistencePackage, allMergedProperties);
-		}
-		ClassMetadata mergedMetadata = getMergedClassMetadata(entities, allMergedProperties);
+        Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
+        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+        for (PersistenceModule module : modules) {
+            module.updateMergedProperties(persistencePackage, allMergedProperties);
+        }
+        ClassMetadata mergedMetadata = getMergedClassMetadata(entities, allMergedProperties);
 
-		DynamicResultSet results = new DynamicResultSet(mergedMetadata);
+        DynamicResultSet results = new DynamicResultSet(mergedMetadata);
 
-		return results;
-	}
+        return results;
+    }
 
-	@Override
-	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
+    @Override
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleFetch(persistencePackage)) {
@@ -251,17 +251,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
-		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
-		return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage);
-	}
+        PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
+        return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage);
+    }
 
     protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage) throws ServiceException {
         //do nothing
         return resultSet;
     }
 
-	@Override
-	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+    @Override
+    public Entity add(PersistencePackage persistencePackage) throws ServiceException {
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleAdd(persistencePackage)) {
@@ -273,18 +273,18 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
-		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
-		Entity response = myModule.add(persistencePackage);
+        PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
+        Entity response = myModule.add(persistencePackage);
         return postAdd(response, persistencePackage);
-	}
+    }
 
     protected Entity postAdd(Entity entity, PersistencePackage persistencePackage) throws ServiceException {
         //do nothing
         return entity;
     }
 
-	@Override
-	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+    @Override
+    public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleUpdate(persistencePackage)) {
@@ -318,8 +318,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return entity;
     }
 
-	@Override
-	public void remove(PersistencePackage persistencePackage) throws ServiceException {
+    @Override
+    public void remove(PersistencePackage persistencePackage) throws ServiceException {
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleRemove(persistencePackage)) {
@@ -343,64 +343,64 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 break;
             }
         }
-		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
-		myModule.remove(persistencePackage);
-	}
+        PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
+        myModule.remove(persistencePackage);
+    }
 
-	public PersistenceModule getCompatibleModule(OperationType operationType) {
-		PersistenceModule myModule = null;
-		for (PersistenceModule module : modules) {
-			if (module.isCompatible(operationType)) {
-				myModule = module;
-				break;
-			}
-		}
-		if (myModule == null) {
-			LOG.error("Unable to find a compatible remote service module for the operation type: " + operationType);
-			throw new RuntimeException("Unable to find a compatible remote service module for the operation type: " + operationType);
-		}
+    public PersistenceModule getCompatibleModule(OperationType operationType) {
+        PersistenceModule myModule = null;
+        for (PersistenceModule module : modules) {
+            if (module.isCompatible(operationType)) {
+                myModule = module;
+                break;
+            }
+        }
+        if (myModule == null) {
+            LOG.error("Unable to find a compatible remote service module for the operation type: " + operationType);
+            throw new RuntimeException("Unable to find a compatible remote service module for the operation type: " + operationType);
+        }
 
-		return myModule;
-	}
+        return myModule;
+    }
 
-	@Override
-	public DynamicEntityDao getDynamicEntityDao() {
-		return dynamicEntityDao;
-	}
+    @Override
+    public DynamicEntityDao getDynamicEntityDao() {
+        return dynamicEntityDao;
+    }
 
-	@Override
-	public void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao) {
-		this.dynamicEntityDao = dynamicEntityDao;
-	}
+    @Override
+    public void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao) {
+        this.dynamicEntityDao = dynamicEntityDao;
+    }
 
-	@Override
-	public Map<String, String> getTargetEntityManagers() {
-		return targetEntityManagers;
-	}
+    @Override
+    public Map<String, String> getTargetEntityManagers() {
+        return targetEntityManagers;
+    }
 
-	@Override
-	public void setTargetEntityManagers(Map<String, String> targetEntityManagers) {
-		this.targetEntityManagers = targetEntityManagers;
-	}
+    @Override
+    public void setTargetEntityManagers(Map<String, String> targetEntityManagers) {
+        this.targetEntityManagers = targetEntityManagers;
+    }
 
-	@Override
-	public TargetModeType getTargetMode() {
-		return targetMode;
-	}
+    @Override
+    public TargetModeType getTargetMode() {
+        return targetMode;
+    }
 
-	@Override
-	public void setTargetMode(TargetModeType targetMode) {
-		String targetManagerRef = targetEntityManagers.get(targetMode.getType());
-		EntityManager targetManager = (EntityManager) applicationContext.getBean(targetManagerRef);
-		if (targetManager == null) {
-			throw new RuntimeException("Unable to find a target entity manager registered with the key: " + targetMode + ". Did you add an entity manager with this key to the targetEntityManagers property?");
-		}
-		dynamicEntityDao.setStandardEntityManager(targetManager);
-		this.targetMode = targetMode;
-	}
+    @Override
+    public void setTargetMode(TargetModeType targetMode) {
+        String targetManagerRef = targetEntityManagers.get(targetMode.getType());
+        EntityManager targetManager = (EntityManager) applicationContext.getBean(targetManagerRef);
+        if (targetManager == null) {
+            throw new RuntimeException("Unable to find a target entity manager registered with the key: " + targetMode + ". Did you add an entity manager with this key to the targetEntityManagers property?");
+        }
+        dynamicEntityDao.setStandardEntityManager(targetManager);
+        this.targetMode = targetMode;
+    }
 
-	@Override
-	public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
+    @Override
+    public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
         List<CustomPersistenceHandler> cloned = new ArrayList<CustomPersistenceHandler>();
         cloned.addAll(customPersistenceHandlers);
         if (getCustomPersistenceHandlerFilters() != null) {
@@ -414,13 +414,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
-		return cloned;
-	}
+        return cloned;
+    }
 
-	@Override
-	public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
-		this.customPersistenceHandlers = customPersistenceHandlers;
-	}
+    @Override
+    public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
+        this.customPersistenceHandlers = customPersistenceHandlers;
+    }
 
     public AdminSecurityServiceRemote getAdminRemoteSecurityService() {
         return adminRemoteSecurityService;

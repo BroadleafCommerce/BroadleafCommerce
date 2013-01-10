@@ -27,7 +27,7 @@ import org.springframework.validation.Validator;
 public class CheckoutFormValidator implements Validator {
 
     @SuppressWarnings("rawtypes")
-	public boolean supports(Class clazz) {
+    public boolean supports(Class clazz) {
         return clazz.equals(CheckoutForm.class);
     }
 

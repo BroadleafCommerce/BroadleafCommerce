@@ -36,10 +36,10 @@ import java.util.HashMap;
  *
  */
 public class FormItemCallbackHandlerManager {
-	
-	private static final long serialVersionUID = 1L;
-	
-	protected HashMap<String, FormItemCallback> callbacks = new HashMap<String, FormItemCallback>();
+    
+    private static final long serialVersionUID = 1L;
+    
+    protected HashMap<String, FormItemCallback> callbacks = new HashMap<String, FormItemCallback>();
 
     public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay) {
         addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null);
@@ -90,16 +90,16 @@ public class FormItemCallbackHandlerManager {
         });
     }
 
-	public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
-		addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null, cb);
-	}
-	
-	public void addFormItemCallback(String fieldName, FormItemCallback formItemCallback) {
-		callbacks.put(fieldName, formItemCallback);
-	}
-	
-	public FormItemCallback getFormItemCallback(String fieldName) {
-		return callbacks.get(fieldName);
-	}
-	
+    public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
+        addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null, cb);
+    }
+    
+    public void addFormItemCallback(String fieldName, FormItemCallback formItemCallback) {
+        callbacks.put(fieldName, formItemCallback);
+    }
+    
+    public FormItemCallback getFormItemCallback(String fieldName) {
+        return callbacks.get(fieldName);
+    }
+    
 }

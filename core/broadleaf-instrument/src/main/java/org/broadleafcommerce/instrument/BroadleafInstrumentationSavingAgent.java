@@ -26,31 +26,31 @@ import java.lang.instrument.Instrumentation;
  */
 public class BroadleafInstrumentationSavingAgent {
 
-	private static volatile Instrumentation instrumentation;
+    private static volatile Instrumentation instrumentation;
 
 
-	/**
-	 * Save the {@link Instrumentation} interface exposed by the JVM.
-	 */
-	public static void premain(String agentArgs, Instrumentation inst) {
-		System.out.println("Starting the Broadleaf instrumentation agent");
-		instrumentation = inst;
-	}
+    /**
+     * Save the {@link Instrumentation} interface exposed by the JVM.
+     */
+    public static void premain(String agentArgs, Instrumentation inst) {
+        System.out.println("Starting the Broadleaf instrumentation agent");
+        instrumentation = inst;
+    }
 
 
-	/**
-	 * Return the {@link Instrumentation} interface exposed by the JVM.
-	 * <p>Note that this agent class will typically not be available in the classpath
-	 * unless the agent is actually specified on JVM startup. If you intend to do
-	 * conditional checking with respect to agent availability, consider using
-	 * {@link org.broadleafcommerce.profile.extensibility.jpa.convert.BroadleafLoadTimeWeaver#getInstrumentation()}
-	 * instead - which will work without the agent class in the classpath as well.
-	 * @return the <code>Instrumentation</code> instance previously saved when
-	 * the {@link #premain} method was called by the JVM; will be <code>null</code>
-	 * if this class was not used as Java agent when this JVM was started.
-	 * @see org.broadleafcommerce.profile.extensibility.jpa.convert.BroadleafLoadTimeWeaver#getInstrumentation()
-	 */
-	public static Instrumentation getInstrumentation() {
-		return instrumentation;
-	}
+    /**
+     * Return the {@link Instrumentation} interface exposed by the JVM.
+     * <p>Note that this agent class will typically not be available in the classpath
+     * unless the agent is actually specified on JVM startup. If you intend to do
+     * conditional checking with respect to agent availability, consider using
+     * {@link org.broadleafcommerce.profile.extensibility.jpa.convert.BroadleafLoadTimeWeaver#getInstrumentation()}
+     * instead - which will work without the agent class in the classpath as well.
+     * @return the <code>Instrumentation</code> instance previously saved when
+     * the {@link #premain} method was called by the JVM; will be <code>null</code>
+     * if this class was not used as Java agent when this JVM was started.
+     * @see org.broadleafcommerce.profile.extensibility.jpa.convert.BroadleafLoadTimeWeaver#getInstrumentation()
+     */
+    public static Instrumentation getInstrumentation() {
+        return instrumentation;
+    }
 }

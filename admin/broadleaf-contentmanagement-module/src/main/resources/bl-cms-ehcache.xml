@@ -3,16 +3,16 @@
     <diskStore path="java.io.tmpdir"/>
 
     <defaultCache
-    	maxElementsInMemory="100000"
-    	eternal="false"
-    	overflowToDisk="true"
-    	timeToLiveSeconds="60"/>
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="60"/>
 
     <!-- 1 hour cache -->
     <cache
-    	name="blCMSElements"
-    	maxElementsInMemory="10000"
-    	eternal="false"
+        name="blCMSElements"
+        maxElementsInMemory="10000"
+        eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="3600"/>
 

@@ -11,7 +11,7 @@
     <!-- Scan Broadleaf defined web utility classes -->
     <context:component-scan base-package="org.broadleafcommerce.core.web"/>
 
-	<bean id="blOrderState"
+    <bean id="blOrderState"
           class="org.broadleafcommerce.core.web.order.OrderState" scope="request"/>
 
     <bean id="orderStateAOP"
@@ -25,73 +25,73 @@
         </aop:aspect>
     </aop:config>
     
-	<bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
-	    <property name="processors">
-		  <set>
-			<ref bean="blContentProcessor"/>
-			<ref bean="blAddSortLinkProcessor" />
-			<ref bean="blCategoriesProcessor" />
-			<ref bean="blFormProcessor" />
-			<ref bean="blGoogleAnalyticsProcessor" />
-			<ref bean="blHeadProcessor" />
-		    <ref bean="blNamedOrderProcessor" />
-		    <ref bean="blPaginationPageLinkProcessor" />
-			<ref bean="blPriceTextDisplayProcessor" />
-			<ref bean="blProductOptionValueProcessor" />
-			<ref bean="blProductOptionsProcessor" />
-			<ref bean="blRatingsProcessor" />
-			<ref bean="blRelatedProductProcessor" />
-			<ref bean="blRemoveFacetValuesLinkProcessor" />
-			<ref bean="blToggleFacetLinkProcessor" />
-			<ref bean="blUrlRewriteProcessor" />
-		  </set>
-		</property>  	
-	</bean> 
-	
-	<bean id="blWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-		<property name="prefix" value="/WEB-INF/templates/" />
-		<property name="suffix" value=".html" />
-		<property name="templateMode" value="HTML5" />
-		<property name="cacheable" value="false"/>
-		<property name="characterEncoding" value="UTF-8" />
-	</bean>	
-	
-	<bean id="blEmailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-		<property name="prefix" value="emailTemplates/" />
-		<property name="suffix" value=".html" />
-		<property name="templateMode" value="HTML5" />
-		<property name="cacheable" value="false"/>
-		<property name="characterEncoding" value="UTF-8" />
-	</bean>
-	
-	<bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
-	
-	<bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
-		<property name="templateResolvers">
-			<set>
-				<ref bean="blWebTemplateResolver" />
-			</set>
-		</property>
-		<property name="dialects">
-			<set>
-				<ref bean="thymeleafSpringStandardDialect" />
-				<ref bean="blDialect" />
-			</set>
-		</property>
-	</bean>	
-	
-	<bean id="blEmailTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
-		<property name="templateResolvers">
-			<set>
-				<ref bean="blEmailTemplateResolver" />
-			</set>
-		</property>
-		<property name="dialects">
-			<set>
-				<ref bean="thymeleafSpringStandardDialect" />
-				<ref bean="blDialect" />
-			</set>
-		</property>
-	</bean>
-	
+    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
+        <property name="processors">
+          <set>
+            <ref bean="blContentProcessor"/>
+            <ref bean="blAddSortLinkProcessor" />
+            <ref bean="blCategoriesProcessor" />
+            <ref bean="blFormProcessor" />
+            <ref bean="blGoogleAnalyticsProcessor" />
+            <ref bean="blHeadProcessor" />
+            <ref bean="blNamedOrderProcessor" />
+            <ref bean="blPaginationPageLinkProcessor" />
+            <ref bean="blPriceTextDisplayProcessor" />
+            <ref bean="blProductOptionValueProcessor" />
+            <ref bean="blProductOptionsProcessor" />
+            <ref bean="blRatingsProcessor" />
+            <ref bean="blRelatedProductProcessor" />
+            <ref bean="blRemoveFacetValuesLinkProcessor" />
+            <ref bean="blToggleFacetLinkProcessor" />
+            <ref bean="blUrlRewriteProcessor" />
+          </set>
+        </property>     
+    </bean> 
+    
+    <bean id="blWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/templates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="cacheable" value="false"/>
+        <property name="characterEncoding" value="UTF-8" />
+    </bean> 
+    
+    <bean id="blEmailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <property name="prefix" value="emailTemplates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="cacheable" value="false"/>
+        <property name="characterEncoding" value="UTF-8" />
+    </bean>
+    
+    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
+    
+    <bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="templateResolvers">
+            <set>
+                <ref bean="blWebTemplateResolver" />
+            </set>
+        </property>
+        <property name="dialects">
+            <set>
+                <ref bean="thymeleafSpringStandardDialect" />
+                <ref bean="blDialect" />
+            </set>
+        </property>
+    </bean> 
+    
+    <bean id="blEmailTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="templateResolvers">
+            <set>
+                <ref bean="blEmailTemplateResolver" />
+            </set>
+        </property>
+        <property name="dialects">
+            <set>
+                <ref bean="thymeleafSpringStandardDialect" />
+                <ref bean="blDialect" />
+            </set>
+        </property>
+    </bean>
+    
 </beans>

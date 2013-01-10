@@ -80,41 +80,41 @@ import java.util.List;
  */
 public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implements Instantiable {
 
-	protected EntitySearchDialog productSearchView;
-	protected EntitySearchDialog skuSearchView;
-	protected SubPresentable parentCategoriesPresenter;
-	protected AssociatedProductOptionPresenterBasic productOptionsPresenter;
-	protected SubPresentable skusPresenter;
-	protected SubPresentable bundleItemsPresenter;
-	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+    protected EntitySearchDialog productSearchView;
+    protected EntitySearchDialog skuSearchView;
+    protected SubPresentable parentCategoriesPresenter;
+    protected AssociatedProductOptionPresenterBasic productOptionsPresenter;
+    protected SubPresentable skusPresenter;
+    protected SubPresentable bundleItemsPresenter;
+    protected HashMap<String, Object> library = new HashMap<String, Object>(10);
     protected HandlerRegistration extendedFetchDataHandlerRegistration;
 
-	@Override
-	protected void changeSelection(final Record selectedRecord) {
-		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
+    @Override
+    protected void changeSelection(final Record selectedRecord) {
+        AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
         productOptionsPresenter.load(selectedRecord, dataSource, null);
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
         getDisplay().getCloneProductButton().enable();
 
-	}
+    }
 
     @Override
     protected void itemSaved(DSResponse response, Object rawData, DSRequest request) {
         super.itemSaved(response, rawData, request);
         getDisplay().getAllCategoriesDisplay().getGrid().invalidateCache();
     }
-	
-	@Override
-	public void bind() {
-		super.bind();
-		parentCategoriesPresenter.bind();
-		productOptionsPresenter.bind();
-		skusPresenter.bind();
-		bundleItemsPresenter.bind();
-	    
-		getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
+    
+    @Override
+    public void bind() {
+        super.bind();
+        parentCategoriesPresenter.bind();
+        productOptionsPresenter.bind();
+        skusPresenter.bind();
+        bundleItemsPresenter.bind();
+        
+        getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (getDisplay().getProductOptionsDisplay().getGrid().getTotalRows() <= 0) {
@@ -146,10 +146,10 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 }
             }
         });
-		
-		getDisplay().getCloneProductButton().addClickHandler(new ClickHandler() {
-		    @Override
-		    public void onClick(ClickEvent event) {
+        
+        getDisplay().getCloneProductButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
                 final Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
                 final String productName = getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("defaultSku.name");
                 AppServices.CATALOG.cloneProduct(productId, new AsyncCallback<Boolean>() {
@@ -168,32 +168,32 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                         }
                     }
                 });
-		    }
-		});
-		
-		getDisplay().getExportProductsButton().addClickHandler(new ClickHandler() {
-		    @Override
-		    public void onClick(ClickEvent event) {
-		        AppServices.EXPORT.getExporters(AdminExporterType.PRODUCT, new AsyncCallback<List<AdminExporterDTO>>() {
-		            @Override
-		            public void onSuccess(final List<AdminExporterDTO> result) {
-		                if (result == null || result.size() == 0) {
-		                    SC.say(BLCMain.getMessageManager().getString("noProductExporters"));
-		                } else {
-		                    ExportListSelectionDialog exportSelectionDialog = new ExportListSelectionDialog();
-		                    exportSelectionDialog.search(BLCMain.getMessageManager().getString("selectExporterTitle"), result);
-		                }
-		            }
+            }
+        });
+        
+        getDisplay().getExportProductsButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                AppServices.EXPORT.getExporters(AdminExporterType.PRODUCT, new AsyncCallback<List<AdminExporterDTO>>() {
+                    @Override
+                    public void onSuccess(final List<AdminExporterDTO> result) {
+                        if (result == null || result.size() == 0) {
+                            SC.say(BLCMain.getMessageManager().getString("noProductExporters"));
+                        } else {
+                            ExportListSelectionDialog exportSelectionDialog = new ExportListSelectionDialog();
+                            exportSelectionDialog.search(BLCMain.getMessageManager().getString("selectExporterTitle"), result);
+                        }
+                    }
 
-		            @Override
-		            public void onFailure(Throwable caught) {
-		                // TODO Auto-generated method stub
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        // TODO Auto-generated method stub
                 
-		            }
-		        });
-		    }
-		});
-		
+                    }
+                });
+            }
+        });
+        
         extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
@@ -201,47 +201,47 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             }
         });
 
-	}
-	
-	@Override
-	protected void addClicked() {
-		initialValues.put("name", BLCMain.getMessageManager().getString("defaultProductName"));
+    }
+    
+    @Override
+    protected void addClicked() {
+        initialValues.put("name", BLCMain.getMessageManager().getString("defaultProductName"));
         addClicked(BLCMain.getMessageManager().getString("newProductTitle"));
-	}
+    }
 
-	@Override
+    @Override
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productDS", new OneToOneProductSkuDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productDS", new OneToOneProductSkuDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource top) {
-				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearch", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.ADORNEDTARGETLIST, OperationType.BASIC, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
-			@Override
+                setupDisplayItems(top);
+                ((ListGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{});
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearch", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.ADORNEDTARGETLIST, OperationType.BASIC, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				ListGridDataSource categorySearchDataSource = (ListGridDataSource) result;
-				EntitySearchDialog categorySearchView = new EntitySearchDialog(categorySearchDataSource);
-				library.put("categorySearchView", categorySearchView);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("oneToOneProductSearchDS", new ProductListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                ListGridDataSource categorySearchDataSource = (ListGridDataSource) result;
+                EntitySearchDialog categorySearchView = new EntitySearchDialog(categorySearchDataSource);
+                library.put("categorySearchView", categorySearchView);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("oneToOneProductSearchDS", new ProductListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				final ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
-				productSearchView = new EntitySearchDialog(productSearchDataSource);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
-			@Override
+                final ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
+                productSearchView = new EntitySearchDialog(productSearchDataSource);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.ADORNEDTARGETLIST, OperationType.BASIC), new Object[]{}, new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				parentCategoriesPresenter = new SimpleSearchListPresenter("",getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), BLCMain.getMessageManager().getString("categorySearchPrompt"));
-				parentCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
-			}
-		}));
-		
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionSearchDS", new ProductOptionListDataSourceFactory(), new AsyncCallbackAdapter() {
+                parentCategoriesPresenter = new SimpleSearchListPresenter("",getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), BLCMain.getMessageManager().getString("categorySearchPrompt"));
+                parentCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
+            }
+        }));
+        
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionSearchDS", new ProductOptionListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
                 EntitySearchDialog productOptionSearchView = new EntitySearchDialog((ListGridDataSource)result, true);
@@ -249,17 +249,17 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             }
         }));
 
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValuesDS", new ProductOptionValueDataSourceFactory(), new NullAsyncCallbackAdapter()));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionsDS", new ProductOptionDataSourceFactory(), new AsyncCallbackAdapter() {
-		    @Override
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValuesDS", new ProductOptionValueDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionsDS", new ProductOptionDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-		        productOptionsPresenter = new AssociatedProductOptionPresenterBasic(getDisplay().getProductOptionsDisplay(), (EntitySearchDialog)library.get("productOptionSearchView"), BLCMain.getMessageManager().getString("productOptionSearchPrompt"));
-		        productOptionsPresenter.setDataSource((ListGridDataSource) result, new String[]{"label", "type", "required"}, new Boolean[]{true, true, true});
-		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"displayOrder","attributeValue","priceAdjustment"}, new Boolean[]{false,false, false});
-		    }
-		}));
-		
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skusDS", new ProductSkusDataSourceFactory(), new AsyncCallbackAdapter() {
+                productOptionsPresenter = new AssociatedProductOptionPresenterBasic(getDisplay().getProductOptionsDisplay(), (EntitySearchDialog)library.get("productOptionSearchView"), BLCMain.getMessageManager().getString("productOptionSearchPrompt"));
+                productOptionsPresenter.setDataSource((ListGridDataSource) result, new String[]{"label", "type", "required"}, new Boolean[]{true, true, true});
+                productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"displayOrder","attributeValue","priceAdjustment"}, new Boolean[]{false,false, false});
+            }
+        }));
+        
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skusDS", new ProductSkusDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
                 skusPresenter = new SkusPresenter(getDisplay().getSkusDisplay(), "Add Sku", null, false, true, false);
@@ -267,8 +267,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 skusPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
             }
         }));
-		
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuSearchDS", new BundleSkuSearchDataSourceFactory(), new AsyncCallbackAdapter() {
+        
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuSearchDS", new BundleSkuSearchDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
                 ListGridDataSource skuSearchDataSource = (ListGridDataSource)result;
@@ -288,8 +288,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
-            	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-            	final AssetSearchDialog dialog=new AssetSearchDialog(staticAssetTreeDS);
+                TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
+                final AssetSearchDialog dialog=new AssetSearchDialog(staticAssetTreeDS);
                 HashMap<String, Object> initialValues = new HashMap<String, Object>(10);
                 initialValues.put("operation", "add");
                 initialValues.put("customCriteria", "assetListUi");
@@ -300,7 +300,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                 library.put("staticAssetDialog", dialog);
             }
         }));
-	}
+    }
 
     @Override
     public void postSetup(Canvas container) {
@@ -323,8 +323,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         super.postSetup(container);
     }
 
-	@Override
-	public OneToOneProductSkuDisplay getDisplay() {
-		return (OneToOneProductSkuDisplay) display;
-	}
+    @Override
+    public OneToOneProductSkuDisplay getDisplay() {
+        return (OneToOneProductSkuDisplay) display;
+    }
 }

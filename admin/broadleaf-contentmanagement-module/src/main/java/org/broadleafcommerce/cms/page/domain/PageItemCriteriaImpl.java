@@ -45,8 +45,8 @@ import org.hibernate.annotations.Type;
 @Inheritance(strategy=InheritanceType.JOINED)
 @AdminPresentationClass(friendlyName = "PageItemCriteriaImpl_basePageItemCriteria")
 public class PageItemCriteriaImpl implements PageItemCriteria {
-	
-	public static final long serialVersionUID = 1L;
+    
+    public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator= "PageItemCriteriaId")
@@ -68,41 +68,41 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
     
     @Column(name = "QUANTITY", nullable=false)
     @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Quantity", group = "PageItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
-	protected Integer quantity;
+    protected Integer quantity;
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "ORDER_ITEM_MATCH_RULE")
     @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Order_Item_Match_Rule", group = "PageItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
-	protected String orderItemMatchRule;
+    protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = PageImpl.class)
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", joinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_ID"))
     protected Page page;
-	
-	public Long getId() {
-		return id;
-	}
+    
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Integer getQuantity() {
-		return quantity;
-	}
+    public Integer getQuantity() {
+        return quantity;
+    }
 
-	public void setQuantity(Integer receiveQuantity) {
-		this.quantity = receiveQuantity;
-	}
+    public void setQuantity(Integer receiveQuantity) {
+        this.quantity = receiveQuantity;
+    }
 
-	public String getOrderItemMatchRule() {
-		return orderItemMatchRule;
-	}
+    public String getOrderItemMatchRule() {
+        return orderItemMatchRule;
+    }
 
-	public void setOrderItemMatchRule(String orderItemMatchRule) {
-		this.orderItemMatchRule = orderItemMatchRule;
-	}
+    public void setOrderItemMatchRule(String orderItemMatchRule) {
+        this.orderItemMatchRule = orderItemMatchRule;
+    }
 
     public Page getPage() {
         return page;
@@ -113,41 +113,41 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((orderItemMatchRule == null) ? 0 : orderItemMatchRule.hashCode());
-		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((orderItemMatchRule == null) ? 0 : orderItemMatchRule.hashCode());
+        result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PageItemCriteriaImpl other = (PageItemCriteriaImpl) obj;
-		
-		if (id != null && other.id != null) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PageItemCriteriaImpl other = (PageItemCriteriaImpl) obj;
+        
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-		
-		if (orderItemMatchRule == null) {
-			if (other.orderItemMatchRule != null)
-				return false;
-		} else if (!orderItemMatchRule.equals(other.orderItemMatchRule))
-			return false;
-		if (quantity == null) {
-			if (other.quantity != null)
-				return false;
-		} else if (!quantity.equals(other.quantity))
-			return false;
-		return true;
-	}
+        
+        if (orderItemMatchRule == null) {
+            if (other.orderItemMatchRule != null)
+                return false;
+        } else if (!orderItemMatchRule.equals(other.orderItemMatchRule))
+            return false;
+        if (quantity == null) {
+            if (other.quantity != null)
+                return false;
+        } else if (!quantity.equals(other.quantity))
+            return false;
+        return true;
+    }
 
     public PageItemCriteria cloneEntity() {
         PageItemCriteriaImpl newField = new PageItemCriteriaImpl();

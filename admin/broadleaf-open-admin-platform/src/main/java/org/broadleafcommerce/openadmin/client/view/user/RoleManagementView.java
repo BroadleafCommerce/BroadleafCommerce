@@ -37,24 +37,24 @@ import com.smartgwt.client.widgets.layout.VLayout;
  */
 public class RoleManagementView extends HLayout implements Instantiable, RoleManagementDisplay {
 
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
     protected GridStructureView permissionsDisplay;
 
-	public RoleManagementView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	@Override
+    public RoleManagementView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("roleLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("roleLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("roleListTitle"), entityDataSource, false);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("roleListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
 
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("roleDetailsTitle"), entityDataSource);
@@ -63,22 +63,22 @@ public class RoleManagementView extends HLayout implements Instantiable, RoleMan
         leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(dynamicFormDisplay);
-	}
+    }
 
-	@Override
+    @Override
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	@Override
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	@Override
+        return dynamicFormDisplay;
+    }
+    
+    @Override
     public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+        return listDisplay;
+    }
 
     @Override
     public GridStructureView getPermissionsDisplay() {

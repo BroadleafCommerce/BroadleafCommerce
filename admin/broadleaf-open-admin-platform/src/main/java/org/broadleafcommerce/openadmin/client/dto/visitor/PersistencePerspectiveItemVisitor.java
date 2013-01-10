@@ -24,12 +24,12 @@ import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 
 public interface PersistencePerspectiveItemVisitor {
 
-	public void visit(AdornedTargetList adornedTargetList);
-	
-	public void visit(MapStructure mapStructure);
-	
-	public void visit(SimpleValueMapStructure simpleValueMapStructure);
-	
-	public void visit(ForeignKey foreignKey);
-	
+    public void visit(AdornedTargetList adornedTargetList);
+    
+    public void visit(MapStructure mapStructure);
+    
+    public void visit(SimpleValueMapStructure simpleValueMapStructure);
+    
+    public void visit(ForeignKey foreignKey);
+    
 }

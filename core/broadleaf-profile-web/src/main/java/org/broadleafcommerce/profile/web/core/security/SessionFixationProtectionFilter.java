@@ -46,62 +46,62 @@ import java.security.NoSuchAlgorithmException;
  */
 @Component("blSessionFixationProtectionFilter")
 public class SessionFixationProtectionFilter extends GenericFilterBean {
-	protected static final String SESSION_ATTR = "SFP-ActiveID";
-	
+    protected static final String SESSION_ATTR = "SFP-ActiveID";
+    
     @Resource(name = "blEncryptionModule")
     protected EncryptionModule encryptionModule;
 
-	@Override
-	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest) sRequest;
-		HttpServletResponse response = (HttpServletResponse) sResponse;
-		HttpSession session = request.getSession(false);
-		
-		if (SecurityContextHolder.getContext() == null) {
-			chain.doFilter(request, response);
-		}
-		
-		String activeIdSessionValue = (String) session.getAttribute(SESSION_ATTR);
-		
-		if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
-			// The request is secure and and we've set a session fixation protection cookie
-	        String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID();
-	        String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
-	        
-	        if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
-	        	abortUser(request, response);
-	        	return;
-	        }
-		} else if (request.isSecure()) {
-			// The request is secure, but we haven't set a session fixation protection cookie yet
+    @Override
+    public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) sRequest;
+        HttpServletResponse response = (HttpServletResponse) sResponse;
+        HttpSession session = request.getSession(false);
+        
+        if (SecurityContextHolder.getContext() == null) {
+            chain.doFilter(request, response);
+        }
+        
+        String activeIdSessionValue = (String) session.getAttribute(SESSION_ATTR);
+        
+        if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
+            // The request is secure and and we've set a session fixation protection cookie
+            String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID();
+            String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
+            
+            if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
+                abortUser(request, response);
+                return;
+            }
+        } else if (request.isSecure()) {
+            // The request is secure, but we haven't set a session fixation protection cookie yet
             String token;
-			try {
-				token = RandomGenerator.generateRandomId("SHA1PRNG", 32);
-			} catch (NoSuchAlgorithmException e) {
-				throw new ServletException(e);
-			}
-			
+            try {
+                token = RandomGenerator.generateRandomId("SHA1PRNG", 32);
+            } catch (NoSuchAlgorithmException e) {
+                throw new ServletException(e);
+            }
+            
             String encryptedActiveIdValue = encryptionModule.encrypt(token);
             
             session.setAttribute(SESSION_ATTR, token);
             SessionFixationProtectionCookie.writeActiveID(response, encryptedActiveIdValue);
-		}
-				
+        }
+                
         chain.doFilter(request, response);
     }
 
     protected void abortUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SecurityContextHolder.clearContext();
-    	SessionFixationProtectionCookie.remove(response);
-    	
-		Cookie cookie = new Cookie("JSESSIONID", "");
-		cookie.setMaxAge(0);
-		cookie.setPath("/");
-		cookie.setSecure(false);
-		cookie.setValue("-1");
-		response.addCookie(cookie);
-		
-    	response.sendRedirect("/"); 
-	}
+        SessionFixationProtectionCookie.remove(response);
+        
+        Cookie cookie = new Cookie("JSESSIONID", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        cookie.setSecure(false);
+        cookie.setValue("-1");
+        response.addCookie(cookie);
+        
+        response.sendRedirect("/"); 
+    }
 
 }

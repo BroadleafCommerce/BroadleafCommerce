@@ -287,14 +287,14 @@ public interface Sku extends Serializable {
      * @return the ProductOptionValues for this Sku
      * @see {@link ProductOptionValue}, {@link ProductOption}
      */
-	public List<ProductOptionValue> getProductOptionValues();
+    public List<ProductOptionValue> getProductOptionValues();
 
-	/**
-	 * Sets the ProductOptionValues that should be mapped to this Sku
-	 * 
-	 * @param productOptionValues
-	 * @see {@link ProductOptionValue}, {@link ProductOption}
-	 */
+    /**
+     * Sets the ProductOptionValues that should be mapped to this Sku
+     * 
+     * @param productOptionValues
+     * @see {@link ProductOptionValue}, {@link ProductOption}
+     */
     public void setProductOptionValues(List<ProductOptionValue> productOptionValues);
 
     /**
@@ -352,13 +352,13 @@ public interface Sku extends Serializable {
      * 
      * @return whether or not the product is on sale
      */
-	public boolean isOnSale();
+    public boolean isOnSale();
 
-	/**
-	 * Whether this Sku can be sorted by a machine
-	 * 
-	 * @return <b>true</b> if this Sku can be sorted by a machine
-	 */
+    /**
+     * Whether this Sku can be sorted by a machine
+     * 
+     * @return <b>true</b> if this Sku can be sorted by a machine
+     */
     public Boolean isMachineSortable();
 
     /**
@@ -423,9 +423,9 @@ public interface Sku extends Serializable {
      */
     public SkuAttribute getSkuAttributeByName(String name);
 
-	/**
-	 * @return a Map of all the sku attributes on this sku keyed by the attribute name
-	 */
+    /**
+     * @return a Map of all the sku attributes on this sku keyed by the attribute name
+     */
     public Map<String, SkuAttribute> getMappedSkuAttributes();
     
 }

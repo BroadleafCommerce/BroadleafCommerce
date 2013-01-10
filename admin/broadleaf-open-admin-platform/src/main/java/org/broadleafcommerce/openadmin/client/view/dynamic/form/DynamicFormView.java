@@ -31,18 +31,18 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
  */
 public class DynamicFormView extends VLayout implements DynamicFormDisplay {
 
-	protected ToolStrip toolbar;
-	protected ToolStripButton saveButton;
-	protected ToolStripButton refreshButton;
-	protected FormOnlyView formOnlyView;
+    protected ToolStrip toolbar;
+    protected ToolStripButton saveButton;
+    protected ToolStripButton refreshButton;
+    protected FormOnlyView formOnlyView;
 
     public DynamicFormView(DataSource dataSource) {
         this("", dataSource);
     }
-	
-	public DynamicFormView(String title, DataSource dataSource) {
-		super();
-		
+    
+    public DynamicFormView(String title, DataSource dataSource) {
+        super();
+        
         setLayoutMargin(0);
         toolbar = new ToolStrip();
         toolbar.setHeight(30);
@@ -68,22 +68,22 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
         addMember(formOnlyView);
         
         setOverflow(Overflow.HIDDEN);
-	}
+    }
 
-	public ToolStrip getToolbar() {
-		return toolbar;
-	}
+    public ToolStrip getToolbar() {
+        return toolbar;
+    }
 
-	public ToolStripButton getSaveButton() {
-		return saveButton;
-	}
+    public ToolStripButton getSaveButton() {
+        return saveButton;
+    }
 
-	public ToolStripButton getRefreshButton() {
-		return refreshButton;
-	}
+    public ToolStripButton getRefreshButton() {
+        return refreshButton;
+    }
 
-	public FormOnlyDisplay getFormOnlyDisplay() {
-		return formOnlyView;
-	}
+    public FormOnlyDisplay getFormOnlyDisplay() {
+        return formOnlyView;
+    }
 
 }

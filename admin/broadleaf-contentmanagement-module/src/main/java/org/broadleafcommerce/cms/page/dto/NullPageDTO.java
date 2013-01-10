@@ -23,6 +23,6 @@ package org.broadleafcommerce.cms.page.dto;
  * Created by bpolster.
  */
 public class NullPageDTO extends PageDTO {
-	
+    
 }
 

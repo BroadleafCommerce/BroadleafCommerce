@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
  */
 @Deprecated
 public interface ShippingService {
-	
+    
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException;
     
 }
