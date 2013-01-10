@@ -43,51 +43,51 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 public class SpringTemporaryRedirectOverrideFilter implements Filter {
-	
-	private Pattern[] urlPatterns = new Pattern[]{};
+    
+    private Pattern[] urlPatterns = new Pattern[]{};
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#destroy()
-	 */
-	public void destroy() {
-		//do nothing
-	}
-	
-	public boolean isUrlMatch(String url) {
-		for (Pattern pattern : urlPatterns) {
-			Matcher matcher = pattern.matcher(url);
-			if (matcher.matches()) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see javax.servlet.Filter#destroy()
+     */
+    public void destroy() {
+        //do nothing
+    }
+    
+    public boolean isUrlMatch(String url) {
+        for (Pattern pattern : urlPatterns) {
+            Matcher matcher = pattern.matcher(url);
+            if (matcher.matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
-	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		BroadleafResponseWrapper responseWrapper = new BroadleafResponseWrapper((HttpServletResponse) response);
-		chain.doFilter(request, responseWrapper);
-		if ( 
-				response instanceof BroadleafResponseWrapper && 
-				302 == ((BroadleafResponseWrapper) response).getStatus() &&
-				isUrlMatch(((HttpServletRequest)request).getRequestURI())
-		) {
-			((HttpServletResponse) response).setStatus(301);
-		}                                                                
-	}
+    /* (non-Javadoc)
+     * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     */
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        BroadleafResponseWrapper responseWrapper = new BroadleafResponseWrapper((HttpServletResponse) response);
+        chain.doFilter(request, responseWrapper);
+        if ( 
+                response instanceof BroadleafResponseWrapper && 
+                302 == ((BroadleafResponseWrapper) response).getStatus() &&
+                isUrlMatch(((HttpServletRequest)request).getRequestURI())
+        ) {
+            ((HttpServletResponse) response).setStatus(301);
+        }                                                                
+    }
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
-	public void init(FilterConfig config) throws ServletException {
-		String massagedString = config.getInitParameter("urlPatterns").replaceAll("\\s+", " ");
-		String[] temp = massagedString.split("\\s");
-		urlPatterns = new Pattern[temp.length];
-		for (int j=0;j<urlPatterns.length;j++) {
-			urlPatterns[j] = Pattern.compile(temp[j]);
-		}
-	}
+    /* (non-Javadoc)
+     * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+     */
+    public void init(FilterConfig config) throws ServletException {
+        String massagedString = config.getInitParameter("urlPatterns").replaceAll("\\s+", " ");
+        String[] temp = massagedString.split("\\s");
+        urlPatterns = new Pattern[temp.length];
+        for (int j=0;j<urlPatterns.length;j++) {
+            urlPatterns[j] = Pattern.compile(temp[j]);
+        }
+    }
 
 }

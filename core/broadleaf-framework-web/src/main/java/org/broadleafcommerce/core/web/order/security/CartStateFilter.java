@@ -65,19 +65,19 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
     
     private static String cartRequestAttributeName = "cart";
 
-	@SuppressWarnings("unchecked")
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {		
-		Customer customer = (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
-		
-		if (customer != null) {
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Looking up cart for customer " + customer.getId());
-			}
-		   	Order cart = orderService.findCartForCustomer(customer);
-	    	
-	    	if (cart == null) { 
-	    		cart = orderService.getNullOrder();
-	    	} else {
+    @SuppressWarnings("unchecked")
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {        
+        Customer customer = (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
+        
+        if (customer != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Looking up cart for customer " + customer.getId());
+            }
+            Order cart = orderService.findCartForCustomer(customer);
+            
+            if (cart == null) { 
+                cart = orderService.getNullOrder();
+            } else {
                 try {
                     updateCartService.validateCart(cart);
                 } catch (IllegalArgumentException e){
@@ -91,33 +91,33 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
                 }
             }
 
-	    	request.setAttribute(cartRequestAttributeName, cart);
+            request.setAttribute(cartRequestAttributeName, cart);
 
-	        // Setup cart for content rule processing
-	        Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
-	        if (ruleMap == null) {
-	            ruleMap = new HashMap<String,Object>();
-	        }
-	        ruleMap.put("cart", cart);
-	        request.setAttribute(BLC_RULE_MAP_PARAM, ruleMap);
-		}
+            // Setup cart for content rule processing
+            Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
+            if (ruleMap == null) {
+                ruleMap = new HashMap<String,Object>();
+            }
+            ruleMap.put("cart", cart);
+            request.setAttribute(BLC_RULE_MAP_PARAM, ruleMap);
+        }
 
         chain.doFilter(request, response);
     }
 
     public int getOrder() {
-    	//FilterChainOrder has been dropped from Spring Security 3
+        //FilterChainOrder has been dropped from Spring Security 3
         //return FilterChainOrder.REMEMBER_ME_FILTER+1;
-    	return 1502;
+        return 1502;
     }
     
-	public static String getCartRequestAttributeName() {
-		return cartRequestAttributeName;
-	}
+    public static String getCartRequestAttributeName() {
+        return cartRequestAttributeName;
+    }
 
-	public static void setCartRequestAttributeName(String cartRequestAttributeName) {
-		CartStateFilter.cartRequestAttributeName = cartRequestAttributeName;
-	}
+    public static void setCartRequestAttributeName(String cartRequestAttributeName) {
+        CartStateFilter.cartRequestAttributeName = cartRequestAttributeName;
+    }
 
 
 }

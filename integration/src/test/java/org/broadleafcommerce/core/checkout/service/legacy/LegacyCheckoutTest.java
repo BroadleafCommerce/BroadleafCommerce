@@ -83,10 +83,10 @@ public class LegacyCheckoutTest extends BaseTest {
     @Resource
     private SecurePaymentInfoService securePaymentInfoService;
 
-	@Test(groups = { "checkoutLegacy" }, dependsOnGroups = { "createCartForCustomerLegacy", "testShippingInsertLegacy" })
-	@Transactional
+    @Test(groups = { "checkoutLegacy" }, dependsOnGroups = { "createCartForCustomerLegacy", "testShippingInsertLegacy" })
+    @Transactional
     public void testCheckout() throws Exception {
-    	String userName = "customer1";
+        String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Order order = orderService.createNewCartForCustomer(customer);
 
@@ -125,8 +125,8 @@ public class LegacyCheckoutTest extends BaseTest {
 
 /*
     @SuppressWarnings("serial")
-   	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
-   	@Transactional
+    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
+    @Transactional
     public void testCustomerMaxUsesPromo() throws Exception {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
@@ -218,72 +218,72 @@ public class LegacyCheckoutTest extends BaseTest {
 
         CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
 
-			private static final long serialVersionUID = 1L;
-			private String referenceNumber = "1234";
+            private static final long serialVersionUID = 1L;
+            private String referenceNumber = "1234";
 
-			public String getCvvCode() {
-				return "123";
-			}
+            public String getCvvCode() {
+                return "123";
+            }
 
-			public Integer getExpirationMonth() {
-				return 11;
-			}
+            public Integer getExpirationMonth() {
+                return 11;
+            }
 
-			public Integer getExpirationYear() {
-				return 2011;
-			}
+            public Integer getExpirationYear() {
+                return 2011;
+            }
 
-			public Long getId() {
-				return null;
-			}
+            public Long getId() {
+                return null;
+            }
 
-			public String getPan() {
-				return "1111111111111111";
-			}
+            public String getPan() {
+                return "1111111111111111";
+            }
 
             public String getNameOnCard() {
                 return "Cardholder Name";
             }
 
-			public void setCvvCode(String cvvCode) {
-				//do nothing
-			}
+            public void setCvvCode(String cvvCode) {
+                //do nothing
+            }
 
-			public void setExpirationMonth(Integer expirationMonth) {
-				//do nothing
-			}
+            public void setExpirationMonth(Integer expirationMonth) {
+                //do nothing
+            }
 
-			public void setExpirationYear(Integer expirationYear) {
-				//do nothing
-			}
+            public void setExpirationYear(Integer expirationYear) {
+                //do nothing
+            }
 
-			public void setId(Long id) {
-				//do nothing
-			}
+            public void setId(Long id) {
+                //do nothing
+            }
 
             public void setNameOnCard(String nameOnCard) {
                 //do nothing
             }
 
             public void setPan(String pan) {
-				//do nothing
-			}
+                //do nothing
+            }
 
-			public EncryptionModule getEncryptionModule() {
-				return encryptionModule;
-			}
+            public EncryptionModule getEncryptionModule() {
+                return encryptionModule;
+            }
 
-			public String getReferenceNumber() {
-				return referenceNumber;
-			}
+            public String getReferenceNumber() {
+                return referenceNumber;
+            }
 
-			public void setEncryptionModule(EncryptionModule encryptionModule) {
-				//do nothing
-			}
+            public void setEncryptionModule(EncryptionModule encryptionModule) {
+                //do nothing
+            }
 
-			public void setReferenceNumber(String referenceNumber) {
-				this.referenceNumber = referenceNumber;
-			}
+            public void setReferenceNumber(String referenceNumber) {
+                this.referenceNumber = referenceNumber;
+            }
 
         };
 

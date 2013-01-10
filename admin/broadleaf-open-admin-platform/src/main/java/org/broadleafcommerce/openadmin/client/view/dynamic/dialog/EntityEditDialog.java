@@ -48,9 +48,9 @@ import java.util.Map;
  *
  */
 public class EntityEditDialog extends Window {
-	
-	private DynamicForm dynamicForm;
-	private ItemEditedHandler handler;
+    
+    private DynamicForm dynamicForm;
+    private ItemEditedHandler handler;
     private VStack pictureStack;
     protected boolean showMedia = false;
     protected String mediaField;
@@ -61,21 +61,21 @@ public class EntityEditDialog extends Window {
     protected IButton saveButton;
     protected IButton cancelButton;
 
-	public EntityEditDialog() {
-		this.setIsModal(true);
-		this.setShowModalMask(true);
-		this.setShowMinimizeButton(false);
-		//this.setWidth(600);
-		this.setCanDragResize(true);
-		this.setOverflow(Overflow.VISIBLE);
+    public EntityEditDialog() {
+        this.setIsModal(true);
+        this.setShowModalMask(true);
+        this.setShowMinimizeButton(false);
+        //this.setWidth(600);
+        this.setCanDragResize(true);
+        this.setOverflow(Overflow.VISIBLE);
         this.setStyleName("blcFormView");
 
         hStack = new HStack();
         
-		VStack stack = new VStack();
+        VStack stack = new VStack();
         stack.setWidth100();
-		stack.setLayoutRightMargin(20);
-		dynamicForm = new DynamicForm();
+        stack.setLayoutRightMargin(20);
+        dynamicForm = new DynamicForm();
         dynamicForm.setHeight(175);
         dynamicForm.setWidth100();
         dynamicForm.setPadding(10);
@@ -107,11 +107,11 @@ public class EntityEditDialog extends Window {
         saveButton = new IButton("Save");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	if (dynamicForm.validate()) {
+                if (dynamicForm.validate()) {
                     saveButton.disable();
                     cancelButton.disable();
-            		dynamicForm.saveData(new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    dynamicForm.saveData(new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()== RPCResponse.STATUS_SUCCESS) {
                                 Record record = response.getData()[0];
                                 if (handler != null) {
@@ -124,16 +124,16 @@ public class EntityEditDialog extends Window {
                             }
                             saveButton.enable();
                             cancelButton.enable();
-						}
-            		});
-            	}
+                        }
+                    });
+                }
             }
         });
 
         cancelButton = new IButton("Cancel");
         cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	hide();
+                hide();
                 isHidden = true;
             }
         });
@@ -149,36 +149,36 @@ public class EntityEditDialog extends Window {
         hLayout.setLayoutBottomMargin(40);
         vLayout.addMember(hLayout);
         addItem(vLayout);
-	}
+    }
 
-	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
-		editNewRecord(null, dataSource, initialValues, handler, fieldNames, null);
-	}
+    public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
+        editNewRecord(null, dataSource, initialValues, handler, fieldNames, null);
+    }
 
-	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
+    public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
         pictureStack.setVisible(false);
         saveButton.enable();
         cancelButton.enable();
-		initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
-		this.handler = handler;
-		if (fieldNames != null && fieldNames.length > 0) {
-			dataSource.resetVisibilityOnly(fieldNames);
-		} else {
-			dataSource.resetPermanentFieldVisibility();
-		}
-		if (ignoreFields != null) {
-			for (String fieldName : ignoreFields) {
-				dataSource.getField(fieldName).setHidden(true);
-			}
-		}
-		if (title != null) {
-			this.setTitle(title);
-		} else {
-			this.setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
-		}
-		buildFields(dataSource, dynamicForm, null);
+        initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
+        this.handler = handler;
+        if (fieldNames != null && fieldNames.length > 0) {
+            dataSource.resetVisibilityOnly(fieldNames);
+        } else {
+            dataSource.resetPermanentFieldVisibility();
+        }
+        if (ignoreFields != null) {
+            for (String fieldName : ignoreFields) {
+                dataSource.getField(fieldName).setHidden(true);
+            }
+        }
+        if (title != null) {
+            this.setTitle(title);
+        } else {
+            this.setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
+        }
+        buildFields(dataSource, dynamicForm, null);
         dynamicForm.editNewRecord(initialValues);
-		show();
+        show();
         redraw();
         saveButton.setVisible(true);
         setHeight(20);
@@ -238,34 +238,34 @@ public class EntityEditDialog extends Window {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields, boolean readOnly) {
+    public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields, boolean readOnly) {
         saveButton.enable();
         cancelButton.enable();
         pictureStack.setVisible(false);
         if (showMedia && mediaField != null) {
             updateMedia(record.getAttribute(mediaField));
         }
-		this.handler = handler;
-		if (fieldNames != null && fieldNames.length > 0) {
-			dataSource.resetVisibilityOnly(fieldNames);
-		} else {
-			dataSource.resetPermanentFieldVisibility();
-		}
-		if (ignoreFields != null) {
-			for (String fieldName : ignoreFields) {
-				dataSource.getField(fieldName).setHidden(true);
-			}
-		}
-		if (title != null) {
-			this.setTitle(title);
-		} else {
-			this.setTitle("Edit entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
-		}
-		buildFields(dataSource, dynamicForm, record);
+        this.handler = handler;
+        if (fieldNames != null && fieldNames.length > 0) {
+            dataSource.resetVisibilityOnly(fieldNames);
+        } else {
+            dataSource.resetPermanentFieldVisibility();
+        }
+        if (ignoreFields != null) {
+            for (String fieldName : ignoreFields) {
+                dataSource.getField(fieldName).setHidden(true);
+            }
+        }
+        if (title != null) {
+            this.setTitle(title);
+        } else {
+            this.setTitle("Edit entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
+        }
+        buildFields(dataSource, dynamicForm, record);
         dynamicForm.editRecord(record);
         centerInPage();
-		setTop(70);
-		show();
+        setTop(70);
+        show();
         redraw();
         saveButton.setVisible(!readOnly);
         setHeight(20);
@@ -285,11 +285,11 @@ public class EntityEditDialog extends Window {
             setWidth(formWidth);
         }
         isHidden = false;
-	}
-	
-	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm, Record record) {
-		FormBuilder.buildForm(dataSource, dynamicForm, false, record);
-	}
+    }
+    
+    protected void buildFields(DataSource dataSource, DynamicForm dynamicForm, Record record) {
+        FormBuilder.buildForm(dataSource, dynamicForm, false, record);
+    }
 
     public boolean isShowMedia() {
         return showMedia;

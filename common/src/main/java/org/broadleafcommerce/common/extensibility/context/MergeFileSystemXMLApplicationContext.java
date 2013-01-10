@@ -49,59 +49,59 @@ import java.io.FileNotFoundException;
  */
 public class MergeFileSystemXMLApplicationContext extends AbstractXmlApplicationContext {
 
-	protected Resource[] configResources;
-	
-	protected Resource[] getConfigResources() {
-		return this.configResources;
-	}
-	
-	/**
-	 * Create a new MergeClassPathXMLApplicationContext, loading the definitions from the given files. Note,
-	 * all sourceLocation files will be merged using standard Spring configuration override rules. However, the patch
-	 * files are fully merged into the result of the sourceLocations simple merge. Patch merges are first executed according
-	 * to beans with the same id. Subsequent merges within a bean are executed against tagnames - ignoring any
-	 * further id attributes.
-	 * 
-	 * @param sourceLocations array of absolute file system paths for the source application context files
-	 * @param patchLocations array of absolute file system paths for the patch application context files
-	 * @throws BeansException
-	 */
-	public MergeFileSystemXMLApplicationContext(String[] sourceLocations, String[] patchLocations) throws BeansException {
-		this(sourceLocations, patchLocations, null);
-	}
-	
-	/**
-	 * Create a new MergeClassPathXMLApplicationContext, loading the definitions from the given files. Note,
-	 * all sourceLocation files will be merged using standard Spring configuration override rules. However, the patch
-	 * files are fully merged into the result of the sourceLocations simple merge. Patch merges are first executed according
-	 * to beans with the same id. Subsequent merges within a bean are executed against tagnames - ignoring any
-	 * further id attributes.
-	 * 
-	 * @param sourceLocations array of absolute file system paths for the source application context files
-	 * @param patchLocations array of absolute file system paths for the patch application context files
-	 * @param parent the parent context
-	 * @throws BeansException
-	 */
-	public MergeFileSystemXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
-		super(parent);
-		
-		ResourceInputStream[] sources;
-		ResourceInputStream[] patches;
-		try {
-			sources = new ResourceInputStream[sourceLocations.length];
-			for (int j=0;j<sourceLocations.length;j++){
-				File temp = new File(sourceLocations[j]);
-				sources[j] = new ResourceInputStream(new BufferedInputStream(new FileInputStream(temp)), sourceLocations[j]);
-			}
-			
-			patches = new ResourceInputStream[patchLocations.length];
-			for (int j=0;j<patches.length;j++){
-				File temp = new File(patchLocations[j]);
-				sources[j] = new ResourceInputStream(new BufferedInputStream(new FileInputStream(temp)), patchLocations[j]);
-			}
-		} catch (FileNotFoundException e) {
-			throw new FatalBeanException("Unable to merge context files", e);
-		}
+    protected Resource[] configResources;
+    
+    protected Resource[] getConfigResources() {
+        return this.configResources;
+    }
+    
+    /**
+     * Create a new MergeClassPathXMLApplicationContext, loading the definitions from the given files. Note,
+     * all sourceLocation files will be merged using standard Spring configuration override rules. However, the patch
+     * files are fully merged into the result of the sourceLocations simple merge. Patch merges are first executed according
+     * to beans with the same id. Subsequent merges within a bean are executed against tagnames - ignoring any
+     * further id attributes.
+     * 
+     * @param sourceLocations array of absolute file system paths for the source application context files
+     * @param patchLocations array of absolute file system paths for the patch application context files
+     * @throws BeansException
+     */
+    public MergeFileSystemXMLApplicationContext(String[] sourceLocations, String[] patchLocations) throws BeansException {
+        this(sourceLocations, patchLocations, null);
+    }
+    
+    /**
+     * Create a new MergeClassPathXMLApplicationContext, loading the definitions from the given files. Note,
+     * all sourceLocation files will be merged using standard Spring configuration override rules. However, the patch
+     * files are fully merged into the result of the sourceLocations simple merge. Patch merges are first executed according
+     * to beans with the same id. Subsequent merges within a bean are executed against tagnames - ignoring any
+     * further id attributes.
+     * 
+     * @param sourceLocations array of absolute file system paths for the source application context files
+     * @param patchLocations array of absolute file system paths for the patch application context files
+     * @param parent the parent context
+     * @throws BeansException
+     */
+    public MergeFileSystemXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
+        super(parent);
+        
+        ResourceInputStream[] sources;
+        ResourceInputStream[] patches;
+        try {
+            sources = new ResourceInputStream[sourceLocations.length];
+            for (int j=0;j<sourceLocations.length;j++){
+                File temp = new File(sourceLocations[j]);
+                sources[j] = new ResourceInputStream(new BufferedInputStream(new FileInputStream(temp)), sourceLocations[j]);
+            }
+            
+            patches = new ResourceInputStream[patchLocations.length];
+            for (int j=0;j<patches.length;j++){
+                File temp = new File(patchLocations[j]);
+                sources[j] = new ResourceInputStream(new BufferedInputStream(new FileInputStream(temp)), patchLocations[j]);
+            }
+        } catch (FileNotFoundException e) {
+            throw new FatalBeanException("Unable to merge context files", e);
+        }
 
         ImportProcessor importProcessor = new ImportProcessor(this);
         try {
@@ -111,8 +111,8 @@ public class MergeFileSystemXMLApplicationContext extends AbstractXmlApplication
             throw new FatalBeanException("Unable to merge source and patch locations", e);
         }
 
-		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
-		refresh();
-	}
+        this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
+        refresh();
+    }
 
 }

@@ -29,19 +29,19 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
-	
-	public GridStructureDisplay getAllCategoriesDisplay();
-	
-	public ExpandableGridStructureDisplay getProductOptionsDisplay();
-	
-	public ToolStripButton getGenerateSkusButton();
-	
-	public SubItemDisplay getSkusDisplay();
-	
-	public GridStructureDisplay getBundleItemsDisplay();
-	
-	public ToolStripButton getCloneProductButton();
+    
+    public GridStructureDisplay getAllCategoriesDisplay();
+    
+    public ExpandableGridStructureDisplay getProductOptionsDisplay();
+    
+    public ToolStripButton getGenerateSkusButton();
+    
+    public SubItemDisplay getSkusDisplay();
+    
+    public GridStructureDisplay getBundleItemsDisplay();
+    
+    public ToolStripButton getCloneProductButton();
 
-	public ToolStripButton getExportProductsButton();
+    public ToolStripButton getExportProductsButton();
 
 }

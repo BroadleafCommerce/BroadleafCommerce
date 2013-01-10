@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
  *
  */
 public class OfferDiscountType implements Serializable, BroadleafEnumerationType {
-	
+    
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferDiscountType> TYPES = new HashMap<String, OfferDiscountType>();
@@ -48,7 +48,7 @@ public class OfferDiscountType implements Serializable, BroadleafEnumerationType
     }
 
     public OfferDiscountType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -64,10 +64,10 @@ public class OfferDiscountType implements Serializable, BroadleafEnumerationType
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

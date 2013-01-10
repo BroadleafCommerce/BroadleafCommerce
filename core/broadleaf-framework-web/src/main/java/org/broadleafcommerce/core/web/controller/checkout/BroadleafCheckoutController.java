@@ -64,15 +64,15 @@ import java.util.*;
  */
 public class BroadleafCheckoutController extends AbstractCheckoutController {
 
-	private static final Log LOG = LogFactory.getLog(BroadleafCheckoutController.class);
-	
+    private static final Log LOG = LogFactory.getLog(BroadleafCheckoutController.class);
+    
     protected static String cartPageRedirect = "redirect:/cart";
     protected static String checkoutView = "checkout/checkout";
-	protected static String checkoutPageRedirect = "redirect:/checkout";
-	protected static String multishipView = "checkout/multiship";
+    protected static String checkoutPageRedirect = "redirect:/checkout";
+    protected static String multishipView = "checkout/multiship";
     protected static String multishipAddAddressView = "checkout/multishipAddAddressForm";
     protected static String multishipAddAddressSuccessView = "redirect:/checkout/multiship";
-	protected static String multishipSuccessView = "redirect:/checkout";
+    protected static String multishipSuccessView = "redirect:/checkout";
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
     
     /**
@@ -84,14 +84,14 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return the return path
      */
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) {
-    	Order cart = CartState.getCart();
-    	
-    	if (!(cart instanceof NullOrderImpl)) {
-			model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
-    	}
-    	
-    	populateModelWithShippingReferenceData(request, model);
-    	
+        Order cart = CartState.getCart();
+        
+        if (!(cart instanceof NullOrderImpl)) {
+            model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
+        }
+        
+        populateModelWithShippingReferenceData(request, model);
+        
         return getCheckoutView();
     }
     
@@ -105,12 +105,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return a redirect to /checkout
      * @throws PricingException 
      */
-	public String convertToSingleship(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-    	Order cart = CartState.getCart();
-		fulfillmentGroupService.collapseToOneFulfillmentGroup(cart, true);
-		return getCheckoutPageRedirect();
-	}
-	
+    public String convertToSingleship(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
+        Order cart = CartState.getCart();
+        fulfillmentGroupService.collapseToOneFulfillmentGroup(cart, true);
+        return getCheckoutPageRedirect();
+    }
+    
     /**
      * Attempts to attach the user's email to the order so that they may proceed anonymously
      * 
@@ -122,31 +122,31 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @throws ServiceException 
      */
     public String saveGlobalOrderDetails(HttpServletRequest request, Model model, 
-    		OrderInfoForm orderInfoForm, BindingResult result) throws ServiceException {
-    	Order cart = CartState.getCart();
+            OrderInfoForm orderInfoForm, BindingResult result) throws ServiceException {
+        Order cart = CartState.getCart();
 
         orderInfoFormValidator.validate(orderInfoForm, result);
         if (result.hasErrors()) {
-        	// We need to clear the email on error in case they are trying to edit it
-			try {
-				cart.setEmailAddress(null);
-				orderService.save(cart, false);
-			} catch (PricingException pe) {
-				LOG.error("Error when saving the email address for order confirmation to the cart", pe);
-			}
-			
-        	populateModelWithShippingReferenceData(request, model);
-    		return getCheckoutView();
+            // We need to clear the email on error in case they are trying to edit it
+            try {
+                cart.setEmailAddress(null);
+                orderService.save(cart, false);
+            } catch (PricingException pe) {
+                LOG.error("Error when saving the email address for order confirmation to the cart", pe);
+            }
+            
+            populateModelWithShippingReferenceData(request, model);
+            return getCheckoutView();
         }
-    	
-		try {
-			cart.setEmailAddress(orderInfoForm.getEmailAddress());
-			orderService.save(cart, false);
-		} catch (PricingException pe) {
-			LOG.error("Error when saving the email address for order confirmation to the cart", pe);
-		}
-		
-		return getCheckoutPageRedirect();	
+        
+        try {
+            cart.setEmailAddress(orderInfoForm.getEmailAddress());
+            orderService.save(cart, false);
+        } catch (PricingException pe) {
+            LOG.error("Error when saving the email address for order confirmation to the cart", pe);
+        }
+        
+        return getCheckoutPageRedirect();   
     }
 
     /**
@@ -163,20 +163,20 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return the return path
      * @throws ServiceException 
      */
-	public String saveSingleShip(HttpServletRequest request, HttpServletResponse response, Model model,
-			ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
+    public String saveSingleShip(HttpServletRequest request, HttpServletResponse response, Model model,
+            ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
 
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
             putFulfillmentOptionsAndEstimationOnModel(model);
             populateModelWithShippingReferenceData(request, model);
-        	model.addAttribute("states", stateService.findStates());
+            model.addAttribute("states", stateService.findStates());
             model.addAttribute("countries", countryService.findCountries());
             model.addAttribute("expirationMonths", populateExpirationMonths());
             model.addAttribute("expirationYears", populateExpirationYears());
             model.addAttribute("validShipping", false);
-        	return getCheckoutView();
+            return getCheckoutView();
         }
 
         FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
@@ -194,51 +194,51 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
 
     public String savePaymentForm(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-    	//TODO: Implement
+        //TODO: Implement
         return isAjaxRequest(request) ? getCheckoutView() : getCheckoutPageRedirect();
     }
 
-	/**
-	 * Renders the multiship page. This page is used by the user when shipping items
-	 * to different locations (or with different FulfillmentOptions) is desired.
-	 * 
-	 * Note that the default Broadleaf implementation will require the user to input
-	 * an Address and FulfillmentOption for each quantity of each DiscreteOrderItem.
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @return the return path
-	 */
-	public String showMultiship(HttpServletRequest request, HttpServletResponse response, Model model) {
-		Customer customer = CustomerState.getCustomer();
-		Order cart = CartState.getCart();
-		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
-    	model.addAttribute("customerAddresses", customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()));
-    	model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
+    /**
+     * Renders the multiship page. This page is used by the user when shipping items
+     * to different locations (or with different FulfillmentOptions) is desired.
+     * 
+     * Note that the default Broadleaf implementation will require the user to input
+     * an Address and FulfillmentOption for each quantity of each DiscreteOrderItem.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @return the return path
+     */
+    public String showMultiship(HttpServletRequest request, HttpServletResponse response, Model model) {
+        Customer customer = CustomerState.getCustomer();
+        Order cart = CartState.getCart();
+        model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
+        model.addAttribute("customerAddresses", customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()));
+        model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
         return getMultishipView();
-	}
-	
-	/**
-	 * Processes the given options for multiship. Validates that all options are
-	 * selected before performing any actions.
-	 * 
-	 * @see #showMultiship(HttpServletRequest, HttpServletResponse, Model)
-	 * 
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @param orderMultishipOptionForm
-	 * @return a redirect to the checkout page
-	 * @throws PricingException 
-	 * @throws ServiceException 
-	 */
+    }
+    
+    /**
+     * Processes the given options for multiship. Validates that all options are
+     * selected before performing any actions.
+     * 
+     * @see #showMultiship(HttpServletRequest, HttpServletResponse, Model)
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param orderMultishipOptionForm
+     * @return a redirect to the checkout page
+     * @throws PricingException 
+     * @throws ServiceException 
+     */
     public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model,
-    		OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException, ServiceException {
-    	Order cart = CartState.getCart();
-    	orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
-    	cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, true);
-    	return getMultishipSuccessView();
+            OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException, ServiceException {
+        Order cart = CartState.getCart();
+        orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
+        cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, true);
+        return getMultishipSuccessView();
     }
 
     /**
@@ -250,7 +250,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return the return path
      */
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
-    	model.addAttribute("states", stateService.findStates());
+        model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
         return getMultishipAddAddressView();
     }
@@ -268,40 +268,40 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @throws ServiceException 
      */
     public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
-    		 ShippingInfoForm addressForm, BindingResult result) throws ServiceException {
+             ShippingInfoForm addressForm, BindingResult result) throws ServiceException {
         multishipAddAddressFormValidator.validate(addressForm, result);
         if (result.hasErrors()) {
             return showMultishipAddAddress(request, response, model);
         }
-    	
-    	Address address = addressService.saveAddress(addressForm.getAddress());
-    	
-    	CustomerAddress customerAddress = customerAddressService.create();
-    	customerAddress.setAddressName(addressForm.getAddressName());
-    	customerAddress.setAddress(address);
-    	customerAddress.setCustomer(CustomerState.getCustomer());
-    	customerAddressService.saveCustomerAddress(customerAddress);
-    	
-    	//append current time to redirect to fix a problem with ajax caching in IE
-    	return getMultishipAddAddressSuccessView() + "?_=" + System.currentTimeMillis();
+        
+        Address address = addressService.saveAddress(addressForm.getAddress());
+        
+        CustomerAddress customerAddress = customerAddressService.create();
+        customerAddress.setAddressName(addressForm.getAddressName());
+        customerAddress.setAddress(address);
+        customerAddress.setCustomer(CustomerState.getCustomer());
+        customerAddressService.saveCustomerAddress(customerAddress);
+        
+        //append current time to redirect to fix a problem with ajax caching in IE
+        return getMultishipAddAddressSuccessView() + "?_=" + System.currentTimeMillis();
     }
 
     public String saveMultiShipInstruction(HttpServletRequest request, HttpServletResponse response, Model model,
-    		MultiShipInstructionForm instructionForm) throws ServiceException, PricingException {
-    	Order cart = CartState.getCart();
-    	FulfillmentGroup fulfillmentGroup = null;
-    	
-    	for (FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
-    		if (tempFulfillmentGroup.getId().equals(instructionForm.getFulfillmentGroupId())) {
-    			fulfillmentGroup = tempFulfillmentGroup;
-    		}
-    	}
-    	fulfillmentGroup.setPersonalMessage(instructionForm.getPersonalMessage());
-    	fulfillmentGroup.setDeliveryInstruction(instructionForm.getDeliveryMessage());
-    	fulfillmentGroupService.save(fulfillmentGroup);
-    	
-   	//append current time to redirect to fix a problem with ajax caching in IE
-   	return getCheckoutPageRedirect()+ "?_=" + System.currentTimeMillis();
+            MultiShipInstructionForm instructionForm) throws ServiceException, PricingException {
+        Order cart = CartState.getCart();
+        FulfillmentGroup fulfillmentGroup = null;
+        
+        for (FulfillmentGroup tempFulfillmentGroup : cart.getFulfillmentGroups()) {
+            if (tempFulfillmentGroup.getId().equals(instructionForm.getFulfillmentGroupId())) {
+                fulfillmentGroup = tempFulfillmentGroup;
+            }
+        }
+        fulfillmentGroup.setPersonalMessage(instructionForm.getPersonalMessage());
+        fulfillmentGroup.setDeliveryInstruction(instructionForm.getDeliveryMessage());
+        fulfillmentGroupService.save(fulfillmentGroup);
+        
+    //append current time to redirect to fix a problem with ajax caching in IE
+    return getCheckoutPageRedirect()+ "?_=" + System.currentTimeMillis();
    }
     
     /**
@@ -333,12 +333,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
             BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
-    	
-    	if (billingForm.getPaymentMethod() == null || "credit_card".equals(billingForm.getPaymentMethod())) {
-    		return completeSecureCreditCardCheckout(request, response, model, billingForm, result);
-    	} else {
-    		throw new IllegalArgumentException("Complete checkout called with payment Method " + billingForm.getPaymentMethod() + " which has not been implemented.");
-    	}
+        
+        if (billingForm.getPaymentMethod() == null || "credit_card".equals(billingForm.getPaymentMethod())) {
+            return completeSecureCreditCardCheckout(request, response, model, billingForm, result);
+        } else {
+            throw new IllegalArgumentException("Complete checkout called with payment Method " + billingForm.getPaymentMethod() + " which has not been implemented.");
+        }
     }
 
     /**
@@ -474,10 +474,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return boolean indicating whether or not the fulfillment groups on the cart have addresses.
      */
     protected boolean hasValidShippingAddresses(Order cart) {
-    	if (cart.getFulfillmentGroups() == null) {
-    		return false;
-    	}
-    	
+        if (cart.getFulfillmentGroups() == null) {
+            return false;
+        }
+        
         for (FulfillmentGroup fulfillmentGroup : cart.getFulfillmentGroups()) {
             if (fulfillmentGroup.getAddress() == null || fulfillmentGroup.getFulfillmentOption() == null) {
                 return false;
@@ -493,7 +493,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return boolean indicating whether or not the order has valid info
      */
     protected boolean hasValidOrderInfo(Order cart) {
-    	return StringUtils.isNotBlank(cart.getEmailAddress());
+        return StringUtils.isNotBlank(cart.getEmailAddress());
     }
 
     /**
@@ -502,7 +502,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     protected void putFulfillmentOptionsAndEstimationOnModel(Model model) {
         List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
         Order cart = CartState.getCart();
-        		
+                
         if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0 && hasValidShippingAddresses(cart)) {
             Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
             options.addAll(fulfillmentOptions);
@@ -570,7 +570,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-            	State state = stateService.findStateByAbbreviation(text);
+                State state = stateService.findStateByAbbreviation(text);
                 setValue(state);
             }
         });
@@ -585,27 +585,27 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
     
     protected void populateModelWithShippingReferenceData(HttpServletRequest request, Model model) {
-		String editOrderInfo = request.getParameter("edit-order-info");
-    	boolean hasValidOrderInfo; 
-		if (BooleanUtils.toBoolean(editOrderInfo)) {
-			hasValidOrderInfo = false;
-		} else {
-			hasValidOrderInfo = hasValidOrderInfo(CartState.getCart());
-		}
+        String editOrderInfo = request.getParameter("edit-order-info");
+        boolean hasValidOrderInfo; 
+        if (BooleanUtils.toBoolean(editOrderInfo)) {
+            hasValidOrderInfo = false;
+        } else {
+            hasValidOrderInfo = hasValidOrderInfo(CartState.getCart());
+        }
         model.addAttribute("validOrderInfo", hasValidOrderInfo);
-    	
-		String editShipping = request.getParameter("edit-shipping");
-    	boolean hasValidShipping; 
-		if (BooleanUtils.toBoolean(editShipping)) {
-			hasValidShipping = false;
-		} else {
-			hasValidShipping = hasValidShippingAddresses(CartState.getCart());
-		}
+        
+        String editShipping = request.getParameter("edit-shipping");
+        boolean hasValidShipping; 
+        if (BooleanUtils.toBoolean(editShipping)) {
+            hasValidShipping = false;
+        } else {
+            hasValidShipping = hasValidShippingAddresses(CartState.getCart());
+        }
         model.addAttribute("validShipping", hasValidShipping);
 
         putFulfillmentOptionsAndEstimationOnModel(model);
         
-    	model.addAttribute("states", stateService.findStates());
+        model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
         model.addAttribute("expirationMonths", populateExpirationMonths());
         model.addAttribute("expirationYears", populateExpirationYears());
@@ -615,36 +615,36 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         return cartPageRedirect;
     }
 
-	public String getCheckoutView() {
-		return checkoutView;
-	}
+    public String getCheckoutView() {
+        return checkoutView;
+    }
 
-	public String getCheckoutPageRedirect() {
-		return checkoutPageRedirect;
-	}
-	
-	public String getMultishipView() {
-		return multishipView;
-	}
-	
-	public String getMultishipAddAddressView() {
-		return multishipAddAddressView;
-	}
+    public String getCheckoutPageRedirect() {
+        return checkoutPageRedirect;
+    }
+    
+    public String getMultishipView() {
+        return multishipView;
+    }
+    
+    public String getMultishipAddAddressView() {
+        return multishipAddAddressView;
+    }
 
-	public String getMultishipSuccessView() {
-		return multishipSuccessView;
-	}
-	
-	public String getMultishipAddAddressSuccessView() {
-		return multishipAddAddressSuccessView;
-	}
+    public String getMultishipSuccessView() {
+        return multishipSuccessView;
+    }
+    
+    public String getMultishipAddAddressSuccessView() {
+        return multishipAddAddressSuccessView;
+    }
 
-	public String getBaseConfirmationView() {
-		return baseConfirmationView;
-	}
+    public String getBaseConfirmationView() {
+        return baseConfirmationView;
+    }
 
-	protected String getConfirmationView(String orderNumber) {
-		return getBaseConfirmationView() + "/" + orderNumber;
-	}
+    protected String getConfirmationView(String orderNumber) {
+        return getBaseConfirmationView() + "/" + orderNumber;
+    }
 
 }

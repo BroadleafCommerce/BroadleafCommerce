@@ -29,21 +29,21 @@ import java.util.Stack;
  */
 public class UIFactory extends HashMap<String, Display> {
 
-	private static final long serialVersionUID = 1L;
-	
-	private Stack<Display> currentView = new Stack<Display>();
-	private Stack<String> keyStack = new Stack<String>();
+    private static final long serialVersionUID = 1L;
+    
+    private Stack<Display> currentView = new Stack<Display>();
+    private Stack<String> keyStack = new Stack<String>();
 
-	public void getView(String value, final AsyncClient asyncClient) {
-		getView(value, true, true, asyncClient);
-	}
-	
-	public void getView(final String value, boolean clearCurrentView, final boolean storeView, final AsyncClient asyncClient) {
-		if (clearCurrentView) {
-			clearCurrentView();
-		}
-		Display view;
-		if (!containsKey(value)) {
+    public void getView(String value, final AsyncClient asyncClient) {
+        getView(value, true, true, asyncClient);
+    }
+    
+    public void getView(final String value, boolean clearCurrentView, final boolean storeView, final AsyncClient asyncClient) {
+        if (clearCurrentView) {
+            clearCurrentView();
+        }
+        Display view;
+        if (!containsKey(value)) {
             ModuleFactory.getInstance().createAsync(value, new AsyncClient() {
                 @Override
                 public void onSuccess(Object instance) {
@@ -51,7 +51,7 @@ public class UIFactory extends HashMap<String, Display> {
                         put(value, (Display) instance);
                     }
                     currentView.push((Display) instance);
-		            keyStack.push(value);
+                    keyStack.push(value);
                     asyncClient.onSuccess(instance);
                 }
 
@@ -61,28 +61,28 @@ public class UIFactory extends HashMap<String, Display> {
                 }
             });
 
-		} else {
-			view = get(value);
+        } else {
+            view = get(value);
             currentView.push(view);
-		    keyStack.push(value);
+            keyStack.push(value);
             asyncClient.onSuccess(view);
-		}
-	}
-	
-	public void getPresenter(String value, AsyncClient asyncClient) {
-		ModuleFactory.getInstance().createAsync(value, asyncClient);
-	}
-	
-	public void clearCurrentView() {
-		for (Display display : currentView) {
-			display.destroy();
-		}
-		currentView.clear();
-		keyStack.clear();
-	}
+        }
+    }
+    
+    public void getPresenter(String value, AsyncClient asyncClient) {
+        ModuleFactory.getInstance().createAsync(value, asyncClient);
+    }
+    
+    public void clearCurrentView() {
+        for (Display display : currentView) {
+            display.destroy();
+        }
+        currentView.clear();
+        keyStack.clear();
+    }
 
-	public boolean equalsCurrentView(String key) {
-		return !(keyStack.isEmpty() || !keyStack.peek().equals(key));
-	}
+    public boolean equalsCurrentView(String key) {
+        return !(keyStack.isEmpty() || !keyStack.peek().equals(key));
+    }
 
 }

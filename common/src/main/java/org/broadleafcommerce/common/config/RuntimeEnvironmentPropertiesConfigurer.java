@@ -79,19 +79,19 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
 
     
     static {
-    	defaultEnvironments.add("production");
-    	defaultEnvironments.add("staging");
-    	defaultEnvironments.add("integrationqa");
-    	defaultEnvironments.add("integrationdev");
-    	defaultEnvironments.add("development");
-    	defaultEnvironments.add("local");
-    	
-		blcPropertyLocations.add(new ClassPathResource("config/bc/admin/"));
-		blcPropertyLocations.add(new ClassPathResource("config/bc/"));
-		blcPropertyLocations.add(new ClassPathResource("config/bc/cms/"));
-		blcPropertyLocations.add(new ClassPathResource("config/bc/web/"));
-		
-		defaultPropertyLocations.add(new ClassPathResource("runtime-properties/"));
+        defaultEnvironments.add("production");
+        defaultEnvironments.add("staging");
+        defaultEnvironments.add("integrationqa");
+        defaultEnvironments.add("integrationdev");
+        defaultEnvironments.add("development");
+        defaultEnvironments.add("local");
+        
+        blcPropertyLocations.add(new ClassPathResource("config/bc/admin/"));
+        blcPropertyLocations.add(new ClassPathResource("config/bc/"));
+        blcPropertyLocations.add(new ClassPathResource("config/bc/cms/"));
+        blcPropertyLocations.add(new ClassPathResource("config/bc/web/"));
+        
+        defaultPropertyLocations.add(new ClassPathResource("runtime-properties/"));
     }
 
     protected String defaultEnvironment = "development";
@@ -101,23 +101,23 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     protected StringValueResolver stringValueResolver;
 
     public RuntimeEnvironmentPropertiesConfigurer() {
-    	super();
-    	setIgnoreUnresolvablePlaceholders(true); // This default will get overriden by user options if present
+        super();
+        setIgnoreUnresolvablePlaceholders(true); // This default will get overriden by user options if present
     }
 
     public void afterPropertiesSet() throws IOException {
-    	// If no environment override has been specified, used the default environments
-    	if (environments == null || environments.size() == 0) {
-    		environments = defaultEnvironments;
-    	}
-    	
-    	// Prepend the default property locations to the specified property locations (if any)
-		Set<Resource> combinedLocations = new LinkedHashSet<Resource>();
-		combinedLocations.addAll(defaultPropertyLocations);
-    	if (propertyLocations != null && propertyLocations.size() > 0) {
-    		combinedLocations.addAll(propertyLocations);
-    	}
-    	propertyLocations = combinedLocations;
+        // If no environment override has been specified, used the default environments
+        if (environments == null || environments.size() == 0) {
+            environments = defaultEnvironments;
+        }
+        
+        // Prepend the default property locations to the specified property locations (if any)
+        Set<Resource> combinedLocations = new LinkedHashSet<Resource>();
+        combinedLocations.addAll(defaultPropertyLocations);
+        if (propertyLocations != null && propertyLocations.size() > 0) {
+            combinedLocations.addAll(propertyLocations);
+        }
+        propertyLocations = combinedLocations;
     
         if (!environments.contains(defaultEnvironment)) {
             throw new AssertionError("Default environment '" + defaultEnvironment + "' not listed in environment list");
@@ -176,18 +176,18 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         }
         
         if (LOG.isDebugEnabled()) {
-	        Properties props = new Properties();
-	        for (Resource resource : allLocations) {
-	            if (resource.exists()) {
-	                props = new Properties(props);
-	                props.load(resource.getInputStream());
-	                for (Entry<Object, Object> entry : props.entrySet()) {
-	                	LOG.debug("Read " + entry.getKey() + " as " + entry.getValue());
-	                }
-	            } else {
-	                LOG.debug("Unable to locate resource: " + resource.getFilename());
-	            }
-	        }
+            Properties props = new Properties();
+            for (Resource resource : allLocations) {
+                if (resource.exists()) {
+                    props = new Properties(props);
+                    props.load(resource.getInputStream());
+                    for (Entry<Object, Object> entry : props.entrySet()) {
+                        LOG.debug("Read " + entry.getKey() + " as " + entry.getValue());
+                    }
+                } else {
+                    LOG.debug("Unable to locate resource: " + resource.getFilename());
+                }
+            }
         }
 
 
@@ -259,10 +259,10 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     }
 
     @Override
-	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
+    protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
         super.processProperties(beanFactoryToProcess, props);
-		stringValueResolver = new PlaceholderResolvingStringValueResolver(props);
-	}
+        stringValueResolver = new PlaceholderResolvingStringValueResolver(props);
+    }
 
     /**
      * Sets the default environment name, used when the runtime environment
@@ -297,33 +297,33 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
 
     private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
 
-		private final PropertyPlaceholderHelper helper;
+        private final PropertyPlaceholderHelper helper;
 
-		private final PropertyPlaceholderHelper.PlaceholderResolver resolver;
+        private final PropertyPlaceholderHelper.PlaceholderResolver resolver;
 
-		public PlaceholderResolvingStringValueResolver(Properties props) {
-			this.helper = new PropertyPlaceholderHelper("${", "}", ":", true);
-			this.resolver = new PropertyPlaceholderConfigurerResolver(props);
-		}
+        public PlaceholderResolvingStringValueResolver(Properties props) {
+            this.helper = new PropertyPlaceholderHelper("${", "}", ":", true);
+            this.resolver = new PropertyPlaceholderConfigurerResolver(props);
+        }
 
-		public String resolveStringValue(String strVal) throws BeansException {
-			String value = this.helper.replacePlaceholders(strVal, this.resolver);
-			return (value.equals("") ? null : value);
-		}
-	}
+        public String resolveStringValue(String strVal) throws BeansException {
+            String value = this.helper.replacePlaceholders(strVal, this.resolver);
+            return (value.equals("") ? null : value);
+        }
+    }
 
-	private class PropertyPlaceholderConfigurerResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
+    private class PropertyPlaceholderConfigurerResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
 
-		private final Properties props;
+        private final Properties props;
 
-		private PropertyPlaceholderConfigurerResolver(Properties props) {
-			this.props = props;
-		}
+        private PropertyPlaceholderConfigurerResolver(Properties props) {
+            this.props = props;
+        }
 
-		public String resolvePlaceholder(String placeholderName) {
-			return RuntimeEnvironmentPropertiesConfigurer.this.resolvePlaceholder(placeholderName, props, 1);
-		}
-	}
+        public String resolvePlaceholder(String placeholderName) {
+            return RuntimeEnvironmentPropertiesConfigurer.this.resolvePlaceholder(placeholderName, props, 1);
+        }
+    }
 
     public StringValueResolver getStringValueResolver() {
         return stringValueResolver;

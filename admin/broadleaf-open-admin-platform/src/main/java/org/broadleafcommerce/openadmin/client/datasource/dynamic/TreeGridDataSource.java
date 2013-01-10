@@ -33,21 +33,21 @@ import java.util.List;
  *
  */
 public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
-	
-	protected String rootId;
-	protected String rootName;
+    
+    protected String rootId;
+    protected String rootName;
 
-	/**
-	 * @param name
-	 * @param persistencePerspective
-	 * @param service
-	 * @param modules
-	 */
-	public TreeGridDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, String rootId, String rootName) {
-		super(name, persistencePerspective, service, modules);
-		this.rootId = rootId;
-		this.rootName = rootName;
-	}
+    /**
+     * @param name
+     * @param persistencePerspective
+     * @param service
+     * @param modules
+     */
+    public TreeGridDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, String rootId, String rootName) {
+        super(name, persistencePerspective, service, modules);
+        this.rootId = rootId;
+        this.rootName = rootName;
+    }
 
     public void setupGridFields() {
         setupGridFields(new String[]{});
@@ -61,128 +61,128 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         setupGridFields(fieldNames, canEdit, "*", "*");
     }
 
-	public void setupGridFields(String[] fieldNames, Boolean[] canEdit, String initialFieldWidth, String otherFieldWidth) {
+    public void setupGridFields(String[] fieldNames, Boolean[] canEdit, String initialFieldWidth, String otherFieldWidth) {
         if (fieldNames.length != canEdit.length) {
             throw new IllegalArgumentException("The fieldNames and canEdit array parameters must be of equal length");
         }
-		if (fieldNames != null && fieldNames.length > 0) {
-			resetProminenceOnly(fieldNames);
-		}
-		
-		String[] sortedFieldNames = new String[fieldNames.length];
-		for (int j=0;j<fieldNames.length;j++) {
-			sortedFieldNames[j] = fieldNames[j];
-		}
-		Arrays.sort(sortedFieldNames);
-		
-		DataSourceField[] fields = getFields();
+        if (fieldNames != null && fieldNames.length > 0) {
+            resetProminenceOnly(fieldNames);
+        }
+        
+        String[] sortedFieldNames = new String[fieldNames.length];
+        for (int j=0;j<fieldNames.length;j++) {
+            sortedFieldNames[j] = fieldNames[j];
+        }
+        Arrays.sort(sortedFieldNames);
+        
+        DataSourceField[] fields = getFields();
         TreeGridField[] gridFields = new TreeGridField[fields.length];
         int j = 0;
         List<DataSourceField> prominentFields = new ArrayList<DataSourceField>();
         for (DataSourceField field : fields) {
-        	if (field.getAttributeAsBoolean("prominent")) {
-        		prominentFields.add(field);
-        	}
+            if (field.getAttributeAsBoolean("prominent")) {
+                prominentFields.add(field);
+            }
         }
         int availableSlots = fieldNames==null?4:fieldNames.length;
         if (availableSlots == 0 && prominentFields.size() == 0) {
             throw new RuntimeException("You have explicitly specified zero length array for fieldsNames and have no fields defined as prominent via AdminPresentation annotation. Cannot proceed with a tree grid without defining at least one column to show.");
         }
         for (DataSourceField field : prominentFields) {
-        	String columnWidth = field.getAttribute("columnWidth");
-        	gridFields[j] = new TreeGridField(field.getName(), field.getTitle(), j==0?200:150);
-        	if (j == 0) {
-        		if (fieldNames == null || fieldNames.length == 0) {
-        			gridFields[j].setFrozen(true);
-        		}
-        		if (columnWidth != null) {
-        			gridFields[j].setWidth(columnWidth);
-        		} else if (initialFieldWidth != null) {
-        			gridFields[j].setWidth(initialFieldWidth);
-        		}
-        	} else {
-        		if (columnWidth != null) {
-        			gridFields[j].setWidth(columnWidth);
-        		} else {
-        			gridFields[j].setWidth(otherFieldWidth);
-        		}
-        	}
-        	gridFields[j].setHidden(false);
-        	int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
-        	if (pos >= 0) {
-        		gridFields[j].setCanEdit(canEdit[pos]);
-        	}
-        	j++;
-        	availableSlots--;
+            String columnWidth = field.getAttribute("columnWidth");
+            gridFields[j] = new TreeGridField(field.getName(), field.getTitle(), j==0?200:150);
+            if (j == 0) {
+                if (fieldNames == null || fieldNames.length == 0) {
+                    gridFields[j].setFrozen(true);
+                }
+                if (columnWidth != null) {
+                    gridFields[j].setWidth(columnWidth);
+                } else if (initialFieldWidth != null) {
+                    gridFields[j].setWidth(initialFieldWidth);
+                }
+            } else {
+                if (columnWidth != null) {
+                    gridFields[j].setWidth(columnWidth);
+                } else {
+                    gridFields[j].setWidth(otherFieldWidth);
+                }
+            }
+            gridFields[j].setHidden(false);
+            int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
+            if (pos >= 0) {
+                gridFields[j].setCanEdit(canEdit[pos]);
+            }
+            j++;
+            availableSlots--;
         }
         for (DataSourceField field : fields) {
-        	if (!prominentFields.contains(field)) {
-        		String columnWidth = field.getAttribute("columnWidth");
-        		gridFields[j] = new TreeGridField(field.getName(), field.getTitle(), j==0?200:150);
-        		if (field.getAttributeAsBoolean("permanentlyHidden")) {
-        			gridFields[j].setHidden(true);
-	        		gridFields[j].setCanHide(false);
-        		} else if (field.getAttributeAsBoolean("hidden")) {
-        			gridFields[j].setHidden(true);
-        		} else if (availableSlots <= 0) {
-	        		gridFields[j].setHidden(true);
-	        	} else {
-	        		if (j == 0) {
-	        			if (fieldNames == null || fieldNames.length == 0) {
-	            			gridFields[j].setFrozen(true);
-	            		}
-	            		if (columnWidth != null) {
-	            			gridFields[j].setWidth(columnWidth);
-	            		} else if (initialFieldWidth != null) {
-	            			gridFields[j].setWidth(initialFieldWidth);
-	            		}
-	            	} else {
-	            		if (columnWidth != null) {
-	            			gridFields[j].setWidth(columnWidth);
-	            		} else {
-	            			gridFields[j].setWidth(otherFieldWidth);
-	            		}
-	            	}
-	        		int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
-	            	if (pos >= 0) {
-	            		gridFields[j].setCanEdit(canEdit[pos]);
-	            	}
-	        		availableSlots--;
-	        	}
-        		j++;
-        	}
+            if (!prominentFields.contains(field)) {
+                String columnWidth = field.getAttribute("columnWidth");
+                gridFields[j] = new TreeGridField(field.getName(), field.getTitle(), j==0?200:150);
+                if (field.getAttributeAsBoolean("permanentlyHidden")) {
+                    gridFields[j].setHidden(true);
+                    gridFields[j].setCanHide(false);
+                } else if (field.getAttributeAsBoolean("hidden")) {
+                    gridFields[j].setHidden(true);
+                } else if (availableSlots <= 0) {
+                    gridFields[j].setHidden(true);
+                } else {
+                    if (j == 0) {
+                        if (fieldNames == null || fieldNames.length == 0) {
+                            gridFields[j].setFrozen(true);
+                        }
+                        if (columnWidth != null) {
+                            gridFields[j].setWidth(columnWidth);
+                        } else if (initialFieldWidth != null) {
+                            gridFields[j].setWidth(initialFieldWidth);
+                        }
+                    } else {
+                        if (columnWidth != null) {
+                            gridFields[j].setWidth(columnWidth);
+                        } else {
+                            gridFields[j].setWidth(otherFieldWidth);
+                        }
+                    }
+                    int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
+                    if (pos >= 0) {
+                        gridFields[j].setCanEdit(canEdit[pos]);
+                    }
+                    availableSlots--;
+                }
+                j++;
+            }
         }
         ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
-        	int pos = 0;
-        	for (String fieldName : fieldNames) {
-        		((ListGrid) getAssociatedGrid()).reorderField(((ListGrid) getAssociatedGrid()).getFieldNum(fieldName), pos);
-        		pos++;
-        	}
+            int pos = 0;
+            for (String fieldName : fieldNames) {
+                ((ListGrid) getAssociatedGrid()).reorderField(((ListGrid) getAssociatedGrid()).getFieldNum(fieldName), pos);
+                pos++;
+            }
         }
         getAssociatedGrid().setHilites(hilites);
-	}
-	
-	@Override
-	public void resetPermanentFieldVisibility(String... fieldNames) {
-		super.resetPermanentFieldVisibility(fieldNames);
-		((ListGrid) getAssociatedGrid()).refreshFields();
-	}
+    }
+    
+    @Override
+    public void resetPermanentFieldVisibility(String... fieldNames) {
+        super.resetPermanentFieldVisibility(fieldNames);
+        ((ListGrid) getAssociatedGrid()).refreshFields();
+    }
 
-	public String getRootId() {
-		return rootId;
-	}
+    public String getRootId() {
+        return rootId;
+    }
 
-	public void setRootId(String root) {
-		this.rootId = root;
-	}
+    public void setRootId(String root) {
+        this.rootId = root;
+    }
 
-	public String getRootName() {
-		return rootName;
-	}
+    public String getRootName() {
+        return rootName;
+    }
 
-	public void setRootName(String rootName) {
-		this.rootName = rootName;
-	}
+    public void setRootName(String rootName) {
+        this.rootName = rootName;
+    }
 
 }

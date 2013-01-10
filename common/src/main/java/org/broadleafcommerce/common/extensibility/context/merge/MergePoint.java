@@ -45,47 +45,47 @@ import java.util.List;
  *
  */
 public class MergePoint {
-	
-	private static final Log LOG = LogFactory.getLog(MergePoint.class);
-	
-	private MergeHandler handler;
-	private Document doc1;
-	private Document doc2;
-	private XPath xPath;
-	
-	public MergePoint(MergeHandler handler, Document doc1, Document doc2) {
-		this.handler = handler;
-		this.doc1 = doc1;
-		this.doc2 = doc2;
-		XPathFactory factory=XPathFactory.newInstance();
-		xPath=factory.newXPath();
-	}
-	
-	/**
-	 * Execute the merge operation and also provide a list of nodes that have already been
-	 * merged. It is up to the handler implementation to respect or ignore this list.
-	 * 
-	 * @param exhaustedNodes
-	 * @return list of merged nodes
-	 * @throws XPathExpressionException
-	 */
-	public Node[] merge(List<Node> exhaustedNodes) throws XPathExpressionException, TransformerException {
-		return merge(handler, exhaustedNodes);
-	}
-	
-	private Node[] merge(MergeHandler handler, List<Node> exhaustedNodes) throws XPathExpressionException, TransformerException {
-		if (LOG.isDebugEnabled()) {
-    		LOG.debug("Processing handler: " + handler.getXPath());
-    	}
-		if (handler.getChildren() != null) {
-			MergeHandler[] children = handler.getChildren();
+    
+    private static final Log LOG = LogFactory.getLog(MergePoint.class);
+    
+    private MergeHandler handler;
+    private Document doc1;
+    private Document doc2;
+    private XPath xPath;
+    
+    public MergePoint(MergeHandler handler, Document doc1, Document doc2) {
+        this.handler = handler;
+        this.doc1 = doc1;
+        this.doc2 = doc2;
+        XPathFactory factory=XPathFactory.newInstance();
+        xPath=factory.newXPath();
+    }
+    
+    /**
+     * Execute the merge operation and also provide a list of nodes that have already been
+     * merged. It is up to the handler implementation to respect or ignore this list.
+     * 
+     * @param exhaustedNodes
+     * @return list of merged nodes
+     * @throws XPathExpressionException
+     */
+    public Node[] merge(List<Node> exhaustedNodes) throws XPathExpressionException, TransformerException {
+        return merge(handler, exhaustedNodes);
+    }
+    
+    private Node[] merge(MergeHandler handler, List<Node> exhaustedNodes) throws XPathExpressionException, TransformerException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Processing handler: " + handler.getXPath());
+        }
+        if (handler.getChildren() != null) {
+            MergeHandler[] children = handler.getChildren();
             for (MergeHandler aChildren : children) {
                 Node[] temp = merge(aChildren, exhaustedNodes);
                 if (temp != null) {
                     Collections.addAll(exhaustedNodes, temp);
                 }
             }
-		}
+        }
         String[] xPaths = handler.getXPath().split(" ");
         List<Node> nodeList1 = new ArrayList<Node>();
         List<Node> nodeList2 = new ArrayList<Node>();
@@ -105,9 +105,9 @@ public class MergePoint {
                 }
             }
         }
-		if (nodeList1 != null && nodeList2 != null) {
-			return handler.merge(nodeList1, nodeList2, exhaustedNodes);
-		}
-		return null;
-	}
+        if (nodeList1 != null && nodeList2 != null) {
+            return handler.merge(nodeList1, nodeList2, exhaustedNodes);
+        }
+        return null;
+    }
 }

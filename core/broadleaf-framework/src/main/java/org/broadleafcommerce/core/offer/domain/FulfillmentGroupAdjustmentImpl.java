@@ -168,7 +168,7 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     
     @Override
     public void setValue(Money value) {
-    	this.value = value.getAmount();
+        this.value = value.getAmount();
     }
 
     @Override

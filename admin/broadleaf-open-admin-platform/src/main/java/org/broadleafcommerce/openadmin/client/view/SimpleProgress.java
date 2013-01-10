@@ -27,25 +27,25 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessPro
  *
  */
 public class SimpleProgress extends Progressbar implements Progress {
-	
-	private int barValue;
-	private Timer timer;
-	private boolean isActive;
-	private Double current = 1D;
-	
-	public SimpleProgress(Integer height) {
-		this(null, height);
-	}
+    
+    private int barValue;
+    private Timer timer;
+    private boolean isActive;
+    private Double current = 1D;
+    
+    public SimpleProgress(Integer height) {
+        this(null, height);
+    }
 
-	public SimpleProgress(Integer width, Integer height) {
-		setHeight(height);  
-		if (width != null) setWidth(height);
+    public SimpleProgress(Integer width, Integer height) {
+        setHeight(height);  
+        if (width != null) setWidth(height);
         setVertical(false); 
         timer = new Timer() {  
             public void run() {
-            	//asymptote calculation
-            	Double factor = 1D/current;
-            	current += .009D;
+                //asymptote calculation
+                Double factor = 1D/current;
+                current += .009D;
                 barValue = (int) (100 - 100D * factor);
                 setPercentDone(barValue);
                 if(isActive)  
@@ -53,79 +53,79 @@ public class SimpleProgress extends Progressbar implements Progress {
             }  
         };
         setOpacity(50);
-	}
-	
-	private void finalizeProgress(final Stoppable progressContainer) {
-		final IntContainer container = new IntContainer(100);
-		Timer timer = new Timer() {  
+    }
+    
+    private void finalizeProgress(final Stoppable progressContainer) {
+        final IntContainer container = new IntContainer(100);
+        Timer timer = new Timer() {  
             public void run() { 
                 if (container.getVal() > 0) {  
-                	setPercentDone(container.getVal());
-                	container.setVal(-1);
+                    setPercentDone(container.getVal());
+                    container.setVal(-1);
                     schedule(10); 
                 } else if (container.getVal() == -1){
-                	container.setVal(0);
-                	schedule(500);
+                    container.setVal(0);
+                    schedule(500);
                 } else {
-                	setOpacity(50);
-                	setPercentDone(container.getVal());
-                	if (progressContainer != null) {
-                		progressContainer.finalizeProgress();
-                	}
+                    setOpacity(50);
+                    setPercentDone(container.getVal());
+                    if (progressContainer != null) {
+                        progressContainer.finalizeProgress();
+                    }
                 }
             }  
         };
         timer.schedule(10);
-	}
-	
-	public void startProgress() {
-		isActive = true;
-		barValue = 0;  
-		current = 1D;
-		setOpacity(100);
+    }
+    
+    public void startProgress() {
+        isActive = true;
+        barValue = 0;  
+        current = 1D;
+        setOpacity(100);
         setPercentDone(barValue);
         timer.schedule(50);
-	}
-	
-	public void stopProgress(Stoppable progressContainer) {
-		isActive = false;
-		timer.cancel();
-		finalizeProgress(progressContainer);
-	}
-	
-	public void stopProgress() {
-		isActive = false;
-		timer.cancel();
-		finalizeProgress(null);
-	}
-	
-	public Boolean isActive() {
-		return isActive;
-	}
-	
-	private static class IntContainer {
-		
-		public IntContainer(int val) {
-			this.val = val;
-		}
-		
-		int val;
+    }
+    
+    public void stopProgress(Stoppable progressContainer) {
+        isActive = false;
+        timer.cancel();
+        finalizeProgress(progressContainer);
+    }
+    
+    public void stopProgress() {
+        isActive = false;
+        timer.cancel();
+        finalizeProgress(null);
+    }
+    
+    public Boolean isActive() {
+        return isActive;
+    }
+    
+    private static class IntContainer {
+        
+        public IntContainer(int val) {
+            this.val = val;
+        }
+        
+        int val;
 
-		/**
-		 * @return the val
-		 */
-		public int getVal() {
-			return val;
-		}
+        /**
+         * @return the val
+         */
+        public int getVal() {
+            return val;
+        }
 
-		/**
-		 * @param val the val to set
-		 */
-		public void setVal(int val) {
-			this.val = val;
-		}
-		
-	}
+        /**
+         * @param val the val to set
+         */
+        public void setVal(int val) {
+            this.val = val;
+        }
+        
+    }
 
     @Override
     public void setDisplay(ServerProcessProgressWindow window) {

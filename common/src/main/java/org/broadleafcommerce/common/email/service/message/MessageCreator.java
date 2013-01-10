@@ -33,18 +33,18 @@ public abstract class MessageCreator {
     private JavaMailSender mailSender;
         
     public MessageCreator(JavaMailSender mailSender) {
-    	this.mailSender = mailSender;
+        this.mailSender = mailSender;
     }
 
     public void sendMessage(final HashMap<String,Object> props) throws MailException {
-    	MimeMessagePreparator preparator = buildMimeMessagePreparator(props);
+        MimeMessagePreparator preparator = buildMimeMessagePreparator(props);
         this.mailSender.send(preparator);
     }
     
     public abstract String buildMessageBody(EmailInfo info, HashMap<String,Object> props);
     
     public MimeMessagePreparator buildMimeMessagePreparator(final HashMap<String,Object> props) {
-    	 MimeMessagePreparator preparator = new MimeMessagePreparator() {
+         MimeMessagePreparator preparator = new MimeMessagePreparator() {
              public void prepare(MimeMessage mimeMessage) throws Exception {
                  EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.getType());
                  EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.getType());
@@ -59,7 +59,7 @@ public abstract class MessageCreator {
                      message.setCc(emailUser.getCCAddresses());
                  }
                  String messageBody = info.getMessageBody();
-                 if (messageBody == null) {                	 
+                 if (messageBody == null) {                  
                      messageBody = buildMessageBody(info, props);
                  }
                  message.setText(messageBody, true);
@@ -70,14 +70,14 @@ public abstract class MessageCreator {
              }
          };
          return preparator;
-    	    	
+                
     }
 
-	public JavaMailSender getMailSender() {
-		return mailSender;
-	}
+    public JavaMailSender getMailSender() {
+        return mailSender;
+    }
 
-	public void setMailSender(JavaMailSender mailSender) {
-		this.mailSender = mailSender;
-	}
+    public void setMailSender(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 }

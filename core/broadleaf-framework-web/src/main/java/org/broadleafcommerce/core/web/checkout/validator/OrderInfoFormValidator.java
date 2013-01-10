@@ -32,14 +32,14 @@ public class OrderInfoFormValidator implements Validator {
     }
 
     public void validate(Object obj, Errors errors) {
-    	OrderInfoForm orderInfoForm = (OrderInfoForm) obj;
+        OrderInfoForm orderInfoForm = (OrderInfoForm) obj;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailAddress", "emailAddress.required");
         
         if (!errors.hasErrors()) {
-			if (!EmailValidator.getInstance().isValid(orderInfoForm.getEmailAddress())) {
-				errors.rejectValue("emailAddress", "emailAddress.invalid", null, null);
-			}
+            if (!EmailValidator.getInstance().isValid(orderInfoForm.getEmailAddress())) {
+                errors.rejectValue("emailAddress", "emailAddress.invalid", null, null);
+            }
         }
     }
 }

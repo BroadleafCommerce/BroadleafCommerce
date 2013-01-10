@@ -52,140 +52,140 @@ import org.mvel2.ParserContext;
  */
 public abstract class AbstractBaseProcessor implements BaseProcessor {
 
-	private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
-	private static final Map EXPRESSION_CACHE = new LRUMap(1000);
-	
-	protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
-    	CandidatePromotionItems candidates = new CandidatePromotionItems();
-    	if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
-    		candidates.setMatchedQualifier(true);
-    	} else {
-    		for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
-    			checkForItemRequirements(candidates, criteria, promotableOrderItems, true);
-    			if (!candidates.isMatchedQualifier()) {
-    				break;
-    			}
-    		}    		
-    	}
-    	
-    	if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
+    private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
+    private static final Map EXPRESSION_CACHE = new LRUMap(1000);
+    
+    protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
+        CandidatePromotionItems candidates = new CandidatePromotionItems();
+        if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
+            candidates.setMatchedQualifier(true);
+        } else {
+            for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
+                checkForItemRequirements(candidates, criteria, promotableOrderItems, true);
+                if (!candidates.isMatchedQualifier()) {
+                    break;
+                }
+            }           
+        }
+        
+        if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
             for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
-	    	    checkForItemRequirements(candidates, criteria, promotableOrderItems, false);
+                checkForItemRequirements(candidates, criteria, promotableOrderItems, false);
                 if (!candidates.isMatchedQualifier()) {
                     break;
                 }
             }
-    	}
-    	
-		if (candidates.isMatchedQualifier()) {
-			if (! meetsItemQualifierSubtotal(offer, candidates)) {
-				candidates.setMatchedQualifier(false);
-			}
-		}    	
-    	
-    	return candidates;
+        }
+        
+        if (candidates.isMatchedQualifier()) {
+            if (! meetsItemQualifierSubtotal(offer, candidates)) {
+                candidates.setMatchedQualifier(false);
+            }
+        }       
+        
+        return candidates;
     }
-	
-	private boolean isEmpty(Collection<? extends Object> collection) {
-		return (collection == null || collection.size() == 0);
-	}
+    
+    private boolean isEmpty(Collection<? extends Object> collection) {
+        return (collection == null || collection.size() == 0);
+    }
 
-	private boolean hasPositiveValue(Money money) {
-		return (money != null && money.greaterThan(Money.ZERO));
-	}
-	
-	protected boolean meetsItemQualifierSubtotal(Offer offer, CandidatePromotionItems candidateItem) {
-		Money qualifyingSubtotal = offer.getQualifyingItemSubTotal(); 
-		if (! hasPositiveValue(qualifyingSubtotal)) {
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Offer " + offer.getName() + " does not have an item subtotal requirement.");
-			}
-			return true;
-		}
+    private boolean hasPositiveValue(Money money) {
+        return (money != null && money.greaterThan(Money.ZERO));
+    }
+    
+    protected boolean meetsItemQualifierSubtotal(Offer offer, CandidatePromotionItems candidateItem) {
+        Money qualifyingSubtotal = offer.getQualifyingItemSubTotal(); 
+        if (! hasPositiveValue(qualifyingSubtotal)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Offer " + offer.getName() + " does not have an item subtotal requirement.");
+            }
+            return true;
+        }
 
-		if (isEmpty(offer.getQualifyingItemCriteria())) {
-			if (OfferType.ORDER_ITEM.equals(offer.getType())) {
-				if (LOG.isWarnEnabled()) {
-					LOG.warn("Offer " + offer.getName() + " has a subtotal item requirement but no item qualification criteria.");
-				}
-				return false;
-			} else {			
-				// Checking if targets meet subtotal for item offer with no item criteria.
-				Money accumulatedTotal = null;
-				for (PromotableOrderItem orderItem : candidateItem.getCandidateTargets()) {						
-					Money itemPrice = orderItem.getCurrentPrice().multiply(orderItem.getQuantity());
-					accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
-					if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
-						if (LOG.isTraceEnabled()) {
-							LOG.trace("Offer " + offer.getName() + " meets qualifying item subtotal.");
-						}
-						return true;
-					}
-				}
-			}
-			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Offer " + offer.getName() + " does not meet qualifying item subtotal.");
-			}
-		} else {
-			if (candidateItem.getCandidateQualifiersMap() != null) {
-				Money accumulatedTotal = null;
-				Set<PromotableOrderItem> usedItems = new HashSet<PromotableOrderItem>();
-				for (OfferItemCriteria criteria : candidateItem.getCandidateQualifiersMap().keySet()) {
-					List<PromotableOrderItem> promotableItems = candidateItem.getCandidateQualifiersMap().get(criteria);
-					if (promotableItems != null) {
-						for (PromotableOrderItem item : promotableItems) {
-							if (!usedItems.contains(item)) {
-								usedItems.add(item);
-								Money itemPrice = item.getCurrentPrice().multiply(item.getQuantity());
-								accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
-								if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
-									if (LOG.isTraceEnabled()) {
-										LOG.trace("Offer " + offer.getName() + " meets the item subtotal requirement.");
-									}
-									return true;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+        if (isEmpty(offer.getQualifyingItemCriteria())) {
+            if (OfferType.ORDER_ITEM.equals(offer.getType())) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Offer " + offer.getName() + " has a subtotal item requirement but no item qualification criteria.");
+                }
+                return false;
+            } else {            
+                // Checking if targets meet subtotal for item offer with no item criteria.
+                Money accumulatedTotal = null;
+                for (PromotableOrderItem orderItem : candidateItem.getCandidateTargets()) {                     
+                    Money itemPrice = orderItem.getCurrentPrice().multiply(orderItem.getQuantity());
+                    accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
+                    if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Offer " + offer.getName() + " meets qualifying item subtotal.");
+                        }
+                        return true;
+                    }
+                }
+            }
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Offer " + offer.getName() + " does not meet qualifying item subtotal.");
+            }
+        } else {
+            if (candidateItem.getCandidateQualifiersMap() != null) {
+                Money accumulatedTotal = null;
+                Set<PromotableOrderItem> usedItems = new HashSet<PromotableOrderItem>();
+                for (OfferItemCriteria criteria : candidateItem.getCandidateQualifiersMap().keySet()) {
+                    List<PromotableOrderItem> promotableItems = candidateItem.getCandidateQualifiersMap().get(criteria);
+                    if (promotableItems != null) {
+                        for (PromotableOrderItem item : promotableItems) {
+                            if (!usedItems.contains(item)) {
+                                usedItems.add(item);
+                                Money itemPrice = item.getCurrentPrice().multiply(item.getQuantity());
+                                accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
+                                if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
+                                    if (LOG.isTraceEnabled()) {
+                                        LOG.trace("Offer " + offer.getName() + " meets the item subtotal requirement.");
+                                    }
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		if (LOG.isTraceEnabled()) {
-			LOG.trace("Offer " + offer.getName() + " does not meet the item subtotal qualifications.");
-		}
-		return false;
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Offer " + offer.getName() + " does not meet the item subtotal qualifications.");
+        }
+        return false;
 
-	}
-	
-	protected void checkForItemRequirements(CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, boolean isQualifier) {
-		boolean matchFound = false;
-		int criteriaQuantity = criteria.getQuantity();
-		
-		if (criteriaQuantity > 0) {			
-			// If matches are found, add the candidate items to a list and store it with the itemCriteria 
-			// for this promotion.
-			for (PromotableOrderItem item : promotableOrderItems) {
-				if (couldOrderItemMeetOfferRequirement(criteria, item)) {
-					if (isQualifier) {
-						candidates.addQualifier(criteria, item);
-					} else {
-						candidates.addTarget(item);
-					}
-					matchFound = true;
-				}
-			}
-		}
-		
-		if (isQualifier) {
-			candidates.setMatchedQualifier(matchFound);
-		} else {
-			candidates.setMatchedTarget(matchFound);
-		}
-	}
-	
-	protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem discreteOrderItem) {
+    }
+    
+    protected void checkForItemRequirements(CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, boolean isQualifier) {
+        boolean matchFound = false;
+        int criteriaQuantity = criteria.getQuantity();
+        
+        if (criteriaQuantity > 0) {         
+            // If matches are found, add the candidate items to a list and store it with the itemCriteria 
+            // for this promotion.
+            for (PromotableOrderItem item : promotableOrderItems) {
+                if (couldOrderItemMeetOfferRequirement(criteria, item)) {
+                    if (isQualifier) {
+                        candidates.addQualifier(criteria, item);
+                    } else {
+                        candidates.addTarget(item);
+                    }
+                    matchFound = true;
+                }
+            }
+        }
+        
+        if (isQualifier) {
+            candidates.setMatchedQualifier(matchFound);
+        } else {
+            candidates.setMatchedTarget(matchFound);
+        }
+    }
+    
+    protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem discreteOrderItem) {
         boolean appliesToItem = false;
 
         if (criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule().trim().length() != 0) {
@@ -201,8 +201,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         return appliesToItem;
     }
-	
-	/**
+    
+    /**
      * Private method used by couldOfferApplyToOrder to execute the MVEL expression in the
      * appliesToOrderRules to determine if this offer can be applied.
      *
@@ -228,43 +228,43 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                 }
             }
 
-			Object test = MVEL.executeExpression(exp, vars);
-			
-			return (Boolean) test;
-		} catch (Exception e) {
-			//Unable to execute the MVEL expression for some reason
-			//Return false, but notify about the bad expression through logs
-			LOG.info("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false for the match expression", e);
-			return false;
-		}
+            Object test = MVEL.executeExpression(exp, vars);
+            
+            return (Boolean) test;
+        } catch (Exception e) {
+            //Unable to execute the MVEL expression for some reason
+            //Return false, but notify about the bad expression through logs
+            LOG.info("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false for the match expression", e);
+            return false;
+        }
 
     }
     
     /**
-	 * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
-	 * marked as qualifiers or targets.  This method removes those items from being used as targets or
-	 * qualifiers so they are eligible for other promotions.
-	 * @param chargeableItems
-	 */
-	protected void clearAllNonFinalizedQuantities(List<PromotableOrderItem> chargeableItems) {
-		for(PromotableOrderItem chargeableItem : chargeableItems) {
-			chargeableItem.clearAllNonFinalizedQuantities();
-		}
-	}
-	
-	protected void finalizeQuantities(List<PromotableOrderItem> chargeableItems) {
-		for(PromotableOrderItem chargeableItem : chargeableItems) {
-			chargeableItem.finalizeQuantities();
-		}
-	}
-	
-	@Override
+     * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
+     * marked as qualifiers or targets.  This method removes those items from being used as targets or
+     * qualifiers so they are eligible for other promotions.
+     * @param chargeableItems
+     */
+    protected void clearAllNonFinalizedQuantities(List<PromotableOrderItem> chargeableItems) {
+        for(PromotableOrderItem chargeableItem : chargeableItems) {
+            chargeableItem.clearAllNonFinalizedQuantities();
+        }
+    }
+    
+    protected void finalizeQuantities(List<PromotableOrderItem> chargeableItems) {
+        for(PromotableOrderItem chargeableItem : chargeableItems) {
+            chargeableItem.finalizeQuantities();
+        }
+    }
+    
+    @Override
     public void clearOffersandAdjustments(PromotableOrder order) {
         order.removeAllCandidateOffers();
         order.removeAllAdjustments();
     }
-	
-	@Override
+    
+    @Override
     public List<Offer> filterOffers(List<Offer> offers, Customer customer) {
         List<Offer> filteredOffers = new ArrayList<Offer>();
         if (offers != null && !offers.isEmpty()) {
@@ -274,7 +274,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         return filteredOffers;
     }
 
-	/**
+    /**
      * Removes all out of date offers.  If an offer does not have a start date, or the start
      * date is a later date, that offer will be removed.  Offers without a start date should
      * not be processed.  If the offer has a end date that has already passed, that offer
@@ -336,12 +336,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         
         String rule = null;
         if (!StringUtils.isEmpty(offer.getAppliesToCustomerRules())) {
-        	rule = offer.getAppliesToCustomerRules();
+            rule = offer.getAppliesToCustomerRules();
         } else {
-        	OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.CUSTOMER.getType());
-        	if (customerRule != null) {
-        		rule = customerRule.getMatchRule();
-        	}
+            OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.CUSTOMER.getType());
+            if (customerRule != null) {
+                rule = customerRule.getMatchRule();
+            }
         }
 
         if (rule != null) {

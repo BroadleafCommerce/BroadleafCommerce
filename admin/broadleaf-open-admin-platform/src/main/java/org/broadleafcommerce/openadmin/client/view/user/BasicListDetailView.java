@@ -34,42 +34,42 @@ import com.smartgwt.client.widgets.layout.VLayout;
  */
 public abstract class BasicListDetailView extends HLayout implements Instantiable {
 
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
 
-	public BasicListDetailView() {
-		setHeight100();
-		setWidth100();
-	}
+    public BasicListDetailView() {
+        setHeight100();
+        setWidth100();
+    }
 
     public abstract String getViewPrefix();
     public abstract String getFormTitle();
     public abstract String getListTitle();
-	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID(getViewPrefix()+"LeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+    
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID(getViewPrefix()+"LeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(getListTitle(), entityDataSource, false);
+        listDisplay = new DynamicEntityListView(getListTitle(), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
         dynamicFormDisplay = new DynamicFormView(getFormTitle(), entityDataSource);
         leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(dynamicFormDisplay);
-	}
+    }
 
-	public Canvas asCanvas() {
-		return this;
-	}
+    public Canvas asCanvas() {
+        return this;
+    }
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+    public DynamicFormDisplay getDynamicFormDisplay() {
+        return dynamicFormDisplay;
+    }
+    
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
 }

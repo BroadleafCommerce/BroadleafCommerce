@@ -28,14 +28,14 @@ public interface Display {
 
     public void build(DataSource entityDataSource, DataSource... additionalDataSources);
 
-	public abstract Canvas asCanvas();
+    public abstract Canvas asCanvas();
 
-	public abstract void draw();
+    public abstract void draw();
 
-	public abstract void show();
+    public abstract void show();
 
-	public abstract void hide();
+    public abstract void hide();
 
-	public abstract void destroy();
-	
+    public abstract void destroy();
+    
 }

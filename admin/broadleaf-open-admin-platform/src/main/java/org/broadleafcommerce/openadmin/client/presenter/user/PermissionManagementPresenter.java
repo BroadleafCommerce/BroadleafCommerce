@@ -42,11 +42,11 @@ public class PermissionManagementPresenter extends DynamicEntityPresenter implem
     }
 
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminCreatePermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
-				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"name","description"}, new Boolean[]{true, true});
-			}
-		}));
-	}
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminCreatePermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource top) {
+                setupDisplayItems(top);
+                ((ListGridDataSource) top).setupGridFields(new String[]{"name","description"}, new Boolean[]{true, true});
+            }
+        }));
+    }
 }

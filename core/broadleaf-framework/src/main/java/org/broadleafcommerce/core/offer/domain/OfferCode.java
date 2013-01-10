@@ -56,6 +56,6 @@ public interface OfferCode extends Serializable {
 
     public List<Order> getOrders();
 
-	public void setOrders(List<Order> orders);
+    public void setOrders(List<Order> orders);
 
 }

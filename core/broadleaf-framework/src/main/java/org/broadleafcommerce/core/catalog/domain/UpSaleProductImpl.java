@@ -39,9 +39,9 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class UpSaleProductImpl implements RelatedProduct {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
     @GeneratedValue(generator= "UpSaleProductId")
     @GenericGenerator(
         name="UpSaleProductId",
@@ -57,8 +57,8 @@ public class UpSaleProductImpl implements RelatedProduct {
     )
     @Column(name = "UP_SALE_PRODUCT_ID")
     private Long id;
-	
-	@Column(name = "PROMOTION_MESSAGE")
+    
+    @Column(name = "PROMOTION_MESSAGE")
     @AdminPresentation(friendlyName = "UpSaleProductImpl_Upsale_Promotion_Message", largeEntry=true)
     private String promotionMessage;
 
@@ -70,7 +70,7 @@ public class UpSaleProductImpl implements RelatedProduct {
     @Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     private Product product;
     
-	@ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="UPSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category;
@@ -113,14 +113,14 @@ public class UpSaleProductImpl implements RelatedProduct {
     }
     
     public Category getCategory() {
-		return category;
-	}
+        return category;
+    }
 
-	public void setCategory(Category category) {
-		this.category = category;
-	}
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
-	public Product getRelatedProduct() {
+    public Product getRelatedProduct() {
         return relatedSaleProduct;
     }   
 

@@ -62,8 +62,8 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
         }
 
         throw new FulfillmentPriceException("No valid processor was found to calculate the FulfillmentGroup cost with " +
-        		"FulfillmentOption id: " + fulfillmentGroup.getFulfillmentOption().getId() + 
-        				" and name: " + fulfillmentGroup.getFulfillmentOption().getName());
+                "FulfillmentOption id: " + fulfillmentGroup.getFulfillmentOption().getId() + 
+                        " and name: " + fulfillmentGroup.getFulfillmentOption().getName());
     }
     
     @Override

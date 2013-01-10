@@ -40,8 +40,8 @@ import java.util.Map;
  */
 @Deprecated
 public class BandedShippingModule implements ShippingModule {
-	
-	private static final Log LOG = LogFactory.getLog(BandedShippingModule.class);
+    
+    private static final Log LOG = LogFactory.getLog(BandedShippingModule.class);
 
     public static final String MODULENAME = "bandedShippingModule";
 
@@ -62,17 +62,17 @@ public class BandedShippingModule implements ShippingModule {
     }
 
     private void calculateShipping(FulfillmentGroup fulfillmentGroup) {
-    	if (!isValidModuleForService(fulfillmentGroup.getService()) && !isDefaultModule()) {
-    		LOG.info("fulfillment group (" + fulfillmentGroup.getId() + ") with a service type of (" + fulfillmentGroup.getService() + ") is not valid for this module service type (" + getServiceName() + ")");
-    		return;
-    	}
-    	if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
-    		LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
-    		fulfillmentGroup.setShippingPrice(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency()));
+        if (!isValidModuleForService(fulfillmentGroup.getService()) && !isDefaultModule()) {
+            LOG.info("fulfillment group (" + fulfillmentGroup.getId() + ") with a service type of (" + fulfillmentGroup.getService() + ") is not valid for this module service type (" + getServiceName() + ")");
+            return;
+        }
+        if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
+            LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
+            fulfillmentGroup.setShippingPrice(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency()));
             fulfillmentGroup.setSaleShippingPrice(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency()));
             fulfillmentGroup.setRetailShippingPrice(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency()));
-    		return;
-    	}
+            return;
+        }
         Address address = fulfillmentGroup.getAddress();
         String state = (address != null && address.getState() != null) ? address.getState().getAbbreviation() : null;
         BigDecimal retailTotal = new BigDecimal(0);
@@ -129,24 +129,24 @@ public class BandedShippingModule implements ShippingModule {
         this.feeSubTypeMapping = feeSubTypeMapping;
     }
 
-	@Override
+    @Override
     public String getServiceName() {
-		return ShippingServiceType.BANDED_SHIPPING.getType();
-	}
+        return ShippingServiceType.BANDED_SHIPPING.getType();
+    }
 
-	@Override
+    @Override
     public Boolean isValidModuleForService(String serviceName) {
-		return getServiceName().equals(serviceName);
-	}
+        return getServiceName().equals(serviceName);
+    }
 
-	@Override
+    @Override
     public Boolean isDefaultModule() {
-		return isDefaultModule;
-	}
+        return isDefaultModule;
+    }
 
-	@Override
+    @Override
     public void setDefaultModule(Boolean isDefaultModule) {
-		this.isDefaultModule = isDefaultModule;
-	}
+        this.isDefaultModule = isDefaultModule;
+    }
 
 }

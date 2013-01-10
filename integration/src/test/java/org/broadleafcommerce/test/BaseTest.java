@@ -41,26 +41,26 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
     protected static MergeClassPathXMLApplicationContext mergeContext = null;
 
     protected static List<String> moduleContexts = new ArrayList<String>();
-	
-	public static MergeClassPathXMLApplicationContext getContext() {
-		try {
-			if (mergeContext == null) {
-				String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-				
-				String[] additionalContexts = (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) 
-						? new String[]{"bl-applicationContext-test-legacy.xml"} 
-						: new String[]{};
+    
+    public static MergeClassPathXMLApplicationContext getContext() {
+        try {
+            if (mergeContext == null) {
+                String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
+                
+                String[] additionalContexts = (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) 
+                        ? new String[]{"bl-applicationContext-test-legacy.xml"} 
+                        : new String[]{};
 
                 additionalContexts = (String[]) ArrayUtils.addAll(additionalContexts, moduleContexts.toArray());
-				
-				mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+                
+                mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-		return mergeContext;
-	}
+        return mergeContext;
+    }
 
     protected static List<String> getModuleContexts() {
         return moduleContexts;

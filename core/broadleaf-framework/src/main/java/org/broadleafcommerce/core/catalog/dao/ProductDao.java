@@ -103,7 +103,7 @@ public interface ProductDao {
      * @return the matching products
      */
     @Nonnull
-	public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, ProductSearchCriteria searchCriteria);
+    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, ProductSearchCriteria searchCriteria);
     
     /**
      * Find all products whose start and end dates are before and after the passed in 
@@ -116,7 +116,7 @@ public interface ProductDao {
      * @return the matching products
      */
     @Nonnull
-	public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
+    public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
 
     @Nonnull
     public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate, @Nonnull int limit, @Nonnull int offset);
@@ -156,12 +156,12 @@ public interface ProductDao {
      * <p>
      * {@code
      *     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
-	 *	        <property name="entityContexts">
-	 *		        <list>
-	 *			        <value>classpath:myCompany-applicationContext-entity.xml</value>
-	 *		        </list>
-	 *	        </property>
-	 *      </bean>
+     *          <property name="entityContexts">
+     *              <list>
+     *                  <value>classpath:myCompany-applicationContext-entity.xml</value>
+     *              </list>
+     *          </property>
+     *      </bean>
      * }
      * </p>
      * Declare the same key for your desired entity in your entity xml that is used in the Broadleaf entity xml, but change the value to the fully
@@ -186,16 +186,16 @@ public interface ProductDao {
      * @return List of products that match the passed in URI.
      * 
      */
-	public List<Product> findProductByURI(String key);
-	
-	/**
-	 * Reads all products from the database that are currently active. That is, reads all products that
-	 * are not archived and whose start and end dates surround the currentDate
-	 * 
-	 * @param currentDate
-	 * @return a list of all active products
-	 */
-	public List<Product> readAllActiveProducts(@Nonnull Date currentDate);
+    public List<Product> findProductByURI(String key);
+    
+    /**
+     * Reads all products from the database that are currently active. That is, reads all products that
+     * are not archived and whose start and end dates surround the currentDate
+     * 
+     * @param currentDate
+     * @return a list of all active products
+     */
+    public List<Product> readAllActiveProducts(@Nonnull Date currentDate);
 
 
 }

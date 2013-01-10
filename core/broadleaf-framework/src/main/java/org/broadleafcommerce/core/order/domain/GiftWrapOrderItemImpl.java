@@ -53,15 +53,15 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         this.wrappedItems = wrappedItems;
     }
 
-	@Override
-	public OrderItem clone() {
-		GiftWrapOrderItem orderItem = (GiftWrapOrderItem) super.clone();
-		if (getWrappedItems() != null) orderItem.getWrappedItems().addAll(getWrappedItems());
-		
-		return orderItem;
-	}
+    @Override
+    public OrderItem clone() {
+        GiftWrapOrderItem orderItem = (GiftWrapOrderItem) super.clone();
+        if (getWrappedItems() != null) orderItem.getWrappedItems().addAll(getWrappedItems());
+        
+        return orderItem;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = super.hashCode();
         int result = super.hashCode();
@@ -80,7 +80,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         GiftWrapOrderItemImpl other = (GiftWrapOrderItemImpl) obj;
 
         if (!super.equals(obj)) {
-        	return false;
+            return false;
         }
         
         if (id != null && other.id != null) {

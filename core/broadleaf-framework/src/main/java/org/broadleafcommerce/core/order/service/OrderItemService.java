@@ -30,7 +30,7 @@ import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemReque
 import java.util.HashMap;
 
 public interface OrderItemService {
-	
+    
     public OrderItem readOrderItemById(Long orderItemId);
 
     public OrderItem saveOrderItem(OrderItem orderItem);
@@ -56,17 +56,17 @@ public interface OrderItemService {
      */
     public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest);
 
-	public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest);
+    public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest);
 
-	/**
-	 * Creates an OrderItemRequestDTO object that most closely resembles the given OrderItem.
-	 * That is, it will copy the SKU and quantity and attempt to copy the product and category
-	 * if they exist.
-	 * 
-	 * @param item the item to copy
-	 * @return the OrderItemRequestDTO that mirrors the item
-	 */
-	public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item);
+    /**
+     * Creates an OrderItemRequestDTO object that most closely resembles the given OrderItem.
+     * That is, it will copy the SKU and quantity and attempt to copy the product and category
+     * if they exist.
+     * 
+     * @param item the item to copy
+     * @return the OrderItemRequestDTO that mirrors the item
+     */
+    public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item);
 
 
 }

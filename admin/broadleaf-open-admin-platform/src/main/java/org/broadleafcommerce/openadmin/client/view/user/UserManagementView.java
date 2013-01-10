@@ -38,26 +38,26 @@ import com.smartgwt.client.widgets.tab.Tab;
  *
  */
 public class UserManagementView extends HLayout implements Instantiable, UserManagementDisplay {
-	
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
-	protected UserRoleView userRolesDisplay;
+    
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected UserRoleView userRolesDisplay;
     protected UserPermissionView userPermissionDisplay;
     
-	public UserManagementView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	@Override
+    public UserManagementView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("userLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("userLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("userListTitle"), entityDataSource, false);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("userListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -89,27 +89,27 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	@Override
+    @Override
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	@Override
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	@Override
+        return dynamicFormDisplay;
+    }
+    
+    @Override
     public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+        return listDisplay;
+    }
 
-	@Override
+    @Override
     public UserRoleView getUserRolesDisplay() {
-		return userRolesDisplay;
-	}
+        return userRolesDisplay;
+    }
 
     @Override
     public UserPermissionView getUserPermissionDisplay() {

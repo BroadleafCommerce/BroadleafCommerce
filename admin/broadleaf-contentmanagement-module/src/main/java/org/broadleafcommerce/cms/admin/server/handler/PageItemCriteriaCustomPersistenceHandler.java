@@ -73,32 +73,32 @@ public class PageItemCriteriaCustomPersistenceHandler extends CustomPersistenceH
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
         removeHtmlEncoding(entity);
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			PageItemCriteria adminInstance = (PageItemCriteria) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
-			adminInstance = (PageItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            PageItemCriteria adminInstance = (PageItemCriteria) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
+            adminInstance = (PageItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             if (adminInstance.getPage().getLockedFlag()) {
                 throw new IllegalArgumentException("Unable to update a locked record");
             }
             adminInstance = (PageItemCriteria) dynamicEntityDao.merge(adminInstance);
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         removeHtmlEncoding(entity);
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             PageItemCriteria adminInstance = (PageItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (adminInstance.getPage().getLockedFlag()) {
                 /*
@@ -134,20 +134,20 @@ public class PageItemCriteriaCustomPersistenceHandler extends CustomPersistenceH
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
             return adminEntity;
-		} catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		Entity entity = persistencePackage.getEntity();
+        Entity entity = persistencePackage.getEntity();
         try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			PageItemCriteria adminInstance = (PageItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            PageItemCriteria adminInstance = (PageItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
             if (adminInstance.getPage().getLockedFlag()) {
                 /*
@@ -174,9 +174,9 @@ public class PageItemCriteriaCustomPersistenceHandler extends CustomPersistenceH
             }
 
             dynamicEntityDao.remove(adminInstance);
-		} catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
+        }
     }
 }

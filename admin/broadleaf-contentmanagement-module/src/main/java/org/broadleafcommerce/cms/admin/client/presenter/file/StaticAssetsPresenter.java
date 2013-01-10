@@ -65,7 +65,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
     protected HandlerRegistration saveButtonHandlerRegistration;
 
     @Override
-	protected void changeSelection(Record selectedRecord) {
+    protected void changeSelection(Record selectedRecord) {
         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
             getDisplay().getListDisplay().getRemoveButton().enable();
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
@@ -79,7 +79,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("fullUrl").disable();
         AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
         assetItem.updateState();
-	}
+    }
 
     @Override
     protected void addClicked() {
@@ -90,15 +90,15 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         addNewItem(BLCMain.getMessageManager().getString("newItemTitle"));
     }
 
-	@Override
-	protected void addNewItem(String newItemTitle) {
+    @Override
+    protected void addNewItem(String newItemTitle) {
         initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         initialValues.put("csrfToken", BLCMain.csrfToken);
         compileDefaultValuesFromCurrentFilter(initialValues);
         Map<String, String> hints = new HashMap<String, String>();
         hints.put("name", BLCMain.getMessageManager().getString("assetUploadNameHint"));
         hints.put("fullUrl", BLCMain.getMessageManager().getString("assetUploadFullUrlHint"));
-		FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, hints, new ItemEditedHandler() {
+        FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, hints, new ItemEditedHandler() {
             public void onItemEdited(ItemEdited event) {
                 ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
@@ -126,7 +126,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 }
             }
         }, null, new String[]{"file", "name", "fullUrl", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria", "csrfToken"}, null);
-	}
+    }
 
     @Override
     protected void removeClicked() {
@@ -135,8 +135,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
     }
 
     @Override
-	public void bind() {
-		super.bind();
+    public void bind() {
+        super.bind();
         if (!FILE_UPLOAD.isDrawn()) {
             FILE_UPLOAD.draw();
             FILE_UPLOAD.hide();
@@ -147,8 +147,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 //save the regular entity form and the page template form
                 if (event.isLeftButtonDown()) {
                     DSRequest requestProperties = new DSRequest();
-					//requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
-					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
+                    //requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
@@ -176,7 +176,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                                     }
                                 }
                                 getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(currentSelectedRecord));
-							}
+                            }
                         }
                     }, requestProperties);
                 }
@@ -188,7 +188,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 clearAssetPreviewImage();
             }
         });
-	}
+    }
 
     protected void clearAssetPreviewImage() {
         AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
@@ -196,18 +196,18 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
     }
 
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTreeDataSourceFactory(), new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTreeDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(dataSource);
                 ((ListGridDataSource) dataSource).setupGridFields(new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"});
             }
         }));
-	}
+    }
 
-	@Override
-	public StaticAssetsDisplay getDisplay() {
-		return (StaticAssetsDisplay) display;
-	}
-	
+    @Override
+    public StaticAssetsDisplay getDisplay() {
+        return (StaticAssetsDisplay) display;
+    }
+    
 }

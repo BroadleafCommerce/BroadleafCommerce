@@ -102,7 +102,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     
     @Override
     public void setDiscountedPrice(Money discountedPrice) {
-    	this.discountedPrice = discountedPrice.getAmount();
+        this.discountedPrice = discountedPrice.getAmount();
     }
 
     @Override
@@ -121,7 +121,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
         return offer.getPriority();
     }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

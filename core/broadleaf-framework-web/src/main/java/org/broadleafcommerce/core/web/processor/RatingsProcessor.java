@@ -55,8 +55,8 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-    	RatingService ratingService = ProcessorUtils.getRatingService(arguments);
-    	String itemId = String.valueOf(StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("itemId")));
+        RatingService ratingService = ProcessorUtils.getRatingService(arguments);
+        String itemId = String.valueOf(StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("itemId")));
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         if (ratingSummary != null) {
             addToModel(arguments, getRatingsVar(element), ratingSummary);
@@ -65,20 +65,20 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
         Customer customer = CustomerState.getCustomer();
         ReviewDetail reviewDetail = null;
         if (!customer.isAnonymous()) {
-        	reviewDetail = ratingService.readReviewByCustomerAndItem(customer, itemId);
+            reviewDetail = ratingService.readReviewByCustomerAndItem(customer, itemId);
         }
         if (reviewDetail != null) {
-        	addToModel(arguments, "currentCustomerReview", reviewDetail);
+            addToModel(arguments, "currentCustomerReview", reviewDetail);
         }
         
     }
     
     private String getRatingsVar(Element element) {
-    	String ratingsVar = element.getAttributeValue("ratingsVar");
-    	if (StringUtils.isNotEmpty(ratingsVar)) {
-    		return ratingsVar;
-    	} 
-    	return "ratingSummary";
+        String ratingsVar = element.getAttributeValue("ratingsVar");
+        if (StringUtils.isNotEmpty(ratingsVar)) {
+            return ratingsVar;
+        } 
+        return "ratingSummary";
     }
 
 }

@@ -66,7 +66,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     protected static String loginRedirect = "login";
     protected static String resetPasswordRedirect = "resetPassword";
 
-	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getLoginView();
     }
 
@@ -181,61 +181,61 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
         return getChangePasswordView();
     }
 
-	public String processChangePassword(ResetPasswordForm resetPasswordForm,
-			HttpServletRequest request) {
-		GenericResponse errorResponse = adminSecurityService
-				.changePassword(resetPasswordForm.getUsername(),
-						resetPasswordForm.getOldPassword(),
-						resetPasswordForm.getPassword(),
-						resetPasswordForm.getConfirmPassword());
-		if (errorResponse.getHasErrors()) {
-			setErrors(errorResponse, request);
-			return getChangePasswordView();
-		} else {
-			return redirectToLoginWithMessage("passwordReset");
-		}
-	}
+    public String processChangePassword(ResetPasswordForm resetPasswordForm,
+            HttpServletRequest request) {
+        GenericResponse errorResponse = adminSecurityService
+                .changePassword(resetPasswordForm.getUsername(),
+                        resetPasswordForm.getOldPassword(),
+                        resetPasswordForm.getPassword(),
+                        resetPasswordForm.getConfirmPassword());
+        if (errorResponse.getHasErrors()) {
+            setErrors(errorResponse, request);
+            return getChangePasswordView();
+        } else {
+            return redirectToLoginWithMessage("passwordReset");
+        }
+    }
 
-	public static String getLoginView() {
-		return loginView;
-	}
+    public static String getLoginView() {
+        return loginView;
+    }
 
-	public static void setLoginView(String loginView) {
-		BroadleafAdminLoginController.loginView = loginView;
-	}
+    public static void setLoginView(String loginView) {
+        BroadleafAdminLoginController.loginView = loginView;
+    }
 
-	public static String getForgotPasswordView() {
-		return forgotPasswordView;
-	}
+    public static String getForgotPasswordView() {
+        return forgotPasswordView;
+    }
 
-	public static void setForgotPasswordView(String forgotPasswordView) {
-		BroadleafAdminLoginController.forgotPasswordView = forgotPasswordView;
-	}
+    public static void setForgotPasswordView(String forgotPasswordView) {
+        BroadleafAdminLoginController.forgotPasswordView = forgotPasswordView;
+    }
 
-	public static String getForgotUsernameView() {
-		return forgotUsernameView;
-	}
+    public static String getForgotUsernameView() {
+        return forgotUsernameView;
+    }
 
-	public static void setForgotUsernameView(String forgotUsernameView) {
-		BroadleafAdminLoginController.forgotUsernameView = forgotUsernameView;
-	}
+    public static void setForgotUsernameView(String forgotUsernameView) {
+        BroadleafAdminLoginController.forgotUsernameView = forgotUsernameView;
+    }
 
-	public static String getResetPasswordView() {
-		return resetPasswordView;
-	}
+    public static String getResetPasswordView() {
+        return resetPasswordView;
+    }
 
-	public static void setResetPasswordView(String resetPasswordView) {
-		BroadleafAdminLoginController.resetPasswordView = resetPasswordView;
-	}
+    public static void setResetPasswordView(String resetPasswordView) {
+        BroadleafAdminLoginController.resetPasswordView = resetPasswordView;
+    }
 
-	public static String getChangePasswordView() {
-		return changePasswordView;
-	}
+    public static String getChangePasswordView() {
+        return changePasswordView;
+    }
 
-	public static void setChangePasswordView(String changePasswordView) {
-		BroadleafAdminLoginController.changePasswordView = changePasswordView;
-	}
-	
+    public static void setChangePasswordView(String changePasswordView) {
+        BroadleafAdminLoginController.changePasswordView = changePasswordView;
+    }
+    
     protected AdminUser getPersistentAdminUser() {
         SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {

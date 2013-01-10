@@ -43,63 +43,63 @@ import java.util.Map;
 @Component("blToggleFacetLinkProcessor")
 public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProcessor {
 
-	/**
-	 * Sets the name of this processor to be used in Thymeleaf template
-	 */
-	public ToggleFacetLinkProcessor() {
-		super("togglefacetlink");
-	}
-	
-	@Override
-	public int getPrecedence() {
-		return 10000;
-	}
+    /**
+     * Sets the name of this processor to be used in Thymeleaf template
+     */
+    public ToggleFacetLinkProcessor() {
+        super("togglefacetlink");
+    }
+    
+    @Override
+    public int getPrecedence() {
+        return 10000;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-		Map<String, String> attrs = new HashMap<String, String>();
-		SearchFacetDTOService facetService = ProcessorUtils.getSearchFacetDTOService(arguments);
-		
-		BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
-		HttpServletRequest request = blcContext.getRequest();
-		
-		String baseUrl = request.getRequestURL().toString();
-		Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
-		
-		SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		
-		String key = facetService.getUrlKey(result);
-		String value = facetService.getValue(result);
-		String[] paramValues = params.get(key);
-		
-		if (ArrayUtils.contains(paramValues, facetService.getValue(result))) {
-			paramValues = (String[]) ArrayUtils.removeElement(paramValues, facetService.getValue(result));
-		} else {
-			paramValues = (String[]) ArrayUtils.add(paramValues, value);
-		}
-		
-		params.remove(ProductSearchCriteria.PAGE_NUMBER);
-		params.put(key, paramValues);
-		
-		String url = ProcessorUtils.getUrl(baseUrl, params);
-		
-		attrs.put("href", url);
-		return attrs;
-	}
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
+        Map<String, String> attrs = new HashMap<String, String>();
+        SearchFacetDTOService facetService = ProcessorUtils.getSearchFacetDTOService(arguments);
+        
+        BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
+        HttpServletRequest request = blcContext.getRequest();
+        
+        String baseUrl = request.getRequestURL().toString();
+        Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
+        
+        SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        
+        String key = facetService.getUrlKey(result);
+        String value = facetService.getValue(result);
+        String[] paramValues = params.get(key);
+        
+        if (ArrayUtils.contains(paramValues, facetService.getValue(result))) {
+            paramValues = (String[]) ArrayUtils.removeElement(paramValues, facetService.getValue(result));
+        } else {
+            paramValues = (String[]) ArrayUtils.add(paramValues, value);
+        }
+        
+        params.remove(ProductSearchCriteria.PAGE_NUMBER);
+        params.put(key, paramValues);
+        
+        String url = ProcessorUtils.getUrl(baseUrl, params);
+        
+        attrs.put("href", url);
+        return attrs;
+    }
 
-	@Override
-	protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-		return ModificationType.SUBSTITUTION;
-	}
+    @Override
+    protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName, String newAttributeName) {
+        return ModificationType.SUBSTITUTION;
+    }
 
-	@Override
-	protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
-		return true;
-	}
+    @Override
+    protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName, String newAttributeName) {
+        return true;
+    }
 
-	@Override
-	protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
-		return false;
-	}
+    @Override
+    protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
+        return false;
+    }
 }

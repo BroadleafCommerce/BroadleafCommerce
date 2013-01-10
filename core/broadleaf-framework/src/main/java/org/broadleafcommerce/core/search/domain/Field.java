@@ -27,124 +27,124 @@ import java.util.List;
  * @author Andre Azzolini (apazzolini)
  */
 public interface Field {
-	
-	/**
-	 * Gets the id
-	 * @return the id
-	 */
-	public Long getId();
+    
+    /**
+     * Gets the id
+     * @return the id
+     */
+    public Long getId();
 
-	/**
-	 * Sets the id
-	 * @param id 
-	 */
-	public void setId(Long id);
+    /**
+     * Sets the id
+     * @param id 
+     */
+    public void setId(Long id);
 
-	/**
-	 * Gets the entityType of this Field
-	 * @return the entityType
-	 */
-	public FieldEntity getEntityType();
+    /**
+     * Gets the entityType of this Field
+     * @return the entityType
+     */
+    public FieldEntity getEntityType();
 
-	/**
-	 * Sets the entityType 
-	 * @param entityType 
-	 */
-	public void setEntityType(FieldEntity entityType);
+    /**
+     * Sets the entityType 
+     * @param entityType 
+     */
+    public void setEntityType(FieldEntity entityType);
 
-	/**
-	 * Gets the propertyName of this Field. This would be something like "manufacturer" or "defaultSku.price"
-	 * if the EntityType was "product"
-	 * @return the propertyName
-	 */
-	public String getPropertyName();
+    /**
+     * Gets the propertyName of this Field. This would be something like "manufacturer" or "defaultSku.price"
+     * if the EntityType was "product"
+     * @return the propertyName
+     */
+    public String getPropertyName();
 
-	/**
-	 * Sets the propertyName
-	 * @param propertyName
-	 */
-	public void setPropertyName(String propertyName);
+    /**
+     * Sets the propertyName
+     * @param propertyName
+     */
+    public void setPropertyName(String propertyName);
 
-	/**
-	 * Gets the abbreviation of this Field. This will be used in URL query string parameters for sorting and
-	 * filtering
-	 * @return the abbreviation
-	 */
-	public String getAbbreviation();
+    /**
+     * Gets the abbreviation of this Field. This will be used in URL query string parameters for sorting and
+     * filtering
+     * @return the abbreviation
+     */
+    public String getAbbreviation();
 
-	/**
-	 * Sets the abbreviation
-	 * @param abbreviation
-	 */
-	public void setAbbreviation(String abbreviation);
+    /**
+     * Sets the abbreviation
+     * @param abbreviation
+     */
+    public void setAbbreviation(String abbreviation);
 
-	/**
-	 * Gets the searchable flag
-	 * @return whether or not this Field is searchable
-	 */
-	public Boolean getSearchable();
+    /**
+     * Gets the searchable flag
+     * @return whether or not this Field is searchable
+     */
+    public Boolean getSearchable();
 
-	/** 
-	 * Sets the searchable flag
-	 * @param searchable
-	 */
-	public void setSearchable(Boolean searchable);
+    /** 
+     * Sets the searchable flag
+     * @param searchable
+     */
+    public void setSearchable(Boolean searchable);
 
-	/**
-	 * Sets the facet field type
-	 * @param facetFieldType
-	 */
-	public void setFacetFieldType(FieldType facetFieldType);
+    /**
+     * Sets the facet field type
+     * @param facetFieldType
+     */
+    public void setFacetFieldType(FieldType facetFieldType);
 
-	/**
-	 * Gets the facet field type. Note that the facet field type is also the type used to perform sorting.
-	 * Any field where there is a desire to facet or sort on should have this FieldType specified.
-	 * 
-	 * @see #getSearchableFieldTypes()
-	 * @return the facet field type
-	 */
-	public FieldType getFacetFieldType();
+    /**
+     * Gets the facet field type. Note that the facet field type is also the type used to perform sorting.
+     * Any field where there is a desire to facet or sort on should have this FieldType specified.
+     * 
+     * @see #getSearchableFieldTypes()
+     * @return the facet field type
+     */
+    public FieldType getFacetFieldType();
 
-	/**
-	 * Sets the searchableFieldTypes
-	 * 
-	 * @see #getSearchableFieldTypes()
-	 * @param searchableFieldTypes
-	 */
-	public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes);
+    /**
+     * Sets the searchableFieldTypes
+     * 
+     * @see #getSearchableFieldTypes()
+     * @param searchableFieldTypes
+     */
+    public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes);
 
-	/**
-	 * Gets the dynamic searchable field types. For example, in solr, if you wanted to index a field as both
-	 * text and string, you would have two searchable field types, String and Text
-	 * 
-	 * @return the searchable types for this field
-	 */
-	public List<FieldType> getSearchableFieldTypes();
-	
-	/**
-	 * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available 
-	 * in the community version of Broadleaf Commerce.
-	 * @return the searchConfigs
-	 */
-	public List<SearchConfig> getSearchConfigs();
-	
-	/**
-	 * Sets the searchConfigs. 
-	 * @param searchConfigs
-	 */
-	public void setSearchConfigs (List<SearchConfig> searchConfigs);
+    /**
+     * Gets the dynamic searchable field types. For example, in solr, if you wanted to index a field as both
+     * text and string, you would have two searchable field types, String and Text
+     * 
+     * @return the searchable types for this field
+     */
+    public List<FieldType> getSearchableFieldTypes();
+    
+    /**
+     * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available 
+     * in the community version of Broadleaf Commerce.
+     * @return the searchConfigs
+     */
+    public List<SearchConfig> getSearchConfigs();
+    
+    /**
+     * Sets the searchConfigs. 
+     * @param searchConfigs
+     */
+    public void setSearchConfigs (List<SearchConfig> searchConfigs);
 
-	/**
-	 * Returns the qualified name of this Field. The default implementation returns the entityType joined
-	 * with the properName by a "."
-	 * @return the qualifiedFieldName
-	 */
-	public String getQualifiedFieldName();
+    /**
+     * Returns the qualified name of this Field. The default implementation returns the entityType joined
+     * with the properName by a "."
+     * @return the qualifiedFieldName
+     */
+    public String getQualifiedFieldName();
 
-	/**
-	 * Returns whether or not this field should be considered translatable
-	 * @return translatable
-	 */
+    /**
+     * Returns whether or not this field should be considered translatable
+     * @return translatable
+     */
     public Boolean getTranslatable();
     
     /**

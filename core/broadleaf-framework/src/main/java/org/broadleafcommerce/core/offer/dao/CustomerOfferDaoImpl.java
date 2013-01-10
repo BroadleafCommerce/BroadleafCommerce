@@ -43,9 +43,9 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
     }
 
     public void delete(CustomerOffer customerOffer) {
-    	if (!em.contains(customerOffer)) {
-    		customerOffer = readCustomerOfferById(customerOffer.getId());
-    	}
+        if (!em.contains(customerOffer)) {
+            customerOffer = readCustomerOfferById(customerOffer.getId());
+        }
         em.remove(customerOffer);
     }
 

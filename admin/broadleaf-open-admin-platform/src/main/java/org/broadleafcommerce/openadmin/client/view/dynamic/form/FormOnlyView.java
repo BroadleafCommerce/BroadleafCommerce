@@ -33,21 +33,21 @@ import com.smartgwt.client.widgets.layout.VLayout;
  *
  */
 public class FormOnlyView extends VLayout implements FormOnlyDisplay {
-	
-	protected DynamicForm form;
-	
-	public FormOnlyView() {
-		this(null);
-	}
+    
+    protected DynamicForm form;
+    
+    public FormOnlyView() {
+        this(null);
+    }
 
     public FormOnlyView(DataSource dataSource) {
         this(dataSource, null, null, null);
     }
-	
-	public FormOnlyView(DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId) {
+    
+    public FormOnlyView(DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId) {
 
         super();
-		
+        
         setStyleName("bl-dynamic-form");
         setLayoutMargin(0);
         setMembersMargin(10);
@@ -67,7 +67,7 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form.setItemHoverWidth(200);
 
         if (dataSource != null) {
-        	buildFields(dataSource, showDisabedState == null ? true : showDisabedState, canEdit == null ? false : canEdit, showId == null ? false : showId, null);
+            buildFields(dataSource, showDisabedState == null ? true : showDisabedState, canEdit == null ? false : canEdit, showId == null ? false : showId, null);
         }
 
         addMember(form);
@@ -86,16 +86,16 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
                 }
             }
         });
-	}
-	
-	@Override
+    }
+    
+    @Override
     public void buildFields(final DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId, Record currentRecord) {
-		FormBuilder.buildForm(dataSource, form, showDisabedState, canEdit, showId, currentRecord);
-	}
+        FormBuilder.buildForm(dataSource, form, showDisabedState, canEdit, showId, currentRecord);
+    }
 
-	@Override
+    @Override
     public DynamicForm getForm() {
-		return form;
-	}
-	
+        return form;
+    }
+    
 }

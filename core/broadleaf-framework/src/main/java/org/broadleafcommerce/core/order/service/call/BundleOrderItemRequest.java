@@ -75,15 +75,15 @@ public class BundleOrderItemRequest {
     }
 
     public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices() {
-		return bundleOrderItemFeePrices;
-	}
+        return bundleOrderItemFeePrices;
+    }
 
-	public void setBundleOrderItemFeePrices(
-			List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
-		this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
-	}
+    public void setBundleOrderItemFeePrices(
+            List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
+        this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
+    }
 
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

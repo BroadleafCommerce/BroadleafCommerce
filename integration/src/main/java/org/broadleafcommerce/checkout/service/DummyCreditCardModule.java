@@ -30,50 +30,50 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
  */
 public class DummyCreditCardModule extends AbstractModule {
 
-	@Override
+    @Override
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         return createResponse(paymentContext);
     }
 
     @Override
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     @Override
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     @Override
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     @Override
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     @Override
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
     
     @Override
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
-	}
+        return createResponse(paymentContext);
+    }
 
-	private PaymentResponseItem createResponse(PaymentContext paymentContext) {
+    private PaymentResponseItem createResponse(PaymentContext paymentContext) {
         paymentContext.getPaymentInfo().setReferenceNumber("abc123");
-    	PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-		responseItem.setTransactionTimestamp(SystemTime.asDate());
-		responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
-		responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
-		responseItem.setTransactionSuccess(true);
-		responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
-		responseItem.setCurrency(paymentContext.getPaymentInfo().getOrder().getCurrency());
+        PaymentResponseItem responseItem = new PaymentResponseItemImpl();
+        responseItem.setTransactionTimestamp(SystemTime.asDate());
+        responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
+        responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
+        responseItem.setTransactionSuccess(true);
+        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
+        responseItem.setCurrency(paymentContext.getPaymentInfo().getOrder().getCurrency());
         return responseItem;
     }
 

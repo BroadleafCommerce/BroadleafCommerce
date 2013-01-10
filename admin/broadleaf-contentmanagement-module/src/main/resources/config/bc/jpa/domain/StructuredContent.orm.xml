@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
-	<named-query name="BC_READ_ALL_STRUCTURED_CONTENT_TYPES" >
-		<query>SELECT structuredContentType
+    <named-query name="BC_READ_ALL_STRUCTURED_CONTENT_TYPES" >
+        <query>SELECT structuredContentType
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContentType structuredContentType
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_READ_STRUCTURED_CONTENT_TYPE_BY_NAME" >
-		<query>SELECT structuredContentType
+        <query>SELECT structuredContentType
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContentType structuredContentType
                WHERE structuredContentType.name = :name
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_READ_CONTENT_FIELDS_BY_CONTENT_ID" >
-		<query>SELECT scField
+        <query>SELECT scField
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContentField scField
                WHERE scField.structuredContent = :structuredContent
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_PRODUCTION_SANDBOX" >
-		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.sandbox = :sandbox AND
                      structuredContent.structuredContentType = :contentType AND
@@ -33,11 +33,11 @@
                      structuredContent.archivedFlag = false AND
                      structuredContent.offlineFlag = false
                ORDER BY structuredContent.priority
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_USER_SANDBOX" >
-		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.structuredContentType = :contentType AND
                      (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
@@ -50,11 +50,11 @@
                                sandboxItem.archivedFlag = 'N' AND
                                sandboxItem.temporaryItemId = structuredContent.id)
                ORDER BY structuredContent.priority
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME" >
-		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.sandbox is null AND
                      structuredContent.structuredContentType = :contentType AND
@@ -63,11 +63,11 @@
                      structuredContent.archivedFlag = false AND
                      structuredContent.offlineFlag = false
                ORDER BY structuredContent.priority
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_PRODUCTION_SANDBOX" >
-		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.sandbox = :sandbox AND
                      structuredContent.structuredContentType = :contentType AND
@@ -75,11 +75,11 @@
                      structuredContent.archivedFlag = false AND
                      structuredContent.offlineFlag = false
                ORDER BY structuredContent.priority
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_USER_SANDBOX" >
-		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.structuredContentType = :contentType AND
                      (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
@@ -91,11 +91,11 @@
                                sandboxItem.archivedFlag = 'N' AND
                                sandboxItem.temporaryItemId = structuredContent.id)
                ORDER BY structuredContent.priority
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE" >
-		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                WHERE structuredContent.sandbox is null AND
                      structuredContent.structuredContentType = :contentType AND
@@ -103,12 +103,12 @@
                      structuredContent.archivedFlag = false AND
                      structuredContent.offlineFlag = false
                ORDER BY structuredContent.priority
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME_AND_PRODUCTION_SANDBOX" >
-   		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                   FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                   WHERE structuredContent.sandbox = :sandbox AND
                         (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
@@ -116,11 +116,11 @@
                         structuredContent.archivedFlag = false AND
                         structuredContent.offlineFlag = false
                   ORDER BY structuredContent.priority
-   		</query>
-   	</named-query>
+        </query>
+    </named-query>
 
        <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME_AND_USER_SANDBOX" >
-   		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                   FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                   WHERE (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
                         structuredContent.contentName = :contentName AND
@@ -132,11 +132,11 @@
                                   sandboxItem.archivedFlag = 'N' AND
                                   sandboxItem.temporaryItemId = structuredContent.id)
                   ORDER BY structuredContent.priority
-   		</query>
-   	</named-query>
+        </query>
+    </named-query>
 
        <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME" >
-   		<query>SELECT structuredContent
+        <query>SELECT structuredContent
                   FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
                   WHERE structuredContent.sandbox is null AND
                         (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
@@ -144,7 +144,7 @@
                         structuredContent.archivedFlag = false AND
                         structuredContent.offlineFlag = false
                   ORDER BY structuredContent.priority
-   		</query>
-   	</named-query>
+        </query>
+    </named-query>
 
 </entity-mappings>

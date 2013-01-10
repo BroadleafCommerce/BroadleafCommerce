@@ -144,8 +144,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setRetailPrice(prices.getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
         for (DiscreteOrderItemFeePrice fee : itemRequest.getDiscreteOrderItemFeePrices()) {
-        	item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
-        	item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
+            item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
+            item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
         }
 
         item.assignFinalPrice();
@@ -202,7 +202,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     
     @Override
     public BundleOrderItem createBundleOrderItem(final ProductBundleOrderItemRequest itemRequest) {
-    	ProductBundle productBundle = itemRequest.getProductBundle();
+        ProductBundle productBundle = itemRequest.getProductBundle();
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         bundleOrderItem.setQuantity(itemRequest.getQuantity());
         bundleOrderItem.setCategory(itemRequest.getCategory());
@@ -215,21 +215,21 @@ public class OrderItemServiceImpl implements OrderItemService {
             Product bundleProduct = skuBundleItem.getBundle();
             Sku bundleSku = skuBundleItem.getSku();
 
-	        Category bundleCategory = null;
-	        if (itemRequest.getCategory() != null) {
-	            bundleCategory = itemRequest.getCategory();
-	        } 
-	
-	        if (bundleCategory == null && bundleProduct != null) {
-	            bundleCategory = bundleProduct.getDefaultCategory();
-	        }
+            Category bundleCategory = null;
+            if (itemRequest.getCategory() != null) {
+                bundleCategory = itemRequest.getCategory();
+            } 
+    
+            if (bundleCategory == null && bundleProduct != null) {
+                bundleCategory = bundleProduct.getDefaultCategory();
+            }
 
-	        DiscreteOrderItemRequest bundleItemRequest = new DiscreteOrderItemRequest();
-	        bundleItemRequest.setCategory(bundleCategory);
-	        bundleItemRequest.setProduct(bundleProduct);
-	        bundleItemRequest.setQuantity(skuBundleItem.getQuantity());
-	        bundleItemRequest.setSku(bundleSku);
-	        bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
+            DiscreteOrderItemRequest bundleItemRequest = new DiscreteOrderItemRequest();
+            bundleItemRequest.setCategory(bundleCategory);
+            bundleItemRequest.setProduct(bundleProduct);
+            bundleItemRequest.setQuantity(skuBundleItem.getQuantity());
+            bundleItemRequest.setSku(bundleSku);
+            bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
             bundleItemRequest.setSalePriceOverride(skuBundleItem.getSalePrice());
             bundleItemRequest.setBundleOrderItem(bundleOrderItem);
             
@@ -247,25 +247,25 @@ public class OrderItemServiceImpl implements OrderItemService {
     
     @Override
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item) {
-    	OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO()
-    		.setQuantity(item.getQuantity())
-    		.setSkuId(((DiscreteOrderItem) item).getSku().getId());
-    	
-    	if (item.getCategory() != null) {
-    		orderItemRequest.setCategoryId(item.getCategory().getId());
-    	}
-    	
-    	if (((DiscreteOrderItem) item).getProduct() != null) {
-    		orderItemRequest.setProductId(((DiscreteOrderItem) item).getProduct().getId());
-    	}
-    	
-    	if (item.getOrderItemAttributes() != null) {
-    		for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
-    			orderItemRequest.getItemAttributes().put(entry.getKey(), entry.getValue().getValue());
-    		}
-    	}
-    	
-    	return orderItemRequest;
+        OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO()
+            .setQuantity(item.getQuantity())
+            .setSkuId(((DiscreteOrderItem) item).getSku().getId());
+        
+        if (item.getCategory() != null) {
+            orderItemRequest.setCategoryId(item.getCategory().getId());
+        }
+        
+        if (((DiscreteOrderItem) item).getProduct() != null) {
+            orderItemRequest.setProductId(((DiscreteOrderItem) item).getProduct().getId());
+        }
+        
+        if (item.getOrderItemAttributes() != null) {
+            for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
+                orderItemRequest.getItemAttributes().put(entry.getKey(), entry.getValue().getValue());
+            }
+        }
+        
+        return orderItemRequest;
     }
 
 }

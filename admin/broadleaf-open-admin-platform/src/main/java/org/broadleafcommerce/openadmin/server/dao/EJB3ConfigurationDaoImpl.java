@@ -28,26 +28,26 @@ import java.util.HashMap;
  */
 public class EJB3ConfigurationDaoImpl implements EJB3ConfigurationDao {
 
-	private Ejb3Configuration configuration = null;
+    private Ejb3Configuration configuration = null;
 
-	protected PersistenceUnitInfo persistenceUnitInfo;
+    protected PersistenceUnitInfo persistenceUnitInfo;
 
-	public Ejb3Configuration getConfiguration() {
-		synchronized(this) {
-			if (configuration == null) {
-				Ejb3Configuration temp = new Ejb3Configuration();
-				configuration = temp.configure(persistenceUnitInfo, new HashMap());
-			}
-		}
-		return configuration;
-	}
+    public Ejb3Configuration getConfiguration() {
+        synchronized(this) {
+            if (configuration == null) {
+                Ejb3Configuration temp = new Ejb3Configuration();
+                configuration = temp.configure(persistenceUnitInfo, new HashMap());
+            }
+        }
+        return configuration;
+    }
 
-	public PersistenceUnitInfo getPersistenceUnitInfo() {
-		return persistenceUnitInfo;
-	}
+    public PersistenceUnitInfo getPersistenceUnitInfo() {
+        return persistenceUnitInfo;
+    }
 
-	public void setPersistenceUnitInfo(PersistenceUnitInfo persistenceUnitInfo) {
-		this.persistenceUnitInfo = persistenceUnitInfo;
-	}
-	
+    public void setPersistenceUnitInfo(PersistenceUnitInfo persistenceUnitInfo) {
+        this.persistenceUnitInfo = persistenceUnitInfo;
+    }
+    
 }

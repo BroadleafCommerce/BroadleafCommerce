@@ -30,39 +30,39 @@ import org.springframework.util.ClassUtils;
  */
 public class Jpa2PersistenceUnitInfoDecorator implements InvocationHandler {
 
-	private final PersistenceUnitInfo target;
+    private final PersistenceUnitInfo target;
 
-	private final Class<? extends Enum> sharedCacheModeEnum;
+    private final Class<? extends Enum> sharedCacheModeEnum;
 
-	private final Class<? extends Enum> validationModeEnum;
+    private final Class<? extends Enum> validationModeEnum;
 
-	@SuppressWarnings("unchecked")
-	public Jpa2PersistenceUnitInfoDecorator(PersistenceUnitInfo target) {
-		this.target = target;
-		try {
-			this.sharedCacheModeEnum = (Class<? extends Enum>)
-					ClassUtils.forName("javax.persistence.SharedCacheMode", PersistenceUnitInfo.class.getClassLoader());
-			this.validationModeEnum = (Class<? extends Enum>)
-					ClassUtils.forName("javax.persistence.ValidationMode", PersistenceUnitInfo.class.getClassLoader());
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException("JPA 2.0 API enum types not present", ex);
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public Jpa2PersistenceUnitInfoDecorator(PersistenceUnitInfo target) {
+        this.target = target;
+        try {
+            this.sharedCacheModeEnum = (Class<? extends Enum>)
+                    ClassUtils.forName("javax.persistence.SharedCacheMode", PersistenceUnitInfo.class.getClassLoader());
+            this.validationModeEnum = (Class<? extends Enum>)
+                    ClassUtils.forName("javax.persistence.ValidationMode", PersistenceUnitInfo.class.getClassLoader());
+        }
+        catch (Exception ex) {
+            throw new IllegalStateException("JPA 2.0 API enum types not present", ex);
+        }
+    }
 
-	public final PersistenceUnitInfo getTarget() {
-		return this.target;
-	}
+    public final PersistenceUnitInfo getTarget() {
+        return this.target;
+    }
 
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		if (method.getName().equals("getSharedCacheMode")) {
-			return Enum.valueOf(this.sharedCacheModeEnum, (String) this.target.getClass().getMethod("getSharedCacheModeName", new Class[]{}).invoke(this.target, new Object[]{}));
-		}
-		else if (method.getName().equals("getValidationMode")) {
-			return Enum.valueOf(this.validationModeEnum, (String) this.target.getClass().getMethod("getValidationModeName", new Class[]{}).invoke(this.target, new Object[]{}));
-		}
-		else {
-			return method.invoke(this.target, args);
-		}
-	}
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (method.getName().equals("getSharedCacheMode")) {
+            return Enum.valueOf(this.sharedCacheModeEnum, (String) this.target.getClass().getMethod("getSharedCacheModeName", new Class[]{}).invoke(this.target, new Object[]{}));
+        }
+        else if (method.getName().equals("getValidationMode")) {
+            return Enum.valueOf(this.validationModeEnum, (String) this.target.getClass().getMethod("getValidationModeName", new Class[]{}).invoke(this.target, new Object[]{}));
+        }
+        else {
+            return method.invoke(this.target, args);
+        }
+    }
 }

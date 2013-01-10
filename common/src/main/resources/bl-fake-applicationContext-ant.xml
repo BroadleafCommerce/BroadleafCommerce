@@ -7,18 +7,18 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
-	
+    
     <!-- THIS SHOULD NEVER BE INCLUDED IN THE NORMAL MERGE PROCESS!!! IT IS ONLY USED FOR 
          THE "build-sql" ANT TASK.  THIS TASK REQUIRES THE DATA SOURCE BEANS TO BE 
          CONFIUGRED, BUT DOES NOT ACTUALLY NEED ACCESS TO THE DATABASES. -->
 
     <bean id="webDS" class="org.apache.commons.dbcp.BasicDataSource"/>
-	
-	<bean id="webSecureDS" class="org.apache.commons.dbcp.BasicDataSource"/>
+    
+    <bean id="webSecureDS" class="org.apache.commons.dbcp.BasicDataSource"/>
 
     <bean id="webStorageDS" class="org.apache.commons.dbcp.BasicDataSource"/>
     
@@ -27,5 +27,5 @@
          we don't require a database, this needs to be deactivated. The way to do this is to define 
          the bean as something that does not implement Spring's ApplicationListener interface. -->
     <bean id="blSequenceGeneratorCorruptionDetection" class="java.lang.Object"/>
-	
+    
 </beans>

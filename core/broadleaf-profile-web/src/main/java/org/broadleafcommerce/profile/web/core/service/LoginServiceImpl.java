@@ -37,7 +37,7 @@ public class LoginServiceImpl implements LoginService {
     private UserDetailsService userDetailsService;
 
     public Authentication loginCustomer(Customer customer) {
-    	return loginCustomer(customer.getUsername(), customer.getUnencodedPassword());
+        return loginCustomer(customer.getUsername(), customer.getUnencodedPassword());
     }
     
     public Authentication loginCustomer(String username, String clearTextPassword) {

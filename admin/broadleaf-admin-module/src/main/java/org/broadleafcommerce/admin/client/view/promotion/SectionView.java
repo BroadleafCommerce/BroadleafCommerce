@@ -28,10 +28,10 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
  *
  */
 public class SectionView extends VLayout {
-	
-	protected VStack contentLayout;
+    
+    protected VStack contentLayout;
 
-	public SectionView(String id, String titleKey) {
+    public SectionView(String id, String titleKey) {
 
         if (id != null) {
             setID(id);
@@ -51,10 +51,10 @@ public class SectionView extends VLayout {
         contentLayout.setWidth100();
         addMember(contentLayout);
 
-	}
+    }
 
-	public VStack getContentLayout() {
-		return contentLayout;
-	}
+    public VStack getContentLayout() {
+        return contentLayout;
+    }
 
 }

@@ -116,7 +116,7 @@ public class CategoryImpl implements Category, Status {
     private static void fillInURLMapForCategory(Map<String, List<Long>> categoryUrlMap, Category category, String startingPath, List<Long> startingCategoryList) throws CacheFactoryException {
         String urlKey = category.getUrlKey();
         if (urlKey == null) {
-        	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
+            throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
         }
 
         String currentPath = "";
@@ -240,7 +240,7 @@ public class CategoryImpl implements Category, Status {
     @BatchSize(size = 50)
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
     
-	@OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
@@ -433,25 +433,25 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public List<Category> getAllChildCategories(){
-    	return allChildCategories;
+        return allChildCategories;
     }
 
     @Override
     public boolean hasAllChildCategories(){
-    	return !allChildCategories.isEmpty();
+        return !allChildCategories.isEmpty();
     }
 
     @Override
     public void setAllChildCategories(List<Category> childCategories){
-    	allChildCategories.clear();
-    	for(Category category : childCategories){
-    		allChildCategories.add(category);
-    	}    	
+        allChildCategories.clear();
+        for(Category category : childCategories){
+            allChildCategories.add(category);
+        }       
     }
 
     @Override
     public List<Category> getChildCategories() {
-    	if (childCategories.isEmpty()) {
+        if (childCategories.isEmpty()) {
             for (Category category : allChildCategories) {
                 if (category.isActive()) {
                     childCategories.add(category);
@@ -469,9 +469,9 @@ public class CategoryImpl implements Category, Status {
     @Override
     public void setChildCategories(List<Category> childCategories) {
         this.childCategories.clear();
-    	for(Category category : childCategories){
-    		this.childCategories.add(category);
-    	}
+        for(Category category : childCategories){
+            this.childCategories.add(category);
+        }
     }
 
     @Override
@@ -489,14 +489,14 @@ public class CategoryImpl implements Category, Status {
     @Override
     @Deprecated
     public void setCategoryImages(Map<String, String> categoryImages) {
-    	this.categoryImages.clear();
-    	for(Map.Entry<String, String> me : categoryImages.entrySet()) {
-    		this.categoryImages.put(me.getKey(), me.getValue());
-    	}
+        this.categoryImages.clear();
+        for(Map.Entry<String, String> me : categoryImages.entrySet()) {
+            this.categoryImages.put(me.getKey(), me.getValue());
+        }
     }
 
     @Override
-	public Map<String, List<Long>> getChildCategoryURLMap() {
+    public Map<String, List<Long>> getChildCategoryURLMap() {
         if (childCategoryURLMap == null) {
             HydratedSetup.populateFromCache(this);
         }
@@ -504,13 +504,13 @@ public class CategoryImpl implements Category, Status {
     }
 
     public Map<String, List<Long>> createChildCategoryURLMap() {
-    	try {
+        try {
             Map<String, List<Long>> newMap = new HashMap<String, List<Long>>(50);
             fillInURLMapForCategory(newMap, this, "", new ArrayList<Long>(10));
             return newMap;
-		} catch (CacheFactoryException e) {
-			throw new RuntimeException(e);
-		}
+        } catch (CacheFactoryException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -545,15 +545,15 @@ public class CategoryImpl implements Category, Status {
     
     @Override
     public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy) {
-    	if (currentHierarchy == null) {
-    		currentHierarchy = new ArrayList<Category>();
-    		currentHierarchy.add(this);
-    	}
-    	if (defaultParentCategory != null && ! currentHierarchy.contains(defaultParentCategory)) {
-    		currentHierarchy.add(defaultParentCategory);
-    		defaultParentCategory.buildCategoryHierarchy(currentHierarchy);
-    	}
-    	return currentHierarchy;
+        if (currentHierarchy == null) {
+            currentHierarchy = new ArrayList<Category>();
+            currentHierarchy.add(this);
+        }
+        if (defaultParentCategory != null && ! currentHierarchy.contains(defaultParentCategory)) {
+            currentHierarchy.add(defaultParentCategory);
+            defaultParentCategory.buildCategoryHierarchy(currentHierarchy);
+        }
+        return currentHierarchy;
     }
 
     @Override
@@ -563,10 +563,10 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public void setAllParentCategories(List<Category> allParentCategories) {
-    	this.allParentCategories.clear();
-    	for(Category category : allParentCategories){
-    		this.allParentCategories.add(category);
-    	}
+        this.allParentCategories.clear();
+        for(Category category : allParentCategories){
+            this.allParentCategories.add(category);
+        }
     }
 
     @Override
@@ -586,10 +586,10 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public void setFeaturedProducts(List<FeaturedProduct> featuredProducts) {
-    	this.featuredProducts.clear();
-    	for(FeaturedProduct featuredProduct : featuredProducts){
-    		this.featuredProducts.add(featuredProduct);
-    	}
+        this.featuredProducts.clear();
+        for(FeaturedProduct featuredProduct : featuredProducts){
+            this.featuredProducts.add(featuredProduct);
+        }
     }
     
     @Override
@@ -611,8 +611,8 @@ public class CategoryImpl implements Category, Status {
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
         this.crossSaleProducts.clear();
         for(RelatedProduct relatedProduct : crossSaleProducts){
-        	this.crossSaleProducts.add(relatedProduct);
-        }    	
+            this.crossSaleProducts.add(relatedProduct);
+        }       
     }
 
     @Override
@@ -632,42 +632,42 @@ public class CategoryImpl implements Category, Status {
     
     @Override
     public List<RelatedProduct> getCumulativeCrossSaleProducts() {
-    	Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
-    	    	
-    	List<Category> categoryHierarchy = buildCategoryHierarchy(null);
-    	for (Category category : categoryHierarchy) {
-    		returnProductsSet.addAll(category.getCrossSaleProducts());
-    	}
-    	return new ArrayList<RelatedProduct>(returnProductsSet);
+        Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
+                
+        List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+        for (Category category : categoryHierarchy) {
+            returnProductsSet.addAll(category.getCrossSaleProducts());
+        }
+        return new ArrayList<RelatedProduct>(returnProductsSet);
     }
     
     @Override
     public List<RelatedProduct> getCumulativeUpSaleProducts() {
-    	Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
-    	
-    	List<Category> categoryHierarchy = buildCategoryHierarchy(null);
-    	for (Category category : categoryHierarchy) {
-    		returnProductsSet.addAll(category.getUpSaleProducts());
-    	}
-    	return new ArrayList<RelatedProduct>(returnProductsSet);
+        Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
+        
+        List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+        for (Category category : categoryHierarchy) {
+            returnProductsSet.addAll(category.getUpSaleProducts());
+        }
+        return new ArrayList<RelatedProduct>(returnProductsSet);
     }
 
     @Override
     public List<FeaturedProduct> getCumulativeFeaturedProducts() {
-    	Set<FeaturedProduct> returnProductsSet = new LinkedHashSet<FeaturedProduct>();
-    	
-    	List<Category> categoryHierarchy = buildCategoryHierarchy(null);
-    	for (Category category : categoryHierarchy) {
-    		returnProductsSet.addAll(category.getFeaturedProducts());
-    	}
-    	return new ArrayList<FeaturedProduct>(returnProductsSet);
+        Set<FeaturedProduct> returnProductsSet = new LinkedHashSet<FeaturedProduct>();
+        
+        List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+        for (Category category : categoryHierarchy) {
+            returnProductsSet.addAll(category.getFeaturedProducts());
+        }
+        return new ArrayList<FeaturedProduct>(returnProductsSet);
     }
     
     @Override
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
         this.upSaleProducts.clear();
         for(RelatedProduct relatedProduct : upSaleProducts){
-        	this.upSaleProducts.add(relatedProduct);
+            this.upSaleProducts.add(relatedProduct);
         }
         this.upSaleProducts = upSaleProducts;
     }
@@ -683,38 +683,38 @@ public class CategoryImpl implements Category, Status {
         return result;
     }
     
-	@Override
+    @Override
     public List<Product> getAllProducts() {
-		return allProducts;
-	}
+        return allProducts;
+    }
 
     @Override
-	public void setAllProducts(List<Product> allProducts) {
-		this.allProducts.clear();
-    	for(Product product : allProducts){
-    		this.allProducts.add(product);
-    	}
-	}
+    public void setAllProducts(List<Product> allProducts) {
+        this.allProducts.clear();
+        for(Product product : allProducts){
+            this.allProducts.add(product);
+        }
+    }
     
     @Override
     public List<CategorySearchFacet> getSearchFacets() {
-		return searchFacets;
-	}
+        return searchFacets;
+    }
 
     @Override
-	public void setSearchFacets(List<CategorySearchFacet> searchFacets) {
-		this.searchFacets = searchFacets;
-	}
-
-	@Override
-	public List<SearchFacet> getExcludedSearchFacets() {
-		return excludedSearchFacets;
-	}
+    public void setSearchFacets(List<CategorySearchFacet> searchFacets) {
+        this.searchFacets = searchFacets;
+    }
 
     @Override
-	public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets) {
-		this.excludedSearchFacets = excludedSearchFacets;
-	}
+    public List<SearchFacet> getExcludedSearchFacets() {
+        return excludedSearchFacets;
+    }
+
+    @Override
+    public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets) {
+        this.excludedSearchFacets = excludedSearchFacets;
+    }
     
     @Override
     public InventoryType getInventoryType() {
@@ -728,50 +728,50 @@ public class CategoryImpl implements Category, Status {
     
     @Override
     public FulfillmentType getFulfillmentType() {
-    	return FulfillmentType.getInstance(this.fulfillmentType);
+        return FulfillmentType.getInstance(this.fulfillmentType);
     }
     
     @Override
     public void setFulfillmentType(FulfillmentType fulfillmentType) {
-    	this.fulfillmentType = fulfillmentType.getType();
+        this.fulfillmentType = fulfillmentType.getType();
     }
 
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
-    	final List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
-    	returnFacets.addAll(getSearchFacets());
-    	Collections.sort(returnFacets, facetPositionComparator);
-    	
-    	// Add in parent facets unless they are excluded
-    	List<CategorySearchFacet> parentFacets = null;
-    	if (defaultParentCategory != null) {
-    		parentFacets = defaultParentCategory.getCumulativeSearchFacets();   
-        	CollectionUtils.filter(parentFacets, new Predicate() {
-    			@Override
-    			public boolean evaluate(Object arg) {
-    				CategorySearchFacet csf = (CategorySearchFacet) arg;
-    				return !getExcludedSearchFacets().contains(csf.getSearchFacet()) && !returnFacets.contains(csf.getSearchFacet());
-    			}
-        	});
-    	}
-    	if (parentFacets != null) {
-    		returnFacets.addAll(parentFacets);
-    	}
-    	
-    	return returnFacets;
+        final List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
+        returnFacets.addAll(getSearchFacets());
+        Collections.sort(returnFacets, facetPositionComparator);
+        
+        // Add in parent facets unless they are excluded
+        List<CategorySearchFacet> parentFacets = null;
+        if (defaultParentCategory != null) {
+            parentFacets = defaultParentCategory.getCumulativeSearchFacets();   
+            CollectionUtils.filter(parentFacets, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    CategorySearchFacet csf = (CategorySearchFacet) arg;
+                    return !getExcludedSearchFacets().contains(csf.getSearchFacet()) && !returnFacets.contains(csf.getSearchFacet());
+                }
+            });
+        }
+        if (parentFacets != null) {
+            returnFacets.addAll(parentFacets);
+        }
+        
+        return returnFacets;
     }
 
-	@Override
+    @Override
     public Map<String, Media> getCategoryMedia() {
         return categoryMedia;
     }
 
     @Override
     public void setCategoryMedia(Map<String, Media> categoryMedia) {
-    	this.categoryMedia.clear();
-    	for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
-    		this.categoryMedia.put(me.getKey(), me.getValue());
-    	}
+        this.categoryMedia.clear();
+        for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
+            this.categoryMedia.put(me.getKey(), me.getValue());
+        }
     }
     
     @Override
@@ -863,10 +863,10 @@ public class CategoryImpl implements Category, Status {
     }
     
     protected static Comparator<CategorySearchFacet> facetPositionComparator = new Comparator<CategorySearchFacet>() {
-		@Override
-		public int compare(CategorySearchFacet o1, CategorySearchFacet o2) {
-			return o1.getSequence().compareTo(o2.getSequence());
-		}
-	};
+        @Override
+        public int compare(CategorySearchFacet o1, CategorySearchFacet o2) {
+            return o1.getSequence().compareTo(o2.getSequence());
+        }
+    };
 
 }

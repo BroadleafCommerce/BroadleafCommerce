@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.catalog.domain;
 
 
 public interface RelatedProduct extends PromotableProduct {
-	
+    
     public Long getId();
 
     public Product getProduct();
@@ -35,7 +35,7 @@ public interface RelatedProduct extends PromotableProduct {
 
     public void setProduct(Product product);
     
-	public void setCategory(Category category);
+    public void setCategory(Category category);
 
     public void setRelatedProduct(Product relatedProduct);
 

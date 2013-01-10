@@ -43,9 +43,9 @@ public class UpdateOrderMultishipOptionActivity extends BaseActivity {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
         Long orderItemId = request.getItemRequest().getOrderItemId();
         
-		Integer orderItemQuantityDelta = request.getOrderItemQuantityDelta();
-		if (orderItemQuantityDelta < 0) {
-			int numToDelete = -1 * orderItemQuantityDelta;
+        Integer orderItemQuantityDelta = request.getOrderItemQuantityDelta();
+        if (orderItemQuantityDelta < 0) {
+            int numToDelete = -1 * orderItemQuantityDelta;
             //find the qty in the default fg
             OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
             int qty = 0;
@@ -60,9 +60,9 @@ public class UpdateOrderMultishipOptionActivity extends BaseActivity {
                 }
             }
             if (numToDelete >= qty) {
-			    orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(orderItemId, numToDelete - qty);
+                orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(orderItemId, numToDelete - qty);
             }
-		}
+        }
         
         return context;
     }

@@ -37,15 +37,15 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
  */
 public interface FulfillmentGroupItemStrategy {
 
-	public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException;
+    public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException;
 
-	public CartOperationRequest onItemUpdated(CartOperationRequest request) throws PricingException;
-	
-	public CartOperationRequest onItemRemoved(CartOperationRequest request) throws PricingException;
-	
-	public CartOperationRequest verify(CartOperationRequest request) throws PricingException;
+    public CartOperationRequest onItemUpdated(CartOperationRequest request) throws PricingException;
+    
+    public CartOperationRequest onItemRemoved(CartOperationRequest request) throws PricingException;
+    
+    public CartOperationRequest verify(CartOperationRequest request) throws PricingException;
 
-	public void setRemoveEmptyFulfillmentGroups(boolean removeEmptyFulfillmentGroups);
-	public boolean isRemoveEmptyFulfillmentGroups();
+    public void setRemoveEmptyFulfillmentGroups(boolean removeEmptyFulfillmentGroups);
+    public boolean isRemoveEmptyFulfillmentGroups();
 
 }

@@ -79,24 +79,24 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
     protected ComboBoxItem currentLocale = new ComboBoxItem();
 
     public PagesView() {
-		setHeight100();
-		setWidth100();
-	}
+        setHeight100();
+        setWidth100();
+    }
 
     @Override
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-    	DataSource customerDataSource = additionalDataSources[0];
+        DataSource customerDataSource = additionalDataSources[0];
         DataSource timeDataSource = additionalDataSources[1];
         DataSource requestDataSource = additionalDataSources[2];
         DataSource orderItemDataSource = additionalDataSources[3];
         DataSource productDataSource = additionalDataSources[4];
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("pagesLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("40%");
-		leftVerticalLayout.setShowResizeBar(true);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("pagesLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("40%");
+        leftVerticalLayout.setShowResizeBar(true);
 
-		listDisplay = new DynamicEntityListView(entityDataSource);
+        listDisplay = new DynamicEntityListView(entityDataSource);
         listDisplay.getGrid().setHoverMoveWithMouse(true);
         listDisplay.getGrid().setCanHover(true);
         listDisplay.getGrid().setShowHover(true);
@@ -253,22 +253,22 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         topTabSet.addTab(rulesTab);
 
         addMember(topTabSet);
-	}
+    }
 
     @Override
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	@Override
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+    @Override
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
 
     @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
+        return dynamicFormDisplay;
+    }
 
     @Override
     public ComboBoxItem getCurrentLocale() {
@@ -463,25 +463,25 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
 
     @Override
     public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
-		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
-		builder.enable();
-		builder.setDirty(true);
-		itemBuilderContainerLayout.addMember((ItemBuilderView) builder);
-		itemBuilderViews.add(builder);
-		return builder;
-	}
+        ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
+        builder.enable();
+        builder.setDirty(true);
+        itemBuilderContainerLayout.addMember((ItemBuilderView) builder);
+        itemBuilderViews.add(builder);
+        return builder;
+    }
 
-	@Override
-	public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
-		itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
-		itemBuilderViews.remove(itemBuilder);
-	}
+    @Override
+    public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
+        itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
+        itemBuilderViews.remove(itemBuilder);
+    }
 
-	@Override
-	public void removeAllItemBuilders() {
-		ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
-		for (ItemBuilderView view : myViews) {
-			removeItemBuilder(view);
-		}
-	}
+    @Override
+    public void removeAllItemBuilders() {
+        ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
+        for (ItemBuilderView view : myViews) {
+            removeItemBuilder(view);
+        }
+    }
 }

@@ -35,33 +35,33 @@ import java.util.Map;
  */
 public class PresenterSequenceSetupManager {
 
-	private List<PresenterSetupItem> items = new ArrayList<PresenterSetupItem>();
+    private List<PresenterSetupItem> items = new ArrayList<PresenterSetupItem>();
     private List<PresenterSetupItem> supplementalItems = new ArrayList<PresenterSetupItem>();
-	private Iterator<PresenterSetupItem> itemsIterator = null;
+    private Iterator<PresenterSetupItem> itemsIterator = null;
     private Iterator<PresenterSetupItem> supplementalItemsIterator = null;
-	private Canvas canvas;
-	private EntityPresenter presenter;
+    private Canvas canvas;
+    private EntityPresenter presenter;
     private Map<String, DynamicEntityDataSource> dataSourceLibrary = new HashMap<String, DynamicEntityDataSource>();
     private boolean stage1 = false;
     private boolean stage2 = false;
-	
-	public PresenterSequenceSetupManager(EntityPresenter presenter) {
-		this.presenter = presenter;
-	}
-	
-	public Canvas getCanvas() {
-		return canvas;
-	}
+    
+    public PresenterSequenceSetupManager(EntityPresenter presenter) {
+        this.presenter = presenter;
+    }
+    
+    public Canvas getCanvas() {
+        return canvas;
+    }
 
-	protected void setCanvas(Canvas canvas) {
-		this.canvas = canvas;
-	}
-	
-	public void addOrReplaceItem(PresenterSetupItem item) {
-		addOrReplaceItem(item, null);
-	}
-	
-	public void addOrReplaceItem(PresenterSetupItem item, Integer destinationPos) {
+    protected void setCanvas(Canvas canvas) {
+        this.canvas = canvas;
+    }
+    
+    public void addOrReplaceItem(PresenterSetupItem item) {
+        addOrReplaceItem(item, null);
+    }
+    
+    public void addOrReplaceItem(PresenterSetupItem item, Integer destinationPos) {
         int pos = -1;
         if (itemsIterator == null && !stage1) {
             if (items.contains(item)) {
@@ -100,31 +100,31 @@ public class PresenterSequenceSetupManager {
                 item.invoke();
             }
         }
-	}
-	
-	public void moveItem(PresenterSetupItem item, int pos) {
-		Boolean removed = items.remove(item);
-		if (!removed) {
-			throw new RuntimeException("Unable to find the passed in item in the collection of setup items");
-		}
-		items.add(pos, item);
-	}
-	
-	public PresenterSetupItem getItem(String key) {
-		int pos = items.indexOf(new PresenterSetupItem(key, null, null, null, null));
-		if (pos >= 0) {
-			return items.get(pos);
-		}
-		return null;
-	}
-	
-	protected void launch() {
+    }
+    
+    public void moveItem(PresenterSetupItem item, int pos) {
+        Boolean removed = items.remove(item);
+        if (!removed) {
+            throw new RuntimeException("Unable to find the passed in item in the collection of setup items");
+        }
+        items.add(pos, item);
+    }
+    
+    public PresenterSetupItem getItem(String key) {
+        int pos = items.indexOf(new PresenterSetupItem(key, null, null, null, null));
+        if (pos >= 0) {
+            return items.get(pos);
+        }
+        return null;
+    }
+    
+    protected void launch() {
         if (!presenter.getLoaded()) {
             stage1 = true;
             itemsIterator = items.iterator();
             next();
         }
-	}
+    }
 
     protected void launchSupplemental() {
         if (!presenter.getLoaded()) {
@@ -133,10 +133,10 @@ public class PresenterSequenceSetupManager {
         }
     }
 
-	protected void next() {
-		if (itemsIterator.hasNext()) {
-			itemsIterator.next().invoke();
-		} else if (supplementalItemsIterator != null && supplementalItemsIterator.hasNext()) {
+    protected void next() {
+        if (itemsIterator.hasNext()) {
+            itemsIterator.next().invoke();
+        } else if (supplementalItemsIterator != null && supplementalItemsIterator.hasNext()) {
             supplementalItemsIterator.next().invoke();
         } else {
             BatchManager batchManager = BatchManager.getInstance();
@@ -156,10 +156,10 @@ public class PresenterSequenceSetupManager {
                     }
                 });
             } else {
-			    presenter.postSetup(canvas);
+                presenter.postSetup(canvas);
             }
-		}
-	}
+        }
+    }
 
     protected void addDataSource(DynamicEntityDataSource dataSource) {
         dataSourceLibrary.put(dataSource.getDataURL(), dataSource);

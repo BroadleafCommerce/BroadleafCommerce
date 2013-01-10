@@ -30,16 +30,16 @@ import javax.servlet.http.HttpServletRequest;
  * @author bpolster
  */
 public abstract class BroadleafAbstractController {
-	
     
-	/**
-	 * A helper method that returns whether or not the given request was invoked via an AJAX call
-	 * 
-	 * @param request
-	 * @return - whether or not it was an AJAX request
-	 */
+    
+    /**
+     * A helper method that returns whether or not the given request was invoked via an AJAX call
+     * 
+     * @param request
+     * @return - whether or not it was an AJAX request
+     */
     protected boolean isAjaxRequest(HttpServletRequest request) {
-    	return BroadleafControllerUtility.isAjaxRequest(request);    	
+        return BroadleafControllerUtility.isAjaxRequest(request);       
     }
 
 }

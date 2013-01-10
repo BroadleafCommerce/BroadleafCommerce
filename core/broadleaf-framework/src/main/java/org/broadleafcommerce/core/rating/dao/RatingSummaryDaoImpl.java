@@ -42,11 +42,11 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-	public void deleteRatingSummary(final RatingSummary summary) {
-    	RatingSummary lSummary = summary;
-    	if (!em.contains(lSummary)) {
-    		lSummary = (RatingSummary) em.find(RatingSummaryImpl.class, lSummary.getId());
-    	}
+    public void deleteRatingSummary(final RatingSummary summary) {
+        RatingSummary lSummary = summary;
+        if (!em.contains(lSummary)) {
+            lSummary = (RatingSummary) em.find(RatingSummaryImpl.class, lSummary.getId());
+        }
         em.remove(lSummary);
     }
 

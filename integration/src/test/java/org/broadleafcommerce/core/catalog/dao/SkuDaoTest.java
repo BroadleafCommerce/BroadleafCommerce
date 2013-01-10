@@ -43,8 +43,8 @@ public class SkuDaoTest extends BaseTest {
     @Test(groups = { "createSku" }, dataProvider = "basicSku", dataProviderClass = SkuDaoDataProvider.class, dependsOnGroups = { "readCustomer", "createOrder", "createProducts" })
     @Rollback(false)
     public void createSku(Sku sku) {
-    	Calendar activeStartCal = Calendar.getInstance();
-    	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         sku.setName("test sku");

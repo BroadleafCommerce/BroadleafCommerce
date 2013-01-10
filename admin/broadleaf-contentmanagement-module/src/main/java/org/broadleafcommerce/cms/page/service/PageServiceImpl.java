@@ -387,41 +387,41 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     }      
     
     protected List<PageDTO> mergePages(List<PageDTO> productionPageList, List<Page> sandboxPageList, boolean secure) {
-    	if (sandboxPageList == null || sandboxPageList.size() == 0) {
-    		return productionPageList;
-    	}
-    	
-    	Map<Long, PageDTO> pageMap = new LinkedHashMap<Long, PageDTO>();
-    	if (productionPageList != null) {
-    		for(PageDTO page : productionPageList) {
-    			pageMap.put(page.getId(), page);
-    		}
-    	}
-    	
-    	for (Page page : sandboxPageList) {
-    		if (page.getOriginalPageId() != null) {
-    			pageMap.remove(page.getOriginalPageId());
-    		}
-    		
-    		if (! page.getDeletedFlag() && page.getOfflineFlag() != null && ! page.getOfflineFlag()) {
-    			PageDTO convertedPage = buildPageDTOInternal(page, secure);
-    			pageMap.put(page.getId(), convertedPage);
-    		}
-    	}
-    	
-    	ArrayList<PageDTO> returnList = new ArrayList<PageDTO>(pageMap.values());
-    	
-    	if (returnList.size() > 1) {
-    		Collections.sort(returnList, new BeanComparator("priority"));
-    	}
-    	
-    	return returnList;
+        if (sandboxPageList == null || sandboxPageList.size() == 0) {
+            return productionPageList;
+        }
+        
+        Map<Long, PageDTO> pageMap = new LinkedHashMap<Long, PageDTO>();
+        if (productionPageList != null) {
+            for(PageDTO page : productionPageList) {
+                pageMap.put(page.getId(), page);
+            }
+        }
+        
+        for (Page page : sandboxPageList) {
+            if (page.getOriginalPageId() != null) {
+                pageMap.remove(page.getOriginalPageId());
+            }
+            
+            if (! page.getDeletedFlag() && page.getOfflineFlag() != null && ! page.getOfflineFlag()) {
+                PageDTO convertedPage = buildPageDTOInternal(page, secure);
+                pageMap.put(page.getId(), convertedPage);
+            }
+        }
+        
+        ArrayList<PageDTO> returnList = new ArrayList<PageDTO>(pageMap.values());
+        
+        if (returnList.size() > 1) {
+            Collections.sort(returnList, new BeanComparator("priority"));
+        }
+        
+        return returnList;
     }
     
     protected PageDTO evaluatePageRules(List<PageDTO> pageDTOList, Locale locale, Map<String, Object> ruleDTOs) {
-    	if (pageDTOList == null) {
-    		return NULL_PAGE;
-    	}
+        if (pageDTOList == null) {
+            return NULL_PAGE;
+        }
 
         // First check to see if we have a page that matches on the full locale.
         for(PageDTO page : pageDTOList) {
@@ -435,13 +435,13 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         }
 
         // Otherwise, we look for a match using just the language.
-    	for(PageDTO page : pageDTOList) {
-    		if (passesPageRules(page, ruleDTOs)) {
-    			return page;
-    		}
-    	}
-    	
-    	return NULL_PAGE;    	
+        for(PageDTO page : pageDTOList) {
+            if (passesPageRules(page, ruleDTOs)) {
+                return page;
+            }
+        }
+        
+        return NULL_PAGE;       
     }
     
     protected boolean passesPageRules(PageDTO page, Map<String, Object> ruleDTOs) {
@@ -508,8 +508,8 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
             // for this page before returning.  No caching is used for Sandbox pages.
             if (currentSandbox != null && ! currentSandbox.getSandBoxType().equals(SandBoxType.PRODUCTION)) {
                 List<Page> sandboxPages = pageDao.findPageByURI(currentSandbox, locale, languageOnlyLocale, uri);
-                if (sandboxPages != null && sandboxPages.size() > 0) {                	                
-                	returnList = mergePages(returnList, sandboxPages, secure);                	                  
+                if (sandboxPages != null && sandboxPages.size() > 0) {                                  
+                    returnList = mergePages(returnList, sandboxPages, secure);                                    
                 }
             }
         }

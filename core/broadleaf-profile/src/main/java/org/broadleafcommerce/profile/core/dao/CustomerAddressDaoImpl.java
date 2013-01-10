@@ -45,7 +45,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     }
 
     public CustomerAddress save(CustomerAddress customerAddress) {
-    		return em.merge(customerAddress);
+            return em.merge(customerAddress);
     }
 
     public CustomerAddress create() {

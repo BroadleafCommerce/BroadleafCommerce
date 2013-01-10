@@ -39,32 +39,32 @@ import java.io.IOException;
  */
 @Component("blAuthenticationFailureRedirectStrategy")
 public class BroadleafAuthenticationFailureRedirectStrategy implements RedirectStrategy {
-	
-	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-	@Override
-	public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
-		if (BroadleafControllerUtility.isAjaxRequest(request)) {
-			 url = updateUrlForAjax(url);
-		}
-		redirectStrategy.sendRedirect(request, response, url);
-	}
+    @Override
+    public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+        if (BroadleafControllerUtility.isAjaxRequest(request)) {
+             url = updateUrlForAjax(url);
+        }
+        redirectStrategy.sendRedirect(request, response, url);
+    }
 
-	public String updateUrlForAjax(String url) {
-		String blcAjax = BroadleafControllerUtility.BLC_AJAX_PARAMETER;
-		if (url != null && url.indexOf("?") > 0) {
-			url = url + "&" + blcAjax + "=true";
-		} else {
-			url = url + "?" + blcAjax + "=true";
-		}
-		return url;
-	}
-	
-	public RedirectStrategy getRedirectStrategy() {
-		return redirectStrategy;
-	}
+    public String updateUrlForAjax(String url) {
+        String blcAjax = BroadleafControllerUtility.BLC_AJAX_PARAMETER;
+        if (url != null && url.indexOf("?") > 0) {
+            url = url + "&" + blcAjax + "=true";
+        } else {
+            url = url + "?" + blcAjax + "=true";
+        }
+        return url;
+    }
+    
+    public RedirectStrategy getRedirectStrategy() {
+        return redirectStrategy;
+    }
 
-	public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
-		this.redirectStrategy = redirectStrategy;
-	}
+    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+        this.redirectStrategy = redirectStrategy;
+    }
 }

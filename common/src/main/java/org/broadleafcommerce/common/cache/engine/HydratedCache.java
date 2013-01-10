@@ -33,7 +33,7 @@ public class HydratedCache extends Hashtable<String, Object> {
     private String cacheRegion;
 
     public HydratedCache(String cacheRegion, String cacheName) {
-    	this.cacheRegion = cacheRegion;
+        this.cacheRegion = cacheRegion;
         this.cacheName = cacheName;
     }
 
@@ -42,24 +42,24 @@ public class HydratedCache extends Hashtable<String, Object> {
     }
 
     public String getCacheRegion() {
-		return cacheRegion;
-	}
+        return cacheRegion;
+    }
 
-	public void setCacheRegion(String cacheRegion) {
-		this.cacheRegion = cacheRegion;
-	}
+    public void setCacheRegion(String cacheRegion) {
+        this.cacheRegion = cacheRegion;
+    }
 
-	public HydratedCacheElement getCacheElement(String cacheRegion, String cacheName, Serializable key) {
-    	return (HydratedCacheElement) get(cacheRegion + "_" + cacheName + "_" + key);
+    public HydratedCacheElement getCacheElement(String cacheRegion, String cacheName, Serializable key) {
+        return (HydratedCacheElement) get(cacheRegion + "_" + cacheName + "_" + key);
     }
     
     public HydratedCacheElement removeCacheElement(String cacheRegion, String cacheName, Serializable key) {
-    	String myKey = cacheRegion + "_" + cacheName + "_" + key;
-     	return (HydratedCacheElement) remove(myKey);
+        String myKey = cacheRegion + "_" + cacheName + "_" + key;
+        return (HydratedCacheElement) remove(myKey);
     }
     
     public void addCacheElement(String cacheRegion, String cacheName, Serializable key, Object value) {
-    	String myKey = cacheRegion + "_" + cacheName + "_" + key;
-     	put(myKey, value);
+        String myKey = cacheRegion + "_" + cacheName + "_" + key;
+        put(myKey, value);
     }
 }

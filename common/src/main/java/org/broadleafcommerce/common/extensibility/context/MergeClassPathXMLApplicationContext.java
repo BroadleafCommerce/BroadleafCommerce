@@ -44,51 +44,51 @@ import org.springframework.core.io.Resource;
  */
 public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationContext {
 
-	protected Resource[] configResources;
-	
-	protected Resource[] getConfigResources() {
-		return this.configResources;
-	}
-	
-	/**
-	 * Create a new MergeClassPathXMLApplicationContext, loading the definitions from the given definitions. Note,
-	 * all sourceLocation files will be merged using standard Spring configuration override rules. However, the patch
-	 * files are fully merged into the result of the sourceLocations simple merge. Patch merges are first executed according
-	 * to beans with the same id. Subsequent merges within a bean are executed against tagnames - ignoring any
-	 * further id attributes.
-	 * 
-	 * @param sourceLocations array of relative (or absolute) paths within the class path for the source application context files
-	 * @param patchLocations array of relative (or absolute) paths within the class path for the patch application context files
-	 * @throws BeansException
-	 */
-	public MergeClassPathXMLApplicationContext(String[] sourceLocations, String[] patchLocations) throws BeansException {
-		this(sourceLocations, patchLocations, null);
-	}
-	
-	/**
-	 * Create a new MergeClassPathXMLApplicationContext, loading the definitions from the given definitions. Note,
-	 * all sourceLocation files will be merged using standard Spring configuration override rules. However, the patch
-	 * files are fully merged into the result of the sourceLocations simple merge. Patch merges are first executed according
-	 * to beans with the same id. Subsequent merges within a bean are executed against tagnames - ignoring any
-	 * further id attributes.
-	 * 
-	 * @param sourceLocations array of relative (or absolute) paths within the class path for the source application context files
-	 * @param patchLocations array of relative (or absolute) paths within the class path for the patch application context files
-	 * @param parent the parent context
-	 * @throws BeansException
-	 */
-	public MergeClassPathXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
-		super(parent);
-		
-		ResourceInputStream[] sources = new ResourceInputStream[sourceLocations.length];
-		for (int j=0;j<sourceLocations.length;j++){
-			sources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(sourceLocations[j]), sourceLocations[j]);
-		}
-		
-		ResourceInputStream[] patches = new ResourceInputStream[patchLocations.length];
-		for (int j=0;j<patches.length;j++){
-			patches[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[j]), patchLocations[j]);
-		}
+    protected Resource[] configResources;
+    
+    protected Resource[] getConfigResources() {
+        return this.configResources;
+    }
+    
+    /**
+     * Create a new MergeClassPathXMLApplicationContext, loading the definitions from the given definitions. Note,
+     * all sourceLocation files will be merged using standard Spring configuration override rules. However, the patch
+     * files are fully merged into the result of the sourceLocations simple merge. Patch merges are first executed according
+     * to beans with the same id. Subsequent merges within a bean are executed against tagnames - ignoring any
+     * further id attributes.
+     * 
+     * @param sourceLocations array of relative (or absolute) paths within the class path for the source application context files
+     * @param patchLocations array of relative (or absolute) paths within the class path for the patch application context files
+     * @throws BeansException
+     */
+    public MergeClassPathXMLApplicationContext(String[] sourceLocations, String[] patchLocations) throws BeansException {
+        this(sourceLocations, patchLocations, null);
+    }
+    
+    /**
+     * Create a new MergeClassPathXMLApplicationContext, loading the definitions from the given definitions. Note,
+     * all sourceLocation files will be merged using standard Spring configuration override rules. However, the patch
+     * files are fully merged into the result of the sourceLocations simple merge. Patch merges are first executed according
+     * to beans with the same id. Subsequent merges within a bean are executed against tagnames - ignoring any
+     * further id attributes.
+     * 
+     * @param sourceLocations array of relative (or absolute) paths within the class path for the source application context files
+     * @param patchLocations array of relative (or absolute) paths within the class path for the patch application context files
+     * @param parent the parent context
+     * @throws BeansException
+     */
+    public MergeClassPathXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
+        super(parent);
+        
+        ResourceInputStream[] sources = new ResourceInputStream[sourceLocations.length];
+        for (int j=0;j<sourceLocations.length;j++){
+            sources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(sourceLocations[j]), sourceLocations[j]);
+        }
+        
+        ResourceInputStream[] patches = new ResourceInputStream[patchLocations.length];
+        for (int j=0;j<patches.length;j++){
+            patches[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[j]), patchLocations[j]);
+        }
 
         ImportProcessor importProcessor = new ImportProcessor(this);
         try {
@@ -98,8 +98,8 @@ public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationC
             throw new FatalBeanException("Unable to merge source and patch locations", e);
         }
 
-		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
-		refresh();
-	}
+        this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
+        refresh();
+    }
 
 }

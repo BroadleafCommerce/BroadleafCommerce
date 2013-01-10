@@ -84,17 +84,17 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
         this.id = id;
     }
 
-	@Override
+    @Override
     public DiscreteOrderItem getDiscreteOrderItem() {
-		return discreteOrderItem;
-	}
+        return discreteOrderItem;
+    }
 
-	@Override
+    @Override
     public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem) {
-		this.discreteOrderItem = discreteOrderItem;
-	}
+        this.discreteOrderItem = discreteOrderItem;
+    }
 
-	@Override
+    @Override
     public Money getAmount() {
         return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getDiscreteOrderItem().getBundleOrderItem().getOrder().getCurrency());
     }

@@ -31,31 +31,31 @@ import junit.framework.TestCase;
  *
  */
 public class SpringTemporaryRedirectOverrideFilterTest extends TestCase {
-	
-	public void testFilter() throws Exception {
-		SpringTemporaryRedirectOverrideFilter filter = new SpringTemporaryRedirectOverrideFilter();
-		FilterConfig config = new FilterConfig() {
-			
-			public String getFilterName() {
-				return null;
-			}
-			
-			public String getInitParameter(String param) {
-				return "category/temp.*\n stellar/test/tester another/small/test";
-			}
-			
-			public Enumeration<String> getInitParameterNames() {
-				return null;
-			}
+    
+    public void testFilter() throws Exception {
+        SpringTemporaryRedirectOverrideFilter filter = new SpringTemporaryRedirectOverrideFilter();
+        FilterConfig config = new FilterConfig() {
+            
+            public String getFilterName() {
+                return null;
+            }
+            
+            public String getInitParameter(String param) {
+                return "category/temp.*\n stellar/test/tester another/small/test";
+            }
+            
+            public Enumeration<String> getInitParameterNames() {
+                return null;
+            }
 
-			public ServletContext getServletContext() {
-				return null;
-			}
-		};
-		filter.init(config);
-		assertFalse(filter.isUrlMatch("nonsense/category/temp/mytest"));
-		assertTrue(filter.isUrlMatch("category/temp/mytest"));
-		assertTrue(filter.isUrlMatch("stellar/test/tester"));
-	}
+            public ServletContext getServletContext() {
+                return null;
+            }
+        };
+        filter.init(config);
+        assertFalse(filter.isUrlMatch("nonsense/category/temp/mytest"));
+        assertTrue(filter.isUrlMatch("category/temp/mytest"));
+        assertTrue(filter.isUrlMatch("stellar/test/tester"));
+    }
 
 }

@@ -159,12 +159,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     
     @Override
     public void removeAssociations() {
-		if (getFulfillmentGroup() != null) {
+        if (getFulfillmentGroup() != null) {
             getFulfillmentGroup().getFulfillmentGroupItems().remove(this);
         }
-		setFulfillmentGroup(null);
-		setOrderItem(null);
-	}
+        setFulfillmentGroup(null);
+        setOrderItem(null);
+    }
 
     @Override
     public List<TaxDetail> getTaxes() {

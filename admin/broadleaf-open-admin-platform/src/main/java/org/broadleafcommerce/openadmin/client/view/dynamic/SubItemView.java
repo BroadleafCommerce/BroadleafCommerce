@@ -38,30 +38,30 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  */
 public class SubItemView extends VLayout implements SubItemDisplay {
 
-	protected ToolStrip toolBar;
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
-	protected ToolStripButton saveButton;
-	protected ToolStripButton refreshButton;
-	protected ListGrid grid;
-	protected FormOnlyView formOnlyView;
+    protected ToolStrip toolBar;
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
+    protected ToolStripButton saveButton;
+    protected ToolStripButton refreshButton;
+    protected ListGrid grid;
+    protected FormOnlyView formOnlyView;
 
     public SubItemView(String title, Boolean canReorder, Boolean canEdit) {
         this(title, canReorder, canEdit, false);
     }
 
-	public SubItemView(String title, Boolean canReorder, Boolean canEdit, Boolean showFilterEditor) {
+    public SubItemView(String title, Boolean canReorder, Boolean canEdit, Boolean showFilterEditor) {
         setHeight100();
         setWidth100();
         setStyleName("blcFormBg");
         setOverflow(Overflow.AUTO);
-		
-		HStack hStack = new HStack(10);
-		
-		hStack.setHeight("45%");
-		hStack.setWidth100();
-		hStack.setStyleName("blcFormBg");
-		hStack.setAlign(Alignment.CENTER);
+        
+        HStack hStack = new HStack(10);
+        
+        hStack.setHeight("45%");
+        hStack.setWidth100();
+        hStack.setStyleName("blcFormBg");
+        hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();
         stack.setHeight100();
@@ -122,7 +122,7 @@ public class SubItemView extends VLayout implements SubItemDisplay {
         grid.setShowFilterEditor(showFilterEditor);
         grid.setCanGroupBy(false);
         if (!canEdit) {
-        	grid.setAlternateBodyStyleName("editRowDisabled");
+            grid.setAlternateBodyStyleName("editRowDisabled");
         }
         stack.addMember(grid);
         
@@ -133,35 +133,35 @@ public class SubItemView extends VLayout implements SubItemDisplay {
         addMember(hStack);
         formOnlyView = new FormOnlyView();
         addMember(formOnlyView);
-	}
+    }
 
-	public ToolStrip getToolbar() {
-		return toolBar;
-	}
+    public ToolStrip getToolbar() {
+        return toolBar;
+    }
 
-	public ToolStripButton getAddButton() {
-		return addButton;
-	}
+    public ToolStripButton getAddButton() {
+        return addButton;
+    }
 
-	public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+    public ToolStripButton getRemoveButton() {
+        return removeButton;
+    }
 
-	public ListGrid getGrid() {
-		return grid;
-	}
+    public ListGrid getGrid() {
+        return grid;
+    }
 
-	public ToolStripButton getSaveButton() {
-		return saveButton;
-	}
+    public ToolStripButton getSaveButton() {
+        return saveButton;
+    }
 
-	public ToolStripButton getRefreshButton() {
-		return refreshButton;
-	}
+    public ToolStripButton getRefreshButton() {
+        return refreshButton;
+    }
 
-	public FormOnlyDisplay getFormOnlyDisplay() {
-		return formOnlyView;
-	}
-	
-	
+    public FormOnlyDisplay getFormOnlyDisplay() {
+        return formOnlyView;
+    }
+    
+    
 }

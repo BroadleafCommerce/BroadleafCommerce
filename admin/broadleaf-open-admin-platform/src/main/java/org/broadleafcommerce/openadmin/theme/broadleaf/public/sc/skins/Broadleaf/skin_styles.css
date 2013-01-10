@@ -1136,10 +1136,10 @@ Button (also used as MenuButton base style)
   ListGrid
 ============================================================*/
 /*============================================================
-	ListGrid parts
-		styleName - listGrid
-		headerBarStyle - headerBar
-		bodyStyleName - gridBody
+    ListGrid parts
+        styleName - listGrid
+        headerBarStyle - headerBar
+        bodyStyleName - gridBody
 ============================================================*/
 .listGrid {
   border: 1px solid #A7ABB4;
@@ -1173,11 +1173,11 @@ Button (also used as MenuButton base style)
   vertical-align: top;
 }
 /*============================================================
-	ListGrid cells
-		listGrid.baseStyle
+    ListGrid cells
+        listGrid.baseStyle
 ============================================================*/
 /*------------------------------------------------------------
-		listGrid.baseStyle
+        listGrid.baseStyle
 ------------------------------------------------------------*/
 .cell,
 .cellDark,
@@ -1332,7 +1332,7 @@ Button (also used as MenuButton base style)
 }
 /*Tree styling*/
 /*------------------------------------------------------------
-		treeGrid.baseStyle
+        treeGrid.baseStyle
 ------------------------------------------------------------*/
 .treeCell,
 .treeCellDark,
@@ -1405,7 +1405,7 @@ Button (also used as MenuButton base style)
   font-size: 7px;
 }
 /*============================================================
-	12) ToolStrip
+    12) ToolStrip
 ============================================================*/
 .toolStrip {
   color: #999999;
@@ -1569,14 +1569,14 @@ Button (also used as MenuButton base style)
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 
-	Styles below this comment are not used by default in this skin
+    Styles below this comment are not used by default in this skin
 
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII*/
 /*============================================================
     TabSet CSS tabs
-		tabSet.simpleTabBaseStyle
+        tabSet.simpleTabBaseStyle
 ============================================================*/
 /* styles for simple css-styled tabs*/
 /* left */
@@ -1730,19 +1730,19 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 
-	Styles below this comment are used by optional modules only
+    Styles below this comment are used by optional modules only
 
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII*/
 /*============================================================
-	CubeGrid - Analytics Module only
-		cubeGrid.baseStyle - cubeCell
-		headerGrid.baseStyle - rowHeader
-		reportHeaderBar.button.baseStyle - rowHeader
-		reportHeaderBar.button.baseStyle - innerHeader/colHeader
-		reportHeaderBar.button.baseStyle - rowHeaderLabel
-		reportHeaderBar.button.baseStyle - colHeaderLabel
+    CubeGrid - Analytics Module only
+        cubeGrid.baseStyle - cubeCell
+        headerGrid.baseStyle - rowHeader
+        reportHeaderBar.button.baseStyle - rowHeader
+        reportHeaderBar.button.baseStyle - innerHeader/colHeader
+        reportHeaderBar.button.baseStyle - rowHeaderLabel
+        reportHeaderBar.button.baseStyle - colHeaderLabel
 ============================================================*/
 .cubeCell {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -2239,11 +2239,11 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   border-bottom: 1px solid #808080;
 }
 /*============================================================
-	BarChart
-	internal, charting/visualization module only
-		styleName - chart
-		barStyle - chartBar
-		others are currently fixed
+    BarChart
+    internal, charting/visualization module only
+        styleName - chart
+        barStyle - chartBar
+        others are currently fixed
 ============================================================*/
 .chart {
   background-color: #CCCCCC;
@@ -2296,7 +2296,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   filter: "progid:dximagetransform.microsoft.gradient(gradientType=1, startColorStr=#009900, endColorStr=#00FF00)";
 }
 /*============================================================
-	Printing
+    Printing
         printHeader - general print style for header elements including:
         - ListGrid header cells
         - SectionStack headers
@@ -2309,7 +2309,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-weight: bold;
 }
 /*============================================================
-	Calendar
+    Calendar
     
 ============================================================*/
 .calendar,
@@ -2511,8 +2511,8 @@ a.calMonthEventLink:active {
   border-bottom: 1px solid white;
 }
 /*============================================================
-	PropertySheet
-	internal, used by Visual SmartClient tools
+    PropertySheet
+    internal, used by Visual SmartClient tools
         propertySheet.autoChildDefaults.cellStyle - propSheetValue
         propertySheet.autoChildDefaults.titleStyle - propSheetTitle
         propertySheet.TextItemDefaults.textBoxStyle - propSheetField

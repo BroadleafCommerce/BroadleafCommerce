@@ -36,15 +36,15 @@ public class AuditableListener {
             Field field = getSingleField(entity.getClass(), "auditable");
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
-            	Object auditable = field.get(entity);
-            	if (auditable == null) {
-            		field.set(entity, new Auditable());
-            		auditable = field.get(entity);
-            	}
-        		Field temporalField = auditable.getClass().getDeclaredField("dateCreated");
-        		Field agentField = auditable.getClass().getDeclaredField("createdBy");
-        		setAuditValueTemporal(temporalField, auditable);
-        		setAuditValueAgent(agentField, auditable);
+                Object auditable = field.get(entity);
+                if (auditable == null) {
+                    field.set(entity, new Auditable());
+                    auditable = field.get(entity);
+                }
+                Field temporalField = auditable.getClass().getDeclaredField("dateCreated");
+                Field agentField = auditable.getClass().getDeclaredField("createdBy");
+                setAuditValueTemporal(temporalField, auditable);
+                setAuditValueAgent(agentField, auditable);
             }
         }
     }
@@ -55,28 +55,28 @@ public class AuditableListener {
             Field field = getSingleField(entity.getClass(), "auditable");
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
-            	Object auditable = field.get(entity);
-            	if (auditable == null) {
-            		field.set(entity, new Auditable());
-            		auditable = field.get(entity);
-            	}
-        		Field temporalField = auditable.getClass().getDeclaredField("dateUpdated");
-        		Field agentField = auditable.getClass().getDeclaredField("updatedBy");
-        		setAuditValueTemporal(temporalField, auditable);
-        		setAuditValueAgent(agentField, auditable);
+                Object auditable = field.get(entity);
+                if (auditable == null) {
+                    field.set(entity, new Auditable());
+                    auditable = field.get(entity);
+                }
+                Field temporalField = auditable.getClass().getDeclaredField("dateUpdated");
+                Field agentField = auditable.getClass().getDeclaredField("updatedBy");
+                setAuditValueTemporal(temporalField, auditable);
+                setAuditValueAgent(agentField, auditable);
             }
         }
     }
     
     protected void setAuditValueTemporal(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
-    	Calendar cal = SystemTime.asCalendar();
-    	field.setAccessible(true);
-    	field.set(entity, cal.getTime());
+        Calendar cal = SystemTime.asCalendar();
+        field.setAccessible(true);
+        field.set(entity, cal.getTime());
     }
     
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
         Long customerId = 0L;
-    	try {
+        try {
             BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
             if (requestContext != null) {
                 Object customer = requestContext.getRequest().getAttribute(customerRequestAttributeName);
@@ -93,11 +93,11 @@ public class AuditableListener {
                     }
                 }
             }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    	field.setAccessible(true);
-    	field.set(entity, customerId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        field.setAccessible(true);
+        field.set(entity, customerId);
     }
 
     private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {

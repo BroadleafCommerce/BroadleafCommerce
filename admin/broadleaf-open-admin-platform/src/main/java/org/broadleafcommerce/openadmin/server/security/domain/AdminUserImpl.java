@@ -44,10 +44,10 @@ import java.util.Set;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "AdminUserImpl_baseAdminUser")
 public class AdminUserImpl implements AdminUser {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
     @GeneratedValue(generator = "AdminUserId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminUserId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminUserImpl", allocationSize = 50)
     @Column(name = "ADMIN_USER_ID")
@@ -65,19 +65,19 @@ public class AdminUserImpl implements AdminUser {
 
     @Column(name = "PASSWORD", nullable=false)
     @AdminPresentation(
-		friendlyName = "Admin Password",
-		order=3, 
-		group = "AdminUserImpl_User", 
-		fieldType= SupportedFieldType.PASSWORD,
-		validationConfigurations={
-			@ValidationConfiguration(
-				validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator",
-				configurationItems={
+        friendlyName = "Admin Password",
+        order=3, 
+        group = "AdminUserImpl_User", 
+        fieldType= SupportedFieldType.PASSWORD,
+        validationConfigurations={
+            @ValidationConfiguration(
+                validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator",
+                configurationItems={
                         @ConfigurationItem(itemName="errorMessageKey", itemValue="passwordNotMatchError"),
                         @ConfigurationItem(itemName="fieldType", itemValue="password")
                 }
-			)
-		}
+            )
+        }
     )
     protected String password;
 

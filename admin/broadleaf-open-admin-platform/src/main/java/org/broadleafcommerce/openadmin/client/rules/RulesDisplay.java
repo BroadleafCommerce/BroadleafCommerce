@@ -22,8 +22,8 @@ public interface RulesDisplay {
 
 
 
-	public ToolStripButton getRulesSaveButton();
-	
-	public ToolStripButton getRulesRefreshButton(); 
+    public ToolStripButton getRulesSaveButton();
+    
+    public ToolStripButton getRulesRefreshButton(); 
 
 }

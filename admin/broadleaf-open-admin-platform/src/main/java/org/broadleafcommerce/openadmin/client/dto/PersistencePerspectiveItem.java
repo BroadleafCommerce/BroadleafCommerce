@@ -29,7 +29,7 @@ import java.io.Serializable;
  */
 public interface PersistencePerspectiveItem extends IsSerializable, Serializable {
 
-	public void accept(PersistencePerspectiveItemVisitor visitor);
+    public void accept(PersistencePerspectiveItemVisitor visitor);
 
     public PersistencePerspectiveItem clonePersistencePerspectiveItem();
 

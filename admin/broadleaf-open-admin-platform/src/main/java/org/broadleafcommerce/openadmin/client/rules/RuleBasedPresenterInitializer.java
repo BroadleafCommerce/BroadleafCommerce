@@ -31,35 +31,35 @@ import java.util.Map;
 
 public abstract class RuleBasedPresenterInitializer<U extends DynamicEntityPresenter,V extends RulesDisplay> {
 
-	public static Map<RuleType, String> ATTRIBUTEMAP = new HashMap<RuleType, String>();
+    public static Map<RuleType, String> ATTRIBUTEMAP = new HashMap<RuleType, String>();
 
 
-	protected static final MVELToAdvancedCriteriaTranslator TRANSLATOR = new MVELToAdvancedCriteriaTranslator();
-	protected U presenter;
+    protected static final MVELToAdvancedCriteriaTranslator TRANSLATOR = new MVELToAdvancedCriteriaTranslator();
+    protected U presenter;
 
-	public RuleBasedPresenterInitializer() {
-		super();
-	}
+    public RuleBasedPresenterInitializer() {
+        super();
+    }
 
-	protected V getDisplay() {
-		return (V) presenter.getDisplay();
-	}
+    protected V getDisplay() {
+        return (V) presenter.getDisplay();
+    }
 
-	public void initFilterBuilder(FilterBuilder filterBuilder, String rule) {
-		filterBuilder.clearCriteria();
-		if (rule != null) {
-			try {
-				AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(rule, filterBuilder.getDataSource());
-				if (myCriteria != null) {
-					filterBuilder.setCriteria(myCriteria);
-				}
-			} catch (IncompatibleMVELTranslationException e) {
-				throw new RuntimeException(BLCMain.getMessageManager().getString("mvelTranslationProblem"), e);
-			}
-		}
-	}
+    public void initFilterBuilder(FilterBuilder filterBuilder, String rule) {
+        filterBuilder.clearCriteria();
+        if (rule != null) {
+            try {
+                AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(rule, filterBuilder.getDataSource());
+                if (myCriteria != null) {
+                    filterBuilder.setCriteria(myCriteria);
+                }
+            } catch (IncompatibleMVELTranslationException e) {
+                throw new RuntimeException(BLCMain.getMessageManager().getString("mvelTranslationProblem"), e);
+            }
+        }
+    }
 
 
-	protected abstract void bindItemBuilderEvents(ItemBuilderDisplay display);
-	
+    protected abstract void bindItemBuilderEvents(ItemBuilderDisplay display);
+    
 }

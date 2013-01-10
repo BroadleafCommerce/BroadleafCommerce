@@ -58,12 +58,12 @@ import java.util.Map;
  *
  */
 public class BLCMain implements EntryPoint {
-	
-	public static final MessageManager MESSAGE_MANAGER = new MessageManager();
+    
+    public static final MessageManager MESSAGE_MANAGER = new MessageManager();
     static {
         MESSAGE_MANAGER.addConstants(GWT.<i18nConstants>create(OpenAdminMessages.class));
     }
-	private static HashMap<String, Module> modules = new HashMap<String, Module>(10);
+    private static HashMap<String, Module> modules = new HashMap<String, Module>(10);
     private static List<PreProcessor> preProcessors = new ArrayList<PreProcessor>(10);
     public static final ServerProcessProgressWindow progressWindow = new ServerProcessProgressWindow();
 
@@ -72,23 +72,23 @@ public class BLCMain implements EntryPoint {
     public static String storeFrontWebAppPrefix;
     public static String assetServerUrlPrefix;
     public static String adminContext;
-	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
-	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
-	public static SimpleProgress NON_MODAL_PROGRESS = new SimpleProgress(16, 150);
-	public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
+    public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
+    public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
+    public static SimpleProgress NON_MODAL_PROGRESS = new SimpleProgress(16, 150);
+    public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
     public static PolymorphicTypeSelectionDialog POLYMORPHIC_ADD = new PolymorphicTypeSelectionDialog();
-	public static MasterView MASTERVIEW;
-	public static boolean ISNEW = true;
-	public static String currentModuleKey;
+    public static MasterView MASTERVIEW;
+    public static boolean ISNEW = true;
+    public static String currentModuleKey;
     public static String currentPageKey;
     public static String currentViewKey;
     public static PostLaunch postLaunch = null;
     public static boolean workflowEnabled = false;
-	
-	public static final boolean DEBUG = true;
-	
-	public static void addModule(Module module) {
-	    Module existingModule = modules.get(module.getModuleKey());
+    
+    public static final boolean DEBUG = true;
+    
+    public static void addModule(Module module) {
+        Module existingModule = modules.get(module.getModuleKey());
         if (existingModule == null) {
             modules.put(module.getModuleKey(), module);
             return;
@@ -107,27 +107,27 @@ public class BLCMain implements EntryPoint {
                                                         section.getSectionPresenterClass(),
                                                         section.getSectionPermissions());
         }
-	}
+    }
 
     public static void removeModule(String moduleKey) {
         modules.remove(moduleKey);
     }
-	
-	public static Module getModule(String moduleKey) {
-		return modules.get(moduleKey);
-	}
+    
+    public static Module getModule(String moduleKey) {
+        return modules.get(moduleKey);
+    }
 
     public static void addPreProcessor(PreProcessor preProcessor) {
         preProcessors.add(preProcessor);
     }
-	
-	public static void setSplashWindow(SplashView splashWindow) {
-		SPLASH_PROGRESS = splashWindow;
-	}
-	
-	public static void removeSplashWindow() {
-		SPLASH_PROGRESS = null;
-	}
+    
+    public static void setSplashWindow(SplashView splashWindow) {
+        SPLASH_PROGRESS = splashWindow;
+    }
+    
+    public static void removeSplashWindow() {
+        SPLASH_PROGRESS = null;
+    }
 
     public static void setCurrentModuleKey(String requestedModuleKey) {
         if (requestedModuleKey != null && modules.get(requestedModuleKey) != null) {
@@ -190,8 +190,8 @@ public class BLCMain implements EntryPoint {
 
         return prefix + (path==null?"":path);
     }
-	
-	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
+    
+    public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
         adminContext = GWT.getModuleBaseURL();
         if (!preProcessors.isEmpty()) {
             Map<String, String> pipelineSeed = new HashMap<String, String>();
@@ -204,7 +204,7 @@ public class BLCMain implements EntryPoint {
             }
             finalizeCurrentState(requestedModuleKey, requestedPageKey);
         }
-	}
+    }
 
     private static void executePreProcessors(final int count, final Map<String, String> pipelineSeed) {
         PreProcessor preProcessor = preProcessors.get(count);
@@ -265,9 +265,9 @@ public class BLCMain implements EntryPoint {
         modules.get(currentModuleKey).postDraw();
     }
 
-	@Override
+    @Override
     public void onModuleLoad() {
-	
+    
         NumericTypeFactory.registerNumericSimpleType("localDecimal", NumberFormat.getDecimalFormat(), SupportedFieldType.DECIMAL);
         NumericTypeFactory.registerNumericSimpleType("localMoneyDecimal", NumberFormat.getDecimalFormat(), SupportedFieldType.MONEY);
         NumericTypeFactory.registerNumericSimpleType("localCurrency", NumberFormat.getCurrencyFormat(), SupportedFieldType.MONEY);
@@ -276,26 +276,26 @@ public class BLCMain implements EntryPoint {
         addPreProcessor(new UserSecurityPreProcessor());
         addPreProcessor(new EJB3ConfigurationPreProcessor());
         addPreProcessor(new WorkflowEnabledPreProcessor());
-	}
+    }
 
     public static MessageManager getMessageManager() {
         return MESSAGE_MANAGER;
     }
 
-	/**
+    /**
      * Log a debug.
      *
      * @param message  the message to log
      * @param category category to log in, defaults to "Log"
      */
     public static native void logDebug(String message, String category) /*-{
-    	if ($wnd.isc.Log.logIsDebugEnabled(category)) {
-    		$wnd.isc.Log.logDebug(message, category);
-    	}
-	}-*/;
+        if ($wnd.isc.Log.logIsDebugEnabled(category)) {
+            $wnd.isc.Log.logDebug(message, category);
+        }
+    }-*/;
     
     public static native boolean isLogDebugEnabled(String category) /*-{
-		return $wnd.isc.Log.logIsDebugEnabled(category)
-	}-*/;
+        return $wnd.isc.Log.logIsDebugEnabled(category)
+    }-*/;
 
 }

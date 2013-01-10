@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.easymock.classextension.EasyMock;
 
 abstract public class BaseTagLibTest extends TestCase {
-	
+    
     protected HttpServletRequest request;
     protected PageContext pageContext;
     protected CatalogService catalogService;
@@ -49,7 +49,7 @@ abstract public class BaseTagLibTest extends TestCase {
     }
 
     public void replayAdditionalMockObjects(Object o1, Object o2){
-		EasyMock.replay(request, pageContext, catalogService, o1, o2);
+        EasyMock.replay(request, pageContext, catalogService, o1, o2);
     }
 
     public void setPageContext(PageContext pageContext) {

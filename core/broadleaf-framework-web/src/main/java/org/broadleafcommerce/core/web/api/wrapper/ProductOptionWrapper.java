@@ -39,7 +39,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<ProductOption> {
 
-	@XmlElement
+    @XmlElement
     protected Long id;
     
     @XmlElement
@@ -57,27 +57,27 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
     @XmlElement(name = "allowedValue")
     @XmlElementWrapper(name = "allowedValues")
     protected List<ProductOptionValueWrapper> allowedValues;
-	
-	@Override
-	public void wrap(ProductOption model, HttpServletRequest request) {
-		this.id = model.getId();
-		this.attributeName = model.getAttributeName();
-		this.label = model.getLabel();
-		this.required = model.getRequired();
-		if (model.getType() != null) {
-			this.productOptionType = model.getType().getType();
-		}
-		
-		List<ProductOptionValue> optionValues = model.getAllowedValues();
-		if (optionValues != null) {
-			ArrayList<ProductOptionValueWrapper> allowedValueWrappers = new ArrayList<ProductOptionValueWrapper>();
-			for (ProductOptionValue value : optionValues) {
-				ProductOptionValueWrapper optionValueWrapper = (ProductOptionValueWrapper)context.getBean(ProductOptionValueWrapper.class.getName());
-				optionValueWrapper.wrap(value, request);
-				allowedValueWrappers.add(optionValueWrapper);
-			}
-			this.allowedValues = allowedValueWrappers;
-		}
-	}
+    
+    @Override
+    public void wrap(ProductOption model, HttpServletRequest request) {
+        this.id = model.getId();
+        this.attributeName = model.getAttributeName();
+        this.label = model.getLabel();
+        this.required = model.getRequired();
+        if (model.getType() != null) {
+            this.productOptionType = model.getType().getType();
+        }
+        
+        List<ProductOptionValue> optionValues = model.getAllowedValues();
+        if (optionValues != null) {
+            ArrayList<ProductOptionValueWrapper> allowedValueWrappers = new ArrayList<ProductOptionValueWrapper>();
+            for (ProductOptionValue value : optionValues) {
+                ProductOptionValueWrapper optionValueWrapper = (ProductOptionValueWrapper)context.getBean(ProductOptionValueWrapper.class.getName());
+                optionValueWrapper.wrap(value, request);
+                allowedValueWrappers.add(optionValueWrapper);
+            }
+            this.allowedValues = allowedValueWrappers;
+        }
+    }
 
 }

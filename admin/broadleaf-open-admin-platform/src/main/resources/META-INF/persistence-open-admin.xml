@@ -3,14 +3,14 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
-	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
-		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/SandBoxItem.orm.xml</mapping-file>
         <class>org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionQualifiedEntityImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
@@ -29,11 +29,11 @@
             <property name="hibernate.ejb.session_factory_observer" value="org.broadleafcommerce.openadmin.server.dao.SessionFactoryChangeListener"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
-	</persistence-unit>
-	
-	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
-		<exclude-unlisted-classes/>
-		<properties>
+    </persistence-unit>
+    
+    <persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+        <exclude-unlisted-classes/>
+        <properties>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.transaction.flush_before_completion" value="false"/>
             <property name="hibernate.connection.autocommit" value="false"/>
@@ -43,6 +43,6 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
-	</persistence-unit>
+    </persistence-unit>
 
 </persistence>

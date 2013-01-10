@@ -39,7 +39,7 @@ public class FulfillmentGroupRequest {
     protected String service;
     
     protected FulfillmentOption option;
-	
+    
     protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
 
     public Address getAddress() {
@@ -105,17 +105,17 @@ public class FulfillmentGroupRequest {
      * @see {@link FulfillmentOption}
      */
     @Deprecated
-	public String getService() {
-		return service;
-	}
+    public String getService() {
+        return service;
+    }
 
     /**
      * Deprecated in favor of {@link #setOption(FulfillmentOption)}
      * @see {@link FulfillmentOption}
      */    
     @Deprecated
-	public void setService(String service) {
-		this.service = service;
-	}
+    public void setService(String service) {
+        this.service = service;
+    }
 
 }

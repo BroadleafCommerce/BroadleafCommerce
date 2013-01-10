@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-	<context:component-scan base-package="org.broadleafcommerce.cms"/>
+    <context:component-scan base-package="org.broadleafcommerce.cms"/>
     <context:component-scan base-package="org.broadleafcommerce.common.locale"/>
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
@@ -19,16 +19,16 @@
     </bean>
 
     <bean id="blEntityManagerFactoryAssetStorageInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-		</property>
-		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
-		<property name="persistenceUnitName" value="blCMSStorage"/>
-	</bean>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
+        <property name="persistenceUnitName" value="blCMSStorage"/>
+    </bean>
 
-	<bean id="blTransactionManagerAssetStorageInfo" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="blEntityManagerFactoryAssetStorageInfo" />
-	</bean>
+    <bean id="blTransactionManagerAssetStorageInfo" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="blEntityManagerFactoryAssetStorageInfo" />
+    </bean>
 
     <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -64,7 +64,7 @@
                 <entry key="time" value="org.broadleafcommerce.common.TimeDTO" />
                 <entry key="request" value="org.broadleafcommerce.common.RequestDTO" />
             </map>
-	    </property>
+        </property>
     </bean>
 
     <bean id="blContentRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
@@ -82,7 +82,7 @@
                 <entry key="time" value="org.broadleafcommerce.common.TimeDTO" />
                 <entry key="request" value="org.broadleafcommerce.common.RequestDTO" />
             </map>
-	    </property>
+        </property>
     </bean>
 
     <bean id="blPageRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">

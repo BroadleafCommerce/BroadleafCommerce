@@ -62,11 +62,11 @@ public class ResetPasswordForm implements Serializable {
         this.confirmPassword = confirmPassword;
     }
 
-	public String getOldPassword() {
-		return oldPassword;
-	}
+    public String getOldPassword() {
+        return oldPassword;
+    }
 
-	public void setOldPassword(String oldPassword) {
-		this.oldPassword = oldPassword;
-	}
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
 }

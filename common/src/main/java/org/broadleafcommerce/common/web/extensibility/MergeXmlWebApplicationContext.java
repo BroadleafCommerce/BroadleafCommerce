@@ -95,7 +95,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
         for (String location : broadleafConfigLocations) {
             InputStream source = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(location);
             if (source != null) {
-            	sources.add(new ResourceInputStream(source, location));
+                sources.add(new ResourceInputStream(source, location));
             }
         }
         ResourceInputStream[] filteredSources = new ResourceInputStream[]{};
@@ -112,7 +112,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
                 patches[i] = new ResourceInputStream(resource.getInputStream(), patchLocations[i]);
             }
             if (patches[i] == null || patches[i].available() <= 0) {
-            	throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocations[i]);
+                throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocations[i]);
             }
         }
 

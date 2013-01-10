@@ -94,7 +94,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
                 userPermissionPresenter.bind();
             }
         }));
-	}
+    }
 @Override
  public void postSetup(Canvas container) {
     

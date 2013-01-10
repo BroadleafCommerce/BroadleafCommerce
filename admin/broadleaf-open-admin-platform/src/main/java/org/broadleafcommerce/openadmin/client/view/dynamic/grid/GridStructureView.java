@@ -33,22 +33,22 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
  *
  */
 public class GridStructureView extends HStack implements GridStructureDisplay {
-	
-	protected ToolStrip toolBar;
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
-	protected ListGrid grid;
+    
+    protected ToolStrip toolBar;
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
+    protected ListGrid grid;
     protected Boolean canEdit;
 
     public GridStructureView(String title, Boolean canReorder, Boolean canEdit) {
         this(title, canReorder, canEdit, false);
     }
 
-	public GridStructureView(String title, Boolean canReorder, Boolean canEdit, Boolean autoFetchData) {
-		super(10);
+    public GridStructureView(String title, Boolean canReorder, Boolean canEdit, Boolean autoFetchData) {
+        super(10);
 
         this.canEdit = canEdit;
-		setHeight(300);
+        setHeight(300);
         setWidth100();
         setStyleName("blcFormBg");
         setAlign(Alignment.CENTER);
@@ -101,29 +101,29 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
         grid.setAlternateRecordStyles(true);
         grid.setCanGroupBy(false);
         if (!canEdit) {
-        	grid.setAlternateBodyStyleName("editRowDisabled");
+            grid.setAlternateBodyStyleName("editRowDisabled");
         }
         stack.addMember(grid);
         
         addMember(stack);
         setOverflow(Overflow.VISIBLE);
-	}
+    }
 
-	public ToolStrip getToolBar() {
-		return toolBar;
-	}
+    public ToolStrip getToolBar() {
+        return toolBar;
+    }
 
-	public ToolStripButton getAddButton() {
-		return addButton;
-	}
+    public ToolStripButton getAddButton() {
+        return addButton;
+    }
 
-	public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+    public ToolStripButton getRemoveButton() {
+        return removeButton;
+    }
 
-	public ListGrid getGrid() {
-		return grid;
-	}
+    public ListGrid getGrid() {
+        return grid;
+    }
 
     public Boolean getCanEdit() {
         return canEdit;

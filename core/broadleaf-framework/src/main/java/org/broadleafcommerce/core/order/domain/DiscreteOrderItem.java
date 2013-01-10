@@ -72,18 +72,18 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor {
 
     public Map<String, String> getAdditionalAttributes();
 
-	public void setAdditionalAttributes(Map<String, String> additionalAttributes);
+    public void setAdditionalAttributes(Map<String, String> additionalAttributes);
 
-	public Money getBaseRetailPrice();
+    public Money getBaseRetailPrice();
 
-	public void setBaseRetailPrice(Money baseRetailPrice);
+    public void setBaseRetailPrice(Money baseRetailPrice);
 
-	public Money getBaseSalePrice();
+    public Money getBaseSalePrice();
 
-	public void setBaseSalePrice(Money baseSalePrice);
-	
-	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices();
+    public void setBaseSalePrice(Money baseSalePrice);
+    
+    public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices();
 
-	public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> orderItemFeePrices);
+    public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> orderItemFeePrices);
 
 }

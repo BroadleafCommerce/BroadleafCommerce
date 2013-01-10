@@ -76,122 +76,122 @@ import java.util.Map;
  *
  */
 public class OrderPresenter extends DynamicEntityPresenter implements Instantiable {
-	
-	protected OrderItemPresenter orderItemPresenter;
-	protected SubPresentable fulfillmentGroupPresenter;
-	protected SubPresentable paymentInfoPresenter;
-	protected SubPresentable additionalPaymentAttributesPresenter;
-	protected SubPresentable offerCodePresenter;
-	protected SubPresentable orderAdjustmentPresenter;
-	protected SubPresentable orderItemAdjustmentPresenter;
-	protected SubPresentable fulfillmentGroupAdjustmentPresenter;
-	protected SubPresentable feesPresenter;
+    
+    protected OrderItemPresenter orderItemPresenter;
+    protected SubPresentable fulfillmentGroupPresenter;
+    protected SubPresentable paymentInfoPresenter;
+    protected SubPresentable additionalPaymentAttributesPresenter;
+    protected SubPresentable offerCodePresenter;
+    protected SubPresentable orderAdjustmentPresenter;
+    protected SubPresentable orderItemAdjustmentPresenter;
+    protected SubPresentable fulfillmentGroupAdjustmentPresenter;
+    protected SubPresentable feesPresenter;
     protected SubPresentable paymentResponsePresenter;
     protected SubPresentable paymentLogPresenter;
-	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
-	protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();;
+    protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+    protected List<SubPresentable> subPresentables = new ArrayList<SubPresentable>();;
     protected HandlerRegistration extendedFetchDataHandlerRegistration;
-	
-	@Override
-	protected void changeSelection(Record selectedRecord) {
-		orderItemPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
-		fulfillmentGroupPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
-		paymentInfoPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
-		offerCodePresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
-		orderAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
-	}
-	
-	@Override
-	public void bind() {
-		super.bind();
-		
-		orderItemPresenter.bind();
-		fulfillmentGroupPresenter.bind();
-		paymentInfoPresenter.bind();
-		additionalPaymentAttributesPresenter.bind();
-		offerCodePresenter.bind();
-		orderAdjustmentPresenter.bind();
-		orderItemAdjustmentPresenter.bind();
-		fulfillmentGroupAdjustmentPresenter.bind();
-		feesPresenter.bind();
+    
+    @Override
+    protected void changeSelection(Record selectedRecord) {
+        orderItemPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+        fulfillmentGroupPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+        paymentInfoPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+        offerCodePresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+        orderAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+    }
+    
+    @Override
+    public void bind() {
+        super.bind();
+        
+        orderItemPresenter.bind();
+        fulfillmentGroupPresenter.bind();
+        paymentInfoPresenter.bind();
+        additionalPaymentAttributesPresenter.bind();
+        offerCodePresenter.bind();
+        orderAdjustmentPresenter.bind();
+        orderItemAdjustmentPresenter.bind();
+        fulfillmentGroupAdjustmentPresenter.bind();
+        feesPresenter.bind();
         paymentResponsePresenter.bind();
         paymentLogPresenter.bind();
         
-		subPresentables.add(orderItemPresenter);
-		subPresentables.add(fulfillmentGroupPresenter);
-		subPresentables.add(paymentInfoPresenter);
-		subPresentables.add(additionalPaymentAttributesPresenter);
-		subPresentables.add(offerCodePresenter);
-		subPresentables.add(orderAdjustmentPresenter);
-		subPresentables.add(orderItemAdjustmentPresenter);
-		subPresentables.add(fulfillmentGroupAdjustmentPresenter);
-		subPresentables.add(feesPresenter);
+        subPresentables.add(orderItemPresenter);
+        subPresentables.add(fulfillmentGroupPresenter);
+        subPresentables.add(paymentInfoPresenter);
+        subPresentables.add(additionalPaymentAttributesPresenter);
+        subPresentables.add(offerCodePresenter);
+        subPresentables.add(orderAdjustmentPresenter);
+        subPresentables.add(orderItemAdjustmentPresenter);
+        subPresentables.add(fulfillmentGroupAdjustmentPresenter);
+        subPresentables.add(feesPresenter);
         subPresentables.add(paymentResponsePresenter);
         subPresentables.add(paymentLogPresenter);
         
-		selectionChangedHandlerRegistration.removeHandler();
-		display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			@Override
+        selectionChangedHandlerRegistration.removeHandler();
+        display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            @Override
             public void onSelectionChanged(SelectionEvent event) {
-				ListGridRecord selectedRecord = event.getSelectedRecord();
-						    
-				if (event.getState()) {
-				    for (SubPresentable sp : subPresentables) {
-				        sp.enable();
-				    }
+                ListGridRecord selectedRecord = event.getSelectedRecord();
+                            
+                if (event.getState()) {
+                    for (SubPresentable sp : subPresentables) {
+                        sp.enable();
+                    }
                     
-					if (!selectedRecord.equals(lastSelectedRecord)) {
-						lastSelectedRecord = selectedRecord;
-						if (selectedRecord.getAttributeAsStringArray("_type") == null){
-							formPresenter.disable();
-						} else {
-							formPresenter.setStartState();
-							getPresenterSequenceSetupManager().getDataSource("orderDS").resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
-							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, false, selectedRecord);
-							display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
-						}
-						changeSelection(selectedRecord);
-					}
-					
-    			    for (SubPresentable sp : subPresentables) {
-    			        sp.setReadOnly(true);
-    			    }
-				}
-			}
-		});
-		getDisplay().getPaymentInfoDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			@Override
+                    if (!selectedRecord.equals(lastSelectedRecord)) {
+                        lastSelectedRecord = selectedRecord;
+                        if (selectedRecord.getAttributeAsStringArray("_type") == null){
+                            formPresenter.disable();
+                        } else {
+                            formPresenter.setStartState();
+                            getPresenterSequenceSetupManager().getDataSource("orderDS").resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
+                            display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, false, selectedRecord);
+                            display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
+                        }
+                        changeSelection(selectedRecord);
+                    }
+                    
+                    for (SubPresentable sp : subPresentables) {
+                        sp.setReadOnly(true);
+                    }
+                }
+            }
+        });
+        getDisplay().getPaymentInfoDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            @Override
             public void onSelectionChanged(SelectionEvent event) {
-				ListGridRecord selectedRecord = event.getSelectedRecord();
-				if (event.getState()) {
-					additionalPaymentAttributesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("paymentInfoDS"), null);
+                ListGridRecord selectedRecord = event.getSelectedRecord();
+                if (event.getState()) {
+                    additionalPaymentAttributesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("paymentInfoDS"), null);
                     
                     String id = getPresenterSequenceSetupManager().getDataSource("paymentInfoDS").getPrimaryKeyValue(selectedRecord);
                     getDisplay().getPaymentResponseDisplay().getGrid().fetchData(new Criteria("paymentInfoReferenceNumber", selectedRecord.getAttributeAsString("referenceNumber")));
                     getDisplay().getPaymentLogDisplay().getGrid().fetchData(new Criteria("paymentInfoReferenceNumber", selectedRecord.getAttributeAsString("referenceNumber")));
-				}
-			}
-		});
-		getDisplay().getOrderItemsDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			@Override
+                }
+            }
+        });
+        getDisplay().getOrderItemsDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            @Override
             public void onSelectionChanged(SelectionEvent event) {
-				ListGridRecord selectedRecord = event.getSelectedRecord();
-				if (event.getState()) {
-					orderItemAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderItemDS"), null);
-					feesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("discreteOrderItemFeePriceDS"), null);
-				}
-			}
-		});
-		getDisplay().getFulfillmentGroupDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			@Override
+                ListGridRecord selectedRecord = event.getSelectedRecord();
+                if (event.getState()) {
+                    orderItemAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderItemDS"), null);
+                    feesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("discreteOrderItemFeePriceDS"), null);
+                }
+            }
+        });
+        getDisplay().getFulfillmentGroupDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            @Override
             public void onSelectionChanged(SelectionEvent event) {
-				ListGridRecord selectedRecord = event.getSelectedRecord();
-				if (event.getState()) {
-					fulfillmentGroupAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("fulfillmentGroupDS"), null);
-				}
-			}
-		});
-		getDisplay().getExportOrdersButton().addClickHandler(new ClickHandler() {
+                ListGridRecord selectedRecord = event.getSelectedRecord();
+                if (event.getState()) {
+                    fulfillmentGroupAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("fulfillmentGroupDS"), null);
+                }
+            }
+        });
+        getDisplay().getExportOrdersButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 AppServices.EXPORT.getExporters(AdminExporterType.ORDER.toString(), new AsyncCallback<List<AdminExporterDTO>>() {
@@ -212,165 +212,165 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
                 });
             }
         });
-		
+        
         extendedFetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-			    for (SubPresentable sp : subPresentables) {
-			        sp.disable();
-			    }
+                for (SubPresentable sp : subPresentables) {
+                    sp.disable();
+                }
             }
         });
 
-		
-		setReadOnly(true);
-		//enable the toolbar so that the export button will be able to be clicked
-		getDisplay().getListDisplay().getToolBar().enable();
-	}
-	
-	@Override
-	public OrderDisplay getDisplay() {
-		return (OrderDisplay) display;
-	}
+        
+        setReadOnly(true);
+        //enable the toolbar so that the export button will be able to be clicked
+        getDisplay().getListDisplay().getToolBar().enable();
+    }
+    
+    @Override
+    public OrderDisplay getDisplay() {
+        return (OrderDisplay) display;
+    }
 
-	@Override
+    @Override
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderDS", new OrderListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderDS", new OrderListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource top) {
-				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "total","subTotal","name", "orderNumber", "status", "submitDate"});
+                setupDisplayItems(top);
+                ((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "total","subTotal","name", "orderNumber", "status", "submitDate"});
                 getDisplay().getListDisplay().getGrid().sort("submitDate", SortDirection.DESCENDING);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemDS", new OrderItemListDataSourceFactory(), new NullAsyncCallbackAdapter()));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleOrderItemDS", new BundledOrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
-			@Override
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemDS", new OrderItemListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleOrderItemDS", new BundledOrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				orderItemPresenter = new OrderItemPresenter(getDisplay().getOrderItemsDisplay(), null);
-				orderItemPresenter.setDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("orderItemDS"), new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
-				orderItemPresenter.setExpansionDataSource((ListGridDataSource) result, new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
-				orderItemPresenter.setReadOnly(true);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                orderItemPresenter = new OrderItemPresenter(getDisplay().getOrderItemsDisplay(), null);
+                orderItemPresenter.setDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("orderItemDS"), new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
+                orderItemPresenter.setExpansionDataSource((ListGridDataSource) result, new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
+                orderItemPresenter.setReadOnly(true);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				((ListGridDataSource) result).resetPermanentFieldVisibility(
-					"abbreviation",
-					"name"
-				);
-				EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) result);
-				getPresenterSequenceSetupManager().getDataSource("orderDS").
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"address.country", 
-					countrySearchView,
+                ((ListGridDataSource) result).resetPermanentFieldVisibility(
+                    "abbreviation",
+                    "name"
+                );
+                EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) result);
+                getPresenterSequenceSetupManager().getDataSource("orderDS").
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "address.country", 
+                    countrySearchView,
                     BLCMain.getMessageManager().getString("countrySearchPrompt"),
-					getDisplay().getFulfillmentGroupDisplay()
-				);
-				library.put("countrySearchView", countrySearchView);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("stateDS", new StateListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                    getDisplay().getFulfillmentGroupDisplay()
+                );
+                library.put("countrySearchView", countrySearchView);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("stateDS", new StateListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				((ListGridDataSource) result).resetPermanentFieldVisibility(
-					"abbreviation",
-					"name"
-				);
-				EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) result);
-				getPresenterSequenceSetupManager().getDataSource("orderDS").
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"address.state", 
-					stateSearchView,
+                ((ListGridDataSource) result).resetPermanentFieldVisibility(
+                    "abbreviation",
+                    "name"
+                );
+                EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) result);
+                getPresenterSequenceSetupManager().getDataSource("orderDS").
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "address.state", 
+                    stateSearchView,
                     BLCMain.getMessageManager().getString("stateSearchPrompt"),
-					getDisplay().getFulfillmentGroupDisplay()
-				);
-				library.put("stateSearchView", stateSearchView);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupDS", new FulfillmentGroupListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                    getDisplay().getFulfillmentGroupDisplay()
+                );
+                library.put("stateSearchView", stateSearchView);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupDS", new FulfillmentGroupListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				fulfillmentGroupPresenter = new SubPresenter("",getDisplay().getFulfillmentGroupDisplay());
-				fulfillmentGroupPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "method", "service", "shippingPrice", "status", "address.postalCode"}, new Boolean[]{false, false, false, false, false, false});
-				fulfillmentGroupPresenter.setReadOnly(true);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentInfoDS", new PaymentInfoListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                fulfillmentGroupPresenter = new SubPresenter("",getDisplay().getFulfillmentGroupDisplay());
+                fulfillmentGroupPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "method", "service", "shippingPrice", "status", "address.postalCode"}, new Boolean[]{false, false, false, false, false, false});
+                fulfillmentGroupPresenter.setReadOnly(true);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentInfoDS", new PaymentInfoListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				paymentInfoPresenter = new SubPresenter("",getDisplay().getPaymentInfoDisplay());
-				paymentInfoPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "type", "amount"}, new Boolean[]{false, false, false});
-				paymentInfoPresenter.setReadOnly(true);
-				
-				((DynamicEntityDataSource) result).
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"address.country", 
-					(EntitySearchDialog) library.get("countrySearchView"),
+                paymentInfoPresenter = new SubPresenter("",getDisplay().getPaymentInfoDisplay());
+                paymentInfoPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "type", "amount"}, new Boolean[]{false, false, false});
+                paymentInfoPresenter.setReadOnly(true);
+                
+                ((DynamicEntityDataSource) result).
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "address.country", 
+                    (EntitySearchDialog) library.get("countrySearchView"),
                     BLCMain.getMessageManager().getString("countrySearchPrompt"),
-					getDisplay().getFulfillmentGroupDisplay()
-				);
-				((DynamicEntityDataSource) result).
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"address.state", 
-					(EntitySearchDialog) library.get("stateSearchView"),
+                    getDisplay().getFulfillmentGroupDisplay()
+                );
+                ((DynamicEntityDataSource) result).
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "address.state", 
+                    (EntitySearchDialog) library.get("stateSearchView"),
                     BLCMain.getMessageManager().getString("stateSearchPrompt"),
-					getDisplay().getFulfillmentGroupDisplay()
-				);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentAdditionalAttributesDS", new PaymentAdditionalAttributesDataSourceFactory(this), new AsyncCallbackAdapter() {
-			@Override
+                    getDisplay().getFulfillmentGroupDisplay()
+                );
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentAdditionalAttributesDS", new PaymentAdditionalAttributesDataSourceFactory(this), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				Map<String, Object> initialValues = new HashMap<String, Object>(2);
-				initialValues.put("key", BLCMain.getMessageManager().getString("paymentAttributeKeyDefault"));
-				initialValues.put("value", BLCMain.getMessageManager().getString("paymentAttributeValueDefault"));
-				additionalPaymentAttributesPresenter = new SimpleMapStructurePresenter("", getDisplay().getAdditionalAttributesDisplay(), initialValues);
-				additionalPaymentAttributesPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "value"}, new Boolean[]{true, true});
-				additionalPaymentAttributesPresenter.setReadOnly(true);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCodeDS", new OfferCodeListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                Map<String, Object> initialValues = new HashMap<String, Object>(2);
+                initialValues.put("key", BLCMain.getMessageManager().getString("paymentAttributeKeyDefault"));
+                initialValues.put("value", BLCMain.getMessageManager().getString("paymentAttributeValueDefault"));
+                additionalPaymentAttributesPresenter = new SimpleMapStructurePresenter("", getDisplay().getAdditionalAttributesDisplay(), initialValues);
+                additionalPaymentAttributesPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "value"}, new Boolean[]{true, true});
+                additionalPaymentAttributesPresenter.setReadOnly(true);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCodeDS", new OfferCodeListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				offerCodePresenter = new SubPresenter("",getDisplay().getOfferCodeDisplay());
-				offerCodePresenter.setDataSource((ListGridDataSource) result, new String[]{"offerCode", "startDate", "endDate", "offer.name", "offer.type", "offer.value"}, new Boolean[]{false, false, false, false, false, false});
-				offerCodePresenter.setReadOnly(true);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderAdjustmentDS", new OrderAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                offerCodePresenter = new SubPresenter("",getDisplay().getOfferCodeDisplay());
+                offerCodePresenter.setDataSource((ListGridDataSource) result, new String[]{"offerCode", "startDate", "endDate", "offer.name", "offer.type", "offer.value"}, new Boolean[]{false, false, false, false, false, false});
+                offerCodePresenter.setReadOnly(true);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderAdjustmentDS", new OrderAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				orderAdjustmentPresenter = new CreateBasedListStructurePresenter("", getDisplay().getOrderAdjustmentDisplay(), BLCMain.getMessageManager().getString("newOrderAdjustmentTitle"));
-				orderAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.name", "offer.type"}, new Boolean[]{false, false, false, false});
-				orderAdjustmentPresenter.setReadOnly(true);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemAdjustmentDS", new OrderItemAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                orderAdjustmentPresenter = new CreateBasedListStructurePresenter("", getDisplay().getOrderAdjustmentDisplay(), BLCMain.getMessageManager().getString("newOrderAdjustmentTitle"));
+                orderAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.name", "offer.type"}, new Boolean[]{false, false, false, false});
+                orderAdjustmentPresenter.setReadOnly(true);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemAdjustmentDS", new OrderItemAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter("", getDisplay().getOrderItemAdjustmentDisplay(), BLCMain.getMessageManager().getString("newOrderItemAdjustmentTitle"));
-				orderItemAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
-				orderItemAdjustmentPresenter.setReadOnly(true);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupAdjustmentDS", new FulfillmentGroupAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter("", getDisplay().getOrderItemAdjustmentDisplay(), BLCMain.getMessageManager().getString("newOrderItemAdjustmentTitle"));
+                orderItemAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
+                orderItemAdjustmentPresenter.setReadOnly(true);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupAdjustmentDS", new FulfillmentGroupAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter("", getDisplay().getFulfillmentGroupAdjustmentDisplay(), BLCMain.getMessageManager().getString("newFGAdjustmentTitle"));
-				fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
-				fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("discreteOrderItemFeePriceDS", new DiscreteOrderItemFeePriceDataSourceFactory(), new AsyncCallbackAdapter() {
-			@Override
+                fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter("", getDisplay().getFulfillmentGroupAdjustmentDisplay(), BLCMain.getMessageManager().getString("newFGAdjustmentTitle"));
+                fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
+                fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("discreteOrderItemFeePriceDS", new DiscreteOrderItemFeePriceDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
             public void onSetupSuccess(DataSource result) {
-				feesPresenter = new CreateBasedListStructurePresenter("", getDisplay().getOrderItemFeeDisplay(), BLCMain.getMessageManager().getString("newOrderItemFeeTitle"));
-				feesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "amount", "reportingCode"}, new Boolean[]{false, false, false});
-				feesPresenter.setReadOnly(true);
-			}
-		}));
+                feesPresenter = new CreateBasedListStructurePresenter("", getDisplay().getOrderItemFeeDisplay(), BLCMain.getMessageManager().getString("newOrderItemFeeTitle"));
+                feesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "amount", "reportingCode"}, new Boolean[]{false, false, false});
+                feesPresenter.setReadOnly(true);
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentResponseItemDS", new PaymentResponseItemListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
@@ -387,6 +387,6 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
                 paymentLogPresenter.setReadOnly(true);
             }
         }));
-	}
-	
+    }
+    
 }

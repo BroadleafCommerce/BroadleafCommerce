@@ -42,11 +42,11 @@ public class UrlRedirectPresenter extends DynamicEntityPresenter implements Inst
     }
 
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("urlRedirectDS", new org.broadleafcommerce.cms.admin.client.datasource.url.UrlRedirectDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
-				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"id","incomingUrl","newURL","urlRedirectType"}, new Boolean[]{true, true,true,true});
-			}
-		}));
-	}
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("urlRedirectDS", new org.broadleafcommerce.cms.admin.client.datasource.url.UrlRedirectDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource top) {
+                setupDisplayItems(top);
+                ((ListGridDataSource) top).setupGridFields(new String[]{"id","incomingUrl","newURL","urlRedirectType"}, new Boolean[]{true, true,true,true});
+            }
+        }));
+    }
 }

@@ -40,32 +40,32 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  */
 public class StaticAssetDescriptionMapDataSourceFactory implements DataSourceFactory {
 
-	public static final MapStructure MAPSTRUCTURE = new MapStructure(String.class.getName(), "key", "Key", EntityImplementations.STATICASSETDESCRIPTIONIMPL, "contentMessageValues", true);
-	public static ComplexValueMapStructureDataSource dataSource = null;
+    public static final MapStructure MAPSTRUCTURE = new MapStructure(String.class.getName(), "key", "Key", EntityImplementations.STATICASSETDESCRIPTIONIMPL, "contentMessageValues", true);
+    public static ComplexValueMapStructureDataSource dataSource = null;
 
-	protected StaticAssetsPresenter presenter;
+    protected StaticAssetsPresenter presenter;
 
-	public StaticAssetDescriptionMapDataSourceFactory(StaticAssetsPresenter presenter) {
-		this.presenter = presenter;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.STATICASSETIMPL, null));
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new MapStructureClientModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, presenter.getPresenterSequenceSetupManager(), "localeDS", "friendlyName", "localeCode");
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    public StaticAssetDescriptionMapDataSourceFactory(StaticAssetsPresenter presenter) {
+        this.presenter = presenter;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.STATICASSETIMPL, null));
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new MapStructureClientModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, presenter.getPresenterSequenceSetupManager(), "localeDS", "friendlyName", "localeCode");
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

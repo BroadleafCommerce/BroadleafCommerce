@@ -67,16 +67,16 @@ public class LegacyMergeCartServiceImpl implements MergeCartService {
 
     @Override
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {
-    	return mergeCart(customer, anonymousCart, true);
+        return mergeCart(customer, anonymousCart, true);
     }
 
     @Override
     public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
-    	return reconstructCart(customer, true);
+        return reconstructCart(customer, true);
     }
     
-	@Override
-	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException {
+    @Override
+    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         // reconstruct cart items (make sure they are valid)
         ReconstructCartResponse reconstructCartResponse = reconstructCart(customer, false);
@@ -115,25 +115,25 @@ public class LegacyMergeCartServiceImpl implements MergeCartService {
             }
         }
         
-	    // copy the customer's email to this order, overriding any previously set email
+        // copy the customer's email to this order, overriding any previously set email
         if (customerCart != null && StringUtils.isNotBlank(customer.getEmailAddress())) {
-        	customerCart.setEmailAddress(customer.getEmailAddress());
+            customerCart.setEmailAddress(customer.getEmailAddress());
             customerCart = orderService.save(customerCart, priceOrder);
         }
         
         mergeCartResponse.setOrder(customerCart);
         return mergeCartResponse;
-	}
-	
-	@Override
-	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
-		ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
-		Order customerCart = orderService.findCartForCustomer(customer);
-		if (customerCart != null) {
-			List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
-			for (OrderItem orderItem : customerCart.getOrderItems()) {
-				 if (orderItem instanceof DiscreteOrderItem) {
-					DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+    }
+    
+    @Override
+    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
+        ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
+        Order customerCart = orderService.findCartForCustomer(customer);
+        if (customerCart != null) {
+            List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
+            for (OrderItem orderItem : customerCart.getOrderItems()) {
+                 if (orderItem instanceof DiscreteOrderItem) {
+                    DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                     if (discreteOrderItem.getSku().getActiveStartDate() != null) {
                         if (!discreteOrderItem.getSku().isActive(
                                 discreteOrderItem.getProduct(),
@@ -145,11 +145,11 @@ public class LegacyMergeCartServiceImpl implements MergeCartService {
                             itemsToRemove.add(orderItem);
                         }
                     }
-				} else if (orderItem instanceof BundleOrderItem) {
-					BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-					boolean removeBundle = false;
-					for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
-							.getDiscreteOrderItems()) {
+                } else if (orderItem instanceof BundleOrderItem) {
+                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                    boolean removeBundle = false;
+                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
+                            .getDiscreteOrderItems()) {
                         if (discreteOrderItem.getSku().getActiveStartDate() != null) {
                             if (!discreteOrderItem.getSku().isActive(
                                     discreteOrderItem.getProduct(),
@@ -167,12 +167,12 @@ public class LegacyMergeCartServiceImpl implements MergeCartService {
                                 break;
                             }
                         }
-					}
-					if (removeBundle) {
-						itemsToRemove.add(orderItem);
-					}
-				}
-			}
+                    }
+                    if (removeBundle) {
+                        itemsToRemove.add(orderItem);
+                    }
+                }
+            }
 
             //Remove any giftwrap items who have one or more wrapped item members that have been removed
             for (OrderItem orderItem : customerCart.getOrderItems()) {
@@ -186,14 +186,14 @@ public class LegacyMergeCartServiceImpl implements MergeCartService {
                 }
             }
 
-			for (OrderItem item : itemsToRemove) {
-				removeItemFromOrder(customerCart, item, priceOrder);
-			}
-			reconstructCartResponse.setRemovedItems(itemsToRemove);
-		}
-		reconstructCartResponse.setOrder(customerCart);
-		return reconstructCartResponse;
-	}
+            for (OrderItem item : itemsToRemove) {
+                removeItemFromOrder(customerCart, item, priceOrder);
+            }
+            reconstructCartResponse.setRemovedItems(itemsToRemove);
+        }
+        reconstructCartResponse.setOrder(customerCart);
+        return reconstructCartResponse;
+    }
 
     protected Order mergeGiftWrapOrderItems(MergeCartResponse mergeCartResponse, Order customerCart, Map<OrderItem, OrderItem> oldNewItemMap) throws PricingException {
         //update any remaining gift wrap items with their cloned wrapped item values, instead of the originals
@@ -412,7 +412,7 @@ public class LegacyMergeCartServiceImpl implements MergeCartService {
         orderItems.add(newOrderItem);
         
         order = orderService.save(order, priceOrder);
-    	
+        
         return newOrderItem;
     }
     
@@ -424,5 +424,5 @@ public class LegacyMergeCartServiceImpl implements MergeCartService {
         order = orderService.save(order, priceOrder);
         return order;
     }
-	
+    
 }

@@ -25,7 +25,7 @@ package org.broadleafcommerce.common;
  */
 public interface BroadleafEnumerationType {
 
-	public String getType();
-	public String getFriendlyType();
-	
+    public String getType();
+    public String getFriendlyType();
+    
 }

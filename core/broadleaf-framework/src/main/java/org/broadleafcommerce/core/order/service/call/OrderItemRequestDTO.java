@@ -46,21 +46,21 @@ public class OrderItemRequestDTO {
     public OrderItemRequestDTO() {}
     
     public OrderItemRequestDTO(Long productId, Integer quantity) {
-    	setProductId(productId);
-    	setQuantity(quantity);
+        setProductId(productId);
+        setQuantity(quantity);
     }
     
     public OrderItemRequestDTO(Long productId, Long skuId, Integer quantity) {
-    	setProductId(productId);
-    	setSkuId(skuId);
-    	setQuantity(quantity);
+        setProductId(productId);
+        setSkuId(skuId);
+        setQuantity(quantity);
     }
     
     public OrderItemRequestDTO(Long productId, Long skuId, Long categoryId, Integer quantity) {
-    	setProductId(productId);
-    	setSkuId(skuId);
-    	setCategoryId(categoryId);
-    	setQuantity(quantity);
+        setProductId(productId);
+        setSkuId(skuId);
+        setCategoryId(categoryId);
+        setQuantity(quantity);
     }
 
     public Long getSkuId() {

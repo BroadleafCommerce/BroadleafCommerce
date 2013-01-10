@@ -37,6 +37,6 @@ public interface CustomerAddress extends Serializable {
     public void setAddress(Address address);
     
    
-	
+    
 
 }

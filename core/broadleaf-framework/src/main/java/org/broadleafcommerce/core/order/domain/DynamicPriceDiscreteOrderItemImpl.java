@@ -40,21 +40,21 @@ import javax.persistence.Table;
 @AdminPresentationClass(friendlyName = "DynamicPriceDiscreteOrderItemImpl_dynamicPriceOrderItem")
 public class DynamicPriceDiscreteOrderItemImpl extends DiscreteOrderItemImpl implements DynamicPriceDiscreteOrderItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void setSku(Sku sku) {
-		this.sku = sku;
-		this.name = sku.getName();
-	}
+    @Override
+    public void setSku(Sku sku) {
+        this.sku = sku;
+        this.name = sku.getName();
+    }
 
-	@Override
-	public boolean updatePrices() {
-		return false;
-	}
-	
-	@Override
-	public void accept(OrderItemVisitor visitor) throws PricingException {
+    @Override
+    public boolean updatePrices() {
+        return false;
+    }
+    
+    @Override
+    public void accept(OrderItemVisitor visitor) throws PricingException {
         visitor.visit(this);
     }
 

@@ -34,12 +34,12 @@ import javax.servlet.ServletContextListener;
  */
 public class MergeContextLoaderListener extends ContextLoaderListener {
 
-	/**
-	 * Create the ContextLoader to use. Can be overridden in subclasses.
-	 * @return the new ContextLoader
-	 */
-	protected MergeContextLoader createContextLoader() {
-		return new MergeContextLoader();
-	}
+    /**
+     * Create the ContextLoader to use. Can be overridden in subclasses.
+     * @return the new ContextLoader
+     */
+    protected MergeContextLoader createContextLoader() {
+        return new MergeContextLoader();
+    }
 
 }

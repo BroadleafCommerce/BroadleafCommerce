@@ -39,32 +39,32 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  *
  */
 public class PaymentAdditionalAttributesDataSourceFactory implements DataSourceFactory {
-	
-	public static final SimpleValueMapStructure MAPSTRUCTURE = new SimpleValueMapStructure(String.class.getName(), "key", "Key", String.class.getName(), "value", "Value", "additionalFields");
-	public static ListGridDataSource dataSource = null;
-	
-	protected OrderPresenter presenter;
-	
-	public PaymentAdditionalAttributesDataSourceFactory(OrderPresenter presenter) {
-		this.presenter = presenter;
-	}
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.PAYMENT_INFO, null));
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new MapStructureClientModule(CeilingEntities.PAYMENT_INFO, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    
+    public static final SimpleValueMapStructure MAPSTRUCTURE = new SimpleValueMapStructure(String.class.getName(), "key", "Key", String.class.getName(), "value", "Value", "additionalFields");
+    public static ListGridDataSource dataSource = null;
+    
+    protected OrderPresenter presenter;
+    
+    public PaymentAdditionalAttributesDataSourceFactory(OrderPresenter presenter) {
+        this.presenter = presenter;
+    }
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.PAYMENT_INFO, null));
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new MapStructureClientModule(CeilingEntities.PAYMENT_INFO, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

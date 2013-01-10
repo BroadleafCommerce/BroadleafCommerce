@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
-	version="2.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
 
-	<named-query name="BC_READ_ALL_CATEGORIES">
-		<query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category</query>
-	</named-query>
+    <named-query name="BC_READ_ALL_CATEGORIES">
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category</query>
+    </named-query>
 
-	<named-query name="BC_READ_CATEGORY_BY_NAME">
-		<query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
-		WHERE name = :categoryName</query>
-	</named-query>
+    <named-query name="BC_READ_CATEGORY_BY_NAME">
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
+        WHERE name = :categoryName</query>
+    </named-query>
 
-	<named-query name="BC_READ_ALL_SUBCATEGORIES">
-		<query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
-		WHERE category.defaultParentCategory = :defaultParentCategory</query>
-	</named-query>
+    <named-query name="BC_READ_ALL_SUBCATEGORIES">
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
+        WHERE category.defaultParentCategory = :defaultParentCategory</query>
+    </named-query>
 
-	<named-query name="BC_READ_CATEGORY_BY_URL_KEY">
-		<query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
-		WHERE category.urlKey = :urlKey</query>
-	</named-query>
+    <named-query name="BC_READ_CATEGORY_BY_URL_KEY">
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
+        WHERE category.urlKey = :urlKey</query>
+    </named-query>
 
     <named-query name="BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY" >
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
-		WHERE category.defaultParentCategory = :defaultParentCategory
+        WHERE category.defaultParentCategory = :defaultParentCategory
         AND category.activeStartDate &lt;= :currentDate
-		AND (category.activeEndDate &gt; :currentDate OR category.activeEndDate = null)
+        AND (category.activeEndDate &gt; :currentDate OR category.activeEndDate = null)
         AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N')
         </query>
-	</named-query>
+    </named-query>
 
     <named-query name="BC_READ_CATEGORY_OUTGOING_URL" >
-		<query>SELECT category
+        <query>SELECT category
                FROM org.broadleafcommerce.core.catalog.domain.Category category
                WHERE
                  category.url = :url 
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 </entity-mappings>

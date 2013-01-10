@@ -55,14 +55,14 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     CategoryProductXrefPk categoryProductXref = new CategoryProductXrefPk();
 
     public CategoryProductXrefPk getCategoryProductXref() {
-		return categoryProductXref;
-	}
+        return categoryProductXref;
+    }
     
     public void setCategoryProductXref(CategoryProductXrefPk categoryProductXref) {
-		this.categoryProductXref = categoryProductXref;
-	}
+        this.categoryProductXref = categoryProductXref;
+    }
 
-	/** The display order. */
+    /** The display order. */
     @Column(name = "DISPLAY_ORDER")
     protected Long displayOrder;
 
@@ -81,38 +81,38 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     }
     
     /**
-	 * @return
-	 * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#getCategory()
-	 */
-	public Category getCategory() {
-		return categoryProductXref.getCategory();
-	}
+     * @return
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#getCategory()
+     */
+    public Category getCategory() {
+        return categoryProductXref.getCategory();
+    }
 
-	/**
-	 * @param category
-	 * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#setCategory(org.broadleafcommerce.core.catalog.domain.Category)
-	 */
-	public void setCategory(Category category) {
-		categoryProductXref.setCategory(category);
-	}
+    /**
+     * @param category
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#setCategory(org.broadleafcommerce.core.catalog.domain.Category)
+     */
+    public void setCategory(Category category) {
+        categoryProductXref.setCategory(category);
+    }
 
-	/**
-	 * @return
-	 * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#getProduct()
-	 */
-	public Product getProduct() {
-		return categoryProductXref.getProduct();
-	}
+    /**
+     * @return
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#getProduct()
+     */
+    public Product getProduct() {
+        return categoryProductXref.getProduct();
+    }
 
-	/**
-	 * @param product
-	 * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#setProduct(org.broadleafcommerce.core.catalog.domain.Product)
-	 */
-	public void setProduct(Product product) {
-		categoryProductXref.setProduct(product);
-	}
+    /**
+     * @param product
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#setProduct(org.broadleafcommerce.core.catalog.domain.Product)
+     */
+    public void setProduct(Product product) {
+        categoryProductXref.setProduct(product);
+    }
 
-	public static class CategoryProductXrefPk implements Serializable{
+    public static class CategoryProductXrefPk implements Serializable{
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
         
@@ -125,35 +125,35 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
         @JoinColumn(name = "PRODUCT_ID")
         protected Product product = new ProductImpl();
 
-		public Category getCategory() {
-			return category;
-		}
+        public Category getCategory() {
+            return category;
+        }
 
-		public void setCategory(Category category) {
-			this.category = category;
-		}
+        public void setCategory(Category category) {
+            this.category = category;
+        }
 
-		public Product getProduct() {
-			return product;
-		}
+        public Product getProduct() {
+            return product;
+        }
 
-		public void setProduct(Product product) {
-			this.product = product;
-		}
+        public void setProduct(Product product) {
+            this.product = product;
+        }
 
-		@Override
-		public int hashCode() {
-			return category.hashCode() + product.hashCode();
-		}
+        @Override
+        public int hashCode() {
+            return category.hashCode() + product.hashCode();
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-	        if (obj == null) return false;
-	        else if (!(obj instanceof CategoryProductXrefPk)) return false;
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) return false;
+            else if (!(obj instanceof CategoryProductXrefPk)) return false;
 
-	        return category.getId().equals(((CategoryProductXrefPk) obj).category.getId())
-	        && product.getId().equals(((CategoryProductXrefPk) obj).product.getId());
-		}
+            return category.getId().equals(((CategoryProductXrefPk) obj).category.getId())
+            && product.getId().equals(((CategoryProductXrefPk) obj).product.getId());
+        }
         
     }
     

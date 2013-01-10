@@ -52,12 +52,12 @@ public class RegisterCustomerForm implements Serializable {
         this.passwordConfirm = passwordConfirm;
     }
     
-	public String getRedirectUrl() {
-		return redirectUrl;
-	}
-	
-	public void setRedirectUrl(String redirectUrl) {
-		this.redirectUrl = redirectUrl;
-	}
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+    
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
     
 }

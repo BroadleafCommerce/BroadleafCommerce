@@ -34,22 +34,22 @@ import javax.servlet.http.HttpServletRequest;
  * @author bpolster
  */
 public class BroadleafControllerUtility {
-	
-	public static final String BLC_REDIRECT_ATTRIBUTE = "blc_redirect";
-	public static final String BLC_AJAX_PARAMETER = "blcAjax";
-	
-	/**
-	 * A helper method that returns whether or not the given request was invoked via an AJAX call
-	 * 
-	 * Returns true if the request contains the XMLHttpRequest header or a blcAjax=true parameter.
-	 * 
-	 * @param request
-	 * @return - whether or not it was an AJAX request
-	 */
+    
+    public static final String BLC_REDIRECT_ATTRIBUTE = "blc_redirect";
+    public static final String BLC_AJAX_PARAMETER = "blcAjax";
+    
+    /**
+     * A helper method that returns whether or not the given request was invoked via an AJAX call
+     * 
+     * Returns true if the request contains the XMLHttpRequest header or a blcAjax=true parameter.
+     * 
+     * @param request
+     * @return - whether or not it was an AJAX request
+     */
     public static boolean isAjaxRequest(HttpServletRequest request) {
-    	String ajaxParameter = request.getParameter(BLC_AJAX_PARAMETER);
-    	return (ajaxParameter != null && "true".equals(ajaxParameter)) ||
-    		"XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+        String ajaxParameter = request.getParameter(BLC_AJAX_PARAMETER);
+        return (ajaxParameter != null && "true".equals(ajaxParameter)) ||
+            "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
     
 }

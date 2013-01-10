@@ -92,42 +92,42 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                 // Note that we do not copy over fields with the @NonCopiedField annotation
                 CtField[] fieldsToCopy = template.getDeclaredFields();
                 for (CtField field : fieldsToCopy) {
-                	if (field.hasAnnotation(NonCopied.class)) {
-                		logger.debug(String.format("Not adding field [%s]", field.getName()));
-                	} else {
-	                    logger.debug(String.format("Adding field [%s]", field.getName()));
-	                    CtField copiedField = new CtField(field, clazz);
-	                    clazz.addField(copiedField);
-                	}
+                    if (field.hasAnnotation(NonCopied.class)) {
+                        logger.debug(String.format("Not adding field [%s]", field.getName()));
+                    } else {
+                        logger.debug(String.format("Adding field [%s]", field.getName()));
+                        CtField copiedField = new CtField(field, clazz);
+                        clazz.addField(copiedField);
+                    }
                 }
                 
                 // Copy over all declared methods from the template class
                 CtMethod[] methodsToCopy = template.getDeclaredMethods();
                 for (CtMethod method : methodsToCopy) {
-                	if (method.hasAnnotation(NonCopied.class)) {
-                		logger.debug(String.format("Not adding method [%s]", method.getName()));
-                	} else {
-	                	try {
-		                    CtClass[] paramTypes = method.getParameterTypes();
-		                    CtMethod originalMethod = clazz.getDeclaredMethod(method.getName(), paramTypes);
-		                    
-		                    if (transformedMethods.contains(methodDescription(originalMethod))) {
-		                    	throw new RuntimeException("Method already replaced " + methodDescription(originalMethod));
-		                    } else {
-		                    	logger.debug(String.format("Marking as replaced [%s]", methodDescription(originalMethod)));
-		                    	transformedMethods.add(methodDescription(originalMethod));
-		                    }
-		                    
-		                	logger.debug(String.format("Removing method [%s]", method.getName()));
-		                	clazz.removeMethod(originalMethod);
-	                	} catch (NotFoundException e) {
-	                		// Do nothing -- we don't need to remove a method because it doesn't exist
-	                	}
-	                    
-	                    logger.debug(String.format("Adding method [%s]", method.getName()));
-	                    CtMethod copiedMethod = new CtMethod(method, clazz, null);
-	                    clazz.addMethod(copiedMethod);
-                	}
+                    if (method.hasAnnotation(NonCopied.class)) {
+                        logger.debug(String.format("Not adding method [%s]", method.getName()));
+                    } else {
+                        try {
+                            CtClass[] paramTypes = method.getParameterTypes();
+                            CtMethod originalMethod = clazz.getDeclaredMethod(method.getName(), paramTypes);
+                            
+                            if (transformedMethods.contains(methodDescription(originalMethod))) {
+                                throw new RuntimeException("Method already replaced " + methodDescription(originalMethod));
+                            } else {
+                                logger.debug(String.format("Marking as replaced [%s]", methodDescription(originalMethod)));
+                                transformedMethods.add(methodDescription(originalMethod));
+                            }
+                            
+                            logger.debug(String.format("Removing method [%s]", method.getName()));
+                            clazz.removeMethod(originalMethod);
+                        } catch (NotFoundException e) {
+                            // Do nothing -- we don't need to remove a method because it doesn't exist
+                        }
+                        
+                        logger.debug(String.format("Adding method [%s]", method.getName()));
+                        CtMethod copiedMethod = new CtMethod(method, clazz, null);
+                        clazz.addMethod(copiedMethod);
+                    }
                 }
                 
                 logger.debug(String.format("END - Transform - Copying into [%s] from [%s]", xformKey, xformVal));
@@ -141,7 +141,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     }
     
     protected String methodDescription(CtMethod method) {
-    	return method.getDeclaringClass().getName() + "|" + method.getName() + "|" + method.getSignature();
+        return method.getDeclaringClass().getName() + "|" + method.getName() + "|" + method.getSignature();
     }
     
     public Map<String, String> getXformTemplates() {

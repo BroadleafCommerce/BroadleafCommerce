@@ -83,15 +83,15 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
 
     @Override
     public BundleOrderItem getBundleOrderItem() {
-		return bundleOrderItem;
-	}
+        return bundleOrderItem;
+    }
 
-	@Override
+    @Override
     public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
-		this.bundleOrderItem = bundleOrderItem;
-	}
+        this.bundleOrderItem = bundleOrderItem;
+    }
 
-	@Override
+    @Override
     public Money getAmount() {
         return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, bundleOrderItem.getOrder().getCurrency());
     }

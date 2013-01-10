@@ -97,7 +97,7 @@ import java.util.Map;
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
 public class ProductImpl implements Product, Status {
 
-	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
+    private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
@@ -161,7 +161,7 @@ public class ProductImpl implements Product, Status {
     @Transient
     protected String promoMessage;
 
-	@OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence", dataSourceName = "crossSaleProductsDS", maintainedAdornedTargetFields = {"promotionMessage"}, gridVisibleFields = {"defaultSku.name", "promotionMessage"})
@@ -316,35 +316,35 @@ public class ProductImpl implements Product, Status {
 
     @Override
     public Sku getDefaultSku() {
-		return defaultSku;
-	}
+        return defaultSku;
+    }
     
     @Override
-	public Boolean getCanSellWithoutOptions() {
-		return canSellWithoutOptions == null ? false : canSellWithoutOptions;
-	}
+    public Boolean getCanSellWithoutOptions() {
+        return canSellWithoutOptions == null ? false : canSellWithoutOptions;
+    }
 
     @Override
-	public void setCanSellWithoutOptions(Boolean canSellWithoutOptions) {
-		this.canSellWithoutOptions = canSellWithoutOptions;
-	}
+    public void setCanSellWithoutOptions(Boolean canSellWithoutOptions) {
+        this.canSellWithoutOptions = canSellWithoutOptions;
+    }
 
-	@Override
-	public void setDefaultSku(Sku defaultSku) {
+    @Override
+    public void setDefaultSku(Sku defaultSku) {
         defaultSku.setDefaultProduct(this);
-		this.defaultSku = defaultSku;
-	}
+        this.defaultSku = defaultSku;
+    }
 
     @Override
     public String getPromoMessage() {
-		return promoMessage;
-	}
+        return promoMessage;
+    }
 
     @Override
-	public void setPromoMessage(String promoMessage) {
-		this.promoMessage = promoMessage;
-	}
-	
+    public void setPromoMessage(String promoMessage) {
+        this.promoMessage = promoMessage;
+    }
+    
     @Override
     public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
@@ -358,7 +358,7 @@ public class ProductImpl implements Product, Status {
     }
 
     @Override
-	public List<Sku> getSkus() {
+    public List<Sku> getSkus() {
         if (skus.size() == 0) {
             List<Sku> additionalSkus = getAdditionalSkus();
             for (Sku sku : additionalSkus) {
@@ -379,7 +379,7 @@ public class ProductImpl implements Product, Status {
     public void setAdditionalSkus(List<Sku> skus) {
         this.additionalSkus.clear();
         for(Sku sku : skus){
-        	this.additionalSkus.add(sku);
+            this.additionalSkus.add(sku);
         }
         //this.skus.clear();
     }
@@ -422,10 +422,10 @@ public class ProductImpl implements Product, Status {
     }
 
     @Override
-    public void setAllParentCategories(List<Category> allParentCategories) {    	
+    public void setAllParentCategories(List<Category> allParentCategories) {        
         this.allParentCategories.clear();
         for(Category category : allParentCategories){
-        	this.allParentCategories.add(category);
+            this.allParentCategories.add(category);
         }
     }
 
@@ -516,16 +516,16 @@ public class ProductImpl implements Product, Status {
 
     @Override
     public List<RelatedProduct> getCrossSaleProducts() {
-    	List<RelatedProduct> returnProducts = new ArrayList<RelatedProduct>();
-    	if (crossSaleProducts != null) {
-    		returnProducts.addAll(crossSaleProducts);
-    		 CollectionUtils.filter(returnProducts, new Predicate() {
+        List<RelatedProduct> returnProducts = new ArrayList<RelatedProduct>();
+        if (crossSaleProducts != null) {
+            returnProducts.addAll(crossSaleProducts);
+             CollectionUtils.filter(returnProducts, new Predicate() {
                  @Override
                  public boolean evaluate(Object arg) {
                      return 'Y'!=((Status)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
                  }
-             });    		
-    	}
+             });            
+        }
         return returnProducts;
     }
 
@@ -533,22 +533,22 @@ public class ProductImpl implements Product, Status {
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
         this.crossSaleProducts.clear();
         for(RelatedProduct relatedProduct : crossSaleProducts){
-        	this.crossSaleProducts.add(relatedProduct);
-        }    	
+            this.crossSaleProducts.add(relatedProduct);
+        }       
     }
 
     @Override
     public List<RelatedProduct> getUpSaleProducts() {
-    	List<RelatedProduct> returnProducts = new ArrayList<RelatedProduct>();
-    	if (upSaleProducts != null) {
-    		returnProducts.addAll(upSaleProducts);
-    		CollectionUtils.filter(returnProducts, new Predicate() {
+        List<RelatedProduct> returnProducts = new ArrayList<RelatedProduct>();
+        if (upSaleProducts != null) {
+            returnProducts.addAll(upSaleProducts);
+            CollectionUtils.filter(returnProducts, new Predicate() {
                  @Override
                  public boolean evaluate(Object arg) {
                      return 'Y'!=((Status)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
                  }
-             });    		
-    	}
+             });            
+        }
         return returnProducts;
     }
 
@@ -556,20 +556,20 @@ public class ProductImpl implements Product, Status {
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
         this.upSaleProducts.clear();
         for(RelatedProduct relatedProduct : upSaleProducts){
-        	this.upSaleProducts.add(relatedProduct);
+            this.upSaleProducts.add(relatedProduct);
         }
         this.upSaleProducts = upSaleProducts;
     }
     
     @Override
     public List<RelatedProduct> getCumulativeCrossSaleProducts() {
-    	List<RelatedProduct> returnProducts = getCrossSaleProducts();
-    	if (defaultCategory != null) {
-    		List<RelatedProduct> categoryProducts = defaultCategory.getCumulativeCrossSaleProducts();
-    		if (categoryProducts != null) {
-    			returnProducts.addAll(categoryProducts);
-    		}
-    	}
+        List<RelatedProduct> returnProducts = getCrossSaleProducts();
+        if (defaultCategory != null) {
+            List<RelatedProduct> categoryProducts = defaultCategory.getCumulativeCrossSaleProducts();
+            if (categoryProducts != null) {
+                returnProducts.addAll(categoryProducts);
+            }
+        }
         Iterator<RelatedProduct> itr = returnProducts.iterator();
         while(itr.hasNext()) {
             RelatedProduct relatedProduct = itr.next();
@@ -577,18 +577,18 @@ public class ProductImpl implements Product, Status {
                 itr.remove();
             }
         }
-    	return returnProducts;
+        return returnProducts;
     }
     
     @Override
     public List<RelatedProduct> getCumulativeUpSaleProducts() {
-    	List<RelatedProduct> returnProducts = getUpSaleProducts();
-    	if (defaultCategory != null) {
-    		List<RelatedProduct> categoryProducts = defaultCategory.getCumulativeUpSaleProducts();
-    		if (categoryProducts != null) {
-    			returnProducts.addAll(categoryProducts);
-    		}
-    	}
+        List<RelatedProduct> returnProducts = getUpSaleProducts();
+        if (defaultCategory != null) {
+            List<RelatedProduct> categoryProducts = defaultCategory.getCumulativeUpSaleProducts();
+            if (categoryProducts != null) {
+                returnProducts.addAll(categoryProducts);
+            }
+        }
         Iterator<RelatedProduct> itr = returnProducts.iterator();
         while(itr.hasNext()) {
             RelatedProduct relatedProduct = itr.next();
@@ -596,19 +596,19 @@ public class ProductImpl implements Product, Status {
                 itr.remove();
             }
         }
-    	return returnProducts;
+        return returnProducts;
     }
 
     @Override
     public List<ProductAttribute> getProductAttributes() {
-		return productAttributes;
-	}
+        return productAttributes;
+    }
 
     @Override
-	public void setProductAttributes(List<ProductAttribute> productAttributes) {
-		this.productAttributes = productAttributes;
-	}
-	
+    public void setProductAttributes(List<ProductAttribute> productAttributes) {
+        this.productAttributes = productAttributes;
+    }
+    
     @Override
     public List<ProductOption> getProductOptions() {
         return productOptions;
@@ -621,36 +621,36 @@ public class ProductImpl implements Product, Status {
     
     @Override
     public String getUrl() {
-    	if (url == null) {
-    		return getGeneratedUrl();
-    	} else {
-    		return url;
-    	}
-	}
+        if (url == null) {
+            return getGeneratedUrl();
+        } else {
+            return url;
+        }
+    }
     
     @Override
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
     
     @Override
-	public String getDisplayTemplate() {
-		return displayTemplate;
-	}
+    public String getDisplayTemplate() {
+        return displayTemplate;
+    }
     
     @Override
-	public void setDisplayTemplate(String displayTemplate) {
-		this.displayTemplate = displayTemplate;
-	}
+    public void setDisplayTemplate(String displayTemplate) {
+        this.displayTemplate = displayTemplate;
+    }
     
     @Override
     public ProductAttribute getProductAttributeByName(String name) {
-    	for (ProductAttribute attribute : getProductAttributes()) {
-    		if (attribute.getName().equals(name)) {
-    			return attribute;
-    		}
-    	}
-    	return null;
+        for (ProductAttribute attribute : getProductAttributes()) {
+            if (attribute.getName().equals(name)) {
+                return attribute;
+            }
+        }
+        return null;
     }
     
     @Override
@@ -709,38 +709,38 @@ public class ProductImpl implements Product, Status {
         return true;
     }
 
-	@Override
-	public String getUrlKey() {
-		if (urlKey != null) {
-			return urlKey;
-		} else {
-			if (getName() != null) {
-				String returnKey = getName().toLowerCase();
-				
-				returnKey = returnKey.replaceAll(" ","-");
-				return returnKey.replaceAll("[^A-Za-z0-9/-]", "");
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public void setUrlKey(String urlKey) {
-		this.urlKey = urlKey;
-	}
+    @Override
+    public String getUrlKey() {
+        if (urlKey != null) {
+            return urlKey;
+        } else {
+            if (getName() != null) {
+                String returnKey = getName().toLowerCase();
+                
+                returnKey = returnKey.replaceAll(" ","-");
+                return returnKey.replaceAll("[^A-Za-z0-9/-]", "");
+            }
+        }
+        return null;
+    }
 
     @Override
-	public String getGeneratedUrl() {		
-		if (getDefaultCategory() != null && getDefaultCategory().getGeneratedUrl() != null) {
-			String generatedUrl = getDefaultCategory().getGeneratedUrl();
-			if (generatedUrl.endsWith("//")) {
-				return generatedUrl + getUrlKey();
-			} else {
-				return generatedUrl + "//" + getUrlKey();
-			}						
-		}
-		return null;
-	}
+    public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
+    }
+
+    @Override
+    public String getGeneratedUrl() {       
+        if (getDefaultCategory() != null && getDefaultCategory().getGeneratedUrl() != null) {
+            String generatedUrl = getDefaultCategory().getGeneratedUrl();
+            if (generatedUrl.endsWith("//")) {
+                return generatedUrl + getUrlKey();
+            } else {
+                return generatedUrl + "//" + getUrlKey();
+            }                       
+        }
+        return null;
+    }
 
     @Override
     public void clearDynamicPrices() {

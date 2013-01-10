@@ -45,7 +45,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
             GWT.log("Service call success:\n" + result.toString());
         }
         if (BLCMain.NON_MODAL_PROGRESS.isActive()) {
-        	BLCMain.NON_MODAL_PROGRESS.stopProgress();
+            BLCMain.NON_MODAL_PROGRESS.stopProgress();
         }     
     }
     
@@ -74,7 +74,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
             exception.getMessage().contains("XSRF token mismatch")
         ) {
             SC.logWarn("Retrieving admin user (AbstractCallback.onOtherException)...");
-        	java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,"Retrieving admin user (AbstractCallback.onOtherException)...",exception);
+            java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,"Retrieving admin user (AbstractCallback.onOtherException)...",exception);
             AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
                 @Override
                 public void onSuccess(AdminUser result) {
@@ -143,10 +143,10 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
         //if (BLCMain.DEBUG) MessageBox.alert(msg, exception.getMessage(), null);
         GWT.log(msg, exception);
         if (BLCMain.MODAL_PROGRESS.isActive()) {
-        	BLCMain.MODAL_PROGRESS.stopProgress();
+            BLCMain.MODAL_PROGRESS.stopProgress();
         }
         if (BLCMain.NON_MODAL_PROGRESS.isActive()) {
-        	BLCMain.NON_MODAL_PROGRESS.stopProgress();
+            BLCMain.NON_MODAL_PROGRESS.stopProgress();
         }
     }
 }

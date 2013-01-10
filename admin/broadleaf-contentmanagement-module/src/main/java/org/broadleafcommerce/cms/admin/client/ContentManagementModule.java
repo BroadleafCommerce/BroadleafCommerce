@@ -33,18 +33,18 @@ import java.util.List;
  */
 public class ContentManagementModule extends AbstractHtmlEditingModule {
 
-	public void onModuleLoad() {
+    public void onModuleLoad() {
         addConstants(GWT.<i18nConstants>create(ContentManagementMessages.class));
         addConstants(GWT.<i18nConstants>create(GeneratedMessagesEntityCMS.class));
         addConstants(GWT.<i18nConstants>create(GeneratedMessagesEntityCommon.class));
         addConstants(GWT.<i18nConstants>create(GeneratedMessagesEntityOpenAdmin.class));
         
-		setModuleTitle(BLCMain.getMessageManager().getString("cmsModuleTitle"));
-		setModuleKey("BLCContentManagement");
+        setModuleTitle(BLCMain.getMessageManager().getString("cmsModuleTitle"));
+        setModuleKey("BLCContentManagement");
 
         List<String> pagePermissions = new ArrayList<String>();
-		pagePermissions.add("PERMISSION_CREATE_PAGE");
-		pagePermissions.add("PERMISSION_UPDATE_PAGE");
+        pagePermissions.add("PERMISSION_CREATE_PAGE");
+        pagePermissions.add("PERMISSION_UPDATE_PAGE");
         pagePermissions.add("PERMISSION_DELETE_PAGE");
         pagePermissions.add("PERMISSION_READ_PAGE");
         setSection(
@@ -57,46 +57,46 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
         );
 
         List<String> assetPermissions = new ArrayList<String>();
-		assetPermissions.add("PERMISSION_CREATE_ASSET");
-		assetPermissions.add("PERMISSION_UPDATE_ASSET");
+        assetPermissions.add("PERMISSION_CREATE_ASSET");
+        assetPermissions.add("PERMISSION_UPDATE_ASSET");
         assetPermissions.add("PERMISSION_DELETE_ASSET");
         assetPermissions.add("PERMISSION_READ_ASSET");
         setSection(
             BLCMain.getMessageManager().getString("staticAssetsTitle"),
-			"staticAssets",
-			"org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsView",
-			"staticAssetsPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.file.StaticAssetsPresenter",
-			assetPermissions
-		);
+            "staticAssets",
+            "org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsView",
+            "staticAssetsPresenter",
+            "org.broadleafcommerce.cms.admin.client.presenter.file.StaticAssetsPresenter",
+            assetPermissions
+        );
 
         List<String> structuredContentPermissions = new ArrayList<String>();
-		structuredContentPermissions.add("PERMISSION_CREATE_STRUCTURED_CONTENT");
-		structuredContentPermissions.add("PERMISSION_UPDATE_STRUCTURED_CONTENT");
+        structuredContentPermissions.add("PERMISSION_CREATE_STRUCTURED_CONTENT");
+        structuredContentPermissions.add("PERMISSION_UPDATE_STRUCTURED_CONTENT");
         structuredContentPermissions.add("PERMISSION_DELETE_STRUCTURED_CONTENT");
         structuredContentPermissions.add("PERMISSION_READ_STRUCTURED_CONTENT");
         setSection(
             BLCMain.getMessageManager().getString("structuredContentTitle"),
-			"structuredContent",
-			"org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentView",
-			"structuredContentPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenter",
-			structuredContentPermissions
-		);
+            "structuredContent",
+            "org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentView",
+            "structuredContentPresenter",
+            "org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenter",
+            structuredContentPermissions
+        );
 
-		List<String> redirectUrlPermissions = new ArrayList<String>();
-		redirectUrlPermissions.add("PERMISSION_CREATE_URLHANDLER");
-		redirectUrlPermissions.add("PERMISSION_UPDATE_URLHANDLER");
-		redirectUrlPermissions.add("PERMISSION_DELETE_URLHANDLER");
+        List<String> redirectUrlPermissions = new ArrayList<String>();
+        redirectUrlPermissions.add("PERMISSION_CREATE_URLHANDLER");
+        redirectUrlPermissions.add("PERMISSION_UPDATE_URLHANDLER");
+        redirectUrlPermissions.add("PERMISSION_DELETE_URLHANDLER");
         redirectUrlPermissions.add("PERMISSION_READ_URLHANDLER");
-		setSection(
+        setSection(
             BLCMain.getMessageManager().getString("redirectUrl"),
-			"urlRedirect",
-			"org.broadleafcommerce.cms.admin.client.view.urlRedirect.UrlRedirectView",
-			"urlRedirectPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.urlRedirect.UrlRedirectPresenter",
-			redirectUrlPermissions
-		);
+            "urlRedirect",
+            "org.broadleafcommerce.cms.admin.client.view.urlRedirect.UrlRedirectView",
+            "urlRedirectPresenter",
+            "org.broadleafcommerce.cms.admin.client.presenter.urlRedirect.UrlRedirectPresenter",
+            redirectUrlPermissions
+        );
 
 
         setOrder(100);

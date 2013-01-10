@@ -55,14 +55,14 @@ public class ProductBundleOrderItemRequest {
     }
     
     public Sku getSku() {
-		return sku;
-	}
+        return sku;
+    }
 
-	public ProductBundleOrderItemRequest setSku(Sku sku) {
-		this.sku = sku;
+    public ProductBundleOrderItemRequest setSku(Sku sku) {
+        this.sku = sku;
         return this;
-	}
-	
+    }
+    
     public ProductBundleOrderItemRequest setOrder(Order order) {
         this.order = order;
         return this;
@@ -72,7 +72,7 @@ public class ProductBundleOrderItemRequest {
         return order;
     }
 
-	public int getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
@@ -81,22 +81,22 @@ public class ProductBundleOrderItemRequest {
         return this;
     }
 
-	public ProductBundle getProductBundle() {
-		return productBundle;
-	}
+    public ProductBundle getProductBundle() {
+        return productBundle;
+    }
 
-	public ProductBundleOrderItemRequest setProductBundle(ProductBundle productBundle) {
-		this.productBundle = productBundle;
+    public ProductBundleOrderItemRequest setProductBundle(ProductBundle productBundle) {
+        this.productBundle = productBundle;
         return this;
-	}
+    }
 
-	public Map<String, String> getItemAttributes() {
-		return itemAttributes;
-	}
+    public Map<String, String> getItemAttributes() {
+        return itemAttributes;
+    }
 
-	public ProductBundleOrderItemRequest setItemAttributes(Map<String, String> itemAttributes) {
-		this.itemAttributes = itemAttributes;
-		return this;
-	}
-	
+    public ProductBundleOrderItemRequest setItemAttributes(Map<String, String> itemAttributes) {
+        this.itemAttributes = itemAttributes;
+        return this;
+    }
+    
 }

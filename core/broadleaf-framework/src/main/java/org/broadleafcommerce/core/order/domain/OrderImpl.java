@@ -200,7 +200,7 @@ public class OrderImpl implements Order {
     @MapKey(name="name")
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
     
-	@ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "BroadleafCurrency_Currency_Code", order=1, group = "BroadleafCurrency_Details")
     protected BroadleafCurrency currency;
@@ -244,12 +244,12 @@ public class OrderImpl implements Order {
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
         Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getCurrency());
         for (OrderItem orderItem : orderItems) {
-        	Money price;
-        	if (includeNonTaxableItems) {
-        		price = orderItem.getPrice();
-        	} else {
-        		price = orderItem.getTaxablePrice();
-        	}
+            Money price;
+            if (includeNonTaxableItems) {
+                price = orderItem.getPrice();
+            } else {
+                price = orderItem.getTaxablePrice();
+            }
             if (orderItem instanceof BundleOrderItem) {
                 calculatedSubTotal = calculatedSubTotal.add(price);
             } else {
@@ -434,21 +434,21 @@ public class OrderImpl implements Order {
     
     @Override
     public boolean containsSku(Sku sku) {
-    	for (OrderItem orderItem : getOrderItems()) {
-    	    if (orderItem instanceof DiscreteOrderItem) {
-    	        DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-        		if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
-        			return true;
-        		}
-    	    } else if (orderItem instanceof BundleOrderItem) {
-    	        BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-    	        if (bundleOrderItem.getSku() != null && bundleOrderItem.getSku().equals(sku)) {
-    	            return true;
-    	        }
-    	    }
-    	}
-    	
-    	return false;
+        for (OrderItem orderItem : getOrderItems()) {
+            if (orderItem instanceof DiscreteOrderItem) {
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+                if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
+                    return true;
+                }
+            } else if (orderItem instanceof BundleOrderItem) {
+                BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                if (bundleOrderItem.getSku() != null && bundleOrderItem.getSku().equals(sku)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     @Override
@@ -502,9 +502,9 @@ public class OrderImpl implements Order {
     
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
-    	Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-        	adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFulfillmentGroupAdjustmentsValue());
+            adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFulfillmentGroupAdjustmentsValue());
         }
         return adjustmentValue;
     }
@@ -526,7 +526,7 @@ public class OrderImpl implements Order {
         return totalAdjustmentsValue;
     }
 
-	@Override
+    @Override
     public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
@@ -549,11 +549,11 @@ public class OrderImpl implements Order {
 
     @Override
     @Deprecated
-	public void addAddedOfferCode(OfferCode offerCode) {
-		addOfferCode(offerCode);
-	}
-	
-	@Override
+    public void addAddedOfferCode(OfferCode offerCode) {
+        addOfferCode(offerCode);
+    }
+    
+    @Override
     public void addOfferCode(OfferCode offerCode) {
         getAddedOfferCodes().add(offerCode);
     }
@@ -562,7 +562,7 @@ public class OrderImpl implements Order {
     public BroadleafCurrency getCurrency() {
         return currency;
     }
-	@Override
+    @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
     }
@@ -578,23 +578,23 @@ public class OrderImpl implements Order {
     }
 
     @Override
-	public int getItemCount() {
-		int count = 0;
-		for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
-			count += doi.getQuantity();
-		}
-		return count;
-	}
+    public int getItemCount() {
+        int count = 0;
+        for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
+            count += doi.getQuantity();
+        }
+        return count;
+    }
 
-	@Override
+    @Override
     public boolean equals(Object obj) {
-	   	if (this == obj) {
+        if (this == obj) {
             return true;
         }
-	    if (obj == null) {
+        if (obj == null) {
             return false;
         }
-	    if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         OrderImpl other = (OrderImpl) obj;

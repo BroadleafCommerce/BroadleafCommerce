@@ -28,34 +28,34 @@ import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 @XmlRootElement(name = "skuBundleItem")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class SkuBundleItemWrapper extends BaseWrapper implements APIWrapper<SkuBundleItem> {
-	
-	@XmlElement
-	protected Long id;
-	
-	@XmlElement
-	protected Integer quantity;
-	
-	@XmlElement
-	protected Money salePrice;
-	
-	@XmlElement
-	protected Money retailPrice;
-	
-	@XmlElement
-	protected Long bundleId;
-	
-	@XmlElement
-	protected SkuWrapper sku;
-	
-	@Override
-	public void wrap(SkuBundleItem model, HttpServletRequest request) {
-		this.id = model.getId();
-		this.quantity = model.getQuantity();
-		this.salePrice = model.getSalePrice();
-		this.retailPrice = model.getRetailPrice();
-		this.bundleId = model.getBundle().getId();
-		this.sku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-		this.sku.wrap(model.getSku(), request);
-	}
+    
+    @XmlElement
+    protected Long id;
+    
+    @XmlElement
+    protected Integer quantity;
+    
+    @XmlElement
+    protected Money salePrice;
+    
+    @XmlElement
+    protected Money retailPrice;
+    
+    @XmlElement
+    protected Long bundleId;
+    
+    @XmlElement
+    protected SkuWrapper sku;
+    
+    @Override
+    public void wrap(SkuBundleItem model, HttpServletRequest request) {
+        this.id = model.getId();
+        this.quantity = model.getQuantity();
+        this.salePrice = model.getSalePrice();
+        this.retailPrice = model.getRetailPrice();
+        this.bundleId = model.getBundle().getId();
+        this.sku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
+        this.sku.wrap(model.getSku(), request);
+    }
 
 }

@@ -40,8 +40,8 @@ import java.util.Map;
  *
  */
 public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-	
-	private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
+    
+    private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
@@ -53,39 +53,39 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Category adminInstance = (Category) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
-			adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Category adminInstance = (Category) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
+            adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             if (adminInstance.getDefaultParentCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultParentCategory())) {
                 adminInstance.getAllParentCategories().add(adminInstance.getDefaultParentCategory());
             }
 
-			adminInstance = (Category) dynamicEntityDao.merge(adminInstance);
+            adminInstance = (Category) dynamicEntityDao.merge(adminInstance);
 
-			return helper.getRecord(adminProperties, adminInstance, null, null);
-		} catch (Exception e) {
+            return helper.getRecord(adminProperties, adminInstance, null, null);
+        } catch (Exception e) {
             LOG.error("Unable to add entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
     }
 
-	protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
-		return dynamicEntityDao.getMergedProperties(
-			ceilingEntityFullyQualifiedClass.getName(), 
-			entities, 
-			null, 
-			new String[]{}, 
-			new ForeignKey[]{},
-			MergedPropertyType.PRIMARY,
-			populateManyToOneFields,
-			includeManyToOneFields, 
-			excludeManyToOneFields,
+    protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+        Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
+        return dynamicEntityDao.getMergedProperties(
+            ceilingEntityFullyQualifiedClass.getName(), 
+            entities, 
+            null, 
+            new String[]{}, 
+            new ForeignKey[]{},
+            MergedPropertyType.PRIMARY,
+            populateManyToOneFields,
+            includeManyToOneFields, 
+            excludeManyToOneFields,
             configurationKey,
-			""
-		);
-	}
+            ""
+        );
+    }
 }

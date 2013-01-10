@@ -32,7 +32,7 @@ public class AppServices {
     public static final UtilityServiceAsync UTILITY = GWT.create(UtilityService.class);
     public static final AppConfigurationServiceAsync APP_CONFIGURATION = GWT.create(AppConfigurationService.class);
     static {
-    	ServiceDefTarget endpoint = (ServiceDefTarget) DYNAMIC_ENTITY;
+        ServiceDefTarget endpoint = (ServiceDefTarget) DYNAMIC_ENTITY;
         endpoint.setServiceEntryPoint("admin/dynamic.entity.service");
         
         ServiceDefTarget endpoint2 = (ServiceDefTarget) SECURITY;
@@ -44,7 +44,7 @@ public class AppServices {
         ServiceDefTarget endpoint4 = (ServiceDefTarget) UTILITY;
         endpoint4.setServiceEntryPoint("admin/utility.service");
 
-	ServiceDefTarget endpoint5 = (ServiceDefTarget) APP_CONFIGURATION;
+    ServiceDefTarget endpoint5 = (ServiceDefTarget) APP_CONFIGURATION;
         endpoint5.setServiceEntryPoint("admin/app.configuration.service");
 
     }

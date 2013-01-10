@@ -180,7 +180,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     
     @Override
     public void setValue(Money value) {
-    	this.value = value.getAmount();
+        this.value = value.getAmount();
     }
 
     @Override

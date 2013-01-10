@@ -105,7 +105,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         // Remove JSESSION-ID or other modifiers
         int pos = requestURIWithoutContext.indexOf(";");
         if (pos >= 0) {
-        	requestURIWithoutContext = requestURIWithoutContext.substring(0,pos);
+            requestURIWithoutContext = requestURIWithoutContext.substring(0,pos);
         }
 
         if (LOG.isTraceEnabled()) {
@@ -120,9 +120,9 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         Locale locale = localeResolver.resolveLocale(request);
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
         Theme theme = themeResolver.resolveTheme(request, site);
-	
-	SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
-	if (currentSandbox != null) {
+    
+    SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
+    if (currentSandbox != null) {
             SandBoxContext previewSandBoxContext = new SandBoxContext();
             previewSandBoxContext.setSandBoxId(currentSandbox.getId());
             previewSandBoxContext.setPreviewMode(true);
@@ -140,11 +140,11 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap");
         if (ruleMap == null) {
-        	LOG.trace("Creating ruleMap and adding in Locale.");
+            LOG.trace("Creating ruleMap and adding in Locale.");
             ruleMap = new HashMap<String, Object>();
             request.setAttribute("blRuleMap", ruleMap);
         } else {
-        	LOG.trace("Using pre-existing ruleMap - added by non standard BLC process.");
+            LOG.trace("Using pre-existing ruleMap - added by non standard BLC process.");
         }
         ruleMap.put("locale", locale);
 

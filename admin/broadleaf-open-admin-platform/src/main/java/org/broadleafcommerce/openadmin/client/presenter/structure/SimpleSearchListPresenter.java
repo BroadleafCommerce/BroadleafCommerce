@@ -51,99 +51,99 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDis
  */
 public class SimpleSearchListPresenter extends AbstractSubPresentable {
 
-	protected EntitySearchDialog searchDialog;
-	protected String searchDialogTitle;
+    protected EntitySearchDialog searchDialog;
+    protected String searchDialogTitle;
     protected HandlerRegistration editCompletedHandlerRegistration;
     protected HandlerRegistration addClickedHandlerRegistration;
     protected HandlerRegistration recordDroppedHandlerRegistration;
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickedHandlerRegistration;
-	
-	public SimpleSearchListPresenter(String prefix, GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
-		super(prefix, display, availableToTypes);
-		this.searchDialog = searchDialog;
-		this.searchDialogTitle = searchDialogTitle;
-	}
+    
+    public SimpleSearchListPresenter(String prefix, GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
+        super(prefix, display, availableToTypes);
+        this.searchDialog = searchDialog;
+        this.searchDialogTitle = searchDialogTitle;
+    }
 
     public SimpleSearchListPresenter(String prefix, GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
-		this(prefix, display, searchDialog, null, searchDialogTitle);
-	}
+        this(prefix, display, searchDialog, null, searchDialogTitle);
+    }
 
     public SimpleSearchListPresenter(SimpleSearchListPresenter template) {
         this(template.prefix, template.display, template.searchDialog, template.availableToTypes, template.searchDialogTitle);
         this.abstractDynamicDataSource = template.abstractDynamicDataSource;
         this.readOnly = template.readOnly;
     }
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
-	}
-	
-	public void bind() {
-		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
-			public void onEditComplete(EditCompleteEvent event) {
-				display.getGrid().deselectAllRecords();
-				setStartState();
-			}
-		});
-		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
-						public void onSearchItemSelected(SearchItemSelected event) {
+    
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+        display.getGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getGrid());
+        dataSource.setupGridFields(gridFields, editable);
+    }
+    
+    public void bind() {
+        editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
+            public void onEditComplete(EditCompleteEvent event) {
+                display.getGrid().deselectAllRecords();
+                setStartState();
+            }
+        });
+        addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
+                        public void onSearchItemSelected(SearchItemSelected event) {
                             DynamicEntityDataSource ds = (DynamicEntityDataSource) display.getGrid().getDataSource();
                             ForeignKey foreignKey = (ForeignKey) ds.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
                             if (foreignKey != null) {
                                 event.getRecord().setAttribute(foreignKey.getManyToField(), abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord));
                             }
-							display.getGrid().addData(event.getRecord());
-						}
-					});
-				}
-			}
-		});
-		/*
-		 * TODO add code to check if the AdornedTargetList has a sort field defined. If not,
-		 * then disable the re-order functionality
-		 */
-		recordDroppedHandlerRegistration = display.getGrid().addRecordDropHandler(new RecordDropHandler() {
-			public void onRecordDrop(RecordDropEvent event) {
-				ListGridRecord record = event.getDropRecords()[0];
-				int originalIndex = ((ListGrid) event.getSource()).getRecordIndex(record);
-				int newIndex = event.getIndex();
-				if (newIndex > originalIndex) {
-					newIndex--;
-				}
-				AdornedTargetList adornedTargetList = (AdornedTargetList) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-				record.setAttribute(adornedTargetList.getSortField(), newIndex);
-				display.getGrid().updateData(record);
-			}
-		});
-		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					display.getRemoveButton().enable();
-				} else {
-					display.getRemoveButton().disable();
-				}
-			}
-		});
-		removeClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            display.getGrid().addData(event.getRecord());
+                        }
+                    });
+                }
+            }
+        });
+        /*
+         * TODO add code to check if the AdornedTargetList has a sort field defined. If not,
+         * then disable the re-order functionality
+         */
+        recordDroppedHandlerRegistration = display.getGrid().addRecordDropHandler(new RecordDropHandler() {
+            public void onRecordDrop(RecordDropEvent event) {
+                ListGridRecord record = event.getDropRecords()[0];
+                int originalIndex = ((ListGrid) event.getSource()).getRecordIndex(record);
+                int newIndex = event.getIndex();
+                if (newIndex > originalIndex) {
+                    newIndex--;
+                }
+                AdornedTargetList adornedTargetList = (AdornedTargetList) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                record.setAttribute(adornedTargetList.getSortField(), newIndex);
+                display.getGrid().updateData(record);
+            }
+        });
+        selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                if (event.getState()) {
+                    display.getRemoveButton().enable();
+                } else {
+                    display.getRemoveButton().disable();
+                }
+            }
+        });
+        removeClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
-							    display.getRemoveButton().disable();
+                                display.getRemoveButton().disable();
                             }
-						}
-					});
-				}
-			}
-		});
-	}
+                        }
+                    });
+                }
+            }
+        });
+    }
 
     public HandlerRegistration getAddClickedHandlerRegistration() {
         return addClickedHandlerRegistration;
