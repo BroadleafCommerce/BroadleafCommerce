@@ -24,24 +24,24 @@ import java.util.HashMap;
  *
  */
 public class CurrencyConsiderationContext {
-	
-	private static final ThreadLocal<CurrencyDeterminationService> currencyDeterminationService = new ThreadLocal<CurrencyDeterminationService>();
+    
+    private static final ThreadLocal<CurrencyDeterminationService> currencyDeterminationService = new ThreadLocal<CurrencyDeterminationService>();
 
-	private static final ThreadLocal<HashMap> currencyConsiderationContext = new ThreadLocal<HashMap>();
+    private static final ThreadLocal<HashMap> currencyConsiderationContext = new ThreadLocal<HashMap>();
 
-	public static HashMap getCurrencyConsiderationContext() {
-		return CurrencyConsiderationContext.currencyConsiderationContext.get();
-	}
-	
-	public static void setCurrencyConsiderationContext(HashMap currencyConsiderationContext) {
+    public static HashMap getCurrencyConsiderationContext() {
+        return CurrencyConsiderationContext.currencyConsiderationContext.get();
+    }
+    
+    public static void setCurrencyConsiderationContext(HashMap currencyConsiderationContext) {
         CurrencyConsiderationContext.currencyConsiderationContext.set(currencyConsiderationContext);
-	}
-	
-	public static CurrencyDeterminationService getCurrencyDeterminationService() {
-		return CurrencyConsiderationContext.currencyDeterminationService.get();
-	}
-	
-	public static void setCurrencyDeterminationService(CurrencyDeterminationService currencyDeterminationService) {
+    }
+    
+    public static CurrencyDeterminationService getCurrencyDeterminationService() {
+        return CurrencyConsiderationContext.currencyDeterminationService.get();
+    }
+    
+    public static void setCurrencyDeterminationService(CurrencyDeterminationService currencyDeterminationService) {
         CurrencyConsiderationContext.currencyDeterminationService.set(currencyDeterminationService);
-	}
+    }
 }

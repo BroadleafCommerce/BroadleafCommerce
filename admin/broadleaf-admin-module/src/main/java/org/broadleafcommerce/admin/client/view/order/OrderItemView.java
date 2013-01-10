@@ -42,28 +42,28 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public class OrderItemView extends VLayout implements OrderItemDisplay {
-	
-	protected ToolStrip toolBar;
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
-	protected ToolStripButton saveButton;
-	protected ToolStripButton refreshButton;
-	protected ListGrid grid;
-	protected ListGrid expansionGrid;
-	protected FormOnlyView orderItemFormDisplay;
+    
+    protected ToolStrip toolBar;
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
+    protected ToolStripButton saveButton;
+    protected ToolStripButton refreshButton;
+    protected ListGrid grid;
+    protected ListGrid expansionGrid;
+    protected FormOnlyView orderItemFormDisplay;
 
-	public OrderItemView(String title, Boolean canReorder, Boolean canEdit) {
+    public OrderItemView(String title, Boolean canReorder, Boolean canEdit) {
         setHeight100();
         setWidth100();
         setBackgroundColor("#eaeaea");
         setOverflow(Overflow.AUTO);
-		
-		HStack hStack = new HStack(10);
-		
-		hStack.setHeight("45%");
-		hStack.setWidth100();
-		hStack.setBackgroundColor("#eaeaea");
-		hStack.setAlign(Alignment.CENTER);
+        
+        HStack hStack = new HStack(10);
+        
+        hStack.setHeight("45%");
+        hStack.setWidth100();
+        hStack.setBackgroundColor("#eaeaea");
+        hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();
         stack.setHeight100();
@@ -120,21 +120,21 @@ public class OrderItemView extends VLayout implements OrderItemDisplay {
         expansionGrid.setAlternateRecordStyles(true);
         expansionGrid.setCanGroupBy(false);
         if (!canEdit) {
-        	expansionGrid.setAlternateBodyStyleName("editRowDisabled");
+            expansionGrid.setAlternateBodyStyleName("editRowDisabled");
         }
         expansionGrid.setVisibility(Visibility.HIDDEN);
         expansionGrid.setHeight(100);
         expansionGrid.draw();
         
         grid = new ListGrid() {
-        	@Override  
+            @Override  
             protected Canvas getExpansionComponent(final ListGridRecord record) {
                 VLayout layout = new VLayout(5);
                 layout.setPadding(5);
                 layout.addMember(expansionGrid);
                 expansionGrid.setVisibility(Visibility.INHERIT);
                 String id = ((AbstractDynamicDataSource) grid.getDataSource()).getPrimaryKeyValue(record);
-        		((PresentationLayerAssociatedDataSource) expansionGrid.getDataSource()).loadAssociatedGridBasedOnRelationship(id, null);
+                ((PresentationLayerAssociatedDataSource) expansionGrid.getDataSource()).loadAssociatedGridBasedOnRelationship(id, null);
                 return layout;
             }  
         };
@@ -157,7 +157,7 @@ public class OrderItemView extends VLayout implements OrderItemDisplay {
         grid.setCanExpandRecords(true);
         grid.setCanGroupBy(false);
         if (!canEdit) {
-        	grid.setAlternateBodyStyleName("editRowDisabled");
+            grid.setAlternateBodyStyleName("editRowDisabled");
         }
         stack.addMember(grid);
         
@@ -168,37 +168,37 @@ public class OrderItemView extends VLayout implements OrderItemDisplay {
         addMember(hStack);
         orderItemFormDisplay = new FormOnlyView();
         addMember(orderItemFormDisplay);
-	}
+    }
 
-	public ToolStrip getToolbar() {
-		return toolBar;
-	}
+    public ToolStrip getToolbar() {
+        return toolBar;
+    }
 
-	public ToolStripButton getAddButton() {
-		return addButton;
-	}
+    public ToolStripButton getAddButton() {
+        return addButton;
+    }
 
-	public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+    public ToolStripButton getRemoveButton() {
+        return removeButton;
+    }
 
-	public ListGrid getGrid() {
-		return grid;
-	}
+    public ListGrid getGrid() {
+        return grid;
+    }
 
-	public ListGrid getExpansionGrid() {
-		return expansionGrid;
-	}
+    public ListGrid getExpansionGrid() {
+        return expansionGrid;
+    }
 
-	public FormOnlyDisplay getFormOnlyDisplay() {
-		return orderItemFormDisplay;
-	}
+    public FormOnlyDisplay getFormOnlyDisplay() {
+        return orderItemFormDisplay;
+    }
 
-	public ToolStripButton getSaveButton() {
-		return saveButton;
-	}
+    public ToolStripButton getSaveButton() {
+        return saveButton;
+    }
 
-	public ToolStripButton getRefreshButton() {
-		return refreshButton;
-	}
+    public ToolStripButton getRefreshButton() {
+        return refreshButton;
+    }
 }

@@ -42,7 +42,7 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class OfferRuleImpl implements OfferRule {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator= "OfferRuleId")
@@ -66,63 +66,63 @@ public class OfferRuleImpl implements OfferRule {
     @Column(name = "MATCH_RULE")
     protected String matchRule;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferRule#getId()
-	 */
-	public Long getId() {
-		return id;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferRule#getId()
+     */
+    public Long getId() {
+        return id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferRule#setId(java.lang.Long)
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferRule#setId(java.lang.Long)
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferRule#getMatchRule()
-	 */
-	public String getMatchRule() {
-		return matchRule;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferRule#getMatchRule()
+     */
+    public String getMatchRule() {
+        return matchRule;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferRule#setMatchRule(java.lang.String)
-	 */
-	public void setMatchRule(String matchRule) {
-		this.matchRule = matchRule;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferRule#setMatchRule(java.lang.String)
+     */
+    public void setMatchRule(String matchRule) {
+        this.matchRule = matchRule;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((matchRule == null) ? 0 : matchRule.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((matchRule == null) ? 0 : matchRule.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OfferRuleImpl other = (OfferRuleImpl) obj;
-		
-		if (id != null && other.id != null) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OfferRuleImpl other = (OfferRuleImpl) obj;
+        
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-		
-		if (matchRule == null) {
-			if (other.matchRule != null)
-				return false;
-		} else if (!matchRule.equals(other.matchRule))
-			return false;
-		return true;
-	}
+        
+        if (matchRule == null) {
+            if (other.matchRule != null)
+                return false;
+        } else if (!matchRule.equals(other.matchRule))
+            return false;
+        return true;
+    }
     
 }

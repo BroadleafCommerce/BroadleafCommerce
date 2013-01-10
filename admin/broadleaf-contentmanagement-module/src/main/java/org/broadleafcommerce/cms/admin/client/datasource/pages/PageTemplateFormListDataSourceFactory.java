@@ -36,7 +36,7 @@ public class PageTemplateFormListDataSourceFactory {
 
     public static long count = 0;
 
-	public static PageTemplateFormListDataSource createDataSource(String name, String[] customCriteria, AsyncCallback<DataSource> cb) {
+    public static PageTemplateFormListDataSource createDataSource(String name, String[] customCriteria, AsyncCallback<DataSource> cb) {
         OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
         PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
         DataSourceModule[] modules = new DataSourceModule[]{
@@ -46,6 +46,6 @@ public class PageTemplateFormListDataSourceFactory {
         dataSource.buildFields(customCriteria, false, cb);
 
         return dataSource;
-	}
+    }
 
 }

@@ -62,9 +62,9 @@ public interface PaymentInfo extends Serializable {
     
     public String getCustomerIpAddress();
 
-	public void setCustomerIpAddress(String customerIpAddress);
+    public void setCustomerIpAddress(String customerIpAddress);
 
-	public Map<String, String> getAdditionalFields();
+    public Map<String, String> getAdditionalFields();
 
     public void setAdditionalFields(Map<String, String> additionalFields);
 

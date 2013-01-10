@@ -43,29 +43,29 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
  */
 public class CategoryTreeEntityModule extends BasicClientEntityModule {
 
-	/**
-	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param persistencePerspective
-	 * @param service
-	 */
-	public CategoryTreeEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
-	}
+    /**
+     * @param ceilingEntityFullyQualifiedClassname
+     * @param persistencePerspective
+     * @param service
+     */
+    public CategoryTreeEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+        super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
+    }
 
-	@Override
-	public Record buildRecord(Entity entity, Boolean updateId) {
-		return super.buildRecord(entity, true);
-	}
+    @Override
+    public Record buildRecord(Entity entity, Boolean updateId) {
+        return super.buildRecord(entity, true);
+    }
 
-	@Override
-	public void executeUpdate(final String requestId, DSRequest request, final DSResponse response, String[] customCriteria, AsyncCallback<DataSource> cb) {
-		BLCMain.NON_MODAL_PROGRESS.startProgress();
-		JavaScriptObject data = request.getData();
+    @Override
+    public void executeUpdate(final String requestId, DSRequest request, final DSResponse response, String[] customCriteria, AsyncCallback<DataSource> cb) {
+        BLCMain.NON_MODAL_PROGRESS.startProgress();
+        JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
-			public void onSuccess(Entity result) {
-				super.onSuccess(result);
+        service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+            public void onSuccess(Entity result) {
+                super.onSuccess(result);
                 if (processResult(result, requestId, response, dataSource)) {
                     /*
                      * Since we've hacked the tree to be able to display duplicate entries, we must iterate
@@ -93,9 +93,9 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 
                     dataSource.processResponse(requestId, response);
                 }
-			}
-		});
-	}
+            }
+        });
+    }
 
     protected void logAttributes(Record record) {
         for (String attr : record.getAttributes()) {

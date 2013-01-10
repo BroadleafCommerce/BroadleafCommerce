@@ -35,9 +35,9 @@ import org.hibernate.annotations.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class UpSaleProductImpl implements RelatedProduct {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
     @GeneratedValue(generator= "UpSaleProductId")
     @GenericGenerator(
         name="UpSaleProductId",
@@ -53,8 +53,8 @@ public class UpSaleProductImpl implements RelatedProduct {
     )
     @Column(name = "UP_SALE_PRODUCT_ID")
     private Long id;
-	
-	@Column(name = "PROMOTION_MESSAGE")
+    
+    @Column(name = "PROMOTION_MESSAGE")
     @AdminPresentation(friendlyName="Upsale Promotion Message", largeEntry=true)
     private String promotionMessage;
 

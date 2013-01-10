@@ -565,11 +565,11 @@ public class OfferTest extends CommonSetupBaseTest {
         address.setCountry(country);
         
         for (OrderItem orderItem : order.getOrderItems()) {
-	        FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
-	        fgItem.setFulfillmentGroup(group);
-	        fgItem.setOrderItem(orderItem);
-	        fgItem.setQuantity(orderItem.getQuantity());
-	        group.addFulfillmentGroupItem(fgItem);
+            FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
+            fgItem.setFulfillmentGroup(group);
+            fgItem.setOrderItem(orderItem);
+            fgItem.setQuantity(orderItem.getQuantity());
+            group.addFulfillmentGroupItem(fgItem);
         }
         
         group.setAddress(address);

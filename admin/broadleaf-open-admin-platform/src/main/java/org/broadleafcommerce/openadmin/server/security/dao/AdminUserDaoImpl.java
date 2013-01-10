@@ -42,9 +42,9 @@ public class AdminUserDaoImpl implements AdminUserDao {
     protected EntityConfiguration entityConfiguration;
 
     public void deleteAdminUser(AdminUser user) {
-    	if (!em.contains(user)) {
-        	user = em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser", AdminUser.class), user.getId());
-    	}
+        if (!em.contains(user)) {
+            user = em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser", AdminUser.class), user.getId());
+        }
         em.remove(user);
     }
 

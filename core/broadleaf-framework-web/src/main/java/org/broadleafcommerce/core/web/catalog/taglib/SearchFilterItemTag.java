@@ -57,7 +57,7 @@ public class SearchFilterItemTag extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
 
         JspWriter out = getJspContext().getOut();
-        out.println("<h3>"+getDisplayTitle()+"</h3>");        	
+        out.println("<h3>"+getDisplayTitle()+"</h3>");          
 
         if (displayType.equals("multiSelect")) {
             doMultiSelect(out);
@@ -72,22 +72,22 @@ public class SearchFilterItemTag extends SimpleTagSupport {
         List<Category> categories = ((SearchFilterTag) getParent()).getCategories();
 
         if(products != null ){
-        	doProductMultiSelect(out, products);
+            doProductMultiSelect(out, products);
         }            
           
         if(categories != null){
-           	doCategoryMultiSelect(out, categories);
+            doCategoryMultiSelect(out, categories);
         }
     }
     
     private void doCategoryMultiSelect(JspWriter out, List<Category> categories) throws JspException, IOException{
         String propertyCss = property.replaceAll("[\\.\\[\\]]", "_");
-    	out.println("<ul class='searchFilter-"+propertyCss+"'>");
-    	for (Category category : categories) {
-    		String catUrl = getUrl(category);
-    		out.println("<li vaue='"+category.getName()+"'>"+catUrl);
-    	}
-    	out.println("</ul>");
+        out.println("<ul class='searchFilter-"+propertyCss+"'>");
+        for (Category category : categories) {
+            String catUrl = getUrl(category);
+            out.println("<li vaue='"+category.getName()+"'>"+catUrl);
+        }
+        out.println("</ul>");
     }
     
     private void doProductMultiSelect(JspWriter out, List<Product> products) throws JspException, IOException{
@@ -174,7 +174,7 @@ public class SearchFilterItemTag extends SimpleTagSupport {
                 "        updateSearchFilterResults();\r\n" +
                 "    } );" +
         "</script>");
-    	
+        
     }
     
     private void doSliderRange(JspWriter out)  throws JspException, IOException {

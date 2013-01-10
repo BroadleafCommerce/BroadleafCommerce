@@ -32,17 +32,17 @@ public interface SandBoxDisplay extends Display {
 
     public ToolStripButton getPromoteAllButton();
 
-	public ToolStripButton getRevertRejectSelectionButton();
+    public ToolStripButton getRevertRejectSelectionButton();
 
     public ToolStripButton getPromoteSelectionButton();
 
     public ToolStripButton getRevertRejectAllButton();
 
-	public ListGrid getGrid();
+    public ListGrid getGrid();
 
     public ToolStripButton getRefreshButton();
 
-	public ToolStrip getToolBar();
+    public ToolStrip getToolBar();
 
     public ToolStripButton getPreviewButton();
 

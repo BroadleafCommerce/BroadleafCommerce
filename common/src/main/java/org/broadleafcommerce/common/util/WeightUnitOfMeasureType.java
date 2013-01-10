@@ -49,7 +49,7 @@ public class WeightUnitOfMeasureType implements Serializable, BroadleafEnumerati
     }
 
     public WeightUnitOfMeasureType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -58,7 +58,7 @@ public class WeightUnitOfMeasureType implements Serializable, BroadleafEnumerati
     }
     
     public String getFriendlyType() {
-    	return friendlyType;
+        return friendlyType;
     }
 
     private void setType(final String type) {

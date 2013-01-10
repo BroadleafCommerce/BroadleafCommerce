@@ -77,8 +77,8 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
             throw new Exception("Unable to retrieve image metadata from stream. Are you sure the stream provided is a valid input stream for an image source?");
         }
 
-		return imageMetadata;
-	}
+        return imageMetadata;
+    }
 
     @Override
     public InputStream convert(InputStream artifactStream, Operation[] operations, String mimeType) throws Exception {
@@ -131,13 +131,13 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
     }
 
     protected BufferedImage stripAlpha(BufferedImage image){
-		BufferedImage raw_image=image;
-		image = new BufferedImage(raw_image.getWidth(), raw_image.getHeight(), BufferedImage.TYPE_INT_RGB);
-		ColorConvertOp xformOp=new ColorConvertOp(null);
-		xformOp.filter(raw_image, image);
+        BufferedImage raw_image=image;
+        image = new BufferedImage(raw_image.getWidth(), raw_image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        ColorConvertOp xformOp=new ColorConvertOp(null);
+        xformOp.filter(raw_image, image);
 
-		return image;
-	}
+        return image;
+    }
 
     public String[] getSupportedUploadTypes() {
         return supportedUploadTypes;

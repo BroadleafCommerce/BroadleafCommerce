@@ -28,10 +28,10 @@ public class DefaultModule extends AbstractModule {
     }
 
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
-    	throw new PaymentException("reverse authorize not implemented.");
-	}
+        throw new PaymentException("reverse authorize not implemented.");
+    }
 
-	public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
+    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("authorizeAndDebit not implemented.");
     }
 

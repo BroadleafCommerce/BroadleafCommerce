@@ -24,6 +24,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  *
  */
 public enum ForeignKeyRestrictionType implements IsSerializable {
-	ID_EQ,
-	COLLECTION_SIZE_EQ
+    ID_EQ,
+    COLLECTION_SIZE_EQ
 }

@@ -30,7 +30,7 @@ public class FulfillmentGroupRequest {
     protected Phone phone;
     protected String method;
     protected String service;
-	protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
+    protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
 
     public Address getAddress() {
         return address;
@@ -57,12 +57,12 @@ public class FulfillmentGroupRequest {
     }
 
     public String getMethod() {
-		return method;
-	}
+        return method;
+    }
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
     public List<FulfillmentGroupItemRequest> getFulfillmentGroupItemRequests() {
         return fulfillmentGroupItemRequests;
@@ -72,12 +72,12 @@ public class FulfillmentGroupRequest {
         this.fulfillmentGroupItemRequests = fulfillmentGroupItemRequests;
     }
 
-	public String getService() {
-		return service;
-	}
+    public String getService() {
+        return service;
+    }
 
-	public void setService(String service) {
-		this.service = service;
-	}
+    public void setService(String service) {
+        this.service = service;
+    }
 
 }

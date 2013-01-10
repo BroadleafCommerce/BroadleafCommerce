@@ -37,9 +37,9 @@ import java.util.List;
 
 public class PromotableOrderImpl implements PromotableOrder {
 
-	private static final long serialVersionUID = 1L;
-	
-	protected boolean totalitarianOfferApplied = false;
+    private static final long serialVersionUID = 1L;
+    
+    protected boolean totalitarianOfferApplied = false;
     protected boolean notCombinableOfferAppliedAtAnyLevel = false;
     protected boolean notCombinableOfferApplied = false;    
     protected boolean hasOrderAdjustments = false;
@@ -53,79 +53,79 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected PromotableItemFactory itemFactory;
     
     public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory) {
-    	this.delegate = order;
-    	this.itemFactory = itemFactory;
+        this.delegate = order;
+        this.itemFactory = itemFactory;
     }
     
     public void reset() {
-    	delegate = null;
-    	resetFulfillmentGroups();
-    	resetDiscreteOrderItems();
+        delegate = null;
+        resetFulfillmentGroups();
+        resetDiscreteOrderItems();
     }
     
     public void resetFulfillmentGroups() {
-    	for (PromotableFulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-    		fulfillmentGroup.reset();
-    	}
-    	fulfillmentGroups = null;
+        for (PromotableFulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            fulfillmentGroup.reset();
+        }
+        fulfillmentGroups = null;
     }
     
     public void resetDiscreteOrderItems() {
-    	for (PromotableOrderItem orderItem : discreteOrderItems) {
-    		orderItem.reset();
-    	}
-    	discreteOrderItems = null;
-    	for (PromotableOrderItem orderItem : discountableDiscreteOrderItems) {
-    		orderItem.reset();
-    	}
-    	discountableDiscreteOrderItems = null;
+        for (PromotableOrderItem orderItem : discreteOrderItems) {
+            orderItem.reset();
+        }
+        discreteOrderItems = null;
+        for (PromotableOrderItem orderItem : discountableDiscreteOrderItems) {
+            orderItem.reset();
+        }
+        discountableDiscreteOrderItems = null;
     }
     
     public void resetTotalitarianOfferApplied() {
-    	totalitarianOfferApplied = false;
-    	notCombinableOfferAppliedAtAnyLevel = false;
-    	for (OrderAdjustment adjustment : delegate.getOrderAdjustments()) {
-    		if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
-    			totalitarianOfferApplied = true;
-    			break;
-    		}
-    		if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-    			notCombinableOfferAppliedAtAnyLevel = true;
-    			break;
-    		}
-    	}
-    	if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
-    		check: {
-		    	for (OrderItem orderItem : delegate.getOrderItems()) {
-		    		for (OrderItemAdjustment adjustment : orderItem.getOrderItemAdjustments()) {
-		    			if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
-		    				totalitarianOfferApplied = true;
-		    				break check;
-		    			}
-		    			if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-		        			notCombinableOfferAppliedAtAnyLevel = true;
-		        			break check;
-		        		}
-		    		}
-		    	}
-    		}
-    	}
-    	if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
-    		check: {
-		    	for (FulfillmentGroup fg : delegate.getFulfillmentGroups()) {
-		    		for (FulfillmentGroupAdjustment adjustment : fg.getFulfillmentGroupAdjustments()) {
-		    			if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
-		    				totalitarianOfferApplied = true;
-		    				break check;
-		    			}
-		    			if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-		        			notCombinableOfferAppliedAtAnyLevel = true;
-		        			break check;
-		        		}
-		    		}
-		    	}
-    		}
-    	}
+        totalitarianOfferApplied = false;
+        notCombinableOfferAppliedAtAnyLevel = false;
+        for (OrderAdjustment adjustment : delegate.getOrderAdjustments()) {
+            if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
+                totalitarianOfferApplied = true;
+                break;
+            }
+            if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
+                notCombinableOfferAppliedAtAnyLevel = true;
+                break;
+            }
+        }
+        if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
+            check: {
+                for (OrderItem orderItem : delegate.getOrderItems()) {
+                    for (OrderItemAdjustment adjustment : orderItem.getOrderItemAdjustments()) {
+                        if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
+                            totalitarianOfferApplied = true;
+                            break check;
+                        }
+                        if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
+                            notCombinableOfferAppliedAtAnyLevel = true;
+                            break check;
+                        }
+                    }
+                }
+            }
+        }
+        if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
+            check: {
+                for (FulfillmentGroup fg : delegate.getFulfillmentGroups()) {
+                    for (FulfillmentGroupAdjustment adjustment : fg.getFulfillmentGroupAdjustments()) {
+                        if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
+                            totalitarianOfferApplied = true;
+                            break check;
+                        }
+                        if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
+                            notCombinableOfferAppliedAtAnyLevel = true;
+                            break check;
+                        }
+                    }
+                }
+            }
+        }
     }
     
     public void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment) {
@@ -135,7 +135,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         adjustmentPrice = adjustmentPrice.subtract(orderAdjustment.getValue().getAmount());
         delegate.getOrderAdjustments().add(orderAdjustment.getDelegate());
         if (!orderAdjustment.getDelegate().getOffer().isCombinableWithOtherOffers()) {
-        	notCombinableOfferApplied = true;
+            notCombinableOfferApplied = true;
         }
         resetTotalitarianOfferApplied();
         hasOrderAdjustments = true;
@@ -155,14 +155,14 @@ public class PromotableOrderImpl implements PromotableOrder {
             delegate.getOrderAdjustments().clear();
         }
         adjustmentPrice = null;
-    	notCombinableOfferApplied = false;
+        notCombinableOfferApplied = false;
         hasOrderAdjustments = false;
         resetTotalitarianOfferApplied();
    }
 
     public void removeAllItemAdjustments() {
         for (PromotableOrderItem orderItem: getDiscountableDiscreteOrderItems()) {
-        	orderItem.removeAllAdjustments();
+            orderItem.removeAllAdjustments();
             adjustmentPrice = null;
             resetTotalitarianOfferApplied();
             orderItem.assignFinalPrice();
@@ -185,48 +185,48 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
     
     public boolean isNotCombinableOfferApplied() {
-		return notCombinableOfferApplied;
-	}
+        return notCombinableOfferApplied;
+    }
 
-	public boolean isHasOrderAdjustments() {
-		return hasOrderAdjustments;
-	}
-	
-	public boolean isTotalitarianOfferApplied() {
-		return totalitarianOfferApplied;
-	}
+    public boolean isHasOrderAdjustments() {
+        return hasOrderAdjustments;
+    }
+    
+    public boolean isTotalitarianOfferApplied() {
+        return totalitarianOfferApplied;
+    }
 
-	public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied) {
-		this.totalitarianOfferApplied = totalitarianOfferApplied;
-	}
+    public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied) {
+        this.totalitarianOfferApplied = totalitarianOfferApplied;
+    }
 
-	public boolean isNotCombinableOfferAppliedAtAnyLevel() {
-		return notCombinableOfferAppliedAtAnyLevel;
-	}
+    public boolean isNotCombinableOfferAppliedAtAnyLevel() {
+        return notCombinableOfferAppliedAtAnyLevel;
+    }
 
-	public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel) {
-		this.notCombinableOfferAppliedAtAnyLevel = notCombinableOfferAppliedAtAnyLevel;
-	}
+    public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel) {
+        this.notCombinableOfferAppliedAtAnyLevel = notCombinableOfferAppliedAtAnyLevel;
+    }
 
-	public List<OrderItemSplitContainer> getSplitItems() {
-		return splitItems;
-	}
+    public List<OrderItemSplitContainer> getSplitItems() {
+        return splitItems;
+    }
 
-	public void setSplitItems(List<OrderItemSplitContainer> splitItems) {
-		this.splitItems = splitItems;
-	}
-	
-	public List<PromotableOrderItem> searchSplitItems(PromotableOrderItem key) {
-		for (OrderItemSplitContainer container : splitItems) {
-			if (container.getKey().equals(key.getDelegate())) {
-				return container.getSplitItems();
-			}
-		}
-		return null;
-	}
-	
-	public void removeAllCandidateOffers() {
-    	removeAllCandidateOrderOffers();
+    public void setSplitItems(List<OrderItemSplitContainer> splitItems) {
+        this.splitItems = splitItems;
+    }
+    
+    public List<PromotableOrderItem> searchSplitItems(PromotableOrderItem key) {
+        for (OrderItemSplitContainer container : splitItems) {
+            if (container.getKey().equals(key.getDelegate())) {
+                return container.getSplitItems();
+            }
+        }
+        return null;
+    }
+    
+    public void removeAllCandidateOffers() {
+        removeAllCandidateOrderOffers();
         if (getDiscountableDiscreteOrderItems() != null) {
             for (PromotableOrderItem item : getDiscountableDiscreteOrderItems()) {
                 item.getDelegate().removeAllCandidateItemOffers();
@@ -237,7 +237,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
     
     public void removeAllCandidateFulfillmentGroupOffers() {
-    	if (getFulfillmentGroups() != null) {
+        if (getFulfillmentGroups() != null) {
             for (PromotableFulfillmentGroup fg : getFulfillmentGroups()) {
                 fg.removeAllCandidateOffers();
             }
@@ -256,12 +256,12 @@ public class PromotableOrderImpl implements PromotableOrder {
     public boolean containsNotStackableFulfillmentGroupOffer() {
         boolean isContainsNotStackableFulfillmentGroupOffer = false;
         for (FulfillmentGroup fg : delegate.getFulfillmentGroups()) {
-        	for (FulfillmentGroupAdjustment fgAdjustment : fg.getFulfillmentGroupAdjustments()) {
-        		if (!fgAdjustment.getOffer().isStackable()) {
-        			isContainsNotStackableFulfillmentGroupOffer = true;
-        			break;
-        		}
-        	}
+            for (FulfillmentGroupAdjustment fgAdjustment : fg.getFulfillmentGroupAdjustments()) {
+                if (!fgAdjustment.getOffer().isStackable()) {
+                    isContainsNotStackableFulfillmentGroupOffer = true;
+                    break;
+                }
+            }
         }
         return isContainsNotStackableFulfillmentGroupOffer;
     }
@@ -309,129 +309,129 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
     
     public List<PromotableOrderItem> getAllSplitItems() {
-    	List<PromotableOrderItem> response = new ArrayList<PromotableOrderItem>();
-    	for (OrderItemSplitContainer container : getSplitItems()) {
-    		response.addAll(container.getSplitItems());
-    	}
-    	
-    	return response;
+        List<PromotableOrderItem> response = new ArrayList<PromotableOrderItem>();
+        for (OrderItemSplitContainer container : getSplitItems()) {
+            response.addAll(container.getSplitItems());
+        }
+        
+        return response;
     }
     
     public Money getSubTotal() {
-		return delegate.getSubTotal();
-	}
+        return delegate.getSubTotal();
+    }
     
     public List<PromotableFulfillmentGroup> getFulfillmentGroups() {
-		if (fulfillmentGroups == null) {
-			fulfillmentGroups = new ArrayList<PromotableFulfillmentGroup>();
-			for (FulfillmentGroup fulfillmentGroup : delegate.getFulfillmentGroups()) {
-				fulfillmentGroups.add(itemFactory.createPromotableFulfillmentGroup(fulfillmentGroup, this));
-			}
-		}
-		return Collections.unmodifiableList(fulfillmentGroups);
-	}
+        if (fulfillmentGroups == null) {
+            fulfillmentGroups = new ArrayList<PromotableFulfillmentGroup>();
+            for (FulfillmentGroup fulfillmentGroup : delegate.getFulfillmentGroups()) {
+                fulfillmentGroups.add(itemFactory.createPromotableFulfillmentGroup(fulfillmentGroup, this));
+            }
+        }
+        return Collections.unmodifiableList(fulfillmentGroups);
+    }
     
     public void setTotalShipping(Money totalShipping) {
-		delegate.setTotalShipping(totalShipping);
-	}
+        delegate.setTotalShipping(totalShipping);
+    }
     
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
-		return delegate.calculateOrderItemsFinalPrice(includeNonTaxableItems);
-	}
+        return delegate.calculateOrderItemsFinalPrice(includeNonTaxableItems);
+    }
     
     public void setSubTotal(Money subTotal) {
-		delegate.setSubTotal(subTotal);
-	}
+        delegate.setSubTotal(subTotal);
+    }
     
     public void assignOrderItemsFinalPrice() {
-		for (PromotableOrderItem orderItem : getDiscountableDiscreteOrderItems()) {
+        for (PromotableOrderItem orderItem : getDiscountableDiscreteOrderItems()) {
             orderItem.assignFinalPrice();
         }
-	}
+    }
     
     public Customer getCustomer() {
-		return delegate.getCustomer();
-	}
+        return delegate.getCustomer();
+    }
     
     public List<PromotableOrderItem> getDiscreteOrderItems() {
-		if (discreteOrderItems == null) {
-			discreteOrderItems = new ArrayList<PromotableOrderItem>();
-			OrderItemVisitor visitor = new OrderItemVisitorAdapter() {
+        if (discreteOrderItems == null) {
+            discreteOrderItems = new ArrayList<PromotableOrderItem>();
+            OrderItemVisitor visitor = new OrderItemVisitorAdapter() {
 
-				@Override
-				public void visit(BundleOrderItem bundleOrderItem) throws PricingException {
-	                for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-	                    addDiscreteItem(discreteOrderItem);
-	                }
-				}
+                @Override
+                public void visit(BundleOrderItem bundleOrderItem) throws PricingException {
+                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                        addDiscreteItem(discreteOrderItem);
+                    }
+                }
 
-				@Override
-				public void visit(DiscreteOrderItem discreteOrderItem) throws PricingException {
-					addDiscreteItem(discreteOrderItem);
-				}
+                @Override
+                public void visit(DiscreteOrderItem discreteOrderItem) throws PricingException {
+                    addDiscreteItem(discreteOrderItem);
+                }
 
-				@Override
-				public void visit(DynamicPriceDiscreteOrderItem dynamicPriceDiscreteOrderItem) throws PricingException {
-					addDiscreteItem(dynamicPriceDiscreteOrderItem);
-				}
+                @Override
+                public void visit(DynamicPriceDiscreteOrderItem dynamicPriceDiscreteOrderItem) throws PricingException {
+                    addDiscreteItem(dynamicPriceDiscreteOrderItem);
+                }
 
-				@Override
-				public void visit(GiftWrapOrderItem giftWrapOrderItem) throws PricingException {
-					addDiscreteItem(giftWrapOrderItem);
-				}
-				
-				private void addDiscreteItem(DiscreteOrderItem discreteOrderItem) {
-					PromotableOrderItem item = itemFactory.createPromotableOrderItem(discreteOrderItem, PromotableOrderImpl.this);
-					item.computeAdjustmentPrice();
-	                discreteOrderItems.add(item);
-				}
-				
-			};
-			try {
-				for (OrderItem temp : delegate.getOrderItems()) {
-					temp.accept(visitor);
-				}
-			} catch (PricingException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
-		return discreteOrderItems;
+                @Override
+                public void visit(GiftWrapOrderItem giftWrapOrderItem) throws PricingException {
+                    addDiscreteItem(giftWrapOrderItem);
+                }
+                
+                private void addDiscreteItem(DiscreteOrderItem discreteOrderItem) {
+                    PromotableOrderItem item = itemFactory.createPromotableOrderItem(discreteOrderItem, PromotableOrderImpl.this);
+                    item.computeAdjustmentPrice();
+                    discreteOrderItems.add(item);
+                }
+                
+            };
+            try {
+                for (OrderItem temp : delegate.getOrderItems()) {
+                    temp.accept(visitor);
+                }
+            } catch (PricingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        return discreteOrderItems;
     }
-	
-	public List<PromotableOrderItem> getDiscountableDiscreteOrderItems() {
-		return getDiscountableDiscreteOrderItems(false);
-	}
-	
-	public List<PromotableOrderItem> getDiscountableDiscreteOrderItems(boolean applyDiscountToSalePrice) {
-		if (discountableDiscreteOrderItems == null) {
-			discountableDiscreteOrderItems = new ArrayList<PromotableOrderItem>();
-			for (PromotableOrderItem orderItem : getDiscreteOrderItems()) {
-				if (orderItem.getSku().isDiscountable() == null || orderItem.getSku().isDiscountable()) {
-					discountableDiscreteOrderItems.add((PromotableOrderItem) orderItem);
-				}
-			}
-			
-			OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(applyDiscountToSalePrice);
-			// Sort the items so that the highest priced ones are at the top
-			Collections.sort(discountableDiscreteOrderItems, priceComparator);
-			
-			currentSortParam = applyDiscountToSalePrice;
-		}
-		
-		if (currentSortParam != applyDiscountToSalePrice) {
-			OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(applyDiscountToSalePrice);
-			// Sort the items so that the highest priced ones are at the top
-			Collections.sort(discountableDiscreteOrderItems, priceComparator);
-			
-			currentSortParam = applyDiscountToSalePrice;
-		}
-		
-		return discountableDiscreteOrderItems;
+    
+    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems() {
+        return getDiscountableDiscreteOrderItems(false);
+    }
+    
+    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems(boolean applyDiscountToSalePrice) {
+        if (discountableDiscreteOrderItems == null) {
+            discountableDiscreteOrderItems = new ArrayList<PromotableOrderItem>();
+            for (PromotableOrderItem orderItem : getDiscreteOrderItems()) {
+                if (orderItem.getSku().isDiscountable() == null || orderItem.getSku().isDiscountable()) {
+                    discountableDiscreteOrderItems.add((PromotableOrderItem) orderItem);
+                }
+            }
+            
+            OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(applyDiscountToSalePrice);
+            // Sort the items so that the highest priced ones are at the top
+            Collections.sort(discountableDiscreteOrderItems, priceComparator);
+            
+            currentSortParam = applyDiscountToSalePrice;
+        }
+        
+        if (currentSortParam != applyDiscountToSalePrice) {
+            OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(applyDiscountToSalePrice);
+            // Sort the items so that the highest priced ones are at the top
+            Collections.sort(discountableDiscreteOrderItems, priceComparator);
+            
+            currentSortParam = applyDiscountToSalePrice;
+        }
+        
+        return discountableDiscreteOrderItems;
     }
 
-	public Order getDelegate() {
-		return delegate;
-	}
-	
+    public Order getDelegate() {
+        return delegate;
+    }
+    
 }

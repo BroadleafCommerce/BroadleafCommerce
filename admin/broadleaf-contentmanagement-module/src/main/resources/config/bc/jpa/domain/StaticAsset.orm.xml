@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_STATIC_ASSET_BY_FULL_URL" >
-		<query>SELECT staticAsset
+        <query>SELECT staticAsset
                FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset
                WHERE
                   staticAsset.sandbox = :targetSandbox AND
                   staticAsset.fullUrl = :fullUrl
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
     <named-query name="BC_READ_STATIC_ASSET_BY_FULL_URL_AND_TARGET_SANDBOX_NULL" >
-		<query>SELECT staticAsset
+        <query>SELECT staticAsset
                FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset
                WHERE
                   staticAsset.sandbox is null AND
                   staticAsset.fullUrl = :fullUrl
-		</query>
-	</named-query>
+        </query>
+    </named-query>
 
 </entity-mappings>

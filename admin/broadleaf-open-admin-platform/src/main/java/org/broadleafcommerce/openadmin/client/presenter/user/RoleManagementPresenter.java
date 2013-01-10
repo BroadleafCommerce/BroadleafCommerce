@@ -54,31 +54,31 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
     }
 
     @Override
-	public void bind() {
-		super.bind();
-		permissionsPresenter.bind();
-	}
+    public void bind() {
+        super.bind();
+        permissionsPresenter.bind();
+    }
 
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminCreateRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminCreateRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource top) {
                 setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"description"}, new Boolean[]{true});
-			}
-		}));
+                ((ListGridDataSource) top).setupGridFields(new String[]{"description"}, new Boolean[]{true});
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionRelatedToUserListDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
-				permissionsPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getPermissionsDisplay(), new EntitySearchDialog((ListGridDataSource) dataSource), new String[]{EntityImplementations.ADMIN_ROLE}, BLCMain.getMessageManager().getString("searchForPermission"));
-				permissionsPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "description", "type"}, new Boolean[]{false, false, false});
+                permissionsPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getPermissionsDisplay(), new EntitySearchDialog((ListGridDataSource) dataSource), new String[]{EntityImplementations.ADMIN_ROLE}, BLCMain.getMessageManager().getString("searchForPermission"));
+                permissionsPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "description", "type"}, new Boolean[]{false, false, false});
             }
         }));
-	}
+    }
 
-	@Override
-	public RoleManagementDisplay getDisplay() {
-		return (RoleManagementDisplay) display;
+    @Override
+    public RoleManagementDisplay getDisplay() {
+        return (RoleManagementDisplay) display;
 
-	}
-	
+    }
+    
 }

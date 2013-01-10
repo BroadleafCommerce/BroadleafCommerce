@@ -31,22 +31,22 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
  *
  */
 public interface CustomPersistenceHandler {
-	
-	public Boolean canHandleInspect(PersistencePackage persistencePackage);
-	public Boolean canHandleFetch(PersistencePackage persistencePackage);
-	public Boolean canHandleAdd(PersistencePackage persistencePackage);
-	public Boolean canHandleRemove(PersistencePackage persistencePackage);
-	public Boolean canHandleUpdate(PersistencePackage persistencePackage);
+    
+    public Boolean canHandleInspect(PersistencePackage persistencePackage);
+    public Boolean canHandleFetch(PersistencePackage persistencePackage);
+    public Boolean canHandleAdd(PersistencePackage persistencePackage);
+    public Boolean canHandleRemove(PersistencePackage persistencePackage);
+    public Boolean canHandleUpdate(PersistencePackage persistencePackage);
     public Boolean willHandleSecurity(PersistencePackage persistencePackage);
-	
-	public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException;
+    
+    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException;
 
-	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
-	
-	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
-	
-	public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
-	
-	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
-	
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+    
+    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+    
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+    
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+    
 }

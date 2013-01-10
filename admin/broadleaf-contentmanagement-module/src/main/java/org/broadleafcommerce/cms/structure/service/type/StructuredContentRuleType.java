@@ -62,7 +62,7 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
      * @param <code>friendlyType</code>
      */
     public StructuredContentRuleType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -90,10 +90,10 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
      * @return
      */
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

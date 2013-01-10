@@ -35,9 +35,9 @@ import org.hibernate.annotations.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class FeaturedProductImpl implements FeaturedProduct {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** The id. */
+    /** The id. */
     @Id
     @GeneratedValue(generator= "FeaturedProductId")
     @GenericGenerator(
@@ -62,7 +62,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @AdminPresentation(friendlyName="Featured Product Promotion Message", largeEntry=true)
     protected String promotionMessage;
     
-	@ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="PRODFEATURED_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category = new CategoryImpl();
@@ -85,7 +85,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     }
     
     public Long getSequence() {
-    	return this.sequence;
+        return this.sequence;
     }
 
     public String getPromotionMessage() {

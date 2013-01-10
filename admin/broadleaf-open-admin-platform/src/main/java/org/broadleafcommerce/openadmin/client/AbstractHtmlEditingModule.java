@@ -23,23 +23,23 @@ package org.broadleafcommerce.openadmin.client;
  */
 public abstract class AbstractHtmlEditingModule extends AbstractModule implements HtmlEditingModule {
 
-	protected String htmlEditorIFramePath;
-	protected String basicHtmlEditorIFramePath;
-	
-	public String getHtmlEditorIFramePath() {
-		return htmlEditorIFramePath;
-	}
+    protected String htmlEditorIFramePath;
+    protected String basicHtmlEditorIFramePath;
+    
+    public String getHtmlEditorIFramePath() {
+        return htmlEditorIFramePath;
+    }
 
-	public void setHtmlEditorIFramePath(String htmlEditorIFramePath) {
-		this.htmlEditorIFramePath = htmlEditorIFramePath;
-	}
+    public void setHtmlEditorIFramePath(String htmlEditorIFramePath) {
+        this.htmlEditorIFramePath = htmlEditorIFramePath;
+    }
 
-	public String getBasicHtmlEditorIFramePath() {
-		return basicHtmlEditorIFramePath;
-	}
+    public String getBasicHtmlEditorIFramePath() {
+        return basicHtmlEditorIFramePath;
+    }
 
-	public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath) {
-		this.basicHtmlEditorIFramePath = basicHtmlEditorIFramePath;
+    public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath) {
+        this.basicHtmlEditorIFramePath = basicHtmlEditorIFramePath;
     }
     
 }

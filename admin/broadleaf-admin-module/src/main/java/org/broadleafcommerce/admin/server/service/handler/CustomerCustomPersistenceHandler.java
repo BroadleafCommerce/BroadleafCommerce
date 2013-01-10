@@ -41,27 +41,27 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
     private static final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
 
     @Resource(name="blCustomerService")
-	protected CustomerService customerService;
+    protected CustomerService customerService;
 
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Customer.class.getName());
-	}
+        return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Customer.class.getName());
+    }
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Customer adminInstance = customerService.createCustomer();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Customer.class.getName(), persistencePerspective);
-			adminInstance = (Customer) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Customer.class.getName(), persistencePerspective);
+            adminInstance = (Customer) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = (Customer) dynamicEntityDao.merge(adminInstance);
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
     }
 }

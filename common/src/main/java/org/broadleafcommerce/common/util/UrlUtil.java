@@ -19,14 +19,14 @@ package org.broadleafcommerce.common.util;
 import org.apache.commons.lang.StringUtils;
 
 public class UrlUtil {
-	public static String generateUrlKey(String toConvert) {
+    public static String generateUrlKey(String toConvert) {
         if (toConvert.matches(".*?\\W.*?")) {
-			//remove all non-word characters
-			String result = toConvert.replaceAll("\\W","");
-			//uncapitalizes the first letter of the url key
-			return StringUtils.uncapitalize(result);
+            //remove all non-word characters
+            String result = toConvert.replaceAll("\\W","");
+            //uncapitalizes the first letter of the url key
+            return StringUtils.uncapitalize(result);
         } else {
             return StringUtils.uncapitalize(toConvert);
         }
-	}
+    }
 }

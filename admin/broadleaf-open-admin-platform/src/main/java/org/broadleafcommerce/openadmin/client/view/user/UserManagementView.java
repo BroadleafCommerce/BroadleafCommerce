@@ -37,25 +37,25 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
  *
  */
 public class UserManagementView extends HLayout implements Instantiable, UserManagementDisplay {
-	
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
-	protected UserRoleView userRolesDisplay;
+    
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected UserRoleView userRolesDisplay;
     protected UserPermissionView userPermissionDisplay;
     
-	public UserManagementView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("userLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+    public UserManagementView() {
+        setHeight100();
+        setWidth100();
+    }
+    
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("userLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("userListTitle"), entityDataSource, false, false);
+        listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("userListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -87,23 +87,23 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	public Canvas asCanvas() {
-		return this;
-	}
+    public Canvas asCanvas() {
+        return this;
+    }
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+    public DynamicFormDisplay getDynamicFormDisplay() {
+        return dynamicFormDisplay;
+    }
+    
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
 
-	public UserRoleView getUserRolesDisplay() {
-		return userRolesDisplay;
-	}
+    public UserRoleView getUserRolesDisplay() {
+        return userRolesDisplay;
+    }
 
     public UserPermissionView getUserPermissionDisplay() {
         return userPermissionDisplay;

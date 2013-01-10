@@ -25,26 +25,26 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspective
  */
 public class JoinStructure implements PersistencePerspectiveItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String name;
-	private String linkedObjectPath;
-	private String targetObjectPath;
-	private String joinStructureEntityClassname;
+    private String name;
+    private String linkedObjectPath;
+    private String targetObjectPath;
+    private String joinStructureEntityClassname;
     private String joinStructureEntityPolymorphicType;
-	private String sortField;
-	private Boolean sortAscending;
-	private String linkedIdProperty;
-	private String targetIdProperty;
-	private Boolean inverse = Boolean.FALSE;
-	
-	public JoinStructure() {
-		//do nothing
-	}
-	
-	public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname) {
-		this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, joinStructureEntityClassname, null, null);
-	}
+    private String sortField;
+    private Boolean sortAscending;
+    private String linkedIdProperty;
+    private String targetIdProperty;
+    private Boolean inverse = Boolean.FALSE;
+    
+    public JoinStructure() {
+        //do nothing
+    }
+    
+    public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname) {
+        this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, joinStructureEntityClassname, null, null);
+    }
     
     public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname, String joinStructureEntityPolymorphicType) {
         this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, joinStructureEntityClassname, joinStructureEntityPolymorphicType, null, null);
@@ -53,92 +53,92 @@ public class JoinStructure implements PersistencePerspectiveItem {
     public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname, String sortField, Boolean sortAscending) {
         this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, joinStructureEntityClassname, null, sortField, sortAscending);
     }
-	
-	public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname, String joinStructureEntityPolymorphicType, String sortField, Boolean sortAscending) {
-		this.name = name;
-		this.linkedObjectPath = linkedObjectPath;
-		this.targetObjectPath = targetObjectPath;
-		this.joinStructureEntityClassname = joinStructureEntityClassname;
+    
+    public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname, String joinStructureEntityPolymorphicType, String sortField, Boolean sortAscending) {
+        this.name = name;
+        this.linkedObjectPath = linkedObjectPath;
+        this.targetObjectPath = targetObjectPath;
+        this.joinStructureEntityClassname = joinStructureEntityClassname;
         this.joinStructureEntityPolymorphicType = joinStructureEntityPolymorphicType;
-		this.sortField = sortField;
-		this.sortAscending = sortAscending;
-		this.linkedIdProperty = linkedIdProperty;
-		this.targetIdProperty = targetIdProperty;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String manyToField) {
-		this.name = manyToField;
-	}
+        this.sortField = sortField;
+        this.sortAscending = sortAscending;
+        this.linkedIdProperty = linkedIdProperty;
+        this.targetIdProperty = targetIdProperty;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String manyToField) {
+        this.name = manyToField;
+    }
 
-	public String getLinkedObjectPath() {
-		return linkedObjectPath;
-	}
+    public String getLinkedObjectPath() {
+        return linkedObjectPath;
+    }
 
-	public void setLinkedObjectPath(String linkedPropertyPath) {
-		this.linkedObjectPath = linkedPropertyPath;
-	}
+    public void setLinkedObjectPath(String linkedPropertyPath) {
+        this.linkedObjectPath = linkedPropertyPath;
+    }
 
-	public String getTargetObjectPath() {
-		return targetObjectPath;
-	}
+    public String getTargetObjectPath() {
+        return targetObjectPath;
+    }
 
-	public void setTargetObjectPath(String targetObjectPath) {
-		this.targetObjectPath = targetObjectPath;
-	}
+    public void setTargetObjectPath(String targetObjectPath) {
+        this.targetObjectPath = targetObjectPath;
+    }
 
-	public String getJoinStructureEntityClassname() {
-		return joinStructureEntityClassname;
-	}
+    public String getJoinStructureEntityClassname() {
+        return joinStructureEntityClassname;
+    }
 
-	public void setJoinStructureEntityClassname(String joinStructureEntityClassname) {
-		this.joinStructureEntityClassname = joinStructureEntityClassname;
-	}
+    public void setJoinStructureEntityClassname(String joinStructureEntityClassname) {
+        this.joinStructureEntityClassname = joinStructureEntityClassname;
+    }
 
-	public String getSortField() {
-		return sortField;
-	}
+    public String getSortField() {
+        return sortField;
+    }
 
-	public void setSortField(String sortField) {
-		this.sortField = sortField;
-	}
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
 
-	public Boolean getSortAscending() {
-		return sortAscending;
-	}
+    public Boolean getSortAscending() {
+        return sortAscending;
+    }
 
-	public void setSortAscending(Boolean sortAscending) {
-		this.sortAscending = sortAscending;
-	}
+    public void setSortAscending(Boolean sortAscending) {
+        this.sortAscending = sortAscending;
+    }
 
-	public String getLinkedIdProperty() {
-		return linkedIdProperty;
-	}
+    public String getLinkedIdProperty() {
+        return linkedIdProperty;
+    }
 
-	public void setLinkedIdProperty(String linkedIdProperty) {
-		this.linkedIdProperty = linkedIdProperty;
-	}
+    public void setLinkedIdProperty(String linkedIdProperty) {
+        this.linkedIdProperty = linkedIdProperty;
+    }
 
-	public String getTargetIdProperty() {
-		return targetIdProperty;
-	}
+    public String getTargetIdProperty() {
+        return targetIdProperty;
+    }
 
-	public void setTargetIdProperty(String targetIdProperty) {
-		this.targetIdProperty = targetIdProperty;
-	}
+    public void setTargetIdProperty(String targetIdProperty) {
+        this.targetIdProperty = targetIdProperty;
+    }
 
-	public Boolean getInverse() {
-		return inverse;
-	}
+    public Boolean getInverse() {
+        return inverse;
+    }
 
-	public void setInverse(Boolean inverse) {
-		this.inverse = inverse;
-	}
-	
-	public void accept(PersistencePerspectiveItemVisitor visitor) {
+    public void setInverse(Boolean inverse) {
+        this.inverse = inverse;
+    }
+    
+    public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
     }
 

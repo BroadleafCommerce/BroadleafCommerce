@@ -29,25 +29,25 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  */
 public class UploadStatusProgress extends Progressbar {
 
-	private int barValue;
-	private Timer timer;
-	private boolean isActive = false;
-	private Double current = 1D;
+    private int barValue;
+    private Timer timer;
+    private boolean isActive = false;
+    private Double current = 1D;
     private String callbackName;
 
-	public UploadStatusProgress(Integer height) {
-		this(null, height);
-	}
+    public UploadStatusProgress(Integer height) {
+        this(null, height);
+    }
 
-	public UploadStatusProgress(Integer width, Integer height) {
+    public UploadStatusProgress(Integer width, Integer height) {
         this.callbackName = callbackName;
-		setHeight(height);  
-		if (width != null) setWidth(width);
+        setHeight(height);  
+        if (width != null) setWidth(width);
         setVertical(false);
         setTitle("test");
         timer = new Timer() {  
             public void run() {
-            	//asymptote calculation
+                //asymptote calculation
                 AppServices.UPLOAD.getPercentUploadComplete(callbackName, BLCMain.csrfToken, new AsyncCallback<Double>() {
                     @Override
                     public void onFailure(Throwable caught) {
@@ -65,26 +65,26 @@ public class UploadStatusProgress extends Progressbar {
             }  
         };
         setOpacity(50);
-	}
-	
-	public void startProgress() {
-		isActive = true;
-		barValue = 0;  
-		current = 1D;
-		setOpacity(100);
+    }
+    
+    public void startProgress() {
+        isActive = true;
+        barValue = 0;  
+        current = 1D;
+        setOpacity(100);
         setPercentDone(barValue);
         timer.schedule(50);
-	}
-	
-	public void stopProgress() {
-		isActive = false;
-		timer.cancel();
-		setPercentDone(100);
-	}
-	
-	public Boolean isActive() {
-		return isActive;
-	}
+    }
+    
+    public void stopProgress() {
+        isActive = false;
+        timer.cancel();
+        setPercentDone(100);
+    }
+    
+    public Boolean isActive() {
+        return isActive;
+    }
 
     public String getCallbackName() {
         return callbackName;
@@ -95,26 +95,26 @@ public class UploadStatusProgress extends Progressbar {
     }
 
     private class IntContainer {
-		
-		public IntContainer(int val) {
-			this.val = val;
-		}
-		
-		int val;
+        
+        public IntContainer(int val) {
+            this.val = val;
+        }
+        
+        int val;
 
-		/**
-		 * @return the val
-		 */
-		public int getVal() {
-			return val;
-		}
+        /**
+         * @return the val
+         */
+        public int getVal() {
+            return val;
+        }
 
-		/**
-		 * @param val the val to set
-		 */
-		public void setVal(int val) {
-			this.val = val;
-		}
-		
-	}
+        /**
+         * @param val the val to set
+         */
+        public void setVal(int val) {
+            this.val = val;
+        }
+        
+    }
 }

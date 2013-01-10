@@ -122,13 +122,13 @@ public class AdminPermissionImpl implements AdminPermission {
         this.description = description;
     }
 
-	public Set<AdminRole> getAllRoles() {
-		return allRoles;
-	}
+    public Set<AdminRole> getAllRoles() {
+        return allRoles;
+    }
 
-	public void setAllRoles(Set<AdminRole> allRoles) {
-		this.allRoles = allRoles;
-	}
+    public void setAllRoles(Set<AdminRole> allRoles) {
+        this.allRoles = allRoles;
+    }
 
     public PermissionType getType() {
         return PermissionType.getInstance(type);
@@ -136,8 +136,8 @@ public class AdminPermissionImpl implements AdminPermission {
 
     public void setType(PermissionType type) {
         if (type != null) {
-    		this.type = type.getType();
-    	}
+            this.type = type.getType();
+        }
     }
 
     public List<AdminPermissionQualifiedEntity> getQualifiedEntities() {

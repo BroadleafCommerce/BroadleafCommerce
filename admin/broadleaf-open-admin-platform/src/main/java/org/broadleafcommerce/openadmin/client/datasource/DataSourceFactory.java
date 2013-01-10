@@ -28,6 +28,6 @@ import com.smartgwt.client.data.DataSource;
  */
 public interface DataSourceFactory {
 
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb);
-	
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb);
+    
 }

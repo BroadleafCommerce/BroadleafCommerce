@@ -33,8 +33,8 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 
 public class BandedShippingModule implements ShippingModule {
-	
-	private static final Log LOG = LogFactory.getLog(BandedShippingModule.class);
+    
+    private static final Log LOG = LogFactory.getLog(BandedShippingModule.class);
 
     public static final String MODULENAME = "bandedShippingModule";
 
@@ -54,17 +54,17 @@ public class BandedShippingModule implements ShippingModule {
     }
 
     private void calculateShipping(FulfillmentGroup fulfillmentGroup) {
-    	if (!isValidModuleForService(fulfillmentGroup.getService()) && !isDefaultModule()) {
-    		LOG.info("fulfillment group (" + fulfillmentGroup.getId() + ") with a service type of (" + fulfillmentGroup.getService() + ") is not valid for this module service type (" + getServiceName() + ")");
-    		return;
-    	}
-    	if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
-    		LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
-    		fulfillmentGroup.setShippingPrice(new Money(0D));
+        if (!isValidModuleForService(fulfillmentGroup.getService()) && !isDefaultModule()) {
+            LOG.info("fulfillment group (" + fulfillmentGroup.getId() + ") with a service type of (" + fulfillmentGroup.getService() + ") is not valid for this module service type (" + getServiceName() + ")");
+            return;
+        }
+        if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
+            LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
+            fulfillmentGroup.setShippingPrice(new Money(0D));
             fulfillmentGroup.setSaleShippingPrice(new Money(0D));
             fulfillmentGroup.setRetailShippingPrice(new Money(0D));
-    		return;
-    	}
+            return;
+        }
         Address address = fulfillmentGroup.getAddress();
         String state = (address != null && address.getState() != null) ? address.getState().getAbbreviation() : null;
         BigDecimal retailTotal = new BigDecimal(0);
@@ -119,20 +119,20 @@ public class BandedShippingModule implements ShippingModule {
         this.feeSubTypeMapping = feeSubTypeMapping;
     }
 
-	public String getServiceName() {
-		return ShippingServiceType.BANDED_SHIPPING.getType();
-	}
+    public String getServiceName() {
+        return ShippingServiceType.BANDED_SHIPPING.getType();
+    }
 
-	public Boolean isValidModuleForService(String serviceName) {
-		return getServiceName().equals(serviceName);
-	}
+    public Boolean isValidModuleForService(String serviceName) {
+        return getServiceName().equals(serviceName);
+    }
 
-	public Boolean isDefaultModule() {
-		return isDefaultModule;
-	}
+    public Boolean isDefaultModule() {
+        return isDefaultModule;
+    }
 
-	public void setDefaultModule(Boolean isDefaultModule) {
-		this.isDefaultModule = isDefaultModule;
-	}
+    public void setDefaultModule(Boolean isDefaultModule) {
+        this.isDefaultModule = isDefaultModule;
+    }
 
 }

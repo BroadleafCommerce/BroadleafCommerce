@@ -42,67 +42,67 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
  */
 public class OrderItemPresenter extends DynamicFormPresenter implements SubPresentable {
 
-	protected OrderItemDisplay display;
-	
-	protected Record associatedRecord;
-	protected AbstractDynamicDataSource abstractDynamicDataSource;
-	protected Boolean disabled = false;
+    protected OrderItemDisplay display;
+    
+    protected Record associatedRecord;
+    protected AbstractDynamicDataSource abstractDynamicDataSource;
+    protected Boolean disabled = false;
     protected String[] availableToTypes;
-	
-	public OrderItemPresenter(OrderItemDisplay display, String[] availableToTypes) {
-		super(display);
-		this.display = display;
+    
+    public OrderItemPresenter(OrderItemDisplay display, String[] availableToTypes) {
+        super(display);
+        this.display = display;
         this.availableToTypes = availableToTypes;
-	}
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
-		display.getFormOnlyDisplay().buildFields(dataSource, true, false, false, null);
-	}
-	
-	public void setExpansionDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getExpansionGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getExpansionGrid());
-		dataSource.setupGridFields(gridFields, editable);
-	}
-	
-	public void setStartState() {
-		if (!disabled) {
-			super.setStartState();
-			display.getAddButton().enable();
-			display.getGrid().enable();
-			display.getRemoveButton().disable();
-		}
-	}
-	
-	public void enable() {
-		disabled = false;
-		super.enable();
-		display.getAddButton().enable();
-		display.getGrid().enable();
-		display.getRemoveButton().enable();
-		display.getToolbar().enable();
-	}
-	
-	public void disable() {
-		disabled = true;
-		super.disable();
-		display.getAddButton().disable();
-		display.getGrid().disable();
-		display.getRemoveButton().disable();
-		display.getToolbar().disable();
-	}
-	
-	public void setReadOnly(Boolean readOnly) {
-		if (readOnly) {
-			disable();
-			display.getGrid().enable();
-		} else {
-			enable();
-		}
-	}
+    }
+    
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+        display.getGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getGrid());
+        dataSource.setupGridFields(gridFields, editable);
+        display.getFormOnlyDisplay().buildFields(dataSource, true, false, false, null);
+    }
+    
+    public void setExpansionDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+        display.getExpansionGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getExpansionGrid());
+        dataSource.setupGridFields(gridFields, editable);
+    }
+    
+    public void setStartState() {
+        if (!disabled) {
+            super.setStartState();
+            display.getAddButton().enable();
+            display.getGrid().enable();
+            display.getRemoveButton().disable();
+        }
+    }
+    
+    public void enable() {
+        disabled = false;
+        super.enable();
+        display.getAddButton().enable();
+        display.getGrid().enable();
+        display.getRemoveButton().enable();
+        display.getToolbar().enable();
+    }
+    
+    public void disable() {
+        disabled = true;
+        super.disable();
+        display.getAddButton().disable();
+        display.getGrid().disable();
+        display.getRemoveButton().disable();
+        display.getToolbar().disable();
+    }
+    
+    public void setReadOnly(Boolean readOnly) {
+        if (readOnly) {
+            disable();
+            display.getGrid().enable();
+        } else {
+            enable();
+        }
+    }
 
     @Override
     public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource) {
@@ -111,8 +111,8 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 
     @Override
     public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
-		this.associatedRecord = associatedRecord;
-		this.abstractDynamicDataSource = abstractDynamicDataSource;
+        this.associatedRecord = associatedRecord;
+        this.abstractDynamicDataSource = abstractDynamicDataSource;
         ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
         String[] types = associatedRecord.getAttributeAsStringArray("_type");
         boolean shouldLoad = availableToTypes == null;
@@ -149,46 +149,46 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
         }
 
         return shouldLoad;
-	}
-	
-	public void bind() {
-		super.bind();
-		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					display.getRemoveButton().enable();
-					((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-					display.getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),false, false, false, event.getRecord());
-					display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
-					display.getFormOnlyDisplay().getForm().enable();
-				} else {
-					display.getRemoveButton().disable();
-				}
-			}
-		});
-		display.getExpansionGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					//display.getRemoveButton().enable();
-					((DynamicEntityDataSource) display.getExpansionGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-					display.getFormOnlyDisplay().buildFields(display.getExpansionGrid().getDataSource(),false, false, false, event.getRecord());
-					display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
-					display.getFormOnlyDisplay().getForm().enable();
-				} else {
-					//display.getRemoveButton().disable();
-				}
-			}
-		});
-		display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
-						}
-					});
-				}
-			}
-		});
-	}
+    }
+    
+    public void bind() {
+        super.bind();
+        display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                if (event.getState()) {
+                    display.getRemoveButton().enable();
+                    ((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
+                    display.getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),false, false, false, event.getRecord());
+                    display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
+                    display.getFormOnlyDisplay().getForm().enable();
+                } else {
+                    display.getRemoveButton().disable();
+                }
+            }
+        });
+        display.getExpansionGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                if (event.getState()) {
+                    //display.getRemoveButton().enable();
+                    ((DynamicEntityDataSource) display.getExpansionGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
+                    display.getFormOnlyDisplay().buildFields(display.getExpansionGrid().getDataSource(),false, false, false, event.getRecord());
+                    display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
+                    display.getFormOnlyDisplay().getForm().enable();
+                } else {
+                    //display.getRemoveButton().disable();
+                }
+            }
+        });
+        display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            display.getRemoveButton().disable();
+                        }
+                    });
+                }
+            }
+        });
+    }
 }

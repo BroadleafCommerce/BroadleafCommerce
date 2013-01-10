@@ -25,6 +25,6 @@ import java.util.HashMap;
  */
 public interface CurrencyDeterminationService {
 
-	public String getCurrencyCode(HashMap currencyConsiderations);
-	
+    public String getCurrencyCode(HashMap currencyConsiderations);
+    
 }

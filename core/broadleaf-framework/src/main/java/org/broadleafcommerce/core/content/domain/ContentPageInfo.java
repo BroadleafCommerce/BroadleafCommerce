@@ -28,18 +28,18 @@ public class ContentPageInfo {
     private int id;
     private String fullUrl;
 
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getFullUrl() {
-		return fullUrl;
-	}
-	public void setFullUrl(String fullUrl) {
-		this.fullUrl = fullUrl;
-	}
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getFullUrl() {
+        return fullUrl;
+    }
+    public void setFullUrl(String fullUrl) {
+        this.fullUrl = fullUrl;
+    }
 
 
 

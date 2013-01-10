@@ -25,68 +25,68 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface PromotableOrder {
 
-	public boolean isNotCombinableOfferAppliedAtAnyLevel();
+    public boolean isNotCombinableOfferAppliedAtAnyLevel();
 
-	public boolean isNotCombinableOfferApplied();
+    public boolean isNotCombinableOfferApplied();
 
-	public void resetTotalitarianOfferApplied();
+    public void resetTotalitarianOfferApplied();
 
-	/**
-	 * Adds the adjustment to the order's adjustment list and discounts the
-	 * order's adjustment price by the value of the adjustment.
-	 * 
-	 * @param orderAdjustment
-	 */
-	public void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment);
+    /**
+     * Adds the adjustment to the order's adjustment list and discounts the
+     * order's adjustment price by the value of the adjustment.
+     * 
+     * @param orderAdjustment
+     */
+    public void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment);
 
-	/**
-	 * Removes all order, order item, and fulfillment adjustments from the order
-	 * and resets the adjustment price.
-	 */
-	public void removeAllAdjustments();
+    /**
+     * Removes all order, order item, and fulfillment adjustments from the order
+     * and resets the adjustment price.
+     */
+    public void removeAllAdjustments();
 
-	/**
-	 * Removes all order adjustments from the order and resets the adjustment
-	 * price. This method does not remove order item or fulfillment adjustments
-	 * from the order.
-	 */
-	public void removeAllOrderAdjustments();
+    /**
+     * Removes all order adjustments from the order and resets the adjustment
+     * price. This method does not remove order item or fulfillment adjustments
+     * from the order.
+     */
+    public void removeAllOrderAdjustments();
 
-	/**
-	 * Removes all adjustments from the order's order items and resets the
-	 * adjustment price for each item. This method does not remove order or
-	 * fulfillment adjustments from the order.
-	 */
-	public void removeAllItemAdjustments();
+    /**
+     * Removes all adjustments from the order's order items and resets the
+     * adjustment price for each item. This method does not remove order or
+     * fulfillment adjustments from the order.
+     */
+    public void removeAllItemAdjustments();
 
-	public void removeAllFulfillmentAdjustments();
+    public void removeAllFulfillmentAdjustments();
 
-	/**
-	 * Returns the price of the order with the order offers applied (item offers
-	 * are not applied).
-	 * 
-	 * @return the order price with the order offers applied (item offers are
-	 *         not applied)
-	 */
-	public Money getAdjustmentPrice();
+    /**
+     * Returns the price of the order with the order offers applied (item offers
+     * are not applied).
+     * 
+     * @return the order price with the order offers applied (item offers are
+     *         not applied)
+     */
+    public Money getAdjustmentPrice();
 
-	public void setAdjustmentPrice(Money adjustmentPrice);
+    public void setAdjustmentPrice(Money adjustmentPrice);
 
-	public boolean isHasOrderAdjustments();
+    public boolean isHasOrderAdjustments();
 
-	public boolean isTotalitarianOfferApplied();
+    public boolean isTotalitarianOfferApplied();
 
-	public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied);
+    public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied);
 
-	public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel);
+    public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel);
 
-	public List<OrderItemSplitContainer> getSplitItems();
+    public List<OrderItemSplitContainer> getSplitItems();
 
-	public void setSplitItems(List<OrderItemSplitContainer> splitItems);
+    public void setSplitItems(List<OrderItemSplitContainer> splitItems);
 
-	public List<PromotableOrderItem> searchSplitItems(PromotableOrderItem key);
-	
-	public void removeAllCandidateOffers();
+    public List<PromotableOrderItem> searchSplitItems(PromotableOrderItem key);
+    
+    public void removeAllCandidateOffers();
 
     public void removeAllCandidateOrderOffers();
     

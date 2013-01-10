@@ -27,10 +27,10 @@ public interface HtmlEditingModule extends Module {
 
     public String getHtmlEditorIFramePath();
 
-	public void setHtmlEditorIFramePath(String htmlEditorIFramePath);
+    public void setHtmlEditorIFramePath(String htmlEditorIFramePath);
 
-	public String getBasicHtmlEditorIFramePath();
+    public String getBasicHtmlEditorIFramePath();
 
-	public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath);
+    public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath);
 
 }

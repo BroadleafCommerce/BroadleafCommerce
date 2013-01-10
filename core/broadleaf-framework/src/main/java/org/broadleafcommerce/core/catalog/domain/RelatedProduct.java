@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import java.io.Serializable;
 
 public interface RelatedProduct extends Serializable {
-	
+    
     public Long getId();
 
     public Product getProduct();

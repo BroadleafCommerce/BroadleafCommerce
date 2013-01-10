@@ -27,14 +27,14 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  */
 public interface UserRoleDisplay {
 
-	public ToolStripButton getAddButton();
-	
-	public ListGrid getGrid();
-	
-	public ToolStripButton getRemoveButton();
-	
-	public ListGrid getExpansionGrid();
-	
-	public ToolStrip getToolBar();
-	
+    public ToolStripButton getAddButton();
+    
+    public ListGrid getGrid();
+    
+    public ToolStripButton getRemoveButton();
+    
+    public ListGrid getExpansionGrid();
+    
+    public ToolStrip getToolBar();
+    
 }

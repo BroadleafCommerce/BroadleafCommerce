@@ -31,23 +31,23 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
  */
 public final class GregorianCalendar_CustomFieldSerializer {
 
-	public static void deserialize(SerializationStreamReader streamReader, GregorianCalendar instance)
+    public static void deserialize(SerializationStreamReader streamReader, GregorianCalendar instance)
     throws SerializationException {
-		//do nothing
-	}
+        //do nothing
+    }
 
-	public static void serialize(SerializationStreamWriter streamWriter, GregorianCalendar instance)
+    public static void serialize(SerializationStreamWriter streamWriter, GregorianCalendar instance)
     throws SerializationException {
-		streamWriter.writeInt(instance.get(Calendar.YEAR));
-		streamWriter.writeInt(instance.get(Calendar.MONTH));
-		streamWriter.writeInt(instance.get(Calendar.DATE));
-		streamWriter.writeInt(instance.get(Calendar.HOUR));
-		streamWriter.writeInt(instance.get(Calendar.MINUTE));
-		streamWriter.writeInt(instance.get(Calendar.SECOND));
-	}
-	
-	public static GregorianCalendar instantiate(SerializationStreamReader streamReader)
+        streamWriter.writeInt(instance.get(Calendar.YEAR));
+        streamWriter.writeInt(instance.get(Calendar.MONTH));
+        streamWriter.writeInt(instance.get(Calendar.DATE));
+        streamWriter.writeInt(instance.get(Calendar.HOUR));
+        streamWriter.writeInt(instance.get(Calendar.MINUTE));
+        streamWriter.writeInt(instance.get(Calendar.SECOND));
+    }
+    
+    public static GregorianCalendar instantiate(SerializationStreamReader streamReader)
     throws SerializationException {
-	    return new GregorianCalendar(streamReader.readInt(),streamReader.readInt(),streamReader.readInt(),streamReader.readInt(),streamReader.readInt(),streamReader.readInt());
-	}
+        return new GregorianCalendar(streamReader.readInt(),streamReader.readInt(),streamReader.readInt(),streamReader.readInt(),streamReader.readInt(),streamReader.readInt());
+    }
 }

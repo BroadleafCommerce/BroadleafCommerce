@@ -34,24 +34,24 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
  */
 public class UserPermissionView extends VLayout implements UserPermissionDisplay {
 
-	protected ToolStrip toolBar;
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
-	protected ListGrid grid;
+    protected ToolStrip toolBar;
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
+    protected ListGrid grid;
 
-	public UserPermissionView(Boolean canReorder, Boolean canEdit) {
+    public UserPermissionView(Boolean canReorder, Boolean canEdit) {
         setHeight100();
         setWidth100();
         setBackgroundColor("#eaeaea");
         setOverflow(Overflow.AUTO);
-		
-		HStack hStack = new HStack(10);
-		hStack.setID("userPermissionHStack");
-		
-		hStack.setHeight("45%");
-		hStack.setWidth100();
-		hStack.setBackgroundColor("#eaeaea");
-		hStack.setAlign(Alignment.CENTER);
+        
+        HStack hStack = new HStack(10);
+        hStack.setID("userPermissionHStack");
+        
+        hStack.setHeight("45%");
+        hStack.setWidth100();
+        hStack.setBackgroundColor("#eaeaea");
+        hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();
         stack.setID("userPermissionVerticalLayout");
@@ -95,7 +95,7 @@ public class UserPermissionView extends VLayout implements UserPermissionDisplay
         grid.setAlternateRecordStyles(true);
         grid.setCanGroupBy(false);
         if (!canEdit) {
-        	grid.setAlternateBodyStyleName("editRowDisabled");
+            grid.setAlternateBodyStyleName("editRowDisabled");
         }
         stack.addMember(grid);
         
@@ -103,22 +103,22 @@ public class UserPermissionView extends VLayout implements UserPermissionDisplay
         hStack.setOverflow(Overflow.AUTO);
         
         addMember(hStack);
-	}
+    }
 
-	public ToolStrip getToolBar() {
-		return toolBar;
-	}
+    public ToolStrip getToolBar() {
+        return toolBar;
+    }
 
-	public ToolStripButton getAddButton() {
-		return addButton;
-	}
+    public ToolStripButton getAddButton() {
+        return addButton;
+    }
 
-	public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+    public ToolStripButton getRemoveButton() {
+        return removeButton;
+    }
 
-	public ListGrid getGrid() {
-		return grid;
-	}
+    public ListGrid getGrid() {
+        return grid;
+    }
 
 }

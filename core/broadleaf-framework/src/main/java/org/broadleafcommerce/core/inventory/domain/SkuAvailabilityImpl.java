@@ -146,9 +146,9 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     }
 
     public void setAvailabilityStatus(final AvailabilityStatusType availabilityStatus) {
-    	if (availabilityStatus != null) {
-    		this.availabilityStatus = availabilityStatus.getType();
-    	}
+        if (availabilityStatus != null) {
+            this.availabilityStatus = availabilityStatus.getType();
+        }
     }
 
     /**

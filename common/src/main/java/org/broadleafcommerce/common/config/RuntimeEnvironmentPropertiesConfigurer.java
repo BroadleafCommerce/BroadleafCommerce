@@ -195,10 +195,10 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     }
 
     @Override
-	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
+    protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
         super.processProperties(beanFactoryToProcess, props);
-		stringValueResolver = new PlaceholderResolvingStringValueResolver(props);
-	}
+        stringValueResolver = new PlaceholderResolvingStringValueResolver(props);
+    }
 
     /**
      * Sets the default environment name, used when the runtime environment
@@ -229,33 +229,33 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
 
     private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
 
-		private final PropertyPlaceholderHelper helper;
+        private final PropertyPlaceholderHelper helper;
 
-		private final PropertyPlaceholderHelper.PlaceholderResolver resolver;
+        private final PropertyPlaceholderHelper.PlaceholderResolver resolver;
 
-		public PlaceholderResolvingStringValueResolver(Properties props) {
-			this.helper = new PropertyPlaceholderHelper("${", "}", ":", true);
-			this.resolver = new PropertyPlaceholderConfigurerResolver(props);
-		}
+        public PlaceholderResolvingStringValueResolver(Properties props) {
+            this.helper = new PropertyPlaceholderHelper("${", "}", ":", true);
+            this.resolver = new PropertyPlaceholderConfigurerResolver(props);
+        }
 
-		public String resolveStringValue(String strVal) throws BeansException {
-			String value = this.helper.replacePlaceholders(strVal, this.resolver);
-			return (value.equals("") ? null : value);
-		}
-	}
+        public String resolveStringValue(String strVal) throws BeansException {
+            String value = this.helper.replacePlaceholders(strVal, this.resolver);
+            return (value.equals("") ? null : value);
+        }
+    }
 
-	private class PropertyPlaceholderConfigurerResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
+    private class PropertyPlaceholderConfigurerResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
 
-		private final Properties props;
+        private final Properties props;
 
-		private PropertyPlaceholderConfigurerResolver(Properties props) {
-			this.props = props;
-		}
+        private PropertyPlaceholderConfigurerResolver(Properties props) {
+            this.props = props;
+        }
 
-		public String resolvePlaceholder(String placeholderName) {
-			return RuntimeEnvironmentPropertiesConfigurer.this.resolvePlaceholder(placeholderName, props, 1);
-		}
-	}
+        public String resolvePlaceholder(String placeholderName) {
+            return RuntimeEnvironmentPropertiesConfigurer.this.resolvePlaceholder(placeholderName, props, 1);
+        }
+    }
 
     public StringValueResolver getStringValueResolver() {
         return stringValueResolver;

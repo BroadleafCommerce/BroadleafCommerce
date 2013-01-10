@@ -47,38 +47,38 @@ import org.springframework.core.io.Resource;
  */
 public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXmlApplicationContext {
 
-	protected Resource[] configResources;
+    protected Resource[] configResources;
 
-	protected Resource[] getConfigResources() {
-		return this.configResources;
-	}
+    protected Resource[] getConfigResources() {
+        return this.configResources;
+    }
 
-	public MergeFileSystemAndClassPathXMLApplicationContext(String[] classPathLocations, String[] fileSystemLocations) throws BeansException {
-		this(classPathLocations, fileSystemLocations, null);
-	}
+    public MergeFileSystemAndClassPathXMLApplicationContext(String[] classPathLocations, String[] fileSystemLocations) throws BeansException {
+        this(classPathLocations, fileSystemLocations, null);
+    }
 
-	public MergeFileSystemAndClassPathXMLApplicationContext(String[] classPathLocations, String[] fileSystemLocations, ApplicationContext parent) throws BeansException {
-		super(parent);
-		
-		ResourceInputStream[] classPathSources;
-		ResourceInputStream[] fileSystemSources;
-		try {
+    public MergeFileSystemAndClassPathXMLApplicationContext(String[] classPathLocations, String[] fileSystemLocations, ApplicationContext parent) throws BeansException {
+        super(parent);
+        
+        ResourceInputStream[] classPathSources;
+        ResourceInputStream[] fileSystemSources;
+        try {
             classPathSources = new ResourceInputStream[classPathLocations.length];
             for (int j=0;j<classPathLocations.length;j++){
                 classPathSources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(classPathLocations[j]), classPathLocations[j]);
             }
-			
-			fileSystemSources = new ResourceInputStream[fileSystemLocations.length];
-			for (int j=0;j<fileSystemSources.length;j++){
-				File temp = new File(fileSystemLocations[j]);
+            
+            fileSystemSources = new ResourceInputStream[fileSystemLocations.length];
+            for (int j=0;j<fileSystemSources.length;j++){
+                File temp = new File(fileSystemLocations[j]);
                 fileSystemSources[j] = new ResourceInputStream(new BufferedInputStream(new FileInputStream(temp)), fileSystemLocations[j]);
-			}
-		} catch (FileNotFoundException e) {
-			throw new FatalBeanException("Unable to merge context files", e);
-		}
-		
-		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(classPathSources, fileSystemSources);
-		refresh();
-	}
+            }
+        } catch (FileNotFoundException e) {
+            throw new FatalBeanException("Unable to merge context files", e);
+        }
+        
+        this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(classPathSources, fileSystemSources);
+        refresh();
+    }
 
 }

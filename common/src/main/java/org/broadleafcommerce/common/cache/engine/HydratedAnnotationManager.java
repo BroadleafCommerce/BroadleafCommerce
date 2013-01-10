@@ -23,6 +23,6 @@ package org.broadleafcommerce.common.cache.engine;
  */
 public interface HydratedAnnotationManager {
 
-	public HydrationDescriptor getHydrationDescriptor(Object entity);
-	
+    public HydrationDescriptor getHydrationDescriptor(Object entity);
+    
 }

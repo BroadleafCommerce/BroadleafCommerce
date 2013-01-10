@@ -28,9 +28,9 @@ import java.io.Serializable;
  */
 public interface PersistencePerspectiveItem extends Serializable {
 
-	public Long getId();
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
     public void accept(PersistencePerspectiveItemVisitor visitor);
     

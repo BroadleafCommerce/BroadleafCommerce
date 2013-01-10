@@ -29,20 +29,20 @@ import com.smartgwt.client.data.Record;
  */
 public interface SubPresentable {
 
-	public void setStartState();
-	
-	public void enable();
-	
-	public void disable();
-	
-	public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource, final DSCallback cb);
+    public void setStartState();
+    
+    public void enable();
+    
+    public void disable();
+    
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource, final DSCallback cb);
 
     public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource);
-	
-	public void bind();
+    
+    public void bind();
 
-	public void setReadOnly(Boolean readOnly);
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable);
-	
+    public void setReadOnly(Boolean readOnly);
+    
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable);
+    
 }

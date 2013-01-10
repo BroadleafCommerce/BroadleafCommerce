@@ -39,21 +39,21 @@ import java.util.Map;
  */
 public class DynamicEntityColumnTreeView extends VLayout implements DynamicEntityColumnTreeDisplay {
 
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
-	protected ComboBoxItem entityType = new ComboBoxItem();
-	protected ColumnTree grid;
-	protected ToolStrip toolBar;
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
+    protected ComboBoxItem entityType = new ComboBoxItem();
+    protected ColumnTree grid;
+    protected ToolStrip toolBar;
 
-	public DynamicEntityColumnTreeView(String title, DataSource dataSource) {
-		super();
+    public DynamicEntityColumnTreeView(String title, DataSource dataSource) {
+        super();
         if ("".equals(title) || title == null) {
             title = "Item";
         }
-		toolBar = new ToolStrip();
-		toolBar.setHeight(30);
-		toolBar.setWidth100();
-		toolBar.addSpacer(6);
+        toolBar = new ToolStrip();
+        toolBar.setHeight(30);
+        toolBar.setWidth100();
+        toolBar.addSpacer(6);
 
         addButton = new ToolStripButton();  
         addButton.setDisabled(true);
@@ -80,14 +80,14 @@ public class DynamicEntityColumnTreeView extends VLayout implements DynamicEntit
             
             LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
             for (String name : polymorphicEntities.keySet()) {
-            	valueMap.put(name, polymorphicEntities.get(name)); 
+                valueMap.put(name, polymorphicEntities.get(name)); 
             }
             entityType.setValueMap(valueMap);  
             entityType.setDefaultValue(((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()); 
             entityType.addFocusHandler(new FocusHandler() {
-				public void onFocus(FocusEvent event) {
-					((ComboBoxItem) event.getItem()).selectValue();
-				}
+                public void onFocus(FocusEvent event) {
+                    ((ComboBoxItem) event.getItem()).selectValue();
+                }
             });
             toolBar.addFormItem(entityType);
         }
@@ -103,38 +103,38 @@ public class DynamicEntityColumnTreeView extends VLayout implements DynamicEntit
         grid.setShowNodeCount(true);
         grid.setLoadDataOnDemand(true);
         addMember(grid);
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getAddButton()
-	 */
-	public ToolStripButton getAddButton() {
-		return addButton;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getAddButton()
+     */
+    public ToolStripButton getAddButton() {
+        return addButton;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getRemoveButton()
-	 */
-	public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getRemoveButton()
+     */
+    public ToolStripButton getRemoveButton() {
+        return removeButton;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getEntityType()
-	 */
-	public ComboBoxItem getEntityType() {
-		return entityType;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getEntityType()
+     */
+    public ComboBoxItem getEntityType() {
+        return entityType;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getGrid()
-	 */
-	public ColumnTree getGrid() {
-		return grid;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getGrid()
+     */
+    public ColumnTree getGrid() {
+        return grid;
+    }
 
-	public ToolStrip getToolBar() {
-		return toolBar;
-	}
+    public ToolStrip getToolBar() {
+        return toolBar;
+    }
 
 }
