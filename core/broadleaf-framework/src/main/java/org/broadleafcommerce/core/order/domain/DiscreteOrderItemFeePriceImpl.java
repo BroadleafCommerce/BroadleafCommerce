@@ -76,15 +76,15 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
         this.id = id;
     }
 
-	public DiscreteOrderItem getDiscreteOrderItem() {
-		return discreteOrderItem;
-	}
+    public DiscreteOrderItem getDiscreteOrderItem() {
+        return discreteOrderItem;
+    }
 
-	public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem) {
-		this.discreteOrderItem = discreteOrderItem;
-	}
+    public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem) {
+        this.discreteOrderItem = discreteOrderItem;
+    }
 
-	public Money getAmount() {
+    public Money getAmount() {
         return amount == null ? null : new Money(amount);
     }
 

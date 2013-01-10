@@ -25,6 +25,6 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
  */
 public interface FormItemCallback {
 
-	void execute(FormItem formItem);
-	
+    void execute(FormItem formItem);
+    
 }

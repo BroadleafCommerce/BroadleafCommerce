@@ -48,8 +48,8 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "baseOfferItemCriteria")
 public class OfferItemCriteriaImpl implements OfferItemCriteria {
-	
-	public static final long serialVersionUID = 1L;
+    
+    public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator= "OfferItemCriteriaId")
@@ -71,13 +71,13 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     
     @Column(name = "QUANTITY", nullable=false)
     @AdminPresentation(friendlyName="Quantity", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
-	protected Integer quantity;
+    protected Integer quantity;
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "ORDER_ITEM_MATCH_RULE")
     @AdminPresentation(friendlyName="Order Item Match Rule", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
-	protected String orderItemMatchRule;
+    protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = OfferImpl.class)
     @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ID"))
@@ -87,55 +87,55 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ID"))
     protected Offer targetOffer;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getId()
-	 */
-	public Long getId() {
-		return id;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getId()
+     */
+    public Long getId() {
+        return id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setId(java.lang.Long)
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setId(java.lang.Long)
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getReceiveQuantity()
-	 */
-	public Integer getQuantity() {
-		return quantity;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getReceiveQuantity()
+     */
+    public Integer getQuantity() {
+        return quantity;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setReceiveQuantity(java.lang.Integer)
-	 */
-	public void setQuantity(Integer receiveQuantity) {
-		this.quantity = receiveQuantity;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setReceiveQuantity(java.lang.Integer)
+     */
+    public void setQuantity(Integer receiveQuantity) {
+        this.quantity = receiveQuantity;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getOrderItemMatchRule()
-	 */
-	public String getOrderItemMatchRule() {
-		return orderItemMatchRule;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getOrderItemMatchRule()
+     */
+    public String getOrderItemMatchRule() {
+        return orderItemMatchRule;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setOrderItemMatchRule(java.lang.String)
-	 */
-	public void setOrderItemMatchRule(String orderItemMatchRule) {
-		this.orderItemMatchRule = orderItemMatchRule;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setOrderItemMatchRule(java.lang.String)
+     */
+    public void setOrderItemMatchRule(String orderItemMatchRule) {
+        this.orderItemMatchRule = orderItemMatchRule;
+    }
 
-	public Offer getQualifyingOffer() {
-		return qualifyingOffer;
-	}
+    public Offer getQualifyingOffer() {
+        return qualifyingOffer;
+    }
 
-	public void setQualifyingOffer(Offer offer) {
-		this.qualifyingOffer = offer;
-	}
+    public void setQualifyingOffer(Offer offer) {
+        this.qualifyingOffer = offer;
+    }
 
     public Offer getTargetOffer() {
         return targetOffer;
@@ -146,40 +146,40 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((orderItemMatchRule == null) ? 0 : orderItemMatchRule.hashCode());
-		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((orderItemMatchRule == null) ? 0 : orderItemMatchRule.hashCode());
+        result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OfferItemCriteriaImpl other = (OfferItemCriteriaImpl) obj;
-		
-		if (id != null && other.id != null) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OfferItemCriteriaImpl other = (OfferItemCriteriaImpl) obj;
+        
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-		
-		if (orderItemMatchRule == null) {
-			if (other.orderItemMatchRule != null)
-				return false;
-		} else if (!orderItemMatchRule.equals(other.orderItemMatchRule))
-			return false;
-		if (quantity == null) {
-			if (other.quantity != null)
-				return false;
-		} else if (!quantity.equals(other.quantity))
-			return false;
-		return true;
-	}
+        
+        if (orderItemMatchRule == null) {
+            if (other.orderItemMatchRule != null)
+                return false;
+        } else if (!orderItemMatchRule.equals(other.orderItemMatchRule))
+            return false;
+        if (quantity == null) {
+            if (other.quantity != null)
+                return false;
+        } else if (!quantity.equals(other.quantity))
+            return false;
+        return true;
+    }
 
 }

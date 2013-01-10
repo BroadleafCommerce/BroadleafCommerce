@@ -41,7 +41,7 @@ public class IdOverrideTableGenerator extends TableGenerator {
     @Override
     public Serializable generate(SessionImplementor session, Object obj) {
         final Serializable id = session.getEntityPersister(entityName, obj).getIdentifier( obj, session );
-		if ( id != null ) {
+        if ( id != null ) {
             return id;
         }
         return super.generate(session, obj);

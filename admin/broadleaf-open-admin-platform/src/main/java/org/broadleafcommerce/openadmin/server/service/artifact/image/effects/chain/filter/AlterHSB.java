@@ -30,21 +30,21 @@ import java.util.Map;
 
 public class AlterHSB extends BaseFilter {
 
-	private RenderingHints hints;
-	private float hue;
-	private float saturation;
-	private float brightness;
+    private RenderingHints hints;
+    private float hue;
+    private float saturation;
+    private float brightness;
 
     public AlterHSB() {
         //do nothing
     }
-	
-	public AlterHSB(float hue, float saturation, float brightness, RenderingHints hints) {
-		this.hints = hints;
-		this.hue = hue;
-		this.saturation = saturation;
-		this.brightness = brightness;
-	}
+    
+    public AlterHSB(float hue, float saturation, float brightness, RenderingHints hints) {
+        this.hints = hints;
+        this.hue = hue;
+        this.saturation = saturation;
+        this.brightness = brightness;
+    }
 
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
@@ -83,11 +83,11 @@ public class AlterHSB extends BaseFilter {
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
-	 */
-	public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-		if (src == null) {
+    /* (non-Javadoc)
+     * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
+     */
+    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
+        if (src == null) {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
@@ -127,59 +127,59 @@ public class AlterHSB extends BaseFilter {
         }
         
         int[] originalPixels = ImageConverter.getPixels(src);
-		int imageWidth = dst.getWidth();
-		int imageHeight = dst.getHeight();
-		
-		int r=0;
-		int g=0;
-		int b=0;
-		
-		int index=0;
-		for (int y=0;y<imageHeight;y++){
-			for (int x=0;x<imageWidth;x++){
-				r = (originalPixels[index] >> 16) & 0xff;
-				g = (originalPixels[index] >> 8) & 0xff;
-				b = (originalPixels[index] >> 0) & 0xff;
+        int imageWidth = dst.getWidth();
+        int imageHeight = dst.getHeight();
+        
+        int r=0;
+        int g=0;
+        int b=0;
+        
+        int index=0;
+        for (int y=0;y<imageHeight;y++){
+            for (int x=0;x<imageWidth;x++){
+                r = (originalPixels[index] >> 16) & 0xff;
+                g = (originalPixels[index] >> 8) & 0xff;
+                b = (originalPixels[index] >> 0) & 0xff;
 
-				float[] hsb = Color.RGBtoHSB(r, g, b, null);
-				float h = hsb[0] * hue;
-				float s = hsb[1] * saturation;
-				float br = hsb[2] * brightness;
+                float[] hsb = Color.RGBtoHSB(r, g, b, null);
+                float h = hsb[0] * hue;
+                float s = hsb[1] * saturation;
+                float br = hsb[2] * brightness;
 
-				// fix overflows
-				if (h > 360) h = 360;
-				if (h < 0) h = 0;
-				if (s > 1) s = 1;
-				if (s < 0) s = 0;
-				if (br > 1) br = 1;
-				if (br < 0) br = 0;
-				
-				Color rgb = new Color(Color.HSBtoRGB(h, s, br));
-				r = rgb.getRed();
-				g = rgb.getGreen();
-				b = rgb.getBlue();
+                // fix overflows
+                if (h > 360) h = 360;
+                if (h < 0) h = 0;
+                if (s > 1) s = 1;
+                if (s < 0) s = 0;
+                if (br > 1) br = 1;
+                if (br < 0) br = 0;
+                
+                Color rgb = new Color(Color.HSBtoRGB(h, s, br));
+                r = rgb.getRed();
+                g = rgb.getGreen();
+                b = rgb.getBlue();
 
-				originalPixels[index] = (originalPixels[index] & 0xff000000)  | (r << 16) | (g << 8) | (b << 0);
-				index++;
-			}
-		}
-		
-		dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
-	     
-	    if (needToConvert) {
+                originalPixels[index] = (originalPixels[index] & 0xff000000)  | (r << 16) | (g << 8) | (b << 0);
+                index++;
+            }
+        }
+        
+        dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
+         
+        if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
         }
         else if (origDst != dst) {
             java.awt.Graphics2D g2 = origDst.createGraphics();
-	    try {
+        try {
             g2.drawImage(dst, 0, 0, null);
-	    } finally {
-	        g2.dispose();
-	    }
+        } finally {
+            g2.dispose();
+        }
         }
 
         return origDst;
-	}
+    }
 
 }

@@ -22,15 +22,15 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.cha
 
 public class FloatParameterConverter implements ParameterConverter {
 
-	/* (non-Javadoc)
-	 * @see com.xpressdocs.email.asset.effects.chain.conversion.ParameterConverter#convert(java.lang.String, double)
-	 */
-	public Parameter convert(String value, Double factor, boolean applyFactor) throws ConversionException {
-		Parameter param = new Parameter();
-		param.setParameterClass(float.class);
-		param.setParameterInstance((float) (applyFactor&&factor!=null?Float.parseFloat(value)/factor:Float.parseFloat(value)));
-		
-		return param;
-	}
+    /* (non-Javadoc)
+     * @see com.xpressdocs.email.asset.effects.chain.conversion.ParameterConverter#convert(java.lang.String, double)
+     */
+    public Parameter convert(String value, Double factor, boolean applyFactor) throws ConversionException {
+        Parameter param = new Parameter();
+        param.setParameterClass(float.class);
+        param.setParameterInstance((float) (applyFactor&&factor!=null?Float.parseFloat(value)/factor:Float.parseFloat(value)));
+        
+        return param;
+    }
 
 }

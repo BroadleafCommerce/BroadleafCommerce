@@ -42,117 +42,117 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name="BLC_SNDBX_PROPERTY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class PropertyImpl implements Property {
-	
-	private static final long serialVersionUID = 1L;
-	
-	@Id
+    
+    private static final long serialVersionUID = 1L;
+    
+    @Id
     @GeneratedValue(generator = "PropertyId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PropertyId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PropertyImpl", allocationSize = 50)
     @Column(name = "PROPERTY_ID")
     protected Long id;
-	
-	@Column(name = "NAME")
-	protected String name;
-	
-	@Column(name = "VALUE")
-	private String value;
-	
-	@Column(name = "DISPLAY_VALUE")
-	protected String displayValue;
-	
-	@Column(name = "IS_DIRTY")
-	protected Boolean isDirty = false;
-	
-	@ManyToOne(targetEntity = EntityImpl.class)
+    
+    @Column(name = "NAME")
+    protected String name;
+    
+    @Column(name = "VALUE")
+    private String value;
+    
+    @Column(name = "DISPLAY_VALUE")
+    protected String displayValue;
+    
+    @Column(name = "IS_DIRTY")
+    protected Boolean isDirty = false;
+    
+    @ManyToOne(targetEntity = EntityImpl.class)
     @JoinColumn(name = "ENTITY_ID")
-	protected org.broadleafcommerce.openadmin.server.domain.Entity entity;
+    protected org.broadleafcommerce.openadmin.server.domain.Entity entity;
 
     @Column(name = "SECONDARY_TYPE")
     protected SupportedFieldType secondaryType;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Property#getName()
-	 */
-	@Override
-	public String getName() {
-		return name;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Property#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Property#getName()
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Property#setName(java.lang.String)
+     */
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Property#getValue()
-	 */
-	@Override
-	public String getValue() {
-		return value;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Property#getValue()
+     */
+    @Override
+    public String getValue() {
+        return value;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Property#setValue(java.lang.String)
-	 */
-	@Override
-	public void setValue(String value) {
-		this.value = value;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Property#setValue(java.lang.String)
+     */
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Property#getDisplayValue()
-	 */
-	@Override
-	public String getDisplayValue() {
-		return displayValue;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Property#getDisplayValue()
+     */
+    @Override
+    public String getDisplayValue() {
+        return displayValue;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Property#setDisplayValue(java.lang.String)
-	 */
-	@Override
-	public void setDisplayValue(String displayValue) {
-		this.displayValue = displayValue;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Property#setDisplayValue(java.lang.String)
+     */
+    @Override
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
+    }
 
-	/**
-	 * @return the entity
-	 */
-	public org.broadleafcommerce.openadmin.server.domain.Entity getEntity() {
-		return entity;
-	}
+    /**
+     * @return the entity
+     */
+    public org.broadleafcommerce.openadmin.server.domain.Entity getEntity() {
+        return entity;
+    }
 
-	/**
-	 * @param entity the entity to set
-	 */
-	public void setEntity(org.broadleafcommerce.openadmin.server.domain.Entity entity) {
-		this.entity = entity;
-	}
+    /**
+     * @param entity the entity to set
+     */
+    public void setEntity(org.broadleafcommerce.openadmin.server.domain.Entity entity) {
+        this.entity = entity;
+    }
 
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Boolean getIsDirty() {
-		return isDirty;
-	}
+    public Boolean getIsDirty() {
+        return isDirty;
+    }
 
-	public void setIsDirty(Boolean isDirty) {
-		this.isDirty = isDirty;
-	}
+    public void setIsDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
 
     public SupportedFieldType getSecondaryType() {
         return secondaryType;
@@ -163,33 +163,33 @@ public class PropertyImpl implements Property {
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PropertyImpl other = (PropertyImpl) obj;
-		
-		if (id != null && other.id != null) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PropertyImpl other = (PropertyImpl) obj;
+        
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
 
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
+    }
 
 }

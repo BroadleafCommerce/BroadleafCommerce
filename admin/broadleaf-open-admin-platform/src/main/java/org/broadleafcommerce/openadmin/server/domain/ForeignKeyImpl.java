@@ -38,201 +38,201 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class ForeignKeyImpl extends PersistencePerspectiveItemImpl implements ForeignKey {
 
-	private static final long serialVersionUID = 1L;
-	
-	@Column(name = "MANY_TO_FIELD")
-	protected String manyToField;
-	
-	@Column(name = "FOREIGN_KEY_CLASS")
-	protected String foreignKeyClass;
-	
-	@Column(name = "CURRENT_VALUE")
-	protected String currentValue;
-	
-	@Column(name = "DATA_SOURCE_NAME")
-	protected String dataSourceName;
-	
-	@Column(name = "RESTRICTION_TYPE")
-	protected ForeignKeyRestrictionType restrictionType = ForeignKeyRestrictionType.ID_EQ;
-	
-	@Column(name = "DISPLAY_VALUE_PROP")
-	protected String displayValueProperty = "name";
-	
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getManyToField()
-	 */
-	@Override
-	public String getManyToField() {
-		return manyToField;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setManyToField(java.lang.String)
-	 */
-	@Override
-	public void setManyToField(String manyToField) {
-		this.manyToField = manyToField;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getForeignKeyClass()
-	 */
-	@Override
-	public String getForeignKeyClass() {
-		return foreignKeyClass;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setForeignKeyClass(java.lang.String)
-	 */
-	@Override
-	public void setForeignKeyClass(String foreignKeyClass) {
-		this.foreignKeyClass = foreignKeyClass;
-	}
+    private static final long serialVersionUID = 1L;
+    
+    @Column(name = "MANY_TO_FIELD")
+    protected String manyToField;
+    
+    @Column(name = "FOREIGN_KEY_CLASS")
+    protected String foreignKeyClass;
+    
+    @Column(name = "CURRENT_VALUE")
+    protected String currentValue;
+    
+    @Column(name = "DATA_SOURCE_NAME")
+    protected String dataSourceName;
+    
+    @Column(name = "RESTRICTION_TYPE")
+    protected ForeignKeyRestrictionType restrictionType = ForeignKeyRestrictionType.ID_EQ;
+    
+    @Column(name = "DISPLAY_VALUE_PROP")
+    protected String displayValueProperty = "name";
+    
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getManyToField()
+     */
+    @Override
+    public String getManyToField() {
+        return manyToField;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setManyToField(java.lang.String)
+     */
+    @Override
+    public void setManyToField(String manyToField) {
+        this.manyToField = manyToField;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getForeignKeyClass()
+     */
+    @Override
+    public String getForeignKeyClass() {
+        return foreignKeyClass;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setForeignKeyClass(java.lang.String)
+     */
+    @Override
+    public void setForeignKeyClass(String foreignKeyClass) {
+        this.foreignKeyClass = foreignKeyClass;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getCurrentValue()
-	 */
-	@Override
-	public String getCurrentValue() {
-		return currentValue;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getCurrentValue()
+     */
+    @Override
+    public String getCurrentValue() {
+        return currentValue;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setCurrentValue(java.lang.String)
-	 */
-	@Override
-	public void setCurrentValue(String currentValue) {
-		this.currentValue = currentValue;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setCurrentValue(java.lang.String)
+     */
+    @Override
+    public void setCurrentValue(String currentValue) {
+        this.currentValue = currentValue;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getDataSourceName()
-	 */
-	@Override
-	public String getDataSourceName() {
-		return dataSourceName;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getDataSourceName()
+     */
+    @Override
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setDataSourceName(java.lang.String)
-	 */
-	@Override
-	public void setDataSourceName(String dataSourceName) {
-		this.dataSourceName = dataSourceName;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setDataSourceName(java.lang.String)
+     */
+    @Override
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getRestrictionType()
-	 */
-	@Override
-	public ForeignKeyRestrictionType getRestrictionType() {
-		return restrictionType;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getRestrictionType()
+     */
+    @Override
+    public ForeignKeyRestrictionType getRestrictionType() {
+        return restrictionType;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setRestrictionType(org.broadleafcommerce.openadmin.client.datasource.relations.ForeignKeyRestrictionType)
-	 */
-	@Override
-	public void setRestrictionType(ForeignKeyRestrictionType restrictionType) {
-		this.restrictionType = restrictionType;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setRestrictionType(org.broadleafcommerce.openadmin.client.datasource.relations.ForeignKeyRestrictionType)
+     */
+    @Override
+    public void setRestrictionType(ForeignKeyRestrictionType restrictionType) {
+        this.restrictionType = restrictionType;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getDisplayValueProperty()
-	 */
-	@Override
-	public String getDisplayValueProperty() {
-		return displayValueProperty;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getDisplayValueProperty()
+     */
+    @Override
+    public String getDisplayValueProperty() {
+        return displayValueProperty;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setDisplayValueProperty(java.lang.String)
-	 */
-	@Override
-	public void setDisplayValueProperty(String displayValueProperty) {
-		this.displayValueProperty = displayValueProperty;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.ForeignKey#setDisplayValueProperty(java.lang.String)
+     */
+    @Override
+    public void setDisplayValueProperty(String displayValueProperty) {
+        this.displayValueProperty = displayValueProperty;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((currentValue == null) ? 0 : currentValue.hashCode());
-		result = prime * result
-				+ ((dataSourceName == null) ? 0 : dataSourceName.hashCode());
-		result = prime
-				* result
-				+ ((displayValueProperty == null) ? 0 : displayValueProperty
-						.hashCode());
-		result = prime * result
-				+ ((foreignKeyClass == null) ? 0 : foreignKeyClass.hashCode());
-		result = prime * result
-				+ ((manyToField == null) ? 0 : manyToField.hashCode());
-		result = prime * result
-				+ ((restrictionType == null) ? 0 : restrictionType.hashCode());
-		return result;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((currentValue == null) ? 0 : currentValue.hashCode());
+        result = prime * result
+                + ((dataSourceName == null) ? 0 : dataSourceName.hashCode());
+        result = prime
+                * result
+                + ((displayValueProperty == null) ? 0 : displayValueProperty
+                        .hashCode());
+        result = prime * result
+                + ((foreignKeyClass == null) ? 0 : foreignKeyClass.hashCode());
+        result = prime * result
+                + ((manyToField == null) ? 0 : manyToField.hashCode());
+        result = prime * result
+                + ((restrictionType == null) ? 0 : restrictionType.hashCode());
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ForeignKeyImpl other = (ForeignKeyImpl) obj;
-		
-		if (id != null && other.id != null) {
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ForeignKeyImpl other = (ForeignKeyImpl) obj;
+        
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-		
-		if (currentValue == null) {
-			if (other.currentValue != null)
-				return false;
-		} else if (!currentValue.equals(other.currentValue))
-			return false;
-		if (dataSourceName == null) {
-			if (other.dataSourceName != null)
-				return false;
-		} else if (!dataSourceName.equals(other.dataSourceName))
-			return false;
-		if (displayValueProperty == null) {
-			if (other.displayValueProperty != null)
-				return false;
-		} else if (!displayValueProperty.equals(other.displayValueProperty))
-			return false;
-		if (foreignKeyClass == null) {
-			if (other.foreignKeyClass != null)
-				return false;
-		} else if (!foreignKeyClass.equals(other.foreignKeyClass))
-			return false;
-		if (manyToField == null) {
-			if (other.manyToField != null)
-				return false;
-		} else if (!manyToField.equals(other.manyToField))
-			return false;
-		if (restrictionType != other.restrictionType)
-			return false;
-		return true;
-	}
+        
+        if (currentValue == null) {
+            if (other.currentValue != null)
+                return false;
+        } else if (!currentValue.equals(other.currentValue))
+            return false;
+        if (dataSourceName == null) {
+            if (other.dataSourceName != null)
+                return false;
+        } else if (!dataSourceName.equals(other.dataSourceName))
+            return false;
+        if (displayValueProperty == null) {
+            if (other.displayValueProperty != null)
+                return false;
+        } else if (!displayValueProperty.equals(other.displayValueProperty))
+            return false;
+        if (foreignKeyClass == null) {
+            if (other.foreignKeyClass != null)
+                return false;
+        } else if (!foreignKeyClass.equals(other.foreignKeyClass))
+            return false;
+        if (manyToField == null) {
+            if (other.manyToField != null)
+                return false;
+        } else if (!manyToField.equals(other.manyToField))
+            return false;
+        if (restrictionType != other.restrictionType)
+            return false;
+        return true;
+    }
 
     @Override
     public void accept(PersistencePerspectiveItemVisitor visitor) {

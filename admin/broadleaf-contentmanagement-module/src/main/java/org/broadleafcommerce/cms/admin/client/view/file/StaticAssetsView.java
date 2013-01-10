@@ -42,18 +42,18 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
     protected GridStructureView assetDescriptionDisplay;
 
     public StaticAssetsView() {
-		setHeight100();
-		setWidth100();
-	}
+        setHeight100();
+        setWidth100();
+    }
 
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
         VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("staticFolderAssetsGridLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("40%");
-		leftVerticalLayout.setShowResizeBar(true);
+        leftVerticalLayout.setID("staticFolderAssetsGridLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("40%");
+        leftVerticalLayout.setShowResizeBar(true);
 
-		listDisplay = new DynamicEntityListView(entityDataSource);
+        listDisplay = new DynamicEntityListView(entityDataSource);
         listDisplay.getGrid().setHoverMoveWithMouse(true);
         listDisplay.getGrid().setCanHover(true);
         listDisplay.getGrid().setShowHover(true);
@@ -76,19 +76,19 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 
         addMember(leftVerticalLayout);
         addMember(dynamicFormDisplay);
-	}
+    }
 
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
     public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+        return listDisplay;
+    }
 
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
+        return dynamicFormDisplay;
+    }
 
     @Override
     public GridStructureDisplay getAssetDescriptionDisplay() {

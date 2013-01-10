@@ -25,24 +25,24 @@ import java.io.Serializable;
  */
 public interface OfferItemCriteria extends Serializable {
 
-	public Long getId();
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
-	public Integer getQuantity();
+    public Integer getQuantity();
 
-	public void setQuantity(Integer quantity);
+    public void setQuantity(Integer quantity);
 
-	public String getOrderItemMatchRule();
+    public String getOrderItemMatchRule();
 
-	public void setOrderItemMatchRule(String orderItemMatchRule);
+    public void setOrderItemMatchRule(String orderItemMatchRule);
 
-	public Offer getQualifyingOffer();
+    public Offer getQualifyingOffer();
 
-	public void setQualifyingOffer(Offer offer);
+    public void setQualifyingOffer(Offer offer);
 
     public Offer getTargetOffer();
 
     public void setTargetOffer(Offer targetOffer);
-	
+    
 }

@@ -54,7 +54,7 @@ import java.util.List;
 
 public abstract class AbstractCartController {
 
-	private static final Log LOG = LogFactory.getLog(CartController.class);
+    private static final Log LOG = LogFactory.getLog(CartController.class);
 
     @Resource(name="blCartService")
     protected final CartService cartService;
@@ -98,26 +98,26 @@ public abstract class AbstractCartController {
         CartSummary cartSummary = new CartSummary();
 
         /*if (cart.getOrderItems() != null ) {
-	        for (OrderItem orderItem : cart.getOrderItems()) {
-	            if (orderItem instanceof DiscreteOrderItem) {
-	                Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
-	                if (!(sku.getSalePrice().equals(((DiscreteOrderItem) orderItem).getSalePrice()))) {
-	                    orderItem.setSalePrice(sku.getSalePrice());
-	                }
-	                if (!(sku.getRetailPrice().equals(((DiscreteOrderItem) orderItem).getRetailPrice()))) {
-	                    orderItem.setRetailPrice(sku.getRetailPrice());
-	                }
-	
-	                if (orderItem.getSalePrice() != orderItem.getRetailPrice()) {
-	                    orderItem.setPrice(orderItem.getSalePrice());
-	                }
-	                else {
-	                    orderItem.setPrice(orderItem.getRetailPrice());
-	                }
-	
-	                orderItem.getPrice();
-	            }
-	        }
+            for (OrderItem orderItem : cart.getOrderItems()) {
+                if (orderItem instanceof DiscreteOrderItem) {
+                    Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
+                    if (!(sku.getSalePrice().equals(((DiscreteOrderItem) orderItem).getSalePrice()))) {
+                        orderItem.setSalePrice(sku.getSalePrice());
+                    }
+                    if (!(sku.getRetailPrice().equals(((DiscreteOrderItem) orderItem).getRetailPrice()))) {
+                        orderItem.setRetailPrice(sku.getRetailPrice());
+                    }
+    
+                    if (orderItem.getSalePrice() != orderItem.getRetailPrice()) {
+                        orderItem.setPrice(orderItem.getSalePrice());
+                    }
+                    else {
+                        orderItem.setPrice(orderItem.getRetailPrice());
+                    }
+    
+                    orderItem.getPrice();
+                }
+            }
         }*/
 
         if (cart.getOrderItems() != null ) {
@@ -148,7 +148,7 @@ public abstract class AbstractCartController {
         
         //re-add cart items in case there were item splits resulting from promotions
         if (cart.getOrderItems() != null ) {
-        	cartSummary.getRows().clear();
+            cartSummary.getRows().clear();
             for (OrderItem orderItem : cart.getOrderItems()) {
                 CartOrderItem cartOrderItem = new CartOrderItem();
                 cartOrderItem.setOrderItem(orderItem);
@@ -273,7 +273,7 @@ public abstract class AbstractCartController {
         
         //re-add cart items in case there were item splits resulting from promotions
         if (currentCartOrder.getOrderItems() != null ) {
-        	cartSummary.getRows().clear();
+            cartSummary.getRows().clear();
             for (OrderItem orderItem : currentCartOrder.getOrderItems()) {
                 CartOrderItem cartOrderItem = new CartOrderItem();
                 cartOrderItem.setOrderItem(orderItem);
@@ -329,7 +329,7 @@ public abstract class AbstractCartController {
         }
 
         if (currentCartOrder.getOrderItems() != null ) {
-        	cartSummary.getRows().clear();
+            cartSummary.getRows().clear();
             for (OrderItem orderItem : currentCartOrder.getOrderItems()) {
                 CartOrderItem cartOrderItem = new CartOrderItem();
                 cartOrderItem.setOrderItem(orderItem);
@@ -361,12 +361,12 @@ public abstract class AbstractCartController {
     protected Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
         FulfillmentGroup fg = cartSummary.getFulfillmentGroup();
         if (fg.getId() == null) {
-	        cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
-	        for(CartOrderItem item : cartSummary.getRows()) {
-	            item.getOrderItem().setOrder(currentCartOrder);
-	            fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity(), false);
-	        }
-	        cartSummary.setFulfillmentGroup(fg);
+            cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
+            for(CartOrderItem item : cartSummary.getRows()) {
+                item.getOrderItem().setOrder(currentCartOrder);
+                fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity(), false);
+            }
+            cartSummary.setFulfillmentGroup(fg);
         }
         return cartService.save(currentCartOrder, true);
     }

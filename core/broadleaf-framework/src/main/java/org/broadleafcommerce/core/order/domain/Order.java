@@ -184,14 +184,14 @@ public interface Order extends Serializable {
      */
     public Money getTotalAdjustmentsValue();
 
-	public boolean updatePrices();
-	
-	public Money getFulfillmentGroupAdjustmentsValue();
-	
-	public void addOfferCode(OfferCode addedOfferCode);
-	
-	@Deprecated
-	public void addAddedOfferCode(OfferCode offerCode);
+    public boolean updatePrices();
+    
+    public Money getFulfillmentGroupAdjustmentsValue();
+    
+    public void addOfferCode(OfferCode addedOfferCode);
+    
+    @Deprecated
+    public void addAddedOfferCode(OfferCode offerCode);
 
     /**
      * A list of arbitrary attributes added to this order.

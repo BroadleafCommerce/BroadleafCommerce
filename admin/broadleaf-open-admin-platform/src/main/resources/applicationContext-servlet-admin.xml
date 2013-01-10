@@ -48,5 +48,5 @@
             <bean class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredRPCServiceExporterFactory"/>
         </property>
     </bean>
-	
+    
 </beans>

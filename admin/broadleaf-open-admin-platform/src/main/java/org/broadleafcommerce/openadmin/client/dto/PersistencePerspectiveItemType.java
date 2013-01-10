@@ -24,7 +24,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  *
  */
 public enum PersistencePerspectiveItemType implements IsSerializable {
-	FOREIGNKEY,
-	JOINSTRUCTURE,
-	MAPSTRUCTURE
+    FOREIGNKEY,
+    JOINSTRUCTURE,
+    MAPSTRUCTURE
 }

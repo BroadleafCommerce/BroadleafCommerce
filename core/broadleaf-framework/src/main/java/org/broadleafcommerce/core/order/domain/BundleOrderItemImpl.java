@@ -60,14 +60,14 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices() {
-		return bundleOrderItemFeePrices;
-	}
+        return bundleOrderItemFeePrices;
+    }
 
-	public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
-		this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
-	}
+    public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
+        this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
+    }
 
-	@Override
+    @Override
     public void removeAllCandidateItemOffers() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
             discreteOrderItem.removeAllCandidateItemOffers();
@@ -76,14 +76,14 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public int removeAllAdjustments() {
-    	int removedAdjustmentCount = 0;
+        int removedAdjustmentCount = 0;
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-        	removedAdjustmentCount = removedAdjustmentCount + discreteOrderItem.removeAllAdjustments();
+            removedAdjustmentCount = removedAdjustmentCount + discreteOrderItem.removeAllAdjustments();
         }
         return removedAdjustmentCount;
     }
 
-	@Override
+    @Override
     public void assignFinalPrice() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
             discreteOrderItem.assignFinalPrice();
@@ -99,9 +99,9 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             currentBundleTaxablePrice = currentBundleTaxablePrice.add(new Money(currentItemTaxablePrice.doubleValue() * discreteOrderItem.getQuantity()));
         }
         for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
-        	if (fee.isTaxable()) {
-        		currentBundleTaxablePrice = currentBundleTaxablePrice.add(fee.getAmount());
-        	}
+            if (fee.isTaxable()) {
+                currentBundleTaxablePrice = currentBundleTaxablePrice.add(fee.getAmount());
+            }
         }
         return currentBundleTaxablePrice;
     }
@@ -114,7 +114,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             bundleRetailPrice = bundleRetailPrice.add(new Money(itemRetailPrice.doubleValue() * discreteOrderItem.getQuantity()));
         }
         for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
-        	bundleRetailPrice = bundleRetailPrice.add(fee.getAmount());
+            bundleRetailPrice = bundleRetailPrice.add(fee.getAmount());
         }
         return bundleRetailPrice;
     }
@@ -135,7 +135,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                 bundleSalePrice = bundleSalePrice.add(new Money(itemSalePrice.doubleValue() * discreteOrderItem.getQuantity()));
             }
             for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
-            	bundleSalePrice = bundleSalePrice.add(fee.getAmount());
+                bundleSalePrice = bundleSalePrice.add(fee.getAmount());
             }
         }
         return bundleSalePrice;
@@ -191,7 +191,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         BundleOrderItemImpl other = (BundleOrderItemImpl) obj;
         
         if (!super.equals(obj)) {
-        	return false;
+            return false;
         }
 
         if (id != null && other.id != null) {

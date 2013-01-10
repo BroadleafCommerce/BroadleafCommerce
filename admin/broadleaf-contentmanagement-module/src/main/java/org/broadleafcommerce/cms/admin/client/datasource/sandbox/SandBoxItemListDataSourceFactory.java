@@ -41,7 +41,7 @@ public class SandBoxItemListDataSourceFactory implements DataSourceFactory {
     public static final String sandBoxForeignKey = "sandBox";
     public static final String originalSandBoxForeignKey = "originalSandBox";
 
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
         operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
         PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(sandBoxForeignKey, EntityImplementations.SANDBOXIMPL), new ForeignKey(originalSandBoxForeignKey, EntityImplementations.SANDBOXIMPL)});
         DataSourceModule[] modules = new DataSourceModule[]{
@@ -54,6 +54,6 @@ public class SandBoxItemListDataSourceFactory implements DataSourceFactory {
         }
         dataSource.setCustomCriteria(customCriteria);
         dataSource.buildFields(null, false, cb);
-	}
+    }
 
 }

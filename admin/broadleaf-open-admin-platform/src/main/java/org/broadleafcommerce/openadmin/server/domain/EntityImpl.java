@@ -44,7 +44,7 @@ import org.hibernate.annotations.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class EntityImpl implements Entity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "EntityId", strategy = GenerationType.TABLE)
@@ -54,106 +54,106 @@ public class EntityImpl implements Entity {
     
     @Column(name = "TYPE")
     @Index(name="SNDBX_ENTITY_TYPE", columnNames={"TYPE"})
-	protected String type;
-	
-	@OneToMany(mappedBy = "entity", targetEntity = PropertyImpl.class, cascade = {CascadeType.ALL})
+    protected String type;
+    
+    @OneToMany(mappedBy = "entity", targetEntity = PropertyImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
     @BatchSize(size = 50)
-	protected List<Property> properties = new ArrayList<Property>();
-	
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
+    protected List<Property> properties = new ArrayList<Property>();
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return type;
-	}
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
 
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Entity#getProperties()
-	 */
-	@Override
-	public List<Property> getProperties() {
-		return properties;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Entity#setProperties(java.util.List)
-	 */
-	@Override
-	public void setProperties(List<Property> properties) {
-		this.properties = properties;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.Entity#addProperty(org.broadleafcommerce.openadmin.client.datasource.results.Property)
-	 */
-	@Override
-	public void addProperty(Property property) {
-		properties.add(property);
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Entity#getProperties()
+     */
+    @Override
+    public List<Property> getProperties() {
+        return properties;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Entity#setProperties(java.util.List)
+     */
+    @Override
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.domain.Entity#addProperty(org.broadleafcommerce.openadmin.client.datasource.results.Property)
+     */
+    @Override
+    public void addProperty(Property property) {
+        properties.add(property);
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((properties == null) ? 0 : properties.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((properties == null) ? 0 : properties.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EntityImpl other = (EntityImpl) obj;
-		
-		if (id != null && other.id != null) {
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EntityImpl other = (EntityImpl) obj;
+        
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-		
-		if (properties == null) {
-			if (other.properties != null)
-				return false;
-		} else if (!properties.equals(other.properties))
-			return false;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
-		return true;
-	}
+        
+        if (properties == null) {
+            if (other.properties != null)
+                return false;
+        } else if (!properties.equals(other.properties))
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        } else if (!type.equals(other.type))
+            return false;
+        return true;
+    }
 }

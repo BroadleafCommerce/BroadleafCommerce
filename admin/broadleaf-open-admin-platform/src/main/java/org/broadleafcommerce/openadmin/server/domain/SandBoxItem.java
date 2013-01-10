@@ -23,17 +23,17 @@ import java.util.List;
 
 public interface SandBoxItem extends Serializable {
 
-	public Long getId();
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
     public SandBox getSandBox();
 
-	public void setSandBox(SandBox sandBox);
+    public void setSandBox(SandBox sandBox);
 
     public SandBox getOriginalSandBox();
 
-	public void setOriginalSandBox(SandBox sandBox);
+    public void setOriginalSandBox(SandBox sandBox);
 
     public SandBoxItemType getSandBoxItemType();
 

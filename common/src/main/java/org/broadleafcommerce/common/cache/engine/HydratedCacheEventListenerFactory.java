@@ -32,7 +32,7 @@ public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory
     private static HydratedCacheManager manager = null;
 
     @Override
-	public CacheEventListener createCacheEventListener(Properties props) {
+    public CacheEventListener createCacheEventListener(Properties props) {
         try {
             if (props == null || props.isEmpty()) {
                 manager = EhcacheHydratedCacheManagerImpl.getInstance();
@@ -46,7 +46,7 @@ public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory
             throw new RuntimeException("Unable to create a CacheEventListener instance", e);
         }
         return (CacheEventListener) manager;
-	}
+    }
 
     public static HydratedCacheManager getConfiguredManager() {
         return manager;

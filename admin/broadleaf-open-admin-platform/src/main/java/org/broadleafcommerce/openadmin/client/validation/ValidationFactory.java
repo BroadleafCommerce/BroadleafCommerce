@@ -28,8 +28,8 @@ import java.util.Map;
  */
 public interface ValidationFactory extends Serializable {
 
-	public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems);
-	
-	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName);
-	
+    public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems);
+    
+    public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName);
+    
 }

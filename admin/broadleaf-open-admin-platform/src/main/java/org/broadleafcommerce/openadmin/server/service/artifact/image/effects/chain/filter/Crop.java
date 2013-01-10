@@ -33,17 +33,17 @@ import java.util.Map;
 
 public class Crop extends BaseFilter {
 
-	private RenderingHints hints;
-	private Rectangle region;
+    private RenderingHints hints;
+    private Rectangle region;
 
     public Crop() {
         //do nothing
     }
 
-	public Crop(Rectangle region, RenderingHints hints) {
-		this.hints = hints;
-		this.region = region;
-	}
+    public Crop(Rectangle region, RenderingHints hints) {
+        this.hints = hints;
+        this.region = region;
+    }
 
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
@@ -76,11 +76,11 @@ public class Crop extends BaseFilter {
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
-	 */
-	public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-		if (src == null) {
+    /* (non-Javadoc)
+     * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
+     */
+    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
+        if (src == null) {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
@@ -119,24 +119,24 @@ public class Crop extends BaseFilter {
         }
         
         java.awt.image.CropImageFilter cropfilter = new java.awt.image.CropImageFilter(region.x,region.y,region.width,region.height);
-		Image returnImage = Toolkit.getDefaultToolkit().createImage(new java.awt.image.FilteredImageSource(src.getSource(),cropfilter));
-		dst = ImageConverter.convertImage(returnImage);
-		origDst = dst;
+        Image returnImage = Toolkit.getDefaultToolkit().createImage(new java.awt.image.FilteredImageSource(src.getSource(),cropfilter));
+        dst = ImageConverter.convertImage(returnImage);
+        origDst = dst;
 
-	    if (needToConvert) {
+        if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
         }
         else if (origDst != dst) {
             java.awt.Graphics2D g2 = origDst.createGraphics();
-	    try {
+        try {
             g2.drawImage(dst, 0, 0, null);
-	    } finally {
-	        g2.dispose();
-	    }
+        } finally {
+            g2.dispose();
+        }
         }
 
         return origDst;
-	}
+    }
 
 }

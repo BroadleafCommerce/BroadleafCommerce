@@ -34,26 +34,26 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
  */
 public class DynamicEntityListView extends VLayout implements DynamicEntityListDisplay {
 
-	protected ToolStripButton addButton;
-	protected ToolStripButton removeButton;
-	protected ComboBoxItem entityType = new ComboBoxItem();
-	protected ListGrid grid;
-	protected ToolStrip toolBar;
+    protected ToolStripButton addButton;
+    protected ToolStripButton removeButton;
+    protected ComboBoxItem entityType = new ComboBoxItem();
+    protected ListGrid grid;
+    protected ToolStrip toolBar;
 
     public DynamicEntityListView(DataSource dataSource) {
-		this("", dataSource, true, true);
-	}
-	
-	public DynamicEntityListView(String title, DataSource dataSource) {
-		this(title, dataSource, true, true);
-	}
-	
-	public DynamicEntityListView(String title, DataSource dataSource, Boolean canReorder, Boolean canEdit) {
-		super();
-		toolBar = new ToolStrip();
-		toolBar.setHeight(30);
-		toolBar.setWidth100();
-		toolBar.addSpacer(6);
+        this("", dataSource, true, true);
+    }
+    
+    public DynamicEntityListView(String title, DataSource dataSource) {
+        this(title, dataSource, true, true);
+    }
+    
+    public DynamicEntityListView(String title, DataSource dataSource, Boolean canReorder, Boolean canEdit) {
+        super();
+        toolBar = new ToolStrip();
+        toolBar.setHeight(30);
+        toolBar.setWidth100();
+        toolBar.addSpacer(6);
         addButton = new ToolStripButton();
         addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
         addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
@@ -88,41 +88,41 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         //grid.setDataPageSize(10);
         grid.setEmptyMessage(BLCMain.getMessageManager().getString("emptyMessage"));
         if (!canEdit) {
-        	grid.setAlternateBodyStyleName("editRowDisabled");
+            grid.setAlternateBodyStyleName("editRowDisabled");
         }
         addMember(grid);
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getAddButton()
-	 */
-	public ToolStripButton getAddButton() {
-		return addButton;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getAddButton()
+     */
+    public ToolStripButton getAddButton() {
+        return addButton;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getRemoveButton()
-	 */
-	public ToolStripButton getRemoveButton() {
-		return removeButton;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getRemoveButton()
+     */
+    public ToolStripButton getRemoveButton() {
+        return removeButton;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getEntityType()
-	 */
-	public ComboBoxItem getEntityType() {
-		return entityType;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getEntityType()
+     */
+    public ComboBoxItem getEntityType() {
+        return entityType;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getGrid()
-	 */
-	public ListGrid getGrid() {
-		return grid;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getGrid()
+     */
+    public ListGrid getGrid() {
+        return grid;
+    }
 
-	public ToolStrip getToolBar() {
-		return toolBar;
-	}
+    public ToolStrip getToolBar() {
+        return toolBar;
+    }
 
 }

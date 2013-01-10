@@ -43,10 +43,10 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     }
 
     public void delete(final OfferAudit offerAudit) {
-    	OfferAudit loa = offerAudit;
-    	if (!em.contains(loa)) {
-    		loa = readAuditById(offerAudit.getId());
-    	}
+        OfferAudit loa = offerAudit;
+        if (!em.contains(loa)) {
+            loa = readAuditById(offerAudit.getId());
+        }
         em.remove(loa);
     }
 

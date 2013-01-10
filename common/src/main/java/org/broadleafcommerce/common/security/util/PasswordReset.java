@@ -64,19 +64,19 @@ public class PasswordReset implements Serializable {
         this.passwordChangeRequired = passwordChangeRequired;
     }
 
-	public int getPasswordLength() {
-		return passwordLength;
-	}
+    public int getPasswordLength() {
+        return passwordLength;
+    }
 
-	public void setPasswordLength(int passwordLength) {
-		this.passwordLength = passwordLength;
-	}
+    public void setPasswordLength(int passwordLength) {
+        this.passwordLength = passwordLength;
+    }
 
-	public boolean isSendResetEmailReliableAsync() {
-		return sendResetEmailReliableAsync;
-	}
+    public boolean isSendResetEmailReliableAsync() {
+        return sendResetEmailReliableAsync;
+    }
 
-	public void setSendResetEmailReliableAsync(boolean sendResetEmailReliableAsync) {
-		this.sendResetEmailReliableAsync = sendResetEmailReliableAsync;
-	}
+    public void setSendResetEmailReliableAsync(boolean sendResetEmailReliableAsync) {
+        this.sendResetEmailReliableAsync = sendResetEmailReliableAsync;
+    }
 }

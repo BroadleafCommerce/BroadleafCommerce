@@ -24,7 +24,7 @@ import org.broadleafcommerce.openadmin.client.view.Display;
  *
  */
 public interface DynamicEditDisplayWithoutForm extends Display {
-	
-	public DynamicEntityListDisplay getListDisplay();
-	
+    
+    public DynamicEntityListDisplay getListDisplay();
+    
 }

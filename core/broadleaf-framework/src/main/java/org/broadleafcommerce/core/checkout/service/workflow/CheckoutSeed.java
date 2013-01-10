@@ -46,7 +46,7 @@ public class CheckoutSeed implements CheckoutResponse {
     }
     
     public void setOrder(Order order) {
-    	this.order = order;
+        this.order = order;
     }
 
     public PaymentResponse getPaymentResponse() {

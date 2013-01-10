@@ -3,13 +3,13 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
-	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
-		<class>org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl</class>
-		<class>org.broadleafcommerce.common.email.domain.EmailTrackingImpl</class>
-		<class>org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl</class>
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+        <class>org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl</class>
+        <class>org.broadleafcommerce.common.email.domain.EmailTrackingImpl</class>
+        <class>org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl</class>
         <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
-		<exclude-unlisted-classes/>
-		<properties>
+        <exclude-unlisted-classes/>
+        <properties>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.transaction.flush_before_completion" value="false"/>
             <property name="hibernate.connection.autocommit" value="false"/>
@@ -22,5 +22,5 @@
             <!--<property name="hibernate.ejb.event.post-load" value="org.hibernate.ejb.event.EJB3PostLoadEventListener,org.broadleafcommerce.openadmin.server.changeset.ChangeSetListener" />
             <property name="org.hibernate.envers.audit_strategy" value="org.broadleafcommerce.openadmin.server.changeset.ValidityAuditStrategy" />-->
         </properties>
-	</persistence-unit>
+    </persistence-unit>
 </persistence>

@@ -40,16 +40,16 @@ public class RichTextHTMLPane extends HTMLPane {
     private String editorPath;
     private DynamicForm form;
 
-	public RichTextHTMLPane(String editorPath, DynamicForm form) {
-		super();
+    public RichTextHTMLPane(String editorPath, DynamicForm form) {
+        super();
         this.editorPath = editorPath;
         counter++;
         myId = counter;
         valueMap.put(String.valueOf(myId), new HashMap<String, Object>());
         valueMap.get(String.valueOf(myId)).put("disabled", false);
         valueMap.get(String.valueOf(myId)).put("form", form);
-	}
-	
+    }
+    
     public void setValue(String value) {
         valueMap.get(String.valueOf(myId)).put("value", value);
         init();
@@ -64,32 +64,32 @@ public class RichTextHTMLPane extends HTMLPane {
     }
 
     public String getValue()  {
-    	Node node = findIFrame();
-    	String response = findRichTextValue(node);
+        Node node = findIFrame();
+        String response = findRichTextValue(node);
         setValue(response);
 
         return response;
     }
     
     public Node findIFrame() {
-    	Element element = getDOM();
-    	Node iframe =  findIFrame(element.getChildNodes());
-    	return iframe;
+        Element element = getDOM();
+        Node iframe =  findIFrame(element.getChildNodes());
+        return iframe;
     }
     
     public Node findIFrame(NodeList<Node> childNodes) {
-    	for (int i = 0; i < childNodes.getLength(); i++) {
-    		Node item = childNodes.getItem(i);
-    		if (item instanceof Element && "IFRAME".equals(((Element) item).getTagName())) {
-				return item;
-			} else {
-				Node childIFrame = findIFrame(item.getChildNodes());
-				if (childIFrame != null) {
-					return childIFrame;
-				}
-			}
-    	}
-    	return null;
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.getItem(i);
+            if (item instanceof Element && "IFRAME".equals(((Element) item).getTagName())) {
+                return item;
+            } else {
+                Node childIFrame = findIFrame(item.getChildNodes());
+                if (childIFrame != null) {
+                    return childIFrame;
+                }
+            }
+        }
+        return null;
     }
 
     public void init() {
@@ -122,19 +122,19 @@ public class RichTextHTMLPane extends HTMLPane {
         return true;
     }
    
-	public static native String findRichTextValue(Node iframeNode) /*-{
-		return iframeNode.contentWindow.tinyMCE.get('richTextContent').getContent();
-	}-*/;
+    public static native String findRichTextValue(Node iframeNode) /*-{
+        return iframeNode.contentWindow.tinyMCE.get('richTextContent').getContent();
+    }-*/;
 
     private static native void exposeGetHTMLDisabled() /*-{
-		$wnd.getHTMLDisabled = function(id) {
-			return @org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane::getHTMLDisabled(Ljava/lang/String;)(id);
-		}
-	}-*/;
+        $wnd.getHTMLDisabled = function(id) {
+            return @org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane::getHTMLDisabled(Ljava/lang/String;)(id);
+        }
+    }-*/;
 
     private static native void exposeGetHTMLValue() /*-{
-		$wnd.getHTMLValue = function(id) {
-			return @org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane::getHTMLValue(Ljava/lang/String;)(id);
-		}
-	}-*/;
+        $wnd.getHTMLValue = function(id) {
+            return @org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane::getHTMLValue(Ljava/lang/String;)(id);
+        }
+    }-*/;
 }

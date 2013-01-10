@@ -31,15 +31,15 @@ import java.util.List;
  */
 public class ContentManagementModule extends AbstractHtmlEditingModule {
 
-	public void onModuleLoad() {
+    public void onModuleLoad() {
         addConstants(GWT.<ConstantsWithLookup>create(ContentManagementMessages.class));
-		
-		setModuleTitle(BLCMain.getMessageManager().getString("cmsModuleTitle"));
-		setModuleKey("BLCContentManagement");
+        
+        setModuleTitle(BLCMain.getMessageManager().getString("cmsModuleTitle"));
+        setModuleKey("BLCContentManagement");
 
         List<String> pagePermissions = new ArrayList<String>();
-		pagePermissions.add("PERMISSION_CREATE_PAGE");
-		pagePermissions.add("PERMISSION_UPDATE_PAGE");
+        pagePermissions.add("PERMISSION_CREATE_PAGE");
+        pagePermissions.add("PERMISSION_UPDATE_PAGE");
         pagePermissions.add("PERMISSION_DELETE_PAGE");
         pagePermissions.add("PERMISSION_READ_PAGE");
         setSection(
@@ -52,54 +52,54 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
         );
 
         List<String> assetPermissions = new ArrayList<String>();
-		assetPermissions.add("PERMISSION_CREATE_ASSET");
-		assetPermissions.add("PERMISSION_UPDATE_ASSET");
+        assetPermissions.add("PERMISSION_CREATE_ASSET");
+        assetPermissions.add("PERMISSION_UPDATE_ASSET");
         assetPermissions.add("PERMISSION_DELETE_ASSET");
         assetPermissions.add("PERMISSION_READ_ASSET");
         setSection(
             BLCMain.getMessageManager().getString("staticAssetsTitle"),
-			"staticAssets",
-			"org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsView",
-			"staticAssetsPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.file.StaticAssetsPresenter",
-			assetPermissions
-		);
+            "staticAssets",
+            "org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsView",
+            "staticAssetsPresenter",
+            "org.broadleafcommerce.cms.admin.client.presenter.file.StaticAssetsPresenter",
+            assetPermissions
+        );
 
         List<String> structuredContentPermissions = new ArrayList<String>();
-		structuredContentPermissions.add("PERMISSION_CREATE_STRUCTURED_CONTENT");
-		structuredContentPermissions.add("PERMISSION_UPDATE_STRUCTURED_CONTENT");
+        structuredContentPermissions.add("PERMISSION_CREATE_STRUCTURED_CONTENT");
+        structuredContentPermissions.add("PERMISSION_UPDATE_STRUCTURED_CONTENT");
         structuredContentPermissions.add("PERMISSION_DELETE_STRUCTURED_CONTENT");
         structuredContentPermissions.add("PERMISSION_READ_STRUCTURED_CONTENT");
         setSection(
             BLCMain.getMessageManager().getString("structuredContentTitle"),
-			"structuredContent",
-			"org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentView",
-			"structuredContentPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenter",
-			structuredContentPermissions
-		);
+            "structuredContent",
+            "org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentView",
+            "structuredContentPresenter",
+            "org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenter",
+            structuredContentPermissions
+        );
 
         List<String> userSandBoxPermissions = new ArrayList<String>();
-		userSandBoxPermissions.add("PERMISSION_ALL_USER_SANDBOX");
+        userSandBoxPermissions.add("PERMISSION_ALL_USER_SANDBOX");
         setSection(
             BLCMain.getMessageManager().getString("userSandBoxTitle"),
-			"userSandBox",
-			"org.broadleafcommerce.cms.admin.client.view.sandbox.MySandBoxView",
-			"userSandBoxPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.MySandBoxPresenter",
-			userSandBoxPermissions
-		);
+            "userSandBox",
+            "org.broadleafcommerce.cms.admin.client.view.sandbox.MySandBoxView",
+            "userSandBoxPresenter",
+            "org.broadleafcommerce.cms.admin.client.presenter.sandbox.MySandBoxPresenter",
+            userSandBoxPermissions
+        );
 
         List<String> approverSandBoxPermissions = new ArrayList<String>();
-		approverSandBoxPermissions.add("PERMISSION_ALL_APPROVER_SANDBOX");
+        approverSandBoxPermissions.add("PERMISSION_ALL_APPROVER_SANDBOX");
         setSection(
             BLCMain.getMessageManager().getString("approverSandBoxTitle"),
-			"approverSandBox",
-			"org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxView",
-			"approverSandBoxPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.SandBoxPresenter",
-			approverSandBoxPermissions
-		);
+            "approverSandBox",
+            "org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxView",
+            "approverSandBoxPresenter",
+            "org.broadleafcommerce.cms.admin.client.presenter.sandbox.SandBoxPresenter",
+            approverSandBoxPermissions
+        );
 
         setHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextFullFeatured.html");
         setBasicHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextBasic.html");

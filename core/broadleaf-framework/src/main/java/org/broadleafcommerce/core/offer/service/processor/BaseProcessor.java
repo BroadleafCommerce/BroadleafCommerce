@@ -30,8 +30,8 @@ import org.broadleafcommerce.profile.core.domain.Customer;
  */
 public interface BaseProcessor {
 
-	public void clearOffersandAdjustments(PromotableOrder order);
-	
-	public List<Offer> filterOffers(List<Offer> offers, Customer customer);
-	
+    public void clearOffersandAdjustments(PromotableOrder order);
+    
+    public List<Offer> filterOffers(List<Offer> offers, Customer customer);
+    
 }

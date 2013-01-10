@@ -118,9 +118,9 @@ public class MergeManager {
 
             //process any defined handlers
             for (int j=0;j<this.handlers.length;j++){
-            	if (LOG.isDebugEnabled()) {
-            		LOG.debug("Processing handler: " + this.handlers[j].getXPath());
-            	}
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Processing handler: " + this.handlers[j].getXPath());
+                }
                 MergePoint point = new MergePoint(this.handlers[j], doc1, doc2);
                 Node[] list = point.merge(exhaustedNodes);
                 if (list != null) {

@@ -55,61 +55,61 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
  */
 public class MapStructureClientModule extends BasicClientEntityModule {
 
-	protected ListGrid associatedGrid;
-	
+    protected ListGrid associatedGrid;
+    
     public MapStructureClientModule(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, ListGrid associatedGrid) {
         super(ceilingEntityFullyQualifiedClassname, fetchTypeFullyQualifiedClassname, persistencePerspective, service);
         this.associatedGrid = associatedGrid;
     }
     
-	public MapStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, ListGrid associatedGrid) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
-		this.associatedGrid = associatedGrid;
-	}
+    public MapStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, ListGrid associatedGrid) {
+        super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
+        this.associatedGrid = associatedGrid;
+    }
 
-	@Override
-	public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-		CriteriaTransferObject criteriaTransferObject = getCto(request);
-		final String parentCategoryId = criteriaTransferObject.get(criteriaTransferObject.getPropertyIdSet().iterator().next()).getFilterValues()[0];
-		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, fetchTypeFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), criteriaTransferObject, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
-			public void onSuccess(DynamicResultSet result) {
-				super.onSuccess(result);
-				TreeNode[] recordList = buildRecords(result, null);
-				MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-				for (TreeNode node : recordList) {
-					node.setAttribute("symbolicId", parentCategoryId);
-					node.setAttribute("priorKey", node.getAttribute(mapStructure.getKeyPropertyName()));
-				}
-				response.setData(recordList);
-				response.setTotalRows(result.getTotalRecords());
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
-			}
-		});
-	}	
-	
-	@Override
-	public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-		JavaScriptObject data = request.getData();
+    @Override
+    public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
+        CriteriaTransferObject criteriaTransferObject = getCto(request);
+        final String parentCategoryId = criteriaTransferObject.get(criteriaTransferObject.getPropertyIdSet().iterator().next()).getFilterValues()[0];
+        service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, fetchTypeFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), criteriaTransferObject, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+            public void onSuccess(DynamicResultSet result) {
+                super.onSuccess(result);
+                TreeNode[] recordList = buildRecords(result, null);
+                MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+                for (TreeNode node : recordList) {
+                    node.setAttribute("symbolicId", parentCategoryId);
+                    node.setAttribute("priorKey", node.getAttribute(mapStructure.getKeyPropertyName()));
+                }
+                response.setData(recordList);
+                response.setTotalRows(result.getTotalRecords());
+                if (cb != null) {
+                    cb.onSuccess(dataSource);
+                }
+                dataSource.processResponse(requestId, response);
+            }
+        });
+    }   
+    
+    @Override
+    public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
+        JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
         Entity entity = buildEntity(temp, request);
         //final ListGridRecord record = associatedGrid.getSelectedRecord();
-    	//Entity entity = buildEntity(record, request);
-    	//for (Property property : tempEntity.getProperties()) {
-    		//entity.findProperty(property.getName()).setValue(property.getValue());
-    	//}
+        //Entity entity = buildEntity(record, request);
+        //for (Property property : tempEntity.getProperties()) {
+            //entity.findProperty(property.getName()).setValue(property.getValue());
+        //}
         //String componentId = request.getComponentId();
         //if (componentId != null) {
             //if (entity.getType() == null) {
-            	//String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-            	//entity.setType(type);
+                //String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
+                //entity.setType(type);
             //}
         //}
-		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
-			public void onSuccess(Entity result) {
-				super.onSuccess(result);
+        service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+            public void onSuccess(Entity result) {
+                super.onSuccess(result);
                 if (processResult(result, requestId, response, dataSource)) {
                     ListGridRecord myRecord = (ListGridRecord) updateRecord(result, (Record) temp, false);
                     ListGridRecord[] recordList = new ListGridRecord[]{myRecord};
@@ -125,137 +125,137 @@ public class MapStructureClientModule extends BasicClientEntityModule {
                     }
                     dataSource.processResponse(requestId, response);
                 }
-			}
-			
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            }
+            
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-		});
-	}
-	
-	@Override
-	public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-		JavaScriptObject data = request.getData();
+            @Override
+            protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                super.onError(opType, requestId, request, response, caught);
+                if (cb != null) {
+                    cb.onFailure(caught);
+                }
+            }
+        });
+    }
+    
+    @Override
+    public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
+        JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
         Entity entity = buildEntity(temp, request);
 //        final ListGridRecord record = associatedGrid.getSelectedRecord();
-//    	Entity entity = buildEntity(record, request);
-//    	for (Property property : tempEntity.getProperties()) {
-//    		entity.findProperty(property.getName()).setValue(property.getValue());
-//    	}
+//      Entity entity = buildEntity(record, request);
+//      for (Property property : tempEntity.getProperties()) {
+//          entity.findProperty(property.getName()).setValue(property.getValue());
+//      }
 //        String componentId = request.getComponentId();
 //        if (componentId != null) {
 //            if (entity.getType() == null) {
-//            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-//            	entity.setType(type);
+//              String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
+//              entity.setType(type);
 //            }
 //        }
         service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
-			public void onSuccess(Void item) {
-				super.onSuccess(null);
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				response.setInvalidateCache(true);
-				dataSource.processResponse(requestId, response);
-			}
-			
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            public void onSuccess(Void item) {
+                super.onSuccess(null);
+                if (cb != null) {
+                    cb.onSuccess(dataSource);
+                }
+                response.setInvalidateCache(true);
+                dataSource.processResponse(requestId, response);
+            }
+            
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
 
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-		});
-	}
-	
-	@Override
-	public Record updateRecord(Entity entity, Record record, Boolean updateId) {
-		for (Property property : entity.getProperties()){
-			String attributeName = property.getName();
-			if (
-				property.getValue() != null && 
-				dataSource.getField(attributeName).getType().equals(FieldType.DATETIME)
-			) {
-				record.setAttribute(attributeName, formatter.parse(property.getValue()));
-			} else if (
-				dataSource.getField(attributeName).getType().equals(FieldType.BOOLEAN)
-			) {
-				if (property.getValue() == null) {
-					record.setAttribute(attributeName, false);
-				} else {
-					String lower = property.getValue().toLowerCase();
-					if (lower.equals("y") || lower.equals("yes") || lower.equals("true") || lower.equals("1")) {
-						record.setAttribute(attributeName, true);
-					} else {
-						record.setAttribute(attributeName, false);
-					}
-				}
-			} else if (
-				property.getMetadata() != null && property.getMetadata().getFieldType() != null &&
-				property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
-			) {
-				record.setAttribute(attributeName, linkedValue);
-			} else {
-				String propertyValue;
-				propertyValue = property.getValue();
-				record.setAttribute(attributeName, propertyValue);
-			}
-			if (property.getDisplayValue() != null) {
-				record.setAttribute("__display_"+attributeName, property.getDisplayValue());
-			}
-		}
-		String[] entityType = entity.getType();
-		record.setAttribute("_type", entityType);
-		return record;
-	}
-	
-	@Override
-	public void executeAdd(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
-		BLCMain.NON_MODAL_PROGRESS.startProgress();
-		JavaScriptObject data = request.getData();
+            @Override
+            protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                super.onError(opType, requestId, request, response, caught);
+                if (cb != null) {
+                    cb.onFailure(caught);
+                }
+            }
+        });
+    }
+    
+    @Override
+    public Record updateRecord(Entity entity, Record record, Boolean updateId) {
+        for (Property property : entity.getProperties()){
+            String attributeName = property.getName();
+            if (
+                property.getValue() != null && 
+                dataSource.getField(attributeName).getType().equals(FieldType.DATETIME)
+            ) {
+                record.setAttribute(attributeName, formatter.parse(property.getValue()));
+            } else if (
+                dataSource.getField(attributeName).getType().equals(FieldType.BOOLEAN)
+            ) {
+                if (property.getValue() == null) {
+                    record.setAttribute(attributeName, false);
+                } else {
+                    String lower = property.getValue().toLowerCase();
+                    if (lower.equals("y") || lower.equals("yes") || lower.equals("true") || lower.equals("1")) {
+                        record.setAttribute(attributeName, true);
+                    } else {
+                        record.setAttribute(attributeName, false);
+                    }
+                }
+            } else if (
+                property.getMetadata() != null && property.getMetadata().getFieldType() != null &&
+                property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
+            ) {
+                record.setAttribute(attributeName, linkedValue);
+            } else {
+                String propertyValue;
+                propertyValue = property.getValue();
+                record.setAttribute(attributeName, propertyValue);
+            }
+            if (property.getDisplayValue() != null) {
+                record.setAttribute("__display_"+attributeName, property.getDisplayValue());
+            }
+        }
+        String[] entityType = entity.getType();
+        record.setAttribute("_type", entityType);
+        return record;
+    }
+    
+    @Override
+    public void executeAdd(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
+        BLCMain.NON_MODAL_PROGRESS.startProgress();
+        JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
         service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
-			public void onSuccess(Entity result) {
-				super.onSuccess(result);
+            public void onSuccess(Entity result) {
+                super.onSuccess(result);
                 if (processResult(result, requestId, response, dataSource)) {
                     TreeNode record = (TreeNode) buildRecord(result, false);
                     TreeNode[] recordList = new TreeNode[]{record};
@@ -272,89 +272,89 @@ public class MapStructureClientModule extends BasicClientEntityModule {
                     }
                     dataSource.processResponse(requestId, response);
                 }
-			}
-			
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
-
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
-
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-		});
-	}
-
-	@Override
-	public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
-			
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
+            }
+            
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
                 if (cb != null) {
-				    cb.onFailure(exception);
+                    cb.onFailure(exception);
                 }
-			}
+            }
 
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
                 if (cb != null) {
-				    cb.onFailure(exception);
+                    cb.onFailure(exception);
                 }
-			}
+            }
 
-			public void onSuccess(DynamicResultSet result) {
-				super.onSuccess(result);
-				ClassMetadata metadata = result.getClassMetaData();
-				filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.MAPSTRUCTUREKEY, MergedPropertyType.MAPSTRUCTUREVALUE}, overrideFieldSort);
-				
-				DataSourceField symbolicIdField = new DataSourceTextField("symbolicId");
-				symbolicIdField.setCanEdit(false);
-				symbolicIdField.setHidden(true);
-				symbolicIdField.setAttribute("rawName", "symbolicId");
-				dataSource.addField(symbolicIdField);
-				
-				DataSourceField priorKeyField = new DataSourceTextField("priorKey");
-				priorKeyField.setCanEdit(false);
-				priorKeyField.setHidden(true);
-				priorKeyField.setAttribute("rawName", "priorKey");
-				dataSource.addField(priorKeyField);
-				
-				//Add a hidden field to store the polymorphic type for this entity
-				DataSourceField typeField = new DataSourceTextField("_type");
-				typeField.setCanEdit(false);
-				typeField.setHidden(true);
-				typeField.setAttribute("rawName", "_type");
-				dataSource.addField(typeField);
-				dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
-				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
+            @Override
+            protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                super.onError(opType, requestId, request, response, caught);
+                if (cb != null) {
+                    cb.onFailure(caught);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
+        AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
+            
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
+
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
+
+            public void onSuccess(DynamicResultSet result) {
+                super.onSuccess(result);
+                ClassMetadata metadata = result.getClassMetaData();
+                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.MAPSTRUCTUREKEY, MergedPropertyType.MAPSTRUCTUREVALUE}, overrideFieldSort);
+                
+                DataSourceField symbolicIdField = new DataSourceTextField("symbolicId");
+                symbolicIdField.setCanEdit(false);
+                symbolicIdField.setHidden(true);
+                symbolicIdField.setAttribute("rawName", "symbolicId");
+                dataSource.addField(symbolicIdField);
+                
+                DataSourceField priorKeyField = new DataSourceTextField("priorKey");
+                priorKeyField.setCanEdit(false);
+                priorKeyField.setHidden(true);
+                priorKeyField.setAttribute("rawName", "priorKey");
+                dataSource.addField(priorKeyField);
+                
+                //Add a hidden field to store the polymorphic type for this entity
+                DataSourceField typeField = new DataSourceTextField("_type");
+                typeField.setCanEdit(false);
+                typeField.setHidden(true);
+                typeField.setAttribute("rawName", "_type");
+                dataSource.addField(typeField);
+                dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
+                dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
 
                 if (cb != null) {
-				    cb.onSuccess(dataSource);
+                    cb.onSuccess(dataSource);
                 }
-			}
-		});
-	}
-	
-	@Override
-	public boolean isCompatible(OperationType operationType) {
-    	return OperationType.MAPSTRUCTURE.equals(operationType);
+            }
+        });
+    }
+    
+    @Override
+    public boolean isCompatible(OperationType operationType) {
+        return OperationType.MAPSTRUCTURE.equals(operationType);
     }
 }

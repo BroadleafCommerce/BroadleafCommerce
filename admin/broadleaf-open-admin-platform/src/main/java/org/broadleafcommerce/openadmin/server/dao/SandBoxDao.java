@@ -22,7 +22,7 @@ import org.broadleafcommerce.openadmin.server.domain.Site;
 
 public interface SandBoxDao {
 
-	public SandBox retrieve(Long id);
+    public SandBox retrieve(Long id);
 
     public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType);
 
