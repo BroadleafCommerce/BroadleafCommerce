@@ -76,7 +76,7 @@ public class FieldDataSourceWrapper extends DataSource {
                 }
             }
             if (!fields[j].getTitle().startsWith(friendlyName) && !friendlyName.contains("DTO")) {
-                fields[j].setTitle(friendlyName + " " + fields[j].getTitle());
+                fields[j].setTitle(friendlyName + " - " + fields[j].getTitle());
             }
 
             Record record = new Record();

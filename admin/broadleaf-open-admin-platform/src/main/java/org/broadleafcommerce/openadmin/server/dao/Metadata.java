@@ -136,6 +136,21 @@ public class Metadata {
                 metadata.setExcluded(false);
                 attributes.put(field.getName(), metadata);
             }
+
+            FieldMetadata metadata = attributes.get(field.getName());
+            AdminPresentationClass adminPresentationClass;
+            if (parentClass != null) {
+                metadata.setOwningClass(parentClass.getName());
+                adminPresentationClass = parentClass.getAnnotation(AdminPresentationClass.class);
+            } else {
+                adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
+            }
+            if (adminPresentationClass != null) {
+                String friendlyName = adminPresentationClass.friendlyName();
+                if (!StringUtils.isEmpty(friendlyName) && StringUtils.isEmpty(metadata.getOwningClassFriendlyName())) {
+                    metadata.setOwningClassFriendlyName(friendlyName);
+                }
+            }
         }
         return attributes;
     }
@@ -506,19 +521,6 @@ public class Metadata {
 
         metadata.setName(field.getName());
         metadata.setTargetClass(targetClass.getName());
-        AdminPresentationClass adminPresentationClass;
-        if (parentClass != null) {
-            metadata.setOwningClass(parentClass.getName());
-            adminPresentationClass = parentClass.getAnnotation(AdminPresentationClass.class);
-        } else {
-            adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
-        }
-        if (adminPresentationClass != null) {
-            String friendlyName = adminPresentationClass.friendlyName();
-            if (!StringUtils.isEmpty(friendlyName)) {
-                metadata.setOwningClassFriendlyName(friendlyName);
-            }
-        }
 
         metadata.setFieldName(field.getName());
 
@@ -678,20 +680,6 @@ public class Metadata {
         metadata.setPrefix(prefix);
         
         metadata.setTargetClass(targetClass.getName());
-        AdminPresentationClass adminPresentationClass;
-        if (parentClass != null) {
-            metadata.setOwningClass(parentClass.getName());
-            adminPresentationClass = parentClass.getAnnotation(AdminPresentationClass.class);
-        } else {
-            adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
-        }
-        if (adminPresentationClass != null) {
-            String friendlyName = adminPresentationClass.friendlyName();
-            if (!StringUtils.isEmpty(friendlyName)) {
-                metadata.setOwningClassFriendlyName(friendlyName);
-            }
-        }
-
         metadata.setFieldName(field.getName());
         org.broadleafcommerce.openadmin.client.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.client.dto.OperationTypes(OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP, OperationType.MAP);
         if (map.getAddType() != null) {
@@ -942,20 +930,6 @@ public class Metadata {
             metadata = new AdornedTargetCollectionMetadata();
         }
         metadata.setTargetClass(targetClass.getName());
-        AdminPresentationClass adminPresentationClass;
-        if (parentClass != null) {
-            metadata.setOwningClass(parentClass.getName());
-            adminPresentationClass = parentClass.getAnnotation(AdminPresentationClass.class);
-        } else {
-            adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
-        }
-        if (adminPresentationClass != null) {
-            String friendlyName = adminPresentationClass.friendlyName();
-            if (!StringUtils.isEmpty(friendlyName)) {
-                metadata.setOwningClassFriendlyName(friendlyName);
-            }
-        }
-
         metadata.setFieldName(field.getName());
 
         if (adornedTargetCollectionMetadata.getReadOnly() != null) {
@@ -1157,20 +1131,6 @@ public class Metadata {
             metadata = new BasicCollectionMetadata();
         }
         metadata.setTargetClass(targetClass.getName());
-        AdminPresentationClass adminPresentationClass;
-        if (parentClass != null) {
-            metadata.setOwningClass(parentClass.getName());
-            adminPresentationClass = parentClass.getAnnotation(AdminPresentationClass.class);
-        } else {
-            adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
-        }
-        if (adminPresentationClass != null) {
-            String friendlyName = adminPresentationClass.friendlyName();
-            if (!StringUtils.isEmpty(friendlyName)) {
-                metadata.setOwningClassFriendlyName(friendlyName);
-            }
-        }
-
         metadata.setFieldName(field.getName());
         if (collectionMetadata.getReadOnly() != null) {
             metadata.setMutable(!collectionMetadata.getReadOnly());
