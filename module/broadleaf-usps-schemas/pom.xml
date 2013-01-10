@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>module</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.6-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>broadleaf-usps-schemas</artifactId>
-	<name>BroadleafCommerce USPS Schemas</name>
-	<description>BroadleafCommerce USPS Schemas</description>
+    <parent>
+        <artifactId>module</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.5.6-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>broadleaf-usps-schemas</artifactId>
+    <name>BroadleafCommerce USPS Schemas</name>
+    <description>BroadleafCommerce USPS Schemas</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
         <license>
@@ -46,65 +46,65 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xmlbeans-maven-plugin</artifactId>
-				<version>2.3.3</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>xmlbeans</goal>
-						</goals>
-					</execution>
-				</executions>
-				<inherited>true</inherited>
-				<configuration>
-					<schemaDirectory>${basedir}/src/main/resources</schemaDirectory>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.zeroturnaround</groupId>
-				<artifactId>javarebel-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>generate-rebel-xml</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<relativePath>../../</relativePath>
-					<rootPath>$${rebel.root}</rootPath>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${basedir}/generated-sources/xmlbeans</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.xmlbeans</groupId>
-			<artifactId>xmlbeans</artifactId>
-		</dependency>
-	</dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xmlbeans-maven-plugin</artifactId>
+                <version>2.3.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>xmlbeans</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <inherited>true</inherited>
+                <configuration>
+                    <schemaDirectory>${basedir}/src/main/resources</schemaDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>javarebel-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <relativePath>../../</relativePath>
+                    <rootPath>$${rebel.root}</rootPath>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/generated-sources/xmlbeans</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+        </dependency>
+    </dependencies>
 </project>

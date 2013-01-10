@@ -26,14 +26,14 @@ import java.io.Serializable;
  */
 public class DynamicResultSet implements Serializable {
     
-	private static final long serialVersionUID = 1L;
-	
-	private ClassMetadata classMetaData;
-	private Entity[] records;
+    private static final long serialVersionUID = 1L;
+    
+    private ClassMetadata classMetaData;
+    private Entity[] records;
     private Integer totalRecords;
     
     public DynamicResultSet() {
-    	//do nothing
+        //do nothing
     }
     
     public DynamicResultSet(ClassMetadata classMetaData, Entity[] records, Integer totalRecords) {
@@ -51,28 +51,28 @@ public class DynamicResultSet implements Serializable {
         this.classMetaData = classMetaData;
     }
 
-	public ClassMetadata getClassMetaData() {
-		return classMetaData;
-	}
+    public ClassMetadata getClassMetaData() {
+        return classMetaData;
+    }
 
-	public void setClassMetaData(ClassMetadata classMetaData) {
-		this.classMetaData = classMetaData;
-	}
+    public void setClassMetaData(ClassMetadata classMetaData) {
+        this.classMetaData = classMetaData;
+    }
 
-	public Integer getTotalRecords() {
-		return totalRecords;
-	}
+    public Integer getTotalRecords() {
+        return totalRecords;
+    }
 
-	public void setTotalRecords(Integer totalRecords) {
-		this.totalRecords = totalRecords;
-	}
+    public void setTotalRecords(Integer totalRecords) {
+        this.totalRecords = totalRecords;
+    }
 
-	public Entity[] getRecords() {
-		return records;
-	}
+    public Entity[] getRecords() {
+        return records;
+    }
 
-	public void setRecords(Entity[] records) {
-		this.records = records;
-	}
+    public void setRecords(Entity[] records) {
+        this.records = records;
+    }
     
 }

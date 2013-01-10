@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="MyCompanySite" default="build-app" basedir="."
-	xmlns:artifact="antlib:org.apache.maven.artifact.ant"
-	xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
-	
-	<!-- import the ant / maven integration tasks -->
-	<path id="maven-ant-tasks.classpath" path="../lib/maven-ant-tasks-2.1.3.jar" />
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
-	
-	<property name="project.root" location="../"/>
-	
-	<property file="../build.properties"/>
+    xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+    xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
+    
+    <!-- import the ant / maven integration tasks -->
+    <path id="maven-ant-tasks.classpath" path="../lib/maven-ant-tasks-2.1.3.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+    
+    <property name="project.root" location="../"/>
+    
+    <property file="../build.properties"/>
 
-	<target name="jetty-demo" depends="start-db">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
+    <target name="jetty-demo" depends="start-db">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
 
-	<target name="jetty-debug" depends="start-db">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
+    <target name="jetty-debug" depends="start-db">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
 
     <target name="jetty-demo-jrebel" depends="start-db">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
 
-	<target name="jetty-demo-yourkit">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
+    <target name="jetty-demo-yourkit">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
 
     <target name="jetty-demo-jrebel-yourkit">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
-	
-	<target name="jetty-stop">
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
-			<arg value="jetty:stop"/>
-		</artifact:mvn>
-	</target>
-	
-	<!-- Project Reference Targets -->
-	<!-- build the application and create the war artifact -->
-	<target name="build-app">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
-			<arg value="-Dmaven.test.skip=true"/>
-			<arg value="install"/>
-		</artifact:mvn>
-	</target>
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
+            <arg value="compile"/>
+            <arg value="war:exploded"/>
+            <arg value="jetty:run"/>
+        </artifact:mvn>
+    </target>
+    
+    <target name="jetty-stop">
+        <artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
+            <arg value="jetty:stop"/>
+        </artifact:mvn>
+    </target>
+    
+    <!-- Project Reference Targets -->
+    <!-- build the application and create the war artifact -->
+    <target name="build-app">
+        <delete dir="war/WEB-INF/lib"/>
+        <artifact:mvn mavenHome="${maven.home}" fork="true">
+            <arg value="-Dmaven.test.skip=true"/>
+            <arg value="install"/>
+        </artifact:mvn>
+    </target>
 
     <target name="start-db">
         <!-- retrieve the web project pom file and import its jar dependencies -->

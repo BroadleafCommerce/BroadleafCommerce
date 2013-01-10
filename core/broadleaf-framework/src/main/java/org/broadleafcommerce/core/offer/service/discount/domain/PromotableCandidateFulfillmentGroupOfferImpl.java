@@ -28,27 +28,27 @@ import java.util.List;
 
 public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableCandidateFulfillmentGroupOffer {
 
-	private static final long serialVersionUID = 1L;
-	
-	protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
-	protected CandidateFulfillmentGroupOffer delegate;
-	protected PromotableFulfillmentGroup promotableFulfillmentGroup;
+    private static final long serialVersionUID = 1L;
+    
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+    protected CandidateFulfillmentGroupOffer delegate;
+    protected PromotableFulfillmentGroup promotableFulfillmentGroup;
     protected Money discountedAmount;
-	
-	public PromotableCandidateFulfillmentGroupOfferImpl(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup) {
-		this.delegate = candidateFulfillmentGroupOffer;
-		this.promotableFulfillmentGroup = promotableFulfillmentGroup;
-	}
-	
-	public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
-		return candidateQualifiersMap;
-	}
+    
+    public PromotableCandidateFulfillmentGroupOfferImpl(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup) {
+        this.delegate = candidateFulfillmentGroupOffer;
+        this.promotableFulfillmentGroup = promotableFulfillmentGroup;
+    }
+    
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
+        return candidateQualifiersMap;
+    }
 
-	public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
-		this.candidateQualifiersMap = candidateItemsMap;
-	}
-	
-	public void computeDiscountedPriceAndAmount() {
+    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
+        this.candidateQualifiersMap = candidateItemsMap;
+    }
+    
+    public void computeDiscountedPriceAndAmount() {
         if (delegate.getOffer() != null && delegate.getFulfillmentGroup() != null){
 
             if (delegate.getFulfillmentGroup().getRetailShippingPrice() != null) {
@@ -73,21 +73,21 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
             }
         }
     }
-	
-	public void reset() {
-		delegate = null;
-	}
-	
-	public CandidateFulfillmentGroupOffer getDelegate() {
-		return delegate;
-	}
-	
-	public Money getDiscountedPrice() {
-		if (delegate.getDiscountedPrice() == null) {
+    
+    public void reset() {
+        delegate = null;
+    }
+    
+    public CandidateFulfillmentGroupOffer getDelegate() {
+        return delegate;
+    }
+    
+    public Money getDiscountedPrice() {
+        if (delegate.getDiscountedPrice() == null) {
             computeDiscountedPriceAndAmount();
         }
-		return delegate.getDiscountedPrice();
-	}
+        return delegate.getDiscountedPrice();
+    }
 
     public Money getDiscountedAmount() {
         if (delegate.getDiscountedPrice() == null) {
@@ -96,15 +96,15 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
         return discountedAmount;
     }
 
-	public Offer getOffer() {
-		return delegate.getOffer();
-	}
-	
-	public PromotableFulfillmentGroup getFulfillmentGroup() {
-		return promotableFulfillmentGroup;
-	}
+    public Offer getOffer() {
+        return delegate.getOffer();
+    }
+    
+    public PromotableFulfillmentGroup getFulfillmentGroup() {
+        return promotableFulfillmentGroup;
+    }
 
     public int getPriority() {
-		return delegate.getPriority();
-	}
+        return delegate.getPriority();
+    }
 }

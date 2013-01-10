@@ -24,26 +24,26 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.money.Money;
 
 public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment {
-	
-	private static final long serialVersionUID = 1L;
-	
-	protected OrderAdjustment delegate;
-	protected PromotableOrder order;
-	
-	public PromotableOrderAdjustmentImpl(OrderAdjustment orderAdjustment, PromotableOrder order) {
-		this.delegate = orderAdjustment;
-		this.order = order;
-	}
-	
-	public void reset() {
-		delegate = null;
-	}
-	
-	public OrderAdjustment getDelegate() {
-		return delegate;
-	}
+    
+    private static final long serialVersionUID = 1L;
+    
+    protected OrderAdjustment delegate;
+    protected PromotableOrder order;
+    
+    public PromotableOrderAdjustmentImpl(OrderAdjustment orderAdjustment, PromotableOrder order) {
+        this.delegate = orderAdjustment;
+        this.order = order;
+    }
+    
+    public void reset() {
+        delegate = null;
+    }
+    
+    public OrderAdjustment getDelegate() {
+        return delegate;
+    }
 
-	/*
+    /*
      * Calculates the value of the adjustment
      */
     public void computeAdjustmentValue() {
@@ -53,26 +53,26 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
                 adjustmentPrice = order.getSubTotal();
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-            	delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
+                delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
                 BigDecimal offerValue = adjustmentPrice.getAmount().subtract(delegate.getOffer().getValue());
-            	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
+                delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                 BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
-            	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
+                delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (adjustmentPrice.lessThan(delegate.getValue())) {
-            	delegate.setValue(adjustmentPrice);
+                delegate.setValue(adjustmentPrice);
             }
         }
     }
     
     public Money getValue() {
-		if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
-			computeAdjustmentValue();
-		}
-		return delegate.getValue();
-	}
+        if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
+            computeAdjustmentValue();
+        }
+        return delegate.getValue();
+    }
 }

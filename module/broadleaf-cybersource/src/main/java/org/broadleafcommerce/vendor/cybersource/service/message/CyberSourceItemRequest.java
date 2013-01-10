@@ -25,93 +25,93 @@ import org.broadleafcommerce.money.Money;
  */
 public class CyberSourceItemRequest implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private Long id;
-	private String shortDescription;
-	private String description;
-	private Money unitPrice;
-	private Long quantity;
-	
-	public String getShortDescription() {
-		return shortDescription;
-	}
-	
-	public void setShortDescription(String shortDescription) {
-		this.shortDescription = shortDescription;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public Money getUnitPrice() {
-		return unitPrice;
-	}
-	
-	public void setUnitPrice(Money unitPrice) {
-		this.unitPrice = unitPrice;
-	}
-	
-	public Long getQuantity() {
-		return quantity;
-	}
-	
-	public void setQuantity(Long quantity) {
-		this.quantity = quantity;
-	}
+    private Long id;
+    private String shortDescription;
+    private String description;
+    private Money unitPrice;
+    private Long quantity;
+    
+    public String getShortDescription() {
+        return shortDescription;
+    }
+    
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public Money getUnitPrice() {
+        return unitPrice;
+    }
+    
+    public void setUnitPrice(Money unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+    
+    public Long getQuantity() {
+        return quantity;
+    }
+    
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	protected void setId(Long id) {
-		/*
-		 * This value should only be controlled by the 
-		 * Broadleaf internal CyberSource implementation code
-		 */
-		this.id = id;
-	}
+    protected void setId(Long id) {
+        /*
+         * This value should only be controlled by the 
+         * Broadleaf internal CyberSource implementation code
+         */
+        this.id = id;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
-		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+        result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CyberSourceItemRequest other = (CyberSourceItemRequest) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (quantity == null) {
-			if (other.quantity != null)
-				return false;
-		} else if (!quantity.equals(other.quantity))
-			return false;
-		if (unitPrice == null) {
-			if (other.unitPrice != null)
-				return false;
-		} else if (!unitPrice.equals(other.unitPrice))
-			return false;
-		return true;
-	}
-	
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CyberSourceItemRequest other = (CyberSourceItemRequest) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (quantity == null) {
+            if (other.quantity != null)
+                return false;
+        } else if (!quantity.equals(other.quantity))
+            return false;
+        if (unitPrice == null) {
+            if (other.unitPrice != null)
+                return false;
+        } else if (!unitPrice.equals(other.unitPrice))
+            return false;
+        return true;
+    }
+    
 }

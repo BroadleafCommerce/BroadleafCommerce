@@ -48,22 +48,22 @@ public abstract class EntityServiceAsyncCallback<T> extends AbstractCallback<T> 
     }
     
     @Override
-	protected void onSecurityException(final ApplicationSecurityException exception) {
+    protected void onSecurityException(final ApplicationSecurityException exception) {
         super.onSecurityException(exception);
         onError(opType, requestId, request, response, exception, false);
-	}
+    }
 
-	@Override
-	protected void onOtherException(Throwable exception) {
-		super.onOtherException(exception);
-		onError(opType, requestId, request, response, exception, false);
-	}
+    @Override
+    protected void onOtherException(Throwable exception) {
+        super.onOtherException(exception);
+        onError(opType, requestId, request, response, exception, false);
+    }
 
     protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
         onError(opType, requestId, request, response, caught, true);
     }
 
-	protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught, boolean showWarning) {
+    protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught, boolean showWarning) {
         response.setStatus(RPCResponse.STATUS_FAILURE);
         dataSource.processResponse(requestId, response);
 

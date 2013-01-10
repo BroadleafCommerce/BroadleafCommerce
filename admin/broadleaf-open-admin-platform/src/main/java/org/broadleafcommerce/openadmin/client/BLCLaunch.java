@@ -29,14 +29,14 @@ public class BLCLaunch implements EntryPoint {
     private static String MODULE_FRAGMENT = "moduleKey=";
 
 
-	public void onModuleLoad() {
-		if (BLCMain.SPLASH_PROGRESS != null) {
-			BLCMain.SPLASH_PROGRESS.startProgress();
-		}
+    public void onModuleLoad() {
+        if (BLCMain.SPLASH_PROGRESS != null) {
+            BLCMain.SPLASH_PROGRESS.startProgress();
+        }
 
         String currentModulePage = History.getToken();
         BLCMain.drawCurrentState(getSelectedModule(currentModulePage), getSelectedPage(currentModulePage));
-	}
+    }
 
     public static String getSelectedModule(String currentModulePage) {
         String moduleParam = null;

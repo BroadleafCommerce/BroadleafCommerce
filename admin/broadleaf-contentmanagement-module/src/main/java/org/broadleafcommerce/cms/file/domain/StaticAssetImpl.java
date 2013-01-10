@@ -133,7 +133,7 @@ public class StaticAssetImpl implements StaticAsset {
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "ORIG_SANDBOX_ID")
     @AdminPresentation(excluded = true)
-	protected SandBox originalSandBox;
+    protected SandBox originalSandBox;
 
     @Column (name = "ARCHIVED_FLAG")
     @AdminPresentation(friendlyName="Archived Flag", visibility = VisibilityEnum.HIDDEN_ALL)

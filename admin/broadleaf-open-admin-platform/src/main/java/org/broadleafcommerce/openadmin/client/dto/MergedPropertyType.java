@@ -22,8 +22,8 @@ package org.broadleafcommerce.openadmin.client.dto;
  *
  */
 public enum MergedPropertyType {
-	PRIMARY,
-	JOINSTRUCTURE,
-	MAPSTRUCTUREKEY,
-	MAPSTRUCTUREVALUE
+    PRIMARY,
+    JOINSTRUCTURE,
+    MAPSTRUCTUREKEY,
+    MAPSTRUCTUREVALUE
 }

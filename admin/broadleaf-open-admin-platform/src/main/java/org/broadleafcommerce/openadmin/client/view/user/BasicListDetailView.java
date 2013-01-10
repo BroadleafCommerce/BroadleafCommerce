@@ -37,26 +37,26 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
  */
 public abstract class BasicListDetailView extends HLayout implements Instantiable {
 
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
+    protected DynamicFormView dynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
 
-	public BasicListDetailView() {
-		setHeight100();
-		setWidth100();
-	}
+    public BasicListDetailView() {
+        setHeight100();
+        setWidth100();
+    }
 
     public abstract String getViewPrefix();
     public abstract String getFormTitle();
     public abstract String getListTitle();
-	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID(getViewPrefix()+"permissionLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
+    
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID(getViewPrefix()+"permissionLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("50%");
+        leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(getListTitle(), entityDataSource, false, false);
+        listDisplay = new DynamicEntityListView(getListTitle(), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -76,17 +76,17 @@ public abstract class BasicListDetailView extends HLayout implements Instantiabl
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
-	}
+    }
 
-	public Canvas asCanvas() {
-		return this;
-	}
+    public Canvas asCanvas() {
+        return this;
+    }
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+    public DynamicFormDisplay getDynamicFormDisplay() {
+        return dynamicFormDisplay;
+    }
+    
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
 }

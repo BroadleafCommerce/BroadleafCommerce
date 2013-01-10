@@ -90,7 +90,7 @@ public class ViewOrderController {
         if (orderFulfillmentGroups != null ) {
             for (FulfillmentGroup fulfillmentGroup : orderFulfillmentGroups)  {
                 if (fulfillmentGroup.getAddress().getPostalCode().equals(findOrderForm.getPostalCode())) {
-		            return viewOrderDetails(model, request, order.getOrderNumber());
+                    return viewOrderDetails(model, request, order.getOrderNumber());
                 }
             }
         }

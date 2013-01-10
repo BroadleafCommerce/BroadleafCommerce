@@ -34,24 +34,24 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class OrderItemEntityModule extends BasicClientEntityModule {
 
-	/**
-	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param persistencePerspective
-	 * @param service
-	 */
-	public OrderItemEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
-	}
+    /**
+     * @param ceilingEntityFullyQualifiedClassname
+     * @param persistencePerspective
+     * @param service
+     */
+    public OrderItemEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+        super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
+    }
 
-	@Override
-	public Record updateRecord(Entity entity, Record record, Boolean updateId) {
-		Record temp = super.updateRecord(entity, record, updateId);
-		if (Arrays.binarySearch(entity.getType(), EntityImplementations.BUNDLE_ORDER_ITEM) >= 0) {
-			((ListGridRecord) temp).setCanExpand(true);
-		} else {
-			((ListGridRecord) temp).setCanExpand(false);
-		}
-		return temp;
-	}
+    @Override
+    public Record updateRecord(Entity entity, Record record, Boolean updateId) {
+        Record temp = super.updateRecord(entity, record, updateId);
+        if (Arrays.binarySearch(entity.getType(), EntityImplementations.BUNDLE_ORDER_ITEM) >= 0) {
+            ((ListGridRecord) temp).setCanExpand(true);
+        } else {
+            ((ListGridRecord) temp).setCanExpand(false);
+        }
+        return temp;
+    }
 
 }

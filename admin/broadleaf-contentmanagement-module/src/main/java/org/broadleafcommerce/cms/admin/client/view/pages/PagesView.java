@@ -44,18 +44,18 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
     protected ComboBoxItem currentLocale = new ComboBoxItem();
 
     public PagesView() {
-		setHeight100();
-		setWidth100();
-	}
+        setHeight100();
+        setWidth100();
+    }
 
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("pagesLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("40%");
-		leftVerticalLayout.setShowResizeBar(true);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("pagesLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("40%");
+        leftVerticalLayout.setShowResizeBar(true);
 
-		listDisplay = new DynamicEntityListView(entityDataSource);
+        listDisplay = new DynamicEntityListView(entityDataSource);
         listDisplay.getGrid().setHoverMoveWithMouse(true);
         listDisplay.getGrid().setCanHover(true);
         listDisplay.getGrid().setShowHover(true);
@@ -76,19 +76,19 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
 
         addMember(leftVerticalLayout);
         addMember(dynamicFormDisplay);
-	}
+    }
 
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
 
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
+        return dynamicFormDisplay;
+    }
 
     public ComboBoxItem getCurrentLocale() {
         return currentLocale;

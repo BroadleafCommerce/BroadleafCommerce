@@ -37,7 +37,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
             GWT.log("Service call success:\n" + result.toString());
         }
         if (BLCMain.NON_MODAL_PROGRESS.isActive()) {
-        	BLCMain.NON_MODAL_PROGRESS.stopProgress();
+            BLCMain.NON_MODAL_PROGRESS.stopProgress();
         }
     }
 
@@ -107,10 +107,10 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
         //if (BLCMain.DEBUG) MessageBox.alert(msg, exception.getMessage(), null);
         GWT.log(msg, exception);
         if (BLCMain.MODAL_PROGRESS.isActive()) {
-        	BLCMain.MODAL_PROGRESS.stopProgress();
+            BLCMain.MODAL_PROGRESS.stopProgress();
         }
         if (BLCMain.NON_MODAL_PROGRESS.isActive()) {
-        	BLCMain.NON_MODAL_PROGRESS.stopProgress();
+            BLCMain.NON_MODAL_PROGRESS.stopProgress();
         }
     }
 }

@@ -61,11 +61,11 @@ public final class FilterCriterionProviders {
     
     public static final FilterCriterionProvider BETWEEN = new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-        	if (directValues.length > 1) {
-				return Restrictions.between(targetPropertyName, directValues[0], directValues[1]);
-        	} else {
-        		return Restrictions.eq(targetPropertyName, directValues[0]);
-        	}
+            if (directValues.length > 1) {
+                return Restrictions.between(targetPropertyName, directValues[0], directValues[1]);
+            } else {
+                return Restrictions.eq(targetPropertyName, directValues[0]);
+            }
         }
     };
     

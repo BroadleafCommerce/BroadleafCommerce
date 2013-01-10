@@ -54,10 +54,10 @@ import java.util.LinkedHashMap;
  *
  */
 public class MasterView extends VLayout {
-	
-	protected Canvas canvas;
-	protected ToolStrip bottomBar;
-	protected Label status;
+    
+    protected Canvas canvas;
+    protected ToolStrip bottomBar;
+    protected Label status;
 
     protected Label selectedPrimaryMenuOption;
     protected Label selectedSecondaryMenuOption;
@@ -268,9 +268,9 @@ public class MasterView extends VLayout {
                         BLCMain.setCurrentModuleKey(moduleKey);
                         buildSecondaryMenu(null);
                         AppController.getInstance().go(canvas, module.getPages(), null, false);
-	                 }
+                     }
                 }
-	        }
+            }
         });
 
         return tmp;
@@ -327,7 +327,7 @@ public class MasterView extends VLayout {
             MenuItem tempMenuItem = new MenuItem(languages[i]);
             menuItems[i] = tempMenuItem;
         }
-	    localeMenu.setData(menuItems);
+        localeMenu.setData(menuItems);
         localeMenu.setShowIcons(false);
 
         String currentLanguage = languages[0];
@@ -377,7 +377,7 @@ public class MasterView extends VLayout {
         logoutLink.setBaseStyle("userLogout");
 
 
-	    logoutLink.addClickHandler(new ClickHandler() {
+        logoutLink.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 UrlBuilder builder = Window.Location.createUrlBuilder();
@@ -410,19 +410,19 @@ public class MasterView extends VLayout {
 
     }
 
-	public Canvas getContainer() {
-		return canvas;
-	}
+    public Canvas getContainer() {
+        return canvas;
+    }
 
-	public ToolStrip getBottomBar() {
-		return bottomBar;
-	}
+    public ToolStrip getBottomBar() {
+        return bottomBar;
+    }
 
-	public Label getStatus() {
-		return status;
-	}
-	
-	public void clearStatus() {
-		status.setContents("");
-	}
+    public Label getStatus() {
+        return status;
+    }
+    
+    public void clearStatus() {
+        status.setContents("");
+    }
 }

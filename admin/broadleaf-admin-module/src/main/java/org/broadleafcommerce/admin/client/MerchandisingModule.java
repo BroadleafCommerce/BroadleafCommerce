@@ -30,56 +30,56 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
  *
  */
 public class MerchandisingModule extends AbstractModule {
-	
-	public void onModuleLoad() {
+    
+    public void onModuleLoad() {
         addConstants(GWT.<ConstantsWithLookup>create(MerchandisingMessages.class));
         addConstants(GWT.<ConstantsWithLookup>create(PromotionMessages.class));
-		
-		setModuleTitle(BLCMain.getMessageManager().getString("merchandisingModuleTitle"));
-		setModuleKey("BLCMerchandising");
-		
-		List<String> categoryPermissions = new ArrayList<String>();
-		categoryPermissions.add("PERMISSION_CREATE_CATEGORY");
-		categoryPermissions.add("PERMISSION_UPDATE_CATEGORY");
+        
+        setModuleTitle(BLCMain.getMessageManager().getString("merchandisingModuleTitle"));
+        setModuleKey("BLCMerchandising");
+        
+        List<String> categoryPermissions = new ArrayList<String>();
+        categoryPermissions.add("PERMISSION_CREATE_CATEGORY");
+        categoryPermissions.add("PERMISSION_UPDATE_CATEGORY");
         categoryPermissions.add("PERMISSION_DELETE_CATEGORY");
         categoryPermissions.add("PERMISSION_READ_CATEGORY");
-		setSection(
+        setSection(
             BLCMain.getMessageManager().getString("categoryMainTitle"),
-			"category",
-			"org.broadleafcommerce.admin.client.view.catalog.category.CategoryView",
-			"categoryPresenter",
-			"org.broadleafcommerce.admin.client.presenter.catalog.category.CategoryPresenter",
-			categoryPermissions
-		);
-		List<String> productPermissions = new ArrayList<String>();
-		productPermissions.add("PERMISSION_CREATE_PRODUCT");
-		productPermissions.add("PERMISSION_UPDATE_PRODUCT");
+            "category",
+            "org.broadleafcommerce.admin.client.view.catalog.category.CategoryView",
+            "categoryPresenter",
+            "org.broadleafcommerce.admin.client.presenter.catalog.category.CategoryPresenter",
+            categoryPermissions
+        );
+        List<String> productPermissions = new ArrayList<String>();
+        productPermissions.add("PERMISSION_CREATE_PRODUCT");
+        productPermissions.add("PERMISSION_UPDATE_PRODUCT");
         productPermissions.add("PERMISSION_DELETE_PRODUCT");
         productPermissions.add("PERMISSION_READ_PRODUCT");
-		setSection(
+        setSection(
             BLCMain.getMessageManager().getString("productMainTitle"),
-			"product",
-			"org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuView",
-			"productPresenter",
-			"org.broadleafcommerce.admin.client.presenter.catalog.product.OneToOneProductSkuPresenter",
-			productPermissions
-		);
+            "product",
+            "org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuView",
+            "productPresenter",
+            "org.broadleafcommerce.admin.client.presenter.catalog.product.OneToOneProductSkuPresenter",
+            productPermissions
+        );
 
-		List<String> offerPermissions = new ArrayList<String>();
-		offerPermissions.add("PERMISSION_CREATE_PROMOTION");
-		offerPermissions.add("PERMISSION_UPDATE_PROMOTION");
+        List<String> offerPermissions = new ArrayList<String>();
+        offerPermissions.add("PERMISSION_CREATE_PROMOTION");
+        offerPermissions.add("PERMISSION_UPDATE_PROMOTION");
         offerPermissions.add("PERMISSION_DELETE_PROMOTION");
         offerPermissions.add("PERMISSION_READ_PROMOTION");
-		setSection(
+        setSection(
             BLCMain.getMessageManager().getString("promotionMainTitle"),
-			"offer",
-			"org.broadleafcommerce.admin.client.view.promotion.OfferView",
-			"offerPresenter",
-			"org.broadleafcommerce.admin.client.presenter.promotion.OfferPresenter",
-			offerPermissions
-		);
+            "offer",
+            "org.broadleafcommerce.admin.client.view.promotion.OfferView",
+            "offerPresenter",
+            "org.broadleafcommerce.admin.client.presenter.promotion.OfferPresenter",
+            offerPermissions
+        );
 
-		registerModule();
-	}
+        registerModule();
+    }
 
 }

@@ -30,18 +30,18 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface ConfigurationItem {
-	
-	/**
-	 * The name of the validation configuration item
-	 * 
-	 * @return the config item name
-	 */
-	String itemName();
-	
-	/**
-	 * The value for the validation configuration item
-	 * 
-	 * @return the config item value
-	 */
-	String itemValue();
+    
+    /**
+     * The name of the validation configuration item
+     * 
+     * @return the config item name
+     */
+    String itemName();
+    
+    /**
+     * The value for the validation configuration item
+     * 
+     * @return the config item value
+     */
+    String itemValue();
 }

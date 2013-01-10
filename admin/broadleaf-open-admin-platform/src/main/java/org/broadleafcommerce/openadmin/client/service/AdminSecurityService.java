@@ -27,6 +27,6 @@ import org.broadleafcommerce.openadmin.client.security.AdminUser;
  */
 public interface AdminSecurityService extends RemoteService {
 
-	public AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException;
-	
+    public AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException;
+    
 }

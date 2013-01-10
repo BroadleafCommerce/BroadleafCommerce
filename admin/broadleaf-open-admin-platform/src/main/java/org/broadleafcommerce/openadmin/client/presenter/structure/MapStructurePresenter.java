@@ -44,10 +44,10 @@ import java.util.Map;
  */
 public class MapStructurePresenter extends AbstractSubPresentable {
 
-	protected MapStructureEntityEditDialog entityEditDialog;
-	protected String entityEditDialogTitle;
-	protected Map<String, Object> initialValues = new HashMap<String, Object>(10);
-	protected String[] gridFields;
+    protected MapStructureEntityEditDialog entityEditDialog;
+    protected String entityEditDialogTitle;
+    protected Map<String, Object> initialValues = new HashMap<String, Object>(10);
+    protected String[] gridFields;
     protected HandlerRegistration dataArrivedHandlerRegistration;
     protected HandlerRegistration selectionChangedHandlerRegistration;
     protected HandlerRegistration removeClickedHandlerRegistration;
@@ -55,34 +55,34 @@ public class MapStructurePresenter extends AbstractSubPresentable {
     protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 
     public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle, Map<String, Object> initialValues) {
-		super(display, availableToTypes);
-		this.entityEditDialog = entityEditDialog;
-		this.entityEditDialogTitle = entityEditDialogTitle;
+        super(display, availableToTypes);
+        this.entityEditDialog = entityEditDialog;
+        this.entityEditDialogTitle = entityEditDialogTitle;
         if (initialValues != null) {
-		    this.initialValues.putAll(initialValues);
+            this.initialValues.putAll(initialValues);
         }
-	}
+    }
 
     public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle, Map<String, Object> initialValues) {
-		this(display, entityEditDialog, null, entityEditDialogTitle, initialValues);
-	}
+        this(display, entityEditDialog, null, entityEditDialogTitle, initialValues);
+    }
 
     public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle) {
-		this(display, entityEditDialog, availableToTypes, entityEditDialogTitle, null);
-	}
+        this(display, entityEditDialog, availableToTypes, entityEditDialogTitle, null);
+    }
 
     public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle) {
-		this(display, entityEditDialog, null, entityEditDialogTitle, null);
-	}
+        this(display, entityEditDialog, null, entityEditDialogTitle, null);
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
-		this.gridFields = gridFields;
-	}
-	
-	public void bind() {
+        display.getGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getGrid());
+        dataSource.setupGridFields(gridFields, editable);
+        this.gridFields = gridFields;
+    }
+    
+    public void bind() {
         if (display.getCanEdit()) {
             dataArrivedHandlerRegistration = display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
                 public void onDataArrived(DataArrivedEvent event) {
@@ -130,7 +130,7 @@ public class MapStructurePresenter extends AbstractSubPresentable {
                 }
             });
         }
-	}
+    }
 
     public HandlerRegistration getAddClickedHandlerRegistration() {
         return addClickedHandlerRegistration;

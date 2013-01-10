@@ -50,9 +50,9 @@ public class StaticAssetView implements View {
             String mimeType = (String) model.get("mimeType");
             response.setContentType(mimeType);
             if (!browserAssetCachingEnabled) {
-			    response.setHeader("Cache-Control","no-cache");
-	            response.setHeader("Pragma","no-cache");
-	            response.setDateHeader ("Expires", 0);
+                response.setHeader("Cache-Control","no-cache");
+                response.setHeader("Pragma","no-cache");
+                response.setDateHeader ("Expires", 0);
             }
             OutputStream os = response.getOutputStream();
             boolean eof = false;
@@ -65,10 +65,10 @@ public class StaticAssetView implements View {
                 }
             }
             os.flush();
-		} catch (Exception e) {
-			LOG.error("Unable to stream asset", e);
+        } catch (Exception e) {
+            LOG.error("Unable to stream asset", e);
             throw e;
-		} finally {
+        } finally {
             try {
                 bis.close();
             } catch (Throwable e) {

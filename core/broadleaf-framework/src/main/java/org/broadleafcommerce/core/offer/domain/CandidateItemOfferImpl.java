@@ -44,7 +44,7 @@ import org.hibernate.annotations.*;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
-	public static final Log LOG = LogFactory.getLog(CandidateItemOfferImpl.class);
+    public static final Log LOG = LogFactory.getLog(CandidateItemOfferImpl.class);
     public static final long serialVersionUID = 1L;
 
     @Id
@@ -110,40 +110,40 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     }
     
     public void setDiscountedPrice(Money discountedPrice) {
-		this.discountedPrice = discountedPrice.getAmount();
-	}
-	
-	public void checkCloneable(CandidateItemOffer itemOffer) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-		Method cloneMethod = itemOffer.getClass().getMethod("clone", new Class[]{});
-		if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !itemOffer.getClass().getName().startsWith("org.broadleafcommerce")) {
-			//subclass is not implementing the clone method
-			throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
-		}
-	}
-	
-	@Override
-	public CandidateItemOffer clone() {
-		//instantiate from the fully qualified name via reflection
-		CandidateItemOffer candidateItemOffer;
-		try {
-			candidateItemOffer = (CandidateItemOffer) Class.forName(this.getClass().getName()).newInstance();
-			try {
-				checkCloneable(candidateItemOffer);
-			} catch (CloneNotSupportedException e) {
-				LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + candidateItemOffer.getClass().getName(), e);
-			}
-			//candidateItemOffer.setCandidateQualifiersMap(getCandidateQualifiersMap());
-			//candidateItemOffer.setCandidateTargets(getCandidateTargets());
-			candidateItemOffer.setOffer(getOffer());
-			candidateItemOffer.setOrderItem(getOrderItem());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
- 		
- 		return candidateItemOffer;
-	}
-	
-	@Override
+        this.discountedPrice = discountedPrice.getAmount();
+    }
+    
+    public void checkCloneable(CandidateItemOffer itemOffer) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = itemOffer.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !itemOffer.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+        }
+    }
+    
+    @Override
+    public CandidateItemOffer clone() {
+        //instantiate from the fully qualified name via reflection
+        CandidateItemOffer candidateItemOffer;
+        try {
+            candidateItemOffer = (CandidateItemOffer) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(candidateItemOffer);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + candidateItemOffer.getClass().getName(), e);
+            }
+            //candidateItemOffer.setCandidateQualifiersMap(getCandidateQualifiersMap());
+            //candidateItemOffer.setCandidateTargets(getCandidateTargets());
+            candidateItemOffer.setOffer(getOffer());
+            candidateItemOffer.setOrderItem(getOrderItem());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        
+        return candidateItemOffer;
+    }
+    
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

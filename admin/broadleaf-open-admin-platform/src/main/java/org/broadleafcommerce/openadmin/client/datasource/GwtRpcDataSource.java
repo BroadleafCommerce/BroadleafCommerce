@@ -66,7 +66,7 @@ public abstract class GwtRpcDataSource
      * format <code>DSDataFormat.CUSTOM</code>.
      */
     public GwtRpcDataSource (String name) {
-    	super(name);
+        super(name);
         setDataProtocol (DSProtocol.CLIENTCUSTOM);
         setDataFormat (DSDataFormat.CUSTOM);
         setClientOnly (false);

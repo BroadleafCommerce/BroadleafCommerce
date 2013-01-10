@@ -31,7 +31,7 @@ import org.broadleafcommerce.presentation.BroadleafEnumerationType;
  * QUALIFIER_TARGET - Can be used as a qualifier and target in multiple promotions
  */
 public class OfferItemRestrictionRuleType implements Serializable, BroadleafEnumerationType {
-	
+    
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferItemRestrictionRuleType> TYPES = new HashMap<String, OfferItemRestrictionRuleType>();
@@ -53,7 +53,7 @@ public class OfferItemRestrictionRuleType implements Serializable, BroadleafEnum
     }
 
     public OfferItemRestrictionRuleType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -69,10 +69,10 @@ public class OfferItemRestrictionRuleType implements Serializable, BroadleafEnum
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

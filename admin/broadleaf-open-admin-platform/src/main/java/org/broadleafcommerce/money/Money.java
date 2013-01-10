@@ -27,7 +27,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
-	
+    
     private static final long serialVersionUID = 1L;
 
     private BigDecimal amount;
@@ -102,9 +102,9 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         }
         this.currency = currency;
         if (amount.compareTo(new BigDecimal(".01")) > -1) {
-        	this.amount = BankersRounding.setScale(amount);
+            this.amount = BankersRounding.setScale(amount);
         } else {
-        	this.amount = amount;
+            this.amount = amount;
         }
     }
     

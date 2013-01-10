@@ -41,18 +41,18 @@ import javax.annotation.Resource;
  */
 @Service("blAdminSecurityRemoteService")
 public class AdminSecurityServiceRemote implements AdminSecurityService  {
-	
-	private static final String ANONYMOUS_USER_NAME = "anonymousUser";
-	
-	@Resource(name="blAdminSecurityService")
-	protected org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService securityService;
+    
+    private static final String ANONYMOUS_USER_NAME = "anonymousUser";
+    
+    @Resource(name="blAdminSecurityService")
+    protected org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService securityService;
 
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
     private boolean isEntitySecurityExplicit = false;
-	
-	public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException {
+    
+    public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException {
         AdminUser persistentAdminUser = getPersistentAdminUser();
         if (persistentAdminUser != null) {
             org.broadleafcommerce.openadmin.client.security.AdminUser response = new org.broadleafcommerce.openadmin.client.security.AdminUser();
@@ -68,10 +68,10 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         }
 
         return null;
-	}
+    }
 
     public AdminUser getPersistentAdminUser() {
-		SecurityContext ctx = SecurityContextHolder.getContext();
+        SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
             Authentication auth = ctx.getAuthentication();
             if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
@@ -83,9 +83,9 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         }
 
         return null;
-	}
-	
-	public void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType operationType) throws ServiceException {
+    }
+    
+    public void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType operationType) throws ServiceException {
         if (ceilingEntityFullyQualifiedName == null) {
             throw new ServiceException("Security Check Failed: ceilingEntityFullyQualifiedName not specified");
         }
@@ -118,7 +118,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
                 throw new ServiceException("Security Check Failed for entity operation: " + operationType.toString() + " (" + ceilingEntityFullyQualifiedName + ")");
             }
         }
-	}
+    }
 
     public boolean isEntitySecurityExplicit() {
         return isEntitySecurityExplicit;

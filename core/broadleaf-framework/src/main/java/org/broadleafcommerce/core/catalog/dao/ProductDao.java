@@ -140,12 +140,12 @@ public interface ProductDao {
      * <p>
      * {@code
      *     <bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">
-	 *	        <property name="entityContexts">
-	 *		        <list>
-	 *			        <value>classpath:myCompany-applicationContext-entity.xml</value>
-	 *		        </list>
-	 *	        </property>
-	 *      </bean>
+     *          <property name="entityContexts">
+     *              <list>
+     *                  <value>classpath:myCompany-applicationContext-entity.xml</value>
+     *              </list>
+     *          </property>
+     *      </bean>
      * }
      * </p>
      * Declare the same key for your desired entity in your entity xml that is used in the Broadleaf entity xml, but change the value to the fully

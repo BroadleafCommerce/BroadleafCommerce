@@ -75,14 +75,14 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     }
 
     public BundleOrderItem getBundleOrderItem() {
-		return bundleOrderItem;
-	}
+        return bundleOrderItem;
+    }
 
-	public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
-		this.bundleOrderItem = bundleOrderItem;
-	}
+    public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
+        this.bundleOrderItem = bundleOrderItem;
+    }
 
-	public Money getAmount() {
+    public Money getAmount() {
         return amount == null ? null : new Money(amount);
     }
 

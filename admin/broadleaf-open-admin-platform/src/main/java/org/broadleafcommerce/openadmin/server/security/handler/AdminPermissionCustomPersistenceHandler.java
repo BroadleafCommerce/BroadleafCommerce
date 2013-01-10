@@ -59,21 +59,21 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
             return update(persistencePackage, dynamicEntityDao, helper);
         }
         Entity entity = checkPermissionName(persistencePackage);
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			AdminPermission adminInstance = (AdminPermission) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminPermission.class.getName(), persistencePerspective);
-			adminInstance = (AdminPermission) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            AdminPermission adminInstance = (AdminPermission) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminPermission.class.getName(), persistencePerspective);
+            adminInstance = (AdminPermission) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             adminInstance = (AdminPermission) dynamicEntityDao.merge(adminInstance);
 
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to add entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
     }
 
     protected Entity checkPermissionName(PersistencePackage persistencePackage) throws ServiceException {
@@ -98,22 +98,22 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = checkPermissionName(persistencePackage);
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminPermission.class.getName(), persistencePerspective);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminPermission.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             AdminPermission adminInstance = (AdminPermission) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-			adminInstance = (AdminPermission) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            adminInstance = (AdminPermission) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             adminInstance = (AdminPermission) dynamicEntityDao.merge(adminInstance);
 
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
-			return adminEntity;
-		} catch (Exception e) {
+            return adminEntity;
+        } catch (Exception e) {
             LOG.error("Unable to update entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
-		}
+            throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
     }
 
 }

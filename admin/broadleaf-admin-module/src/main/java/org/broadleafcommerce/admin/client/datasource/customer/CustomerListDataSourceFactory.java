@@ -38,24 +38,24 @@ import com.smartgwt.client.data.DataSource;
  *
  */
 public class CustomerListDataSourceFactory implements DataSourceFactory {
-	
-	public static ListGridDataSource dataSource = null;
+    
+    public static ListGridDataSource dataSource = null;
     public static final String localeForeignKey = "customerLocale";
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey("challengeQuestion", EntityImplementations.CHALLENGE_QUESTION, null, ForeignKeyRestrictionType.ID_EQ, "question"), new ForeignKey(localeForeignKey, EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName")});
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.CUSTOMER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey("challengeQuestion", EntityImplementations.CHALLENGE_QUESTION, null, ForeignKeyRestrictionType.ID_EQ, "question"), new ForeignKey(localeForeignKey, EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName")});
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new BasicClientEntityModule(CeilingEntities.CUSTOMER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

@@ -27,25 +27,25 @@ import org.broadleafcommerce.money.Money;
 
 public class PromotableFulfillmentGroupAdjustmentImpl implements PromotableFulfillmentGroupAdjustment {
 
-	private static final long serialVersionUID = 1L;
-	
-	protected PromotableFulfillmentGroup fulfillmentGroup;
-	protected FulfillmentGroupAdjustment delegate;
-	
-	public PromotableFulfillmentGroupAdjustmentImpl(FulfillmentGroupAdjustment fulfillmentGroupAdjustment, PromotableFulfillmentGroup fulfillmentGroup) {
-		this.delegate = fulfillmentGroupAdjustment;
-		this.fulfillmentGroup = fulfillmentGroup;
-	}
-	
-	public void reset() {
-		delegate = null;
-	}
-	
-	public FulfillmentGroupAdjustment getDelegate() {
-		return delegate;
-	}
-	
-	/*
+    private static final long serialVersionUID = 1L;
+    
+    protected PromotableFulfillmentGroup fulfillmentGroup;
+    protected FulfillmentGroupAdjustment delegate;
+    
+    public PromotableFulfillmentGroupAdjustmentImpl(FulfillmentGroupAdjustment fulfillmentGroupAdjustment, PromotableFulfillmentGroup fulfillmentGroup) {
+        this.delegate = fulfillmentGroupAdjustment;
+        this.fulfillmentGroup = fulfillmentGroup;
+    }
+    
+    public void reset() {
+        delegate = null;
+    }
+    
+    public FulfillmentGroupAdjustment getDelegate() {
+        return delegate;
+    }
+    
+    /*
      * Calculates the value of the adjustment
      */
     public void computeAdjustmentValue() {
@@ -59,62 +59,62 @@ public class PromotableFulfillmentGroupAdjustmentImpl implements PromotableFulfi
                 }
             }
             if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF )) {
-            	setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
+                setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
             }
             if (getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
                 BigDecimal offerValue = adjustmentPrice.getAmount().subtract(delegate.getOffer().getValue());
-            	setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
+                setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                 BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
-            	setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
+                setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (adjustmentPrice.lessThan(getValue())) {
-            	setValue(adjustmentPrice);
+                setValue(adjustmentPrice);
             }
         }
     }
     
     // FulfillmentGroupAdjustment methods
 
-	public Long getId() {
-		return delegate.getId();
-	}
+    public Long getId() {
+        return delegate.getId();
+    }
 
-	public void setId(Long id) {
-		delegate.setId(id);
-	}
+    public void setId(Long id) {
+        delegate.setId(id);
+    }
 
-	public Offer getOffer() {
-		return delegate.getOffer();
-	}
+    public Offer getOffer() {
+        return delegate.getOffer();
+    }
 
-	public FulfillmentGroup getFulfillmentGroup() {
-		return delegate.getFulfillmentGroup();
-	}
+    public FulfillmentGroup getFulfillmentGroup() {
+        return delegate.getFulfillmentGroup();
+    }
 
-	public String getReason() {
-		return delegate.getReason();
-	}
+    public String getReason() {
+        return delegate.getReason();
+    }
 
-	public void setReason(String reason) {
-		delegate.setReason(reason);
-	}
+    public void setReason(String reason) {
+        delegate.setReason(reason);
+    }
 
-	public void init(FulfillmentGroup fulfillmentGroup, Offer offer,
-			String reason) {
-		delegate.init(fulfillmentGroup, offer, reason);
-	}
+    public void init(FulfillmentGroup fulfillmentGroup, Offer offer,
+            String reason) {
+        delegate.init(fulfillmentGroup, offer, reason);
+    }
 
-	public void setValue(Money value) {
-		delegate.setValue(value);
-	}
+    public void setValue(Money value) {
+        delegate.setValue(value);
+    }
 
-	public Money getValue() {
-		if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
+    public Money getValue() {
+        if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
             computeAdjustmentValue();
         }
-		return delegate.getValue();
-	}
+        return delegate.getValue();
+    }
     
 }

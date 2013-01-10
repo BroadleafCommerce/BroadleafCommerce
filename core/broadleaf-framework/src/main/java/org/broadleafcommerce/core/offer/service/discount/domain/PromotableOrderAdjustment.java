@@ -21,15 +21,15 @@ import org.broadleafcommerce.money.Money;
 
 public interface PromotableOrderAdjustment {
 
-	public void reset();
+    public void reset();
 
-	public OrderAdjustment getDelegate();
+    public OrderAdjustment getDelegate();
 
-	/*
-	 * Calculates the value of the adjustment
-	 */
-	public void computeAdjustmentValue();
+    /*
+     * Calculates the value of the adjustment
+     */
+    public void computeAdjustmentValue();
 
-	public Money getValue();
-	
+    public Money getValue();
+    
 }

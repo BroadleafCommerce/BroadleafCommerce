@@ -91,7 +91,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Column(name = "VALUE")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
     @BatchSize(size = 50)
-	protected Map<String, String> additionalAttributes = new HashMap<String, String>();
+    protected Map<String, String> additionalAttributes = new HashMap<String, String>();
     
     @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
@@ -137,16 +137,16 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         this.bundleOrderItem = bundleOrderItem;
     }
 
-	@Override
-	public String getName() {
-		String name = super.getName();
-		if (name == null) {
-			return sku.getName();
-		}
-		return name;
-	}
+    @Override
+    public String getName() {
+        String name = super.getName();
+        if (name == null) {
+            return sku.getName();
+        }
+        return name;
+    }
 
-	@Override
+    @Override
     public boolean updatePrices() {
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null
@@ -161,61 +161,61 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             updated = true;
         }
         if (getDiscreteOrderItemFeePrices() != null) {
-	        for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
-	        	setSalePrice(getSalePrice().add(fee.getAmount()));
-	        	setRetailPrice(getRetailPrice().add(fee.getAmount()));
-	        }
+            for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
+                setSalePrice(getSalePrice().add(fee.getAmount()));
+                setRetailPrice(getRetailPrice().add(fee.getAmount()));
+            }
         }
         return updated;
     }
 
     public Map<String, String> getAdditionalAttributes() {
-		return additionalAttributes;
-	}
+        return additionalAttributes;
+    }
 
-	public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
-		this.additionalAttributes = additionalAttributes;
-	}
+    public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
+        this.additionalAttributes = additionalAttributes;
+    }
 
-	public Money getBaseRetailPrice() {
-		return baseRetailPrice != null?new Money(baseRetailPrice):null;
-	}
+    public Money getBaseRetailPrice() {
+        return baseRetailPrice != null?new Money(baseRetailPrice):null;
+    }
 
-	public void setBaseRetailPrice(Money baseRetailPrice) {
-		this.baseRetailPrice = baseRetailPrice.getAmount();
-	}
+    public void setBaseRetailPrice(Money baseRetailPrice) {
+        this.baseRetailPrice = baseRetailPrice.getAmount();
+    }
 
-	public Money getBaseSalePrice() {
-		return baseSalePrice!=null?new Money(baseRetailPrice):null;
-	}
+    public Money getBaseSalePrice() {
+        return baseSalePrice!=null?new Money(baseRetailPrice):null;
+    }
 
-	public void setBaseSalePrice(Money baseSalePrice) {
-		this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
-	}
+    public void setBaseSalePrice(Money baseSalePrice) {
+        this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
+    }
 
-	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
-		return discreteOrderItemFeePrices;
-	}
+    public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
+        return discreteOrderItemFeePrices;
+    }
 
-	public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
-		this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
-	}
-	
-	@Override
-	public OrderItem clone() {
-		DiscreteOrderItem orderItem = (DiscreteOrderItem) super.clone();
-		if (getDiscreteOrderItemFeePrices() != null) orderItem.getDiscreteOrderItemFeePrices().addAll(getDiscreteOrderItemFeePrices());
-		if (getAdditionalAttributes() != null) orderItem.getAdditionalAttributes().putAll(getAdditionalAttributes());
-		orderItem.setBaseRetailPrice(getBaseRetailPrice());
-		orderItem.setBaseSalePrice(getBaseSalePrice());
-		orderItem.setBundleOrderItem(getBundleOrderItem());
-		orderItem.setProduct(getProduct());
-		orderItem.setSku(getSku());
-		
-		return orderItem;
-	}
+    public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
+        this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
+    }
+    
+    @Override
+    public OrderItem clone() {
+        DiscreteOrderItem orderItem = (DiscreteOrderItem) super.clone();
+        if (getDiscreteOrderItemFeePrices() != null) orderItem.getDiscreteOrderItemFeePrices().addAll(getDiscreteOrderItemFeePrices());
+        if (getAdditionalAttributes() != null) orderItem.getAdditionalAttributes().putAll(getAdditionalAttributes());
+        orderItem.setBaseRetailPrice(getBaseRetailPrice());
+        orderItem.setBaseSalePrice(getBaseSalePrice());
+        orderItem.setBundleOrderItem(getBundleOrderItem());
+        orderItem.setProduct(getProduct());
+        orderItem.setSku(getSku());
+        
+        return orderItem;
+    }
 
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -226,7 +226,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         DiscreteOrderItemImpl other = (DiscreteOrderItemImpl) obj;
         
         if (!super.equals(obj)) {
-        	return false;
+            return false;
         }
 
         if (id != null && other.id != null) {

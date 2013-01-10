@@ -22,14 +22,14 @@ Usage
 
 2) Use the following HTML code to place the buttons on your site:
 
-	<button type="submit" class="button positive">
-	  <img src="css/blueprint/plugins/buttons/icons/tick.png" alt=""/> Save
-	</button>
+    <button type="submit" class="button positive">
+      <img src="css/blueprint/plugins/buttons/icons/tick.png" alt=""/> Save
+    </button>
 
-	<a class="button" href="/password/reset/">
-	  <img src="css/blueprint/plugins/buttons/icons/key.png" alt=""/> Change Password
-	</a>
+    <a class="button" href="/password/reset/">
+      <img src="css/blueprint/plugins/buttons/icons/key.png" alt=""/> Change Password
+    </a>
 
-	<a href="${symbol_pound}" class="button negative">
-	  <img src="css/blueprint/plugins/buttons/icons/cross.png" alt=""/> Cancel
-	</a>
+    <a href="${symbol_pound}" class="button negative">
+      <img src="css/blueprint/plugins/buttons/icons/cross.png" alt=""/> Cancel
+    </a>

@@ -4,11 +4,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-3.0.xsd
@@ -16,74 +16,74 @@
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
-	
-	<context:component-scan base-package="org.broadleafcommerce.profile.web"/>
-	<context:component-scan base-package="org.broadleafcommerce.core.web"/>
-	<context:component-scan base-package="${package}.web.controller"/>
-	
-	<aop:config/>
-	
-	<bean id="resourceBundleExtensionPoint"
-		class="org.broadleafcommerce.profile.core.util.ResourceBundleExtensionPoint" />
+    
+    <context:component-scan base-package="org.broadleafcommerce.profile.web"/>
+    <context:component-scan base-package="org.broadleafcommerce.core.web"/>
+    <context:component-scan base-package="${package}.web.controller"/>
+    
+    <aop:config/>
+    
+    <bean id="resourceBundleExtensionPoint"
+        class="org.broadleafcommerce.profile.core.util.ResourceBundleExtensionPoint" />
 
-	<bean id="messageSource"
-		class="org.broadleafcommerce.profile.core.util.BLResourceBundleMessageSource">
-		<constructor-arg>
-			<list>
-				<value>messages</value>
-			</list>
-		</constructor-arg>
-		<constructor-arg ref="resourceBundleExtensionPoint" />
-	</bean>
+    <bean id="messageSource"
+        class="org.broadleafcommerce.profile.core.util.BLResourceBundleMessageSource">
+        <constructor-arg>
+            <list>
+                <value>messages</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="resourceBundleExtensionPoint" />
+    </bean>
 
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView"></property>
-		<property name="prefix" value="/WEB-INF/jsp/"></property>
-		<property name="suffix" value=".jsp"></property>
-	</bean>
+    <bean id="viewResolver"
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass"
+            value="org.springframework.web.servlet.view.JstlView"></property>
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
 
-	<bean id="store" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
-		<property name="viewName" value="catalog/store" />
-	</bean>	
+    <bean id="store" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+        <property name="viewName" value="catalog/store" />
+    </bean> 
 
-	<bean id="catalogController" class="org.broadleafcommerce.core.web.controller.catalog.CatalogController">
-		<property name="catalogService" ref="blCatalogService"/>
-		<property name="ratingService" ref="blRatingService" />
+    <bean id="catalogController" class="org.broadleafcommerce.core.web.controller.catalog.CatalogController">
+        <property name="catalogService" ref="blCatalogService"/>
+        <property name="ratingService" ref="blRatingService" />
         <property name="defaultCategoryView" value="catalog/catalog"/>
         <property name="defaultProductView" value="catalog/product"/>
         <property name="rootCategoryName" value="Store" />
         <property name="categoryTemplatePrefix" value="catalog/templates/"/>
-	</bean>
-	
-	<bean id="blCartController" class="org.broadleafcommerce.core.web.controller.order.CartController">
+    </bean>
+    
+    <bean id="blCartController" class="org.broadleafcommerce.core.web.controller.order.CartController">
         <property name="cartView" value="shoppingCart/cartSummary"/>
         <property name="cartViewRedirect" value="false"/>
         <property name="addItemView" value="viewCart.htm"/>
         <property name="addItemViewRedirect" value="true"/>
         <property name="removeItemView" value="viewCart.htm"/>
         <property name="removeItemViewRedirect" value="true"/>
-	</bean>
-	
-	<bean id="urlMapping"
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="order" value="1" />
-		<property name="alwaysUseFullPath" value="true" />
-		<!-- property name="interceptors">
-			<list>
-				<ref bean="catalogDisplayInterceptor" />
-			</list>
-		</property -->
-		<property name="mappings">
-			<props>
-				<prop key="/store">catalogController</prop>
-				<prop key="/basket/**">blCartController</prop>
-				<prop key="/registerCustomer/*">blRegisterCustomerController</prop>
-				<prop key="/checkout/*">mycompanyCheckoutController</prop>
-			</props>
-		</property>
-	</bean>
+    </bean>
+    
+    <bean id="urlMapping"
+        class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order" value="1" />
+        <property name="alwaysUseFullPath" value="true" />
+        <!-- property name="interceptors">
+            <list>
+                <ref bean="catalogDisplayInterceptor" />
+            </list>
+        </property -->
+        <property name="mappings">
+            <props>
+                <prop key="/store">catalogController</prop>
+                <prop key="/basket/**">blCartController</prop>
+                <prop key="/registerCustomer/*">blRegisterCustomerController</prop>
+                <prop key="/checkout/*">mycompanyCheckoutController</prop>
+            </props>
+        </property>
+    </bean>
 
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
     <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>

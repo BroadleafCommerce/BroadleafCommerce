@@ -63,8 +63,8 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
     protected FilterBuilder timeFilterBuilder;
     protected FilterBuilder requestFilterBuilder;
     protected ToolStrip structuredContentToolBar;
-	protected ToolStripButton structuredContentSaveButton;
-	protected ToolStripButton structuredContentRefreshButton;
+    protected ToolStripButton structuredContentSaveButton;
+    protected ToolStripButton structuredContentRefreshButton;
     protected List<ItemBuilderDisplay> itemBuilderViews = new ArrayList<ItemBuilderDisplay>();
     protected VLayout newItemBuilderLayout;
     protected Button addItemButton;
@@ -76,9 +76,9 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
     protected Label orderItemLabel;
 
     public StructuredContentView() {
-		setHeight100();
-		setWidth100();
-	}
+        setHeight100();
+        setWidth100();
+    }
 
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
         DataSource customerDataSource = additionalDataSources[0];
@@ -87,12 +87,12 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         DataSource orderItemDataSource = additionalDataSources[3];
         DataSource productDataSource = additionalDataSources[4];
 
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("structureLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("40%");
-		leftVerticalLayout.setShowResizeBar(true);
-		listDisplay = new DynamicEntityListView("", entityDataSource);
+        VLayout leftVerticalLayout = new VLayout();
+        leftVerticalLayout.setID("structureLeftVerticalLayout");
+        leftVerticalLayout.setHeight100();
+        leftVerticalLayout.setWidth("40%");
+        leftVerticalLayout.setShowResizeBar(true);
+        listDisplay = new DynamicEntityListView("", entityDataSource);
         listDisplay.getGrid().setHoverMoveWithMouse(true);
         listDisplay.getGrid().setCanHover(true);
         listDisplay.getGrid().setShowHover(true);
@@ -248,40 +248,40 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         topTabSet.addTab(rulesTab);
 
         addMember(topTabSet);
-	}
+    }
 
     public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
-		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
-		builder.enable();
-		builder.setDirty(true);
-		itemBuilderContainerLayout.addMember((ItemBuilderView) builder);
-		itemBuilderViews.add(builder);
-		return builder;
-	}
+        ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
+        builder.enable();
+        builder.setDirty(true);
+        itemBuilderContainerLayout.addMember((ItemBuilderView) builder);
+        itemBuilderViews.add(builder);
+        return builder;
+    }
 
-	public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
-		itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
-		itemBuilderViews.remove(itemBuilder);
-	}
+    public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
+        itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
+        itemBuilderViews.remove(itemBuilder);
+    }
 
-	public void removeAllItemBuilders() {
-		ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
-		for (ItemBuilderView view : myViews) {
-			removeItemBuilder(view);
-		}
-	}
+    public void removeAllItemBuilders() {
+        ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
+        for (ItemBuilderView view : myViews) {
+            removeItemBuilder(view);
+        }
+    }
 
     public Canvas asCanvas() {
-		return this;
-	}
+        return this;
+    }
 
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
+    public DynamicEntityListDisplay getListDisplay() {
+        return listDisplay;
+    }
 
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
+        return dynamicFormDisplay;
+    }
 
     public FilterBuilder getCustomerFilterBuilder() {
         return customerFilterBuilder;

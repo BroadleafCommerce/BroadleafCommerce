@@ -49,13 +49,13 @@ public class CyberSourcePasswordCallback implements CallbackHandler {
         }
     }
 
-	public String getTransactionKey() {
-		return transactionKey;
-	}
+    public String getTransactionKey() {
+        return transactionKey;
+    }
 
-	public void setTransactionKey(String transactionKey) {
-		this.transactionKey = transactionKey;
-	}
+    public void setTransactionKey(String transactionKey) {
+        this.transactionKey = transactionKey;
+    }
     
 }
 

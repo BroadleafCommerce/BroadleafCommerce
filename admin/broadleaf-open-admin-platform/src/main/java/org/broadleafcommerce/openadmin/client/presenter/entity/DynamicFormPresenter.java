@@ -31,85 +31,85 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDispl
  */
 public class DynamicFormPresenter {
 
-	protected DynamicFormDisplay display;
-	protected HandlerRegistration saveButtonHandlerRegistration;
-	protected HandlerRegistration refreshButtonHandlerRegistration;
+    protected DynamicFormDisplay display;
+    protected HandlerRegistration saveButtonHandlerRegistration;
+    protected HandlerRegistration refreshButtonHandlerRegistration;
     protected HandlerRegistration itemChangedHandlerRegistration;
-	
-	public DynamicFormPresenter(DynamicFormDisplay display) {
-		this.display = display;
-	}
-	
-	public void setStartState() {
-		display.getSaveButton().disable();
-		display.getFormOnlyDisplay().getForm().enable();
-		display.getRefreshButton().disable();
-	}
-	
-	public void enable() {
-		display.getSaveButton().enable();
-		display.getFormOnlyDisplay().getForm().enable();
-		display.getRefreshButton().enable();
-	}
-	
-	public void disable() {
-		display.getSaveButton().disable();
-		display.getFormOnlyDisplay().getForm().disable();
-		display.getRefreshButton().disable();
-        display.getFormOnlyDisplay().getForm().clearValues();
-		display.getFormOnlyDisplay().getForm().reset();
-	}
-	
-	public void bind() {
-		saveButtonHandlerRegistration=display.getSaveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					DSRequest requestProperties = new DSRequest();
-					requestProperties.setAttribute("dirtyValues", display.getFormOnlyDisplay().getForm().getChangedValues());
-					display.getFormOnlyDisplay().getForm().saveData(null, requestProperties);
-					display.getSaveButton().disable();
-                    display.getRefreshButton().disable();
-				}
-			}
-        });
-		refreshButtonHandlerRegistration=display.getRefreshButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getFormOnlyDisplay().getForm().reset();
-					display.getSaveButton().disable();
-                    display.getRefreshButton().disable();
-				}
-			}
-        });
-		itemChangedHandlerRegistration=display.getFormOnlyDisplay().getForm().addItemChangedHandler(new ItemChangedHandler() {
-			public void onItemChanged(ItemChangedEvent event) {
-				display.getSaveButton().enable();
-                display.getRefreshButton().enable();
-			}
-		});
-		
-		exposeNativeEnableSaveButton();
-	}
-	
-	public void enableSaveButton() {
-		display.getSaveButton().enable();
+    
+    public DynamicFormPresenter(DynamicFormDisplay display) {
+        this.display = display;
+    }
+    
+    public void setStartState() {
+        display.getSaveButton().disable();
+        display.getFormOnlyDisplay().getForm().enable();
+        display.getRefreshButton().disable();
+    }
+    
+    public void enable() {
+        display.getSaveButton().enable();
+        display.getFormOnlyDisplay().getForm().enable();
         display.getRefreshButton().enable();
-	}
+    }
+    
+    public void disable() {
+        display.getSaveButton().disable();
+        display.getFormOnlyDisplay().getForm().disable();
+        display.getRefreshButton().disable();
+        display.getFormOnlyDisplay().getForm().clearValues();
+        display.getFormOnlyDisplay().getForm().reset();
+    }
+    
+    public void bind() {
+        saveButtonHandlerRegistration=display.getSaveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    DSRequest requestProperties = new DSRequest();
+                    requestProperties.setAttribute("dirtyValues", display.getFormOnlyDisplay().getForm().getChangedValues());
+                    display.getFormOnlyDisplay().getForm().saveData(null, requestProperties);
+                    display.getSaveButton().disable();
+                    display.getRefreshButton().disable();
+                }
+            }
+        });
+        refreshButtonHandlerRegistration=display.getRefreshButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    display.getFormOnlyDisplay().getForm().reset();
+                    display.getSaveButton().disable();
+                    display.getRefreshButton().disable();
+                }
+            }
+        });
+        itemChangedHandlerRegistration=display.getFormOnlyDisplay().getForm().addItemChangedHandler(new ItemChangedHandler() {
+            public void onItemChanged(ItemChangedEvent event) {
+                display.getSaveButton().enable();
+                display.getRefreshButton().enable();
+            }
+        });
+        
+        exposeNativeEnableSaveButton();
+    }
+    
+    public void enableSaveButton() {
+        display.getSaveButton().enable();
+        display.getRefreshButton().enable();
+    }
 
-	private native void exposeNativeEnableSaveButton() /*-{
-		var currentDynamicFormPresenter = this;
-		$wnd.enableSaveButton = function() {
-			currentDynamicFormPresenter.@org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter::enableSaveButton()();
-		}
-	}-*/;
+    private native void exposeNativeEnableSaveButton() /*-{
+        var currentDynamicFormPresenter = this;
+        $wnd.enableSaveButton = function() {
+            currentDynamicFormPresenter.@org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter::enableSaveButton()();
+        }
+    }-*/;
 
-	public HandlerRegistration getSaveButtonHandlerRegistration() {
-		return saveButtonHandlerRegistration;
-	}
+    public HandlerRegistration getSaveButtonHandlerRegistration() {
+        return saveButtonHandlerRegistration;
+    }
 
-	public HandlerRegistration getRefreshButtonHandlerRegistration() {
-		return refreshButtonHandlerRegistration;
-	}
+    public HandlerRegistration getRefreshButtonHandlerRegistration() {
+        return refreshButtonHandlerRegistration;
+    }
 
     public HandlerRegistration getItemChangedHandlerRegistration() {
         return itemChangedHandlerRegistration;

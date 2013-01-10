@@ -42,11 +42,11 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
         return em.merge(reviewDetail);
     }
 
-	public ReviewDetail create() {
-		return (ReviewDetail) entityConfiguration.createEntityInstance(ReviewDetail.class.getName());
-	}
+    public ReviewDetail create() {
+        return (ReviewDetail) entityConfiguration.createEntityInstance(ReviewDetail.class.getName());
+    }
 
-	public ReviewFeedback createFeedback() {
-		return (ReviewFeedback) entityConfiguration.createEntityInstance(ReviewFeedback.class.getName());
-	}
+    public ReviewFeedback createFeedback() {
+        return (ReviewFeedback) entityConfiguration.createEntityInstance(ReviewFeedback.class.getName());
+    }
 }

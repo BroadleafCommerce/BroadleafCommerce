@@ -25,20 +25,20 @@ import java.io.Serializable;
  *
  */
 public class ClassMetadata implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private String ceilingType;
-	private ClassTree polymorphicEntities;
-	private Property[] properties;
-	
-	public String getCeilingType() {
-		return ceilingType;
-	}
-	
-	public void setCeilingType(String type) {
-		this.ceilingType = type;
-	}
+    
+    private static final long serialVersionUID = 1L;
+    
+    private String ceilingType;
+    private ClassTree polymorphicEntities;
+    private Property[] properties;
+    
+    public String getCeilingType() {
+        return ceilingType;
+    }
+    
+    public void setCeilingType(String type) {
+        this.ceilingType = type;
+    }
 
     public ClassTree getPolymorphicEntities() {
         return polymorphicEntities;
@@ -49,11 +49,11 @@ public class ClassMetadata implements Serializable {
     }
 
     public Property[] getProperties() {
-		return properties;
-	}
-	
-	public void setProperties(Property[] property) {
-		this.properties = property;
-	}
-	
+        return properties;
+    }
+    
+    public void setProperties(Property[] property) {
+        this.properties = property;
+    }
+    
 }

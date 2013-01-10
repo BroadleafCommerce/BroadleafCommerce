@@ -99,10 +99,10 @@ public class USPSServiceResponseType implements Serializable, BroadleafEnumerati
     }
 
     public String getFriendlyType() {
-		return description;
-	}
+        return description;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
@@ -110,17 +110,17 @@ public class USPSServiceResponseType implements Serializable, BroadleafEnumerati
     }
 
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
+    public void setName(String name) {
+        this.name = name;
         if (!NAMEDTYPES.containsKey(name)) {
-        	NAMEDTYPES.put(name, this);
+            NAMEDTYPES.put(name, this);
         }
-	}
+    }
 
-	public String getDescription() {
+    public String getDescription() {
         return description;
     }
 

@@ -66,10 +66,10 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentPageRecord;
     protected String currentPageId;
-	protected EntitySearchDialog pageTemplateDialogView;
+    protected EntitySearchDialog pageTemplateDialogView;
 
-	@Override
-	protected void removeClicked() {
+    @Override
+    protected void removeClicked() {
         SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
             public void execute(Boolean value) {
                 if (value) {
@@ -84,7 +84,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 }
             }
         });
-	}
+    }
 
     protected void destroyTemplateForm() {
         Canvas legacyForm = ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
@@ -94,7 +94,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     }
 
     @Override
-	protected void changeSelection(Record selectedRecord) {
+    protected void changeSelection(Record selectedRecord) {
         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
             getDisplay().getListDisplay().getRemoveButton().enable();
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
@@ -106,7 +106,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
         currentPageId = getPresenterSequenceSetupManager().getDataSource("pageDS").getPrimaryKeyValue(currentPageRecord);
         loadTemplateForm(selectedRecord);
 
-	}
+    }
 
     protected void loadTemplateForm(final Record selectedRecord) {
         //load the page template form
@@ -145,14 +145,14 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     }
 
     @Override
-	public void bind() {
-		super.bind();
+    public void bind() {
+        super.bind();
         getSaveButtonHandlerRegistration().removeHandler();
         formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
                     FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
                     if (legacyForm != null) {
                         legacyForm.getForm().reset();
@@ -163,10 +163,10 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                             formItem.setValue(legacyForm.getForm().getValue(formItem.getFieldName()));
                         }
                     }
-					getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                    getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                     getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
-				}
-			}
+                }
+            }
         });
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -205,7 +205,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                         }
                                     }
                                 });
-							}
+                            }
                         }
                     }, requestProperties);
                 }
@@ -217,28 +217,28 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 destroyTemplateForm();
             }
         });
-	}
+    }
 
 
-	public void setup() {
+    public void setup() {
         super.setup();
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageDS", new PageDataSourceFactory(), new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageDS", new PageDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource top) {
-				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
-			}
+                setupDisplayItems(top);
+                ((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
+            }
         }));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearchDS", new PageTemplateSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				ListGridDataSource pageTemplateDataSource = (ListGridDataSource) result;
-				pageTemplateDataSource.resetPermanentFieldVisibility(
-					"templateName",
-					"templatePath"
-				);
-				EntitySearchDialog pageTemplateSearchView = new EntitySearchDialog(pageTemplateDataSource, true);
-				pageTemplateDialogView = pageTemplateSearchView;
-				getPresenterSequenceSetupManager().getDataSource("pageDS").
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearchDS", new PageTemplateSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                ListGridDataSource pageTemplateDataSource = (ListGridDataSource) result;
+                pageTemplateDataSource.resetPermanentFieldVisibility(
+                    "templateName",
+                    "templatePath"
+                );
+                EntitySearchDialog pageTemplateSearchView = new EntitySearchDialog(pageTemplateDataSource, true);
+                pageTemplateDialogView = pageTemplateSearchView;
+                getPresenterSequenceSetupManager().getDataSource("pageDS").
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
                         "pageTemplate",
                         pageTemplateSearchView,
                         "Page Template Search",
@@ -253,13 +253,13 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                             }
                         }
                 );
-			}
-		}));
-	}
+            }
+        }));
+    }
 
-	@Override
-	public PagesDisplay getDisplay() {
-		return (PagesDisplay) display;
-	}
+    @Override
+    public PagesDisplay getDisplay() {
+        return (PagesDisplay) display;
+    }
 
 }

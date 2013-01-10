@@ -11,32 +11,32 @@
         <name>category</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.CategoryTag</tag-class>
         <body-content>empty</body-content>
-       	<attribute>
-			<name>var</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>categoryId</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>categoryId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     
     <tag>
         <name>googleAnalytics</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.GoogleAnalyticsTag</tag-class>
         <body-content>empty</body-content>
-       	<attribute>
-			<name>webPropertyId</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>order</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>webPropertyId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>order</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     
       <tag>
@@ -49,125 +49,125 @@
         <name>breadcrumb</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.CategoryBreadCrumbTag</tag-class>
         <body-content>empty</body-content>
-       	<attribute>
-			<name>categoryList</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>categoryId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>categoryList</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>categoryId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
-	<tag>
+    <tag>
         <name>categoryLink</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.CategoryLinkTag</tag-class>
         <body-content>empty</body-content>
-       	<attribute>
-			<name>category</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>category</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
-	<tag>
+    <tag>
         <name>productLink</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.ProductLinkTag</tag-class>
         <body-content>empty</body-content>
-       	<attribute>
-			<name>product</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>category</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>product</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>category</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
-	<tag>
+    <tag>
         <name>productsForCategory</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.GetProductsByCategoryIdTag</tag-class>
         <body-content>empty</body-content>
-       	<attribute>
-			<name>var</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>categoryId</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>categoryId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
-	<tag>
+    <tag>
         <name>searchFilter</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.SearchFilterTag</tag-class>
         <body-content>JSP</body-content>
-       	<attribute>
-			<name>products</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>categories</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>queryString</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>products</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>categories</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>queryString</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
-	<tag>
+    <tag>
         <name>searchFilterItem</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.SearchFilterItemTag</tag-class>
         <body-content>empty</body-content>
-       	<attribute>
-			<name>property</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>propertyDisplay</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>displayTitle</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
-			<name>displayType</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>property</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>propertyDisplay</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>displayTitle</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>displayType</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     <tag>
         <name>displayFeaturedProducts</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.DisplayFeaturedProductsTag</tag-class>
         <body-content>JSP</body-content>
-       	<attribute>
-			<name>products</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>var</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>maxFeatures</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+        <attribute>
+            <name>products</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>maxFeatures</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 </taglib>

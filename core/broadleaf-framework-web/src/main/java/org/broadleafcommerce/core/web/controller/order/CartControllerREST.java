@@ -38,13 +38,13 @@ public class CartControllerREST extends AbstractCartController {
 
     @RequestMapping(value = "currentCart", method = RequestMethod.GET)
     public String viewCart(ModelMap model, HttpServletRequest request) throws PricingException {
-    	return super.viewCart(model, request);
+        return super.viewCart(model, request);
     }
 
     @RequestMapping(value = "skus/sku/{skuId}", method = {RequestMethod.POST})
     public String addItem(@PathVariable Long skuId, @ModelAttribute AddToCartItem addToCartItem, BindingResult errors, ModelMap model, HttpServletRequest request) {
-    	addToCartItem.setSkuId(skuId);
-    	return super.addItem(false, addToCartItem, errors, model, request);
+        addToCartItem.setSkuId(skuId);
+        return super.addItem(false, addToCartItem, errors, model, request);
     }
 
     @RequestMapping(value = "orderItems/orderItem/{orderItemId}", method = {RequestMethod.DELETE})
@@ -60,6 +60,6 @@ public class CartControllerREST extends AbstractCartController {
     @RequestMapping(value = "promos/promo/{promoCode}", method = RequestMethod.POST)
     public String updatePromoCode (@PathVariable String promoCode, @ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         cartSummary.setPromoCode(promoCode);
-    	return super.updatePromoCode(cartSummary, model, request);
+        return super.updatePromoCode(cartSummary, model, request);
     }
 }

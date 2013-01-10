@@ -72,7 +72,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
     protected HandlerRegistration saveButtonHandlerRegistration;
 
     @Override
-	protected void changeSelection(Record selectedRecord) {
+    protected void changeSelection(Record selectedRecord) {
         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
             getDisplay().getListDisplay().getRemoveButton().enable();
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
@@ -88,7 +88,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("fullUrl").disable();
         AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
         assetItem.updateState();
-	}
+    }
 
     @Override
     protected void addClicked() {
@@ -99,15 +99,15 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         addNewItem(BLCMain.getMessageManager().getString("newItemTitle"));
     }
 
-	@Override
-	protected void addNewItem(String newItemTitle) {
+    @Override
+    protected void addNewItem(String newItemTitle) {
         initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         initialValues.put("csrfToken", BLCMain.csrfToken);
         compileDefaultValuesFromCurrentFilter(initialValues);
         Map<String, String> hints = new HashMap<String, String>();
         hints.put("name", BLCMain.getMessageManager().getString("assetUploadNameHint"));
         hints.put("fullUrl", BLCMain.getMessageManager().getString("assetUploadFullUrlHint"));
-		FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, hints, new ItemEditedHandler() {
+        FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, hints, new ItemEditedHandler() {
             public void onItemEdited(ItemEdited event) {
                 ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
@@ -134,18 +134,18 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 //resetForm();
             }
         }, null, new String[]{"file", "name", "fullUrl", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria", "csrfToken"}, null);
-	}
+    }
 
     @Override
-	public void bind() {
-		super.bind();
+    public void bind() {
+        super.bind();
         staticAssetDescriptionPresenter.bind();
         /*getDisplay().getListLeafDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-					resetForm();
-				}
+                    resetForm();
+                }
             }
         });*/
         if (!FILE_UPLOAD.isDrawn()) {
@@ -158,8 +158,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 //save the regular entity form and the page template form
                 if (event.isLeftButtonDown()) {
                     DSRequest requestProperties = new DSRequest();
-					requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
-					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
+                    requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
@@ -173,7 +173,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                                     currentId = newId;
                                 }
                                 getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(currentSelectedRecord));
-							}
+                            }
                         }
                     }, requestProperties);
                 }
@@ -186,16 +186,16 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 assetItem.clearImage();
             }
         });
-	}
+    }
 
     public void resetForm() {
         getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").resetPermanentFieldVisibilityBasedOnType(new String[]{EntityImplementations.STATICASSETIMPL});
-		getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), true, false, false);
+        getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), true, false, false);
         staticAssetDescriptionPresenter.disable();
     }
 
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTreeDataSourceFactory(), new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTreeDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(dataSource);
@@ -232,23 +232,23 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetDescriptionMapDS", new StaticAssetDescriptionMapDataSourceFactory(this), new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				staticAssetDescriptionPresenter = new MapStructurePresenter(getDisplay().getAssetDescriptionDisplay(), getStaticAssetDescriptionEntityView(), new String[]{EntityImplementations.STATICASSETIMPL}, BLCMain.getMessageManager().getString("newAssetDescriptionTitle"));
-				staticAssetDescriptionPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "description", "longDescription"}, new Boolean[]{true, true, true});
-			}
-		}));
-	}
+            public void onSetupSuccess(DataSource result) {
+                staticAssetDescriptionPresenter = new MapStructurePresenter(getDisplay().getAssetDescriptionDisplay(), getStaticAssetDescriptionEntityView(), new String[]{EntityImplementations.STATICASSETIMPL}, BLCMain.getMessageManager().getString("newAssetDescriptionTitle"));
+                staticAssetDescriptionPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "description", "longDescription"}, new Boolean[]{true, true, true});
+            }
+        }));
+    }
 
     protected MapStructureEntityEditDialog getStaticAssetDescriptionEntityView() {
-		 if (staticAssetDescriptionEntityAdd == null) {
-			 staticAssetDescriptionEntityAdd = new MapStructureEntityEditDialog(StaticAssetDescriptionMapDataSourceFactory.MAPSTRUCTURE, getPresenterSequenceSetupManager().getDataSource("localeDS"), "friendlyName", "localeCode");
-		 }
-		 return staticAssetDescriptionEntityAdd;
-	}
+         if (staticAssetDescriptionEntityAdd == null) {
+             staticAssetDescriptionEntityAdd = new MapStructureEntityEditDialog(StaticAssetDescriptionMapDataSourceFactory.MAPSTRUCTURE, getPresenterSequenceSetupManager().getDataSource("localeDS"), "friendlyName", "localeCode");
+         }
+         return staticAssetDescriptionEntityAdd;
+    }
 
-	@Override
-	public StaticAssetsDisplay getDisplay() {
-		return (StaticAssetsDisplay) display;
-	}
-	
+    @Override
+    public StaticAssetsDisplay getDisplay() {
+        return (StaticAssetsDisplay) display;
+    }
+    
 }

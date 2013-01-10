@@ -40,32 +40,32 @@ import com.smartgwt.client.data.DataSource;
  */
 public class ParentCategoryListDataSourceFactory implements DataSourceFactory {
 
-	public static final String defaultCategoryForeignKey = "defaultCategory";
-	public static final String symbolName = "allParentCategories";
-	public static final String linkedObjectPath = "categoryProductXref.product";
-	public static final String linkedIdProperty = "id";
-	public static final String targetObjectPath = "categoryProductXref.category";
-	public static final String targetIdProperty = "id";
-	public static final String sortField = "displayOrder";
-	public static ListGridDataSource dataSource = null;
-	
-	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(defaultCategoryForeignKey, EntityImplementations.CATEGORY, null)});
-			JoinStructure joinStructure = new JoinStructure(symbolName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, EntityImplementations.CATEGORY_PRODUCT, sortField, true);
-			joinStructure.setInverse(true);
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.JOINSTRUCTURE, joinStructure);
-			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY),
-				new JoinStructureClientModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
-	}
+    public static final String defaultCategoryForeignKey = "defaultCategory";
+    public static final String symbolName = "allParentCategories";
+    public static final String linkedObjectPath = "categoryProductXref.product";
+    public static final String linkedIdProperty = "id";
+    public static final String targetObjectPath = "categoryProductXref.category";
+    public static final String targetIdProperty = "id";
+    public static final String sortField = "displayOrder";
+    public static ListGridDataSource dataSource = null;
+    
+    public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
+        if (dataSource == null) {
+            PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(defaultCategoryForeignKey, EntityImplementations.CATEGORY, null)});
+            JoinStructure joinStructure = new JoinStructure(symbolName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, EntityImplementations.CATEGORY_PRODUCT, sortField, true);
+            joinStructure.setInverse(true);
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.JOINSTRUCTURE, joinStructure);
+            DataSourceModule[] modules = new DataSourceModule[]{
+                new BasicClientEntityModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY),
+                new JoinStructureClientModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+            };
+            dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+            dataSource.buildFields(null, false, cb);
+        } else {
+            if (cb != null) {
+                cb.onSuccess(dataSource);
+            }
+        }
+    }
 
 }

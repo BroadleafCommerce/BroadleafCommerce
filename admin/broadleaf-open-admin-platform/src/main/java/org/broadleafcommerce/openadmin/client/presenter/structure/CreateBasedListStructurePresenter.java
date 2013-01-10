@@ -48,8 +48,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDis
  */
 public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 
-	protected String editDialogTitle;
-	protected Map<String, Object> initialValues;
+    protected String editDialogTitle;
+    protected Map<String, Object> initialValues;
     protected String[] gridFields = new String[]{};
     protected HandlerRegistration dataArrivedHandlerRegistration;
     protected HandlerRegistration editCompletedHandlerRegistration;
@@ -59,81 +59,81 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
     protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 
     public CreateBasedListStructurePresenter(GridStructureDisplay display, String editDialogTitle) {
-		this(display, null, editDialogTitle, new HashMap<String, Object>());
-	}
+        this(display, null, editDialogTitle, new HashMap<String, Object>());
+    }
 
-	public CreateBasedListStructurePresenter(GridStructureDisplay display, String[] availableToTypes, String editDialogTitle) {
-		this(display, availableToTypes, editDialogTitle, new HashMap<String, Object>());
-	}
+    public CreateBasedListStructurePresenter(GridStructureDisplay display, String[] availableToTypes, String editDialogTitle) {
+        this(display, availableToTypes, editDialogTitle, new HashMap<String, Object>());
+    }
 
     public CreateBasedListStructurePresenter(GridStructureDisplay display, String editDialogTitle, Map<String, Object> initialValues) {
-		this(display, null, editDialogTitle, initialValues);
-	}
-	
-	public CreateBasedListStructurePresenter(GridStructureDisplay display, String[] availableToTypes, String editDialogTitle, Map<String, Object> initialValues) {
-		super(display, availableToTypes);
-		this.editDialogTitle = editDialogTitle;
-		this.initialValues = initialValues;
-	}
+        this(display, null, editDialogTitle, initialValues);
+    }
+    
+    public CreateBasedListStructurePresenter(GridStructureDisplay display, String[] availableToTypes, String editDialogTitle, Map<String, Object> initialValues) {
+        super(display, availableToTypes);
+        this.editDialogTitle = editDialogTitle;
+        this.initialValues = initialValues;
+    }
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
-		display.getGrid().setDataSource(dataSource);
-		dataSource.setAssociatedGrid(display.getGrid());
-		dataSource.setupGridFields(gridFields, editable);
+        display.getGrid().setDataSource(dataSource);
+        dataSource.setAssociatedGrid(display.getGrid());
+        dataSource.setupGridFields(gridFields, editable);
         this.gridFields = gridFields;
     }
-	
-	public void bind() {
-		dataArrivedHandlerRegistration = display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
-			public void onDataArrived(DataArrivedEvent event) {
-				display.getRemoveButton().disable();
-			}
-		});
-		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
-			public void onEditComplete(EditCompleteEvent event) {
-				display.getGrid().deselectAllRecords();
-				setStartState();
-			}
-		});
-		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					display.getRemoveButton().enable();
-				} else {
-					display.getRemoveButton().disable();
-				}
-			}
-		});
-		removedClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
-						}
-					});
-				}
-			}
-		});
-		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					DynamicEntityDataSource ds = (DynamicEntityDataSource) display.getGrid().getDataSource();
-					ForeignKey foreignKey = (ForeignKey) ds.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-					initialValues.put(foreignKey.getManyToField(), abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord));
-					String[] type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
-					initialValues.put("_type", type);
-					BLCMain.ENTITY_ADD.editNewRecord(editDialogTitle, ds, initialValues, null, null, null);
-				}
-			}
-		});
+    
+    public void bind() {
+        dataArrivedHandlerRegistration = display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
+            public void onDataArrived(DataArrivedEvent event) {
+                display.getRemoveButton().disable();
+            }
+        });
+        editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
+            public void onEditComplete(EditCompleteEvent event) {
+                display.getGrid().deselectAllRecords();
+                setStartState();
+            }
+        });
+        selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                if (event.getState()) {
+                    display.getRemoveButton().enable();
+                } else {
+                    display.getRemoveButton().disable();
+                }
+            }
+        });
+        removedClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            display.getRemoveButton().disable();
+                        }
+                    });
+                }
+            }
+        });
+        addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    DynamicEntityDataSource ds = (DynamicEntityDataSource) display.getGrid().getDataSource();
+                    ForeignKey foreignKey = (ForeignKey) ds.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                    initialValues.put(foreignKey.getManyToField(), abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord));
+                    String[] type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
+                    initialValues.put("_type", type);
+                    BLCMain.ENTITY_ADD.editNewRecord(editDialogTitle, ds, initialValues, null, null, null);
+                }
+            }
+        });
         rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
             @Override
             public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
                 BLCMain.ENTITY_ADD.editRecord(editDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, null, null);
             }
         });
-	}
+    }
 
     public HandlerRegistration getAddClickedHandlerRegistration() {
         return addClickedHandlerRegistration;

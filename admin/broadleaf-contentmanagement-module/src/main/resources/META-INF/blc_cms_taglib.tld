@@ -24,54 +24,54 @@
         <tag-class>org.broadleafcommerce.cms.web.structure.DisplayContentTag</tag-class>
         <body-content>JSP</body-content>
         <description>Returns the internationalized message for the passed in messageKey</description>
-       	<attribute>
-			<name>contentType</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
+        <attribute>
+            <name>contentType</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
             <description>The type of content to look up.</description>
-		</attribute>
+        </attribute>
         <attribute>
-			<name>contentName</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
+            <name>contentName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
             <description>The name of a specific content item within the content type.</description>
-		</attribute>
+        </attribute>
         <attribute>
-			<name>count</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
+            <name>count</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
             <description>The number of items to return.</description>
-		</attribute>
+        </attribute>
         <attribute>
-			<name>locale</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Overrides the request scoped locale</description>
-		</attribute>
+            <name>locale</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Overrides the request scoped locale</description>
+        </attribute>
         <attribute>
-			<name>contentListVar</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Name of the page scoped variable that the result is set to.  Defaults to contentList.</description>
-		</attribute>
-       	<attribute>
-			<name>contentItemVar</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Name of the page scoped variable that the first result is set to.  Defaults to contentItem.</description>
-		</attribute>
+            <name>contentListVar</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Name of the page scoped variable that the result is set to.  Defaults to contentList.</description>
+        </attribute>
         <attribute>
-			<name>numResultsVar</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Name of the page scoped variable that stores the number of results.  Defaults to numResults.</description>
-		</attribute>
+            <name>contentItemVar</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Name of the page scoped variable that the first result is set to.  Defaults to contentItem.</description>
+        </attribute>
         <attribute>
-			<name>product</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Product to include in rule processing.</description>
-		</attribute>
+            <name>numResultsVar</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Name of the page scoped variable that stores the number of results.  Defaults to numResults.</description>
+        </attribute>
+        <attribute>
+            <name>product</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Product to include in rule processing.</description>
+        </attribute>
     </tag>
 
 </taglib>

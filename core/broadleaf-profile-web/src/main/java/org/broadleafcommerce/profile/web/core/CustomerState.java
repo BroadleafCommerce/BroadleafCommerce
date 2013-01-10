@@ -22,6 +22,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface CustomerState {
 
-	public Customer getCustomer(HttpServletRequest request);
+    public Customer getCustomer(HttpServletRequest request);
 
 }

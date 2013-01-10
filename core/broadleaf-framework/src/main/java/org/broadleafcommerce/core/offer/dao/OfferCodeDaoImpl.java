@@ -41,9 +41,9 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     }
 
     public void delete(OfferCode offerCode) {
-    	if (!em.contains(offerCode)) {
-    		offerCode = readOfferCodeById(offerCode.getId());
-    	}
+        if (!em.contains(offerCode)) {
+            offerCode = readOfferCodeById(offerCode.getId());
+        }
         em.remove(offerCode);
     }
 

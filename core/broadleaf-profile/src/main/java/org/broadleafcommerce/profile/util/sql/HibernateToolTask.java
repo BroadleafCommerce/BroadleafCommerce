@@ -45,47 +45,47 @@ import org.hibernate.util.StringHelper;
  */
 public class HibernateToolTask extends Task {
 
-	public HibernateToolTask() {
-		super();
-	}
-	@SuppressWarnings("rawtypes")
-	private List configurationTasks = new ArrayList();
-	private File destDir;
-	@SuppressWarnings("rawtypes")
-	private List generators = new ArrayList();
-	private Path classPath;
-	private boolean combinePersistenceUnits = true;
-	private boolean refineFileNames = true;
-	
-	public ExporterTask createHbm2DDL() {
-		ExporterTask generator = new Hbm2DDLExporterTask(this);
-		addGenerator( generator );
-		return generator;
-	}
-	
-	public JPAConfigurationTask createJPAConfiguration() {
-		JPAConfigurationTask task = new JPAConfigurationTask();
-		addConfiguration(task);
-		return task;
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected boolean addConfiguration(ConfigurationTask config) {
-		return configurationTasks.add(config);
-	}
+    public HibernateToolTask() {
+        super();
+    }
+    @SuppressWarnings("rawtypes")
+    private List configurationTasks = new ArrayList();
+    private File destDir;
+    @SuppressWarnings("rawtypes")
+    private List generators = new ArrayList();
+    private Path classPath;
+    private boolean combinePersistenceUnits = true;
+    private boolean refineFileNames = true;
+    
+    public ExporterTask createHbm2DDL() {
+        ExporterTask generator = new Hbm2DDLExporterTask(this);
+        addGenerator( generator );
+        return generator;
+    }
+    
+    public JPAConfigurationTask createJPAConfiguration() {
+        JPAConfigurationTask task = new JPAConfigurationTask();
+        addConfiguration(task);
+        return task;
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected boolean addConfiguration(ConfigurationTask config) {
+        return configurationTasks.add(config);
+    }
 
-	@SuppressWarnings("unchecked")
-	protected boolean addGenerator(ExporterTask generator) {
-		return generators.add(generator);
-	}
-	
-	/**
+    @SuppressWarnings("unchecked")
+    protected boolean addGenerator(ExporterTask generator) {
+        return generators.add(generator);
+    }
+    
+    /**
      * Set the classpath to be used when running the Java class
      *
      * @param s an Ant Path object containing the classpath.
      */
     public void setClasspath(Path s) {
-		classPath = s;
+        classPath = s;
     }
     
     
@@ -95,221 +95,221 @@ public class HibernateToolTask extends Task {
      * @return created classpath
      */
     public Path createClasspath() {
-		classPath = new Path(getProject() );
-		return classPath;
+        classPath = new Path(getProject() );
+        return classPath;
     }
 
-	public void execute() {
-		AntClassLoader loader;
-		MergeClassPathXMLApplicationContext mergeContext;
-		try {
-			loader = getProject().createClassLoader(classPath);
-			ClassLoader classLoader = this.getClass().getClassLoader();
-			loader.setParent(classLoader); // if this is not set, classes from the taskdef cannot be found - which is crucial for e.g. annotations.
-			loader.setThreadContextLoader();
-			// launch the service merge application context to get the entity configuration for the entire framework
-			String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-			mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[]{});
-		} catch (Exception e) {
-			throw new BuildException(e, getLocation());
-		}
-		int count = 1;
-		ExporterTask generatorTask = null;
-		try {
-			for (Object configuration : configurationTasks) {
-				JPAConfigurationTask configurationTask = (JPAConfigurationTask) configuration;
-				log("Executing Hibernate Tool with a " + configurationTask.getDescription());
-				@SuppressWarnings("rawtypes")
-				Iterator iterator = generators.iterator();
-				while (iterator.hasNext()) {
-					generatorTask = (ExporterTask) iterator.next();
-					log(count++ + ". task: " + generatorTask.getName());
-					generatorTask.setOutputFileName(configurationTask.getDialect() + "_" + configurationTask.getPersistenceUnit() + ".sql");
-					generatorTask.setDestdir(destDir);
-					generatorTask.setConfiguration(configurationTask.createConfiguration(mergeContext));
-					generatorTask.execute();
-				}
-			}
-		} catch (RuntimeException re) {
-			reportException(re, count, generatorTask);
-		} finally {
-			if (loader != null) {
-				loader.resetThreadContextLoader();
-				loader.cleanup();
-			}
-		}
-		try {
-			if (combinePersistenceUnits) {
-				ArrayList<File> combine = new ArrayList<File>();
-				for (Object configuration : configurationTasks) {
-					JPAConfigurationTask configurationTask = (JPAConfigurationTask) configuration;
-					File[] sqlFiles = destDir.listFiles(new SqlFileFilter());
-					for (File file : sqlFiles) {
-						if (file.getName().startsWith(configurationTask.getDialect())){
-							combine.add(file);
-						}
-					}
-					combineFiles(combine);
-					combine.clear();
-				}
-			}
-			if (refineFileNames) {
-				File[] sqlFiles = destDir.listFiles(new SqlFileFilter());
-				for (File file : sqlFiles) {
-					String filename = file.getName();
-					String[] starters = {"org.hibernate.dialect.", "org.broadleafcommerce.profile.util.sql."};
-					for (String starter : starters) {
-						if (filename.startsWith(starter)) {
-							String newFileName = filename.substring(starter.length(), filename.length());
-							file.renameTo(new File(destDir, newFileName));
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new BuildException(e, getLocation());
-		}
-	}
-	
-	private void combineFiles(ArrayList<File> combine) throws Exception {
-		Iterator<File> itr = combine.iterator();
-		File startFile = itr.next();
-		while(itr.hasNext()) {
-			File nextFile = itr.next();
-			BufferedWriter writer = null;
-			BufferedReader reader = null;
-			try{
-				writer = new BufferedWriter(new FileWriter(startFile, true));
-				reader = new BufferedReader(new FileReader(nextFile));
-				boolean eof = false;
-				String temp = null;
-				while (!eof) {
-					temp = reader.readLine();
-					if (temp == null) {
-						eof = true;
-					} else {
-						writer.write(temp);
-						writer.write("\n");
-					}
-				}
-			} finally {
-				if (writer != null) {
-					try{ writer.close(); } catch (Throwable e) {};
-				}
-				if (reader != null) {
-					try{ reader.close(); } catch (Throwable e) {};
-				}
-			}
-			try{
-				nextFile.delete();
-			} catch (Throwable e) {}
-		}
-	}
+    public void execute() {
+        AntClassLoader loader;
+        MergeClassPathXMLApplicationContext mergeContext;
+        try {
+            loader = getProject().createClassLoader(classPath);
+            ClassLoader classLoader = this.getClass().getClassLoader();
+            loader.setParent(classLoader); // if this is not set, classes from the taskdef cannot be found - which is crucial for e.g. annotations.
+            loader.setThreadContextLoader();
+            // launch the service merge application context to get the entity configuration for the entire framework
+            String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
+            mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[]{});
+        } catch (Exception e) {
+            throw new BuildException(e, getLocation());
+        }
+        int count = 1;
+        ExporterTask generatorTask = null;
+        try {
+            for (Object configuration : configurationTasks) {
+                JPAConfigurationTask configurationTask = (JPAConfigurationTask) configuration;
+                log("Executing Hibernate Tool with a " + configurationTask.getDescription());
+                @SuppressWarnings("rawtypes")
+                Iterator iterator = generators.iterator();
+                while (iterator.hasNext()) {
+                    generatorTask = (ExporterTask) iterator.next();
+                    log(count++ + ". task: " + generatorTask.getName());
+                    generatorTask.setOutputFileName(configurationTask.getDialect() + "_" + configurationTask.getPersistenceUnit() + ".sql");
+                    generatorTask.setDestdir(destDir);
+                    generatorTask.setConfiguration(configurationTask.createConfiguration(mergeContext));
+                    generatorTask.execute();
+                }
+            }
+        } catch (RuntimeException re) {
+            reportException(re, count, generatorTask);
+        } finally {
+            if (loader != null) {
+                loader.resetThreadContextLoader();
+                loader.cleanup();
+            }
+        }
+        try {
+            if (combinePersistenceUnits) {
+                ArrayList<File> combine = new ArrayList<File>();
+                for (Object configuration : configurationTasks) {
+                    JPAConfigurationTask configurationTask = (JPAConfigurationTask) configuration;
+                    File[] sqlFiles = destDir.listFiles(new SqlFileFilter());
+                    for (File file : sqlFiles) {
+                        if (file.getName().startsWith(configurationTask.getDialect())){
+                            combine.add(file);
+                        }
+                    }
+                    combineFiles(combine);
+                    combine.clear();
+                }
+            }
+            if (refineFileNames) {
+                File[] sqlFiles = destDir.listFiles(new SqlFileFilter());
+                for (File file : sqlFiles) {
+                    String filename = file.getName();
+                    String[] starters = {"org.hibernate.dialect.", "org.broadleafcommerce.profile.util.sql."};
+                    for (String starter : starters) {
+                        if (filename.startsWith(starter)) {
+                            String newFileName = filename.substring(starter.length(), filename.length());
+                            file.renameTo(new File(destDir, newFileName));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new BuildException(e, getLocation());
+        }
+    }
+    
+    private void combineFiles(ArrayList<File> combine) throws Exception {
+        Iterator<File> itr = combine.iterator();
+        File startFile = itr.next();
+        while(itr.hasNext()) {
+            File nextFile = itr.next();
+            BufferedWriter writer = null;
+            BufferedReader reader = null;
+            try{
+                writer = new BufferedWriter(new FileWriter(startFile, true));
+                reader = new BufferedReader(new FileReader(nextFile));
+                boolean eof = false;
+                String temp = null;
+                while (!eof) {
+                    temp = reader.readLine();
+                    if (temp == null) {
+                        eof = true;
+                    } else {
+                        writer.write(temp);
+                        writer.write("\n");
+                    }
+                }
+            } finally {
+                if (writer != null) {
+                    try{ writer.close(); } catch (Throwable e) {};
+                }
+                if (reader != null) {
+                    try{ reader.close(); } catch (Throwable e) {};
+                }
+            }
+            try{
+                nextFile.delete();
+            } catch (Throwable e) {}
+        }
+    }
 
-	private void reportException(Throwable re, int count, ExporterTask generatorTask) {
-		log("An exception occurred while running exporter #" + count + ":" + generatorTask.getName(), Project.MSG_ERR);
-		log("To get the full stack trace run ant with -verbose", Project.MSG_ERR);
-		
-		log(re.toString(), Project.MSG_ERR);
-		String ex = new String();
-		Throwable cause = re.getCause();
-		while(cause!=null) {
-			ex += cause.toString() + "\n";
-			if(cause==cause.getCause()) {
-				break; // we reached the top.
-			} else {
-				cause=cause.getCause();
-			}
-		}
-		if(StringHelper.isNotEmpty(ex)) {
-			log(ex, Project.MSG_ERR);
-		}
+    private void reportException(Throwable re, int count, ExporterTask generatorTask) {
+        log("An exception occurred while running exporter #" + count + ":" + generatorTask.getName(), Project.MSG_ERR);
+        log("To get the full stack trace run ant with -verbose", Project.MSG_ERR);
+        
+        log(re.toString(), Project.MSG_ERR);
+        String ex = new String();
+        Throwable cause = re.getCause();
+        while(cause!=null) {
+            ex += cause.toString() + "\n";
+            if(cause==cause.getCause()) {
+                break; // we reached the top.
+            } else {
+                cause=cause.getCause();
+            }
+        }
+        if(StringHelper.isNotEmpty(ex)) {
+            log(ex, Project.MSG_ERR);
+        }
 
-		String newbieMessage = getProbableSolutionOrCause(re);
-		if(newbieMessage!=null) {
-			log(newbieMessage);
-		} 		
-		
-		if(re instanceof BuildException) {
-			throw (BuildException)re;
-		} else {
-			throw new BuildException(re, getLocation());
-		}
-	}
+        String newbieMessage = getProbableSolutionOrCause(re);
+        if(newbieMessage!=null) {
+            log(newbieMessage);
+        }       
+        
+        if(re instanceof BuildException) {
+            throw (BuildException)re;
+        } else {
+            throw new BuildException(re, getLocation());
+        }
+    }
 
-	private String getProbableSolutionOrCause(Throwable re) {
-		if(re==null) return null;
-		
-		if(re instanceof MappingNotFoundException) {
-			MappingNotFoundException mnf = (MappingNotFoundException)re;
-			if("resource".equals(mnf.getType())) {
-				return "A " + mnf.getType() + " located at " + mnf.getPath() + " was not found.\n" +
-						"Check the following:\n" +
-						"\n" +
-						"1) Is the spelling/casing correct ?\n" +
-						"2)	Is " + mnf.getPath() + " available via the classpath ?\n" +
-						"3) Does it actually exist ?\n";						
-			} else {
-				return "A " + mnf.getType() + " located at " + mnf.getPath() + " was not found.\n" +
-				"Check the following:\n" +
-				"\n" +
-				"1) Is the spelling/casing correct ?\n" +
-				"2)	Do you permission to access " + mnf.getPath() + " ?\n" +
-				"3) Does it actually exist ?\n";	
-			}
-		}
+    private String getProbableSolutionOrCause(Throwable re) {
+        if(re==null) return null;
+        
+        if(re instanceof MappingNotFoundException) {
+            MappingNotFoundException mnf = (MappingNotFoundException)re;
+            if("resource".equals(mnf.getType())) {
+                return "A " + mnf.getType() + " located at " + mnf.getPath() + " was not found.\n" +
+                        "Check the following:\n" +
+                        "\n" +
+                        "1) Is the spelling/casing correct ?\n" +
+                        "2) Is " + mnf.getPath() + " available via the classpath ?\n" +
+                        "3) Does it actually exist ?\n";                        
+            } else {
+                return "A " + mnf.getType() + " located at " + mnf.getPath() + " was not found.\n" +
+                "Check the following:\n" +
+                "\n" +
+                "1) Is the spelling/casing correct ?\n" +
+                "2) Do you permission to access " + mnf.getPath() + " ?\n" +
+                "3) Does it actually exist ?\n";    
+            }
+        }
 
-		if(re instanceof ClassNotFoundException || re instanceof NoClassDefFoundError) {
-			
-			return "A class were not found in the classpath of the Ant task.\n" +
-					"Ensure that the classpath contains the classes needed for Hibernate and your code are in the classpath.\n"; 			
-			
-		}
-		
-		if(re instanceof UnsupportedClassVersionError) {
-			return "You are most likely running the ant task with a JRE that is older than the JRE required to use the classes.\n" +
-					"e.g. running with JRE 1.3 or 1.4 when using JDK 1.5 annotations is not possible.\n" +
-					"Ensure that you are using a correct JRE.";
-		}
-		
-		
-		
-		if(re.getCause()!=re) {
-			return getProbableSolutionOrCause( re.getCause() );					
-		}
-		
-		return null;
-	}
+        if(re instanceof ClassNotFoundException || re instanceof NoClassDefFoundError) {
+            
+            return "A class were not found in the classpath of the Ant task.\n" +
+                    "Ensure that the classpath contains the classes needed for Hibernate and your code are in the classpath.\n";            
+            
+        }
+        
+        if(re instanceof UnsupportedClassVersionError) {
+            return "You are most likely running the ant task with a JRE that is older than the JRE required to use the classes.\n" +
+                    "e.g. running with JRE 1.3 or 1.4 when using JDK 1.5 annotations is not possible.\n" +
+                    "Ensure that you are using a correct JRE.";
+        }
+        
+        
+        
+        if(re.getCause()!=re) {
+            return getProbableSolutionOrCause( re.getCause() );                 
+        }
+        
+        return null;
+    }
 
-	public File getDestdir() {
-		return destDir;
-	}
+    public File getDestdir() {
+        return destDir;
+    }
 
-	public void setDestdir(File destDir) {
-		this.destDir = destDir;
-	}
+    public void setDestdir(File destDir) {
+        this.destDir = destDir;
+    }
 
-	public boolean isCombinePersistenceUnits() {
-		return combinePersistenceUnits;
-	}
+    public boolean isCombinePersistenceUnits() {
+        return combinePersistenceUnits;
+    }
 
-	public void setCombinePersistenceUnits(boolean combinePersistenceUnits) {
-		this.combinePersistenceUnits = combinePersistenceUnits;
-	}
+    public void setCombinePersistenceUnits(boolean combinePersistenceUnits) {
+        this.combinePersistenceUnits = combinePersistenceUnits;
+    }
 
-	public boolean isRefineFileNames() {
-		return refineFileNames;
-	}
+    public boolean isRefineFileNames() {
+        return refineFileNames;
+    }
 
-	public void setRefineFileNames(boolean refineFileNames) {
-		this.refineFileNames = refineFileNames;
-	}
-	
-	private class SqlFileFilter implements FilenameFilter {
+    public void setRefineFileNames(boolean refineFileNames) {
+        this.refineFileNames = refineFileNames;
+    }
+    
+    private class SqlFileFilter implements FilenameFilter {
 
-		public boolean accept(File dir, String name) {
-			return name.endsWith(".sql");
-		}
-		
-	}
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".sql");
+        }
+        
+    }
 }

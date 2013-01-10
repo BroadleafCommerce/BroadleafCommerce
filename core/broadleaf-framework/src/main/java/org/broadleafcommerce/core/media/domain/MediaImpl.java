@@ -36,10 +36,10 @@ import org.hibernate.annotations.*;
 @Table(name="BLC_MEDIA")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class MediaImpl implements Media {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
     @GeneratedValue(generator= "MediaId")
     @GenericGenerator(
         name="MediaId",
@@ -102,52 +102,52 @@ public class MediaImpl implements Media {
         this.url = url;
     }
     
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((label == null) ? 0 : label.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((url == null) ? 0 : url.hashCode());
-		return result;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((label == null) ? 0 : label.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MediaImpl other = (MediaImpl) obj;
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MediaImpl other = (MediaImpl) obj;
 
-		if (id != null && other.id != null) {
+        if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-		
-		if (label == null) {
-			if (other.label != null)
-				return false;
-		} else if (!label.equals(other.label))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (url == null) {
-			if (other.url != null)
-				return false;
-		} else if (!url.equals(other.url))
-			return false;
-		return true;
-	}
+        
+        if (label == null) {
+            if (other.label != null)
+                return false;
+        } else if (!label.equals(other.label))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        return true;
+    }
 
 }

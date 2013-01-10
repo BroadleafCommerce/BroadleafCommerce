@@ -57,10 +57,10 @@ public class RatingServiceImpl implements RatingService {
         ReviewDetail reviewDetail = reviewDetailDao.readReviewDetailById(reviewId);
 
         if (reviewDetail != null) {
-        	ReviewFeedback reviewFeedback = reviewDetailDao.createFeedback();
-        	reviewFeedback.setCustomer(customer);
-        	reviewFeedback.setIsHelpful(helpful);
-        	reviewFeedback.setReviewDetail(reviewDetail);
+            ReviewFeedback reviewFeedback = reviewDetailDao.createFeedback();
+            reviewFeedback.setCustomer(customer);
+            reviewFeedback.setIsHelpful(helpful);
+            reviewFeedback.setReviewDetail(reviewDetail);
             reviewDetail.getReviewFeedback().add(reviewFeedback);
             reviewDetailDao.saveReviewDetail(reviewDetail);
         }
@@ -145,7 +145,7 @@ public class RatingServiceImpl implements RatingService {
         if (ratingDetail == null) {
             ratingDetail = new RatingDetailImpl(ratingSummary, rating, SystemTime.asDate(), customer);
         } else {
-            ratingDetail.setRating(rating);        	
+            ratingDetail.setRating(rating);         
         }
 
         ratingSummary.getRatings().add(ratingDetail);
@@ -155,7 +155,7 @@ public class RatingServiceImpl implements RatingService {
         if (reviewDetail == null) {
             reviewDetail = new ReviewDetailImpl(customer, SystemTime.asDate(), ratingDetail, reviewText, ratingSummary);
         } else {
-            reviewDetail.setReviewText(reviewText);        	
+            reviewDetail.setReviewText(reviewText);         
         }
 
         ratingSummary.getReviews().add(reviewDetail);

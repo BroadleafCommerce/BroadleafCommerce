@@ -43,44 +43,44 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
         return null;
     }
 
-	public void displayAssetSearchDialog(final JavaScriptObject editor) {
-		assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
-			@Override
-			public void onSearchItemSelected(TileGridItemSelected event) {
-				String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
-				String name = event.getRecord().getAttribute("name");
-				String fileExtension = event.getRecord().getAttribute("fileExtension");
-				String richContent;
+    public void displayAssetSearchDialog(final JavaScriptObject editor) {
+        assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
+            @Override
+            public void onSearchItemSelected(TileGridItemSelected event) {
+                String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
+                String name = event.getRecord().getAttribute("name");
+                String fileExtension = event.getRecord().getAttribute("fileExtension");
+                String richContent;
 
-				if (fileExtension.equals("gif") || fileExtension.equals("jpg") || fileExtension.equals("png")) {
-					richContent =  "<img title='" + name + "' src='" + staticAssetFullUrl + "' alt='" + name + "'/>";
-				} else {
-					richContent = "<a href='" + staticAssetFullUrl + "'>" + name + "</a>";
-				}
-				insertRichTextContent(editor, richContent);
+                if (fileExtension.equals("gif") || fileExtension.equals("jpg") || fileExtension.equals("png")) {
+                    richContent =  "<img title='" + name + "' src='" + staticAssetFullUrl + "' alt='" + name + "'/>";
+                } else {
+                    richContent = "<a href='" + staticAssetFullUrl + "'>" + name + "</a>";
+                }
+                insertRichTextContent(editor, richContent);
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-			}
-		});
-	}
+            }
+        });
+    }
 
-	private native void exposeNativeGetTemplatePath() /*-{
-		var currentPagesPresenter = this;
-		$wnd.getTemplatePath = function() {
-			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::getTemplatePath()();
-		}
-	}-*/;
+    private native void exposeNativeGetTemplatePath() /*-{
+        var currentPagesPresenter = this;
+        $wnd.getTemplatePath = function() {
+            return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::getTemplatePath()();
+        }
+    }-*/;
 
-	private native void exposeNativeDisplayAssetSearchDialog() /*-{
-		var currentPagesPresenter = this;
-		$wnd.displayAssetSearchDialog = function(editor) {
-			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::displayAssetSearchDialog(Lcom/google/gwt/core/client/JavaScriptObject;)(editor);
-		}
-	}-*/;
+    private native void exposeNativeDisplayAssetSearchDialog() /*-{
+        var currentPagesPresenter = this;
+        $wnd.displayAssetSearchDialog = function(editor) {
+            return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::displayAssetSearchDialog(Lcom/google/gwt/core/client/JavaScriptObject;)(editor);
+        }
+    }-*/;
 
-	private native void insertRichTextContent(JavaScriptObject tinyMCEEditor, String content) /*-{
-		tinyMCEEditor.selection.setContent(content);
-	}-*/;
+    private native void insertRichTextContent(JavaScriptObject tinyMCEEditor, String content) /*-{
+        tinyMCEEditor.selection.setContent(content);
+    }-*/;
 
     protected String getAdminContext() {
         return BLCMain.adminContext;
@@ -92,25 +92,25 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
 
     public native void exposeNativeGetPreviewUrlPrefix() /*-{
         var currentPagesPresenter = this;
-		$wnd.getPreviewUrlPrefix = function() {
-			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::getPreviewUrlPrefix()();
-		}
-	}-*/;
+        $wnd.getPreviewUrlPrefix = function() {
+            return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::getPreviewUrlPrefix()();
+        }
+    }-*/;
 
     public native void exposeNativeAdminContext() /*-{
         var currentPagesPresenter = this;
-		$wnd.getAdminContext = function() {
-			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::getAdminContext()();
-		}
-	}-*/;
+        $wnd.getAdminContext = function() {
+            return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::getAdminContext()();
+        }
+    }-*/;
 
     @Override
     public void setup() {
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
-            	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-            	assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS);
+                TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
+                assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS);
             }
         }));
     }

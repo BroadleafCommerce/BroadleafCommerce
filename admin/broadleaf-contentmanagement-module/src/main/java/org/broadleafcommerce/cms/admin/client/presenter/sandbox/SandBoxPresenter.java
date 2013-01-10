@@ -52,43 +52,43 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 
     private static final CommentDialog COMMENT_DIALOG = new CommentDialog();
 
-	protected SandBoxDisplay display;
-	protected ListGridRecord lastSelectedRecord = null;
-	protected Boolean loaded = false;
+    protected SandBoxDisplay display;
+    protected ListGridRecord lastSelectedRecord = null;
+    protected Boolean loaded = false;
 
-	protected HandlerRegistration selectionChangedHandlerRegistration;
-	protected HandlerRegistration revertRejectAllClickHandlerRegistration;
+    protected HandlerRegistration selectionChangedHandlerRegistration;
+    protected HandlerRegistration revertRejectAllClickHandlerRegistration;
     protected HandlerRegistration revertRejectSelectionClickHandlerRegistration;
-	protected HandlerRegistration promoteAllClickHandlerRegistration;
+    protected HandlerRegistration promoteAllClickHandlerRegistration;
     protected HandlerRegistration promoteSelectionClickHandlerRegistration;
     protected HandlerRegistration refreshClickHandlerRegistration;
     protected HandlerRegistration previewClickHandlerRegistration;
-	protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
+    protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
 
-	protected Boolean disabled = false;
+    protected Boolean disabled = false;
 
-	public void setStartState() {
+    public void setStartState() {
         display.getPromoteAllButton().disable();
         display.getPromoteSelectionButton().disable();
         display.getRevertRejectAllButton().disable();
         display.getRevertRejectSelectionButton().disable();
         display.getRefreshButton().enable();
         display.getPreviewButton().disable();
-	}
+    }
 
-	public void enable() {
-		disabled = false;
-		display.getPromoteAllButton().enable();
+    public void enable() {
+        disabled = false;
+        display.getPromoteAllButton().enable();
         display.getPromoteSelectionButton().disable();
         display.getRevertRejectAllButton().enable();
         display.getRevertRejectSelectionButton().disable();
         display.getPreviewButton().disable();
-	}
+    }
 
-	public void disable() {
-		disabled = true;
-		setStartState();
-	}
+    public void disable() {
+        disabled = true;
+        setStartState();
+    }
 
     protected String getSelectedRecords() {
         ListGridRecord[] records = display.getGrid().getSelection();
@@ -125,7 +125,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
         display.getGrid().invalidateCache();
     }
 
-	public void bind() {
+    public void bind() {
         previewClickHandlerRegistration = display.getPreviewButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -142,7 +142,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                 }
             }
         });
-		revertRejectAllClickHandlerRegistration = display.getRevertRejectAllButton().addClickHandler(new ClickHandler() {
+        revertRejectAllClickHandlerRegistration = display.getRevertRejectAllButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     if (BLCMain.currentViewKey.equals("userSandBox")) {
@@ -162,7 +162,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                 }
             }
         });
-		revertRejectSelectionClickHandlerRegistration = display.getRevertRejectSelectionButton().addClickHandler(new ClickHandler() {
+        revertRejectSelectionClickHandlerRegistration = display.getRevertRejectSelectionButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     if (BLCMain.currentViewKey.equals("userSandBox")) {
@@ -182,19 +182,19 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                 }
             }
         });
-		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				ListGridRecord selectedRecord = event.getSelectedRecord();
-				if (event.getState() && selectedRecord != null) {
-					if (!selectedRecord.equals(lastSelectedRecord)) {
-						display.getRevertRejectSelectionButton().enable();
+        selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            public void onSelectionChanged(SelectionEvent event) {
+                ListGridRecord selectedRecord = event.getSelectedRecord();
+                if (event.getState() && selectedRecord != null) {
+                    if (!selectedRecord.equals(lastSelectedRecord)) {
+                        display.getRevertRejectSelectionButton().enable();
                         display.getPromoteSelectionButton().enable();
                         display.getPreviewButton().enable();
-					}
-				}
-			}
-		});
-		promoteAllClickHandlerRegistration = display.getPromoteAllButton().addClickHandler(new ClickHandler() {
+                    }
+                }
+            }
+        });
+        promoteAllClickHandlerRegistration = display.getPromoteAllButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     COMMENT_DIALOG.launch("Enter a promotion comment", new CommentCallback() {
@@ -214,7 +214,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                 }
             }
         });
-		promoteSelectionClickHandlerRegistration = display.getPromoteSelectionButton().addClickHandler(new ClickHandler() {
+        promoteSelectionClickHandlerRegistration = display.getPromoteSelectionButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     COMMENT_DIALOG.launch("Enter a promotion comment", new CommentCallback() {
@@ -242,24 +242,24 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                 }
             }
         });
-	}
+    }
 
-	public void postSetup(Canvas container) {
-		BLCMain.ISNEW = false;
-		if (containsDisplay(container)) {
-			display.show();
-		} else {
-			bind();
-			container.addChild(display.asCanvas());
-			loaded = true;
-		}
-		if (BLCMain.MODAL_PROGRESS.isActive()) {
-			BLCMain.MODAL_PROGRESS.stopProgress();
-		}
-		if (BLCMain.SPLASH_PROGRESS.isActive()) {
-			BLCMain.SPLASH_PROGRESS.stopProgress();
-		}
-	}
+    public void postSetup(Canvas container) {
+        BLCMain.ISNEW = false;
+        if (containsDisplay(container)) {
+            display.show();
+        } else {
+            bind();
+            container.addChild(display.asCanvas());
+            loaded = true;
+        }
+        if (BLCMain.MODAL_PROGRESS.isActive()) {
+            BLCMain.MODAL_PROGRESS.stopProgress();
+        }
+        if (BLCMain.SPLASH_PROGRESS.isActive()) {
+            BLCMain.SPLASH_PROGRESS.stopProgress();
+        }
+    }
 
     @Override
     public void setup() {
@@ -273,26 +273,26 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
     }
 
     protected Boolean containsDisplay(Canvas container) {
-		return container.contains(display.asCanvas());
-	}
+        return container.contains(display.asCanvas());
+    }
 
     public SandBoxDisplay getDisplay() {
-		return display;
-	}
+        return display;
+    }
 
-	public void setDisplay(Display display) {
-		this.display = (SandBoxDisplay) display;
-	}
+    public void setDisplay(Display display) {
+        this.display = (SandBoxDisplay) display;
+    }
 
-	protected void setupDisplayItems(DataSource entityDataSource, DataSource... additionalDataSources) {
-		getDisplay().build(entityDataSource, additionalDataSources);
-		((PresentationLayerAssociatedDataSource) entityDataSource).setAssociatedGrid(display.getGrid());
+    protected void setupDisplayItems(DataSource entityDataSource, DataSource... additionalDataSources) {
+        getDisplay().build(entityDataSource, additionalDataSources);
+        ((PresentationLayerAssociatedDataSource) entityDataSource).setAssociatedGrid(display.getGrid());
         setStartState();
-	}
+    }
 
-	public HandlerRegistration getSelectionChangedHandlerRegistration() {
-		return selectionChangedHandlerRegistration;
-	}
+    public HandlerRegistration getSelectionChangedHandlerRegistration() {
+        return selectionChangedHandlerRegistration;
+    }
 
     public HandlerRegistration getRevertRejectAllClickHandlerRegistration() {
         return revertRejectAllClickHandlerRegistration;
@@ -315,12 +315,12 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
     }
 
     public PresenterSequenceSetupManager getPresenterSequenceSetupManager() {
-		return presenterSequenceSetupManager;
-	}
+        return presenterSequenceSetupManager;
+    }
 
-	public Boolean getLoaded() {
-		return loaded;
-	}
+    public Boolean getLoaded() {
+        return loaded;
+    }
 
     protected void invalidateOtherCache() {
         //do nothing

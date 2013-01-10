@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
  */
 public interface DynamicSkuPricingService  {
 
-	public DynamicSkuPrices getSkuPrices(Sku sku, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
-	
-	
+    public DynamicSkuPrices getSkuPrices(Sku sku, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
+    
+    
 }

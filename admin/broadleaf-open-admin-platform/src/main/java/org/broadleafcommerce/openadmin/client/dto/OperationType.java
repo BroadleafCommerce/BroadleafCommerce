@@ -22,8 +22,8 @@ package org.broadleafcommerce.openadmin.client.dto;
  *
  */
 public enum OperationType {
-	FOREIGNKEY,
-	ENTITY,
-	JOINSTRUCTURE,
-	MAPSTRUCTURE
+    FOREIGNKEY,
+    ENTITY,
+    JOINSTRUCTURE,
+    MAPSTRUCTURE
 }

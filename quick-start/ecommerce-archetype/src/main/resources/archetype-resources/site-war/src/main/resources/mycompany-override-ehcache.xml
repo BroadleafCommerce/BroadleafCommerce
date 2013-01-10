@@ -2,21 +2,21 @@
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    	
+        
     <cache
-    	name="blStandardElements"
-    	maxElementsInMemory="100000"
-    	eternal="false"
+        name="blStandardElements"
+        maxElementsInMemory="100000"
+        eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="1">
-    	<cacheEventListenerFactory class="org.broadleafcommerce.profile.cache.engine.HydratedCacheEventListenerFactory"/>
+        <cacheEventListenerFactory class="org.broadleafcommerce.profile.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
     
-   	<cache
-    	name="blOrderElements"
-    	maxElementsInMemory="1000000"
-    	eternal="false"
-    	overflowToDisk="true"
-    	timeToLiveSeconds="100"/>
-    	
+    <cache
+        name="blOrderElements"
+        maxElementsInMemory="1000000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="100"/>
+        
 </ehcache>

@@ -64,11 +64,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Override
     public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox) {
-    	try {
-			fullUrl = URLDecoder.decode(fullUrl, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
-		}
+        try {
+            fullUrl = URLDecoder.decode(fullUrl, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
+        }
         return staticAssetDao.readStaticAssetByFullUrl(fullUrl, targetSandBox);
     }
 

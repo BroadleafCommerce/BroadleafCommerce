@@ -8,33 +8,33 @@
              version="2.0">
              
     <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
-		<non-jta-data-source>jdbc/web</non-jta-data-source>
-		<exclude-unlisted-classes/>
-		<properties>
+        <non-jta-data-source>jdbc/web</non-jta-data-source>
+        <exclude-unlisted-classes/>
+        <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>
         </properties>
-	</persistence-unit>
-	
-	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
-		<non-jta-data-source>jdbc/webSecure</non-jta-data-source>
-		<exclude-unlisted-classes/>
-		<properties>
+    </persistence-unit>
+    
+    <persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+        <non-jta-data-source>jdbc/webSecure</non-jta-data-source>
+        <exclude-unlisted-classes/>
+        <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>
         </properties>
-	</persistence-unit>
+    </persistence-unit>
 
     <persistence-unit name="blCMSStorage" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<non-jta-data-source>jdbc/cmsStorage</non-jta-data-source>
-		<exclude-unlisted-classes/>
-		<properties>
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <non-jta-data-source>jdbc/cmsStorage</non-jta-data-source>
+        <exclude-unlisted-classes/>
+        <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>
         </properties>
-	</persistence-unit>
+    </persistence-unit>
 </persistence>

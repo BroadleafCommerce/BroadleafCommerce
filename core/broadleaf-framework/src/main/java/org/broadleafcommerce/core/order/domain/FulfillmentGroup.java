@@ -147,14 +147,14 @@ public interface FulfillmentGroup extends Serializable {
     
     public Boolean isShippingPriceTaxable();
 
-	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
-	
-	public String getService();
+    public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
+    
+    public String getService();
 
-	public void setService(String service);
-	
-	public List<DiscreteOrderItem> getDiscreteOrderItems();
-	
-	public Money getFulfillmentGroupAdjustmentsValue();
-	
+    public void setService(String service);
+    
+    public List<DiscreteOrderItem> getDiscreteOrderItems();
+    
+    public Money getFulfillmentGroupAdjustmentsValue();
+    
 }

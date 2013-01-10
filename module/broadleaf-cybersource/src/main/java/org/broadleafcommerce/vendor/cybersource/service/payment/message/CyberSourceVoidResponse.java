@@ -24,10 +24,10 @@ import org.broadleafcommerce.money.Money;
  *
  */
 public class CyberSourceVoidResponse  implements java.io.Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private java.math.BigInteger reasonCode;
+    
+    private static final long serialVersionUID = 1L;
+    
+    private java.math.BigInteger reasonCode;
     private java.lang.String requestDateTime;
     private Money amount;
 

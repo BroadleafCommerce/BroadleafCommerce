@@ -37,7 +37,7 @@ import java.util.List;
 @EntityListeners(value = { AdminAuditableListener.class })
 public class SandBoxActionImpl implements SandBoxAction {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "SandBoxActionId", strategy = GenerationType.TABLE)
