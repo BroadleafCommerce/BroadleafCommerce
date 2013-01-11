@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.test;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
 import org.springframework.test.context.TestExecutionListeners;
@@ -24,15 +23,15 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 @TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
-@TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})
+@TestExecutionListeners(inheritListeners = false, value = { MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class })
 public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 
     @PersistenceContext(unitName = "blPU")
@@ -41,19 +40,27 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
     protected static MergeClassPathXMLApplicationContext mergeContext = null;
 
     protected static List<String> moduleContexts = new ArrayList<String>();
-    
+
     public static MergeClassPathXMLApplicationContext getContext() {
         try {
             if (mergeContext == null) {
+                // Note that as of 2.2.0, this array will no longer include "bl-applicationContext-test", as we want that to
+                // be the very last context loaded.
                 String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
                 
-                String[] additionalContexts = (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) 
-                        ? new String[]{"bl-applicationContext-test-legacy.xml"} 
-                        : new String[]{};
+                // After the framework applicationContexts are loaded, we want the module ones
+                List<String> additionalContexts = new ArrayList<String>(moduleContexts);
 
-                additionalContexts = (String[]) ArrayUtils.addAll(additionalContexts, moduleContexts.toArray());
+                // Lastly, we want the test applicationContext
+                additionalContexts.add("bl-applicationContext-test.xml");
+
+                // If we're running in legacy test mode, we need that one too
+                if (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) {
+                    additionalContexts.add("bl-applicationContext-test-legacy.xml");
+                }
                 
-                mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts);
+                String[] strArray = new String[additionalContexts.size()];
+                mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts.toArray(strArray));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

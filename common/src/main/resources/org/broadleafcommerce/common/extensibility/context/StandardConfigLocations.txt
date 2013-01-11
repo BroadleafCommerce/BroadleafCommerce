@@ -18,5 +18,5 @@ bl-open-admin-contentCreator-applicationContext.xml
 bl-admin-applicationContext.xml
 #testing application context files
 bl-framework-applicationContext-test.xml
-bl-applicationContext-test.xml
+#bl-applicationContext-test.xml
 bl-applicationContext-test-security.xml

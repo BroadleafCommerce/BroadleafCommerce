@@ -298,8 +298,12 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             }
         }
         if (state == null || !state.isConfigurationOnly()) {
-            temp.setJtaDataSource(newPU.getJtaDataSource());
-            temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
+            if (newPU.getJtaDataSource() != null) {
+                temp.setJtaDataSource(newPU.getJtaDataSource());
+            }
+            if (newPU.getNonJtaDataSource() != null) {
+                temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
+            }
         } else {
             temp.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
             temp.getProperties().setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
