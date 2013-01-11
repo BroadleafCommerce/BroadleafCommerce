@@ -69,7 +69,7 @@ public class DummyCreditCardModule extends AbstractModule {
         responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
         responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
         responseItem.setTransactionSuccess(true);
-        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
+        responseItem.setTransactionAmount(paymentContext.getPaymentInfo().getAmount());
         responseItem.setCurrency(paymentContext.getPaymentInfo().getCurrency());
         return responseItem;
     }

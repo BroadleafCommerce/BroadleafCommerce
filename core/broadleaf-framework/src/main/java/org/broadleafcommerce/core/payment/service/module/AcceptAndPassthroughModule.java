@@ -65,7 +65,7 @@ public class AcceptAndPassthroughModule extends AbstractModule {
     @Override
     public PaymentResponseItem processAuthorizeAndDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
         responseItem.setTransactionSuccess(true);
-        responseItem.setAmountPaid(amountToDebit);
+        responseItem.setTransactionAmount(amountToDebit);
         return responseItem;
     }
 

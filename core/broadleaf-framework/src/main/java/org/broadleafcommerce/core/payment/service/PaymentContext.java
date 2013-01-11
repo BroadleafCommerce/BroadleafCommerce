@@ -23,16 +23,14 @@ import org.broadleafcommerce.common.money.Money;
 public interface PaymentContext {
 
     /**
-     *
-     * @deprecated Use getTransactionAmount() instead.
-     * @return
+     * @deprecated
+     * @see #getTransactionAmount()
      */
     public Money getOriginalPaymentAmount();
 
     /**
-     *
-     * @deprecated Use getRemainingTransactionAmount() instead.
-     * @return
+     * @deprecated
+     * @see #getRemainingTransactionAmount()
      */
     public Money getRemainingPaymentAmount();
 

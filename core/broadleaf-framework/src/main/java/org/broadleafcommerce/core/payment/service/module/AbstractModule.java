@@ -50,7 +50,7 @@ public abstract class AbstractModule implements PaymentModule {
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
 
         PaymentResponseItem responseItem = getNewResponseItem();
-        responseItem.setAmountPaid(amountAvailableToReverseAuthorize);
+        responseItem.setTransactionAmount(amountAvailableToReverseAuthorize);
         responseItem.setCurrency(paymentInfo.getCurrency());
 
         //Add PaymentInfoDetail - ReverseAuth
@@ -65,7 +65,7 @@ public abstract class AbstractModule implements PaymentModule {
 
         PaymentResponseItem responseItem = getNewResponseItem();
         responseItem.setTransactionTimestamp(SystemTime.asDate());
-        responseItem.setAmountPaid(amountAvailableToDebit);
+        responseItem.setTransactionAmount(amountAvailableToDebit);
         responseItem.setCurrency(paymentInfo.getCurrency());
         //Add PaymentInfoDetail - Capture
         paymentInfo.getPaymentInfoDetails().add(getNewCapturePaymentInfoDetail(paymentInfo, amountAvailableToDebit));
@@ -85,7 +85,7 @@ public abstract class AbstractModule implements PaymentModule {
 
         PaymentResponseItem responseItem = getNewResponseItem();
         responseItem.setTransactionTimestamp(SystemTime.asDate());
-        responseItem.setAmountPaid(amountAvailableToCredit);
+        responseItem.setTransactionAmount(amountAvailableToCredit);
         responseItem.setCurrency(paymentInfo.getCurrency());
         //Add PaymentInfoDetail - Refund
         paymentInfo.getPaymentInfoDetails().add(getNewRefundPaymentInfoDetail(paymentInfo, amountAvailableToCredit));

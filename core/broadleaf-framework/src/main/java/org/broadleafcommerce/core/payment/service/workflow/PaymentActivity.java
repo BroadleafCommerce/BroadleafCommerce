@@ -52,6 +52,8 @@ public class PaymentActivity extends BaseActivity {
     public ProcessContext execute(ProcessContext context) throws Exception {
         CombinedPaymentContextSeed seed = ((WorkflowPaymentContext) context).getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
+
+        // TODO:  If seed has a specified total, use that; otherwise do the following:
         Money orderTotal = seed.getOrderTotal();
         Money remainingTotal = seed.getOrderTotal();
         Map<PaymentInfo, Referenced> replaceItems = new HashMap<PaymentInfo, Referenced>();
@@ -134,11 +136,11 @@ public class PaymentActivity extends BaseActivity {
                     }
                     if (paymentResponseItem != null) {
                         //validate payment response item
-                        if (paymentResponseItem.getAmountPaid() == null || paymentResponseItem.getTransactionTimestamp() == null || paymentResponseItem.getTransactionSuccess() == null) {
-                            throw new PaymentException("The PaymentResponseItem instance did not contain one or more of the following: amountPaid, transactionTimestamp or transactionSuccess");
+                        if (paymentResponseItem.getTransactionAmount() == null || paymentResponseItem.getTransactionTimestamp() == null || paymentResponseItem.getTransactionSuccess() == null) {
+                            throw new PaymentException("The PaymentResponseItem instance did not contain one or more of the following: transactionAmount, transactionTimestamp or transactionSuccess");
                         }
                         seed.getPaymentResponse().addPaymentResponseItem(info, paymentResponseItem);
-                        remainingTotal = remainingTotal.subtract(paymentResponseItem.getAmountPaid());
+                        remainingTotal = remainingTotal.subtract(paymentResponseItem.getTransactionAmount());
                     }
                 }
             }

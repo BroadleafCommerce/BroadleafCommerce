@@ -85,7 +85,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
 
     @Override
     public PaymentResponseItem processCredit(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException {
-        responseItem.setAmountPaid(amountToCredit);
+        responseItem.setTransactionSuccess(true);
         Map<String, String> additionalFields = validateNullCreditCard(paymentContext);
         findPaymentInfoFromContext(paymentContext).setAdditionalFields(additionalFields);
         return responseItem;
