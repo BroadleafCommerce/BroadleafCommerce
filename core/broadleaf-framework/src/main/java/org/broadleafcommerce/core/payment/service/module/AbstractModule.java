@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.payment.service.module;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.payment.domain.*;
@@ -32,8 +33,9 @@ public abstract class AbstractModule implements PaymentModule {
 
     @Override
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
-        PaymentResponseItem responseItem = getNewResponseItem();
-        return processAuthorize(paymentContext, responseItem);
+        Money amountToAuthorize = paymentContext.getRemainingTransactionAmount();
+        PaymentResponseItem responseItem = getNewResponseItem(amountToAuthorize, findPaymentInfoFromContext(paymentContext).getCurrency());
+        return processAuthorize(paymentContext, amountToAuthorize, responseItem);
     }
 
     /**
@@ -49,9 +51,7 @@ public abstract class AbstractModule implements PaymentModule {
         Money amountAvailableToReverseAuthorize = getAmountAvailableToReverseAuthorize(paymentContext);
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
 
-        PaymentResponseItem responseItem = getNewResponseItem();
-        responseItem.setTransactionAmount(amountAvailableToReverseAuthorize);
-        responseItem.setCurrency(paymentInfo.getCurrency());
+        PaymentResponseItem responseItem = getNewResponseItem(amountAvailableToReverseAuthorize, paymentInfo.getCurrency());
 
         //Add PaymentInfoDetail - ReverseAuth
         paymentInfo.getPaymentInfoDetails().add(getNewReverseAuthPaymentInfoDetail(paymentInfo, amountAvailableToReverseAuthorize));
@@ -63,10 +63,7 @@ public abstract class AbstractModule implements PaymentModule {
         Money amountAvailableToDebit = getAmountAvailableToDebit(paymentContext);
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
 
-        PaymentResponseItem responseItem = getNewResponseItem();
-        responseItem.setTransactionTimestamp(SystemTime.asDate());
-        responseItem.setTransactionAmount(amountAvailableToDebit);
-        responseItem.setCurrency(paymentInfo.getCurrency());
+        PaymentResponseItem responseItem = getNewResponseItem(amountAvailableToDebit, paymentInfo.getCurrency());
         //Add PaymentInfoDetail - Capture
         paymentInfo.getPaymentInfoDetails().add(getNewCapturePaymentInfoDetail(paymentInfo, amountAvailableToDebit));
 
@@ -83,10 +80,7 @@ public abstract class AbstractModule implements PaymentModule {
         Money amountAvailableToCredit = getAmountAvailableToCredit(paymentContext);
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
 
-        PaymentResponseItem responseItem = getNewResponseItem();
-        responseItem.setTransactionTimestamp(SystemTime.asDate());
-        responseItem.setTransactionAmount(amountAvailableToCredit);
-        responseItem.setCurrency(paymentInfo.getCurrency());
+        PaymentResponseItem responseItem = getNewResponseItem(amountAvailableToCredit, paymentInfo.getCurrency());
         //Add PaymentInfoDetail - Refund
         paymentInfo.getPaymentInfoDetails().add(getNewRefundPaymentInfoDetail(paymentInfo, amountAvailableToCredit));
 
@@ -95,8 +89,10 @@ public abstract class AbstractModule implements PaymentModule {
 
     @Override
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-        Money amountAlreadyCaptured = findPaymentInfoFromContext(paymentContext).getPaymentCapturedAmount();
-        return processVoidPayment(paymentContext, amountAlreadyCaptured, getNewResponseItem());
+        PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
+        Money amountAlreadyCaptured = paymentInfo.getPaymentCapturedAmount();
+        PaymentResponseItem responseItem = getNewResponseItem(amountAlreadyCaptured, paymentInfo.getCurrency());
+        return processVoidPayment(paymentContext, amountAlreadyCaptured, responseItem);
     }
 
     @Override
@@ -105,7 +101,14 @@ public abstract class AbstractModule implements PaymentModule {
     }
 
     protected PaymentResponseItem getNewResponseItem() {
-        return paymentInfoService.createResponseItem();
+        return getNewResponseItem(null, null);
+    }
+
+    protected PaymentResponseItem getNewResponseItem(Money amount, BroadleafCurrency currency) {
+        PaymentResponseItem responseItem = paymentInfoService.createResponseItem();
+        responseItem.setTransactionAmount(amount);
+        responseItem.setCurrency(currency);
+        return responseItem;
     }
     
     protected PaymentInfoDetail getNewPaymentInfoDetail(PaymentInfo paymentInfo, PaymentInfoDetailType type, Money amount){

@@ -30,7 +30,7 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 public class DummyCreditCardModule extends AbstractModule {
 
     @Override
-    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
+    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, Money amountToAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         return createResponse(paymentContext, responseItem);
     }
 

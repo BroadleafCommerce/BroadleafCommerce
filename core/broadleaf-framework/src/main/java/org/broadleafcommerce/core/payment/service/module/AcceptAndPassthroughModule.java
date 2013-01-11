@@ -53,7 +53,7 @@ public class AcceptAndPassthroughModule extends AbstractModule {
     }
 
     @Override
-    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
+    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, Money amountToAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("authorize not implemented.");
     }
 

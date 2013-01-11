@@ -47,7 +47,7 @@ import java.util.Map;
 public class NullCreditCardPaymentModule extends AbstractModule {
 
     @Override
-    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
+    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, Money amountToAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         Map<String, String> additionalFields = validateNullCreditCard(paymentContext);
         responseItem.setTransactionSuccess(additionalFields != null);
         if (responseItem.getTransactionSuccess()) {

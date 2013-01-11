@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 public class DefaultModule extends AbstractModule {
 
     @Override
-    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
+    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, Money amountToAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("authorize not implemented.");
     }
 
