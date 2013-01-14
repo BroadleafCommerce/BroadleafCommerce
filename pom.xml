@@ -634,16 +634,22 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>3.6.1</version>
+                <version>4.0.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>3.6.1</version>
+                <version>4.0.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>slf4j-jdk14</artifactId>
+                        <groupId>org.slf4j</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Byte Code Manipulation Libraries-->

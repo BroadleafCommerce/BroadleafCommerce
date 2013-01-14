@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.Currency;
+import java.util.Map;
 
 public class BroadleafRequestContext {
     
@@ -189,6 +190,11 @@ public class BroadleafRequestContext {
 
     public void setBroadleafCurrency(BroadleafCurrency broadleafCurrency) {
         this.broadleafCurrency = broadleafCurrency;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, String[]> getRequestParameterMap() {
+        return getBroadleafRequestContext().getRequest().getParameterMap();
     }
 
 }

@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.service.solr.SolrIndexService;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +31,15 @@ import java.util.List;
  * @author Andre Azzolini (apazzolini)
  */
 public interface SearchService {
+
+    /**
+     * This method delegates to {@link SolrIndexService#rebuildIndex()}. It is here to preserve backwards-compatibility
+     * with sites that were originally configured to run Broadleaf with Solr before 2.2.0.
+     * 
+     * @throws ServiceException
+     * @throws IOException
+     */
+    public void rebuildIndex() throws ServiceException, IOException;
     
     /**
      * Performs a search for products in the given category, taking into consideration the ProductSearchCriteria
@@ -45,7 +55,8 @@ public interface SearchService {
      * @return the result of the search
      * @throws ServiceException 
      */
-    public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException;
+    public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
+            throws ServiceException;
     
     /**
      * Performs a search for products in the given category, taking into consideration the ProductSearchCriteria
@@ -61,7 +72,8 @@ public interface SearchService {
      * @return
      * @throws ServiceException
      */
-    public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException;
+    public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
+            throws ServiceException;
     
     /**
      * Performs a search for products across all categories for the given query, taking into consideration
@@ -72,7 +84,8 @@ public interface SearchService {
      * @return the result of the search
      * @throws ServiceException 
      */
-    public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) throws ServiceException;
+    public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria)
+            throws ServiceException;
     
     /**
      * Performs a search for products in the given category for the given query, taking into consideration 
@@ -83,7 +96,8 @@ public interface SearchService {
      * @param searchCriteria
      * @throws ServiceException
      */
-    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, ProductSearchCriteria searchCriteria) throws ServiceException;
+    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query,
+            ProductSearchCriteria searchCriteria) throws ServiceException;
 
     /**
      * Gets all available facets for search results page
@@ -99,15 +113,5 @@ public interface SearchService {
      * @return the available facets
      */
     public List<SearchFacetDTO> getCategoryFacets(Category category);
-    
-    /**
-     * Rebuilds the current index. Note that some search service implementations may not necessarily
-     * support rebuilding an index (such as the DatabaseProductSearchService)
-     * @throws IOException 
-     * @throws ServiceException
-     */
-    public void rebuildIndex() throws ServiceException, IOException;
-
-
 
 }
