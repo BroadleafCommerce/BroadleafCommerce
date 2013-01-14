@@ -122,11 +122,9 @@ public class PaymentActivity extends BaseActivity {
                         throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
                     }
                     if (getRollbackHandler() != null && automaticallyRegisterRollbackHandlerForPayment) {
-                        Map<String, Object> myState;
-                        if (getStateConfiguration() != null) {
-                            myState = getStateConfiguration();
-                        } else {
-                            myState = new HashMap<String, Object>();
+                        Map<String, Object> myState = new HashMap<String, Object>();
+                        if (getStateConfiguration() != null && !getStateConfiguration().isEmpty()) {
+                            myState.putAll(getStateConfiguration());
                         }
                         myState.put(ROLLBACK_ACTIONTYPE, seed.getActionType());
                         myState.put(ROLLBACK_PAYMENTCONTEXT, paymentContext);
