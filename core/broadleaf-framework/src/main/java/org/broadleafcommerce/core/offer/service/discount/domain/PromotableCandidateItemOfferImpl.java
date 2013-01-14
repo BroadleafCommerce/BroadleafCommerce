@@ -18,9 +18,11 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.AdvancedOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferTier;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
 import java.math.BigDecimal;
@@ -63,20 +65,38 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
         this.candidateTargets = candidateTargets;
     }
 
+    private BigDecimal retriveTierForItem(Long i) {
+        OfferTier maxTier = null;
+        for (OfferTier t : ((AdvancedOffer) delegate.getOffer()).getOfferTiers()) {
+            maxTier = t;
+            if (i <= t.getMinQuantity()) {
+                return t.getAmount();
+            }
+        }
+        if (maxTier != null) {
+            return maxTier.getAmount();
+        }
+        return BigDecimal.ZERO;
+    }
+
     @Override
     public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
         Money savings = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, orderItem.getDelegate().getOrder().getCurrency());
         Money salesPrice = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
+        BigDecimal offerValue = delegate.getOffer().getValue();
+        if (delegate.getOffer() instanceof AdvancedOffer && ((AdvancedOffer) delegate.getOffer()).isTieredOffer()) {
+            offerValue = retriveTierForItem((long) orderItem.getQuantity());
+        }
         if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
             //Price reduction by a fixed amount
-            savings = savings.add(BroadleafCurrencyUtils.getMoney(getOffer().getValue(), orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings));
+            savings = savings.add(BroadleafCurrencyUtils.getMoney(offerValue, orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings));
         } else if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
             //Price reduction by a percent off
-            BigDecimal savingsPercent = getOffer().getValue().divide(new BigDecimal(100));
+            BigDecimal savingsPercent = offerValue.divide(new BigDecimal(100));
             savings = savings.add(salesPrice.multiply(savingsPercent).multiply(qtyToReceiveSavings));
         } else {
             //Different price (presumably less than the normal price)
-            savings = savings.add(salesPrice.multiply(qtyToReceiveSavings).subtract(BroadleafCurrencyUtils.getMoney(getOffer().getValue(), orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings)));
+            savings = savings.add(salesPrice.multiply(qtyToReceiveSavings).subtract(BroadleafCurrencyUtils.getMoney(offerValue, orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings)));
         }
         return savings;
     }

@@ -99,11 +99,11 @@ public class OfferImpl implements Offer, Status {
 
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 2, group = "OfferImpl_Description", prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 3, group = "OfferImpl_Description", prominent=true, groupOrder = 1)
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 3, group = "OfferImpl_Description", largeEntry=true, prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 4, group = "OfferImpl_Description", largeEntry=true, prominent=true, groupOrder = 1)
     protected String description;
 
     @Column(name = "OFFER_TYPE", nullable=false)
@@ -113,15 +113,15 @@ public class OfferImpl implements Offer, Status {
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order=4, group = "OfferImpl_Amount", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType", groupOrder=2)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order=5, group = "OfferImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType", groupOrder=1)
     protected String discountType;
 
     @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order=5, group = "OfferImpl_Amount", prominent=true, groupOrder=2)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order=6, group = "OfferImpl_Description", prominent=true, groupOrder=1)
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority", group = "OfferImpl_Description", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority", order=7,group = "OfferImpl_Description", groupOrder=1)
     protected int priority;
 
     @Column(name = "START_DATE")
