@@ -26,6 +26,8 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Map;
+
 public class BroadleafRequestContext {
     
     private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();   
@@ -155,5 +157,10 @@ public class BroadleafRequestContext {
 
     public void setTheme(Theme theme) {
         this.theme = theme;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, String[]> getRequestParameterMap() {
+        return getBroadleafRequestContext().getRequest().getParameterMap();
     }
 }
