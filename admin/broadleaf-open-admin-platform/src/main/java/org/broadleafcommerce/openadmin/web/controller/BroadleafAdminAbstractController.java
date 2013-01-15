@@ -17,14 +17,9 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
-import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
@@ -41,8 +36,9 @@ public abstract class BroadleafAdminAbstractController extends BroadleafAbstract
     protected String currentSectionKey;
 
     @Resource(name = "blAdminNavigationService")
-    private AdminNavigationService adminNavigationService;
+    protected AdminNavigationService adminNavigationService;
 
+    /*
     @ModelAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME)
     public AdminModule getCurrentAdminModule() {
         AdminSection section = getCurrentAdminSection();
@@ -60,5 +56,6 @@ public abstract class BroadleafAdminAbstractController extends BroadleafAbstract
     }
 
     public abstract String getCurrentSectionKey();
+    */
 
 }

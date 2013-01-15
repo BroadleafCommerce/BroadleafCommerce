@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.AssociationPathElement;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,10 +47,20 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.DOMException;
 
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+
 import javax.persistence.Embedded;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -146,14 +148,23 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (metadata != null) {
                 Boolean mutable = metadata.getMutable();
                 Boolean readOnly = metadata.getReadOnly();
+
+                if (metadata.getFieldType().equals(SupportedFieldType.BOOLEAN)) {
+                    if (value == null) {
+                        value = "false";
+                    }
+                }
+
                 if ((mutable == null || mutable) && (readOnly == null || !readOnly)) {
                     if (value != null) {
                         switch (metadata.getFieldType()) {
                             case BOOLEAN:
-                                if (Character.class.isAssignableFrom(returnType)) {
-                                    fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value) ? 'Y' : 'N');
-                                } else {
-                                    fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value));
+                                boolean v = Boolean.valueOf(value);
+                                try {
+                                    fieldManager.setFieldValue(instance, property.getName(), v);
+                                } catch (IllegalArgumentException e) {
+                                    char c = v ? 'Y' : 'N';
+                                    fieldManager.setFieldValue(instance, property.getName(), c);
                                 }
                                 break;
                             case DATE:
@@ -398,6 +409,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             if (metadata.getForeignKeyCollection()) {
                                 ((BasicFieldMetadata) propertyItem.getMetadata()).setFieldType(metadata.getFieldType());
                                 strVal = null;
+                            } else if (metadata.getFieldType().equals(SupportedFieldType.BOOLEAN) && value instanceof Character) {
+                                strVal = (value.equals('Y')) ? "true" : "false";
                             } else if (Date.class.isAssignableFrom(value.getClass())) {
                                 strVal = dateFormat.format((Date) value);
                             } else if (Timestamp.class.isAssignableFrom(value.getClass())) {

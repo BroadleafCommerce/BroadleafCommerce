@@ -621,6 +621,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             Map<String, FieldMetadata> cacheData;
             synchronized(LOCK_OBJECT) {
                 cacheData = METADATA_CACHE.get(cacheKey);
+                cacheData = null;
                 if (cacheData == null) {
                     Map<String, FieldMetadata> props = getPropertiesForEntityClass(
                         clazz,

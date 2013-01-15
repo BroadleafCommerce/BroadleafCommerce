@@ -54,6 +54,32 @@ public class BLCMapUtils {
     }
     
     /**
+     * Given an array of values and a TypedClosure that maps an appropriate key for a given value,
+     * returns a HashMap of the key to the value.
+     * 
+     * <b>Note: If two values share the same key, the later one will override the previous one in the returned map</b>
+     * @see #keyedListMap(Iterable, TypedClosure)
+     * 
+     * V[] --> Map<K, V>
+     * 
+     * @param values
+     * @param closure
+     * @return the map
+     */
+    public static <K, V> Map<K, V> keyedMap(V[] values, TypedClosure<K, V> closure) {
+        Map<K, V> map = new HashMap<K, V>();
+        
+        if (values != null) {
+            for (V value : values) {
+                K key = closure.getKey(value);
+                map.put(key, value);
+            }
+        }
+        
+        return map;
+    }
+    
+    /**
      * Given a collection of values and a TypedClosure that maps an appropriate key for a given value,
      * returns a HashMap of the key to a list of values that map to that key.
      * 

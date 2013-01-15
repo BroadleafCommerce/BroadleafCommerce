@@ -16,9 +16,13 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.TypedClosure;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
+import java.util.Map;
 
 
 /**
@@ -35,6 +39,21 @@ public class ClassMetadata implements IsSerializable, Serializable {
     private Property[] properties;
     private String currencyCode = "USD";
     
+    private Map<String, Property> pMap = null;
+
+    public Map<String, Property> getPMap() {
+        if (pMap == null) {
+            pMap = BLCMapUtils.keyedMap(properties, new TypedClosure<String, Property>() {
+
+                @Override
+                public String getKey(Property value) {
+                    return value.getName();
+                }
+            });
+        }
+        return pMap;
+    }
+
     public String getCeilingType() {
         return ceilingType;
     }

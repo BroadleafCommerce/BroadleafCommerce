@@ -32,11 +32,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
-import java.util.List;
 
 /**
  * AdminLoginController handles login related needs for the BLC admin including:
@@ -76,29 +76,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
             AdminModule first = modules.get(0);
             if (!first.getSections().isEmpty()) {
                 AdminSection adminSection = first.getSections().get(0);
-
-                String redirectUrl = adminSection.getUrl();
-                //remove the preceding forward slash to make the redirect relative
-                if (redirectUrl.startsWith("/")) {
-                    redirectUrl = redirectUrl.substring(1, redirectUrl.length());
-                }
-                Enumeration parameterNames = request.getParameterNames();
-                if (parameterNames.hasMoreElements()) {
-                    redirectUrl += "?";
-                }
-                while(parameterNames.hasMoreElements()) {
-                    String name = (String) parameterNames.nextElement();
-                    String value = request.getParameter(name);
-                    redirectUrl += name + "=" + value;
-                    if (parameterNames.hasMoreElements()) {
-                        redirectUrl += "&";
-                    }
-                }
-                if (adminSection.getSectionKey() != null) {
-                    redirectUrl += "#moduleKey=" + first.getModuleKey() + "&pageKey=" + adminSection.getSectionKey();
-                }
-
-                return "redirect:" + redirectUrl;
+                return "redirect:" + adminSection.getUrl();
             }
         }
         return null;
