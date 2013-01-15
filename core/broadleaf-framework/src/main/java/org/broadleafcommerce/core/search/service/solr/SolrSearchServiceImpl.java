@@ -365,14 +365,15 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             SearchFacetDTO dto = entry.getValue();
             String facetTagField = entry.getValue().isActive() ? shs.getGlobalFacetTagField() : entry.getKey();
 
-            List<SearchFacetRange> searchFacetRanges = dto.getFacet().getSearchFacetRanges();
+            // Clone the list - we don't want to remove these facets from the DB
+            List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
             if (extensionManager != null) {
-                extensionManager.filterSearchFacetRanges(dto, searchFacetRanges);
+                extensionManager.filterSearchFacetRanges(dto, facetRanges);
             }
 
-            if (searchFacetRanges != null && searchFacetRanges.size() > 0) {
-                for (SearchFacetRange range : searchFacetRanges) {
+            if (facetRanges != null && facetRanges.size() > 0) {
+                for (SearchFacetRange range : facetRanges) {
                     query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), facetTagField, "ex", range));
                 }
             } else {
