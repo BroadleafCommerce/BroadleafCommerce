@@ -472,6 +472,7 @@ public class ProductDaoImpl implements ProductDao {
         
         // We need to filter on active date on the sku
         Join<Product, Sku> sku = product.join("defaultSku");
+        product.fetch("defaultSku");
         
         // Product objects are what we want back
         criteria.select(product);
