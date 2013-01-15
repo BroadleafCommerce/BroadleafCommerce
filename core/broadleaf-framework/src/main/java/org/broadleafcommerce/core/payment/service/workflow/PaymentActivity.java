@@ -53,9 +53,15 @@ public class PaymentActivity extends BaseActivity {
         CombinedPaymentContextSeed seed = ((WorkflowPaymentContext) context).getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
 
-        // TODO:  If seed has a specified total, use that; otherwise do the following:
-        Money orderTotal = seed.getOrderTotal();
-        Money remainingTotal = seed.getOrderTotal();
+        // If seed has a specified total, use that; otherwise use order total.
+        Money transactionTotal, remainingTotal;
+        if (seed.getTransactionAmount() != null) {
+            transactionTotal = seed.getTransactionAmount();
+            remainingTotal = seed.getTransactionAmount();
+        } else {
+            transactionTotal = seed.getOrderTotal();
+            remainingTotal = seed.getOrderTotal();
+        }
         Map<PaymentInfo, Referenced> replaceItems = new HashMap<PaymentInfo, Referenced>();
         try {
             Iterator<PaymentInfo> itr = infos.keySet().iterator();
@@ -65,7 +71,7 @@ public class PaymentActivity extends BaseActivity {
                     Referenced referenced = infos.get(info);
                     itr.remove();
                     infos.remove(info);
-                    PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, referenced, userName);
+                    PaymentContextImpl paymentContext = new PaymentContextImpl(transactionTotal, remainingTotal, info, referenced, userName);
                     PaymentResponseItem paymentResponseItem;
                     if (seed.getActionType().equals(PaymentActionType.AUTHORIZE)) {
                         try {
