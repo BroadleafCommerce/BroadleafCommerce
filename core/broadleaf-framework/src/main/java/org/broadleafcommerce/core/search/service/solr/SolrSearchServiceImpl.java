@@ -52,15 +52,19 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
-
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -105,24 +109,35 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             final String baseTempPath = System.getProperty("java.io.tmpdir");
 
             File tempDir = new File(baseTempPath + File.separator + "solrhome");
-            if (tempDir.exists() == false) {
+            if (!tempDir.exists()) {
                 tempDir.mkdir();
             }
 
             solrServer = tempDir.getAbsolutePath();
         }
 
-        File solrXml = new File(this.getClass().getResource("/solr-default.xml").getFile());
+        File solrXml = copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrServer, "solr-default.xml");
 
         LOG.debug(String.format("Using [%s] as solrhome", solrServer));
         LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
         
         if (LOG.isTraceEnabled()) {
             LOG.trace("Contents of solr.xml:");
-            BufferedReader br = new BufferedReader(new FileReader(solrXml));
-            String line;
-            while ((line = br.readLine()) != null) {
-                LOG.trace(line);
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(solrXml));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    LOG.trace(line);
+                }
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (Throwable e) {
+                        //do nothing
+                    }
+                }
             }
             LOG.trace("Done printing solr.xml");
         }
@@ -133,6 +148,43 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         SolrContext.setPrimaryServer(primaryServer);
         SolrContext.setReindexServer(reindexServer);
+    }
+
+    public File copyConfigToSolrHome(InputStream configIs, String parentDir, String configFileSimpleName) throws IOException {
+        File destFile = new File(new File(parentDir), configFileSimpleName);
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            bis = new BufferedInputStream(configIs);
+            bos = new BufferedOutputStream(new FileOutputStream(destFile, false));
+            boolean eof = false;
+            while (!eof) {
+                int temp = bis.read();
+                if (temp == -1) {
+                    eof = true;
+                } else {
+                    bos.write(temp);
+                }
+            }
+            bos.flush();
+        } finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (Throwable e) {
+                    //do nothing
+                }
+            }
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (Throwable e) {
+                    //do nothing
+                }
+            }
+        }
+
+        return destFile;
     }
 
     public SolrSearchServiceImpl(SolrServer solrServer) {
