@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.payment.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -25,7 +26,7 @@ import java.math.BigDecimal;
  * @author jfischer
  *
  */
-public interface AmountItem {
+public interface AmountItem extends Serializable {
 
     public abstract Long getId();
 
