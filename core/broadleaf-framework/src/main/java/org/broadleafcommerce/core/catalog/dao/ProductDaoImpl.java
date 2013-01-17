@@ -426,7 +426,43 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
+    public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {
+        CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate);
+        int firstResult = page * pageSize;
+        return (List<Product>) em.createQuery(criteria).setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+    }
+
+    @Override
     public List<Product> readAllActiveProducts(Date currentDate) {
+        CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate);
+        return (List<Product>) em.createQuery(criteria).getResultList();
+    }
+
+    @Override
+    public Long readCountAllActiveProducts(Date currentDate) {
+        // Set up the criteria query that specifies we want to return a Long
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+
+        // The root of our search is Product
+        Root<ProductImpl> product = criteria.from(ProductImpl.class);
+
+        // We need to filter on active date on the sku
+        Join<Product, Sku> sku = product.join("defaultSku");
+
+        // We want the count of products
+        criteria.select(builder.count(product));
+
+        // Ensure the product is currently active
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        attachActiveRestriction(currentDate, product, sku, restrictions);
+
+        // Add the restrictions to the criteria query
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        return em.createQuery(criteria).getSingleResult();
+    }
+
+    protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
@@ -436,16 +472,17 @@ public class ProductDaoImpl implements ProductDao {
         
         // We need to filter on active date on the sku
         Join<Product, Sku> sku = product.join("defaultSku");
+        product.fetch("defaultSku");
         
         // Product objects are what we want back
         criteria.select(product);
         
-        // We only want results from the determine category
+        // Ensure the product is currently active
         List<Predicate> restrictions = new ArrayList<Predicate>();
         attachActiveRestriction(currentDate, product, sku, restrictions);
         
-        // Execute the query with the restrictions
+        // Add the restrictions to the criteria query
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        return criteria;
     }
 }
