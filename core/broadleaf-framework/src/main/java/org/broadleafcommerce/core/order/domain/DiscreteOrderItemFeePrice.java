@@ -16,9 +16,11 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.common.money.Money;
 
-public interface DiscreteOrderItemFeePrice {
+public interface DiscreteOrderItemFeePrice extends Serializable {
 
     public abstract Long getId();
 
