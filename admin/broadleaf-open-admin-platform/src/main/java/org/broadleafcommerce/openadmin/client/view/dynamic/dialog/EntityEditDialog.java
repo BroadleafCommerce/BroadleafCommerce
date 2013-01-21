@@ -182,14 +182,14 @@ public class EntityEditDialog extends Window {
         redraw();
         saveButton.setVisible(true);
         setHeight(20);
-        int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
+        int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 10;
         if (formHeight > 600) {
             setHeight(600);
         } else {
             setHeight(formHeight);
         }
         setWidth(20);
-        int formWidth = hStack.getScrollWidth() + 30;
+        int formWidth = hStack.getScrollWidth() + 10;
         if (formWidth > 800) {
             setWidth(800);
         } else if (formWidth < 400) {
@@ -269,14 +269,14 @@ public class EntityEditDialog extends Window {
         redraw();
         saveButton.setVisible(!readOnly);
         setHeight(20);
-        int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
+        int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 10;
         if (formHeight > 600) {
             setHeight(600);
         } else {
             setHeight(formHeight);
         }
         setWidth(20);
-        int formWidth = hStack.getScrollWidth() + 30;
+        int formWidth = hStack.getScrollWidth() + 10;
         if (formWidth > 800) {
             setWidth(800);
         } else if (formWidth < 400) {
