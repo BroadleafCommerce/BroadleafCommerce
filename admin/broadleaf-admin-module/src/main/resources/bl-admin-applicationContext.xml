@@ -59,9 +59,6 @@
             <mo:field name="lastName">
                 <mo:property name="excluded" value="true"/>
             </mo:field>
-            <mo:field name="emailAddress">
-                <mo:property name="excluded" value="true"/>
-            </mo:field>
             <mo:field name="auditable.dateCreated">
                 <mo:property name="excluded" value="true"/>
             </mo:field>
