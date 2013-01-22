@@ -22,7 +22,7 @@ public class SupportLogManager extends LogManager {
      * @return the specialized Logger instance supporting the SUPPORT log level
      */
     public static SupportLogger getLogger(final String moduleName, String name) {
-        return (SupportLogger) getLoggerRepository().getLogger(name, new LoggerFactory() {
+        return (SupportLogger) getLoggerRepository().getLogger(name + "(" + moduleName + ")", new LoggerFactory() {
             @Override
             public Logger makeNewLoggerInstance(String s) {
                 return new SupportLogger(moduleName, s);
@@ -38,12 +38,7 @@ public class SupportLogManager extends LogManager {
      * @return the specialized Logger instance supporting the SUPPORT log level
      */
     public static SupportLogger getLogger(final String moduleName, Class<?> clazz) {
-        return (SupportLogger) getLoggerRepository().getLogger(clazz.getName(), new LoggerFactory() {
-            @Override
-            public Logger makeNewLoggerInstance(String s) {
-                return new SupportLogger(moduleName, s);
-            }
-        });
+        return getLogger(moduleName, clazz.getSimpleName());
     }
 
 }

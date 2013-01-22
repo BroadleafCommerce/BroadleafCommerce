@@ -523,10 +523,6 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         for (final ItemBuilderDisplay display : getDisplay().getTargetItemBuilderViews()) {
             bindItemBuilderEvents(display, true);
         }
-
-
-
-
         getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

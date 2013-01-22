@@ -197,5 +197,27 @@ public interface ProductDao {
      */
     public List<Product> readAllActiveProducts(@Nonnull Date currentDate);
 
+    /**
+     * Reads all products from the database that are currently active. That is, reads all products that 
+     * are not archived and whose start and end dates surround the currentDate. This method differs from
+     * {@link #readAllActiveProducts(Date)} in that this one will utilize database paging.
+     * 
+     * It will fetch results in pages. For example, if page = 3 and pageSize = 25, this method would
+     * return rows 75-99 from the database.
+     * 
+     * @param page - the number of the page to get (0 indexed)
+     * @param pageSize - the number of results per page
+     * @param currentDate
+     * @return a list of active products for the given page
+     */
+    public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate);
+
+    /**
+     * Returns the number of products that are currently active.
+     * 
+     * @param currentDate
+     * @return the number of currently active products
+     */
+    public Long readCountAllActiveProducts(Date currentDate);
 
 }

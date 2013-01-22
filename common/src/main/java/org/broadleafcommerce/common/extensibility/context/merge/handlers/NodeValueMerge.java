@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -38,12 +38,12 @@ public class NodeValueMerge extends BaseHandler {
     protected String delimiter = " ";
     protected String regex = "[\\s\\n\\r]+";
 
-    public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
-        if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
+    public Node[] merge(List<Node> nodeList1, List<Node> nodeList2, List<Node> exhaustedNodes) {
+        if (CollectionUtils.isEmpty(nodeList1) || CollectionUtils.isEmpty(nodeList2)) {
             return null;
         }
-        Node node1 = nodeList1.item(0);
-        Node node2 = nodeList2.item(0);
+        Node node1 = nodeList1.get(0);
+        Node node2 = nodeList2.get(0);
         String[] items1 = node1.getNodeValue().split(getRegEx());
         String[] items2 = node2.getNodeValue().split(getRegEx());
         Set<String> finalItems = new LinkedHashSet<String>();
@@ -64,9 +64,9 @@ public class NodeValueMerge extends BaseHandler {
         node1.setNodeValue(sb.toString());
         node2.setNodeValue(sb.toString());
 
-        Node[] response = new Node[nodeList2.getLength()];
+        Node[] response = new Node[nodeList2.size()];
         for (int j=0;j<response.length;j++){
-            response[j] = nodeList2.item(j);
+            response[j] = nodeList2.get(j);
         }
         return response;
     }

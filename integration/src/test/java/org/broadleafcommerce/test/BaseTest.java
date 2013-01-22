@@ -27,32 +27,50 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 @TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
-@TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})
+@TestExecutionListeners(inheritListeners = false, value = { MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class })
 public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 
-    private static MergeClassPathXMLApplicationContext mergeContext = null;
-    
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+
+    protected static MergeClassPathXMLApplicationContext mergeContext = null;
+
+    protected static List<String> moduleContexts = new ArrayList<String>();
+
     public static MergeClassPathXMLApplicationContext getContext() {
-            
         try {
             if (mergeContext == null) {
+                // Note that as of 2.2.0, this array will no longer include "bl-applicationContext-test", as we want that to
+                // be the very last context loaded.
                 String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
                 
-                String[] additionalContexts = (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) 
-                        ? new String[]{"bl-applicationContext-test-legacy.xml"} 
-                        : new String[]{};
+                // After the framework applicationContexts are loaded, we want the module ones
+                List<String> additionalContexts = new ArrayList<String>(moduleContexts);
+
+                // Lastly, we want the test applicationContext
+                additionalContexts.add("bl-applicationContext-test.xml");
+
+                // If we're running in legacy test mode, we need that one too
+                if (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) {
+                    additionalContexts.add("bl-applicationContext-test-legacy.xml");
+                }
                 
-                mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts);
+                String[] strArray = new String[additionalContexts.size()];
+                mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts.toArray(strArray));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return mergeContext;
     }
-    
-    @PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
+
+    protected static List<String> getModuleContexts() {
+        return moduleContexts;
+    }
 
 }

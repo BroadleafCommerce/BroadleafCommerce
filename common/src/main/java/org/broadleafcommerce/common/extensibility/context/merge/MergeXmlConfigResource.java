@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.common.extensibility.context.merge;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
@@ -30,6 +25,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  *
@@ -87,7 +87,7 @@ public class MergeXmlConfigResource {
         pair[0] = sources[0];
         for (int j=1;j<sources.length;j++){
             pair[1] = sources[j];
-            response = mergeItems(pair);
+            response = mergeItems(pair[0], pair[1]);
             try{
                 pair[0].close();
             } catch (Throwable e) {
@@ -104,8 +104,8 @@ public class MergeXmlConfigResource {
         return response;
     }
 
-    protected ResourceInputStream mergeItems(ResourceInputStream[] sourceLocations) throws MergeException, MergeManagerSetupException {
-        ResourceInputStream response = new MergeManager().merge(sourceLocations[0], sourceLocations[1]);
+    protected ResourceInputStream mergeItems(ResourceInputStream sourceLocationFirst, ResourceInputStream sourceLocationSecond) throws MergeException, MergeManagerSetupException {
+        ResourceInputStream response = new MergeManager().merge(sourceLocationFirst, sourceLocationSecond);
 
         return response;
     }
@@ -124,7 +124,7 @@ public class MergeXmlConfigResource {
     public String serialize(InputStream in) {
         InputStreamReader reader = null;
         int temp;
-        StringBuffer item = new StringBuffer();
+        StringBuilder item = new StringBuilder();
         boolean eof = false;
         try {
             reader = new InputStreamReader(in);

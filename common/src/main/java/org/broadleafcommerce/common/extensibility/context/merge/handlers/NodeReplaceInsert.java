@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,18 +66,18 @@ public class NodeReplaceInsert extends BaseHandler {
         }
     };
 
-    public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
-        if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
+    public Node[] merge(List<Node> nodeList1, List<Node> nodeList2, List<Node> exhaustedNodes) {
+        if (CollectionUtils.isEmpty(nodeList1) || CollectionUtils.isEmpty(nodeList2)) {
             return null;
         }
-        Node[] primaryNodes = new Node[nodeList1.getLength()];
+        Node[] primaryNodes = new Node[nodeList1.size()];
         for (int j=0;j<primaryNodes.length;j++){
-            primaryNodes[j] = nodeList1.item(j);
+            primaryNodes[j] = nodeList1.get(j);
         }
 
         ArrayList<Node> list = new ArrayList<Node>();
-        for (int j=0;j<nodeList2.getLength();j++){
-            list.add(nodeList2.item(j));
+        for (int j=0;j<nodeList2.size();j++){
+            list.add(nodeList2.get(j));
         }
 
         List<Node> usedNodes = matchNodes(exhaustedNodes, primaryNodes, list);

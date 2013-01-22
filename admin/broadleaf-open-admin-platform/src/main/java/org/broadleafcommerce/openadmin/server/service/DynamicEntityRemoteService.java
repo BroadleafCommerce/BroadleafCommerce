@@ -204,9 +204,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             sb.append(exploitProtectionService.getAntiSamyPolicyFileLocation());
             sb.append(" policy in effect. Set a new policy file to modify validation behavior/strictness.");
             entity.addValidationError(currentProperty.getName(), sb.toString());
-        } catch (Exception e) {
-            LOG.error("Unable to clean the passed in entity values", e);
-            throw new ServiceException("Unable to clean the passed in entity values", e);
         }
     }
 

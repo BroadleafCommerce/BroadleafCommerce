@@ -33,8 +33,8 @@ import java.io.Serializable;
  */
 public class ShippingInfoForm implements Serializable {
 
-    private static final long serialVersionUID = -7895489234675056031L;
-    protected Address address = new AddressImpl();
+	private static final long serialVersionUID = -7895489234675056031L;
+	protected Address address = new AddressImpl();
     protected String addressName;
     protected FulfillmentOption fulfillmentOption;
     protected Long fulfillmentOptionId;

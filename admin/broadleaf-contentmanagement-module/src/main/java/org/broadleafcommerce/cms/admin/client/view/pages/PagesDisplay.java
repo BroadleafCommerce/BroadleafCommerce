@@ -19,13 +19,17 @@ package org.broadleafcommerce.cms.admin.client.view.pages;
 import org.broadleafcommerce.openadmin.client.rules.RulesDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
+import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.layout.VLayout;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: jfischer Date: 8/22/11 Time: 3:51 PM To
@@ -84,4 +88,17 @@ public interface PagesDisplay extends DynamicEditDisplay, RulesDisplay {
     public Label getOrderItemLabel();
 
     public void setOrderItemLabel(Label orderItemLabel);
+    
+    public  List<ItemBuilderDisplay> getItemBuilderViews();
+
+    public  void setItemBuilderViews(List<ItemBuilderDisplay> itemBuilderViews);
+
+    public  VLayout getItemBuilderContainerLayout();
+
+    public  ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource);
+
+    public  void removeItemBuilder(ItemBuilderDisplay itemBuilder);
+    
+    public  void removeAllItemBuilders();
+    
 }

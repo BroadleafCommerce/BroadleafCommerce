@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.view.customer;
+package org.broadleafcommerce.core.search.service.solr;
 
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
+import org.broadleafcommerce.common.exception.ServiceException;
+
+import java.io.IOException;
 
 /**
- * 
- * @author jfischer
- *
+ * @author Andre Azzolini (apazzolini)
  */
-public interface CustomerDisplay extends DynamicEditDisplay {
-    
-    public ToolStripButton getUpdateLoginButton();
+public interface SolrIndexService {
 
-    public GridStructureView getCustomerAddressDisplay();
-    
+    /**
+     * Rebuilds the current index. 
+     * 
+     * @throws IOException 
+     * @throws ServiceException
+     */
+    public void rebuildIndex() throws ServiceException, IOException;
+
 }

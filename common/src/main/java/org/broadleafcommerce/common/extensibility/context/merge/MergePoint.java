@@ -28,6 +28,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -77,17 +79,32 @@ public class MergePoint {
         }
         if (handler.getChildren() != null) {
             MergeHandler[] children = handler.getChildren();
-            for (int j=0;j<children.length;j++){
-                Node[] temp = merge(children[j], exhaustedNodes);
+            for (MergeHandler aChildren : children) {
+                Node[] temp = merge(aChildren, exhaustedNodes);
                 if (temp != null) {
-                    for (Node node : temp) {
-                        exhaustedNodes.add(node);
-                    }
+                    Collections.addAll(exhaustedNodes, temp);
                 }
             }
         }
-        NodeList nodeList1 = (NodeList) xPath.evaluate(handler.getXPath(), doc1, XPathConstants.NODESET);
-        NodeList nodeList2 = (NodeList) xPath.evaluate(handler.getXPath(), doc2, XPathConstants.NODESET);
+        String[] xPaths = handler.getXPath().split(" ");
+        List<Node> nodeList1 = new ArrayList<Node>();
+        List<Node> nodeList2 = new ArrayList<Node>();
+        for (String xPathVal : xPaths) {
+            NodeList temp1 = (NodeList) xPath.evaluate(xPathVal, doc1, XPathConstants.NODESET);
+            if (temp1 != null) {
+                int length = temp1.getLength();
+                for (int j=0;j<length;j++) {
+                    nodeList1.add(temp1.item(j));
+                }
+            }
+            NodeList temp2 = (NodeList) xPath.evaluate(xPathVal, doc2, XPathConstants.NODESET);
+            if (temp2 != null) {
+                int length = temp2.getLength();
+                for (int j=0;j<length;j++) {
+                    nodeList2.add(temp2.item(j));
+                }
+            }
+        }
         if (nodeList1 != null && nodeList2 != null) {
             return handler.merge(nodeList1, nodeList2, exhaustedNodes);
         }

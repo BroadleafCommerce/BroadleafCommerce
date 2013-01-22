@@ -30,6 +30,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisp
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 /**
  * 
@@ -41,7 +43,8 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
     protected DynamicFormView dynamicFormDisplay;
     protected DynamicEntityListView listDisplay;
     protected ToolStripButton updateLoginButton;
-
+    protected GridStructureView customerAddressDisplay;
+    
     public CustomerView() {
         setHeight100();
         setWidth100();
@@ -63,7 +66,10 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
         ToolStrip toolbar = dynamicFormDisplay.getToolbar();
         toolbar.addFill();
 
-        updateLoginButton = new ToolStripButton();
+        customerAddressDisplay = new GridStructureView(BLCMain.getMessageManager().getString("customerAddressListTitle"), false, false);
+        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(customerAddressDisplay);
+        
+        updateLoginButton = new ToolStripButton();  
         updateLoginButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Broadleaf/images/headerIcons/settings.png");
         updateLoginButton.setDisabled(true);
         updateLoginButton.setTitle(BLCMain.getMessageManager().getString("resetPasswordPrompt"));
@@ -96,4 +102,9 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
         return updateLoginButton;
     }
 
+    @Override
+    public GridStructureView getCustomerAddressDisplay() {
+        return customerAddressDisplay;
+    }
+    
 }

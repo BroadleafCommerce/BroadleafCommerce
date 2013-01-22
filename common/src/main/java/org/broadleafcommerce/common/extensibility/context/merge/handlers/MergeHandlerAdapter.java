@@ -16,10 +16,9 @@
 
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
-import java.util.List;
-
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
+import java.util.List;
 
 /**
  * This adapter class allows the developer to create a merge handler
@@ -48,7 +47,7 @@ public class MergeHandlerAdapter implements MergeHandler {
         return null;
     }
 
-    public Node[] merge(NodeList nodeList1, NodeList nodeList2,
+    public Node[] merge(List<Node> nodeList1, List<Node> nodeList2,
             List<Node> exhaustedNodes) {
         return null;
     }

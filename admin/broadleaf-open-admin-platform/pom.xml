@@ -145,7 +145,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                   
                     </plugin>
                 </plugins>
             </build>
@@ -155,6 +154,12 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
