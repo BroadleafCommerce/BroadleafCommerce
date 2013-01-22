@@ -386,7 +386,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             Map<PaymentInfo, Referenced> payments = paymentInfoTypeService.getPaymentsMap(cart);
 
-
             CreditCardPaymentInfo ccReference = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
             ccReference.setNameOnCard(billingForm.getCreditCardName());
             ccReference.setReferenceNumber(ccInfo.getReferenceNumber());
@@ -394,6 +393,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             ccReference.setCvvCode(billingForm.getCreditCardCvvCode());
             ccReference.setExpirationMonth(Integer.parseInt(billingForm.getCreditCardExpMonth()));
             ccReference.setExpirationYear(Integer.parseInt(billingForm.getCreditCardExpYear()));
+            securePaymentInfoService.save(ccReference);
 
             payments.put(ccInfo, ccReference);
 
