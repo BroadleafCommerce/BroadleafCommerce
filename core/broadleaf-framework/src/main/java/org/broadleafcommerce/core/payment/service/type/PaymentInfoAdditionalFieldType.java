@@ -36,7 +36,11 @@ public class PaymentInfoAdditionalFieldType implements Serializable, BroadleafEn
     public static final PaymentInfoAdditionalFieldType LAST_FOUR = new PaymentInfoAdditionalFieldType("LAST_FOUR", "Last Four Digits of CC");
     public static final PaymentInfoAdditionalFieldType GIFT_CARD_NUM = new PaymentInfoAdditionalFieldType("GIFT_CARD_NUM", "Gift Card Number");
     public static final PaymentInfoAdditionalFieldType EMAIL = new PaymentInfoAdditionalFieldType("EMAIL", "Email");
-    public static final PaymentInfoAdditionalFieldType ACCOUNT_CREDIT_NUM = new PaymentInfoAdditionalFieldType("ACCOUNT_CREDIT_NUM", "Account Credit Number");
+    public static final PaymentInfoAdditionalFieldType ACCOUNT_CREDIT_NUM = new PaymentInfoAdditionalFieldType("ACCOUNT_CREDIT_NUM", "Account Credit Number");   
+    public static final PaymentInfoAdditionalFieldType AUTH_CODE = new PaymentInfoAdditionalFieldType("AUTH_CODE", "Authorization Code");
+    public static final PaymentInfoAdditionalFieldType REQUEST_ID = new PaymentInfoAdditionalFieldType("REQUEST_ID", "Request Id");
+    public static final PaymentInfoAdditionalFieldType SUBSCRIPTION_ID = new PaymentInfoAdditionalFieldType("SUBSCRIPTION_ID", "Subscription Id");
+    public static final PaymentInfoAdditionalFieldType SUBSCRIPTION_TITLE = new PaymentInfoAdditionalFieldType("SUBSCRIPTION_TITLE", "Subscription Title");
 
     public static PaymentInfoAdditionalFieldType getInstance(final String type) {
         return TYPES.get(type);
