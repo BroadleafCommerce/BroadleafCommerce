@@ -111,7 +111,7 @@ public abstract class AbstractModule implements PaymentModule {
         return responseItem;
     }
     
-    protected PaymentInfoDetail getNewPaymentInfoDetail(PaymentInfo paymentInfo, PaymentInfoDetailType type, Money amount){
+    protected PaymentInfoDetail getNewPaymentInfoDetail(PaymentInfo paymentInfo, PaymentInfoDetailType type, Money amount) {
         PaymentInfoDetail paymentInfoDetail = new PaymentInfoDetailImpl();
         paymentInfoDetail.setPaymentInfo(paymentInfo);
         paymentInfoDetail.setType(type);
@@ -120,7 +120,7 @@ public abstract class AbstractModule implements PaymentModule {
         return paymentInfoDetail;
     }
     
-    protected PaymentInfoDetail getNewCapturePaymentInfoDetail(PaymentInfo paymentInfo, Money amount){
+    protected PaymentInfoDetail getNewCapturePaymentInfoDetail(PaymentInfo paymentInfo, Money amount) {
         return getNewPaymentInfoDetail(paymentInfo, PaymentInfoDetailType.CAPTURE, amount);
     }
 
@@ -128,7 +128,7 @@ public abstract class AbstractModule implements PaymentModule {
         return getNewPaymentInfoDetail(paymentInfo, PaymentInfoDetailType.REFUND, amount);
     }
 
-    protected PaymentInfoDetail getNewReverseAuthPaymentInfoDetail(PaymentInfo paymentInfo, Money amount){
+    protected PaymentInfoDetail getNewReverseAuthPaymentInfoDetail(PaymentInfo paymentInfo, Money amount) {
         return getNewPaymentInfoDetail(paymentInfo, PaymentInfoDetailType.REVERSE_AUTH, amount);
     }
 
@@ -142,7 +142,7 @@ public abstract class AbstractModule implements PaymentModule {
         return null;
     }
     
-    protected Money getAmountAvailableToDebit(PaymentContext paymentContext){
+    protected Money getAmountAvailableToDebit(PaymentContext paymentContext) {
         // Get the remaining amount to debit for the current transaction
         Money amountToDebit = paymentContext.getRemainingTransactionAmount();
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
@@ -156,10 +156,10 @@ public abstract class AbstractModule implements PaymentModule {
             return amountAvailableToDebit;
         } else {
             return amountToDebit;
-        }    
+        }
     }
 
-    protected Money getAmountAvailableToCredit(PaymentContext paymentContext){
+    protected Money getAmountAvailableToCredit(PaymentContext paymentContext) {
         // Get the remaining amount to credit for the current transaction
         Money amountToCredit = paymentContext.getRemainingTransactionAmount();
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
@@ -175,7 +175,7 @@ public abstract class AbstractModule implements PaymentModule {
         }
     }
 
-    protected Money getAmountAvailableToReverseAuthorize(PaymentContext paymentContext){
+    protected Money getAmountAvailableToReverseAuthorize(PaymentContext paymentContext) {
         // Get the remaining amount to reverse for the current transaction
         Money amountToReverse = paymentContext.getRemainingTransactionAmount();
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
