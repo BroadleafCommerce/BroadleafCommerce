@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
+
+import java.util.List;
 
 public interface FulfillmentGroupDao {
 
@@ -86,5 +86,10 @@ public interface FulfillmentGroupDao {
      */
     public List<FulfillmentGroup> readFulfillmentGroupsByStatus(FulfillmentGroupStatusType status, int start, int maxResults);
 
-    
+    /**
+     * Reads the max sequnce of fulfillment groups for a particular order and increments by 1.
+     * @param order
+     * @return
+     */
+    public Integer readNextFulfillmentGroupSequnceForOrder(Order order);
 }

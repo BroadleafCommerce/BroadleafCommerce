@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
@@ -30,6 +23,13 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Repository("blFulfillmentGroupDao")
 public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
@@ -138,5 +138,21 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
             FulfillmentGroupStatusType status, int start, int maxResults) {
         return readFulfillmentGroupsByStatus(status, start, maxResults, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Integer readNextFulfillmentGroupSequnceForOrder(Order order) {
+        Query query = em.createNamedQuery("BC_READ_MAX_FULFILLMENT_GROUP_SEQUENCE");
+        query.setParameter("orderId", order.getId());
+        List<Integer> max = query.getResultList();
+        if (max != null && !max.isEmpty()) {
+            Integer maxNumber = max.get(0);
+            if (maxNumber == null) {
+                return 1;
+            }
+            return maxNumber + 1;
+        }
+        return 1;
     }
 }

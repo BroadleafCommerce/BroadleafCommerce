@@ -16,15 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -44,6 +35,15 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
 @Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
@@ -62,6 +62,12 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     @Override
     @Transactional("blTransactionManager")
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
+        if (fulfillmentGroup.getSequence() == null) {
+            fulfillmentGroup.setSequence(
+                    fulfillmentGroupDao.readNextFulfillmentGroupSequnceForOrder(
+                            fulfillmentGroup.getOrder()));
+        }
+
         return fulfillmentGroupDao.save(fulfillmentGroup);
     }
 

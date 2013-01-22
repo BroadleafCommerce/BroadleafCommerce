@@ -160,6 +160,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Order order;
     
+    @Column(name = "FULFILLMENT_GROUP_SEQUNCE")
+    protected Integer sequence;
+
     @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="FG_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
@@ -548,6 +551,16 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Override
     public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
         this.isShippingPriceTaxable = isShippingPriceTaxable;
+    }
+
+    @Override
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
+    @Override
+    public Integer getSequence() {
+        return this.sequence;
     }
 
     @Override
