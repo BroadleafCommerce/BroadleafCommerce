@@ -142,7 +142,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
         DateTime expirationDate = new DateTime(expYear, expMonth, 1, 0, 0);
         boolean validDate = expirationDate.isAfterNow();
 
-        boolean validCVV = !cvv.equals("000");
+        boolean validCVV = !"000".equals(cvv);
 
         if (validDate && validCard && validCVV){
             Map<String, String> additionalFields = new HashMap<String, String>();
