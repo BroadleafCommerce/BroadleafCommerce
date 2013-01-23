@@ -72,7 +72,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     @Column(name = "NAME_ON_CARD", nullable=false)
     protected String nameOnCard;
 
-    @Column(name = "CVV_CODE", nullable = false)
+    @Transient
     protected String cvvCode;
 
     /* (non-Javadoc)

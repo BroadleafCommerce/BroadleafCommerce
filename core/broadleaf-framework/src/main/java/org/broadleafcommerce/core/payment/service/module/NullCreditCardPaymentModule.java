@@ -130,6 +130,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
 
     protected Map<String, String> validateNullCreditCard(PaymentContext paymentContext){
         CreditCardPaymentInfo ccInfo = (CreditCardPaymentInfo) paymentContext.getReferencedPaymentInfo();
+        if (ccInfo == null) { return null; }
         String nameOnCard = ccInfo.getNameOnCard();
         String ccNumber = ccInfo.getPan().replaceAll("[\\s-]+", "");
         Integer expMonth = ccInfo.getExpirationMonth();
