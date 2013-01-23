@@ -113,10 +113,10 @@ public abstract class AbstractModule implements EntryPoint, Module {
     	} 
     	
     	setSection(BLCMain.getMessageManager().getString(modulePrefix+"MainTitle"),
-    			modulePrefix+"View",
-    			basePackageName + ".view." + firstCharLowerCaseName+"View",
-    			modulePrefix+"Presenter",
-    			basePackageName + ".presenter." + firstCharLowerCaseName+"Presenter",
+                firstCharLowerCaseName + "View",
+                basePackageName + ".view." + modulePrefix + "View",
+                firstCharLowerCaseName + "Presenter",
+                basePackageName + ".presenter." + modulePrefix + "Presenter",
     			permissions);
     }
 
