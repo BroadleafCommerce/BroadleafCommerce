@@ -48,13 +48,17 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
 
     /* Factories */
     @Resource(name = "blNullOrderFactory")
-    protected NullOrderFactory nullOrderFactory;    
+    protected NullOrderFactory nullOrderFactory;
     
     /* Services */
     @Resource(name = "blPricingService")
@@ -111,6 +115,9 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource(name = "blRemoveItemWorkflow")
     protected SequenceProcessor removeItemWorkflow;
+
+    @Resource(name = "blTransactionManager")
+    JpaTransactionManager transactionManager;
     
     /* Fields */
     protected boolean moveNamedOrderItems = true;
@@ -197,12 +204,55 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(value = "blTransactionManager")
     public Order save(Order order, Boolean priceOrder) throws PricingException {
         if (priceOrder) {
-            order = pricingService.executePricing(order);
+            int retryCount = 0;
+            long pauseInterval = 500;
+            boolean isValid = false;
+            while (!isValid) {
+                try {
+                    order = pricingService.executePricing(order);
+                    isValid = true;
+                } catch (CannotAcquireLockException ex) {
+                    isValid = false;
+                    if (retryCount >= 3) {
+                        throw ex;
+                    } else {
+                        retryCount++;
+                    }
+                    try {
+                        Thread.sleep(pauseInterval);
+                    } catch (Throwable e) {
+                        //do nothing
+                    }
+                }
+            }
         }
-        return persist(order);
+
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("saveOrder");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+        TransactionStatus status = transactionManager.getTransaction(def);
+        try {
+            order = persist(order);
+            transactionManager.commit(status);
+        } catch (RuntimeException ex) {
+            boolean isActive = false;
+            try {
+                if (!status.isRollbackOnly()) {
+                    isActive = true;
+                }
+            } catch (Exception e) {
+                //do nothing
+            }
+            if (isActive) {
+                transactionManager.rollback(status);
+            }
+            throw ex;
+        }
+
+        return order;
     }
     
     // This method exists to provide OrderService methods the ability to save an order

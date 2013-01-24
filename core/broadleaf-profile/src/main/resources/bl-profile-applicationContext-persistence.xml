@@ -76,8 +76,6 @@
         </property>
     </bean>
 
-    <tx:annotation-driven/>
-
     <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
