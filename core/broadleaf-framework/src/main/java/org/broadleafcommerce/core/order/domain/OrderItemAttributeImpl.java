@@ -44,7 +44,7 @@ import java.lang.reflect.Method;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_ORDER_ITEM_ATTRIBUTE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "OrderItemAttributeImpl_baseProductAttribute")
 public class OrderItemAttributeImpl implements OrderItemAttribute {
 
