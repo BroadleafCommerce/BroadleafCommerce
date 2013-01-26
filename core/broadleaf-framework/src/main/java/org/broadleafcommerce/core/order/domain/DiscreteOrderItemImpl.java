@@ -154,7 +154,18 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
+        if (this.order != null && bundleOrderItem != null) {
+            throw new IllegalStateException("Cannot set a BundleOrderItem on a DiscreteOrderItem that is already associated with an Order");
+        }
         this.bundleOrderItem = bundleOrderItem;
+    }
+
+    @Override
+    public void setOrder(Order order) {
+        if (order != null && bundleOrderItem != null) {
+            throw new IllegalStateException("Cannot set an Order on a DiscreteOrderItem that is already associated with a BundleOrderItem");
+        }
+        this.order = order;
     }
 
     /**
@@ -252,7 +263,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Money getBaseRetailPrice() {
-        return baseRetailPrice == null ? null : BroadleafCurrencyUtils.getMoney(baseRetailPrice, getOrder().getCurrency());
+        return convertToMoney(baseRetailPrice);
     }
 
     @Override
@@ -262,7 +273,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Money getBaseSalePrice() {
-        return baseSalePrice == null ? null : BroadleafCurrencyUtils.getMoney(baseRetailPrice, getOrder().getCurrency());
+        return convertToMoney(baseSalePrice);
     }
 
     @Override
@@ -279,25 +290,29 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
         this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
     }
+
+    protected Money convertToMoney(BigDecimal amount) {
+        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getOrder().getCurrency());
+    }
     
     @Override
     public OrderItem clone() {
         DiscreteOrderItem orderItem = (DiscreteOrderItem) super.clone();
-        if (getDiscreteOrderItemFeePrices() != null) {
-            for (DiscreteOrderItemFeePrice feePrice : getDiscreteOrderItemFeePrices()) {
+        if (discreteOrderItemFeePrices != null) {
+            for (DiscreteOrderItemFeePrice feePrice : discreteOrderItemFeePrices) {
                 DiscreteOrderItemFeePrice cloneFeePrice = feePrice.clone();
                 cloneFeePrice.setDiscreteOrderItem(orderItem);
                 orderItem.getDiscreteOrderItemFeePrices().add(cloneFeePrice);
             }
         }
-        if (getAdditionalAttributes() != null) {
-            orderItem.getAdditionalAttributes().putAll(getAdditionalAttributes());
+        if (additionalAttributes != null) {
+            orderItem.getAdditionalAttributes().putAll(additionalAttributes);
         }
-        orderItem.setBaseRetailPrice(getBaseRetailPrice());
-        orderItem.setBaseSalePrice(getBaseSalePrice());
-        orderItem.setBundleOrderItem(getBundleOrderItem());
-        orderItem.setProduct(getProduct());
-        orderItem.setSku(getSku());
+        orderItem.setBaseRetailPrice(convertToMoney(baseRetailPrice));
+        orderItem.setBaseSalePrice(convertToMoney(baseSalePrice));
+        orderItem.setBundleOrderItem(bundleOrderItem);
+        orderItem.setProduct(product);
+        orderItem.setSku(sku);
         
         return orderItem;
     }

@@ -144,9 +144,9 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
             } catch (CloneNotSupportedException e) {
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + itemAttribute.getClass().getName(), e);
             }            
-            itemAttribute.setName(getName());
-            itemAttribute.setOrderItem(itemAttribute.getOrderItem());
-            itemAttribute.setValue(getValue());
+            itemAttribute.setName(name);
+            itemAttribute.setOrderItem(orderItem);
+            itemAttribute.setValue(value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

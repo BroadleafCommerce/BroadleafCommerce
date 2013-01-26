@@ -56,7 +56,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
     @Override
     public OrderItem clone() {
         GiftWrapOrderItem orderItem = (GiftWrapOrderItem) super.clone();
-        if (getWrappedItems() != null) orderItem.getWrappedItems().addAll(getWrappedItems());
+        if (wrappedItems != null) orderItem.getWrappedItems().addAll(wrappedItems);
         
         return orderItem;
     }

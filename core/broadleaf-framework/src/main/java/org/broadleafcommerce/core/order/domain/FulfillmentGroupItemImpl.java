@@ -206,10 +206,10 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clonedFulfillmentGroupItem.getClass().getName(), e);
             }
 
-            clonedFulfillmentGroupItem.setFulfillmentGroup(getFulfillmentGroup());
-            clonedFulfillmentGroupItem.setOrderItem(getOrderItem());
-            clonedFulfillmentGroupItem.setQuantity(getQuantity());
-            clonedFulfillmentGroupItem.setStatus(getStatus());
+            clonedFulfillmentGroupItem.setFulfillmentGroup(fulfillmentGroup);
+            clonedFulfillmentGroupItem.setOrderItem(orderItem);
+            clonedFulfillmentGroupItem.setQuantity(quantity);
+            clonedFulfillmentGroupItem.setStatus(status);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

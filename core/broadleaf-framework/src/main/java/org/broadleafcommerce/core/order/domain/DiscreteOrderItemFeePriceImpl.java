@@ -144,9 +144,9 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
             }
             clone.setAmount(getAmount());
-            clone.setName(getName());
-            clone.setReportingCode(getReportingCode());
-            clone.setDiscreteOrderItem(getDiscreteOrderItem());
+            clone.setName(name);
+            clone.setReportingCode(reportingCode);
+            clone.setDiscreteOrderItem(discreteOrderItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
