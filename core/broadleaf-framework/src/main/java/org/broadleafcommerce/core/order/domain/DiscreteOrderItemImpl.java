@@ -313,6 +313,10 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         orderItem.setBundleOrderItem(bundleOrderItem);
         orderItem.setProduct(product);
         orderItem.setSku(sku);
+
+        if (orderItem.getOrder() == null) {
+            throw new IllegalStateException("Either an Order or a BundleOrderItem must be set on the DiscreteOrderItem");
+        }
         
         return orderItem;
     }

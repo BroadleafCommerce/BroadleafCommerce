@@ -33,11 +33,13 @@ import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferP
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -90,11 +92,13 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Offer save(Offer offer) {
         return offerDao.save(offer);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public OfferCode saveOfferCode(OfferCode offerCode) {
         offerCode.setOffer(offerDao.save(offerCode.getOffer()));
         return offerCodeDao.save(offerCode);
@@ -242,6 +246,7 @@ public class OfferServiceImpl implements OfferService {
      *
      */
     @Override
+    @Transactional("blTransactionManager")
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         /*
         TODO rather than a threadlocal, we should update the "shouldPrice" boolean on the service API to
@@ -251,8 +256,6 @@ public class OfferServiceImpl implements OfferService {
          */
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
-            //re-populate the order from the current db state and make sure we're dealing with the latest and greatest
-            order = orderService.findOrderById(order.getId());
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
             orderOfferProcessor.clearOffersandAdjustments(promotableOrder);
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, promotableOrder.getCustomer());
@@ -279,15 +282,22 @@ public class OfferServiceImpl implements OfferService {
                 }
                 orderItemMergeService.finalizeCart(promotableOrder);
             }
+
+            for (DiscreteOrderItem orderItem : order.getDiscreteOrderItems()) {
+                if (orderItem.getBundleOrderItem() == null && orderItem.getOrder() == null) {
+                    orderItem.setOrder(order);
+                }
+            }
+
+            orderService.save(order, false);
         }
     }
     
     @Override
+    @Transactional("blTransactionManager")
     public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
-            //re-populate the order from the current db state and make sure we're dealing with the latest and greatest
-            order = orderService.findOrderById(order.getId());
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
             promotableOrder.removeAllCandidateFulfillmentGroupOffers();
             promotableOrder.removeAllFulfillmentAdjustments();

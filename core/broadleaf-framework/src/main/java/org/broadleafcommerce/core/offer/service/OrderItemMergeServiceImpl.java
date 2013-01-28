@@ -99,7 +99,8 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
         }
         for (Map<String, Object[]> values : gatherMap.values()) {
             for (Object[] item : values.values()) {
-                orderItemService.saveOrderItem((OrderItem) item[0]);
+                OrderItem temp = orderItemService.saveOrderItem((OrderItem) item[0]);
+                ((FulfillmentGroupItem) item[1]).setOrderItem(temp);
                 fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
             }
         }
@@ -107,9 +108,11 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
             FulfillmentGroup fg = fgItem.getFulfillmentGroup();
             fg.getFulfillmentGroupItems().remove(fgItem);
             fulfillmentGroupItemDao.delete(fgItem);
+            //fgItem.setFulfillmentGroup(null);
             if (fg.getFulfillmentGroupItems().isEmpty()) {
                 order.getFulfillmentGroups().remove(fg);
                 fulfillmentGroupService.delete(fg);
+                //fg.setOrder(null);
             }
         }
         for (DiscreteOrderItem orderItem : itemsToRemove) {
@@ -124,7 +127,7 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
     }
 
     @Override
-    public void mergeSplitItems(final PromotableOrder order) {
+    public void mergeSplitItems(PromotableOrder order) {
         try {
             mergeSplitDiscreteOrderItems(order);
 
@@ -212,11 +215,12 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                 FulfillmentGroup fg = item.getFulfillmentGroup();
                 fg.getFulfillmentGroupItems().remove(item);
                 fulfillmentGroupItemDao.delete(item);
+                //item.setFulfillmentGroup(null);
                 if (fg.getFulfillmentGroupItems().size() == 0) {
                     order.getDelegate().getFulfillmentGroups().remove(fg);
-                    fg.setOrder(null);
+                    //fg.setOrder(null);
                     fulfillmentGroupService.delete(fg);
-                    orderService.save(order.getDelegate(), false);
+                    //orderService.save(order.getDelegate(), false);
                 }
             }
         }
@@ -248,20 +252,22 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
         try {
             if (!CollectionUtils.isEmpty(order.getFulfillmentGroups())) {
                 //stage 1 - gather possible split items - including those inside a bundle order item
-                gatherFulfillmentGroupLinkedDiscreteOrderItems(order, promotableOrder.getMultiShipOptions());
+                order = gatherFulfillmentGroupLinkedDiscreteOrderItems(order, promotableOrder.getMultiShipOptions());
                 //stage 2 - gather the bundles themselves
-                gatherFulfillmentGroupLinkedBundleOrderItems(order);
+                order = gatherFulfillmentGroupLinkedBundleOrderItems(order);
             } else {
                 //stage 1 - gather possible split items - including those inside a bundle order item
-                gatherOrderLinkedDiscreteOrderItems(order);
+                order = gatherOrderLinkedDiscreteOrderItems(order);
                 //stage 2 - gather the bundles themselves
-                gatherOrderLinkedBundleOrderItems(order);
+                order = gatherOrderLinkedBundleOrderItems(order);
             }
 
         } catch (PricingException e) {
             throw new RuntimeException("Could not gather the cart", e);
         }
+        promotableOrder.setDelegate(order);
         promotableOrder.resetDiscreteOrderItems();
+        //promotableOrder.resetFulfillmentGroups();
     }
 
     @Override
@@ -301,7 +307,7 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
         }
     }
 
-    protected void gatherOrderLinkedBundleOrderItems(Order order) throws PricingException {
+    protected Order gatherOrderLinkedBundleOrderItems(Order order) throws PricingException {
         Map<String, BundleOrderItem> gatherBundle = new HashMap<String, BundleOrderItem>();
         List<BundleOrderItem> bundlesToRemove = new ArrayList<BundleOrderItem>();
         for (OrderItem orderItem : order.getOrderItems()) {
@@ -326,9 +332,11 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                 throw new PricingException("Item could not be removed", e);
             }
         }
+
+        return order;
     }
 
-    protected void gatherOrderLinkedDiscreteOrderItems(Order order) throws PricingException {
+    protected Order gatherOrderLinkedDiscreteOrderItems(Order order) throws PricingException {
         List<DiscreteOrderItem> itemsToRemove = new ArrayList<DiscreteOrderItem>();
         Map<String, OrderItem> gatheredItem = new HashMap<String, OrderItem>();
         for (OrderItem orderItem : order.getOrderItems()) {
@@ -359,9 +367,11 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                 orderItemService.saveOrderItem(bundleOrderItem);
             }
         }
+
+        return order;
     }
 
-    protected void gatherFulfillmentGroupLinkedBundleOrderItems(Order order) throws PricingException {
+    protected Order gatherFulfillmentGroupLinkedBundleOrderItems(Order order) throws PricingException {
         List<BundleOrderItem> bundlesToRemove = new ArrayList<BundleOrderItem>();
         Map<Long, Map<String, Object[]>> gatherBundle = new HashMap<Long, Map<String, Object[]>>();
         for (FulfillmentGroup group : order.getFulfillmentGroups()) {
@@ -387,7 +397,8 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
         }
         for (Map<String, Object[]> values : gatherBundle.values()) {
             for (Object[] item : values.values()) {
-                orderItemService.saveOrderItem((OrderItem) item[0]);
+                OrderItem temp = orderItemService.saveOrderItem((OrderItem) item[0]);
+                ((FulfillmentGroupItem) item[1]).setOrderItem(temp);
                 fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
             }
         }
@@ -398,9 +409,11 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                 throw new PricingException("Item could not be removed", e);
             }
         }
+
+        return order;
     }
 
-    protected void gatherFulfillmentGroupLinkedDiscreteOrderItems(Order order, List<OrderMultishipOption> options) throws PricingException {
+    protected Order gatherFulfillmentGroupLinkedDiscreteOrderItems(Order order, List<OrderMultishipOption> options) throws PricingException {
         List<DiscreteOrderItem> itemsToRemove = new ArrayList<DiscreteOrderItem>();
         List<FulfillmentGroupItem> fgItemsToRemove = new ArrayList<FulfillmentGroupItem>();
         Map<Long, Map<String, Object[]>> gatherMap = new HashMap<Long, Map<String, Object[]>>();
@@ -425,7 +438,8 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
         }
         for (Map<String, Object[]> values : gatherMap.values()) {
             for (Object[] item : values.values()) {
-                orderItemService.saveOrderItem((OrderItem) item[0]);
+                OrderItem temp = orderItemService.saveOrderItem((OrderItem) item[0]);
+                ((FulfillmentGroupItem) item[1]).setOrderItem(temp);
                 fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
             }
         }
@@ -433,9 +447,10 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
             FulfillmentGroup fg = fgItem.getFulfillmentGroup();
             fg.getFulfillmentGroupItems().remove(fgItem);
             fulfillmentGroupItemDao.delete(fgItem);
+            //fgItem.setFulfillmentGroup(null);
             if (fg.getFulfillmentGroupItems().isEmpty()) {
                 order.getFulfillmentGroups().remove(fg);
-                fg.setOrder(null);
+                //fg.setOrder(null);
             }
         }
 
@@ -450,6 +465,8 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                 orderItemService.saveOrderItem(bundleOrderItem);
             }
         }
+
+        return order;
     }
 
     protected void gatherOrderLinkedDiscreteOrderItem(List<DiscreteOrderItem> itemsToRemove, Map<String, OrderItem> gatheredItem, DiscreteOrderItem orderItem, String extraIdentifier) {
@@ -573,6 +590,7 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                             }
                             fulfillmentGroupItemDao.delete(fgItem);
                             fgItems.remove();
+                            //fgItem.setFulfillmentGroup(null);
                         }
                     }
                 }
@@ -649,7 +667,7 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
         newOrderItem.setOrder(order);
         newOrderItem = orderItemService.saveOrderItem(newOrderItem);
         orderItems.add(newOrderItem);
-        orderService.save(order, priceOrder);
+        //orderService.save(order, priceOrder); //possible not save
         return newOrderItem;
     }
 
@@ -703,6 +721,7 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                                 }
                                 fulfillmentGroupItemDao.delete(fgItem);
                                 fgItems.remove();
+                                //fgItem.setFulfillmentGroup(null);
                             }
                         }
                     }
@@ -718,6 +737,7 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
                         delegate.setId(null);
                         delegate.setBundleOrderItem(null);
                         delegate = (DiscreteOrderItem) orderItemService.saveOrderItem(delegate);
+                        val = (BundleOrderItem) orderItemService.saveOrderItem(val);
                         delegate.setBundleOrderItem(val);
                         itemsToAdd.add(delegate);
 
@@ -750,7 +770,6 @@ public class OrderItemMergeServiceImpl implements OrderItemMergeService {
             }
         }
 
-        orderService.save(order.getDelegate(), false);
     }
 
     @Override
