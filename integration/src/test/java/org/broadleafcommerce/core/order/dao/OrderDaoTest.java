@@ -69,6 +69,7 @@ public class OrderDaoTest extends BaseTest {
     }
 
     @Test(groups = {"deleteOrderForCustomer"}, dependsOnGroups = {"readOrder"})
+    @Transactional
     public void deleteOrderForCustomer(){
         Order order = orderDao.readOrderById(orderId);
         assert order != null;

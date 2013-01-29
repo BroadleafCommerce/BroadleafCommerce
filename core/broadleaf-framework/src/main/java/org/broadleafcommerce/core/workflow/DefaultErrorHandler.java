@@ -37,8 +37,20 @@ public class DefaultErrorHandler implements ErrorHandler {
      */
     public void handleError(ProcessContext context, Throwable th) throws WorkflowException {
         context.stopProcess();
-        
-        if (!unloggedExceptionClasses.contains(th.getClass().getName())) {
+
+        boolean shouldLog = true;
+        Throwable cause = th;
+        while (true) {
+            if (unloggedExceptionClasses.contains(cause.getClass().getName())) {
+                shouldLog = false;
+                break;
+            }
+            cause = cause.getCause();
+            if (cause == null) {
+                break;
+            }
+        }
+        if (shouldLog) {
             LOG.error("An error occurred during the workflow", th);
         }
         

@@ -49,7 +49,7 @@ public class OrderDaoImpl implements OrderDao {
 
     public Order save(final Order order) {
         Order response = em.merge(order);
-        em.flush();
+        //em.flush();
         return response;
     }
 

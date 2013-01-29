@@ -148,6 +148,9 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert(order.getOrderItems().size()==1);
         assert(order.getOrderItems().get(0).getQuantity()==2);
 
+        /*
+        This test is currently not supported, as the order service only supports like item merging
+
         // re-price the order without automatically merging.
         cartService.setAutomaticallyMergeLikeItems(false);
         DiscreteOrderItemRequest itemRequest2 = new DiscreteOrderItemRequest();
@@ -164,13 +167,14 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert(order.getOrderItems().size()==2);
         assert(order.getOrderItems().get(0).getQuantity()==2);
         assert(order.getOrderItems().get(1).getQuantity()==1);
+        */
     }
 
     @Test(groups = { "addBundleToOrderLegacy" }, dependsOnGroups = { "addAnotherItemToOrderLegacy" })
     @Rollback(false)
     @Transactional
     public void addBundleToOrder() throws PricingException {
-        numOrderItems++;
+        //numOrderItems++;
         Sku sku = skuDao.readFirstSku();
         Order order = cartService.findOrderById(orderId);
         assert order != null;
@@ -264,7 +268,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
     public void checkOrderItems() throws PricingException {
         Order order = cartService.findOrderById(orderId);
         //the removal from the previous test was rolled back
-        assert order.getOrderItems().size() == 2;
+        assert order.getOrderItems().size() == 1;
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemService.readOrderItemById(bundleOrderItemId);
         assert bundleOrderItem == null;
     }

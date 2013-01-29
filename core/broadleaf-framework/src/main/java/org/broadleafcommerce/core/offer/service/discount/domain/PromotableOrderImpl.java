@@ -77,8 +77,10 @@ public class PromotableOrderImpl implements PromotableOrder {
     
     @Override
     public void resetFulfillmentGroups() {
-        for (PromotableFulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-            fulfillmentGroup.reset();
+        if (fulfillmentGroups != null) {
+            for (PromotableFulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+                fulfillmentGroup.reset();
+            }
         }
         fulfillmentGroups = null;
     }
@@ -536,6 +538,11 @@ public class PromotableOrderImpl implements PromotableOrder {
     @Override
     public Order getDelegate() {
         return delegate;
+    }
+
+    @Override
+    public void setDelegate(Order order) {
+        this.delegate = delegate;
     }
 
     @Override
