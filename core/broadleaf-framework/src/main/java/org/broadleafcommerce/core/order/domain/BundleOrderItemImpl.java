@@ -84,10 +84,12 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentation(excluded = true)
     protected ProductBundle productBundle;
 
+    @Override
     public Sku getSku() {
            return sku;
     }
 
+    @Override
     public void setSku(Sku sku) {
        this.sku = sku;
         if (sku != null) {
@@ -102,26 +104,32 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
     }
 
+    @Override
     public ProductBundle getProductBundle() {
         return productBundle;
     }
 
+    @Override
     public void setProductBundle(ProductBundle productBundle) {
         this.productBundle = productBundle;
     }
 
+    @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         return discreteOrderItems;
     }
 
+    @Override
     public void setDiscreteOrderItems(List<DiscreteOrderItem> discreteOrderItems) {
         this.discreteOrderItems = discreteOrderItems;
     }
 
+    @Override
     public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices() {
         return bundleOrderItemFeePrices;
     }
 
+    @Override
     public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
         this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
     }
@@ -183,6 +191,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
     }
 
+    @Override
     public boolean shouldSumItems() {
         if (productBundle != null) {
             return ProductBundlePricingModelType.ITEM_SUM.equals(productBundle.getPricingModel());
@@ -234,18 +243,22 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
     }
 
+    @Override
     public Money getBaseRetailPrice() {
-        return baseRetailPrice != null?new Money(baseRetailPrice):null;
+        return convertToMoney(baseRetailPrice);
     }
 
+    @Override
     public void setBaseRetailPrice(Money baseRetailPrice) {
         this.baseRetailPrice = baseRetailPrice==null?null:baseRetailPrice.getAmount();
     }
 
+    @Override
     public Money getBaseSalePrice() {
-        return baseSalePrice!=null?new Money(baseRetailPrice):null;
+        return convertToMoney(baseSalePrice);
     }
 
+    @Override
     public void setBaseSalePrice(Money baseSalePrice) {
         this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
     }
@@ -259,6 +272,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         return false;
     }
     
+    @Override
     public boolean hasAdjustedItems() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
             if (discreteOrderItem.getAdjustmentValue().greaterThan(new Money(0D))) {
@@ -305,12 +319,15 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BundleOrderItemImpl other = (BundleOrderItemImpl) obj;
         
         if (!super.equals(obj)) {
@@ -322,37 +339,44 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
 
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         return true;
     }
 
+    @Override
     public Product getProduct() {
         return getProductBundle();
+    }
+
+    protected Money convertToMoney(BigDecimal amount) {
+        return amount == null ? null : new Money(amount);
     }
 
     @Override
     public OrderItem clone() {
         BundleOrderItemImpl orderItem = (BundleOrderItemImpl) super.clone();
-        if (getDiscreteOrderItems() != null) {
-            for (DiscreteOrderItem discreteOrderItem : getDiscreteOrderItems()) {
+        if (discreteOrderItems != null) {
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                 DiscreteOrderItem temp = (DiscreteOrderItem) discreteOrderItem.clone();
                 temp.setBundleOrderItem(orderItem);
                 orderItem.getDiscreteOrderItems().add(temp);
             }
         }
-        if (getBundleOrderItemFeePrices() != null) {
-            for (BundleOrderItemFeePrice feePrice : getBundleOrderItemFeePrices()) {
+        if (bundleOrderItemFeePrices != null) {
+            for (BundleOrderItemFeePrice feePrice : bundleOrderItemFeePrices) {
                 BundleOrderItemFeePrice cloneFeePrice = feePrice.clone();
                 cloneFeePrice.setBundleOrderItem(orderItem);
                 orderItem.getBundleOrderItemFeePrices().add(cloneFeePrice);
             }
         }
 
-        orderItem.setBaseRetailPrice(getBaseRetailPrice());
-        orderItem.setBaseSalePrice(getBaseSalePrice());
+        orderItem.setBaseRetailPrice(convertToMoney(baseRetailPrice));
+        orderItem.setBaseSalePrice(convertToMoney(baseSalePrice));
         orderItem.setSku(sku);
         orderItem.setProductBundle(productBundle);
 

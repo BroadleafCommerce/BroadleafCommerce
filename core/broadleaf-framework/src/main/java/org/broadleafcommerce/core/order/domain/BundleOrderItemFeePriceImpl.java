@@ -69,50 +69,62 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     @Column(name = "IS_TAXABLE")
     private Boolean isTaxable = Boolean.FALSE;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public BundleOrderItem getBundleOrderItem() {
         return bundleOrderItem;
     }
 
+    @Override
     public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
         this.bundleOrderItem = bundleOrderItem;
     }
 
+    @Override
     public Money getAmount() {
-        return amount == null ? null : new Money(amount);
+        return convertToMoney(amount);
     }
 
+    @Override
     public void setAmount(Money amount) {
         this.amount = Money.toAmount(amount);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Boolean isTaxable() {
         return isTaxable;
     }
 
+    @Override
     public void setTaxable(Boolean isTaxable) {
         this.isTaxable = isTaxable;
     }
 
+    @Override
     public String getReportingCode() {
         return reportingCode;
     }
 
+    @Override
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
     }
@@ -125,6 +137,11 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
         }
     }
 
+    protected Money convertToMoney(BigDecimal amount) {
+        return amount == null ? null : new Money(amount);
+    }
+
+    @Override
     public BundleOrderItemFeePrice clone() {
         //instantiate from the fully qualified name via reflection
         BundleOrderItemFeePrice clone;
@@ -135,10 +152,10 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
             } catch (CloneNotSupportedException e) {
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
             }
-            clone.setAmount(getAmount());
-            clone.setName(getName());
-            clone.setReportingCode(getReportingCode());
-            clone.setBundleOrderItem(getBundleOrderItem());
+            clone.setAmount(convertToMoney(amount));
+            clone.setName(name);
+            clone.setReportingCode(reportingCode);
+            clone.setBundleOrderItem(bundleOrderItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -161,40 +178,54 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BundleOrderItemFeePriceImpl other = (BundleOrderItemFeePriceImpl) obj;
         if (amount == null) {
-            if (other.amount != null)
+            if (other.amount != null) {
                 return false;
-        } else if (!amount.equals(other.amount))
+            }
+        } else if (!amount.equals(other.amount)) {
             return false;
+        }
         if (bundleOrderItem == null) {
-            if (other.bundleOrderItem != null)
+            if (other.bundleOrderItem != null) {
                 return false;
-        } else if (!bundleOrderItem.equals(other.bundleOrderItem))
+            }
+        } else if (!bundleOrderItem.equals(other.bundleOrderItem)) {
             return false;
+        }
         if (id == null) {
-            if (other.id != null)
+            if (other.id != null) {
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!id.equals(other.id)) {
             return false;
-        if (isTaxable != other.isTaxable)
+        }
+        if (isTaxable != other.isTaxable) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (reportingCode == null) {
-            if (other.reportingCode != null)
+            if (other.reportingCode != null) {
                 return false;
-        } else if (!reportingCode.equals(other.reportingCode))
+            }
+        } else if (!reportingCode.equals(other.reportingCode)) {
             return false;
+        }
         return true;
     }
 }
