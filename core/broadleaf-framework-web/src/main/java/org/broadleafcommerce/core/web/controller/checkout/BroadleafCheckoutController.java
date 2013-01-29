@@ -393,7 +393,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             ccReference.setCvvCode(billingForm.getCreditCardCvvCode());
             ccReference.setExpirationMonth(Integer.parseInt(billingForm.getCreditCardExpMonth()));
             ccReference.setExpirationYear(Integer.parseInt(billingForm.getCreditCardExpYear()));
-            securePaymentInfoService.save(ccReference);
 
             payments.put(ccInfo, ccReference);
 
