@@ -83,9 +83,6 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
-
     @Override
     public List<Offer> findAllOffers() {
         return offerDao.readAllOffers();
