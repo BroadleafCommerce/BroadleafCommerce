@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.payment.service;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.*;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -57,15 +56,7 @@ public class BroadleafPaymentInfoTypeServiceImpl implements BroadleafPaymentInfo
             }
 
             if(PaymentInfoType.CREDIT_CARD.equals(paymentInfo.getType())){
-                Referenced referenceInfo = null;
-                try {
-                    referenceInfo = securePaymentInfoService.findSecurePaymentInfo(paymentInfo.getReferenceNumber(), PaymentInfoType.CREDIT_CARD);
-                } catch (WorkflowException e) {
-                    e.printStackTrace();
-                }
-                if (referenceInfo == null) {
-                    referenceInfo = createCreditCardReferenceInfo(paymentInfo);
-                }
+                Referenced referenceInfo = createCreditCardReferenceInfo(paymentInfo);
                 payments.put(paymentInfo, referenceInfo);
             }
 
