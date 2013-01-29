@@ -79,9 +79,6 @@ public class OfferServiceImpl implements OfferService {
 
     @Resource(name = "blOrderItemMergeService")
     protected OrderItemMergeService orderItemMergeService;
-    
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
 
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionListener extensionManager;
