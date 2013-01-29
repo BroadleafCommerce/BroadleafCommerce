@@ -38,6 +38,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Defines an order in Broadleaf.    There are several key items to be aware of with the BLC Order.
+ * 
+ * 1.  Carts are also Orders that are in a Pending status
+ * 
+ * 2.  Wishlists (and similar) are "NamedOrders"
+ * 
+ * 3.  Orders have several price related methods that are useful when displaying totals on the cart.
+ * 3a.    getSubTotal() :  The total of all order items and their adjustments exclusive of taxes
+ * 3b.    getOrderAdjustmentsValue() :  The total of all order adjustments
+ * 3c.    getTotalTax() :  The total taxes being charged for the order
+ * 3d.    getTotal() : The order total (equivalent of getSubTotal() - getOrderAdjustmentsValue() + getTotalTax())
+ * 
+ * 4.  Order payments are represented with PaymentInfo objects.
+ * 
+ * 5.  Order shipping (e.g. fulfillment) are represented with Fulfillment objects.
+ */
 public interface Order extends Serializable {
 
     public Long getId();
@@ -325,7 +342,7 @@ public interface Order extends Serializable {
     public void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation);
 
     /**
-     * Returns the discount value of all the applied item offers for this order.  The value is already
+     * Returns the discount value of all the applied item offers for this order.  This value is already
      * deducted from the order subTotal.
      *
      * @return the discount value of all the applied item offers for this order

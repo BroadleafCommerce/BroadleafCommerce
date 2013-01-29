@@ -35,6 +35,10 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,10 +48,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -185,12 +185,13 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             }
             return currentBundleTaxablePrice;
         } else {
-            Money taxablePrice = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
-            if (sku != null && sku.isTaxable() == null || sku.isTaxable()) {
-                taxablePrice = getPrice();
-            }
-            return taxablePrice;
+            return super.getTaxablePrice();
         }
+    }
+
+    @Override
+    public Boolean isTaxable() {
+        return (sku == null || sku.isTaxable() == null || sku.isTaxable());
     }
 
     @Override
