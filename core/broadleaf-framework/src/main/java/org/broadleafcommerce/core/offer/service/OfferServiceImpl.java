@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
@@ -38,10 +33,18 @@ import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferP
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class OfferServiceImpl.
@@ -76,6 +79,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Resource(name = "blOrderItemMergeService")
     protected OrderItemMergeService orderItemMergeService;
+    
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
 
     @Override
     public List<Offer> findAllOffers() {
@@ -83,11 +89,13 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Offer save(Offer offer) {
         return offerDao.save(offer);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public OfferCode saveOfferCode(OfferCode offerCode) {
         offerCode.setOffer(offerDao.save(offerCode.getOffer()));
         return offerCodeDao.save(offerCode);
@@ -230,6 +238,7 @@ public class OfferServiceImpl implements OfferService {
      *
      */
     @Override
+    @Transactional("blTransactionManager")
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         /*
         TODO rather than a threadlocal, we should update the "shouldPrice" boolean on the service API to
@@ -242,7 +251,6 @@ public class OfferServiceImpl implements OfferService {
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
             orderOfferProcessor.clearOffersandAdjustments(promotableOrder);
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, promotableOrder.getCustomer());
-
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
                 orderOfferProcessor.compileOrderTotal(promotableOrder);
             } else {
@@ -266,10 +274,19 @@ public class OfferServiceImpl implements OfferService {
                 }
                 orderItemMergeService.finalizeCart(promotableOrder);
             }
+
+            for (DiscreteOrderItem orderItem : order.getDiscreteOrderItems()) {
+                if (orderItem.getBundleOrderItem() == null && orderItem.getOrder() == null) {
+                    orderItem.setOrder(order);
+                }
+            }
+
+            orderService.save(order, false);
         }
     }
     
     @Override
+    @Transactional("blTransactionManager")
     public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
@@ -391,5 +408,15 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService) {
         this.orderItemMergeService = orderItemMergeService;
+    }
+
+    @Override
+    public OrderService getOrderService() {
+        return orderService;
+    }
+
+    @Override
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
     }
 }

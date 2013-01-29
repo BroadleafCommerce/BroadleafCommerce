@@ -121,6 +121,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         offerService.setFulfillmentGroupOfferProcessor(fgProcessor);
         offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
         offerService.setOrderItemMergeService(orderItemMergeService);
+        offerService.setOrderService(orderServiceMock);
     }
 
     public void replay() {
@@ -142,6 +143,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
     }
 
     public void testApplyAllFulfillmentGroupOffersWithOrderItemOffers() throws Exception {
+        final ThreadLocal<Order> myOrder = new ThreadLocal<Order>();
         CandidateFulfillmentGroupOfferAnswer candidateFGOfferAnswer = new CandidateFulfillmentGroupOfferAnswer();
         EasyMock.expect(offerDaoMock.createCandidateFulfillmentGroupOffer()).andAnswer(candidateFGOfferAnswer).times(6);
 
@@ -160,6 +162,13 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
         EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
         EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
+
+        EasyMock.expect(orderServiceMock.findOrderById(EasyMock.isA(Long.class))).andAnswer(new IAnswer<Order>() {
+            @Override
+            public Order answer() throws Throwable {
+                return myOrder.get();
+            }
+        }).anyTimes();
 
         EasyMock.expect(multishipOptionServiceMock.findOrderMultishipOptions(EasyMock.isA(Long.class))).andAnswer(new IAnswer<List<OrderMultishipOption>>() {
             @Override
@@ -202,6 +211,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         replay();
 
         PromotableOrder order = dataProvider.createBasicOrder();
+        myOrder.set(order.getDelegate());
         List<PromotableCandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
         List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
         offers.addAll(dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"));
@@ -235,6 +245,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         assertTrue(fgAdjustmentCount == 1);
 
         order = dataProvider.createBasicOrder();
+        myOrder.set(order.getDelegate());
         offers.get(2).setValue(new BigDecimal("1"));
 
         offerService.applyOffersToOrder(offers, order.getDelegate());

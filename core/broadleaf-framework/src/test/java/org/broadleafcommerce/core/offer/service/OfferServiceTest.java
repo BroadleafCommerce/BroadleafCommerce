@@ -83,12 +83,13 @@ public class OfferServiceTest extends TestCase {
     protected void setUp() throws Exception {
         offerService = new OfferServiceImpl();
         customerOfferDaoMock = EasyMock.createMock(CustomerOfferDao.class);
+        orderServiceMock = EasyMock.createMock(OrderService.class);
         offerCodeDaoMock = EasyMock.createMock(OfferCodeDao.class);
         offerDaoMock = EasyMock.createMock(OfferDao.class);
         offerService.setCustomerOfferDao(customerOfferDaoMock);
         offerService.setOfferCodeDao(offerCodeDaoMock);
         offerService.setOfferDao(offerDaoMock);
-        orderServiceMock = EasyMock.createMock(OrderService.class);
+        offerService.setOrderService(orderServiceMock);
         orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
         fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
         fgServiceMock = EasyMock.createMock(FulfillmentGroupService.class);
@@ -148,6 +149,7 @@ public class OfferServiceTest extends TestCase {
     }
 
     public void testApplyOffersToOrder_Order() throws Exception {
+        final ThreadLocal<Order> myOrder = new ThreadLocal<Order>();
         CandidateOrderOfferAnswer candidateOrderOfferAnswer = new CandidateOrderOfferAnswer();
         OrderAdjustmentAnswer orderAdjustmentAnswer = new OrderAdjustmentAnswer();
         EasyMock.expect(offerDaoMock.createCandidateOrderOffer()).andAnswer(candidateOrderOfferAnswer).atLeastOnce();
@@ -161,6 +163,12 @@ public class OfferServiceTest extends TestCase {
         EasyMock.expect(fgServiceMock.addItemToFulfillmentGroup(EasyMock.isA(FulfillmentGroupItemRequest.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
         EasyMock.expect(orderServiceMock.removeItem(EasyMock.isA(Long.class), EasyMock.isA(Long.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
         EasyMock.expect(orderServiceMock.save(EasyMock.isA(Order.class),EasyMock.isA(Boolean.class))).andAnswer(OfferDataItemProvider.getSaveOrderAnswer()).anyTimes();
+        EasyMock.expect(orderServiceMock.findOrderById(EasyMock.isA(Long.class))).andAnswer(new IAnswer<Order>() {
+            @Override
+            public Order answer() throws Throwable {
+                return myOrder.get();
+            }
+        }).anyTimes();
 
         EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
         EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
@@ -183,6 +191,7 @@ public class OfferServiceTest extends TestCase {
         replay();
 
         Order order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
         List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
 
         offerService.applyOffersToOrder(offers, order);
@@ -193,6 +202,7 @@ public class OfferServiceTest extends TestCase {
         assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(116.95D)));
 
         order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
         offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
         List<Offer> offers2 = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",
@@ -218,6 +228,7 @@ public class OfferServiceTest extends TestCase {
         assertTrue(order.getSubTotal().equals(new Money(124.95D)));
 
         order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
         OfferRule orderRule = new OfferRuleImpl();
         orderRule.setMatchRule("order.subTotal.getAmount()>124");
         offers.get(0).getOfferMatchRules().put(OfferRuleType.ORDER.getType(), orderRule);
@@ -239,6 +250,7 @@ public class OfferServiceTest extends TestCase {
         assertTrue(order.getSubTotal().equals(new Money(124.95D)));
 
         order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
         //offers.get(0).setCombinableWithOtherOffers(false);
         List<Offer> offers3 = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>20", OfferDiscountType.AMOUNT_OFF);
         offers.addAll(offers3);
@@ -249,6 +261,7 @@ public class OfferServiceTest extends TestCase {
         assertTrue(adjustmentCount == 2);
 
         order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
         offers.get(0).setCombinableWithOtherOffers(false);
 
         offerService.applyOffersToOrder(offers, order);
@@ -268,6 +281,7 @@ public class OfferServiceTest extends TestCase {
         assertTrue(order.getSubTotal().equals(new Money(124.95D)));
 
         order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
         offers.get(0).setTotalitarianOffer(true);
 
         offerService.applyOffersToOrder(offers, order);
@@ -287,6 +301,7 @@ public class OfferServiceTest extends TestCase {
         assertTrue(order.getSubTotal().equals(new Money(129.95D)));
 
         order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
         offers.get(0).setValue(new BigDecimal(".05"));
         offers.get(2).setValue(new BigDecimal(".01"));
         offers.get(2).setDiscountType(OfferDiscountType.PERCENT_OFF);
@@ -312,6 +327,7 @@ public class OfferServiceTest extends TestCase {
     }
 
     public void testApplyOffersToOrder_Items() throws Exception {
+        final ThreadLocal<Order> myOrder = new ThreadLocal<Order>();
         CandidateItemOfferAnswer answer = new CandidateItemOfferAnswer();
         OrderItemAdjustmentAnswer answer2 = new OrderItemAdjustmentAnswer();
         EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);
@@ -332,6 +348,13 @@ public class OfferServiceTest extends TestCase {
             }
         }).anyTimes();
 
+        EasyMock.expect(orderServiceMock.findOrderById(EasyMock.isA(Long.class))).andAnswer(new IAnswer<Order>() {
+            @Override
+            public Order answer() throws Throwable {
+                return myOrder.get();
+            }
+        }).anyTimes();
+
         multishipOptionServiceMock.deleteAllOrderMultishipOptions(EasyMock.isA(Order.class));
         EasyMock.expectLastCall().anyTimes();
         EasyMock.expect(fgServiceMock.collapseToOneFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
@@ -342,6 +365,7 @@ public class OfferServiceTest extends TestCase {
         replay();
 
         Order order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
         List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",
             OfferDiscountType.PERCENT_OFF,
@@ -361,6 +385,7 @@ public class OfferServiceTest extends TestCase {
         assertTrue(adjustmentCount == 2);
 
         order = dataProvider.createBasicOrder().getDelegate();
+        myOrder.set(order);
 
         offers = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",

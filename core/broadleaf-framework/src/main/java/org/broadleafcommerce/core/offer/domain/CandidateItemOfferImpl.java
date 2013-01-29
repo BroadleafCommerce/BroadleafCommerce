@@ -136,8 +136,8 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
             }
             //candidateItemOffer.setCandidateQualifiersMap(getCandidateQualifiersMap());
             //candidateItemOffer.setCandidateTargets(getCandidateTargets());
-            candidateItemOffer.setOffer(getOffer());
-            candidateItemOffer.setOrderItem(getOrderItem());
+            candidateItemOffer.setOffer(offer);
+            candidateItemOffer.setOrderItem(orderItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -157,12 +157,15 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CandidateItemOfferImpl other = (CandidateItemOfferImpl) obj;
 
         if (id != null && other.id != null) {
@@ -170,20 +173,26 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         }
 
         if (discountedPrice == null) {
-            if (other.discountedPrice != null)
+            if (other.discountedPrice != null) {
                 return false;
-        } else if (!discountedPrice.equals(other.discountedPrice))
+            }
+        } else if (!discountedPrice.equals(other.discountedPrice)) {
             return false;
+        }
         if (offer == null) {
-            if (other.offer != null)
+            if (other.offer != null) {
                 return false;
-        } else if (!offer.equals(other.offer))
+            }
+        } else if (!offer.equals(other.offer)) {
             return false;
+        }
         if (orderItem == null) {
-            if (other.orderItem != null)
+            if (other.orderItem != null) {
                 return false;
-        } else if (!orderItem.equals(other.orderItem))
+            }
+        } else if (!orderItem.equals(other.orderItem)) {
             return false;
+        }
         return true;
     }
 

@@ -51,25 +51,25 @@
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLegacyCartServiceOperation" order="1"/>
     </aop:config>
 
-    <aop:config>
+    <!--<aop:config>
         <aop:pointcut id="blOrderDaoOperation" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.save(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation"/>
-    </aop:config>
+    </aop:config>-->
     
-    <aop:config>
+    <!--<aop:config>
         <aop:pointcut id="blOrderDaoOperation2" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.delete(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation2"/>
-    </aop:config>
+    </aop:config>-->
     
-    <aop:config>
+    <!--<aop:config>
         <aop:pointcut id="blOrderDaoOperation3" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.submit*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation3"/>
-    </aop:config>
+    </aop:config>-->
     
-    <aop:config>
+    <!--<aop:config>
         <aop:pointcut id="blOrderDaoOperation4" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.create*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation4"/>
-    </aop:config>
+    </aop:config>-->
     
     <aop:config>
         <aop:pointcut id="blOrderDaoOperation5" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.update*(..))"/>
@@ -91,10 +91,10 @@
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blTargetContentServiceOperation"/>
     </aop:config>
 
-    <aop:config>
+    <!--<aop:config>
         <aop:pointcut id="blPricingServiceOperation" expression="execution(* org.broadleafcommerce.core.pricing.service.PricingService.executePricing(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPricingServiceOperation"/>
-    </aop:config>
+    </aop:config>-->
     
     <aop:config>
         <aop:pointcut id="blTargetContentServiceOperation2" expression="execution(* org.broadleafcommerce.core.marketing.service.TargetContentService.update*(..))"/>
@@ -136,7 +136,7 @@
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderItemDaoOperation3"/>
     </aop:config>
 
-    <aop:config>
+    <!--<aop:config>
         <aop:pointcut id="blOfferServiceOperation" expression="execution(* org.broadleafcommerce.core.offer.service.OfferService.save*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation"/>
     </aop:config>
@@ -154,7 +154,7 @@
     <aop:config>
         <aop:pointcut id="blOfferServiceOperation4" expression="execution(* org.broadleafcommerce.core.offer.service.OfferService.build*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation4"/>
-    </aop:config>
+    </aop:config>-->
     
     <aop:config>
         <aop:pointcut id="blShippingRateServiceOperation" expression="execution(* org.broadleafcommerce.core.pricing.service.ShippingRateService.*(..))"/>

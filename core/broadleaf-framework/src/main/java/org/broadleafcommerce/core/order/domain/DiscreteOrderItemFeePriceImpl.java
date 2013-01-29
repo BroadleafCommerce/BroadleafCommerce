@@ -72,42 +72,52 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Reporting_Code", order=3, group = "DiscreteOrderItemFeePriceImpl_Description", prominent=true)
     private String reportingCode;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public DiscreteOrderItem getDiscreteOrderItem() {
         return discreteOrderItem;
     }
 
+    @Override
     public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem) {
         this.discreteOrderItem = discreteOrderItem;
     }
 
+    @Override
     public Money getAmount() {
-        return amount == null ? null : new Money(amount);
+        return convertToMoney(amount);
     }
 
+    @Override
     public void setAmount(Money amount) {
         this.amount = Money.toAmount(amount);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getReportingCode() {
         return reportingCode;
     }
 
+    @Override
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
     }
@@ -120,6 +130,11 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
         }
     }
 
+    protected Money convertToMoney(BigDecimal amount) {
+        return amount == null ? null : new Money(amount);
+    }
+
+    @Override
     public DiscreteOrderItemFeePrice clone() {
         //instantiate from the fully qualified name via reflection
         DiscreteOrderItemFeePrice clone;
@@ -130,10 +145,10 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
             } catch (CloneNotSupportedException e) {
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
             }
-            clone.setAmount(getAmount());
-            clone.setName(getName());
-            clone.setReportingCode(getReportingCode());
-            clone.setDiscreteOrderItem(getDiscreteOrderItem());
+            clone.setAmount(convertToMoney(amount));
+            clone.setName(name);
+            clone.setReportingCode(reportingCode);
+            clone.setDiscreteOrderItem(discreteOrderItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -155,38 +170,51 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DiscreteOrderItemFeePriceImpl other = (DiscreteOrderItemFeePriceImpl) obj;
         if (amount == null) {
-            if (other.amount != null)
+            if (other.amount != null) {
                 return false;
-        } else if (!amount.equals(other.amount))
+            }
+        } else if (!amount.equals(other.amount)) {
             return false;
+        }
         if (discreteOrderItem == null) {
-            if (other.discreteOrderItem != null)
+            if (other.discreteOrderItem != null) {
                 return false;
-        } else if (!discreteOrderItem.equals(other.discreteOrderItem))
+            }
+        } else if (!discreteOrderItem.equals(other.discreteOrderItem)) {
             return false;
+        }
         if (id == null) {
-            if (other.id != null)
+            if (other.id != null) {
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!id.equals(other.id)) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (reportingCode == null) {
-            if (other.reportingCode != null)
+            if (other.reportingCode != null) {
                 return false;
-        } else if (!reportingCode.equals(other.reportingCode))
+            }
+        } else if (!reportingCode.equals(other.reportingCode)) {
             return false;
+        }
         return true;
     }
 }

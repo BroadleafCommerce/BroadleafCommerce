@@ -37,7 +37,7 @@ import java.math.BigDecimal;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_TAX_DETAIL")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "TaxDetailImpl_baseTaxDetail")
 public class TaxDetailImpl implements TaxDetail {
     

@@ -91,58 +91,72 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Tax", order=9, group = "FulfillmentGroupItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public FulfillmentGroup getFulfillmentGroup() {
         return fulfillmentGroup;
     }
 
+    @Override
     public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         this.fulfillmentGroup = fulfillmentGroup;
     }
 
+    @Override
     public OrderItem getOrderItem() {
         return orderItem;
     }
 
+    @Override
     public void setOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
     }
 
+    @Override
     public int getQuantity() {
         return quantity;
     }
 
+    @Override
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
+    @Override
     public Money getRetailPrice() {
         return orderItem.getRetailPrice();
     }
 
+    @Override
     public Money getSalePrice() {
         return orderItem.getSalePrice();
     }
 
+    @Override
     public Money getPrice() {
         return orderItem.getPrice();
     }
 
+    @Override
     public String getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(String status) {
         this.status = status;
     }
     
+    @Override
     public void removeAssociations() {
         if (getFulfillmentGroup() != null) getFulfillmentGroup().getFulfillmentGroupItems().remove(this);
         setFulfillmentGroup(null);
@@ -159,10 +173,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         this.taxes = taxes;
     }
     
+    @Override
     public Money getTotalTax() {
         return totalTax == null ? null : new Money(totalTax);
     }
 
+    @Override
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
     }
@@ -175,6 +191,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         }
     }
 
+    @Override
     public FulfillmentGroupItem clone() {
         //this is likely an extended class - instantiate from the fully qualified name via reflection
         FulfillmentGroupItem clonedFulfillmentGroupItem;
@@ -186,10 +203,10 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clonedFulfillmentGroupItem.getClass().getName(), e);
             }
 
-            clonedFulfillmentGroupItem.setFulfillmentGroup(getFulfillmentGroup());
-            clonedFulfillmentGroupItem.setOrderItem(getOrderItem());
-            clonedFulfillmentGroupItem.setQuantity(getQuantity());
-            clonedFulfillmentGroupItem.setStatus(getStatus());
+            clonedFulfillmentGroupItem.setFulfillmentGroup(fulfillmentGroup);
+            clonedFulfillmentGroupItem.setOrderItem(orderItem);
+            clonedFulfillmentGroupItem.setQuantity(quantity);
+            clonedFulfillmentGroupItem.setStatus(status);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -199,12 +216,15 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         FulfillmentGroupItemImpl other = (FulfillmentGroupItemImpl) obj;
 
         if (id != null && other.id != null) {
@@ -212,10 +232,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         }
 
         if (orderItem == null) {
-            if (other.orderItem != null)
+            if (other.orderItem != null) {
                 return false;
-        } else if (!orderItem.equals(other.orderItem))
+            }
+        } else if (!orderItem.equals(other.orderItem)) {
             return false;
+        }
         return true;
     }
 
