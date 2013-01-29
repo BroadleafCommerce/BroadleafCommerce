@@ -168,7 +168,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
-    protected Map<String,OrderItemAttribute> orderItemAttributeMap;
+    protected Map<String,OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
 
     @Column(name = "SPLIT_PARENT_ITEM_ID")
     @AdminPresentation(excluded = true)
@@ -423,9 +423,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
                 }
             }
             
-            if (getOrderItemAttributes() != null) {
-                clonedOrderItem.setOrderItemAttributes(new HashMap<String, OrderItemAttribute>());
-
+            if (getOrderItemAttributes() != null && !getOrderItemAttributes().isEmpty()) {
                 for (OrderItemAttribute attribute : getOrderItemAttributes().values()) {
                     OrderItemAttribute clone = attribute.clone();
                     clone.setOrderItem(clonedOrderItem);

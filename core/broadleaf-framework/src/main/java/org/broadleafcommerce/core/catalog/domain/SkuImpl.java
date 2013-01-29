@@ -64,7 +64,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -586,7 +585,7 @@ public class SkuImpl implements Sku {
                 LOG.debug("sku, " + id + ", inactive due to category being inactive");
             }
         }
-        return this.isActive() && product.isActive() && category.isActive();
+        return this.isActive() && (product == null || product.isActive()) && (category == null || category.isActive());
     }
 
     @Override

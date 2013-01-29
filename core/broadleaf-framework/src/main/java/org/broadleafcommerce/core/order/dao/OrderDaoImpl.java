@@ -48,7 +48,9 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     public Order save(final Order order) {
-        return em.merge(order);
+        Order response = em.merge(order);
+        em.flush();
+        return response;
     }
 
     public void delete(Order salesOrder) {
