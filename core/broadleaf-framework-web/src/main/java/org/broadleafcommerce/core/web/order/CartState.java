@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.web.order;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.web.order.security.CartStateProcessor;
+import org.broadleafcommerce.core.web.order.security.CartStateRequestProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
@@ -32,7 +32,7 @@ public class CartState {
      */
     public static Order getCart() {
         WebRequest request = BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
-        return (Order) request.getAttribute(CartStateProcessor.getCartRequestAttributeName(), WebRequest.SCOPE_REQUEST);
+        return (Order) request.getAttribute(CartStateRequestProcessor.getCartRequestAttributeName(), WebRequest.SCOPE_REQUEST);
     }
     
     /**
@@ -42,7 +42,7 @@ public class CartState {
      */
     public static void setCart(Order cart) {
         WebRequest request = BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
-        request.setAttribute(CartStateProcessor.getCartRequestAttributeName(), cart, WebRequest.SCOPE_REQUEST);
+        request.setAttribute(CartStateRequestProcessor.getCartRequestAttributeName(), cart, WebRequest.SCOPE_REQUEST);
     }
 
 }

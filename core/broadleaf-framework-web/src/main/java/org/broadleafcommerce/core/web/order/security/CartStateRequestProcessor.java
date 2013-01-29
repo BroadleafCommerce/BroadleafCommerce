@@ -45,8 +45,8 @@ import java.util.Map;
  * @see {@link ServletWebRequest}
  * @see {@link org.springframework.web.portlet.context.PortletWebRequest}
  */
-@Component("blCartStateProcessor")
-public class CartStateProcessor implements BroadleafWebRequestProcessor {
+@Component("blCartStateRequestProcessor")
+public class CartStateRequestProcessor implements BroadleafWebRequestProcessor {
 
     /** Logger for this class and subclasses */
     protected final Log LOG = LogFactory.getLog(getClass());
@@ -107,7 +107,7 @@ public class CartStateProcessor implements BroadleafWebRequestProcessor {
     }
 
     public static void setCartRequestAttributeName(String cartRequestAttributeName) {
-        CartStateProcessor.cartRequestAttributeName = cartRequestAttributeName;
+        CartStateRequestProcessor.cartRequestAttributeName = cartRequestAttributeName;
     }
 
 

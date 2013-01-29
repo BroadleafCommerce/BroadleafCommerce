@@ -48,8 +48,8 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
     /** Logger for this class and subclasses */
     protected final Log LOG = LogFactory.getLog(getClass());
 
-    @Resource(name="blCartStateProcessor")
-    protected CartStateProcessor cartStateProcessor;
+    @Resource(name = "blCartStateRequestProcessor")
+    protected CartStateRequestProcessor cartStateProcessor;
 
     @Override
     @SuppressWarnings("unchecked")
