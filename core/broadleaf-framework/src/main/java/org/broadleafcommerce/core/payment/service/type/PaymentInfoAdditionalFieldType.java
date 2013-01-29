@@ -33,7 +33,12 @@ public class PaymentInfoAdditionalFieldType implements Serializable, BroadleafEn
     public static final PaymentInfoAdditionalFieldType CARD_TYPE = new PaymentInfoAdditionalFieldType("CARD_TYPE", "Card Type");
     public static final PaymentInfoAdditionalFieldType EXP_MONTH = new PaymentInfoAdditionalFieldType("EXP_MONTH", "Expiration Month");
     public static final PaymentInfoAdditionalFieldType EXP_YEAR = new PaymentInfoAdditionalFieldType("EXP_YEAR", "Expiration Year");
-    public static final PaymentInfoAdditionalFieldType LAST_FOUR = new PaymentInfoAdditionalFieldType("LAST_FOUR", "Last Four Digits of CC");
+    
+    // Generic Fields that can be used for multiple payment types
+    public static final PaymentInfoAdditionalFieldType PAYMENT_TYPE = new PaymentInfoAdditionalFieldType("PAYMENT_TYPE", "Type of Payment");
+    public static final PaymentInfoAdditionalFieldType NAME_ON_ACCOUNT = new PaymentInfoAdditionalFieldType("NAME_ON_ACCOUNT", "Name on Account");
+    public static final PaymentInfoAdditionalFieldType ACCOUNT_TYPE = new PaymentInfoAdditionalFieldType("ACCOUNT_TYPE", "Account Type");
+    public static final PaymentInfoAdditionalFieldType LAST_FOUR = new PaymentInfoAdditionalFieldType("LAST_FOUR", "Last Four Digits ofAccount or CC");
     public static final PaymentInfoAdditionalFieldType GIFT_CARD_NUM = new PaymentInfoAdditionalFieldType("GIFT_CARD_NUM", "Gift Card Number");
     public static final PaymentInfoAdditionalFieldType EMAIL = new PaymentInfoAdditionalFieldType("EMAIL", "Email");
     public static final PaymentInfoAdditionalFieldType ACCOUNT_CREDIT_NUM = new PaymentInfoAdditionalFieldType("ACCOUNT_CREDIT_NUM", "Account Credit Number");   

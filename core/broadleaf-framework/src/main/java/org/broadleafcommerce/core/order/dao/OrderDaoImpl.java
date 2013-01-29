@@ -56,7 +56,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order save(final Order order) {
-        return em.merge(order);
+        Order response = em.merge(order);
+        //em.flush();
+        return response;
     }
 
     @Override

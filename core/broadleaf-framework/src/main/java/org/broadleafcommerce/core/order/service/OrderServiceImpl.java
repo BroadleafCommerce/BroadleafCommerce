@@ -48,13 +48,18 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.hibernate.exception.LockAcquisitionException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
 
     /* Factories */
     @Resource(name = "blNullOrderFactory")
-    protected NullOrderFactory nullOrderFactory;    
+    protected NullOrderFactory nullOrderFactory;
     
     /* Services */
     @Resource(name = "blPricingService")
@@ -111,13 +116,23 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource(name = "blRemoveItemWorkflow")
     protected SequenceProcessor removeItemWorkflow;
+
+    @Resource(name = "blTransactionManager")
+    JpaTransactionManager transactionManager;
+
+    @Value("${pricing.retry.count.for.lock.failure}")
+    protected int pricingRetryCountForLockFailure = 3;
+
+    @Value("${pricing.retry.wait.interval.for.lock.failure}")
+    protected long pricingRetryWaitIntervalForLockFailure = 500L;
     
     /* Fields */
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
-    protected boolean automaticallyMergeLikeItems = true; 
+    protected boolean automaticallyMergeLikeItems = true;
 
     @Override
+    @Transactional("blTransactionManager")
     public Order createNewCartForCustomer(Customer customer) {
         return orderDao.createNewCartForCustomer(customer);
     }
@@ -197,12 +212,108 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(value = "blTransactionManager")
     public Order save(Order order, Boolean priceOrder) throws PricingException {
-        if (priceOrder) {
-            order = pricingService.executePricing(order);
+        //persist the order first
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("saveOrder");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+        TransactionStatus status = transactionManager.getTransaction(def);
+        try {
+            order = persist(order);
+            finalizeTransaction(status, false);
+        } catch (RuntimeException ex) {
+            finalizeTransaction(status, true);
+            throw ex;
         }
-        return persist(order);
+
+        //make any pricing changes - possibly retrying with the persisted state if there's a lock failure
+        if (priceOrder) {
+            int retryCount = 0;
+            boolean isValid = false;
+            while (!isValid) {
+                try {
+                    order = pricingService.executePricing(order);
+                    isValid = true;
+                } catch (Exception ex) {
+                    boolean isValidCause = false;
+                    Throwable cause = ex;
+                    while (!isValidCause) {
+                        if (cause.getClass().equals(LockAcquisitionException.class)) {
+                            isValidCause = true;
+                        }
+                        cause = cause.getCause();
+                        if (cause == null) {
+                            break;
+                        }
+                    }
+                    if (isValidCause) {
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Problem acquiring lock during pricing call - attempting to price again.");
+                        }
+                        isValid = false;
+                        if (retryCount >= pricingRetryCountForLockFailure) {
+                            if (LOG.isInfoEnabled()) {
+                                LOG.info("Problem acquiring lock during pricing call. Retry limit exceeded at (" + retryCount + "). Throwing exception.");
+                            }
+                            if (ex instanceof PricingException) {
+                                throw (PricingException) ex;
+                            } else {
+                                throw new PricingException(ex);
+                            }
+                        } else {
+                            order = findOrderById(order.getId());
+                            retryCount++;
+                        }
+                        try {
+                            Thread.sleep(pricingRetryWaitIntervalForLockFailure);
+                        } catch (Throwable e) {
+                            //do nothing
+                        }
+                    } else {
+                        if (ex instanceof PricingException) {
+                            throw (PricingException) ex;
+                        } else {
+                            throw new PricingException(ex);
+                        }
+                    }
+                }
+            }
+
+            //make the final save of the priced order
+            def = new DefaultTransactionDefinition();
+            def.setName("saveOrder");
+            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+            status = transactionManager.getTransaction(def);
+            try {
+                order = persist(order);
+                finalizeTransaction(status, false);
+            } catch (RuntimeException ex) {
+                finalizeTransaction(status, true);
+                throw ex;
+            }
+        }
+
+        return order;
+    }
+
+    protected void finalizeTransaction(TransactionStatus status, boolean isError) {
+        boolean isActive = false;
+        try {
+            if (!status.isRollbackOnly()) {
+                isActive = true;
+            }
+        } catch (Exception e) {
+            //do nothing
+        }
+        if (isActive) {
+            if (isError) {
+                transactionManager.rollback(status);
+            } else {
+                transactionManager.commit(status);
+            }
+        }
     }
     
     // This method exists to provide OrderService methods the ability to save an order
@@ -430,6 +541,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
+        if (!automaticallyMergeLikeItems) {
+            throw new UnsupportedOperationException("At this time, OrderService only supports merging like items in the cart");
+        }
         this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
     }
     
