@@ -402,4 +402,14 @@ public class OfferServiceImpl implements OfferService {
     public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService) {
         this.orderItemMergeService = orderItemMergeService;
     }
+
+    @Override
+    public OrderService getOrderService() {
+        return orderService;
+    }
+
+    @Override
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
+    }
 }
