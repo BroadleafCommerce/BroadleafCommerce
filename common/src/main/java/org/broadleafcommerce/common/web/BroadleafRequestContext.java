@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Currency;
 import java.util.Map;
 
+/**
+ * Convenient holder class for various objects to be automatically available on thread local without invoking the various
+ * services yourself
+ * 
+ * @see {@link BroadleafRequestProcessor}
+ */
 public class BroadleafRequestContext {
     
     private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();   
@@ -51,30 +59,87 @@ public class BroadleafRequestContext {
         return false;
     }
     
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-    private SandBox sandbox;
-    private Locale locale;
-    private BroadleafCurrency broadleafCurrency;
-    private Site site;
-    private Theme theme;
-    public java.util.Locale javaLocale;
-    public Currency javaCurrency;
+    protected HttpServletRequest request;
+    protected HttpServletResponse response;
+    protected WebRequest webRequest;
+    protected SandBox sandbox;
+    protected Locale locale;
+    protected BroadleafCurrency broadleafCurrency;
+    protected Site site;
+    protected Theme theme;
+    protected java.util.Locale javaLocale;
+    protected Currency javaCurrency;
 
+    /**
+     * Gets the current request on the context
+     * @return
+     */
     public HttpServletRequest getRequest() {
         return request;
     }
 
+    /**
+     * Sets the current request on the context. Note that this also invokes {@link #setWebRequest(WebRequest)} by wrapping
+     * <b>request</b> in a {@link ServletWebRequest}.
+     * 
+     * @param request
+     */
     public void setRequest(HttpServletRequest request) {
+        if (webRequest == null) {
+            setWebRequest(new ServletWebRequest(request));
+        }
         this.request = request;
     }
 
+    /**
+     * Returns the response for the context
+     * 
+     * @return
+     */
     public HttpServletResponse getResponse() {
         return response;
     }
 
+    /**
+     * Sets the response on the context
+     * 
+     * @param response
+     */
     public void setResponse(HttpServletResponse response) {
         this.response = response;
+    }
+
+    /**
+     * Sets the generic request on the context. This is available to be used in non-Servlet environments (like Portlets).
+     * Note that if <b>webRequest</b> is an instance of {@link ServletWebRequest} then
+     * {@link #setRequest(HttpServletRequest)} will be invoked as well with the native underlying {@link HttpServletRequest}
+     * passed as a parameter.
+     * <br />
+     * <br />
+     * Also, if <b>webRequest</b> is an instance of {@link ServletWebRequest} then an attempt is made to set the response
+     * (note that this could be null if the ServletWebRequest was not instantiated with both the {@link HttpServletRequest}
+     * and {@link HttpServletResponse}
+     * @param webRequest
+     */
+    public void setWebRequest(WebRequest webRequest) {
+        if (this.request == null) {
+            if (webRequest instanceof ServletWebRequest) {
+                setRequest(((ServletWebRequest) webRequest).getRequest());
+                setResponse(((ServletWebRequest) webRequest).getResponse());
+            }
+        }
+        this.webRequest = webRequest;
+    }
+
+    /**
+     * Returns the generic request for use outside of servlets (like in Portlets). This will be automatically set
+     * by invoking {@link #setRequest(HttpServletRequest)}
+     * 
+     * @return the generic request
+     * @see {@link #setWebRequest(WebRequest)}
+     */
+    public WebRequest getWebRequest() {
+        return webRequest;
     }
 
     public Site getSite() {
