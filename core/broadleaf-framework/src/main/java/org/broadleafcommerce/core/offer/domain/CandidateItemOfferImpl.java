@@ -146,8 +146,8 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
             }
             //candidateItemOffer.setCandidateQualifiersMap(getCandidateQualifiersMap());
             //candidateItemOffer.setCandidateTargets(getCandidateTargets());
-            candidateItemOffer.setOffer(getOffer());
-            candidateItemOffer.setOrderItem(getOrderItem());
+            candidateItemOffer.setOffer(offer);
+            candidateItemOffer.setOrderItem(orderItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

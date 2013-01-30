@@ -109,27 +109,21 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         }
         return null;
     }
-    
+
     @Override
     public Money getBundleItemsRetailPrice() {
-        Money price = new Money(BankersRounding.zeroAmount());
+        Money price = new Money(BigDecimal.ZERO);
         for (SkuBundleItem item : getSkuBundleItems()) {
-            if(price.isZero()) {
-                //make sure that the currency is updated;
-                price = item.getRetailPrice();
-            } else {
-                price = price.add(item.getRetailPrice().multiply(item.getQuantity()));
-            }
+            price = price.add(item.getRetailPrice().multiply(item.getQuantity()));
         }
         return price;
     }
-    
+
     @Override
     public Money getBundleItemsSalePrice() {
-        Money price = new Money(BankersRounding.zeroAmount());
+        Money price = new Money(BigDecimal.ZERO);
         for (SkuBundleItem item : getSkuBundleItems()){
-            if(price.isZero()) {
-              //make sure that the currency is updated;
+            if (item.getSalePrice() != null) {
                 price = price.add(item.getSalePrice().multiply(item.getQuantity()));
             } else {
                 price = price.add(item.getRetailPrice().multiply(item.getQuantity()));

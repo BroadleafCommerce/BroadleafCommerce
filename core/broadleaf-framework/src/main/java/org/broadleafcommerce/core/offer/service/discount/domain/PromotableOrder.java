@@ -105,6 +105,8 @@ public interface PromotableOrder {
     public void addCandidateOrderOffer(PromotableCandidateOrderOffer candidateOrderOffer);
     
     public Order getDelegate();
+
+    public void setDelegate(Order order);
     
     public Money calculateOrderItemsCurrentPrice();
     

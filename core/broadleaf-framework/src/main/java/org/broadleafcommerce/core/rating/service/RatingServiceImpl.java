@@ -45,10 +45,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class RatingServiceImpl implements RatingService {
 
     @Resource(name="blRatingSummaryDao")
-    private RatingSummaryDao ratingSummaryDao;
+    protected RatingSummaryDao ratingSummaryDao;
 
     @Resource(name="blReviewDetailDao")
-    private ReviewDetailDao reviewDetailDao;
+    protected ReviewDetailDao reviewDetailDao;
 
     @Transactional("blTransactionManager")
     public void deleteRatingSummary(RatingSummary ratingSummary) {

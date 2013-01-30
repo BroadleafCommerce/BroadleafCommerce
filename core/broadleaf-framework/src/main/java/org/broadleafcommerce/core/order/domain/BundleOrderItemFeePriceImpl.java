@@ -93,7 +93,7 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
 
     @Override
     public Money getAmount() {
-        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, bundleOrderItem.getOrder().getCurrency());
+        return convertToMoney(amount);
     }
 
     @Override
@@ -139,6 +139,10 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
         }
     }
 
+    protected Money convertToMoney(BigDecimal amount) {
+        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, bundleOrderItem.getOrder().getCurrency());
+    }
+
     @Override
     public BundleOrderItemFeePrice clone() {
         //instantiate from the fully qualified name via reflection
@@ -150,10 +154,10 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
             } catch (CloneNotSupportedException e) {
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
             }
-            clone.setAmount(getAmount());
-            clone.setName(getName());
-            clone.setReportingCode(getReportingCode());
-            clone.setBundleOrderItem(getBundleOrderItem());
+            clone.setAmount(convertToMoney(amount));
+            clone.setName(name);
+            clone.setReportingCode(reportingCode);
+            clone.setBundleOrderItem(bundleOrderItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

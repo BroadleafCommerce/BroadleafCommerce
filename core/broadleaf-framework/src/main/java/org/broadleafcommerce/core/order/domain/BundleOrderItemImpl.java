@@ -249,7 +249,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public Money getBaseRetailPrice() {
-        return baseRetailPrice != null?BroadleafCurrencyUtils.getMoney(baseRetailPrice,getOrder().getCurrency()):null;
+        return convertToMoney(baseRetailPrice);
     }
 
     @Override
@@ -259,7 +259,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public Money getBaseSalePrice() {
-        return baseSalePrice!=null?BroadleafCurrencyUtils.getMoney(baseRetailPrice,getOrder().getCurrency()):null;
+        return convertToMoney(baseSalePrice);
     }
 
     @Override
@@ -358,26 +358,30 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         return getProductBundle();
     }
 
+    protected Money convertToMoney(BigDecimal amount) {
+        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getOrder().getCurrency());
+    }
+
     @Override
     public OrderItem clone() {
         BundleOrderItemImpl orderItem = (BundleOrderItemImpl) super.clone();
-        if (getDiscreteOrderItems() != null) {
-            for (DiscreteOrderItem discreteOrderItem : getDiscreteOrderItems()) {
+        if (discreteOrderItems != null) {
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                 DiscreteOrderItem temp = (DiscreteOrderItem) discreteOrderItem.clone();
                 temp.setBundleOrderItem(orderItem);
                 orderItem.getDiscreteOrderItems().add(temp);
             }
         }
-        if (getBundleOrderItemFeePrices() != null) {
-            for (BundleOrderItemFeePrice feePrice : getBundleOrderItemFeePrices()) {
+        if (bundleOrderItemFeePrices != null) {
+            for (BundleOrderItemFeePrice feePrice : bundleOrderItemFeePrices) {
                 BundleOrderItemFeePrice cloneFeePrice = feePrice.clone();
                 cloneFeePrice.setBundleOrderItem(orderItem);
                 orderItem.getBundleOrderItemFeePrices().add(cloneFeePrice);
             }
         }
 
-        orderItem.setBaseRetailPrice(getBaseRetailPrice());
-        orderItem.setBaseSalePrice(getBaseSalePrice());
+        orderItem.setBaseRetailPrice(convertToMoney(baseRetailPrice));
+        orderItem.setBaseSalePrice(convertToMoney(baseSalePrice));
         orderItem.setSku(sku);
         orderItem.setProductBundle(productBundle);
 

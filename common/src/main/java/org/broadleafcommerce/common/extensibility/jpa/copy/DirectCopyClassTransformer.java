@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.LoaderClassPath;
@@ -97,7 +98,33 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                     } else {
                         logger.debug(String.format("Adding field [%s]", field.getName()));
                         CtField copiedField = new CtField(field, clazz);
-                        clazz.addField(copiedField);
+
+                        boolean defaultConstructorFound = false;
+
+                        String implClass = getImplementationType(field.getType().getName());
+
+                        // Look through all of the constructors in the implClass to see 
+                        // if there is one that takes zero parameters
+                        try {
+                            CtConstructor[] implConstructors = classPool.get(implClass).getConstructors();
+                            if (implConstructors != null) {
+                                for (CtConstructor cons : implConstructors) {
+                                    if (cons.getParameterTypes().length == 0) {
+                                        defaultConstructorFound = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        } catch (NotFoundException e) {
+                            // Do nothing -- if we don't find this implementation, it's probably because it's
+                            // an array. In this case, we will not initialize the field.
+                        }
+
+                        if (defaultConstructorFound) {
+                            clazz.addField(copiedField, "new " + implClass + "()");
+                        } else {
+                            clazz.addField(copiedField);
+                        }
                     }
                 }
                 
@@ -140,6 +167,29 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
         return null;
     }
     
+    /**
+     * This method will do its best to return an implementation type for a given classname. This will allow weaving
+     * template classes to have initialized values.
+     * 
+     * We provide default implementations for List, Map, and Set, and will attempt to utilize a default constructor for
+     * other classes.
+     * 
+     * If the className contains an '[', we will return null.
+     */
+    protected String getImplementationType(String className) {
+        if (className.equals("java.util.List")) {
+            return "java.util.ArrayList";
+        } else if (className.equals("java.util.Map")) {
+            return "java.util.HashMap";
+        } else if (className.equals("java.util.Set")) {
+            return "java.util.HashSet";
+        } else if (className.contains("[")) {
+            return null;
+        }
+
+        return className;
+    }
+
     protected String methodDescription(CtMethod method) {
         return method.getDeclaringClass().getName() + "|" + method.getName() + "|" + method.getSignature();
     }
@@ -153,4 +203,3 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     }
     
 }
-

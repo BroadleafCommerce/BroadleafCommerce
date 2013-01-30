@@ -44,7 +44,7 @@ import java.lang.reflect.Method;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_ORDER_ITEM_ATTRIBUTE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "OrderItemAttributeImpl_baseProductAttribute")
 public class OrderItemAttributeImpl implements OrderItemAttribute {
 
@@ -144,9 +144,9 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
             } catch (CloneNotSupportedException e) {
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + itemAttribute.getClass().getName(), e);
             }            
-            itemAttribute.setName(getName());
-            itemAttribute.setOrderItem(itemAttribute.getOrderItem());
-            itemAttribute.setValue(getValue());
+            itemAttribute.setName(name);
+            itemAttribute.setOrderItem(orderItem);
+            itemAttribute.setValue(value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

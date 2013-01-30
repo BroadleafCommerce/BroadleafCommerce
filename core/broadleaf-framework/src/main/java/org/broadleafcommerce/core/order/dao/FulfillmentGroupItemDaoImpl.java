@@ -43,7 +43,6 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
             fulfillmentGroupItem = readFulfillmentGroupItemById(fulfillmentGroupItem.getId());
         }
         em.remove(fulfillmentGroupItem);
-        em.flush();
     }
 
     public FulfillmentGroupItem save(final FulfillmentGroupItem fulfillmentGroupItem) {

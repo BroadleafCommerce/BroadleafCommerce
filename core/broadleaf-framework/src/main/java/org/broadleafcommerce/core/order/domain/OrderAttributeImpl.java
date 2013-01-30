@@ -40,7 +40,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_ORDER_ATTRIBUTE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "OrderAttributeImpl_baseProductAttribute")
 public class OrderAttributeImpl implements OrderAttribute {
 

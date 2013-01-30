@@ -57,7 +57,6 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -170,7 +169,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
-    protected Map<String,OrderItemAttribute> orderItemAttributeMap;
+    protected Map<String,OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
 
     @Column(name = "SPLIT_PARENT_ITEM_ID")
     @AdminPresentation(excluded = true)
@@ -178,7 +177,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getRetailPrice() {
-        return retailPrice == null ? null : BroadleafCurrencyUtils.getMoney(retailPrice, getOrder().getCurrency());
+        return convertToMoney(retailPrice);
     }
 
     @Override
@@ -188,7 +187,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getSalePrice() {
-        return salePrice == null ? null : BroadleafCurrencyUtils.getMoney(salePrice, getOrder().getCurrency());
+        return convertToMoney(salePrice);
     }
 
     @Override
@@ -198,7 +197,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getPrice() {
-        return price == null ? null : BroadleafCurrencyUtils.getMoney(price, getOrder().getCurrency());
+        return convertToMoney(price);
     }
 
     @Override
@@ -329,7 +328,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public OrderItemType getOrderItemType() {
-        return OrderItemType.getInstance(orderItemType);
+        return convertOrderItemType(orderItemType);
     }
 
     @Override
@@ -446,6 +445,14 @@ public class OrderItemImpl implements OrderItem, Cloneable {
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
         }
     }
+
+    protected Money convertToMoney(BigDecimal amount) {
+        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getOrder().getCurrency());
+    }
+
+    protected OrderItemType convertOrderItemType(String type) {
+        return OrderItemType.getInstance(type);
+    }
     
     @Override
     public OrderItem clone() {
@@ -458,35 +465,33 @@ public class OrderItemImpl implements OrderItem, Cloneable {
             } catch (CloneNotSupportedException e) {
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clonedOrderItem.getClass().getName(), e);
             }
-            if (getCandidateItemOffers() != null) {
-                for (CandidateItemOffer candidate : getCandidateItemOffers()) {
+            if (candidateItemOffers != null) {
+                for (CandidateItemOffer candidate : candidateItemOffers) {
                     CandidateItemOffer clone = candidate.clone();
                     clone.setOrderItem(clonedOrderItem);
                     clonedOrderItem.getCandidateItemOffers().add(clone);
                 }
             }
             
-            if (getOrderItemAttributes() != null) {
-                clonedOrderItem.setOrderItemAttributes(new HashMap<String, OrderItemAttribute>());
-
-                for (OrderItemAttribute attribute : getOrderItemAttributes().values()) {
+            if (orderItemAttributeMap != null && !orderItemAttributeMap.isEmpty()) {
+                for (OrderItemAttribute attribute : orderItemAttributeMap.values()) {
                     OrderItemAttribute clone = attribute.clone();
                     clone.setOrderItem(clonedOrderItem);
                     clonedOrderItem.getOrderItemAttributes().put(clone.getName(), clone);
                 }
             }
             
-            clonedOrderItem.setCategory(getCategory());
-            clonedOrderItem.setGiftWrapOrderItem(getGiftWrapOrderItem());
-            clonedOrderItem.setName(getName());
-            clonedOrderItem.setOrder(getOrder());
-            clonedOrderItem.setOrderItemType(getOrderItemType());
-            clonedOrderItem.setPersonalMessage(getPersonalMessage());
-            clonedOrderItem.setQuantity(getQuantity());
-            clonedOrderItem.setRetailPrice(getRetailPrice());
-            clonedOrderItem.setSalePrice(getSalePrice());
-            clonedOrderItem.setPrice(getPrice());
-            clonedOrderItem.setSplitParentItemId(getSplitParentItemId());
+            clonedOrderItem.setCategory(category);
+            clonedOrderItem.setGiftWrapOrderItem(giftWrapOrderItem);
+            clonedOrderItem.setName(name);
+            clonedOrderItem.setOrder(order);
+            clonedOrderItem.setOrderItemType(convertOrderItemType(orderItemType));
+            clonedOrderItem.setPersonalMessage(personalMessage);
+            clonedOrderItem.setQuantity(quantity);
+            clonedOrderItem.setRetailPrice(convertToMoney(retailPrice));
+            clonedOrderItem.setSalePrice(convertToMoney(salePrice));
+            clonedOrderItem.setPrice(convertToMoney(price));
+            clonedOrderItem.setSplitParentItemId(splitParentItemId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
