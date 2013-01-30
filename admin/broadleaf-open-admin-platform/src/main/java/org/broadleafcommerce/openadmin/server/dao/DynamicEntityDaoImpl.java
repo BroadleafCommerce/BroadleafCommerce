@@ -58,9 +58,6 @@ import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -81,6 +78,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 /**
  * 
@@ -621,7 +621,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             Map<String, FieldMetadata> cacheData;
             synchronized(LOCK_OBJECT) {
                 cacheData = METADATA_CACHE.get(cacheKey);
-                cacheData = null;
+                cacheData = null; //FIXME: APA delete this line
                 if (cacheData == null) {
                     Map<String, FieldMetadata> props = getPropertiesForEntityClass(
                         clazz,

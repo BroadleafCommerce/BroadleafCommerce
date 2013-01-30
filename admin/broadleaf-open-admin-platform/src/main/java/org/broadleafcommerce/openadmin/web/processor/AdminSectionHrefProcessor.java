@@ -24,10 +24,10 @@ import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
 import org.thymeleaf.spring3.context.SpringWebContext;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * A Thymeleaf processor that will generate the HREF of a given Admin Section.
@@ -58,23 +58,7 @@ public class AdminSectionHrefProcessor extends AbstractAttributeModifierAttrProc
         if (section != null) {
             HttpServletRequest request = ((SpringWebContext) arguments.getContext()).getHttpServletRequest();
 
-            //remove the preceding forward slash to make the redirect relative
-            href = section.getUrl();
-            if (href.startsWith("/")) {
-                href = href.substring(1, href.length());
-            }
-
-            // If we're using the default handler, we're loading a GWT module
-            if (section.getUseDefaultHandler()) {
-                
-                // Append the GWT dev mode parameter if it exists
-                if (request.getParameter("gwt.codesvr") != null ) {
-                    href += "?gwt.codesvr=" + request.getParameter("gwt.codesvr");
-                }
-        
-                // Append the necessary GWT module keys
-                href += "#moduleKey=" + section.getModule().getModuleKey() + "&pageKey=" + section.getSectionKey();
-            }
+            href = request.getContextPath() + section.getUrl();
         }
         
         Map<String, String> attrs = new HashMap<String, String>();

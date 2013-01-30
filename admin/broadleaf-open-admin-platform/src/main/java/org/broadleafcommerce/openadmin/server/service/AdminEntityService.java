@@ -20,7 +20,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
@@ -31,19 +31,22 @@ import java.util.Map;
  */
 public interface AdminEntityService {
 
-    public ClassMetadata getClassMetadata(Class<?> clazz) throws ServiceException, ApplicationSecurityException;
+    public ClassMetadata getClassMetadata(Class<?> clazz)
+            throws ServiceException, ApplicationSecurityException;
 
-    public Entity[] getRecords(Class<?> clazz, FilterAndSortCriteria... fascs) throws ServiceException, ApplicationSecurityException;
+    public Entity[] getRecords(Class<?> clazz, FilterAndSortCriteria... fascs)
+            throws ServiceException, ApplicationSecurityException;
 
-    public Entity getRecord(Class<?> clazz, String id) throws ServiceException, ApplicationSecurityException;
+    public Entity getRecord(Class<?> clazz, String id)
+            throws ServiceException, ApplicationSecurityException;
 
-    public Entity updateEntity(Entity entity, Class<?> clazz) throws ServiceException, ApplicationSecurityException;
+    public Entity[] getRecordsForCollection(Class<?> containingClass, String containingEntityId, String collectionField)
+            throws ServiceException, ApplicationSecurityException;
 
-    public Map<String, Entity[]> getSubRecords(Class<?> clazz, String containingEntityId, ClassMetadata metadata) throws ServiceException, ApplicationSecurityException;
+    public Map<String, Entity[]> getRecordsForAllSubCollections(Class<?> containingClass, String containingEntityId)
+            throws ServiceException, ApplicationSecurityException;
 
-    Property[] getDisplayProperties(ClassMetadata metadata, Entity entity);
-
-
-
+    public Entity updateEntity(EntityForm entityForm, Class<?> clazz)
+            throws ServiceException, ApplicationSecurityException;
 
 }

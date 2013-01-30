@@ -25,8 +25,8 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.controller.BroadleafAdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
-import org.broadleafcommerce.openadmin.web.form.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -34,7 +34,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -57,13 +56,14 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey) throws Exception {
         Class<?> sectionClass = getClassForSection(sectionKey);
-        ClassMetadata cmd = service.getClassMetadata(sectionClass);
-        Entity[] rows = service.getRecords(sectionClass, null);
 
-        ListGrid listGrid = formService.getListGrid(cmd, rows);
+        ClassMetadata cmd = service.getClassMetadata(sectionClass);
+        Entity[] rows = service.getRecords(sectionClass);
+
+        ListGrid listGrid = formService.buildListGrid(cmd, rows);
 
         model.addAttribute("listGrid", listGrid);
-        model.addAttribute("viewType", "listGridForm");
+        model.addAttribute("viewType", "listGrid");
 
         setModelAttributes(model, sectionKey);
         return "modules/dynamicModule";
@@ -72,36 +72,30 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id) throws Exception {
-        ClassMetadata cmd = service.getClassMetadata(getClassForSection(sectionKey));
+        Class<?> sectionClass = getClassForSection(sectionKey);
 
-        Entity e = service.getRecord(getClassForSection(sectionKey), id);
+        ClassMetadata cmd = service.getClassMetadata(sectionClass);
+        Entity entity = service.getRecord(sectionClass, id);
+        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClass, id);
 
-        EntityForm ef = formService.getEntityForm(cmd, e);
-
-        Map<String, Entity[]> subRecordsMap = service.getSubRecords(getClassForSection(sectionKey), id, cmd);
+        EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
         
-        for (Entry<String, Entity[]> entry : subRecordsMap.entrySet()) {
-            Class<?> clazz = Class.forName(entry.getValue()[0].getType()[0]);
-            ClassMetadata subCmd = service.getClassMetadata(clazz);
-            ListGrid listGrid = formService.getListGrid(subCmd, entry.getValue());
-
-            ef.getSubordinateListGrids().put(entry.getKey(), listGrid);
-        }
-
-        model.addAttribute("ef", ef);
+        model.addAttribute("entityForm", entityForm);
+        model.addAttribute("viewType", "entityForm");
 
         setModelAttributes(model, sectionKey);
-        return "views/entityForm";
+        return "modules/dynamicModule";
     }
 
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id,
             EntityForm entityForm) throws Exception {
+        Class<?> sectionClass = getClassForSection(sectionKey);
 
-        service.updateEntity(entityForm.getEntity(), getClassForSection(sectionKey));
+        service.updateEntity(entityForm, sectionClass);
 
-        return "redirect:/" + sectionKey;
+        return "redirect:/" + sectionKey + "/" + id;
     }
 
     public String viewEntityCollection(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -118,7 +112,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                 ClassMetadata collectionMetadata = service.getClassMetadata(collectionClass);
                 Entity[] rows = service.getRecords(collectionClass);
 
-                ListGrid listGrid = formService.getListGrid(collectionMetadata, rows);
+                ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
                 model.addAttribute("listGrid", listGrid);
                 model.addAttribute("viewType", "modalListGrid");
 

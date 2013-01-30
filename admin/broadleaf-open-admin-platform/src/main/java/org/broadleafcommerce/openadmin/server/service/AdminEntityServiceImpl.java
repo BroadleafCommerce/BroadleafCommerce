@@ -16,12 +16,10 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
@@ -33,13 +31,13 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -80,84 +78,111 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Map<String, Entity[]> getSubRecords(Class<?> clazz, String containingEntityId, ClassMetadata metadata) throws ServiceException, ApplicationSecurityException {
+    public Entity[] getRecordsForCollection(Class<?> containingClass, String containingEntityId, String collectionField)
+            throws ServiceException, ApplicationSecurityException {
+        // Get the collection property and assert it's a valid collection
+        ClassMetadata cmd = getClassMetadata(containingClass);
+        Property prop = cmd.getPMap().get(collectionField);
+        if (!(prop.getMetadata() instanceof BasicCollectionMetadata)) {
+            throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was not a " +
+                    "collection field.", collectionField, containingClass.getName()));
+        }
+        BasicCollectionMetadata fmd = (BasicCollectionMetadata) prop.getMetadata();
+
+        try {
+            // Establish the filter criteria for the subcollection -- we want to get all results for the subcollection
+            // for the current containing entity id
+            Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
+            ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
+                    .get(PersistencePerspectiveItemType.FOREIGNKEY);
+
+            FilterAndSortCriteria fasc = new FilterAndSortCriteria(foreignField.getManyToField());
+            fasc.setFilterValue(containingEntityId);
+
+            Entity[] subRecords = fetch(collectionClass, new ForeignKey[] { foreignField }, fasc).getRecords();
+            return subRecords;
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    @Override
+    public Map<String, Entity[]> getRecordsForAllSubCollections(Class<?> containingClass, String containingEntityId)
+            throws ServiceException, ApplicationSecurityException {
         Map<String, Entity[]> map = new HashMap<String, Entity[]>();
 
-        for (Property p : metadata.getProperties()) {
+        ClassMetadata cmd = getClassMetadata(containingClass);
+        for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicCollectionMetadata) {
-                BasicCollectionMetadata md = (BasicCollectionMetadata) p.getMetadata();
-                try {
-                    Class<?> collectionClass = Class.forName(md.getCollectionCeilingEntity());
-                    ForeignKey foreignField = (ForeignKey) md.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-
-                    FilterAndSortCriteria subFasc = new FilterAndSortCriteria(foreignField.getManyToField());
-                    subFasc.setFilterValue(containingEntityId);
-
-                    //Entity[] subRecords = getRecords(collectionClass, new ForeignKey[] { foreignField }, subFasc);
-                    Entity[] subRecords = fetch(collectionClass, new ForeignKey[] { foreignField }, subFasc).getRecords();
-                    
-                    if (subRecords != null && subRecords.length > 0) {
-                        map.put(p.getName(), subRecords);
-                    }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                Entity[] rows = getRecordsForCollection(containingClass, containingEntityId, p.getName());
+                map.put(p.getName(), rows);
             }
         }
-        
+
         return map;
     }
 
     @Override
-    public Property[] getDisplayProperties(ClassMetadata metadata, Entity entity) {
-        List<Property> returnList = new ArrayList<Property>();
+    public Entity updateEntity(EntityForm entityForm, Class<?> clazz) throws ServiceException, ApplicationSecurityException {
+        // Build the property array from the field map
 
-        for (Property p : metadata.getProperties()) {
-            if (p.getMetadata() instanceof BasicFieldMetadata) {
-                BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-
-                Property entityProp = entity.getPMap().get(p.getName());
-                entityProp.setMetadata(md);
-
-                returnList.add(entityProp);
-            }
+        Property[] properties = new Property[entityForm.getFields().size()];
+        int i = 0;
+        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+            Property p = new Property();
+            p.setName(entry.getKey());
+            p.setValue(entry.getValue().getValue());
+            properties[i++] = p;
         }
 
-        Property[] returnArray = new Property[returnList.size()];
-        return returnList.toArray(returnArray);
+        Entity entity = new Entity();
+        entity.setProperties(properties);
+        entity.setType(new String[] { entityForm.getEntityType() });
+
+        return update(entity, clazz);
     }
 
-    @Override
-    public Entity updateEntity(Entity entity, Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        OperationTypes opTypes = getDefaultOperationTypes();
-        PersistencePerspective perspective = getPersistencePerspective(opTypes, null);
-        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, perspective);
-
-        for (Entry<String, Property> entry : entity.getPMap().entrySet()) {
-            entry.getValue().setName(entry.getKey());
-        }
-        Property[] pArray = new Property[entity.getPMap().values().size()];
-        entity.setProperties(entity.getPMap().values().toArray(pArray));
-
+    /**
+     * Executes a database update for the given entity and class
+     * 
+     * @param entity
+     * @param clazz
+     * @return the updated entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    protected Entity update(Entity entity, Class<?> clazz) throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, null);
         pkg.setEntity(entity);
-
         return service.update(pkg);
     }
 
+    /**
+     * Executes a database inspect for the given class
+     * 
+     * @param clazz
+     * @return the DynamicResultSet (note that this will not have any entities, only metadata)
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
     protected DynamicResultSet inspect(Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        OperationTypes opTypes = getDefaultOperationTypes();
-        PersistencePerspective perspective = getPersistencePerspective(opTypes, null);
-        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, perspective);
-
+        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, null);
         return service.inspect(pkg);
     }
 
-    protected DynamicResultSet fetch(Class<?> clazz, ForeignKey[] foreignKeys, FilterAndSortCriteria... fascs) throws ServiceException, ApplicationSecurityException {
-        ForeignKey[] combined = (ForeignKey[]) ArrayUtils.addAll(foreignKeys, null);
-
-        OperationTypes opTypes = getDefaultOperationTypes();
-        PersistencePerspective perspective = getPersistencePerspective(opTypes, combined);
-        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, perspective);
+    /**
+     * Executes a database fetch for the given class, foreign keys, and any applicable filter and sort criteria
+     * 
+     * @param clazz
+     * @param foreignKeys
+     * @param fascs
+     * @return the DynamicResultSet (note that this will not have any metadata, only entities)
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    protected DynamicResultSet fetch(Class<?> clazz, ForeignKey[] foreignKeys, FilterAndSortCriteria... fascs)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, foreignKeys);
         CriteriaTransferObject cto = getDefaultCto();
         
         if (fascs != null) {
@@ -169,19 +194,26 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return service.fetch(pkg, cto);
     }
     
+    /**
+     * @return an OperationTypes object with OperationType.BASIC set for all operations
+     */
     protected OperationTypes getDefaultOperationTypes() {
         OperationTypes operationTypes = new OperationTypes();
         operationTypes.setFetchType(OperationType.BASIC);
-        operationTypes.setRemoveType(OperationType.NONDESTRUCTIVEREMOVE);
-        operationTypes.setAddType(OperationType.NONDESTRUCTIVEREMOVE);
+        operationTypes.setRemoveType(OperationType.BASIC);
+        operationTypes.setAddType(OperationType.BASIC);
         operationTypes.setUpdateType(OperationType.BASIC);
         operationTypes.setInspectType(OperationType.BASIC);
         return operationTypes;
     }
     
-    protected PersistencePerspective getPersistencePerspective(OperationTypes types, ForeignKey[] foreignKeys) {
+    /**
+     * @param foreignKeys keys to add to the PersistencePerspective PersistencePerspectiveItems
+     * @return a PersistencePerspective configured with the default operation types and specified foreign keys
+     */
+    protected PersistencePerspective getPersistencePerspective(ForeignKey[] foreignKeys) {
         PersistencePerspective persistencePerspective = new PersistencePerspective();
-        persistencePerspective.setOperationTypes(types);
+        persistencePerspective.setOperationTypes(getDefaultOperationTypes());
         persistencePerspective.setAdditionalForeignKeys(new ForeignKey[] {});
         persistencePerspective.setAdditionalNonPersistentProperties(new String[] {});
         if (foreignKeys != null) {
@@ -193,23 +225,33 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return persistencePerspective;
     }
     
-    protected PersistencePackage getPersistencePackage(String className, String[] customCriteria, PersistencePerspective perspective) {
+    /**
+     * Assembles a persistence package for the specified attributes
+     * 
+     * @param className the fully qualified name of the class to use
+     * @param customCriteria any customCriteria to pass to the persistence handlers
+     * @param keys any foreign keys to consider for the persistence perspective
+     * @return the assembled persistence package
+     */
+    protected PersistencePackage getPersistencePackage(String className, String[] customCriteria, ForeignKey[] keys) {
         PersistencePackage pp = new PersistencePackage();
         pp.setCeilingEntityFullyQualifiedClassname(className);
         pp.setFetchTypeFullyQualifiedClassname(null);
-        pp.setPersistencePerspective(perspective);
+        pp.setPersistencePerspective(getPersistencePerspective(keys));
         pp.setCustomCriteria(customCriteria);
         pp.setEntity(null);
         pp.setCsrfToken(null);
         return pp;
     }
     
+    /**
+     * @return a default CriteriaTransferObject set up to fetch a maximum of 75 results
+     */
     protected CriteriaTransferObject getDefaultCto() {
         CriteriaTransferObject cto = new CriteriaTransferObject();
         cto.setFirstResult(0);
         cto.setMaxResults(75);
         return cto;
     }
-    
 
 }

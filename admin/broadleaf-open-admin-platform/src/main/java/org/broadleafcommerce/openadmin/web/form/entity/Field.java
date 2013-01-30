@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.form;
+package org.broadleafcommerce.openadmin.web.form.entity;
 
 
 
@@ -26,32 +26,56 @@ public class Field {
     protected String name;
     protected String friendlyName;
     protected String fieldType;
+    protected String value;
+    protected String displayValue;
+    protected String foreignKeyDisplayValueProperty;
+
+    public String getDisplayValue() {
+        return displayValue == null ? value : displayValue;
+    }
 
     public String getName() {
         return name;
     }
 
-    public Field setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     public String getFriendlyName() {
         return friendlyName;
     }
 
-    public Field setFriendlyName(String friendlyName) {
+    public void setFriendlyName(String friendlyName) {
         this.friendlyName = friendlyName;
-        return this;
     }
 
     public String getFieldType() {
         return fieldType;
     }
 
-    public Field setFieldType(String fieldType) {
+    public void setFieldType(String fieldType) {
         this.fieldType = fieldType;
-        return this;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
+    }
+
+    public String getForeignKeyDisplayValueProperty() {
+        return foreignKeyDisplayValueProperty;
+    }
+
+    public void setForeignKeyDisplayValueProperty(String foreignKeyDisplayValueProperty) {
+        this.foreignKeyDisplayValueProperty = foreignKeyDisplayValueProperty;
     }
 
 }

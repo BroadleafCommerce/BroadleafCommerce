@@ -17,8 +17,7 @@
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.util.BLCArrayUtils;
-import org.broadleafcommerce.common.util.TypedPredicate;
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
@@ -26,15 +25,22 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.web.form.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.Field;
-import org.broadleafcommerce.openadmin.web.form.HeaderColumn;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
+import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.stereotype.Service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -42,94 +48,123 @@ import java.util.List;
 @Service("blFormBuilderService")
 public class FormBuilderServiceImpl implements FormBuilderService {
 
-    @Override
-    public ListGrid getListGrid(ClassMetadata metadata, Entity[] entities) {
-        List<HeaderColumn> hcs = new ArrayList<HeaderColumn>();
+    @Resource(name = "blAdminEntityService")
+    protected AdminEntityService adminEntityService;
 
-        for (Property p : metadata.getProperties()) {
+    @Override
+    public ListGrid buildListGrid(ClassMetadata cmd, Entity[] entities) {
+        List<Field> hfs = new ArrayList<Field>();
+
+        // Determine which fields are going to be used in the table header
+        // For now, only consider field prominence annotations
+        for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
-                BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) p.getMetadata();
-                if (fieldMetadata.isProminent() != null && fieldMetadata.isProminent()) {
-                    HeaderColumn hc = (HeaderColumn) new HeaderColumn()
-                            .setName(p.getName())
-                            .setFriendlyName(p.getMetadata().getFriendlyName());
-                    hcs.add(hc);
+                BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
+                if (fmd.isProminent() != null && fmd.isProminent()) {
+                    Field hf = new Field();
+                    hf.setName(p.getName());
+                    hf.setFriendlyName(fmd.getFriendlyName());
+                    hfs.add(hf);
                 }
             }
         }
 
         ListGrid lg = new ListGrid();
+        lg.setClassName(cmd.getCeilingType());
+        lg.setHeaderFields(hfs);
 
-        lg.setMetadata(metadata);
-        lg.setEntities(Arrays.asList(entities));
-        lg.setHeaderColumns(hcs);
+        // For each of the entities (rows) in the list grid, we need to build the associated
+        // ListGridRecord and set the required fields on the record. These fields are the same ones
+        // that are used for the column headers
+        for (Entity e : entities) {
+            ListGridRecord record = new ListGridRecord();
+            record.setId(e.findProperty("id").getValue());
+
+            for (Field headerField : hfs) {
+                Property p = e.findProperty(headerField.getName());
+                Field recordField = new Field();
+                recordField.setName(headerField.getName());
+                recordField.setValue(p.getValue());
+                record.getFields().add(recordField);
+            }
+
+            lg.getRecords().add(record);
+        }
 
         return lg;
     }
 
     @Override
-    public EntityForm getEntityForm(ClassMetadata cmd, Entity e) {
-        EntityForm ef = new EntityForm(e);
-
-        ef.setMetadata(cmd);
+    public EntityForm buildEntityForm(ClassMetadata cmd, final Entity entity, final Map<String, Entity[]> subCollections)
+            throws ClassNotFoundException, ServiceException, ApplicationSecurityException {
+        final EntityForm ef = new EntityForm();
+        ef.setId(entity.findProperty("id").getValue());
+        ef.setEntityType(entity.getType()[0]);
 
         for (final Property p : cmd.getProperties()) {
-            // We have all polymorphic types here. Filter out ones that do not apply
-            boolean entityHasProperty = BLCArrayUtils.contains(e.getProperties(), new TypedPredicate<Property>() {
+            p.getMetadata().accept(new MetadataVisitor() {
                 @Override
-                public boolean evaluate(Property entityProperty) {
-                    return p.getName().equals(entityProperty.getName());
+                public void visit(BasicFieldMetadata fmd) {
+                    // We have all polymorphic types here since we're looping through the metadata
+                    // for the class. Filter out ones that do not apply to this particular entity.
+                    boolean entityHasProperty = entity.findProperty(p.getName()) != null;
+
+                    if (entityHasProperty) {
+                        String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+
+                        // Create the field and set some basic attributes
+                        Field f = new Field();
+                        f.setName(p.getName());
+                        f.setFieldType(fieldType);
+                        f.setFriendlyName(p.getMetadata().getFriendlyName());
+                        if (StringUtils.isBlank(f.getFriendlyName())) {
+                            f.setFriendlyName(f.getName());
+                        }
+
+                        // Set the value attributes
+                        Property entityProp = entity.findProperty(p.getName());
+                        f.setValue(entityProp.getValue());
+                        f.setDisplayValue(entityProp.getDisplayValue());
+
+                        // Set additional attributes
+                        f.setForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+
+                        // Add the field to the appropriate FieldGroup
+                        String groupName = ((BasicFieldMetadata) p.getMetadata()).getGroup();
+                        groupName = groupName == null ? "Default" : groupName;
+                        FieldGroup fieldGroup = ef.getGroups().get(groupName);
+                        if (fieldGroup == null) {
+                            fieldGroup = new FieldGroup();
+                            fieldGroup.setTitle(groupName);
+                            ef.getGroups().put(groupName, fieldGroup);
+                        }
+                        fieldGroup.getFields().add(f);
+                    }
+                }
+                
+                @Override
+                public void visit(BasicCollectionMetadata fmd) {
+                    try {
+                        Entity[] subCollectionEntities = subCollections.get(p.getName());
+                        Class<?> subCollectionClass = Class.forName(fmd.getCollectionCeilingEntity());
+                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(subCollectionClass);
+                        ListGrid subCollectionGrid = buildListGrid(subCollectionMd, subCollectionEntities);
+                        ef.getCollectionListGrids().add(subCollectionGrid);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                @Override
+                public void visit(MapMetadata fmd) {
+
+                }
+
+                @Override
+                public void visit(AdornedTargetCollectionMetadata fmd) {
+
                 }
             });
-
-            if (!entityHasProperty) {
-                continue;
-            }
-
-            if (p.getMetadata() instanceof BasicFieldMetadata) {
-                BasicFieldMetadata metadata = (BasicFieldMetadata) p.getMetadata();
-
-                String fieldType = metadata.getFieldType() == null ? null : metadata.getFieldType().toString();
-                
-                if (fieldType.equalsIgnoreCase("FOREIGN_KEY")) {
-                    continue;
-                }
-                
-                if (!fieldType.equalsIgnoreCase("BOOLEAN") && !fieldType.equalsIgnoreCase("ADDITIONAL_FOREIGN_KEY")) {
-                    fieldType = "TEXT";
-                }
-
-                Field f = new Field()
-                        .setName(p.getName())
-                        .setFriendlyName(p.getMetadata().getFriendlyName())
-                        .setFieldType(fieldType);
-
-                if (StringUtils.isBlank(f.getFriendlyName())) {
-                    f.setFriendlyName(f.getName());
-                }
-
-                String groupName = ((BasicFieldMetadata) p.getMetadata()).getGroup();
-                groupName = groupName == null ? "Default" : groupName;
-
-                List<Field> fs = ef.getGroupedFields().get(groupName);
-                if (fs == null) {
-                    fs = new ArrayList<Field>();
-                    ef.getGroupedFields().put(groupName, fs);
-                }
-
-                fs.add(f);
-            } else if (p.getMetadata() instanceof MapMetadata) {
-                //TODO: Add implementation
-                ef.getNonBasicFields().add(p);
-            } else if (p.getMetadata() instanceof AdornedTargetCollectionMetadata) {
-                //TODO: Add implementation
-                ef.getNonBasicFields().add(p);
-            } else if (p.getMetadata() instanceof BasicCollectionMetadata) {
-                //TODO: Add implementation
-                ef.getNonBasicFields().add(p);
-            } else {
-                //TODO: Add implementation
-            }
         }
 
         return ef;

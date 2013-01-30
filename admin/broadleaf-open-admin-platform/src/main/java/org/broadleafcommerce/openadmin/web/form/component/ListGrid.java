@@ -1,36 +1,40 @@
+
 package org.broadleafcommerce.openadmin.web.form.component;
 
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.web.form.HeaderColumn;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 public class ListGrid {
 
-    protected List<HeaderColumn> headerColumns;
-
-    protected List<Entity> entities;
-
+    protected String className;
+    protected List<Field> headerFields = new ArrayList<Field>();
+    protected List<ListGridRecord> records = new ArrayList<ListGridRecord>();
     protected int startIndex = 0;
 
-    protected ClassMetadata metadata;
-
-    public List<HeaderColumn> getHeaderColumns() {
-        return headerColumns;
+    public String getClassName() {
+        return className;
     }
 
-    public void setHeaderColumns(List<HeaderColumn> headerColumns) {
-        this.headerColumns = headerColumns;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
-    public List<Entity> getEntities() {
-        return entities;
+    public List<Field> getHeaderFields() {
+        return headerFields;
     }
 
-    public void setEntities(List<Entity> entities) {
-        this.entities = entities;
+    public void setHeaderFields(List<Field> headerFields) {
+        this.headerFields = headerFields;
+    }
+
+    public List<ListGridRecord> getRecords() {
+        return records;
+    }
+
+    public void setRecords(List<ListGridRecord> records) {
+        this.records = records;
     }
 
     public int getStartIndex() {
@@ -41,12 +45,5 @@ public class ListGrid {
         this.startIndex = startIndex;
     }
 
-    public ClassMetadata getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(ClassMetadata metadata) {
-        this.metadata = metadata;
-    }
-
 }
+
