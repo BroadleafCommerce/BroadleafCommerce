@@ -144,7 +144,7 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                         retailTotal = retailTotal.add(price);
                         
                         if (sku != null && sku.getWeight() != null && sku.getWeight().getWeight() != null) {
-                            BigDecimal convertedWeight = convertWeight(sku.getWeight().getWeight(), sku.getWeight().getWeightUnitOfMeasure());
+                            BigDecimal convertedWeight = convertWeight(sku.getWeight().getWeight(), sku.getWeight().getWeightUnitOfMeasure()).multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
                             weightTotal = weightTotal.add(convertedWeight);
                         }
                     }
