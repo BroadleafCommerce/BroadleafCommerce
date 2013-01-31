@@ -54,6 +54,7 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
     protected SequenceProcessor removeItemWorkflow;
 
     @Resource(name = "blTransactionManager")
-    JpaTransactionManager transactionManager;
+    protected PlatformTransactionManager transactionManager;
 
     @Value("${pricing.retry.count.for.lock.failure}")
     protected int pricingRetryCountForLockFailure = 3;
