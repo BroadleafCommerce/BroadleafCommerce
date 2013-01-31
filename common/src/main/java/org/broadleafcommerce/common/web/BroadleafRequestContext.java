@@ -85,10 +85,10 @@ public class BroadleafRequestContext {
      * @param request
      */
     public void setRequest(HttpServletRequest request) {
+        this.request = request;
         if (webRequest == null) {
             setWebRequest(new ServletWebRequest(request));
         }
-        this.request = request;
     }
 
     /**
@@ -122,13 +122,13 @@ public class BroadleafRequestContext {
      * @param webRequest
      */
     public void setWebRequest(WebRequest webRequest) {
+        this.webRequest = webRequest;
         if (this.request == null) {
             if (webRequest instanceof ServletWebRequest) {
                 setRequest(((ServletWebRequest) webRequest).getRequest());
                 setResponse(((ServletWebRequest) webRequest).getResponse());
             }
         }
-        this.webRequest = webRequest;
     }
 
     /**
