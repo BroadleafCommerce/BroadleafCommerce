@@ -17,6 +17,7 @@
 package org.broadleafcommerce.profile.core.service;
 
 import org.broadleafcommerce.profile.core.dao.CustomerPaymentDao;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +62,16 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     @Transactional("blTransactionManager")
     public CustomerPayment create() {
         return customerPaymentDao.create();
+    }
+
+    public CustomerPayment findDefaultPaymentForCustomer(Customer customer) {
+        List<CustomerPayment> payments = readCustomerPaymentsByCustomerId(customer.getId());
+        for (CustomerPayment payment : payments) {
+            if (payment.isDefault()) {
+                return payment;
+            }
+        }
+        return null;
     }
 
 }
