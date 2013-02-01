@@ -37,6 +37,10 @@ public interface CustomerPayment extends Serializable {
 
     public void setPaymentToken(String paymentToken);
 
+    public boolean isDefault();
+
+    public void setDefault(boolean isDefault);
+
     public Map<String, String> getAdditionalFields();
 
     public void setAdditionalFields(Map<String, String> additionalFields);

@@ -63,6 +63,10 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Token", order=1, group = "CustomerPaymentImpl_Identification", groupOrder = 1)
     protected String paymentToken;
 
+    @Column(name = "IS_DEFAULT")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Default_Customer_Payment")
+    protected boolean isDefault = false;
+
     @ElementCollection
     @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns=@JoinColumn(name="CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
@@ -109,6 +113,16 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @Override
     public void setPaymentToken(String paymentToken) {
         this.paymentToken = paymentToken;
+    }
+
+    @Override
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    @Override
+    public void setDefault(boolean aDefault) {
+        this.isDefault = aDefault;
     }
 
     @Override
