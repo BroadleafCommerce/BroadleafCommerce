@@ -89,4 +89,12 @@ public interface OrderItemPriceDetail extends Serializable {
      * @return
      */
     public Money getTotalAdjustmentValue();
+
+    /**
+     * Returns the total adjustedPrice.
+     *
+     * @return
+     */
+    public Money getTotalAdjustedPrice();
+
 }
