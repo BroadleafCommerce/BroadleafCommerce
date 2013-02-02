@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.common.money;
 
+import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -31,9 +34,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.broadleafcommerce.common.money.util.CurrencyAdapter;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
     
@@ -43,7 +43,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
 
     private final Currency currency;
     
-    public static final Money ZERO = new NonModifiableMoney(BigDecimal.ZERO);
+    public static final Money ZERO = new Money(BigDecimal.ZERO);
 
     public Money(Currency currency) {
         this(BankersRounding.zeroAmount(), currency);
@@ -283,6 +283,11 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         if (amount != null ? !amount.equals(money.amount) : money.amount != null) {
             return false;
         }
+
+        if (isZero()) {
+            return true;
+        }
+
         if (currency != null ? !currency.equals(money.currency) : money.currency != null) {
             return false;
         }

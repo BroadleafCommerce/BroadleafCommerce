@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 
 import java.io.Serializable;
 import java.util.List;
@@ -49,24 +49,17 @@ public interface OrderItemPriceDetail extends Serializable {
      */
     public void setOrderItem(OrderItem order);
 
-
+    /**
+     * Returns a List of the adjustments that effected this priceDetail. 
+     * @return a  List of OrderItemPriceDetailAdjustment
+     */
+    public List<OrderItemPriceDetailAdjustment> getOrderItemPriceDetailAdjustments();
 
     /**
-     * The final price associated with this {@link OrderItemPriceDetail}. Note that this takes into account all of the taxes, fees and
-     * promotions that are applied on this {@link OrderItemPriceDetail}. This will also use {@link #getSalePrice()} as a base rather
-     * than {@link #getRetailPrice()} when {@link #getIsOnSale()} is true.
-     * 
-     * @return
+     * Sets the list of OrderItemPriceDetailAdjustment
+     * @param orderItemPriceDetailAdjustments
      */
-    public Money getPrice();
-
-    /**
-     * Sets the price of this {@link OrderItemPriceDetail} while taking into account all taxes, fees, promotions and whether or not the
-     * item is on sale.
-     * 
-     * @param price
-     */
-    public void setPrice(Money price);
+    public void setOrderItemAdjustments(List<OrderItemPriceDetailAdjustment> orderItemPriceDetailAdjustments);
 
     /**
      * The quantity of this {@link OrderItemPriceDetail}.
@@ -75,108 +68,25 @@ public interface OrderItemPriceDetail extends Serializable {
      */
     public int getQuantity();
 
+    /**
+     * Returns the quantity
+     * @param quantity
+     */
     public void setQuantity(int quantity);
 
     /**
-     * Returns a unmodifiable List of OrderItemAdjustment.  To modify the List of OrderItemAdjustment, please
-     * use the addOrderItemAdjustment or removeAllAdjustments methods.
-     * @return a unmodifiable List of OrderItemAdjustment
-     */
-    public List<OrderItemAdjustment> getOrderItemAdjustments();
-
-    /**
-     * Sets the list of OrderItemAdjustments
-     * @param orderItemAdjustments
-     */
-    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
-    
-    /**
-     * Removes all candidate offers.   Used by the promotion engine which subsequently adds 
-     * the candidate offers that might apply back to this item.
-     */
-    public void removeAllCandidateItemOffers();
-
-    /**
-     * Removes all adjustment for this order item and reset the adjustment price.
-     */
-    public int removeAllAdjustments();
-
-    /**
-     * The price of the item before discounts and prices.
+     * Returns the value of all adjustments for a single quantity of the item.
      * 
+     * Use {@link #getTotalAdjustmentValue()} to get the total for all quantities of this item.
+     *
      * @return
      */
-    public Money getUnitAmount();
+    public Money getAdjustmentValue();
 
     /**
-     * Returns the unit display price for the item.  
-     * 
-     * This represents the item price after subtracting all discounts from item offers.
-     * 
-     * @return
-     */
-    public Money getUnitDisplayPrice();
-
-    /**
-     * Returns the unit tax amount.  
-     * 
-     * @return
-     */
-    public Money getUnitTaxes();
-
-    /**
-     * Returns the itemAdjustmentValue that is applied to each quantity  
-     * 
-     * @return
-     */
-    public Money getUnitItemAdjustmentValue();
-
-    /**
-     * Returns the total amount of this orderItem which is the equivalent of 
-     * {@link #getUnitAmount()} * {@link #getQuantity()}. 
-     * 
-     * @return
-     */
-    public Money getTotalAmount();
-
-    /**
-     * Returns the total item display price, calculated as:
-     * {@link #getUnitDisplayPrice()} * {@link #getQuantity()}.          
-     * 
-     * The unitDisplay price subtracts item level (but not order level) adjustments.
-     * @return
-     */
-    public Money getTotalItemDisplayPrice();
-
-    /**
-     * Returns the total return price.   The return price subtracts both 
-     * order and item level adjustments.
-     * 
-     * @return
-     */
-    public Money getTotalReturnPrice();
-
-    /**
-     * Returns the total taxes to be paid. 
-     * 
-     * @return
-     */
-    public Money getTotalTaxes();
-
-    /**
-     * Returns the total of all adjustments on this line item (specifically, bother order and item level
-     * adjustments).
-     * 
+     * Returns getAdjustmentValue() * the quantity.
+     *
      * @return
      */
     public Money getTotalAdjustmentValue();
-
-    /**
-     * Returns the total of all item level adjustments. 
-     * 
-     * @return
-     */
-    public Money getTotalItemAdjustmentValue();
-
-
 }
