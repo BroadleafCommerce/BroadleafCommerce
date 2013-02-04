@@ -95,11 +95,70 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
+    public EntityForm buildEntityForm(ClassMetadata cmd) {
+        final EntityForm ef = new EntityForm();
+        ef.setEntityType(cmd.getCeilingType());
+
+        for (final Property p : cmd.getProperties()) {
+            p.getMetadata().accept(new MetadataVisitor() {
+
+                @Override
+                public void visit(BasicFieldMetadata fmd) {
+                    // We have all polymorphic types here since we're looping through the metadata
+                    // for the class. Filter out ones that do not apply to this particular entity.
+
+                    String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+
+                    // Create the field and set some basic attributes
+                    Field f = new Field();
+                    f.setName(p.getName());
+                    f.setFieldType(fieldType);
+                    f.setFriendlyName(p.getMetadata().getFriendlyName());
+                    if (StringUtils.isBlank(f.getFriendlyName())) {
+                        f.setFriendlyName(f.getName());
+                    }
+
+                    // Set additional attributes
+                    f.setForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+
+                    // Add the field to the appropriate FieldGroup
+                    String groupName = ((BasicFieldMetadata) p.getMetadata()).getGroup();
+                    groupName = groupName == null ? "Default" : groupName;
+                    FieldGroup fieldGroup = ef.getGroups().get(groupName);
+                    if (fieldGroup == null) {
+                        fieldGroup = new FieldGroup();
+                        fieldGroup.setTitle(groupName);
+                        ef.getGroups().put(groupName, fieldGroup);
+                    }
+                    fieldGroup.getFields().add(f);
+                }
+
+                @Override
+                public void visit(BasicCollectionMetadata fmd) {
+
+                }
+
+                @Override
+                public void visit(MapMetadata fmd) {
+
+                }
+
+                @Override
+                public void visit(AdornedTargetCollectionMetadata fmd) {
+
+                }
+            });
+        }
+
+        return ef;
+
+    }
+
+    @Override
     public EntityForm buildEntityForm(ClassMetadata cmd, final Entity entity, final Map<String, Entity[]> subCollections)
             throws ClassNotFoundException, ServiceException, ApplicationSecurityException {
-        final EntityForm ef = new EntityForm();
+        final EntityForm ef = buildEntityForm(cmd);
         ef.setId(entity.findProperty("id").getValue());
-        ef.setEntityType(entity.getType()[0]);
 
         for (final Property p : cmd.getProperties()) {
             p.getMetadata().accept(new MetadataVisitor() {
@@ -107,38 +166,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 public void visit(BasicFieldMetadata fmd) {
                     // We have all polymorphic types here since we're looping through the metadata
                     // for the class. Filter out ones that do not apply to this particular entity.
-                    boolean entityHasProperty = entity.findProperty(p.getName()) != null;
+                    Property entityProp = entity.findProperty(p.getName());
 
-                    if (entityHasProperty) {
-                        String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
-
-                        // Create the field and set some basic attributes
-                        Field f = new Field();
-                        f.setName(p.getName());
-                        f.setFieldType(fieldType);
-                        f.setFriendlyName(p.getMetadata().getFriendlyName());
-                        if (StringUtils.isBlank(f.getFriendlyName())) {
-                            f.setFriendlyName(f.getName());
-                        }
-
-                        // Set the value attributes
-                        Property entityProp = entity.findProperty(p.getName());
-                        f.setValue(entityProp.getValue());
-                        f.setDisplayValue(entityProp.getDisplayValue());
-
-                        // Set additional attributes
-                        f.setForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
-
-                        // Add the field to the appropriate FieldGroup
-                        String groupName = ((BasicFieldMetadata) p.getMetadata()).getGroup();
-                        groupName = groupName == null ? "Default" : groupName;
-                        FieldGroup fieldGroup = ef.getGroups().get(groupName);
-                        if (fieldGroup == null) {
-                            fieldGroup = new FieldGroup();
-                            fieldGroup.setTitle(groupName);
-                            ef.getGroups().put(groupName, fieldGroup);
-                        }
-                        fieldGroup.getFields().add(f);
+                    if (entityProp == null) {
+                        ef.removeField(p.getName());
+                    } else {
+                        Field field = ef.findField(p.getName());
+                        field.setValue(entityProp.getValue());
+                        field.setDisplayValue(entityProp.getDisplayValue());
                     }
                 }
                 
@@ -149,6 +184,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         Class<?> subCollectionClass = Class.forName(fmd.getCollectionCeilingEntity());
                         ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(subCollectionClass);
                         ListGrid subCollectionGrid = buildListGrid(subCollectionMd, subCollectionEntities);
+                        subCollectionGrid.setSubCollectionFieldName(p.getName());
+                        subCollectionGrid.setAddMethodType(fmd.getAddMethodType());
                         ef.getCollectionListGrids().add(subCollectionGrid);
                     } catch (Exception e) {
                         throw new RuntimeException(e);

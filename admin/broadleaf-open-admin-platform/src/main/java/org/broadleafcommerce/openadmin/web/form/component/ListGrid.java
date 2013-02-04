@@ -1,6 +1,7 @@
 
 package org.broadleafcommerce.openadmin.web.form.component;
 
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ public class ListGrid {
     protected List<Field> headerFields = new ArrayList<Field>();
     protected List<ListGridRecord> records = new ArrayList<ListGridRecord>();
     protected int startIndex = 0;
+    protected AddMethodType addMethodType;
+    protected String subCollectionFieldName = null;
 
     public String getClassName() {
         return className;
@@ -43,6 +46,22 @@ public class ListGrid {
 
     public void setStartIndex(int startIndex) {
         this.startIndex = startIndex;
+    }
+
+    public AddMethodType getAddMethodType() {
+        return addMethodType;
+    }
+
+    public void setAddMethodType(AddMethodType addMethodType) {
+        this.addMethodType = addMethodType;
+    }
+
+    public String getSubCollectionFieldName() {
+        return subCollectionFieldName;
+    }
+
+    public void setSubCollectionFieldName(String subCollectionFieldName) {
+        this.subCollectionFieldName = subCollectionFieldName;
     }
 
 }

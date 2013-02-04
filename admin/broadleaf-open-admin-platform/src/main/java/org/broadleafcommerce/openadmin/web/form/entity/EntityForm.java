@@ -5,6 +5,7 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,6 +35,29 @@ public class EntityForm {
         }
 
         return fields;
+    }
+
+    public Field findField(String fieldName) {
+        for (Entry<String, FieldGroup> entry : getGroups().entrySet()) {
+            for (Field field : entry.getValue().getFields()) {
+                if (field.getName().equals(fieldName)) {
+                    return field;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void removeField(String fieldName) {
+        for (Entry<String, FieldGroup> entry : getGroups().entrySet()) {
+            Iterator<Field> it = entry.getValue().getFields().listIterator();
+            while (it.hasNext()) {
+                Field field = it.next();
+                if (field.getName().equals(fieldName)) {
+                    it.remove();
+                }
+            }
+        }
     }
 
     public String getId() {

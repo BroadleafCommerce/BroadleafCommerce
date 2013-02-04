@@ -49,4 +49,7 @@ public interface AdminEntityService {
     public Entity updateEntity(EntityForm entityForm, Class<?> clazz)
             throws ServiceException, ApplicationSecurityException;
 
+    public Entity addSubCollectionEntity(EntityForm entityForm, Class<?> clazz, String fieldName, String parentId)
+            throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
+
 }

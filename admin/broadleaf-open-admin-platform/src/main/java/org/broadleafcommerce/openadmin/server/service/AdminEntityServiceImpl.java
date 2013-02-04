@@ -54,11 +54,14 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     
     @Override
     public ClassMetadata getClassMetadata(Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        return inspect(clazz).getClassMetaData();
+        ClassMetadata cmd = inspect(clazz).getClassMetaData();
+        cmd.setCeilingType(clazz.getName());
+        return cmd;
     }
     
     @Override
-    public Entity[] getRecords(Class<?> clazz, FilterAndSortCriteria... fascs) throws ServiceException, ApplicationSecurityException {
+    public Entity[] getRecords(Class<?> clazz, FilterAndSortCriteria... fascs)
+            throws ServiceException, ApplicationSecurityException {
         return fetch(clazz, null, fascs).getRecords();
     }
 
@@ -123,9 +126,48 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity updateEntity(EntityForm entityForm, Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        // Build the property array from the field map
+    public Entity addSubCollectionEntity(EntityForm entityForm, Class<?> clazz, String fieldName, String parentId)
+            throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
+        // Find the FieldMetadata for this collection field
+        ClassMetadata cmd = getClassMetadata(clazz);
+        BasicCollectionMetadata fmd = null;
+        for (Property p : cmd.getProperties()) {
+            if (p.getName().equals(fieldName) && p.getMetadata() instanceof BasicCollectionMetadata) {
+                fmd = (BasicCollectionMetadata) p.getMetadata();
+            }
+        }
 
+        Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
+
+        // Build the property array from the field map. Note that we leave 1 extra slot for the foreign key reference
+        Property[] properties = new Property[entityForm.getFields().size() + 1];
+        int i = 0;
+        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+            Property p = new Property();
+            p.setName(entry.getKey());
+            p.setValue(entry.getValue().getValue());
+            properties[i++] = p;
+        }
+
+        // Also add in the foreign field property
+        ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
+                .get(PersistencePerspectiveItemType.FOREIGNKEY);
+        Property p = new Property();
+        p.setName(foreignField.getManyToField());
+        p.setValue(parentId);
+        properties[i++] = p;
+
+        Entity entity = new Entity();
+        entity.setProperties(properties);
+        entity.setType(new String[] { entityForm.getEntityType() });
+
+        return add(entity, collectionClass, new ForeignKey[] { foreignField });
+    }
+
+    @Override
+    public Entity updateEntity(EntityForm entityForm, Class<?> clazz)
+            throws ServiceException, ApplicationSecurityException {
+        // Build the property array from the field map
         Property[] properties = new Property[entityForm.getFields().size()];
         int i = 0;
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
@@ -140,6 +182,21 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         entity.setType(new String[] { entityForm.getEntityType() });
 
         return update(entity, clazz);
+    }
+
+    /**
+     * Executes a database add for the given entity and class
+     * 
+     * @param entity
+     * @param clazz
+     * @return the updated entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    protected Entity add(Entity entity, Class<?> clazz, ForeignKey[] foreignKeys) throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, foreignKeys);
+        pkg.setEntity(entity);
+        return service.add(pkg);
     }
 
     /**

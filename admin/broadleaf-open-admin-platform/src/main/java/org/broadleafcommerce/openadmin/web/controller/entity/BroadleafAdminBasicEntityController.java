@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -122,6 +123,45 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";
+    }
+
+    public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String id,
+            String collectionField) throws Exception {
+        Class<?> mainClass = getClassForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(mainClass);
+
+        for (Property p : mainMetadata.getProperties()) {
+            if (p.getName().equals(collectionField)) {
+                Class<?> collectionClass = Class.forName(((BasicCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
+
+                ClassMetadata collectionMetadata = service.getClassMetadata(collectionClass);
+
+                EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
+
+                model.addAttribute("currentUrl", request.getRequestURL().toString());
+                model.addAttribute("entityForm", entityForm);
+                model.addAttribute("viewType", "modalEntityForm");
+
+                break;
+            }
+        }
+
+        setModelAttributes(model, sectionKey);
+        return "modules/modalContainer";
+    }
+
+    public String saveNewCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String id,
+            String collectionField,
+            EntityForm entityForm) throws Exception {
+        Class<?> mainClass = getClassForSection(sectionKey);
+
+        service.addSubCollectionEntity(entityForm, mainClass, collectionField, id);
+
+        return "redirect:/" + sectionKey + "/" + id;
     }
 
     protected Class<?> getClassForSection(String sectionKey) {

@@ -36,4 +36,6 @@ public interface FormBuilderService {
     public EntityForm buildEntityForm(ClassMetadata cmd, Entity e, Map<String, Entity[]> subCollections)
             throws ClassNotFoundException, ServiceException, ApplicationSecurityException;
 
+    public EntityForm buildEntityForm(ClassMetadata cmd);
+
 }
