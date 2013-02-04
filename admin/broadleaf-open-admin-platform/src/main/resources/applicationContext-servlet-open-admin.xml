@@ -76,6 +76,7 @@
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
                 <ref bean="blAdminDialect" />
+                <ref bean="blDialect" />
             </set>
         </property>
     </bean>
