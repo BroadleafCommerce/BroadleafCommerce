@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import java.util.List;
 
 
-public interface BundleOrderItem extends OrderItem, SkuAccessor {
+public interface BundleOrderItem extends OrderItem, OrderItemContainer, SkuAccessor {
 
     List<DiscreteOrderItem> getDiscreteOrderItems();
 

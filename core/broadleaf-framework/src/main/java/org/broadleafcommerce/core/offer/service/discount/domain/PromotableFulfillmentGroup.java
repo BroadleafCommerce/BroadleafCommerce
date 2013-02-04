@@ -16,43 +16,53 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.common.money.Money;
+public interface PromotableFulfillmentGroup extends Serializable {
 
-public interface PromotableFulfillmentGroup {
-
-    public void reset();
-
-    public FulfillmentGroup getDelegate();
-
-    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems();
-
-    /*
-     * Adds the adjustment to the order item's adjustment list and discounts the order item's adjustment
-     * price by the value of the adjustment.
+    /**
+     * Returns the list of all fulfillment group adjustments.
+     * @return
      */
-    public void addFulfillmentGroupAdjustment(PromotableFulfillmentGroupAdjustment fulfillmentGroupAdjustment);
+    List<PromotableFulfillmentGroupAdjustment> getCandidateFulfillmentGroupAdjustments();
 
-    public void removeAllAdjustments();
+    /**
+     * Adds a fulfillmentGroupAdjustment
+     * @return
+     */
+    //void addFulfillmentGroupAdjustment(PromotableFulfillmentGroupAdjustment adjustment);
 
-    public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
-
-    public Money getAdjustmentPrice();
-
-    public void setAdjustmentPrice(Money adjustmentPrice);
-
-    public Money getRetailShippingPrice();
-
-    public Money getSaleShippingPrice();
-    
-    public void removeAllCandidateOffers();
-    
-    public void setShippingPrice(Money shippingPrice);
-    
-    public Money getShippingPrice();
-    
-    public void addCandidateFulfillmentGroupOffer(PromotableCandidateFulfillmentGroupOffer candidateOffer);
+    //    public void reset();
+    //
+    //    public FulfillmentGroup getDelegate();
+    //
+    //    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems();
+    //
+    //    /*
+    //     * Adds the adjustment to the order item's adjustment list and discounts the order item's adjustment
+    //     * price by the value of the adjustment.
+    //     */
+    //    public void addFulfillmentGroupAdjustment(PromotableFulfillmentGroupAdjustment fulfillmentGroupAdjustment);
+    //
+    //    public void removeAllAdjustments();
+    //
+    //    public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
+    //
+    //    public Money getAdjustmentPrice();
+    //
+    //    public void setAdjustmentPrice(Money adjustmentPrice);
+    //
+    //    public Money getRetailShippingPrice();
+    //
+    //    public Money getSaleShippingPrice();
+    //    
+    //    public void removeAllCandidateOffers();
+    //    
+    //    public void setShippingPrice(Money shippingPrice);
+    //    
+    //    public Money getShippingPrice();
+    //    
+    //    public void addCandidateFulfillmentGroupOffer(PromotableCandidateFulfillmentGroupOffer candidateOffer);
     
 }

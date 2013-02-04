@@ -108,14 +108,27 @@ public interface Order extends Serializable {
      */
     public void assignOrderItemsFinalPrice();
 
-    /**
-     * Gets the sum total of all of the {@link OrderItem}s included in this Order while taking into accoun their quantity.
-     * Note that this will include all fees and promotions for each {@link OrderItem}.
+    /** 
+     * @deprecated 
+     * Use {@link #calculateItemTotal()} or {@link #calculateTaxableItemTotal()} instead.      
      * 
      * @param includeNonTaxableItems - whether or not to use {@link OrderItem#getTaxablePrice()} or {@link OrderItem#getPrice()
      * @return
      */
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems);
+
+    /**
+     * Returns the total taxable item amount for this order.   This will include the item totals minus any item and
+     * order level adjustments.
+     */
+    public Money calculateTaxableItemTotal();
+
+    /**
+     * Returns the sum of the item totals. 
+     * 
+     * @return
+     */
+    public Money calculateSubTotal();
 
     /**
      * The grand total of this {@link Order} which includes all shipping costs and taxes, as well as any adjustments from

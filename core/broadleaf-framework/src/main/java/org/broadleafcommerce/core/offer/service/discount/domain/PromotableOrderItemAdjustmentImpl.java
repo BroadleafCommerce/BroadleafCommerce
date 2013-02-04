@@ -16,17 +16,15 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.AdvancedOffer;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferTier;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
 
 public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdjustment {
     
@@ -48,6 +46,10 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
         return delegate;
     }
     
+    public Offer getOffer() {
+        return delegate.getOffer();
+    }
+
     protected boolean roundOfferValues = true;
     protected int roundingScale = 2;
     protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;

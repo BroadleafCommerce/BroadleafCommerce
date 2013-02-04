@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
@@ -33,7 +35,6 @@ import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferP
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -41,10 +42,11 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * The Class OfferServiceImpl.
@@ -52,6 +54,8 @@ import java.util.List;
 @Service("blOfferService")
 public class OfferServiceImpl implements OfferService {
     
+    private static final Log LOG = LogFactory.getLog(OfferServiceImpl.class);
+
     // should be called outside of Offer service after Offer service is executed
     @Resource(name="blCustomerOfferDao")
     protected CustomerOfferDao customerOfferDao;
@@ -76,9 +80,6 @@ public class OfferServiceImpl implements OfferService {
     
     @Resource(name="blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
-
-    @Resource(name = "blOrderItemMergeService")
-    protected OrderItemMergeService orderItemMergeService;
 
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionListener extensionManager;
@@ -257,36 +258,31 @@ public class OfferServiceImpl implements OfferService {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
-            orderOfferProcessor.clearOffersandAdjustments(promotableOrder);
-            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, promotableOrder.getCustomer());
+            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getCustomer());
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
-                orderOfferProcessor.compileOrderTotal(promotableOrder);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("No offers applicable to this order.");
+                }
+                
+                // Remove offers that might have been applied in prior runs of the promotion engine.
+                orderOfferProcessor.clearAllOfferAdjustmentsAndFinalizePrice(order);
+                return;
             } else {
-                orderItemMergeService.prepareCart(promotableOrder);
-                orderItemMergeService.gatherCart(promotableOrder);
-                orderItemMergeService.initializeBundleSplitItems(promotableOrder);
                 List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
                 List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
 
                 itemOfferProcessor.filterOffers(promotableOrder, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
 
                 if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
-                    orderOfferProcessor.compileOrderTotal(promotableOrder);
+                    orderOfferProcessor.clearAllOfferAdjustmentsAndFinalizePrice(order);
                 } else {
                     // At this point, we should have a PromotableOrder that contains PromotableItems each of which
                     // has a list of candidatePromotions that might be applied.
 
                     // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
                     itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
-                    orderItemMergeService.gatherCart(promotableOrder);
                 }
-                orderItemMergeService.finalizeCart(promotableOrder);
-            }
-
-            for (DiscreteOrderItem orderItem : order.getDiscreteOrderItems()) {
-                if (orderItem.getBundleOrderItem() == null && orderItem.getOrder() == null) {
-                    orderItem.setOrder(order);
-                }
+                // TODO:  Finalize Cart
             }
 
             orderService.save(order, false);
@@ -307,7 +303,7 @@ public class OfferServiceImpl implements OfferService {
                     possibleFGOffers.add(offer);
                 }
             }
-            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, promotableOrder.getCustomer());
+            List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, order.getCustomer());
             List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
             for (Offer offer : filteredOffers) {
                 fulfillmentGroupOfferProcessor.filterFulfillmentGroupLevelOffer(promotableOrder, qualifiedFGOffers, offer);
@@ -315,7 +311,6 @@ public class OfferServiceImpl implements OfferService {
             if (!qualifiedFGOffers.isEmpty()) {
                 fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
             }
-            orderItemMergeService.gatherCart(promotableOrder);
             fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
         }
     }
@@ -406,16 +401,6 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public OfferCode findOfferCodeById(Long id) {
         return offerCodeDao.readOfferCodeById(id);
-    }
-
-    @Override
-    public OrderItemMergeService getOrderItemMergeService() {
-        return orderItemMergeService;
-    }
-
-    @Override
-    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService) {
-        this.orderItemMergeService = orderItemMergeService;
     }
 
     @Override

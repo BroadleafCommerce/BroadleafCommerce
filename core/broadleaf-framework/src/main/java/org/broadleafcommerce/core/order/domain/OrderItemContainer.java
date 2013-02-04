@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.service.discount.domain;
+package org.broadleafcommerce.core.order.domain;
 
-import org.broadleafcommerce.core.offer.domain.Offer;
+import java.util.List;
 
-import java.io.Serializable;
 
-public interface PromotableFulfillmentGroupAdjustment extends Serializable {
+public interface OrderItemContainer {
+
+    List<? extends OrderItem> getOrderItems();
 
     /**
-     * Returns the associated offer
+     * Returns true if the contained items can be discounted.
      * @return
      */
-    Offer getOffer();
-
-    //    public void reset();
-    //
-    //    public FulfillmentGroupAdjustment getDelegate();
-    //
-    //    /*
-    //     * Calculates the value of the adjustment
-    //     */
-    //    public void computeAdjustmentValue();
-    //
-    //    public Money getValue();
-    
+    boolean getAllowDiscountsOnChildItems();
 }

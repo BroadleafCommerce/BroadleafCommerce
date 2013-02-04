@@ -168,8 +168,7 @@ public class OrderImpl implements Order {
     @OrderBy("id")
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
@@ -178,12 +177,11 @@ public class OrderImpl implements Order {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
-    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<CandidateOrderOffer>();
 
-    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
@@ -194,8 +192,7 @@ public class OrderImpl implements Order {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<Offer, OfferInfo>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
@@ -242,19 +239,27 @@ public class OrderImpl implements Order {
 
     @Override
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
+        if (includeNonTaxableItems) {
+            return calculateTaxableItemTotal();
+        } else {
+            return calculateSubTotal();
+        }
+    }
+
+    @Override
+    public Money calculateTaxableItemTotal() {
         Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getCurrency());
         for (OrderItem orderItem : orderItems) {
-            Money price;
-            if (includeNonTaxableItems) {
-                price = orderItem.getPrice();
-            } else {
-                price = orderItem.getTaxablePrice();
-            }
-            if (orderItem instanceof BundleOrderItem) {
-                calculatedSubTotal = calculatedSubTotal.add(price);
-            } else {
-                calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
-            }
+            calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalTaxableAmount());
+        }
+        return calculatedSubTotal;
+    }
+
+    @Override
+    public Money calculateSubTotal() {
+        Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getCurrency());
+        for (OrderItem orderItem : orderItems) {
+            calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalPrice());
         }
         return calculatedSubTotal;
     }
@@ -495,7 +500,7 @@ public class OrderImpl implements Order {
     public Money getItemAdjustmentsValue() {
         Money itemAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderItem orderItem : orderItems) {
-            itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getTotalItemAdjustmentValue());
+            itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getTotalAdjustmentValue());
         }
         return itemAdjustmentsValue;
     }

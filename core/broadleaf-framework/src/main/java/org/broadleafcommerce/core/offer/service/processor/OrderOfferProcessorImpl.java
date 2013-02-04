@@ -18,11 +18,12 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferDTO;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustmentDTO;
 import org.broadleafcommerce.core.offer.service.OrderItemMergeService;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -35,11 +36,12 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -49,9 +51,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     private static final Log LOG = LogFactory.getLog(OrderOfferProcessorImpl.class);
 
-    @Resource(name = "blOfferDao")
-    protected OfferDao offerDao;
-
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
@@ -59,7 +58,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     protected OrderItemMergeService orderItemMergeService;
 
     @Override
-    public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
+    public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
         if (offer.getDiscountType().getType().equals(OfferDiscountType.FIX_PRICE.getType())) {
             LOG.warn("Offers of type ORDER may not have a discount type of FIX_PRICE. Ignoring order offer (name=" + offer.getName() + ")");
             return;
@@ -68,18 +67,18 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         //Order Qualification
         orderQualification:
         {
-            if (couldOfferApplyToOrder(offer, order)) {
+            if (couldOfferApplyToOrder(offer, promotableOrder)) {
                 orderLevelQualification = true;
                 break orderQualification;
             }
-            for (PromotableOrderItem discreteOrderItem : order.getDiscountableDiscreteOrderItems(offer.getApplyDiscountToSalePrice())) {
-                if (couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
+            for (PromotableOrderItem orderItem : promotableOrder.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice())) {
+                if (couldOfferApplyToOrder(offer, promotableOrder, orderItem)) {
                     orderLevelQualification = true;
                     break orderQualification;
                 }
             }
-            for (PromotableFulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-                if (couldOfferApplyToOrder(offer, order, fulfillmentGroup)) {
+            for (PromotableFulfillmentGroup fulfillmentGroup : promotableOrder.getFulfillmentGroups()) {
+                if (couldOfferApplyToOrder(offer, promotableOrder, fulfillmentGroup)) {
                     orderLevelQualification = true;
                     break orderQualification;
                 }
@@ -87,17 +86,17 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
         //Item Qualification - new for 1.5!
         if (orderLevelQualification) {
-            CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, order.getDiscountableDiscreteOrderItems(offer.getApplyDiscountToSalePrice()));
+            CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, promotableOrder.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice()));
             if (candidates.isMatchedQualifier()) {
-                PromotableCandidateOrderOffer candidateOffer = createCandidateOrderOffer(order, qualifiedOrderOffers, offer);
+                PromotableCandidateOrderOffer candidateOffer = createCandidateOrderOffer(promotableOrder, qualifiedOrderOffers, offer);
                 candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateQualifiersMap());
             }
         }
     }
 
     @Override
-    public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order) {
-        return couldOfferApplyToOrder(offer, order, null, null);
+    public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder) {
+        return couldOfferApplyToOrder(offer, promotableOrder, null, null);
     }
 
     /**
@@ -106,11 +105,11 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      *
      * @param offer
      * @param order
-     * @param discreteOrderItem
+     * @param orderItem
      * @return true if offer can be applied, otherwise false
      */
-    protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order, PromotableOrderItem discreteOrderItem) {
-        return couldOfferApplyToOrder(offer, order, discreteOrderItem, null);
+    protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder, PromotableOrderItem orderItem) {
+        return couldOfferApplyToOrder(offer, promotableOrder, orderItem, null);
     }
 
     /**
@@ -122,8 +121,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      * @param fulfillmentGroup
      * @return true if offer can be applied, otherwise false
      */
-    protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order, PromotableFulfillmentGroup fulfillmentGroup) {
-        return couldOfferApplyToOrder(offer, order, null, fulfillmentGroup);
+    protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder, PromotableFulfillmentGroup fulfillmentGroup) {
+        return couldOfferApplyToOrder(offer, promotableOrder, null, fulfillmentGroup);
     }
 
     /**
@@ -132,11 +131,11 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      *
      * @param offer
      * @param order
-     * @param discreteOrderItem
-     * @param fulfillmentGroup
+     * @param promotableOrderItem
+     * @param promotableFulfillmentGroup
      * @return true if offer can be applied, otherwise false
      */
-    protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order, PromotableOrderItem discreteOrderItem, PromotableFulfillmentGroup fulfillmentGroup) {
+    protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder, PromotableOrderItem promotableOrderItem, PromotableFulfillmentGroup promotableFulfillmentGroup) {
         boolean appliesToItem = false;
         String rule = null;
         if (offer.getAppliesToOrderRules() != null && offer.getAppliesToOrderRules().trim().length() != 0) {
@@ -151,13 +150,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         if (rule != null) {
 
             HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("order", order.getDelegate());
+            promotableOrder.updateRuleVariables(vars);
             vars.put("offer", offer);
-            if (fulfillmentGroup != null) {
-                vars.put("fulfillmentGroup", fulfillmentGroup.getDelegate());
+            if (promotableFulfillmentGroup != null) {
+                vars.put("fulfillmentGroup", promotableFulfillmentGroup.getDelegate());
             }
-            if (discreteOrderItem != null) {
-                vars.put("discreteOrderItem", discreteOrderItem.getDelegate());
+            if (promotableOrderItem != null) {
+                promotableOrderItem.updateRuleVariables(vars);
             }
             Boolean expressionOutcome = executeExpression(rule, vars);
             if (expressionOutcome != null && expressionOutcome) {
@@ -170,13 +169,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return appliesToItem;
     }
 
-    protected PromotableCandidateOrderOffer createCandidateOrderOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
-        CandidateOrderOffer candidateOffer = offerDao.createCandidateOrderOffer();
-        candidateOffer.setOrder(order.getDelegate());
-        candidateOffer.setOffer(offer);
-        // Why do we add offers here when we set the sorted list later
-        //order.addCandidateOrderOffer(candidateOffer);
-        PromotableCandidateOrderOffer promotableCandidateOrderOffer = promotableItemFactory.createPromotableCandidateOrderOffer(candidateOffer, order);
+    protected PromotableCandidateOrderOffer createCandidateOrderOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
+        CandidateOrderOffer candidateOffer = new CandidateOrderOfferDTO(promotableOrder.getOrder(), offer);
+
+        PromotableCandidateOrderOffer promotableCandidateOrderOffer = promotableItemFactory.createPromotableCandidateOrderOffer(candidateOffer, promotableOrder);
         qualifiedOrderOffers.add(promotableCandidateOrderOffer);
 
         return promotableCandidateOrderOffer;
@@ -204,19 +200,19 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     @Override
-    public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order) {
+    public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder promotableOrder) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
         boolean orderOffersApplied = false;
         Iterator<PromotableCandidateOrderOffer> orderOfferIterator = orderOffers.iterator();
         while (orderOfferIterator.hasNext()) {
             PromotableCandidateOrderOffer orderOffer = orderOfferIterator.next();
             if (orderOffer.getOffer().getTreatAsNewFormat() == null || !orderOffer.getOffer().getTreatAsNewFormat()) {
-                if ((orderOffer.getOffer().isStackable()) || !order.isHasOrderAdjustments()) {
-                    boolean alreadyContainsNotCombinableOfferAtAnyLevel = order.isNotCombinableOfferAppliedAtAnyLevel();
-                    applyOrderOffer(order, orderOffer);
+                if ((orderOffer.getOffer().isStackable()) || !promotableOrder.isHasOrderAdjustments()) {
+                    boolean alreadyContainsNotCombinableOfferAtAnyLevel = promotableOrder.isNotCombinableOfferAppliedAtAnyLevel();
+                    applyOrderOffer(promotableOrder, orderOffer);
                     orderOffersApplied = true;
                     if (!orderOffer.getOffer().isCombinableWithOtherOffers() || alreadyContainsNotCombinableOfferAtAnyLevel) {
-                        orderOffersApplied = compareAndAdjustOrderAndItemOffers(order, orderOffersApplied);
+                        orderOffersApplied = compareAndAdjustOrderAndItemOffers(promotableOrder, orderOffersApplied);
                         if (orderOffersApplied) {
                             break;
                         } else {
@@ -225,8 +221,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     }
                 }
             } else {
-                if (!order.containsNotStackableOrderOffer() || !order.isHasOrderAdjustments()) {
-                    boolean alreadyContainsTotalitarianOffer = order.isTotalitarianOfferApplied();
+                if (!promotableOrder.containsNotStackableOrderOffer() || !promotableOrder.isHasOrderAdjustments()) {
+                    boolean alreadyContainsTotalitarianOffer = promotableOrder.isTotalitarianOfferApplied();
 
                     // TODO:  Add filter for item-subtotal
                     applyOrderOffer(order, orderOffer);
@@ -235,7 +231,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                             (orderOffer.getOffer().isTotalitarianOffer() != null && orderOffer.getOffer().isTotalitarianOffer()) ||
                                     alreadyContainsTotalitarianOffer
                             ) {
-                        orderOffersApplied = compareAndAdjustOrderAndItemOffers(order, orderOffersApplied);
+                        orderOffersApplied = compareAndAdjustOrderAndItemOffers(promotableOrder, orderOffersApplied);
                         if (orderOffersApplied) {
                             break;
                         } else {
@@ -250,16 +246,14 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return orderOffersApplied;
     }
 
-    protected boolean compareAndAdjustOrderAndItemOffers(PromotableOrder order, boolean orderOffersApplied) {
-        if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
+    protected boolean compareAndAdjustOrderAndItemOffers(PromotableOrder promotableOrder, boolean orderOffersApplied) {
+        if (promotableOrder.getAdjustmentPrice().greaterThanOrEqual(promotableOrder.calculateOrderItemsCurrentPrice())) {
             // item offer is better; remove not combinable order offer and process other order offers
-            order.removeAllOrderAdjustments();
+            promotableOrder.removeAllOrderAdjustments();
             orderOffersApplied = false;
         } else {
             // totalitarian order offer is better; remove all item offers
-            order.removeAllItemAdjustments();
-            orderItemMergeService.gatherCart(order);
-            orderItemMergeService.initializeSplitItems(order);
+            promotableOrder.removeAllItemAdjustments();
         }
         return orderOffersApplied;
     }
@@ -270,28 +264,18 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      *
      * @param orderOffer a CandidateOrderOffer to apply to an Order
      */
-    protected void applyOrderOffer(PromotableOrder order, PromotableCandidateOrderOffer orderOffer) {
-        OrderAdjustment orderAdjustment = offerDao.createOrderAdjustment();
-        orderAdjustment.init(order.getDelegate(), orderOffer.getOffer(), orderOffer.getOffer().getName());
-        PromotableOrderAdjustment promotableOrderAdjustment = promotableItemFactory.createPromotableOrderAdjustment(orderAdjustment, order);
+    protected void applyOrderOffer(PromotableOrder promotableOrder, PromotableCandidateOrderOffer orderOffer) {
+        OrderAdjustment orderAdjustment = new OrderAdjustmentDTO();
+        orderAdjustment.init(promotableOrder.getOrder(), orderOffer.getOffer(), orderOffer.getOffer().getName());
+        PromotableOrderAdjustment promotableOrderAdjustment = promotableItemFactory.createPromotableOrderAdjustment(orderAdjustment, promotableOrder);
         //add to adjustment
-        order.addOrderAdjustments(promotableOrderAdjustment);
+        promotableOrder.addOrderAdjustments(promotableOrderAdjustment);
     }
 
     @Override
-    public void compileOrderTotal(PromotableOrder order) {
-        order.assignOrderItemsFinalPrice();
-        order.setSubTotal(order.calculateOrderItemsFinalPrice(true));
-    }
-
-    @Override
-    public OfferDao getOfferDao() {
-        return offerDao;
-    }
-
-    @Override
-    public void setOfferDao(OfferDao offerDao) {
-        this.offerDao = offerDao;
+    public void compileOrderTotal(PromotableOrder promotableOrder) {
+        promotableOrder.assignOrderItemsFinalPrice();
+        promotableOrder.setSubTotal(promotableOrder.calculateOrderItemsFinalPrice(true));
     }
 
     @Override
@@ -302,15 +286,5 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Override
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
         this.promotableItemFactory = promotableItemFactory;
-    }
-
-    @Override
-    public OrderItemMergeService getOrderItemMergeService() {
-        return orderItemMergeService;
-    }
-
-    @Override
-    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService) {
-        this.orderItemMergeService = orderItemMergeService;
     }
 }

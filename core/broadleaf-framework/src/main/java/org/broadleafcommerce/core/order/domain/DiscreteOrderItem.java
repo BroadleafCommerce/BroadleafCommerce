@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import java.util.List;
 import java.util.Map;
 
-public interface DiscreteOrderItem extends OrderItem, SkuAccessor {
+public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
 
     Sku getSku();
 

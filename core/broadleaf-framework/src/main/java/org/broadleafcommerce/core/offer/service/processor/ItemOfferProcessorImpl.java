@@ -56,7 +56,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         boolean isNewFormat = !CollectionUtils.isEmpty(offer.getQualifyingItemCriteria()) || !CollectionUtils.isEmpty(offer.getTargetItemCriteria());
         boolean itemLevelQualification = false;
         boolean offerCreated = false;
-        for (PromotableOrderItem promotableOrderItem : order.getDiscountableDiscreteOrderItems(offer.getApplyDiscountToSalePrice())) {
+        for (PromotableOrderItem promotableOrderItem : order.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice())) {
             if(couldOfferApplyToOrder(offer, order, promotableOrderItem)) {
                 if (!isNewFormat) {
                     //support legacy offers
@@ -88,7 +88,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
         //Item Qualification - new for 1.5!
         if (itemLevelQualification && !offerCreated) {
-            CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, order.getDiscountableDiscreteOrderItems(offer.getApplyDiscountToSalePrice()));
+            CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, order.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice()));
             PromotableCandidateItemOffer candidateOffer = null;
             if (candidates.isMatchedQualifier()) {
                 //we don't know the final target yet, so put null for the order item for now
@@ -566,8 +566,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     
     @Override
     public void filterOffers(PromotableOrder order, List<Offer> filteredOffers, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, List<PromotableCandidateItemOffer> qualifiedItemOffers) {
-        // set order subtotal price to total item price without adjustments
-        order.setSubTotal(order.calculateOrderItemsFinalPrice(true));
+        // set order subTotal price to total item price without adjustments
+        order.setOrderSubTotalToPriceWithoutAdjustments();
+
         for (Offer offer : filteredOffers) {            
             if(offer.getType().equals(OfferType.ORDER)){
                 filterOrderLevelOffer(order, qualifiedOrderOffers, offer);

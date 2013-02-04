@@ -22,9 +22,9 @@ import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.springframework.stereotype.Service;
 
 @Service("blPromotableItemFactory")
@@ -42,7 +42,7 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
         return new PromotableOrderAdjustmentImpl(orderAdjustment, order);
     }
 
-    public PromotableOrderItem createPromotableOrderItem(DiscreteOrderItem orderItem, PromotableOrder order) {
+    public PromotableOrderItem createPromotableOrderItem(OrderItem orderItem, PromotableOrder order) {
         return new PromotableOrderItemImpl(orderItem, order, this);
     }
     

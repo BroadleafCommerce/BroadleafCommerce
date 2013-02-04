@@ -29,15 +29,10 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -49,12 +44,14 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -97,16 +94,15 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @AdminPresentation(excluded = true)
     protected SkuBundleItem skuBundleItem;
     
-    @CollectionOfElements
+    @ElementCollection
     @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "NAME", nullable = false) })
+    @MapKeyColumn(name = "NAME", nullable = false)
     @Column(name = "VALUE")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
     @BatchSize(size = 50)
     protected Map<String, String> additionalAttributes = new HashMap<String, String>();
     
-    @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
@@ -363,10 +359,14 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         result = prime * result + ((sku == null) ? 0 : sku.hashCode());
         return result;
     }
-    
+
     @Override
-    public void accept(OrderItemVisitor visitor) throws PricingException {
-        visitor.visit(this);
+    public boolean isDiscountingAllowed() {
+        if (discountsAllowed == null) {
+            return sku.isDiscountable();
+        } else {
+            return discountsAllowed.booleanValue();
+        }
     }
 
 }

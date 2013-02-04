@@ -20,15 +20,13 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface OrderItem extends Serializable {
+public interface OrderItem extends Serializable, Cloneable {
 
     /**
      * The unique identifier of this OrderItem
@@ -37,7 +35,7 @@ public interface OrderItem extends Serializable {
     public Long getId();
 
     /**
-     * Sets the unique id of the OrderItem.   Typically left blank for new items and Broadleaf will
+     * Sets the unique id of the OrderItem.   Typically left null for new items and Broadleaf will
      * set using the next sequence number.
      * @param id
      */
@@ -66,7 +64,11 @@ public interface OrderItem extends Serializable {
     public Money getRetailPrice();
 
     /**
-     * Sets the retail price of the item at the time that it is added to the {@link Order}
+     * @deprecated The retail price used in sales calculations will be set during 
+     * price finalization but otherwise is not used by the system.
+     * 
+     * If trying to override a price or set a fixed price, use {@link #setBasePrice(Money)}
+     * along with {@link #setDiscountingAllowed(boolean)}
      * 
      * @param retailPrice
      */
@@ -80,14 +82,20 @@ public interface OrderItem extends Serializable {
     public Money getSalePrice();
 
     /**
-     * Sets the sale price of the item at the time that is is added to the {@link Order}
+     * @deprecated - The sale price used in price calculations will be
+     * set by the system when prices are finalized prior to order submission.
+     * 
+     * If trying to override a price or set a fixed price, use {@link #setBasePrice(Money)}
+     * along with {@link #setDiscountingAllowed(boolean)}
+     * 
      * @param salePrice
      */
     public void setSalePrice(Money salePrice);
 
     /**
      * @deprecated 
-     * Delegates to {@link #getTotalItemAdjustmentValue()} instead. 
+     * Delegates to {@link #getAverageAdjustmentValue()} instead but this method is of little
+     * or no value in most practical applications unless only simple promotions are being used.
      * 
      * @return
      */
@@ -95,7 +103,7 @@ public interface OrderItem extends Serializable {
 
     /**
      * @deprecated
-     * Calls {@link #getAverageUnitDisplayPrice()}
+     * Delegates to {@link #getAveragePrice()}
      * 
      * @return
      */
@@ -103,11 +111,15 @@ public interface OrderItem extends Serializable {
 
     /**
      * @deprecated
-     * Do not use.
+     * Should not be called.   Consider {@link setBasePrice(Money price)} along with {@link #setDiscountingAllowed(boolean)}
+     * to set the price to a final value.    Otherwise, the system will compute the price as part of the
+     * discounting and dynamic price evaluation.     
      * 
      * @param price
      */
-    public void setPrice(Money price);
+    public void setPrice(Money price);   
+
+
 
     /**
      * The quantity of this {@link OrderItem}.
@@ -116,7 +128,28 @@ public interface OrderItem extends Serializable {
      */
     public int getQuantity();
 
+    /**
+     * Sets the quantity of this item
+     */
     public void setQuantity(int quantity);
+    
+    /**
+     * Collection of priceDetails for this orderItem.    
+     * 
+     * Without discounts, an orderItem would have exactly 1 ItemPriceDetail.   When orderItem discounting or 
+     * tax-calculations result in an orderItem having multiple prices like in a buy-one-get-one free example, 
+     * the orderItem will get an additional ItemPriceDetail.  
+     * 
+     * Generally, an OrderItem will have 1 ItemPriceDetail record for each uniquely priced version of the item.
+     */
+    public List<OrderItemPriceDetail> getOrderItemPriceDetails();    
+
+    /**
+     * Returns the list of orderItem price details.
+     * @see {@link #getOrderItemPriceDetails()}
+     * @param orderItemPriceDetails
+     */
+    public void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails);
 
     public Category getCategory();
 
@@ -126,13 +159,19 @@ public interface OrderItem extends Serializable {
 
     public void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers);
 
-    /**
-     * Returns a unmodifiable List of OrderItemAdjustment.  To modify the List of OrderItemAdjustment, please
-     * use the addOrderItemAdjustment or removeAllAdjustments methods.
-     * @return a unmodifiable List of OrderItemAdjustment
+    /**    
+     * Returns item level adjustment for versions of Broadleaf Commerce prior to 2.3.0 which replaced
+     * this concept with OrderItemPriceDetail adjustments.
+     * @return a List of OrderItemAdjustment
      */
     public List<OrderItemAdjustment> getOrderItemAdjustments();
 
+    /**
+     * @deprecated
+     * Item level adjustments are now stored at the OrderItemPriceDetail level instead to 
+     * prevent unnecessary item splitting of OrderItems when evaluating promotions 
+     * in the pricing engine.
+     */
     public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
 
     public PersonalMessage getPersonalMessage();
@@ -150,7 +189,12 @@ public interface OrderItem extends Serializable {
     public void setOrderItemType(OrderItemType orderItemType);
 
     /**
-     * Returns the amount of this item subject to tax
+     * @deprecated
+     * If the item is taxable, returns {@link #getAveragePrice()}   
+     * 
+     * It is recommended instead that tax calculation engines use the {@link #getTotalTaxableAmount()} which provides the taxable 
+     * total for all quantities of this item.    This method suffers from penny rounding errors in some
+     * situations.         
      * 
      * @return
      */
@@ -162,19 +206,23 @@ public interface OrderItem extends Serializable {
      * @return
      */
     public boolean getIsOnSale();
+    
+    /**
+     * If true, this item can be discounted..
+     */
+    public boolean isDiscountingAllowed();
+    
+    /**
+     * Turns off discount processing for this line item.
+     * @param disableDiscounts
+     */
+    public void setDiscountingAllowed(boolean discountingAllowed);
 
     /**
      * Returns true if this item received a discount. 
      * @return
      */
     public boolean getIsDiscounted();
-
-    /**
-     * Post-condition should be that {@link #getPrice()} should be the most up-to-date.
-     * 
-     * @return
-     */
-    public boolean updatePrices();
     
     /**
      * Generally copied from the Sku.getName()
@@ -183,15 +231,26 @@ public interface OrderItem extends Serializable {
     public String getName();
 
     /**
+     * Used to reset the base price of the item before the pricing engine
+     * executes.   
+     * 
+     * Intended to be called after an event which could effect the base price of the
+     * item.   For example, a registered user might be subject to different prices
+     * than a guest user, so after logging in, the system would call this method.
+     * 
+     * Other scenarios include the result of automatic bundling or loading a stale
+     * cart from the database.
+     *      
+     * @return true if the base prices changed as a result of this call
+     */
+    public boolean updatePrices();
+
+    /**
      * Sets the name of this order item. 
      * @param name
      */
     public void setName(String name);
 
-    /**
-     * Copies this orderItem.
-     * @return
-     */
     public OrderItem clone();
 
     public void assignFinalPrice();
@@ -199,8 +258,8 @@ public interface OrderItem extends Serializable {
     public Money getCurrentPrice();
     
     /**
-     * Returns the price of this item.   If the parameter allowSalesPrice is true, will 
-     * return the sale price if applicable.
+     * Returns the unit price of this item.   If the parameter allowSalesPrice is true, will 
+     * return the sale price if one exists.
      * 
      * @param allowSalesPrice
      * @return
@@ -222,9 +281,7 @@ public interface OrderItem extends Serializable {
     /**
      * Removes all adjustment for this order item and reset the adjustment price.
      */
-    public int removeAllAdjustments();
-    
-    public void accept(OrderItemVisitor visitor) throws PricingException;
+    public int removeAllAdjustments();    
 
     /**
      * A list of arbitrary attributes added to this item.
@@ -237,8 +294,65 @@ public interface OrderItem extends Serializable {
      * @param orderItemAttributes
      */
     public void setOrderItemAttributes(Map<String,OrderItemAttribute> orderItemAttributes);
+    
+    /**
+     * Returns the average unit display price for the item.  
+     * 
+     * Some implementations may choose to show this on a view cart screen.    Due to fractional discounts,
+     * it the display could represent a unit price that is off.  
+     * 
+     * For example, if this OrderItem had 3 items at $1 each and also received a $1 discount.   The net 
+     * effect under the default rounding scenario would be an average price of $0.666666
+     * 
+     * Most systems would represent this as $0.67 as the discounted unit price; however, this amount times 3 ($2.01)
+     * would not equal the getTotalPrice() which would be $2.00.    For this reason, it is not recommended
+     * that implementations utilize this field.    Instead, they may choose not to show the unit price or show 
+     * multiple prices by looping through the OrderItemPriceDetails. 
+     * 
+     * @return
+     */
+    public Money getAveragePrice();
 
+    /**
+     * Returns the average unit item adjustments.
+     * 
+     * For example, if this item has a quantity of 2 at a base-price of $10 and a 10% discount applies to both
+     * then this method would return $1. 
+     * 
+     * Some implementations may choose to show this on a view cart screen.    Due to fractional discounts,
+     * the display could represent a unit adjustment value that is off due to rounding.    See {@link #getAveragePrice()}
+     * for an example of this.
+     * 
+     * Implementations wishing to show unit prices may choose instead to show the individual OrderItemPriceDetails 
+     * instead of this value to avoid the rounding problem.    This would result in multiple cart item 
+     * display rows for each OrderItem.
+     * 
+     * Alternatively, the cart display should use {@link #getTotalAdjustmentValue()}.
+     * 
+     * @return
+     */
+    public Money getAverageAdjustmentValue();
 
+    /**
+     * Returns the total for all item level adjustments.
+     * 
+     * For example, if the item has a 2 items priced at $10 a piece and a 10% discount applies to both
+     * quantities.    This method would return $2. 
+     * 
+     * @return
+     */
+    public Money getTotalAdjustmentValue();
+
+    /**
+     * Returns the total price to be paid for this order item including item-level adjustments.
+     * 
+     * It does not include the effect of order level adjustments.   Calculated by looping through
+     * the orderItemPriceDetails
+     * 
+     * @return
+     */
+    public Money getTotalPrice();
+    
     /**
      * Returns whether or not this item is taxable. If this flag is not set, it returns true by default
      * 
@@ -252,143 +366,70 @@ public interface OrderItem extends Serializable {
      * 
      * @param taxable
      */
-    public void setTaxable(Boolean taxable);
-
-    /**
-     * @deprecated
-     * No longer applicable as of Broadleaf 2.3.   Now managed via OrderItemPriceDetails
-     * 
-     * With prior versions, if the system automatically split an item to accommodate the promotion logic (e.g. buy one get one free),
-     * then this value is set to the originalItemId.
-     *
-     * Returns null otherwise.
-     *
-     * @return
-     */
-    public Long getSplitParentItemId();
-
-    /**
-     * @deprecated
-     * @param id
-     */
-    public void setSplitParentItemId(Long id);
+    public void setTaxable(Boolean taxable);    
     
     /**
-     * The price of the item before discounts and prices.
+     * Returns the total amount of this item subject to taxes.
      * 
-     * Generally equivalent to {@link #getSalePrice()}
-     * 
-     * @return
-     */
-    public Money getUnitAmount();
-
-    /**
-     * Returns the average unit display price for the item.  
-     * 
-     * Some implementations may choose to show this on a view cart screen.    Due to fractional discounts,
-     * it the display could represent a unit price that is off.  
-     * 
-     * For example, if this OrderItem had 3 items at $1 each and also received a $1 discount.   The net 
-     * effect under the default rounding scenario would be an average price of $0.666666
-     * 
-     * Most systems would represent this as $0.67 as the discounted unit price; however, this amount times 3 ($2.01)
-     * would not equal the getTotalAmount() which would be $2.00. 
+     * This is calculated as {@link #getTotalPrice()} - {@link #getTaxableProratedOrderAdjustment()}
      * 
      * @return
      */
-    public Money getAverageUnitDisplayPrice();
+    public Money getTotalTaxableAmount();    
 
     /**
-     * Returns the average unit taxes for the item.  
-     * 
-     * Some implementations may choose to show this on a view cart screen.    Due to fractional discounts,
-     * it the display could represent a unit tax amount that is off due to rounding.
-     * 
-     * Typically not used as most implementations will not display unit level taxes and will opt to show a 
-     * single tax line item per order using Order.getTotalTax().
-     *     
-     * @see #getAverageUnitDisplayPrice() for an example of the rounding issue
+     * Returns the total taxes paid (or due) for this OrderItem. 
      * 
      * @return
      */
-    public Money getAverageUnitTaxes();
-
+    public Money getTotalTax();
+    
     /**
-     * Returns the average unit item adjustments.  
-     * 
-     * Some implementations may choose to show this on a view cart screen.    Due to fractional discounts,
-     * the display could represent a unit tax adjustment value that is off due to rounding.
-     * 
-     * Implementations wishing to show unit prices may choose instead to show the individual ItemPriceDetails 
-     * instead of this value to avoid the rounding problem.    This would result in multiple cart item 
-     * display rows for each OrderItem.
-     *     
-     * @see #getAverageUnitDisplayPrice() for an example of the rounding issue
+     * Sets the total taxes paid (or due) for this OrderItem. 
      * 
      * @return
      */
-    public Money getAverageUnitItemAdjustmentValue();
+    public void setTotalTax(Money tax);
 
     /**
-     * Returns the total amount of this orderItem by summing the TotalAmount of each of the ItemPriceDetails.
-     * 
-     * This should be the equivalent of multiplying the quantity times the getUnitAmount
-     * 
+     * Order level discounts need to be distributed to the item level.    Most of these will 
+     * effect the taxes owed but in some cases they may not.    This method returns the 
+     * total of the total order adjustments that do reduce the overall taxes.
      * 
      * @return
      */
-    public Money getTotalAmount();
+    public Money getTaxableProratedOrderAdjustment();
+    
+    /**
+     * Sets the relative order level discounts that are distributed to the item level and that should
+     * reduce the amount of taxes paid.        
+     */
+    public void setTaxableProratedOrderAdjustment(Money taxableProratedOrderAdjustment);
 
     /**
-     * Returns the total item display price by summing the displayPrice from the ItemPriceDetails. 
+     * The value of an order-level offer gets distributed to each of the OrderItems.   This field 
+     * represents that value.   
      * 
      * @return
      */
-    public Money getTotalItemDisplayPrice();
+    public Money getProratedOrderAdjustment();
 
     /**
-     * Returns the total return price by summing the returnPrice from the ItemPriceDetails. 
+     * Sets the pro-rated amount of order-level offer that benefits this OrderItem.
+     * 
+     */
+    public void setProratedOrderAdjustment(Money proratedOrderAdjustmentAmount);
+
+    /**
+     * This field represents the value of fulfillment charges gets distributed to each of the OrderItems   
      * 
      * @return
      */
-    public Money getTotalReturnPrice();
+    public Money getProratedFulfillmentCharges();
 
     /**
-     * Returns the total taxes by summing the total taxes from the ItemPriceDetails. 
+     * Sets the prorated fulfillment charges that apply to this OrderItem   
      * 
-     * @return
      */
-    public Money getTotalTaxes();
-
-    /**
-     * Returns the total of all adjustments on this line item.
-     * Most implementations would NOT use this value.  It represents item adjustments as well as order level
-     * adjustments that have been distributed to the item.
-     * 
-     * Typically, a view cart implementation would show the {@link getTotalItemDisplayPrice()} and indicate the
-     * amount saved using the {@link getTotalItemAdjustmentValue()} 
-     * 
-     * @return
-     */
-    public Money getTotalAdjustmentValue();
-
-    /**
-     * Returns the total of all item level adjustments for this line item by summing the totalItemAdjustmentValue(s) 
-     * from the ItemPriceDetails. 
-     * 
-     * @return
-     */
-    public Money getTotalItemAdjustmentValue();
-
-    /**
-     * Collection of priceDetails for this orderItem.    
-     * 
-     * Without discounts, an orderItem would have exactly 1 ItemPriceDetail.   When orderItem discounting or 
-     * tax-calculations result in an orderItem having multiple prices like in a buy-one-get-one free example, 
-     * the orderItem will get an additional ItemPriceDetail.  
-     * 
-     * Generally, an OrderItem will have 1 ItemPriceDetail record for each uniquely priced version of the item.
-     */
-    public List<OrderItemPriceDetail> getOrderItemPriceDetails();
-
+    public void setProratedFulfillmentCharges(Money proratedFulfillmentCharges);
 }

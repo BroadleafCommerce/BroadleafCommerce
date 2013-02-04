@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
@@ -28,11 +29,11 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     private static final long serialVersionUID = 1L;
     
     protected OrderAdjustment delegate;
-    protected PromotableOrder order;
+    protected PromotableOrder promotableOrder;
     
     public PromotableOrderAdjustmentImpl(OrderAdjustment orderAdjustment, PromotableOrder order) {
         this.delegate = orderAdjustment;
-        this.order = order;
+        this.promotableOrder = order;
     }
     
     @Override
@@ -45,6 +46,11 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
         return delegate;
     }
     
+    @Override
+    public Offer getOffer() {
+        return delegate.getOffer();
+    }
+
     protected boolean roundOfferValues = true;
     protected int roundingScale = 2;
     protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
@@ -81,10 +87,10 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
      */
     @Override
     public void computeAdjustmentValue() {
-        if (delegate.getOffer() != null && order != null) {
-            Money adjustmentPrice = order.getAdjustmentPrice(); // get the current price of the item with all adjustments
+        if (getOffer() != null && promotableOrder != null) {
+            Money adjustmentPrice = promotableOrder.get(); // get the current price of the item with all adjustments
             if (adjustmentPrice == null) {
-                adjustmentPrice = order.getSubTotal();
+                adjustmentPrice = promotableOrder.getSubTotal();
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
                 delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));

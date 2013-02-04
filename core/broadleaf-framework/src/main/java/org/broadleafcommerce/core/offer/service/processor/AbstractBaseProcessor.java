@@ -16,16 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +34,16 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.tool.hbm2x.StringUtils;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -185,12 +185,14 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
     }
     
-    protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem discreteOrderItem) {
+    protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem orderItem) {
         boolean appliesToItem = false;
 
         if (criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule().trim().length() != 0) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("discreteOrderItem", discreteOrderItem.getDelegate());
+            vars.put("discreteOrderItem", orderItem.getDelegate());
+            vars.put("orderItem", orderItem.getDelegate());
+            vars.put("bundleOrderItem", orderItem.getDelegate());
             Boolean expressionOutcome = executeExpression(criteria.getOrderItemMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;

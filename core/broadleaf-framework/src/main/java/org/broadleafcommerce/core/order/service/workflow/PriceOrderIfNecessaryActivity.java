@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.service.workflow;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -26,7 +24,6 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import javax.annotation.Resource;
 
 public class PriceOrderIfNecessaryActivity extends BaseActivity {
-    private static Log LOG = LogFactory.getLog(PriceOrderIfNecessaryActivity.class);
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;

@@ -16,14 +16,21 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 
 public interface PromotableOrderItemAdjustment {
 
     public void reset();
 
     public OrderItemAdjustment getDelegate();
+
+    /**
+     * Returns the associated offer
+     * @return
+     */
+    public Offer getOffer();
 
     /*
      * Calculates the value of the adjustment

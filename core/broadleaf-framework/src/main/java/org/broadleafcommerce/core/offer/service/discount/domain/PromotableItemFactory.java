@@ -22,9 +22,9 @@ import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 
 public interface PromotableItemFactory {
 
@@ -34,7 +34,7 @@ public interface PromotableItemFactory {
 
     public PromotableOrderAdjustment createPromotableOrderAdjustment(OrderAdjustment orderAdjustment, PromotableOrder order);
 
-    public PromotableOrderItem createPromotableOrderItem(DiscreteOrderItem orderItem,PromotableOrder order);
+    public PromotableOrderItem createPromotableOrderItem(OrderItem orderItem, PromotableOrder order);
 
     public PromotableCandidateItemOffer createPromotableCandidateItemOffer(CandidateItemOffer candidateItemOffer);
 

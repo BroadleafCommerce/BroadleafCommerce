@@ -33,12 +33,9 @@ import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -147,15 +144,17 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @AdminPresentation(excluded = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
+
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemPriceDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>(); 
+    protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<OrderItemPriceDetail>();
     
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
@@ -166,16 +165,27 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @AdminPresentation(excluded = true)
     protected Boolean itemTaxable;
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Column(name = "DISCOUNTS_ALLOWED")
+    @AdminPresentation(excluded = true)
+    protected Boolean discountsAllowed;
+
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
     protected Map<String,OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
 
-    @Column(name = "SPLIT_PARENT_ITEM_ID")
-    @AdminPresentation(excluded = true)
-    protected Long splitParentItemId;
+    @Column(name = "TOTAL_TAX")
+    protected BigDecimal totalTax;
 
+    @Column(name = "TAXABLE_PRORATED_ORDER_ADJ")
+    protected BigDecimal taxableProratedOrderAdjustment;
+
+    @Column(name = "PRORATED_ORDER_ADJ")
+    protected BigDecimal proratedOrderAdjustment;
+
+    @Column(name = "PRORATED_FULFILLMENT_CHARGE")
+    protected BigDecimal proratedFulfillmentCharge;       
+    
     @Override
     public Money getRetailPrice() {
         return convertToMoney(retailPrice);
@@ -210,7 +220,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     public Money getTaxablePrice() {
         Money taxablePrice = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
         if (isTaxable() == null || isTaxable()) {
-            taxablePrice = getPrice();
+            taxablePrice = getAveragePrice();
         }
         return taxablePrice;
     }
@@ -314,12 +324,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getAdjustmentValue() {
-        /** TODO:   Change to call getTotalItemAdjustmentValue() **/
-        Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
-        for (OrderItemAdjustment itemAdjustment : orderItemAdjustments) {
-            adjustmentValue = adjustmentValue.add(itemAdjustment.getValue());
-        }
-        return adjustmentValue;
+        return getAverageAdjustmentValue();
     }
 
     @Override
@@ -463,9 +468,9 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Override
     public OrderItem clone() {
         //this is likely an extended class - instantiate from the fully qualified name via reflection
-        OrderItem clonedOrderItem;
+        OrderItemImpl clonedOrderItem;
         try {
-            clonedOrderItem = (OrderItem) Class.forName(this.getClass().getName()).newInstance();
+            clonedOrderItem = (OrderItemImpl) Class.forName(this.getClass().getName()).newInstance();
             try {
                 checkCloneable(clonedOrderItem);
             } catch (CloneNotSupportedException e) {
@@ -494,10 +499,9 @@ public class OrderItemImpl implements OrderItem, Cloneable {
             clonedOrderItem.setOrderItemType(convertOrderItemType(orderItemType));
             clonedOrderItem.setPersonalMessage(personalMessage);
             clonedOrderItem.setQuantity(quantity);
-            clonedOrderItem.setRetailPrice(convertToMoney(retailPrice));
-            clonedOrderItem.setSalePrice(convertToMoney(salePrice));
-            clonedOrderItem.setPrice(convertToMoney(price));
-            clonedOrderItem.setSplitParentItemId(splitParentItemId);
+            clonedOrderItem.retailPrice = retailPrice;
+            clonedOrderItem.salePrice = salePrice;
+            clonedOrderItem.discountsAllowed = discountsAllowed;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -601,11 +605,6 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     @Override
-    public void accept(OrderItemVisitor visitor) throws PricingException {
-        visitor.visit(this);
-    }
-
-    @Override
     public Boolean isTaxable() {
         return itemTaxable == null ? true : itemTaxable;
     }
@@ -616,12 +615,113 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     @Override
-    public Long getSplitParentItemId() {
-        return splitParentItemId;
+    public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
+        return orderItemPriceDetails;
     }
 
     @Override
-    public void setSplitParentItemId(Long splitParentItemId) {
-        this.splitParentItemId = splitParentItemId;
+    public void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails) {
+        this.orderItemPriceDetails = orderItemPriceDetails;
+    }
+
+    @Override
+    public boolean isDiscountingAllowed() {
+        if (discountsAllowed == null) {
+            return true;
+        } else {
+            return discountsAllowed.booleanValue();
+        }
+    }
+
+    @Override
+    public void setDiscountingAllowed(boolean discountsAllowed) {
+        this.discountsAllowed = discountsAllowed;
+    }
+
+    @Override
+    public Money getAveragePrice() {
+        return getTotalPrice().divide(quantity);
+    }
+
+    @Override
+    public Money getAverageAdjustmentValue() {
+        return getTotalAdjustmentValue().divide(quantity);
+    }
+
+    @Override
+    public Money getTotalAdjustmentValue() {
+        Money totalAdjustmentValue = BroadleafCurrencyUtils.getMoney(order.getCurrency());
+        List<OrderItemPriceDetail> priceDetails = getOrderItemPriceDetails();
+        if (priceDetails != null) {
+            for (OrderItemPriceDetail priceDetail : getOrderItemPriceDetails()) {
+                totalAdjustmentValue = totalAdjustmentValue.add(priceDetail.getTotalAdjustmentValue());
+            }
+        }
+
+        return totalAdjustmentValue;
+    }
+    
+    @Override
+    public Money getTotalPrice() {
+        Money returnValue = convertToMoney(BigDecimal.ZERO);
+        if (orderItemPriceDetails != null) {
+            for (OrderItemPriceDetail oipd : orderItemPriceDetails) {
+                returnValue = returnValue.add(oipd.getTotalAdjustedPrice());
+            }
+        } else {
+            // Support for legacy orders
+            returnValue = getPrice();
+        }
+        
+        return returnValue;
+    }    
+
+    @Override
+    public Money getTotalTaxableAmount() {
+        Money returnValue = convertToMoney(BigDecimal.ZERO);
+        if (isTaxable()) {
+            return getTotalPrice();
+        }
+        return returnValue;
+    }
+
+    @Override
+    public Money getTotalTax() {
+        return convertToMoney(totalTax);
+    }
+
+    @Override
+    public void setTotalTax(Money totalTax) {
+        this.totalTax = Money.toAmount(totalTax);
+    }
+
+    @Override
+    public Money getTaxableProratedOrderAdjustment() {
+        return convertToMoney(taxableProratedOrderAdjustment);
+    }
+
+    @Override
+    public void setTaxableProratedOrderAdjustment(Money taxableProratedOrderAdjustment) {
+        this.taxableProratedOrderAdjustment = Money.toAmount(taxableProratedOrderAdjustment);
+    }
+
+    @Override
+    public Money getProratedOrderAdjustment() {
+        return convertToMoney(proratedOrderAdjustment);
+    }
+
+    @Override
+    public void setProratedOrderAdjustment(Money proratedOrderAdjustment) {
+        this.proratedOrderAdjustment = Money.toAmount(proratedOrderAdjustment);
+    }
+
+    @Override
+    public Money getProratedFulfillmentCharges() {
+        return convertToMoney(proratedFulfillmentCharge);
+    }
+
+    @Override
+    public void setProratedFulfillmentCharges(Money proratedFulfillmentCharge) {
+        this.proratedFulfillmentCharge = Money.toAmount(proratedFulfillmentCharge);
     }
 }

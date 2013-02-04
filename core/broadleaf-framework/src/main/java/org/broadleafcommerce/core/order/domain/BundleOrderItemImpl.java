@@ -27,11 +27,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -62,8 +59,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
     
-    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
 
@@ -116,6 +112,33 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
+    public List<? extends OrderItem> getOrderItems() {
+        return discreteOrderItems;
+    }
+
+    @Override
+    public boolean getAllowDiscountsOnChildItems() {
+        if (shouldSumItems()) {
+            if (productBundle != null) {
+                return productBundle.getItemsPromotable();
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isDiscountingAllowed() {
+        if (shouldSumItems()) {
+            return false;
+        } else {
+            return productBundle.getBundlePromotable();
+        }
+    }
+
+    @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         return discreteOrderItems;
     }
@@ -133,40 +156,6 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @Override
     public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
         this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
-    }
-
-    @Override
-    public void removeAllCandidateItemOffers() {
-        if (shouldSumItems()) {
-            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                discreteOrderItem.removeAllCandidateItemOffers();
-            }
-        } else {
-            super.removeAllCandidateItemOffers();
-        }
-    }
-
-    @Override
-    public int removeAllAdjustments() {
-        if (shouldSumItems()) {
-            int removedAdjustmentCount = 0;
-            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                removedAdjustmentCount = removedAdjustmentCount + discreteOrderItem.removeAllAdjustments();
-            }
-            return removedAdjustmentCount;
-        } else {
-            return super.removeAllAdjustments();
-        }
-    }
-
-    @Override
-    public void assignFinalPrice() {
-        if (shouldSumItems()) {
-            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                discreteOrderItem.assignFinalPrice();
-            }
-        }
-        price = getCurrentPrice().getAmount();
     }
 
     @Override
@@ -279,27 +268,8 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     
     @Override
     public boolean hasAdjustedItems() {
-        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            if (discreteOrderItem.getAdjustmentValue().greaterThan(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency()))) {
-                return true;
-            }
-        }
+        //TODO:  Handle this for bundle order items.
         return false;
-    }
-
-    @Override
-    public Money getCurrentPrice() {
-        if (shouldSumItems()) {
-            Money currentBundlePrice = BroadleafCurrencyUtils.getMoney(getOrder().getCurrency());
-            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                BigDecimal currentItemPrice = discreteOrderItem.getCurrentPrice().getAmount();
-                BigDecimal quantityPrice = currentItemPrice.multiply(new BigDecimal(discreteOrderItem.getQuantity()));
-                currentBundlePrice = currentBundlePrice.add(BroadleafCurrencyUtils.getMoney(quantityPrice, getOrder().getCurrency()));
-            }
-            return currentBundlePrice;
-        } else {
-            return super.getCurrentPrice();
-        }
     }
     
     @Override
@@ -395,10 +365,5 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
-    }
-    
-    @Override
-    public void accept(OrderItemVisitor visitor) throws PricingException {
-        visitor.visit(this);
     }
 }
