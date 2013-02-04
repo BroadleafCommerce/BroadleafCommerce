@@ -55,6 +55,8 @@ import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.easymock.IAnswer;
@@ -291,7 +293,10 @@ public class OfferDataItemProvider {
         address1.setFirstName("John");
         address1.setLastName("Tester");
         address1.setPostalCode("75244");
-        address1.setPrimaryPhone("972-976-1234");
+
+        Phone primary = new PhoneImpl();
+        primary.setPhoneNumber("972-976-1234");
+        address1.setPhonePrimary(primary);
         
         State state = new StateImpl();
         state.setAbbreviation("TX");
@@ -331,7 +336,10 @@ public class OfferDataItemProvider {
         address2.setFirstName("John");
         address2.setLastName("Tester");
         address2.setPostalCode("75244");
-        address2.setPrimaryPhone("972-976-1234");
+
+        Phone primary2 = new PhoneImpl();
+        primary2.setPhoneNumber("972-976-1234");
+        address2.setPhonePrimary(primary2);
         
         State state2 = new StateImpl();
         state2.setAbbreviation("TX");

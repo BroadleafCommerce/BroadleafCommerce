@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.client.translation;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -25,11 +26,13 @@ import com.google.gwt.json.client.JSONParser;
 import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RelativeDate;
 import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.util.EnumUtil;
 import com.smartgwt.client.util.JSOHelper;
 import com.smartgwt.client.util.JSON;
+import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.RelativeDateItem;
 
 import java.util.ArrayList;
@@ -510,5 +513,20 @@ public class AdvancedCriteriaToMVELTranslator {
             }
         }
         return response.toString();
+    }
+
+    public void translateCriteriaToMVEL(Record record, String fieldName, FilterBuilder filterBuilder) {		
+        String attr = record.getAttribute(fieldName);  	
+        Object value = null;
+        try {
+            value = createMVEL(fieldName, filterBuilder.getCriteria(), filterBuilder.getDataSource());
+        } catch (IncompatibleMVELTranslationException e) {
+            throw new RuntimeException(BLCMain.getMessageManager().getString("mvelTranslationProblem"), e);
+        }
+	    
+        String val = value==null?null:String.valueOf(value);
+        if (attr != val && (attr == null || val == null || !attr.equals(val))) {
+            record.setAttribute(fieldName, value);
+        }
     }
 }

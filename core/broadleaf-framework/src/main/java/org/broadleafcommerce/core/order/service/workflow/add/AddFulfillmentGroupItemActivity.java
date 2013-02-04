@@ -34,7 +34,7 @@ public class AddFulfillmentGroupItemActivity extends BaseActivity {
         
         request = fgItemStrategy.onItemAdded(request);
         
-        ((CartOperationContext) context).setSeedData(request);
+        context.setSeedData(request);
         return context;
     }
 

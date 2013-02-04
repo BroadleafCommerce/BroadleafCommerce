@@ -822,6 +822,13 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <type>jar</type>
+                <scope>test</scope>
+            </dependency>
             
             <!-- Spring Plugins -->
             <dependency>
@@ -984,6 +991,12 @@
                 <version>${spring.security.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-aop</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!--Admin Libraries-->

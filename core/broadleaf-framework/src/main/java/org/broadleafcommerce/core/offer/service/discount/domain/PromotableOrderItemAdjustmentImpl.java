@@ -16,12 +16,17 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.AdvancedOffer;
+import org.broadleafcommerce.core.offer.domain.OfferTier;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 
 public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdjustment {
     
@@ -93,7 +98,11 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
             
             // The value of an AMOUNT_OFF type order is the amount specified on the offer.
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) { 
-                Money amountOff = new Money(delegate.getOffer().getValue(), retailAdjustmentPrice.getCurrency(), 5);
+                BigDecimal offerItemValue=delegate.getOffer().getValue();
+                if (delegate.getOffer() instanceof AdvancedOffer &&  ((AdvancedOffer)delegate.getOffer()).isTieredOffer()) {  
+                    offerItemValue= retriveTierForItem((long) orderItem.getQuantity());
+                }
+                Money amountOff = new Money(offerItemValue, retailAdjustmentPrice.getCurrency(), 5);
                 
                 // compute value for on sale price
                 if (delegate.getOffer().getApplyDiscountToSalePrice() && delegate.getOrderItem().getIsOnSale()) {
@@ -119,7 +128,11 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
             
             // The value of FIX_PRICE depends on whether the item was on sale or not. 
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                Money fixPriceAmount = new Money(delegate.getOffer().getValue(), retailAdjustmentPrice.getCurrency(), 5);
+                BigDecimal offerItemValue=delegate.getOffer().getValue();
+                if (delegate.getOffer() instanceof AdvancedOffer &&  ((AdvancedOffer)delegate.getOffer()).isTieredOffer()) {
+                    offerItemValue= retriveTierForItem((long) orderItem.getQuantity());
+                }
+                Money fixPriceAmount = new Money(offerItemValue, retailAdjustmentPrice.getCurrency(), 5);
                 
                 if (fixPriceAmount.lessThan(retailAdjustmentPrice)) {
                     BigDecimal offerValue = retailAdjustmentPrice.getAmount().subtract(fixPriceAmount.getAmount());
@@ -127,7 +140,7 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
                 } else {
                     delegate.setRetailPriceValue(Money.ZERO);
                 }
-                        
+                
                 if (delegate.getOffer().getApplyDiscountToSalePrice() && delegate.getOrderItem().getIsOnSale()) {
                     if (fixPriceAmount.lessThan(salesAdjustmentPrice)) {
                         delegate.setSalesPriceValue(fixPriceAmount);                        
@@ -141,6 +154,7 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
             // The current logic assume serial execution of percent off promotions.   Parallel logic 
             // would be slightly different. 
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
+              
                 if (delegate.getOffer().getApplyDiscountToSalePrice() && delegate.getOrderItem().getIsOnSale()) {
                     BigDecimal offerValue = salesAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
                     if (isRoundOfferValues()) {
@@ -150,8 +164,12 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
                 } else {
                     delegate.setSalesPriceValue(Money.ZERO);
                 }
-                
-                BigDecimal offerValue = retailAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+                BigDecimal offerValue=delegate.getOffer().getValue();
+                if (delegate.getOffer() instanceof AdvancedOffer &&  ((AdvancedOffer)delegate.getOffer()).isTieredOffer()) {
+                    offerValue= retriveTierForItem((long) orderItem.getQuantity());
+                }
+                  offerValue = retailAdjustmentPrice.getAmount().multiply(offerValue.divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+              
                 if (isRoundOfferValues()) {
                     offerValue = offerValue.setScale(roundingScale, roundingMode);
                 }
@@ -159,6 +177,23 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
             }
 
         }
+    }
+
+
+    private BigDecimal retriveTierForItem(Long i) {
+        OfferTier maxTier = null;
+        //assuming that delegate.getOffer()).getOfferTiers() is sorted already
+        for (OfferTier t : ((AdvancedOffer) delegate.getOffer()).getOfferTiers()) {
+
+            if (i <= t.getMinQuantity() - 1) {
+                break;
+            }
+            maxTier = t;
+        }
+        if (maxTier != null) {
+            return maxTier.getAmount();
+        }
+        return BigDecimal.ZERO;
     }
 
     public Money getRetailPriceValue() {

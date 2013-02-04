@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
 import java.io.Serializable;
 
@@ -32,13 +33,17 @@ import java.io.Serializable;
  */
 public class ShippingInfoForm implements Serializable {
 
-    private static final long serialVersionUID = -7895489234675056031L;
-    protected Address address = new AddressImpl();
+	private static final long serialVersionUID = -7895489234675056031L;
+	protected Address address = new AddressImpl();
     protected String addressName;
     protected FulfillmentOption fulfillmentOption;
     protected Long fulfillmentOptionId;
     protected PersonalMessage personalMessage = new PersonalMessageImpl();
     protected String deliveryMessage;
+
+    public ShippingInfoForm() {
+        address.setPhonePrimary(new PhoneImpl());
+    }
     
     public Long getFulfillmentOptionId() {
         return fulfillmentOptionId;

@@ -59,7 +59,7 @@ public class PaymentProcessContextFactory implements ProcessContextFactory {
                 secureMap.put(info, securePaymentInfoService.findSecurePaymentInfo(info.getReferenceNumber(), info.getType()));
             }
         }
-        CombinedPaymentContextSeed combinedSeed = new CombinedPaymentContextSeed(secureMap, paymentActionType, paymentSeed.getOrder().getTotal(), paymentSeed.getPaymentResponse());
+        CombinedPaymentContextSeed combinedSeed = new CombinedPaymentContextSeed(secureMap, paymentActionType, paymentSeed.getOrder().getTotal(), paymentSeed.getPaymentResponse(), paymentSeed.getTransactionAmount());
         WorkflowPaymentContext response = new WorkflowPaymentContext();
         response.setSeedData(combinedSeed);
 

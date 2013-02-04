@@ -64,10 +64,13 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
     protected String postalCode;
 
     @XmlElement
-    protected String primaryPhone;
+    protected PhoneWrapper phonePrimary;
 
     @XmlElement
-    protected String secondaryPhone;
+    protected PhoneWrapper phoneSecondary;
+
+    @XmlElement
+    protected PhoneWrapper phoneFax;
 
     @XmlElement
     protected String companyName;
@@ -97,8 +100,19 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         this.country = countryWrapper;
 
         this.postalCode = model.getPostalCode();
-        this.primaryPhone = model.getPrimaryPhone();
-        this.secondaryPhone = model.getSecondaryPhone();
+
+        PhoneWrapper primaryWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
+        primaryWrapper.wrap(model.getPhonePrimary(), request);
+        this.phonePrimary = primaryWrapper;
+
+        PhoneWrapper secondaryWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
+        secondaryWrapper.wrap(model.getPhoneSecondary(), request);
+        this.phoneSecondary = secondaryWrapper;
+
+        PhoneWrapper faxWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
+        faxWrapper.wrap(model.getPhoneFax(), request);
+        this.phoneFax = faxWrapper;
+
         this.companyName = model.getCompanyName();
         this.isBusiness = model.isBusiness();
         this.isDefault = model.isDefault();
@@ -126,8 +140,19 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         }
 
         address.setPostalCode(this.postalCode);
-        address.setPrimaryPhone(this.primaryPhone);
-        address.setSecondaryPhone(this.secondaryPhone);
+
+        if (this.phonePrimary != null) {
+            address.setPhonePrimary(this.phonePrimary.unwrap(request, appContext));
+        }
+
+        if (this.phoneSecondary != null) {
+            address.setPhoneSecondary(this.phoneSecondary.unwrap(request, appContext));
+        }
+
+        if (this.phoneFax != null) {
+            address.setPhoneFax(this.phoneFax.unwrap(request, appContext));
+        }
+
         address.setCompanyName(this.companyName);
         address.setBusiness(this.isBusiness);
         address.setDefault(this.isDefault);

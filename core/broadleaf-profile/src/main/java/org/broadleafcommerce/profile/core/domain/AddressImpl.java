@@ -16,6 +16,19 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,18 +43,25 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
-
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADDRESS")
+@AdminPresentationOverrides(
+        value = {
+                @AdminPresentationOverride(name="phonePrimary.phoneNumber", value=@AdminPresentation(friendlyName = "AddressImpl_Primary_Phone", order=130, group="AddressImpl_Address", requiredOverride = RequiredOverride.NOT_REQUIRED)),
+                @AdminPresentationOverride(name="phonePrimary.isDefault", value=@AdminPresentation(excluded = true)),
+                @AdminPresentationOverride(name="phonePrimary.isActive", value=@AdminPresentation(excluded = true)),
+                @AdminPresentationOverride(name="phoneSecondary.phoneNumber", value=@AdminPresentation(friendlyName = "AddressImpl_Secondary_Phone", order=140, group="AddressImpl_Address", requiredOverride = RequiredOverride.NOT_REQUIRED)),
+                @AdminPresentationOverride(name="phoneSecondary.isDefault", value=@AdminPresentation(excluded = true)),
+                @AdminPresentationOverride(name="phoneSecondary.isActive", value=@AdminPresentation(excluded = true)),
+                @AdminPresentationOverride(name="phoneFax.phoneNumber", value=@AdminPresentation(friendlyName = "AddressImpl_Fax", order=150, group="AddressImpl_Address", requiredOverride = RequiredOverride.NOT_REQUIRED)),
+                @AdminPresentationOverride(name="phoneFax.isDefault", value=@AdminPresentation(excluded = true)),
+                @AdminPresentationOverride(name="phoneFax.isActive", value=@AdminPresentation(excluded = true))
+        }
+)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "AddressImpl_baseAddress")
 public class AddressImpl implements Address {
 
     private static final long serialVersionUID = 1L;
@@ -52,102 +72,119 @@ public class AddressImpl implements Address {
     @Column(name = "ADDRESS_ID")
     protected Long id;
 
+    @Column(name = "FIRST_NAME")
+    @AdminPresentation(friendlyName = "AddressImpl_First_Name", order=10, group = "AddressImpl_Address")
+    protected String firstName;
+
+    @Column(name = "LAST_NAME")
+    @AdminPresentation(friendlyName = "AddressImpl_Last_Name", order=20, group = "AddressImpl_Address")
+    protected String lastName;
+
+    @Column(name = "EMAIL_ADDRESS")
+    @AdminPresentation(friendlyName = "AddressImpl_Email_Address", order=30, group = "AddressImpl_Address")
+    protected String emailAddress;
+
+    @Column(name = "COMPANY_NAME")
+    @AdminPresentation(friendlyName = "AddressImpl_Company_Name", order=40, group = "AddressImpl_Address")
+    protected String companyName;
+
     @Column(name = "ADDRESS_LINE1", nullable = false)
-    @AdminPresentation(friendlyName = "AddressImpl_Address_1", order=6, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Address_1", order=50, group = "AddressImpl_Address")
     protected String addressLine1;
 
     @Column(name = "ADDRESS_LINE2")
-    @AdminPresentation(friendlyName = "AddressImpl_Address_2", order=7, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Address_2", order=60, group = "AddressImpl_Address")
     protected String addressLine2;
 
     @Column(name = "CITY", nullable = false)
-    @AdminPresentation(friendlyName = "AddressImpl_City", order=8, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_City", order=70, group = "AddressImpl_Address")
     protected String city;
-
-    @Column(name = "POSTAL_CODE", nullable = false)
-    @AdminPresentation(friendlyName = "AddressImpl_Postal_Code", order=14, group = "AddressImpl_Address")
-    protected String postalCode;
-
-    @Column(name = "COUNTY")
-    @AdminPresentation(friendlyName = "AddressImpl_County", order=11, group = "AddressImpl_Address")
-    protected String county;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
-    @AdminPresentation(friendlyName = "AddressImpl_State", order=9, group = "AddressImpl_Address", excluded = true)
+    @AdminPresentation(friendlyName = "AddressImpl_State", order=80, group = "AddressImpl_Address")
+    @AdminPresentationToOneLookup()
     protected State state;
+
+    @Column(name = "COUNTY")
+    @AdminPresentation(friendlyName = "AddressImpl_County", order=90, group = "AddressImpl_Address")
+    protected String county;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
-    @AdminPresentation(friendlyName = "AddressImpl_Country", order=12, group = "AddressImpl_Address", excluded = true)
+    @AdminPresentation(friendlyName = "AddressImpl_Country", order=100, group = "AddressImpl_Address")
+    @AdminPresentationToOneLookup()
     protected Country country;
-    
+
+    @Column(name = "POSTAL_CODE", nullable = false)
+    @AdminPresentation(friendlyName = "AddressImpl_Postal_Code", order=110, group = "AddressImpl_Address")
+    protected String postalCode;
+
+    @Column(name = "ZIP_FOUR")
+    @AdminPresentation(friendlyName = "AddressImpl_Four_Digit_Zip", order=120, group = "AddressImpl_Address")
+    protected String zipFour;
+
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "PHONE_PRIMARY_ID")
+    @Index(name="ADDRESS_PHONE_PRI_IDX", columnNames={"PHONE_PRIMARY_ID"})
+    protected Phone phonePrimary;
+
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "PHONE_SECONDARY_ID")
+    @Index(name="ADDRESS_PHONE_SEC_IDX", columnNames={"PHONE_SECONDARY_ID"})
+    protected Phone phoneSecondary;
+
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "PHONE_FAX_ID")
+    @Index(name="ADDRESS_PHONE_FAX_IDX", columnNames={"PHONE_FAX_ID"})
+    protected Phone phoneFax;
+
+    @Column(name = "IS_DEFAULT")
+    @AdminPresentation(friendlyName = "AddressImpl_Default_Address", order=160, group = "AddressImpl_Address")
+    protected boolean isDefault = false;
+
+    @Column(name = "IS_ACTIVE")
+    @AdminPresentation(friendlyName = "AddressImpl_Active_Address", order=170, group = "AddressImpl_Address")
+    protected boolean isActive = true;
+
+    @Column(name = "IS_BUSINESS")
+    @AdminPresentation(friendlyName = "AddressImpl_Business_Address", order=180, group = "AddressImpl_Address")
+    protected boolean isBusiness = false;
+
     /**
      * This is intented to be used for address verification integrations and should not be modifiable in the admin
      */
     @Column(name = "TOKENIZED_ADDRESS")
-    @AdminPresentation(friendlyName = "AddressImpl_Tokenized_Address", order=15, group = "AddressImpl_Address", visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AddressImpl_Tokenized_Address", order=190, group = "AddressImpl_Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected String tokenizedAddress;
     
     /**
      * This is intented to be used for address verification integrations and should not be modifiable in the admin
      */
     @Column(name = "STANDARDIZED")
-    @AdminPresentation(friendlyName = "AddressImpl_Standardized", order=16, group = "AddressImpl_Address", visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AddressImpl_Standardized", order=200, group = "AddressImpl_Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected Boolean standardized = Boolean.FALSE;
 
-    @Column(name = "ZIP_FOUR")
-    @AdminPresentation(friendlyName = "AddressImpl_Four_Digit_Zip", order=17, group = "AddressImpl_Address")
-    protected String zipFour;
-
-    @Column(name = "COMPANY_NAME")
-    @AdminPresentation(friendlyName = "AddressImpl_Company_Name", order=3, group = "AddressImpl_Address")
-    protected String companyName;
-
-    @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName = "AddressImpl_Default_Address", order=18, group = "AddressImpl_Address")
-    protected boolean isDefault = false;
-
-    @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName = "AddressImpl_Active_Address", order=19, group = "AddressImpl_Address")
-    protected boolean isActive = true;
-
-    @Column(name = "FIRST_NAME")
-    @AdminPresentation(friendlyName = "AddressImpl_First_Name", order=1, group = "AddressImpl_Address")
-    protected String firstName;
-
-    @Column(name = "LAST_NAME")
-    @AdminPresentation(friendlyName = "AddressImpl_Last_Name", order=2, group = "AddressImpl_Address")
-    protected String lastName;
-
-    @Column(name = "PRIMARY_PHONE")
-    @AdminPresentation(friendlyName = "AddressImpl_Primary_Phone", order=4, group = "AddressImpl_Address")
-    protected String primaryPhone;
-
-    @Column(name = "SECONDARY_PHONE")
-    @AdminPresentation(friendlyName = "AddressImpl_Secondary_Phone", order=5, group = "AddressImpl_Address")
-    protected String secondaryPhone;
-
-    @Column(name = "FAX")
-    @AdminPresentation(friendlyName = "AddressImpl_Fax", order=6, group = "AddressImpl_Address")
-    protected String fax;
-
-    @Column(name = "EMAIL_ADDRESS")
-    @AdminPresentation(friendlyName = "AddressImpl_Email_Address", order=7, group = "AddressImpl_Address")
-    protected String emailAddress;
-
-    @Column(name = "IS_BUSINESS")
-    @AdminPresentation(friendlyName = "AddressImpl_Business_Address", order=20, group = "AddressImpl_Address")
-    protected boolean isBusiness = false;
-    
     /**
      * This is intented to be used for address verification integrations and should not be modifiable in the admin
      */
     @Column(name = "VERIFICATION_LEVEL")
-    @AdminPresentation(friendlyName = "AddressImpl_Verification_Level", order=21, group = "AddressImpl_Address", visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AddressImpl_Verification_Level", order=210, group = "AddressImpl_Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected String verificationLevel;
+
+    @Column(name = "PRIMARY_PHONE")
+    @Deprecated
+    protected String primaryPhone;
+
+    @Column(name = "SECONDARY_PHONE")
+    @Deprecated
+    protected String secondaryPhone;
+
+    @Column(name = "FAX")
+    @Deprecated
+    protected String fax;
 
     @Override
     public Long getId() {
@@ -310,23 +347,75 @@ public class AddressImpl implements Address {
     }
 
     @Override
+    @Deprecated
     public String getPrimaryPhone() {
         return primaryPhone;
     }
 
     @Override
+    @Deprecated
     public void setPrimaryPhone(String primaryPhone) {
         this.primaryPhone = primaryPhone;
     }
 
     @Override
+    @Deprecated
     public String getSecondaryPhone() {
         return secondaryPhone;
     }
 
     @Override
+    @Deprecated
     public void setSecondaryPhone(String secondaryPhone) {
         this.secondaryPhone = secondaryPhone;
+    }
+
+    @Override
+    @Deprecated
+    public String getFax() {
+        return this.fax;
+    }
+
+    @Override
+    @Deprecated
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
+
+    @Override
+    public Phone getPhonePrimary() {
+        Phone legacyPhone = new PhoneImpl();
+        legacyPhone.setPhoneNumber(this.primaryPhone);
+        return (phonePrimary == null && this.primaryPhone !=null)? legacyPhone : phonePrimary;
+    }
+
+    @Override
+    public void setPhonePrimary(Phone phonePrimary) {
+        this.phonePrimary = phonePrimary;
+    }
+
+    @Override
+    public Phone getPhoneSecondary() {
+        Phone legacyPhone = new PhoneImpl();
+        legacyPhone.setPhoneNumber(this.secondaryPhone);
+        return (phoneSecondary == null && this.secondaryPhone !=null)? legacyPhone : phoneSecondary;
+    }
+
+    @Override
+    public void setPhoneSecondary(Phone phoneSecondary) {
+        this.phoneSecondary = phoneSecondary;
+    }
+
+    @Override
+    public Phone getPhoneFax() {
+        Phone legacyPhone = new PhoneImpl();
+        legacyPhone.setPhoneNumber(this.fax);
+        return (phoneFax == null && this.fax != null)? legacyPhone : phoneFax;
+    }
+
+    @Override
+    public void setPhoneFax(Phone phoneFax) {
+        this.phoneFax = phoneFax;
     }
 
     @Override
@@ -347,16 +436,6 @@ public class AddressImpl implements Address {
     @Override
     public void setVerificationLevel(String verificationLevel) {
         this.verificationLevel = verificationLevel;
-    }
-
-    @Override
-    public String getFax() {
-        return this.fax;
-    }
-
-    @Override
-    public void setFax(String fax) {
-        this.fax = fax;
     }
 
     @Override

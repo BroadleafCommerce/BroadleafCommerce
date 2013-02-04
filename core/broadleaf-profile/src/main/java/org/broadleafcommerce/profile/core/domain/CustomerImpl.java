@@ -125,7 +125,26 @@ public class CustomerImpl implements Customer {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Attributes", dataSourceName = "customerAttributeDS")
-    protected List<CustomerAttribute> customerAttributes  = new ArrayList<CustomerAttribute>();    
+    protected List<CustomerAttribute> customerAttributes  = new ArrayList<CustomerAttribute>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Addresses", dataSourceName = "customerAddressesDS")
+    protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Phones", dataSourceName = "customerPhonesDS")
+    protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Payments", dataSourceName = "customerPaymentsDS")
+    protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
 
     @Transient
     protected String unencodedPassword;
@@ -381,6 +400,36 @@ public class CustomerImpl implements Customer {
     }
 
     @Override
+    public List<CustomerAddress> getCustomerAddresses() {
+        return customerAddresses;
+    }
+
+    @Override
+    public void setCustomerAddresses(List<CustomerAddress> customerAddresses) {
+        this.customerAddresses = customerAddresses;
+    }
+
+    @Override
+    public List<CustomerPhone> getCustomerPhones() {
+        return customerPhones;
+    }
+
+    @Override
+    public void setCustomerPhones(List<CustomerPhone> customerPhones) {
+        this.customerPhones = customerPhones;
+    }
+
+    @Override
+    public List<CustomerPayment> getCustomerPayments() {
+        return customerPayments;
+    }
+
+    @Override
+    public void setCustomerPayments(List<CustomerPayment> customerPayments) {
+        this.customerPayments = customerPayments;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -414,5 +463,4 @@ public class CustomerImpl implements Customer {
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
-
 }

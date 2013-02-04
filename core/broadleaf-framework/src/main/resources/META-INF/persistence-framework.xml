@@ -84,6 +84,7 @@
         <class>org.broadleafcommerce.core.order.domain.PersonalMessageImpl</class>
         <class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentInfoImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.PaymentInfoDetailImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.AmountItemImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl</class>

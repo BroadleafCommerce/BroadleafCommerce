@@ -33,10 +33,12 @@ import javax.persistence.UniqueConstraint;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationToOneLookupOverride;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Index;
 
@@ -45,9 +47,7 @@ import org.hibernate.annotations.Index;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
 @AdminPresentationOverrides(
-    {
-        @AdminPresentationOverride(name="address.state.name", value=@AdminPresentation(friendlyName = "CustomerAddressImpl_State", visibility = VisibilityEnum.FORM_HIDDEN, order=9, group = "CustomerAddressImpl_Address", readOnly = true)),
-        @AdminPresentationOverride(name="address.country.name", value=@AdminPresentation(friendlyName = "CustomerAddressImpl_Country", visibility = VisibilityEnum.FORM_HIDDEN, order=12, group = "CustomerAddressImpl_Address", readOnly = true)),
+    value = {
         @AdminPresentationOverride(name="address.firstName", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="address.lastName", value=@AdminPresentation(excluded = true))
     }
@@ -76,7 +76,6 @@ public class CustomerAddressImpl implements CustomerAddress {
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
-    
 
     @Override
     public Long getId() {

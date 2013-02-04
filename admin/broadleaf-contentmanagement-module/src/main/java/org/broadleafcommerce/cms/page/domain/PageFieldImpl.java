@@ -67,7 +67,7 @@ public class PageFieldImpl implements PageField {
     @Column (name = "VALUE")
     protected String stringValue;
 
-    @Column (name = "LOB_VALUE")
+    @Column(name = "LOB_VALUE", length = Integer.MAX_VALUE)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     protected String lobValue;
@@ -127,10 +127,12 @@ public class PageFieldImpl implements PageField {
         }
     }
 
+    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
 
+    @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }

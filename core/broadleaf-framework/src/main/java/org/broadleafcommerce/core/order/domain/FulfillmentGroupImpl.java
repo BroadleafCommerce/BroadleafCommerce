@@ -38,6 +38,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,11 +59,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP")
@@ -72,6 +72,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @GeneratedValue(generator = "FulfillmentGroupId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FulfillmentGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupImpl", allocationSize = 50)
     @Column(name = "FULFILLMENT_GROUP_ID")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_ID", order = 1, group = "FulfillmentGroupImpl_Description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER")
@@ -159,6 +160,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Order order;
     
+    @Column(name = "FULFILLMENT_GROUP_SEQUNCE")
+    protected Integer sequence;
+
     @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="FG_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
@@ -547,6 +551,16 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Override
     public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
         this.isShippingPriceTaxable = isShippingPriceTaxable;
+    }
+
+    @Override
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
+    @Override
+    public Integer getSequence() {
+        return this.sequence;
     }
 
     @Override

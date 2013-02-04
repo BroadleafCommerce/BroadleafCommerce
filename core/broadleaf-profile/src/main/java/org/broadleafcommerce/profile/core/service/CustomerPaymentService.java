@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.profile.core.service;
 
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface CustomerPaymentService {
     public void deleteCustomerPaymentById(Long customerPaymentId);
 
     public CustomerPayment create();
+
+    public CustomerPayment findDefaultPaymentForCustomer(Customer customer);
 }

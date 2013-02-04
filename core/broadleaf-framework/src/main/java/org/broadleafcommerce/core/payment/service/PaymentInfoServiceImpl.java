@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @Service("blPaymentInfoService")
 public class PaymentInfoServiceImpl implements PaymentInfoService {
@@ -66,7 +66,9 @@ public class PaymentInfoServiceImpl implements PaymentInfoService {
     }
 
     public PaymentResponseItem createResponseItem() {
-        return paymentInfoDao.createResponseItem();
+        PaymentResponseItem returnItem = paymentInfoDao.createResponseItem();
+        returnItem.setTransactionTimestamp(SystemTime.asDate());
+        return returnItem;
     }
 
 }

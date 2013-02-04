@@ -19,13 +19,20 @@ package org.broadleafcommerce.core.workflow;
 import java.io.Serializable;
 
 public interface ProcessContext extends Serializable {
+
     /**
      * Activly informs the workflow process to stop processing
-     * no further activities will be exeecuted
-     * @return 
+     * no further activities will be executed
+     *
+     * @return whether or not the stop process call was successful
      */
     public boolean stopProcess();
 
+    /**
+     * Is the process stopped
+     *
+     * @return whether or not the process is stopped
+     */
     public boolean isStopped();
 
     /**

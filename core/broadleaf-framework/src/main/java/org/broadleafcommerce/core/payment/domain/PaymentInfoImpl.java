@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -34,22 +35,7 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -114,6 +100,9 @@ public class PaymentInfoImpl implements PaymentInfo {
     @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150, nullable = false) })
     @Column(name = "FIELD_VALUE")
     protected Map<String, String> additionalFields = new HashMap<String, String>();
+
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentInfoDetailImpl.class, cascade = {CascadeType.ALL})
+    protected List<PaymentInfoDetail> details = new ArrayList<PaymentInfoDetail>();
 
     @Transient
     protected Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
@@ -226,6 +215,49 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Override
     public void setRequestParameterMap(Map<String, String[]> requestParameterMap) {
         this.requestParameterMap = requestParameterMap;
+    }
+
+    @Override
+    public List<PaymentInfoDetail> getPaymentInfoDetails() {
+        return details;
+    }
+
+    @Override
+    public void setPaymentInfoDetails(List<PaymentInfoDetail> details) {
+        this.details = details;
+    }
+
+    @Override
+    public Money getPaymentCapturedAmount() {
+        return getDetailsAmountForType(PaymentInfoDetailType.CAPTURE);
+    }
+
+    @Override
+    public Money getPaymentCreditedAmount() {
+        return getDetailsAmountForType(PaymentInfoDetailType.REFUND);
+    }
+
+    @Override
+    public Money getReverseAuthAmount() {
+        return getDetailsAmountForType(PaymentInfoDetailType.REVERSE_AUTH);
+    }
+
+    public Money getDetailsAmountForType(PaymentInfoDetailType type){
+        Money amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
+        for (PaymentInfoDetail detail : details){
+            if (type.equals(detail.getType())){
+                amount = amount.add(detail.getAmount());
+            }
+        }
+        return amount;
+    }
+
+    public BroadleafCurrency getCurrency() {
+        if (order != null) {
+            return order.getCurrency();
+        } else {
+            return null;
+        }
     }
 
     @Override

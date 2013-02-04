@@ -39,7 +39,7 @@ public class CreditCardPaymentInfoFactoryImpl implements PaymentInfoFactory {
         paymentInfo.setOrder(order);
         paymentInfo.setType(PaymentInfoType.CREDIT_CARD);
         paymentInfo.setReferenceNumber(String.valueOf(order.getId()));
-        paymentInfo.setAmount(order.getTotal());
+        paymentInfo.setAmount(order.getRemainingTotal());
 
         return paymentInfo;
     }

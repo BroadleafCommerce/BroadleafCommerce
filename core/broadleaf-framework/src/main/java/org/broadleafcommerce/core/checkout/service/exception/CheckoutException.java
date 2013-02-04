@@ -16,10 +16,11 @@
 
 package org.broadleafcommerce.core.checkout.service.exception;
 
+import org.broadleafcommerce.common.exception.BroadleafException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 
-public class CheckoutException extends Exception {
+public class CheckoutException extends BroadleafException {
 
     private static final long serialVersionUID = 1L;
     

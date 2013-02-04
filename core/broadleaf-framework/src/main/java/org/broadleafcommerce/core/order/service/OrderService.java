@@ -435,6 +435,15 @@ public interface OrderService {
      */
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
 
+    /**
+     * Deletes the Payment Info from the order.
+     * Note that this method will also delete any associated Secure Payment Infos if necessary.
+     *
+     * @param order
+     * @param paymentInfo
+     */
+    public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo);
+
     public void deleteOrder(Order cart);
 
 }

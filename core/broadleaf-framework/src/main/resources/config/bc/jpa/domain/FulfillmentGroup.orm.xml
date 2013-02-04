@@ -15,5 +15,50 @@
              AND fg.primary = TRUE
         </query>
     </named-query>
+    
+         <named-query name="BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE fg.status = :status ORDER BY fg.order.auditable.dateCreated ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_FULFILLMENT_GROUP_BY_STATUS_DESC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE fg.status = :status ORDER BY fg.order.auditable.dateCreated DESC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE (fg.status &lt;&gt; 'FULFILLED' AND fg.status &lt;&gt; 'DELIVERED') 
+            ORDER BY fg.order.auditable.dateCreated ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE (fg.status = 'PARTIALLY_FULFILLED' OR fg.status = 'PARTIALLY_DELIVERED') 
+            ORDER BY fg.order.auditable.dateCreated ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE (fg.status IS NULL) 
+            ORDER BY fg.order.auditable.dateCreated ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_MAX_FULFILLMENT_GROUP_SEQUENCE">
+        <query>
+            SELECT MAX(fg.sequence) FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE fg.order.id = :orderId 
+        </query>
+    </named-query>
 
 </entity-mappings>
