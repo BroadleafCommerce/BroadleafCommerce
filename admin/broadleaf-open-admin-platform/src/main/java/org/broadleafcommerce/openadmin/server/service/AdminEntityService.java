@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -32,6 +33,9 @@ import java.util.Map;
 public interface AdminEntityService {
 
     public ClassMetadata getClassMetadata(Class<?> clazz)
+            throws ServiceException, ApplicationSecurityException;
+
+    public ClassMetadata getClassMetadata(String className, ForeignKey[] foreignKeys, String configKey)
             throws ServiceException, ApplicationSecurityException;
 
     public Entity[] getRecords(Class<?> clazz, FilterAndSortCriteria... fascs)

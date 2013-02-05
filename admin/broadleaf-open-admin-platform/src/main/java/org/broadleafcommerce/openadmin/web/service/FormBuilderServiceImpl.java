@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
@@ -29,18 +30,16 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
+import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.stereotype.Service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -92,6 +91,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         return lg;
+    }
+
+    @Override
+    public RuleBuilder buildRuleBuilder(ClassMetadata cmd, Entity[] entities, String[] ruleVars, String[] configKeys) {
+        RuleBuilder rb = new RuleBuilder();
+        rb.setClassName(cmd.getCeilingType());
+        rb.setRuleVars(ruleVars);
+        rb.setConfigKeys(configKeys);
+        rb.setEntities(entities);
+
+        return rb;
     }
 
     @Override
@@ -183,10 +193,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         Entity[] subCollectionEntities = subCollections.get(p.getName());
                         Class<?> subCollectionClass = Class.forName(fmd.getCollectionCeilingEntity());
                         ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(subCollectionClass);
-                        ListGrid subCollectionGrid = buildListGrid(subCollectionMd, subCollectionEntities);
-                        subCollectionGrid.setSubCollectionFieldName(p.getName());
-                        subCollectionGrid.setAddMethodType(fmd.getAddMethodType());
-                        ef.getCollectionListGrids().add(subCollectionGrid);
+
+                        if (fmd.getRuleBuilderVars().length > 0) {
+                            RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(subCollectionMd, subCollectionEntities,
+                                    fmd.getRuleBuilderVars(), fmd.getRuleBuilderConfigKeys());
+                            ef.getCollectionRuleBuilders().add(subCollectionRuleBuilder);
+                        } else {
+                            ListGrid subCollectionGrid = buildListGrid(subCollectionMd, subCollectionEntities);
+                            ef.getCollectionListGrids().add(subCollectionGrid);
+                        }
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

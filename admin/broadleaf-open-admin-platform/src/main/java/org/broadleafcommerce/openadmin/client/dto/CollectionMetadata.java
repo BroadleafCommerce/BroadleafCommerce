@@ -29,6 +29,8 @@ public abstract class CollectionMetadata extends FieldMetadata {
     private String dataSourceName;
     private boolean mutable;
     private String[] customCriteria;
+    private String[] ruleBuilderConfigKeys;
+    private String[] ruleBuilderVars;
 
     public PersistencePerspective getPersistencePerspective() {
         return persistencePerspective;
@@ -78,6 +80,22 @@ public abstract class CollectionMetadata extends FieldMetadata {
         this.customCriteria = customCriteria;
     }
 
+    public String[] getRuleBuilderConfigKeys() {
+        return ruleBuilderConfigKeys;
+    }
+
+    public void setRuleBuilderConfigKeys(String[] ruleBuilderConfigKeys) {
+        this.ruleBuilderConfigKeys = ruleBuilderConfigKeys;
+    }
+
+    public String[] getRuleBuilderVars() {
+        return ruleBuilderVars;
+    }
+
+    public void setRuleBuilderVars(String[] ruleBuilderVars) {
+        this.ruleBuilderVars = ruleBuilderVars;
+    }
+
     @Override
     protected FieldMetadata populate(FieldMetadata metadata) {
         super.populate(metadata);
@@ -87,6 +105,8 @@ public abstract class CollectionMetadata extends FieldMetadata {
         ((CollectionMetadata) metadata).setDataSourceName(dataSourceName);
         ((CollectionMetadata) metadata).setMutable(mutable);
         ((CollectionMetadata) metadata).setCustomCriteria(customCriteria);
+        ((CollectionMetadata) metadata).setRuleBuilderConfigKeys(ruleBuilderConfigKeys);
+        ((CollectionMetadata) metadata).setRuleBuilderVars(ruleBuilderVars);
         return metadata;
     }
 

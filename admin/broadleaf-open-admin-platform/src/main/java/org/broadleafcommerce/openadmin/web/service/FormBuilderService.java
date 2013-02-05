@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 import java.util.Map;
 
@@ -32,6 +32,8 @@ import java.util.Map;
 public interface FormBuilderService {
 
     public ListGrid buildListGrid(ClassMetadata cmd, Entity[] entities);
+
+    public RuleBuilder buildRuleBuilder(ClassMetadata cmd, Entity[] entities, String[] ruleVars, String[] configKeys);
 
     public EntityForm buildEntityForm(ClassMetadata cmd, Entity e, Map<String, Entity[]> subCollections)
             throws ClassNotFoundException, ServiceException, ApplicationSecurityException;

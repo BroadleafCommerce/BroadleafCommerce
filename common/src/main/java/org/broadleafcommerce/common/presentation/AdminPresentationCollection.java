@@ -189,4 +189,23 @@ public @interface AdminPresentationCollection {
      */
     String currencyCodeField() default "";
 
+    /**
+     * Optional - If you have FieldType set to SupportedFieldType.RULE,
+     * you can explicitly specify the meta-data override configuration keys
+     * that the GUI should use to build the field drop-down.
+     * Example: configurationKeys value may be : {"promotionOrderItem", "promotionCustomer"}
+     *
+     * @return the configuration keys
+     */
+    String[] ruleBuilderConfigKeys() default {};
+
+    /**
+     * Optional - If you have FieldType set to SupportedFieldType.RULE,
+     * you can explicitly specify the variable name for that particular rule.
+     * An array is needed in the case that the SupportedCriteriaFieldType == RULE_MAP
+     *
+     * @return the rule variables
+     */
+    String[] ruleBuilderVars() default {};
+
 }

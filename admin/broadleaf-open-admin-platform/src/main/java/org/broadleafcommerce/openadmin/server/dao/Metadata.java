@@ -429,6 +429,8 @@ public class Metadata {
             override.setInspectType(annotColl.operationTypes().inspectType());
             override.setShowIfProperty(annotColl.showIfProperty());
             override.setCurrencyCodeField(annotColl.currencyCodeField());
+            override.setRuleBuilderConfigKeys(annotColl.ruleBuilderConfigKeys());
+            override.setRuleBuilderVars(annotColl.ruleBuilderVars());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationCollection annotation not found on Field");
@@ -1255,6 +1257,14 @@ public class Metadata {
 
         if (collectionMetadata.getCurrencyCodeField()!=null) {
             metadata.setCurrencyCodeField(collectionMetadata.getCurrencyCodeField());
+        }
+
+        if (collectionMetadata.getRuleBuilderConfigKeys()!=null) {
+            metadata.setRuleBuilderConfigKeys(collectionMetadata.getRuleBuilderConfigKeys());
+        }
+
+        if (collectionMetadata.getRuleBuilderVars()!=null) {
+            metadata.setRuleBuilderVars(collectionMetadata.getRuleBuilderVars());
         }
 
         attributes.put(field.getName(), metadata);

@@ -58,7 +58,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         cmd.setCeilingType(clazz.getName());
         return cmd;
     }
-    
+
+    @Override
+    public ClassMetadata getClassMetadata(String className, ForeignKey[] foreignKeys, String configKey) throws ServiceException, ApplicationSecurityException {
+        return inspect(className, foreignKeys, configKey).getClassMetaData();
+    }
+
     @Override
     public Entity[] getRecords(Class<?> clazz, FilterAndSortCriteria... fascs)
             throws ServiceException, ApplicationSecurityException {
@@ -194,7 +199,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      * @throws ApplicationSecurityException
      */
     protected Entity add(Entity entity, Class<?> clazz, ForeignKey[] foreignKeys) throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, foreignKeys);
+        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, foreignKeys, null);
         pkg.setEntity(entity);
         return service.add(pkg);
     }
@@ -209,7 +214,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      * @throws ApplicationSecurityException
      */
     protected Entity update(Entity entity, Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, null);
+        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, null, null);
         pkg.setEntity(entity);
         return service.update(pkg);
     }
@@ -223,7 +228,22 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      * @throws ApplicationSecurityException
      */
     protected DynamicResultSet inspect(Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, null);
+        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, null, null);
+        return service.inspect(pkg);
+    }
+
+    /**
+     * Executes a database fetch for the given class
+     *
+     * @param className the fully qualified name of the class to use
+     * @param foreignKeys any foreign keys applicable to this perspective
+     * @param configKey any configuration key to consider with this persistence perspective
+     * @return the DynamicResultSet (note that this will not have any entities, only metadata)
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    protected DynamicResultSet inspect(String className, ForeignKey[] foreignKeys, String configKey) throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = getPersistencePackage(className, null, foreignKeys, configKey);
         return service.inspect(pkg);
     }
 
@@ -239,7 +259,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      */
     protected DynamicResultSet fetch(Class<?> clazz, ForeignKey[] foreignKeys, FilterAndSortCriteria... fascs)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, foreignKeys);
+        PersistencePackage pkg = getPersistencePackage(clazz.getName(), null, foreignKeys, null);
         CriteriaTransferObject cto = getDefaultCto();
         
         if (fascs != null) {
@@ -266,9 +286,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     
     /**
      * @param foreignKeys keys to add to the PersistencePerspective PersistencePerspectiveItems
+     * @param configurationKey any configuration key to consider with this persistence perspective
      * @return a PersistencePerspective configured with the default operation types and specified foreign keys
      */
-    protected PersistencePerspective getPersistencePerspective(ForeignKey[] foreignKeys) {
+    protected PersistencePerspective getPersistencePerspective(ForeignKey[] foreignKeys, String configurationKey) {
         PersistencePerspective persistencePerspective = new PersistencePerspective();
         persistencePerspective.setOperationTypes(getDefaultOperationTypes());
         persistencePerspective.setAdditionalForeignKeys(new ForeignKey[] {});
@@ -277,6 +298,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             for (ForeignKey fk : foreignKeys) {
                 persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, fk);
             }
+        }
+
+        if (configurationKey !=null) {
+            persistencePerspective.setConfigurationKey(configurationKey);
         }
         
         return persistencePerspective;
@@ -288,13 +313,14 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      * @param className the fully qualified name of the class to use
      * @param customCriteria any customCriteria to pass to the persistence handlers
      * @param keys any foreign keys to consider for the persistence perspective
+     * @param configurationKey any configuration key to consider with this persistence perspective
      * @return the assembled persistence package
      */
-    protected PersistencePackage getPersistencePackage(String className, String[] customCriteria, ForeignKey[] keys) {
+    protected PersistencePackage getPersistencePackage(String className, String[] customCriteria, ForeignKey[] keys, String configurationKey) {
         PersistencePackage pp = new PersistencePackage();
         pp.setCeilingEntityFullyQualifiedClassname(className);
         pp.setFetchTypeFullyQualifiedClassname(null);
-        pp.setPersistencePerspective(getPersistencePerspective(keys));
+        pp.setPersistencePerspective(getPersistencePerspective(keys, configurationKey));
         pp.setCustomCriteria(customCriteria);
         pp.setEntity(null);
         pp.setCsrfToken(null);

@@ -22,11 +22,11 @@ import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -58,7 +58,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -70,9 +69,6 @@ import java.util.Set;
 @Table(name = "BLC_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationOverrides(
-        {@AdminPresentationOverride(name="targetItemCriteria.offer", value=@AdminPresentation(excluded = true))}
-)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OfferImpl_baseOffer")
 @SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
 public class OfferImpl implements Offer, Status {
@@ -201,6 +197,7 @@ public class OfferImpl implements Offer, Status {
     @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, manyToField = "targetOffer", friendlyName = "targetItemCriteria", ruleBuilderConfigKeys = {"promotionOrderItem"}, ruleBuilderVars = {"orderItem"})
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")

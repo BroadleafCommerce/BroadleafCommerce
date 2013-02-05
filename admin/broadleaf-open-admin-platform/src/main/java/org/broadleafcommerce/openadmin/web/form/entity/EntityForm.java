@@ -2,6 +2,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ public class EntityForm {
     protected String entityType;
     protected Map<String, FieldGroup> groups = new HashMap<String, FieldGroup>();
     protected List<ListGrid> collectionListGrids = new ArrayList<ListGrid>();
+    protected List<RuleBuilder> collectionRuleBuilders = new ArrayList<RuleBuilder>();
 
     protected Map<String, Field> fields = null;
 
@@ -92,4 +94,11 @@ public class EntityForm {
         this.collectionListGrids = collectionListGrids;
     }
 
+    public List<RuleBuilder> getCollectionRuleBuilders() {
+        return collectionRuleBuilders;
+    }
+
+    public void setCollectionRuleBuilders(List<RuleBuilder> collectionRuleBuilders) {
+        this.collectionRuleBuilders = collectionRuleBuilders;
+    }
 }
