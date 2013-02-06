@@ -18,9 +18,11 @@ public interface PersistencePackageFactory {
      * @param className
      * @param customCriteria
      * @param foreignKeys
+     * @param configurationKey
      * @return the persistence package
      */
-    public PersistencePackage standard(String className, String[] customCriteria, ForeignKey[] foreignKeys);
+    public PersistencePackage standard(String className, String[] customCriteria, ForeignKey[] foreignKeys,
+            String configurationKey);
 
     /**
      * Creates a persistence package for operations on adorned target collections

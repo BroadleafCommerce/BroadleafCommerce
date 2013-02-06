@@ -32,7 +32,8 @@ import org.springframework.stereotype.Service;
 public class PersistencePackageFactoryImpl implements PersistencePackageFactory {
     
     @Override
-    public PersistencePackage standard(String className, String[] customCriteria, ForeignKey[] foreignKeys) {
+    public PersistencePackage standard(String className, String[] customCriteria, ForeignKey[] foreignKeys,
+            String configurationKey) {
         PersistencePerspective persistencePerspective = new PersistencePerspective();
         persistencePerspective.setOperationTypes(getDefaultOperationTypes());
         persistencePerspective.setAdditionalForeignKeys(new ForeignKey[] {});
