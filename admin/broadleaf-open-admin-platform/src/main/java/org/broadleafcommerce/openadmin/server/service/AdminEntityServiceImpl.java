@@ -59,16 +59,16 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     protected PersistencePackageFactory persistencePackageFactory;
 
     @Override
-    public ClassMetadata getClassMetadata(Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        ClassMetadata cmd = inspect(clazz).getClassMetaData();
-        cmd.setCeilingType(clazz.getName());
+    public ClassMetadata getClassMetadata(String className) throws ServiceException, ApplicationSecurityException {
+        ClassMetadata cmd = inspect(className, null, null).getClassMetaData();
+        cmd.setCeilingType(className);
         return cmd;
     }
     
     @Override
-    public ClassMetadata getClassMetadata(Class<?> clazz, AdornedTargetList adornedList) throws ServiceException, ApplicationSecurityException {
-        ClassMetadata cmd = inspect(clazz, adornedList).getClassMetaData();
-        cmd.setCeilingType(clazz.getName());
+    public ClassMetadata getClassMetadata(String className, AdornedTargetList adornedList) throws ServiceException, ApplicationSecurityException {
+        ClassMetadata cmd = inspect(className, adornedList).getClassMetaData();
+        cmd.setCeilingType(className);
         return cmd;
     }
 
@@ -78,17 +78,17 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity[] getRecords(Class<?> clazz, FilterAndSortCriteria... fascs)
+    public Entity[] getRecords(String className, ForeignKey[] foreignKeys, FilterAndSortCriteria... fascs)
             throws ServiceException, ApplicationSecurityException {
-        return fetch(clazz, null, fascs).getRecords();
+        return fetch(className, foreignKeys, null, fascs).getRecords();
     }
 
     @Override
-    public Entity getRecord(Class<?> clazz, String id) throws ServiceException, ApplicationSecurityException {
+    public Entity getRecord(String className, String id) throws ServiceException, ApplicationSecurityException {
         FilterAndSortCriteria fasc = new FilterAndSortCriteria("id");
         fasc.setFilterValue(id);
         
-        Entity[] entities = fetch(clazz, null, fasc).getRecords();
+        Entity[] entities = fetch(className, null, null, fasc).getRecords();
         
         if (entities == null || entities.length > 1) {
             throw new RuntimeException("More than one entity found with the same id");
@@ -115,13 +115,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             @Override
             public void visit(AdornedTargetCollectionMetadata fmd) {
                 try {
-                    Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
                     AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                             .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 
-                    recordContainer[0] = fetch(collectionClass, adornedList).getRecords();
-
-                    System.out.println("hi");
+                    recordContainer[0] = fetch(fmd.getCollectionCeilingEntity(), adornedList).getRecords();
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -132,14 +129,14 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 try {
                     // Establish the filter criteria for the subcollection -- we want to get all results for the 
                     // subcollection for the current containing entity id
-                    Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
                     ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
                             .get(PersistencePerspectiveItemType.FOREIGNKEY);
 
                     FilterAndSortCriteria fasc = new FilterAndSortCriteria(foreignField.getManyToField());
                     fasc.setFilterValue(containingEntityId);
 
-                    recordContainer[0] = fetch(collectionClass, new ForeignKey[] { foreignField }, fasc).getRecords();
+                    recordContainer[0] = fetch(fmd.getCollectionCeilingEntity(),
+                            new ForeignKey[] { foreignField }, null, fasc).getRecords();
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -156,11 +153,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Map<String, Entity[]> getRecordsForAllSubCollections(final Class<?> containingClass, final String containingEntityId)
+    public Map<String, Entity[]> getRecordsForAllSubCollections(final String containingClassName,
+            final String containingEntityId)
             throws ServiceException, ApplicationSecurityException {
         final Map<String, Entity[]> map = new HashMap<String, Entity[]>();
 
-        final ClassMetadata cmd = getClassMetadata(containingClass);
+        final ClassMetadata cmd = getClassMetadata(containingClassName);
         for (final Property p : cmd.getProperties()) {
             p.getMetadata().accept(new MetadataVisitor() {
 
@@ -202,18 +200,16 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity addSubCollectionEntity(EntityForm entityForm, Class<?> clazz, String fieldName, String parentId)
+    public Entity addSubCollectionEntity(EntityForm entityForm, String className, String fieldName, String parentId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
         // Find the FieldMetadata for this collection field
-        ClassMetadata cmd = getClassMetadata(clazz);
+        ClassMetadata cmd = getClassMetadata(className);
         BasicCollectionMetadata fmd = null;
         for (Property p : cmd.getProperties()) {
             if (p.getName().equals(fieldName) && p.getMetadata() instanceof BasicCollectionMetadata) {
                 fmd = (BasicCollectionMetadata) p.getMetadata();
             }
         }
-
-        Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
 
         // Build the property array from the field map. Note that we leave 1 extra slot for the foreign key reference
         Property[] properties = new Property[entityForm.getFields().size() + 1];
@@ -237,11 +233,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         entity.setProperties(properties);
         entity.setType(new String[] { entityForm.getEntityType() });
 
-        return add(entity, collectionClass, new ForeignKey[] { foreignField });
+        return add(entity, fmd.getCollectionCeilingEntity(), new ForeignKey[] { foreignField }, null);
     }
 
     @Override
-    public Entity updateEntity(EntityForm entityForm, Class<?> clazz)
+    public Entity updateEntity(EntityForm entityForm, String className)
             throws ServiceException, ApplicationSecurityException {
         // Build the property array from the field map
         Property[] properties = new Property[entityForm.getFields().size()];
@@ -257,7 +253,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         entity.setProperties(properties);
         entity.setType(new String[] { entityForm.getEntityType() });
 
-        return update(entity, clazz);
+        return update(entity, className, null, null);
     }
 
     /**
@@ -269,8 +265,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    protected Entity add(Entity entity, Class<?> clazz, ForeignKey[] foreignKeys) throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.standard(clazz.getName(), null, foreignKeys, null);
+    protected Entity add(Entity entity, String className, ForeignKey[] foreignKeys, String configKey)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
         pkg.setEntity(entity);
         return service.add(pkg);
     }
@@ -284,8 +281,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    protected Entity update(Entity entity, Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.standard(clazz.getName(), null, null, null);
+    protected Entity update(Entity entity, String className, ForeignKey[] foreignKeys, String configKey)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
         pkg.setEntity(entity);
         return service.update(pkg);
     }
@@ -293,25 +291,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     /**
      * Executes a database inspect for the given class
      * 
-     * @param clazz
-     * @return the DynamicResultSet (note that this will not have any entities, only metadata)
-     * @throws ServiceException
-     * @throws ApplicationSecurityException
-     */
-    protected DynamicResultSet inspect(Class<?> clazz) throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.standard(clazz.getName(), null, null, null);
-        return service.inspect(pkg);
-    }
-
-    protected DynamicResultSet inspect(Class<?> clazz, AdornedTargetList adornedList)
-            throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.adornedTarget(clazz.getName(), null, adornedList);
-        return service.inspect(pkg);
-    }
-
-    /**
-     * Executes a database fetch for the given class
-     *
      * @param className the fully qualified name of the class to use
      * @param foreignKeys any foreign keys applicable to this perspective
      * @param configKey any configuration key to consider with this persistence perspective
@@ -319,8 +298,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    protected DynamicResultSet inspect(String className, ForeignKey[] foreignKeys, String configKey) throws ServiceException, ApplicationSecurityException {
+    protected DynamicResultSet inspect(String className, ForeignKey[] foreignKeys, String configKey)
+            throws ServiceException, ApplicationSecurityException {
         PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
+        return service.inspect(pkg);
+    }
+
+    protected DynamicResultSet inspect(String className, AdornedTargetList adornedList)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = persistencePackageFactory.adornedTarget(className, null, adornedList);
         return service.inspect(pkg);
     }
 
@@ -334,9 +320,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    protected DynamicResultSet fetch(Class<?> clazz, ForeignKey[] foreignKeys, FilterAndSortCriteria... fascs)
+    protected DynamicResultSet fetch(String className, ForeignKey[] foreignKeys, String configKey,
+            FilterAndSortCriteria... fascs)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.standard(clazz.getName(), null, foreignKeys, null);
+        PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
         CriteriaTransferObject cto = getDefaultCto();
         
         if (fascs != null) {
@@ -348,9 +335,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return service.fetch(pkg, cto);
     }
     
-    protected DynamicResultSet fetch(Class<?> clazz, AdornedTargetList adornedList)
+    protected DynamicResultSet fetch(String className, AdornedTargetList adornedList)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.adornedTarget(clazz.getName(), null, adornedList);
+        PersistencePackage pkg = persistencePackageFactory.adornedTarget(className, null, adornedList);
         CriteriaTransferObject cto = getDefaultCto();
 
         return service.fetch(pkg, cto);

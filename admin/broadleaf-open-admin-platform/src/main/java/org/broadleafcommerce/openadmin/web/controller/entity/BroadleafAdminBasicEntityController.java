@@ -25,6 +25,7 @@ import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
@@ -62,10 +63,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey) throws Exception {
-        Class<?> sectionClass = getClassForSection(sectionKey);
+        String sectionClassName = getClassNameForSection(sectionKey);
 
-        ClassMetadata cmd = service.getClassMetadata(sectionClass);
-        Entity[] rows = service.getRecords(sectionClass);
+        ClassMetadata cmd = service.getClassMetadata(sectionClassName);
+        Entity[] rows = service.getRecords(sectionClassName, null);
 
         ListGrid listGrid = formService.buildListGrid(cmd, rows);
 
@@ -79,11 +80,11 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id) throws Exception {
-        Class<?> sectionClass = getClassForSection(sectionKey);
+        String sectionClassName = getClassNameForSection(sectionKey);
 
-        ClassMetadata cmd = service.getClassMetadata(sectionClass);
-        Entity entity = service.getRecord(sectionClass, id);
-        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClass, id);
+        ClassMetadata cmd = service.getClassMetadata(sectionClassName);
+        Entity entity = service.getRecord(sectionClassName, id);
+        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
 
         EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
         
@@ -98,9 +99,9 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String sectionKey,
             String id,
             EntityForm entityForm) throws Exception {
-        Class<?> sectionClass = getClassForSection(sectionKey);
+        String sectionClassName = getClassNameForSection(sectionKey);
 
-        service.updateEntity(entityForm, sectionClass);
+        service.updateEntity(entityForm, sectionClassName);
 
         return "redirect:/" + sectionKey + "/" + id;
     }
@@ -109,15 +110,15 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String sectionKey,
             String id,
             String collectionField) throws Exception {
-        Class<?> mainClass = getClassForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClass);
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
 
         for (Property p : mainMetadata.getProperties()) {
             if (p.getName().equals(collectionField)) {
-                Class<?> collectionClass = Class.forName(((BasicFieldMetadata) p.getMetadata()).getForeignKeyClass());
+                String collectionClassName = ((BasicFieldMetadata) p.getMetadata()).getForeignKeyClass();
 
-                ClassMetadata collectionMetadata = service.getClassMetadata(collectionClass);
-                Entity[] rows = service.getRecords(collectionClass);
+                ClassMetadata collectionMetadata = service.getClassMetadata(collectionClassName);
+                Entity[] rows = service.getRecords(collectionClassName, null);
 
                 ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
                 model.addAttribute("listGrid", listGrid);
@@ -136,8 +137,8 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String sectionKey,
             String id,
             String collectionField) throws Exception {
-        Class<?> mainClass = getClassForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClass);
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
 
         for (final Property p : mainMetadata.getProperties()) {
             if (p.getName().equals(collectionField)) {
@@ -151,16 +152,15 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                     @Override
                     public void visit(BasicCollectionMetadata fmd) {
                         try {
-                            Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
-
-                            ClassMetadata collectionMetadata = service.getClassMetadata(collectionClass);
+                            ForeignKey[] foreignKeys = new ForeignKey[] { (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY) };
+                            ClassMetadata collectionMetadata = service.getClassMetadata(fmd.getCollectionCeilingEntity(), foreignKeys, null);
 
                             if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
                                 EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
                                 model.addAttribute("entityForm", entityForm);
                                 model.addAttribute("viewType", "modalEntityForm");
                             } else {
-                                Entity[] rows = service.getRecords(collectionClass);
+                                Entity[] rows = service.getRecords(fmd.getCollectionCeilingEntity(), foreignKeys);
                                 ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
                                 model.addAttribute("listGrid", listGrid);
                                 model.addAttribute("listGridType", "basicCollection");
@@ -175,13 +175,12 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                     @Override
                     public void visit(AdornedTargetCollectionMetadata fmd) {
                         try {
-                            Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
                             AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                                     .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 
-                            ClassMetadata collectionMetadata = service.getClassMetadata(collectionClass, adornedList);
+                            ClassMetadata collectionMetadata = service.getClassMetadata(fmd.getCollectionCeilingEntity(), adornedList);
 
-                            Entity[] rows = service.getRecords(collectionClass);
+                            Entity[] rows = service.getRecords(fmd.getCollectionCeilingEntity(), null);
                             ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
                             model.addAttribute("listGrid", listGrid);
                             model.addAttribute("listGridType", "adornedTarget");
@@ -210,18 +209,18 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String id,
             String collectionField,
             EntityForm entityForm) throws Exception {
-        Class<?> mainClass = getClassForSection(sectionKey);
+        String mainClassName = getClassNameForSection(sectionKey);
 
-        service.addSubCollectionEntity(entityForm, mainClass, collectionField, id);
+        service.addSubCollectionEntity(entityForm, mainClassName, collectionField, id);
 
         return "redirect:/" + sectionKey + "/" + id;
     }
 
-    protected Class<?> getClassForSection(String sectionKey) {
+    protected String getClassNameForSection(String sectionKey) {
         sectionKey = "/" + sectionKey;
         AdminSection section = adminNavigationService.findAdminSectionByURI(sectionKey);
         String className = section.getCeilingEntity();
-        return entityConfiguration.lookupEntityClass(className);
+        return className;
     }
 
     protected void setModelAttributes(Model model, String sectionKey) {

@@ -34,34 +34,33 @@ import java.util.Map;
  */
 public interface AdminEntityService {
 
-    public ClassMetadata getClassMetadata(Class<?> clazz)
+    public ClassMetadata getClassMetadata(String className)
             throws ServiceException, ApplicationSecurityException;
 
-    public ClassMetadata getClassMetadata(Class<?> clazz, AdornedTargetList adornedList)
+    public ClassMetadata getClassMetadata(String className, AdornedTargetList adornedList)
             throws ServiceException, ApplicationSecurityException;
 
     public ClassMetadata getClassMetadata(String className, ForeignKey[] foreignKeys, String configKey)
             throws ServiceException, ApplicationSecurityException;
 
-    public Entity[] getRecords(Class<?> clazz, FilterAndSortCriteria... fascs)
+    public Entity[] getRecords(String className, ForeignKey[] foreignKeys, FilterAndSortCriteria... fascs)
             throws ServiceException, ApplicationSecurityException;
 
-    public Entity getRecord(Class<?> clazz, String id)
+    public Entity getRecord(String className, String id)
             throws ServiceException, ApplicationSecurityException;
 
-    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, String containingEntityId,
-            Property collectionProperty)
+    public Entity[] getRecordsForCollection(final ClassMetadata containingClassMetadata, final String containingEntityId,
+            final Property collectionProperty)
             throws ServiceException, ApplicationSecurityException;
 
-    public Map<String, Entity[]> getRecordsForAllSubCollections(Class<?> containingClass, String containingEntityId)
+    public Map<String, Entity[]> getRecordsForAllSubCollections(final String containingClassName,
+            final String containingEntityId)
             throws ServiceException, ApplicationSecurityException;
 
-    public Entity updateEntity(EntityForm entityForm, Class<?> clazz)
-            throws ServiceException, ApplicationSecurityException;
-
-    public Entity addSubCollectionEntity(EntityForm entityForm, Class<?> clazz, String fieldName, String parentId)
+    public Entity addSubCollectionEntity(EntityForm entityForm, String className, String fieldName, String parentId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
+    public Entity updateEntity(EntityForm entityForm, String className)
+            throws ServiceException, ApplicationSecurityException;
+
 }
-
-

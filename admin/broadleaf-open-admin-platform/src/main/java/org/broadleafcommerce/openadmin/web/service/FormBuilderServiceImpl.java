@@ -230,8 +230,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 public void visit(BasicCollectionMetadata fmd) {
                     try {
                         Entity[] subCollectionEntities = subCollections.get(p.getName());
-                        Class<?> subCollectionClass = Class.forName(fmd.getCollectionCeilingEntity());
-                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(subCollectionClass);
+                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(fmd.getCollectionCeilingEntity());
 
                         if (fmd.getRuleBuilderVars().length > 0) {
                             RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(subCollectionMd, subCollectionEntities,
@@ -260,8 +259,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                                 .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
                         Entity[] subCollectionEntities = subCollections.get(p.getName());
-                        Class<?> subCollectionClass = Class.forName(fmd.getCollectionCeilingEntity());
-                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(subCollectionClass, adornedList);
+                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(fmd.getCollectionCeilingEntity(), adornedList);
 
                         ListGrid subCollectionGrid = buildAdornedListGrid(fmd, subCollectionMd, subCollectionEntities);
                         subCollectionGrid.setSubCollectionFieldName(p.getName());
