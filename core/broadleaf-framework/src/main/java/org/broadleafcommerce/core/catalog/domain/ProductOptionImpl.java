@@ -27,6 +27,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,9 +44,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -76,7 +76,7 @@ public class ProductOptionImpl implements ProductOption {
     protected String attributeName;
     
     @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "Label", tooltip="Text to display for the set of option values")
+    @AdminPresentation(friendlyName = "Label", tooltip = "Text to display for the set of option values", prominent = true)
     protected String label;
 
     @Column(name = "REQUIRED")

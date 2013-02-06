@@ -17,10 +17,12 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -35,6 +37,9 @@ public interface AdminEntityService {
     public ClassMetadata getClassMetadata(Class<?> clazz)
             throws ServiceException, ApplicationSecurityException;
 
+    public ClassMetadata getClassMetadata(Class<?> clazz, AdornedTargetList adornedList)
+            throws ServiceException, ApplicationSecurityException;
+
     public ClassMetadata getClassMetadata(String className, ForeignKey[] foreignKeys, String configKey)
             throws ServiceException, ApplicationSecurityException;
 
@@ -44,7 +49,8 @@ public interface AdminEntityService {
     public Entity getRecord(Class<?> clazz, String id)
             throws ServiceException, ApplicationSecurityException;
 
-    public Entity[] getRecordsForCollection(Class<?> containingClass, String containingEntityId, String collectionField)
+    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, String containingEntityId,
+            Property collectionProperty)
             throws ServiceException, ApplicationSecurityException;
 
     public Map<String, Entity[]> getRecordsForAllSubCollections(Class<?> containingClass, String containingEntityId)
@@ -57,3 +63,5 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
 }
+
+

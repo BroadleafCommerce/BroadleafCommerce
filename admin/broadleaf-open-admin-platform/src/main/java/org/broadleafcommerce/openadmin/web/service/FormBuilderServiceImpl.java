@@ -16,10 +16,11 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
@@ -36,10 +37,13 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -66,6 +70,41 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     hfs.add(hf);
                 }
             }
+        }
+
+        ListGrid lg = new ListGrid();
+        lg.setClassName(cmd.getCeilingType());
+        lg.setHeaderFields(hfs);
+
+        // For each of the entities (rows) in the list grid, we need to build the associated
+        // ListGridRecord and set the required fields on the record. These fields are the same ones
+        // that are used for the column headers
+        for (Entity e : entities) {
+            ListGridRecord record = new ListGridRecord();
+            record.setId(e.findProperty("id").getValue());
+
+            for (Field headerField : hfs) {
+                Property p = e.findProperty(headerField.getName());
+                Field recordField = new Field();
+                recordField.setName(headerField.getName());
+                recordField.setValue(p.getValue());
+                record.getFields().add(recordField);
+            }
+
+            lg.getRecords().add(record);
+        }
+
+        return lg;
+    }
+
+    protected ListGrid buildAdornedListGrid(AdornedTargetCollectionMetadata fmd, ClassMetadata cmd, Entity[] entities) {
+        List<Field> hfs = new ArrayList<Field>();
+        for (String fieldName : fmd.getGridVisibleFields()) {
+            Property p = cmd.getPMap().get(fieldName);
+            Field hf = new Field();
+            hf.setName(p.getName());
+            hf.setFriendlyName(p.getMetadata().getFriendlyName());
+            hfs.add(hf);
         }
 
         ListGrid lg = new ListGrid();
@@ -200,6 +239,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             ef.getCollectionRuleBuilders().add(subCollectionRuleBuilder);
                         } else {
                             ListGrid subCollectionGrid = buildListGrid(subCollectionMd, subCollectionEntities);
+                            subCollectionGrid.setSubCollectionFieldName(p.getName());
+                            subCollectionGrid.setAddMethodType(fmd.getAddMethodType());
                             ef.getCollectionListGrids().add(subCollectionGrid);
                         }
 
@@ -215,7 +256,19 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                 @Override
                 public void visit(AdornedTargetCollectionMetadata fmd) {
+                    try {
+                        AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
+                                .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                        Entity[] subCollectionEntities = subCollections.get(p.getName());
+                        Class<?> subCollectionClass = Class.forName(fmd.getCollectionCeilingEntity());
+                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(subCollectionClass, adornedList);
 
+                        ListGrid subCollectionGrid = buildAdornedListGrid(fmd, subCollectionMd, subCollectionEntities);
+                        subCollectionGrid.setSubCollectionFieldName(p.getName());
+                        ef.getCollectionListGrids().add(subCollectionGrid);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         }
@@ -224,3 +277,5 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
 }
+
+

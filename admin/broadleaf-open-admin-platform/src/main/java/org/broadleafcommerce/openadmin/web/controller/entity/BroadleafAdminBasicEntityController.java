@@ -17,11 +17,17 @@
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.controller.BroadleafAdminAbstractController;
@@ -115,6 +121,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
                 ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
                 model.addAttribute("listGrid", listGrid);
+                model.addAttribute("listGridType", "toOne");
                 model.addAttribute("viewType", "modalListGrid");
 
                 break;
@@ -125,29 +132,75 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/modalContainer";
     }
 
-    public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+    public String showAddCollectionItem(final HttpServletRequest request, HttpServletResponse response, final Model model,
             String sectionKey,
             String id,
             String collectionField) throws Exception {
         Class<?> mainClass = getClassForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(mainClass);
 
-        for (Property p : mainMetadata.getProperties()) {
+        for (final Property p : mainMetadata.getProperties()) {
             if (p.getName().equals(collectionField)) {
-                Class<?> collectionClass = Class.forName(((BasicCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
+                p.getMetadata().accept(new MetadataVisitor() {
 
-                ClassMetadata collectionMetadata = service.getClassMetadata(collectionClass);
+                    @Override
+                    public void visit(BasicFieldMetadata fmd) {
+                        // Unnecessary visitor
+                    }
 
-                EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
+                    @Override
+                    public void visit(BasicCollectionMetadata fmd) {
+                        try {
+                            Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
 
-                model.addAttribute("currentUrl", request.getRequestURL().toString());
-                model.addAttribute("entityForm", entityForm);
-                model.addAttribute("viewType", "modalEntityForm");
+                            ClassMetadata collectionMetadata = service.getClassMetadata(collectionClass);
 
-                break;
+                            if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
+                                EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
+                                model.addAttribute("entityForm", entityForm);
+                                model.addAttribute("viewType", "modalEntityForm");
+                            } else {
+                                Entity[] rows = service.getRecords(collectionClass);
+                                ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
+                                model.addAttribute("listGrid", listGrid);
+                                model.addAttribute("listGridType", "basicCollection");
+                                model.addAttribute("viewType", "modalListGrid");
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+
+                    @Override
+                    public void visit(AdornedTargetCollectionMetadata fmd) {
+                        try {
+                            Class<?> collectionClass = Class.forName(fmd.getCollectionCeilingEntity());
+                            AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
+                                    .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+
+                            ClassMetadata collectionMetadata = service.getClassMetadata(collectionClass, adornedList);
+
+                            Entity[] rows = service.getRecords(collectionClass);
+                            ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
+                            model.addAttribute("listGrid", listGrid);
+                            model.addAttribute("listGridType", "adornedTarget");
+                            model.addAttribute("viewType", "modalListGrid");
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    @Override
+                    public void visit(MapMetadata fmd) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
             }
         }
 
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";
     }
