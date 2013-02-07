@@ -65,6 +65,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     }
 
     public CustomerPayment findDefaultPaymentForCustomer(Customer customer) {
+        if (customer == null) { return null; }
         List<CustomerPayment> payments = readCustomerPaymentsByCustomerId(customer.getId());
         for (CustomerPayment payment : payments) {
             if (payment.isDefault()) {
