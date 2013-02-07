@@ -204,16 +204,33 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/modalContainer";
     }
 
-    public String saveNewCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+    public String saveNewCollectionItem(HttpServletRequest request, HttpServletResponse response, final Model model,
             String sectionKey,
-            String id,
+            final String id,
             String collectionField,
-            EntityForm entityForm) throws Exception {
+            final EntityForm entityForm) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
 
         service.addSubCollectionEntity(entityForm, mainClassName, collectionField, id);
 
-        return "redirect:/" + sectionKey + "/" + id;
+
+        for (Property p : mainMetadata.getProperties()) {
+            if (p.getName().equals(collectionField)) {
+                Entity[] rows = service.getRecordsForCollection(mainMetadata, id, p);
+                ClassMetadata subCollectionMd = service.getClassMetadata(((BasicCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
+
+                ListGrid listGrid = formService.buildListGrid(subCollectionMd, rows);
+                listGrid.setSubCollectionFieldName(collectionField);
+                model.addAttribute("listGrid", listGrid);
+                model.addAttribute("listGridType", "inline");
+
+                break;
+            }
+        }
+
+        setModelAttributes(model, sectionKey);
+        return "views/modalListGrid";
     }
 
     protected String getClassNameForSection(String sectionKey) {

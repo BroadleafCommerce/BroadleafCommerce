@@ -74,7 +74,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public ClassMetadata getClassMetadata(String className, ForeignKey[] foreignKeys, String configKey) throws ServiceException, ApplicationSecurityException {
-        return inspect(className, foreignKeys, configKey).getClassMetaData();
+        ClassMetadata cmd = inspect(className, foreignKeys, configKey).getClassMetaData();
+        cmd.setCeilingType(className);
+        return cmd;
     }
 
     @Override
@@ -231,7 +233,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         Entity entity = new Entity();
         entity.setProperties(properties);
-        entity.setType(new String[] { entityForm.getEntityType() });
+        entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
 
         return add(entity, fmd.getCollectionCeilingEntity(), new ForeignKey[] { foreignField }, null);
     }
