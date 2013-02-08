@@ -16,23 +16,31 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.*;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.util.JSOHelper;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.*;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -341,4 +349,14 @@ public class DynamicEntityDataSource extends AbstractDynamicDataSource {
         var self = this.@com.smartgwt.client.core.BaseClass::getOrCreateJsObj()();
         self.setTypeOperators(type,operatorArray);
     }-*/;
+
+    public LinkedHashMap<String, String> getEnumerationValueMap(String enumField) {
+        DataSourceField f = getField(enumField);
+        LinkedHashMap<String, String> enumMap = new LinkedHashMap<String, String>();
+        String[][] enumerationValues = (String[][]) f.getAttributeAsObject("enumerationValues");
+        for (String[] enumerationValue : enumerationValues) {
+            enumMap.put(enumerationValue[0], enumerationValue[1]);
+        }
+        return enumMap;
+    }
 }
