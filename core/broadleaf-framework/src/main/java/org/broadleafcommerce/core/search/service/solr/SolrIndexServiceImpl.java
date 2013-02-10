@@ -147,7 +147,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         def.setReadOnly(true);
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(def);
-        LOG.trace(String.format("Building index - page: [%s], pageSize: [%s]", page, pageSize));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Building index - page: [%s], pageSize: [%s]", page, pageSize));
+        }
         StopWatch s = new StopWatch();
         try {
             List<Product> products = readAllActiveProducts(page, pageSize);
@@ -182,7 +184,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             throw e;
         }
 
-        LOG.trace(String.format("Built index - page: [%s], pageSize: [%s] in [%s]", page, pageSize, s.toLapString()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Built index - page: [%s], pageSize: [%s] in [%s]", page, pageSize, s.toLapString()));
+        }
     }
 
     protected void finalizeTransaction(TransactionStatus status, boolean isError) {
