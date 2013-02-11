@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.service;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
@@ -204,6 +205,60 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
+    public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
+            String parentId)
+            throws ServiceException, ApplicationSecurityException {
+        final EntityForm ef = new EntityForm();
+        ef.setEntityType(adornedList.getAdornedTargetEntityClassname());
+
+        ClassMetadata collectionMetadata =
+                adminEntityService.getClassMetadata(adornedMd.getCollectionCeilingEntity(), adornedList);
+
+        for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
+            Property p = collectionMetadata.getPMap().get(targetFieldName);
+            BasicFieldMetadata fmd = ((BasicFieldMetadata) p.getMetadata());
+            String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+
+            // Create the field and set some basic attributes
+            Field f = new Field();
+            f.setName(p.getName());
+            f.setFieldType(fieldType);
+            f.setFriendlyName(p.getMetadata().getFriendlyName());
+            if (StringUtils.isBlank(f.getFriendlyName())) {
+                f.setFriendlyName(f.getName());
+            }
+
+            // Set additional attributes
+            f.setForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+
+            // Add the field to the appropriate FieldGroup
+            String groupName = ((BasicFieldMetadata) p.getMetadata()).getGroup();
+            groupName = groupName == null ? "Default" : groupName;
+            FieldGroup fieldGroup = ef.getGroups().get(groupName);
+            if (fieldGroup == null) {
+                fieldGroup = new FieldGroup();
+                fieldGroup.setTitle(groupName);
+                ef.getGroups().put(groupName, fieldGroup);
+            }
+            fieldGroup.getFields().add(f);
+
+            f = new Field();
+            f.setName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
+            f.setFieldType(SupportedFieldType.HIDDEN.toString());
+            f.setValue(parentId);
+            fieldGroup.getFields().add(f);
+
+            f = new Field();
+            f.setName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+            f.setFieldType(SupportedFieldType.HIDDEN.toString());
+            f.setIdOverride("adornedTargetIdProperty");
+            fieldGroup.getFields().add(f);
+        }
+
+        return ef;
+    }
+
+    @Override
     public EntityForm buildEntityForm(ClassMetadata cmd, final Entity entity, final Map<String, Entity[]> subCollections)
             throws ClassNotFoundException, ServiceException, ApplicationSecurityException {
         final EntityForm ef = buildEntityForm(cmd);
@@ -240,6 +295,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             ListGrid subCollectionGrid = buildListGrid(subCollectionMd, subCollectionEntities);
                             subCollectionGrid.setSubCollectionFieldName(p.getName());
                             subCollectionGrid.setAddMethodType(fmd.getAddMethodType());
+                            subCollectionGrid.setListGridType("inline");
                             ef.getCollectionListGrids().add(subCollectionGrid);
                         }
 

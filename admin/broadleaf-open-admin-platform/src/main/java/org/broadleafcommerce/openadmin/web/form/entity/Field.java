@@ -29,6 +29,7 @@ public class Field {
     protected String value;
     protected String displayValue;
     protected String foreignKeyDisplayValueProperty;
+    protected String idOverride;
 
     public String getDisplayValue() {
         return displayValue == null ? value : displayValue;
@@ -76,6 +77,14 @@ public class Field {
 
     public void setForeignKeyDisplayValueProperty(String foreignKeyDisplayValueProperty) {
         this.foreignKeyDisplayValueProperty = foreignKeyDisplayValueProperty;
+    }
+
+    public String getIdOverride() {
+        return idOverride;
+    }
+
+    public void setIdOverride(String idOverride) {
+        this.idOverride = idOverride;
     }
 
 }

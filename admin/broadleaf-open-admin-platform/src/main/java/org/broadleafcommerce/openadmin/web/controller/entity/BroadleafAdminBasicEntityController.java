@@ -69,6 +69,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         Entity[] rows = service.getRecords(sectionClassName, null);
 
         ListGrid listGrid = formService.buildListGrid(cmd, rows);
+        listGrid.setListGridType("main");
 
         model.addAttribute("listGrid", listGrid);
         model.addAttribute("viewType", "listGrid");
@@ -106,36 +107,9 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "redirect:/" + sectionKey + "/" + id;
     }
 
-    public String viewEntityCollection(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id,
-            String collectionField) throws Exception {
-        String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
-
-        for (Property p : mainMetadata.getProperties()) {
-            if (p.getName().equals(collectionField)) {
-                String collectionClassName = ((BasicFieldMetadata) p.getMetadata()).getForeignKeyClass();
-
-                ClassMetadata collectionMetadata = service.getClassMetadata(collectionClassName);
-                Entity[] rows = service.getRecords(collectionClassName, null);
-
-                ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
-                model.addAttribute("listGrid", listGrid);
-                model.addAttribute("listGridType", "toOne");
-                model.addAttribute("viewType", "modalListGrid");
-
-                break;
-            }
-        }
-
-        setModelAttributes(model, sectionKey);
-        return "modules/modalContainer";
-    }
-
     public String showAddCollectionItem(final HttpServletRequest request, HttpServletResponse response, final Model model,
             String sectionKey,
-            String id,
+            final String id,
             String collectionField) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
@@ -146,7 +120,19 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
                     @Override
                     public void visit(BasicFieldMetadata fmd) {
-                        // Unnecessary visitor
+                        try {
+                            String collectionClassName = fmd.getForeignKeyClass();
+
+                            ClassMetadata collectionMetadata = service.getClassMetadata(collectionClassName);
+                            Entity[] rows = service.getRecords(collectionClassName, null);
+
+                            ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
+                            listGrid.setListGridType("toOne");
+                            model.addAttribute("listGrid", listGrid);
+                            model.addAttribute("viewType", "modalListGrid");
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
 
                     @Override
@@ -162,8 +148,8 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                             } else {
                                 Entity[] rows = service.getRecords(fmd.getCollectionCeilingEntity(), foreignKeys);
                                 ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
+                                listGrid.setListGridType("basicCollection");
                                 model.addAttribute("listGrid", listGrid);
-                                model.addAttribute("listGridType", "basicCollection");
                                 model.addAttribute("viewType", "modalListGrid");
                             }
                         } catch (Exception e) {
@@ -182,9 +168,13 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
                             Entity[] rows = service.getRecords(fmd.getCollectionCeilingEntity(), null);
                             ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
+                            listGrid.setListGridType("adornedTarget");
+
+                            EntityForm entityForm = formService.buildAdornedListForm(fmd, adornedList, id);
+
                             model.addAttribute("listGrid", listGrid);
-                            model.addAttribute("listGridType", "adornedTarget");
-                            model.addAttribute("viewType", "modalListGrid");
+                            model.addAttribute("entityForm", entityForm);
+                            model.addAttribute("viewType", "modalAdornedListGrid");
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -212,23 +202,32 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
 
+        // First, we must save the collection entity
         service.addSubCollectionEntity(entityForm, mainClassName, collectionField, id);
 
-
+        // Next, we must get the new list grid that represents this collection
         for (Property p : mainMetadata.getProperties()) {
             if (p.getName().equals(collectionField)) {
                 Entity[] rows = service.getRecordsForCollection(mainMetadata, id, p);
-                ClassMetadata subCollectionMd = service.getClassMetadata(((BasicCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
+                ClassMetadata subCollectionMd;
+                if (p.getMetadata() instanceof BasicCollectionMetadata) {
+                    subCollectionMd = service.getClassMetadata(((BasicCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
+                } else if (p.getMetadata() instanceof AdornedTargetCollectionMetadata) {
+                    subCollectionMd = service.getClassMetadata(((AdornedTargetCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
+                } else {
+                    subCollectionMd = null;
+                }
 
                 ListGrid listGrid = formService.buildListGrid(subCollectionMd, rows);
                 listGrid.setSubCollectionFieldName(collectionField);
+                listGrid.setListGridType("inline");
                 model.addAttribute("listGrid", listGrid);
-                model.addAttribute("listGridType", "inline");
 
                 break;
             }
         }
 
+        // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
         return "views/modalListGrid";
     }

@@ -40,7 +40,9 @@ import org.springframework.stereotype.Service;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -90,7 +92,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         FilterAndSortCriteria fasc = new FilterAndSortCriteria("id");
         fasc.setFilterValue(id);
         
-        Entity[] entities = fetch(className, null, null, fasc).getRecords();
+        Entity[] entities = fetch(className, new ForeignKey[] {}, null, fasc).getRecords();
         
         if (entities == null || entities.length > 1) {
             throw new RuntimeException("More than one entity found with the same id");
@@ -120,7 +122,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                             .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 
-                    recordContainer[0] = fetch(fmd.getCollectionCeilingEntity(), adornedList).getRecords();
+                    String manyToField = adornedList.getCollectionFieldName();
+                    FilterAndSortCriteria fasc = new FilterAndSortCriteria(manyToField);
+                    fasc.setFilterValue(containingEntityId);
+
+                    recordContainer[0] = fetch(fmd.getCollectionCeilingEntity(), adornedList, fasc).getRecords();
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -202,40 +208,82 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity addSubCollectionEntity(EntityForm entityForm, String className, String fieldName, String parentId)
+    public Entity addSubCollectionEntity(EntityForm entityForm, String className, String fieldName, final String parentId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
         // Find the FieldMetadata for this collection field
         ClassMetadata cmd = getClassMetadata(className);
-        BasicCollectionMetadata fmd = null;
-        for (Property p : cmd.getProperties()) {
-            if (p.getName().equals(fieldName) && p.getMetadata() instanceof BasicCollectionMetadata) {
-                fmd = (BasicCollectionMetadata) p.getMetadata();
-            }
-        }
 
+        final List<Property> properties = new ArrayList<Property>();
         // Build the property array from the field map. Note that we leave 1 extra slot for the foreign key reference
-        Property[] properties = new Property[entityForm.getFields().size() + 1];
-        int i = 0;
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
             Property p = new Property();
             p.setName(entry.getKey());
             p.setValue(entry.getValue().getValue());
-            properties[i++] = p;
+            properties.add(p);
         }
 
-        // Also add in the foreign field property
-        ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
-                .get(PersistencePerspectiveItemType.FOREIGNKEY);
-        Property p = new Property();
-        p.setName(foreignField.getManyToField());
-        p.setValue(parentId);
-        properties[i++] = p;
+        final Entity entity = new Entity();
 
-        Entity entity = new Entity();
-        entity.setProperties(properties);
-        entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
+        final List<ForeignKey> additionalForeignKeys = new ArrayList<ForeignKey>();
 
-        return add(entity, fmd.getCollectionCeilingEntity(), new ForeignKey[] { foreignField }, null);
+        final AdornedTargetList[] adornedListContainer = new AdornedTargetList[1];
+
+        for (Property p : cmd.getProperties()) {
+            if (p.getName().equals(fieldName)) {
+                p.getMetadata().accept(new MetadataVisitor() {
+
+                    @Override
+                    public void visit(MapMetadata fmd) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void visit(AdornedTargetCollectionMetadata fmd) {
+                        AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
+                                .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                        entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
+                        adornedListContainer[0] = adornedList;
+                    }
+
+                    @Override
+                    public void visit(BasicCollectionMetadata fmd) {
+                        ForeignKey foreignField = null;
+                        if (fmd != null) {
+                            foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
+                                    .get(PersistencePerspectiveItemType.FOREIGNKEY);
+                            Property p = new Property();
+                            p.setName(foreignField.getManyToField());
+                            p.setValue(parentId);
+                            properties.add(p);
+                        }
+
+                        additionalForeignKeys.add(foreignField);
+
+                        entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
+                    }
+
+                    @Override
+                    public void visit(BasicFieldMetadata fmd) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+            }
+        }
+
+        Property[] propArr = new Property[properties.size()];
+        properties.toArray(propArr);
+        entity.setProperties(propArr);
+
+        ForeignKey[] additionalKeys = new ForeignKey[additionalForeignKeys.size()];
+        additionalKeys = additionalForeignKeys.toArray(additionalKeys);
+
+        if (adornedListContainer[0] != null) {
+            return add(entity, entity.getType()[0], null, adornedListContainer[0]);
+        } else {
+            return add(entity, entity.getType()[0], additionalKeys, null);
+        }
     }
 
     @Override
@@ -271,7 +319,16 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             throws ServiceException, ApplicationSecurityException {
         PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
         pkg.setEntity(entity);
+        //return service.add(pkg);
+        return entity;
+    }
+
+    protected Entity add(Entity entity, String className, String[] customCriteria, AdornedTargetList adornedList)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = persistencePackageFactory.adornedTarget(className, customCriteria, adornedList);
+        pkg.setEntity(entity);
         return service.add(pkg);
+        //return entity;
     }
 
     /**
@@ -337,10 +394,16 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return service.fetch(pkg, cto);
     }
     
-    protected DynamicResultSet fetch(String className, AdornedTargetList adornedList)
+    protected DynamicResultSet fetch(String className, AdornedTargetList adornedList, FilterAndSortCriteria... fascs)
             throws ServiceException, ApplicationSecurityException {
         PersistencePackage pkg = persistencePackageFactory.adornedTarget(className, null, adornedList);
         CriteriaTransferObject cto = getDefaultCto();
+
+        if (fascs != null) {
+            for (FilterAndSortCriteria fasc : fascs) {
+                cto.add(fasc);
+            }
+        }
 
         return service.fetch(pkg, cto);
     }

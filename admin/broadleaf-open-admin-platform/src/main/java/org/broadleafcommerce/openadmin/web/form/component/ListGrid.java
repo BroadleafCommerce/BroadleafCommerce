@@ -15,6 +15,7 @@ public class ListGrid {
     protected int startIndex = 0;
     protected AddMethodType addMethodType;
     protected String subCollectionFieldName = null;
+    protected String listGridType;
 
     public String getClassName() {
         return className;
@@ -62,6 +63,14 @@ public class ListGrid {
 
     public void setSubCollectionFieldName(String subCollectionFieldName) {
         this.subCollectionFieldName = subCollectionFieldName;
+    }
+
+    public String getListGridType() {
+        return listGridType;
+    }
+
+    public void setListGridType(String listGridType) {
+        this.listGridType = listGridType;
     }
 
 }
