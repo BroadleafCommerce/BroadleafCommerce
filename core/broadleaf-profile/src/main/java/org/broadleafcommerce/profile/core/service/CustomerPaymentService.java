@@ -36,4 +36,7 @@ public interface CustomerPaymentService {
     public CustomerPayment create();
 
     public CustomerPayment findDefaultPaymentForCustomer(Customer customer);
+
+    public CustomerPayment setAsDefaultPayment(CustomerPayment payment);
+
 }

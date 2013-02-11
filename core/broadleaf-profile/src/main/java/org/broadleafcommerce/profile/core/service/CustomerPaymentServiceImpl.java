@@ -75,4 +75,14 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
         return null;
     }
 
+    @Override
+    @Transactional("blTransactionManager")
+    public CustomerPayment setAsDefaultPayment(CustomerPayment payment) {
+        CustomerPayment oldDefault = findDefaultPaymentForCustomer(payment.getCustomer());
+        oldDefault.setDefault(false);
+        saveCustomerPayment(oldDefault);
+        payment.setDefault(true);
+        return saveCustomerPayment(payment);
+    }
+
 }
