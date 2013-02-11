@@ -194,6 +194,12 @@ public class ProductImpl implements Product, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(joinEntityClass = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl",
+            targetObjectProperty = "categoryProductXref.category",
+            parentObjectProperty = "categoryProductXref.product",
+            friendlyName = "allParentCategoriesTitle",
+            sortProperty = "displayOrder",
+            gridVisibleFields = { "name" })
     protected List<Category> allParentCategories = new ArrayList<Category>();
     
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})

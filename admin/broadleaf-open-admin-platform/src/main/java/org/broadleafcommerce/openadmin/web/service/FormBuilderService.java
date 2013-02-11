@@ -47,4 +47,6 @@ public interface FormBuilderService {
             String parentId)
             throws ServiceException, ApplicationSecurityException;
 
+    public ListGrid buildAdornedListGrid(AdornedTargetCollectionMetadata fmd, ClassMetadata cmd, Entity[] entities);
+
 }

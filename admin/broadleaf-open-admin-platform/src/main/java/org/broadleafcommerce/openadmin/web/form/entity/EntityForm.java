@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 
 public class EntityForm {
 
+    public static final String HIDDEN_GROUP = "hiddenGroup";
+
     protected String id;
     protected String entityType;
     protected Map<String, FieldGroup> groups = new HashMap<String, FieldGroup>();

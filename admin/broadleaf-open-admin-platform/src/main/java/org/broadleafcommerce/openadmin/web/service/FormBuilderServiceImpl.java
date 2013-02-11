@@ -98,7 +98,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return lg;
     }
 
-    protected ListGrid buildAdornedListGrid(AdornedTargetCollectionMetadata fmd, ClassMetadata cmd, Entity[] entities) {
+    @Override
+    public ListGrid buildAdornedListGrid(AdornedTargetCollectionMetadata fmd, ClassMetadata cmd, Entity[] entities) {
         List<Field> hfs = new ArrayList<Field>();
         for (String fieldName : fmd.getGridVisibleFields()) {
             Property p = cmd.getPMap().get(fieldName);
@@ -241,19 +242,25 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 ef.getGroups().put(groupName, fieldGroup);
             }
             fieldGroup.getFields().add(f);
-
-            f = new Field();
-            f.setName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
-            f.setFieldType(SupportedFieldType.HIDDEN.toString());
-            f.setValue(parentId);
-            fieldGroup.getFields().add(f);
-
-            f = new Field();
-            f.setName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
-            f.setFieldType(SupportedFieldType.HIDDEN.toString());
-            f.setIdOverride("adornedTargetIdProperty");
-            fieldGroup.getFields().add(f);
         }
+
+        FieldGroup fieldGroup = ef.getGroups().get(EntityForm.HIDDEN_GROUP);
+        if (fieldGroup == null) {
+            fieldGroup = new FieldGroup();
+            ef.getGroups().put(EntityForm.HIDDEN_GROUP, fieldGroup);
+        }
+
+        Field f = new Field();
+        f.setName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
+        f.setFieldType(SupportedFieldType.HIDDEN.toString());
+        f.setValue(parentId);
+        fieldGroup.getFields().add(f);
+
+        f = new Field();
+        f.setName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+        f.setFieldType(SupportedFieldType.HIDDEN.toString());
+        f.setIdOverride("adornedTargetIdProperty");
+        fieldGroup.getFields().add(f);
 
         return ef;
     }

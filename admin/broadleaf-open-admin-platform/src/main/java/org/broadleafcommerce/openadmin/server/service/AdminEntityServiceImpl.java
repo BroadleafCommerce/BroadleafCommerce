@@ -242,7 +242,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     public void visit(AdornedTargetCollectionMetadata fmd) {
                         AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                                 .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-                        entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
+                        entity.setType(new String[] { adornedList.getAdornedTargetEntityClassname() });
                         adornedListContainer[0] = adornedList;
                     }
 
@@ -319,8 +319,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             throws ServiceException, ApplicationSecurityException {
         PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
         pkg.setEntity(entity);
-        //return service.add(pkg);
-        return entity;
+        return service.add(pkg);
     }
 
     protected Entity add(Entity entity, String className, String[] customCriteria, AdornedTargetList adornedList)
@@ -328,7 +327,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistencePackage pkg = persistencePackageFactory.adornedTarget(className, customCriteria, adornedList);
         pkg.setEntity(entity);
         return service.add(pkg);
-        //return entity;
     }
 
     /**

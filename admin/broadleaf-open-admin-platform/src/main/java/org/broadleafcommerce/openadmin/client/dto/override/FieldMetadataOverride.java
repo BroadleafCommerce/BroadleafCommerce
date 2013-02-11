@@ -556,6 +556,7 @@ public class FieldMetadataOverride {
     private String[] maintainedAdornedTargetFields;
     private String[] gridVisibleFields;
     private String targetObjectIdProperty;
+    private String joinEntityClass;
     private String sortProperty;
     private Boolean sortAscending;
     private Boolean ignoreAdornedProperties;
@@ -622,6 +623,14 @@ public class FieldMetadataOverride {
 
     public void setTargetObjectIdProperty(String targetObjectIdProperty) {
         this.targetObjectIdProperty = targetObjectIdProperty;
+    }
+
+    public String getJoinEntityClass() {
+        return joinEntityClass;
+    }
+
+    public void setJoinEntityClass(String joinEntityClass) {
+        this.joinEntityClass = joinEntityClass;
     }
 
     public String getTargetObjectProperty() {

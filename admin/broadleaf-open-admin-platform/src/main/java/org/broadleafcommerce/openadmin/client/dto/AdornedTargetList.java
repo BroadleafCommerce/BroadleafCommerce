@@ -37,6 +37,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
     private String linkedIdProperty;
     private String targetIdProperty;
     private Boolean inverse = Boolean.FALSE;
+    private String joinEntityClass;
     
     public AdornedTargetList() {
         //do nothing
@@ -150,6 +151,14 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
         this.adornedTargetEntityPolymorphicType = adornedTargetEntityPolymorphicType;
     }
 
+    public String getJoinEntityClass() {
+        return joinEntityClass;
+    }
+
+    public void setJoinEntityClass(String joinEntityClass) {
+        this.joinEntityClass = joinEntityClass;
+    }
+
     @Override
     public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
         AdornedTargetList adornedTargetList = new AdornedTargetList();
@@ -192,6 +201,8 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
             return false;
         if (targetObjectPath != null ? !targetObjectPath.equals(that.targetObjectPath) : that.targetObjectPath != null)
             return false;
+        if (joinEntityClass != null ? !joinEntityClass.equals(that.joinEntityClass) : that.joinEntityClass != null)
+            return false;
 
         return true;
     }
@@ -208,6 +219,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
         result = 31 * result + (linkedIdProperty != null ? linkedIdProperty.hashCode() : 0);
         result = 31 * result + (targetIdProperty != null ? targetIdProperty.hashCode() : 0);
         result = 31 * result + (inverse != null ? inverse.hashCode() : 0);
+        result = 31 * result + (joinEntityClass != null ? joinEntityClass.hashCode() : 0);
         return result;
     }
 }

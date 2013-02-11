@@ -387,6 +387,7 @@ public class Metadata {
             override.setSortProperty(adornedTargetCollection.sortProperty());
             override.setTargetObjectIdProperty(adornedTargetCollection.targetObjectIdProperty());
             override.setTargetObjectProperty(adornedTargetCollection.targetObjectProperty());
+            override.setJoinEntityClass(adornedTargetCollection.joinEntityClass());
             override.setCustomCriteria(adornedTargetCollection.customCriteria());
             override.setUseServerSideInspectionCache(adornedTargetCollection.useServerSideInspectionCache());
             override.setDataSourceName(adornedTargetCollection.dataSourceName());
@@ -1018,6 +1019,14 @@ public class Metadata {
             targetObjectProperty = adornedTargetCollectionMetadata.getTargetObjectProperty();
         }
 
+        String joinEntityClass = null;
+        if (serverMetadata != null) {
+            joinEntityClass = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getJoinEntityClass();
+        }
+        if (adornedTargetCollectionMetadata.getJoinEntityClass() != null) {
+            joinEntityClass = adornedTargetCollectionMetadata.getJoinEntityClass();
+        }
+
         Class<?> collectionTarget = null;
         checkCeiling: {
             if (oneToMany != null && oneToMany.targetEntity() != void.class) {
@@ -1027,6 +1036,13 @@ public class Metadata {
             if (manyToMany != null && manyToMany.targetEntity() != void.class) {
                 collectionTarget = manyToMany.targetEntity();
                 break checkCeiling;
+            }
+        }
+        if (StringUtils.isNotBlank(joinEntityClass)) {
+            try {
+                collectionTarget = Class.forName(joinEntityClass);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
         if (collectionTarget == null) {
@@ -1068,11 +1084,13 @@ public class Metadata {
             adornedTargetList.setLinkedIdProperty(parentObjectIdProperty);
             adornedTargetList.setTargetObjectPath(targetObjectProperty);
             adornedTargetList.setTargetIdProperty(targetObjectIdProperty);
+            adornedTargetList.setJoinEntityClass(joinEntityClass);
             adornedTargetList.setAdornedTargetEntityClassname(collectionTarget.getName());
             adornedTargetList.setSortField(sortProperty);
             adornedTargetList.setSortAscending(isAscending);
         } else {
             AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, parentObjectIdProperty, targetObjectProperty, targetObjectIdProperty, collectionTarget.getName(), sortProperty, isAscending);
+            adornedTargetList.setJoinEntityClass(joinEntityClass);
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, adornedTargetList);
         }
 

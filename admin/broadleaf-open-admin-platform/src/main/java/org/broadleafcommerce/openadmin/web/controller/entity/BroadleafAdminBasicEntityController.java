@@ -210,18 +210,26 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             if (p.getName().equals(collectionField)) {
                 Entity[] rows = service.getRecordsForCollection(mainMetadata, id, p);
                 ClassMetadata subCollectionMd;
+                ListGrid listGrid;
                 if (p.getMetadata() instanceof BasicCollectionMetadata) {
                     subCollectionMd = service.getClassMetadata(((BasicCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
+                    listGrid = formService.buildListGrid(subCollectionMd, rows);
                 } else if (p.getMetadata() instanceof AdornedTargetCollectionMetadata) {
-                    subCollectionMd = service.getClassMetadata(((AdornedTargetCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
+                    AdornedTargetCollectionMetadata fmd = ((AdornedTargetCollectionMetadata) p.getMetadata());
+                    AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
+                            .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                    subCollectionMd = service.getClassMetadata(fmd.getCollectionCeilingEntity(), adornedList);
+                    listGrid = formService.buildAdornedListGrid(fmd, subCollectionMd, rows);
                 } else {
                     subCollectionMd = null;
+                    listGrid = null;
                 }
 
-                ListGrid listGrid = formService.buildListGrid(subCollectionMd, rows);
-                listGrid.setSubCollectionFieldName(collectionField);
-                listGrid.setListGridType("inline");
-                model.addAttribute("listGrid", listGrid);
+                if (listGrid != null) {
+                    listGrid.setSubCollectionFieldName(collectionField);
+                    listGrid.setListGridType("inline");
+                    model.addAttribute("listGrid", listGrid);
+                }
 
                 break;
             }

@@ -169,6 +169,20 @@ public @interface AdminPresentationAdornedTargetCollection {
     String targetObjectIdProperty() default "id";
 
     /**
+     * <p>Optional - only required if there is an entity that is responsible
+     * for modeling the join table for this adorned collection.</p>
+     * 
+     * <p>For example, consider the scenario that a product has many possible 
+     * parent categories. Also consider that you might want to sort the parent
+     * categories in a specific way. The join entity in this case would hold a
+     * link to both a category and a product as well as a sequence field. This
+     * property provides the ability to specify that mapping.</p>
+     * 
+     * @return the join entity class (if any)
+     */
+    String joinEntityClass() default "";
+
+    /**
      * <p>Optional - only required if the adorned target has
      * a field used for sorting</p>
      *
