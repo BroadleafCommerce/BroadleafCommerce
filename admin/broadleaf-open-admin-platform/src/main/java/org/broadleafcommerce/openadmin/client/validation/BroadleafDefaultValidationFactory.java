@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.openadmin.client.validation;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.reflection.Factory;
+import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.form.validator.IntegerRangeValidator;
 import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 import com.smartgwt.client.widgets.form.validator.Validator;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.reflection.Factory;
-import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
 
 import java.util.Map;
 
@@ -31,16 +32,19 @@ import java.util.Map;
  * @author jfischer
  *
  */
+@Deprecated
 public class BroadleafDefaultValidationFactory implements ValidationFactory {
 
     private static final long serialVersionUID = 1L;
     
-    private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
+    private final Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
     
+    @Override
     public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
         return true;
     }
 
+    @Override
     public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
         Object response = factory.newInstance(validatorClassname);
         if (response == null) {

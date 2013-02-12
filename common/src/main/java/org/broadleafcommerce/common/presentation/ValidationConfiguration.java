@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 public @interface ValidationConfiguration {
     
     /**
-     * <p>The fully qualified classname of the com.smartgwt.client.widgets.form.validator.Validator
+     * <p>The fully qualified classname of the org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator
      * instance to use for validation</p>
      * 
      * @return the validator classname
@@ -40,7 +40,8 @@ public @interface ValidationConfiguration {
     String validationImplementation();
     
     /**
-     * <p>Optional configuration items that can be used to setup the validator</p>
+     * <p>Optional configuration items that can be used to setup the validator</p>. Most validators should have at least
+     * a single configuration item with {@link ConfigurationItem#ERROR_MESSAGE}.
      * 
      * @return validator configuration attributes
      */

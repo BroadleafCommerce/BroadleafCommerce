@@ -16,21 +16,37 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.service.type.ContextType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,7 +73,12 @@ public class AdminUserImpl implements AdminUser {
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name", order=1, group = "AdminUserImpl_User", prominent=true)
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name", order = 1, group = "AdminUserImpl_User", prominent = true,
+            validationConfigurations = { @ValidationConfiguration(
+                    validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator",
+                    configurationItems = { @ConfigurationItem(itemName = "regularExpression", itemValue = "\\w+"),
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "Only word characters are allowed") }
+                    ) })
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
@@ -69,16 +90,19 @@ public class AdminUserImpl implements AdminUser {
         friendlyName = "Admin Password",
         order=3, 
         group = "AdminUserImpl_User", 
-        fieldType= SupportedFieldType.PASSWORD,
-        validationConfigurations={
-            @ValidationConfiguration(
-                validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator",
-                configurationItems={
-                        @ConfigurationItem(itemName="errorMessageKey", itemValue="passwordNotMatchError"),
-                        @ConfigurationItem(itemName="fieldType", itemValue="password")
-                }
-            )
-        }
+            fieldType = SupportedFieldType.PASSWORD
+    // TODO: fix admin password support (add a password confirmation field) and re-enable validation
+    /*
+    validationConfigurations={
+        @ValidationConfiguration(
+                        validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
+            configurationItems={
+                                @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchError"),
+                    @ConfigurationItem(itemName="otherField", itemValue="passwordConfirm")
+            }
+        )
+    }
+    */
     )
     protected String password;
 
@@ -111,6 +135,7 @@ public class AdminUserImpl implements AdminUser {
     @Transient
     protected String unencodedPassword;
     
+    @Override
     public String getUnencodedPassword() {
         return unencodedPassword;
     }
@@ -120,10 +145,12 @@ public class AdminUserImpl implements AdminUser {
     @AdminPresentation(excluded = true)
     protected SandBox overrideSandBox;
 
+    @Override
     public void setUnencodedPassword(String unencodedPassword) {
         this.unencodedPassword = unencodedPassword;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -132,74 +159,92 @@ public class AdminUserImpl implements AdminUser {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getLogin() {
         return login;
     }
 
+    @Override
     public void setLogin(String login) {
         this.login = login;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }
 
+    @Override
     public void setEmail(String email) {
         this.email = email;
     }
 
+    @Override
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    @Override
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
+    @Override
     public Boolean getActiveStatusFlag() {
         return activeStatusFlag;
     }
 
+    @Override
     public void setActiveStatusFlag(Boolean activeStatusFlag) {
         this.activeStatusFlag = activeStatusFlag;
     }
 
+    @Override
     public Set<AdminRole> getAllRoles() {
         return allRoles;
     }
 
+    @Override
     public void setAllRoles(Set<AdminRole> allRoles) {
         this.allRoles = allRoles;
     }
 
+    @Override
     public SandBox getOverrideSandBox() {
         return overrideSandBox;
     }
 
+    @Override
     public void setOverrideSandBox(SandBox overrideSandBox) {
         this.overrideSandBox = overrideSandBox;
     }
 
+    @Override
     public Set<AdminPermission> getAllPermissions() {
         return allPermissions;
     }
 
+    @Override
     public void setAllPermissions(Set<AdminPermission> allPermissions) {
         this.allPermissions = allPermissions;
     }

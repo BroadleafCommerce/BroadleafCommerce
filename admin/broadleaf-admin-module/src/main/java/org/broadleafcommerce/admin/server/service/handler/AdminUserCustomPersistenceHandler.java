@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -33,14 +29,17 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+
+import javax.annotation.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -106,11 +105,16 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             adminInstance.setUnencodedPassword(adminInstance.getPassword());
             adminInstance.setPassword(null);
             
-            adminInstance = adminSecurityService.saveAdminUser(adminInstance);
-            
-            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
-            
-            return adminEntity;
+            boolean validated = helper.validate(entity, adminInstance, adminProperties);
+            if (validated) {
+                adminInstance = adminSecurityService.saveAdminUser(adminInstance);
+
+                Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+                return adminEntity;
+            } else {
+                return entity;
+            }
         } catch (Exception e) {
             LOG.error("Unable to add entity for " + entity.getType()[0], e);
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
@@ -130,15 +134,20 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             adminInstance.setUnencodedPassword(adminInstance.getPassword());
             adminInstance.setPassword(null);
             
-            // The current user can update there data, but they cannot update other user's data.
+            // The current user can update their data, but they cannot update other user's data.
             if (! adminRemoteSecurityService.getPersistentAdminUser().getId().equals(adminInstance.getId())) {
                 adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);                
             }
-            adminInstance = adminSecurityService.saveAdminUser(adminInstance);
-            
-            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
-            
-            return adminEntity;
+            boolean validated = helper.validate(entity, adminInstance, adminProperties);
+            if (validated) {
+                adminInstance = adminSecurityService.saveAdminUser(adminInstance);
+
+                Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+                return adminEntity;
+            } else {
+                return entity;
+            }
         } catch (Exception e) {
             LOG.error("Unable to update entity for " + entity.getType()[0], e);
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);

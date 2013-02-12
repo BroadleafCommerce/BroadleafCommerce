@@ -40,11 +40,11 @@ import org.springframework.stereotype.Service;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
+import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -146,10 +146,24 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public EntityForm buildEntityForm(ClassMetadata cmd) {
-        final EntityForm ef = new EntityForm();
+    public EntityForm createEntityForm(ClassMetadata cmd) {
+        EntityForm ef = new EntityForm();
         ef.setEntityType(cmd.getCeilingType());
+        buildFormMetadata(cmd, ef);
+        return ef;
+    }
 
+    @Override
+    public EntityForm createEntityForm(ClassMetadata cmd, final Entity entity, final Map<String, Entity[]> subCollections)
+            throws ClassNotFoundException, ServiceException, ApplicationSecurityException {
+        final EntityForm ef = new EntityForm();
+        ef.setId(entity.findProperty("id").getValue());
+        ef.setEntityType(entity.getType()[0]);
+        return buildEntityForm(ef, cmd, entity, subCollections);
+    }
+
+    @Override
+    public void buildFormMetadata(ClassMetadata cmd, final EntityForm ef) {
         for (final Property p : cmd.getProperties()) {
             p.getMetadata().accept(new MetadataVisitor() {
 
@@ -200,9 +214,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
             });
         }
-
-        return ef;
-
     }
 
     @Override
@@ -266,10 +277,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public EntityForm buildEntityForm(ClassMetadata cmd, final Entity entity, final Map<String, Entity[]> subCollections)
+    public EntityForm buildEntityForm(final EntityForm ef, ClassMetadata cmd, final Entity entity, final Map<String, Entity[]> subCollections)
             throws ClassNotFoundException, ServiceException, ApplicationSecurityException {
-        final EntityForm ef = buildEntityForm(cmd);
-        ef.setId(entity.findProperty("id").getValue());
+        buildFormMetadata(cmd, ef);
 
         for (final Property p : cmd.getProperties()) {
             p.getMetadata().accept(new MetadataVisitor() {

@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -31,6 +30,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -40,7 +40,6 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -50,7 +49,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -63,7 +65,7 @@ import java.util.Map;
  */
 public class StructuredContentTypeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
+    private final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
 
     @Resource(name="blStructuredContentService")
     protected StructuredContentService structuredContentService;
@@ -160,8 +162,8 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     if (definition.getValidationRegEx() != null) {
                         Map<String, String> itemMap = new HashMap<String, String>();
                         itemMap.put("regularExpression", definition.getValidationRegEx());
-                        itemMap.put("errorMessageKey", definition.getValidationErrorMesageKey());
-                        fieldMetadata.getValidationConfigurations().put("com.smartgwt.client.widgets.form.validator.RegExpValidator", itemMap);
+                        itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
+                        fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
                     }
                     propertiesList.add(property);
                 }
@@ -194,6 +196,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             Property[] properties = new Property[propertiesList.size()];
             properties = propertiesList.toArray(properties);
             Arrays.sort(properties, new Comparator<Property>() {
+                @Override
                 public int compare(Property o1, Property o2) {
                     /*
                          * First, compare properties based on order fields
@@ -243,7 +246,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     }
 
     protected Entity fetchEntityBasedOnId(String structuredContentId) throws Exception {
-        StructuredContent structuredContent = (StructuredContent) structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
+        StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
         Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
         Entity entity = new Entity();
         entity.setType(new String[]{StructuredContentType.class.getName()});

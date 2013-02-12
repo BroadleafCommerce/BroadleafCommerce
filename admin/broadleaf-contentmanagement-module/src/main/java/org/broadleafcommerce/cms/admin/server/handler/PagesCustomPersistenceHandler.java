@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
@@ -58,7 +54,13 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.hibernate.Criteria;
 import org.hibernate.tool.hbm2x.StringUtils;
 
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+
 import javax.annotation.Resource;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -198,12 +200,12 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                     property.setValue(entity.findProperty("pageTemplate").getValue());
                     entity.addProperty(property);
                 }
+                Property lockedProperty = new Property();
+                lockedProperty.setName("locked");
                 if ("true".equals(entity.findProperty("lockedFlag").getValue())) {
-                    Property property = new Property();
-                    property.setName("locked");
-                    property.setValue("[ISOMORPHIC]/../admin/images/lock_page.png");
-                    entity.addProperty(property);
+                    lockedProperty.setValue("[ISOMORPHIC]/../admin/images/lock_page.png");
                 }
+                entity.addProperty(lockedProperty);
             }
 
             for (int j = 0; j < pageEntities.length; j++) {

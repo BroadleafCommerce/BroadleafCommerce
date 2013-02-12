@@ -27,8 +27,11 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
+ * Generic DTO for a domain object. Each property of the domain object is represented by the 'properties' instance variable
+ * which allows for further display metadata to be stored.
  * 
  * @author jfischer
+ * @see {@link Property}
  *
  */
 public class Entity implements IsSerializable, Serializable {
@@ -45,7 +48,7 @@ public class Entity implements IsSerializable, Serializable {
     private String lockedBy;
     private String lockedDate;
     private boolean multiPartAvailableOnThread = false;
-    private boolean isValidationFailure;
+    private boolean isValidationFailure = false;
     private String[][] validationErrors;
     
     private Map<String, Property> pMap = null;
@@ -99,6 +102,7 @@ public class Entity implements IsSerializable, Serializable {
     
     public Property findProperty(String name) {
         Arrays.sort(properties, new Comparator<Property>() {
+            @Override
             public int compare(Property o1, Property o2) {
                 if (o1 == null && o2 == null) {
                     return 0;
@@ -113,6 +117,7 @@ public class Entity implements IsSerializable, Serializable {
         Property searchProperty = new Property();
         searchProperty.setName(name);
         int index = Arrays.binarySearch(properties, searchProperty, new Comparator<Property>() {
+            @Override
             public int compare(Property o1, Property o2) {
                 if (o1 == null && o2 == null) {
                     return 0;
@@ -139,7 +144,16 @@ public class Entity implements IsSerializable, Serializable {
         newProps[newProps.length - 1] = property;
         setProperties(newProps);
     }
-    
+
+    /**
+     * Adds a single validation error to this entity. Note that in order to ensure that a 
+     * 
+     * @param fieldName - the field that is in error. This works on top-level properties (like a 'manufacturer' field on a
+     * {@link Product} entity) but can also work on properties gleaned from a related entity (like
+     * 'defaultSku.weight.weightUnitOfMeasure' on a {@link Product} entity)
+     * @param errorOrErrorKey - the error message to present to a user. Could be the actual error message or a key to a
+     * property in messages.properties to support different locales
+     */
     public void addValidationError(String fieldName, String errorOrErrorKey) {
         if (getValidationErrors() == null) {
             setValidationErrors(new String[0][2]);
@@ -179,10 +193,23 @@ public class Entity implements IsSerializable, Serializable {
         isValidationFailure = validationFailure;
     }
 
+    /**
+     * The validation errors returned here are all 2-element arrays. Index 0 holds the property name that failed validation
+     * while index 1 holds the validation error message (which could be either a message key or the actual message itself)
+     * 
+     * @return a list of 2-element arrays that correspond to validation errors on this Entity
+     */
     public String[][] getValidationErrors() {
         return validationErrors;
     }
 
+    /**
+     * Completely reset the validation errors for this Entity. In most cases it is more appropriate to use the convenience
+     * method for adding a single error via {@link #addValidationError(String, String)}.
+     * 
+     * @param validationErrors
+     * @see #addValidationError(String, String)
+     */
     public void setValidationErrors(String[][] validationErrors) {
         this.validationErrors = validationErrors;
     }

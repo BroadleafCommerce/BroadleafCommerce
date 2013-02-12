@@ -16,19 +16,21 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.w3c.dom.DOMException;
 
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -36,8 +38,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Helper interface for serializing/deserializing the generic {@link Entity} DTO to/from its actual domain object
+ * representation. 
  * 
  * @author jfischer
+ * @see {@link BasicPersistenceModule}
+ * @see {@link MapStructurePersistenceModule}
+ * @see {@link AdornedTargetListPersistenceModule}
  *
  */
 public interface RecordHelper {
@@ -65,5 +72,16 @@ public interface RecordHelper {
     public FieldManager getFieldManager();
 
     public PersistenceModule getCompatibleModule(OperationType operationType);
+
+    /**
+     * Validates the {@link Entity} based on the validators associated with each property
+     * @param entity the instance that is attempted to be saved from. Implementers should set {@link Entity#isValidationFailure()}
+     * accordingly as a result of the validation
+     * @param populatedInstance
+     * @param mergedProperties TODO
+     * @return whether or not the entity passed validation. This yields the same result as calling !{@link Entity#isValidationFailure()}
+     * after invoking this method
+     */
+    public boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties) throws InstantiationException, IllegalAccessException, ClassNotFoundException;
     
 }

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.validation;
 
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
+
 import com.smartgwt.client.widgets.form.validator.Validator;
 
 import java.io.Serializable;
@@ -24,8 +26,9 @@ import java.util.Map;
 /**
  * 
  * @author jfischer
- *
+ * @deprecated see {@link EntityValidatorService}
  */
+@Deprecated
 public interface ValidationFactory extends Serializable {
 
     public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems);

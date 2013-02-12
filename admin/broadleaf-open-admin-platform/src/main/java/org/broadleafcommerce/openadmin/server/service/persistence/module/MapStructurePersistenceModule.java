@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +39,9 @@ import org.hibernate.mapping.PersistentClass;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -63,10 +64,12 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 
     private static final Log LOG = LogFactory.getLog(MapStructurePersistenceModule.class);
     
+    @Override
     public boolean isCompatible(OperationType operationType) {
         return OperationType.MAP.equals(operationType);
     }
     
+    @Override
     public void extractProperties(Class<?>[] inheritanceLine, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
         if (mergedProperties.get(MergedPropertyType.MAPSTRUCTUREKEY) != null) {
             extractPropertiesFromMetadata(inheritanceLine, mergedProperties.get(MergedPropertyType.MAPSTRUCTUREKEY), properties, false, MergedPropertyType.MAPSTRUCTUREKEY);
@@ -103,7 +106,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             } else if (Calendar.class.isAssignableFrom(key.getClass())) {
                 strVal = dateFormat.format(((Calendar) key).getTime());
             } else if (Double.class.isAssignableFrom(key.getClass())) {
-                strVal = decimalFormat.format((Double) key);
+                strVal = decimalFormat.format(key);
             } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
                 strVal = decimalFormat.format(((BigDecimal) key).doubleValue());
             } else {
@@ -269,7 +272,11 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), convertedPrimitive);
             }
             
-            instance = persistenceManager.getDynamicEntityDao().merge(instance);
+            boolean validated = validate(entity, instance, valueMergedProperties);
+            if (validated) {
+                //only save if the validation passes
+                instance = persistenceManager.getDynamicEntityDao().merge(instance);
+            }
             
             Entity[] responses = getMapRecords(instance, mapStructure, valueMergedProperties, entity.findProperty("symbolicId"));
             for (Entity response : responses) {
@@ -348,7 +355,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 if (!entity.findProperty("priorKey").getValue().equals(entity.findProperty(mapStructure.getKeyPropertyName()).getValue())) {
                     map.remove(entity.findProperty("priorKey").getValue());
                 }
-                valueInstance = createPopulatedInstance(valueInstance, entity, (Map<String, FieldMetadata>) valueMergedProperties, false);
+                valueInstance = createPopulatedInstance(valueInstance, entity, valueMergedProperties, false);
                 /*
                  * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
                  * additional types of primitive objects.
@@ -359,7 +366,11 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             }
             
             
-            instance = persistenceManager.getDynamicEntityDao().merge(instance);
+            validate(entity, instance, null);
+            if (!entity.isValidationFailure()) {
+                //only save if the validation passes
+                instance = persistenceManager.getDynamicEntityDao().merge(instance);
+            }
             
             return getMapRecords(instance, mapStructure, valueMergedProperties, entity.findProperty("symbolicId"))[0];
         } catch (Exception e) {

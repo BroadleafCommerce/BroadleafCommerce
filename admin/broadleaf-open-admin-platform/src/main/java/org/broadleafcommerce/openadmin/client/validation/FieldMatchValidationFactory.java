@@ -16,31 +16,35 @@
 
 package org.broadleafcommerce.openadmin.client.validation;
 
-import com.google.gwt.core.client.GWT;
-import com.smartgwt.client.widgets.form.validator.MatchesFieldValidator;
-import com.smartgwt.client.widgets.form.validator.Validator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Factory;
 import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
+
+import com.google.gwt.core.client.GWT;
+import com.smartgwt.client.widgets.form.validator.MatchesFieldValidator;
+import com.smartgwt.client.widgets.form.validator.Validator;
 
 import java.util.Map;
 
 /**
  * 
  * @author jfischer
- *
+ * @deprecated GWT is no more. For the same functionality, see {@link MatchesFieldValidator}
  */
+@Deprecated
 public class FieldMatchValidationFactory implements ValidationFactory {
 
     private static final long serialVersionUID = 1L;
     
-    private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
+    private final Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
     
+    @Override
     public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
         String fieldType = configurationItems.get("fieldType");
         return validatorClassname.equals(MatchesFieldValidator.class.getName()) && (fieldType == null || !fieldType.equals("password"));
     }
 
+    @Override
     public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
         Object response = factory.newInstance(validatorClassname);
         if (response == null) {

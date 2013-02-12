@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
@@ -28,7 +28,6 @@ import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -46,9 +45,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,10 +109,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingClass);
     }
 
+    @Override
     public Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException {
         return getUpDownInheritance(Class.forName(testClassname));
     }
 
+    @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass) {
         Class<?>[] pEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(testClass);
         Class<?> topConcreteClass = pEntities[pEntities.length - 1];
@@ -169,6 +173,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         Property[] properties = new Property[propertiesList.size()];
         properties = propertiesList.toArray(properties);
         Arrays.sort(properties, new Comparator<Property>() {
+            @Override
             public int compare(Property o1, Property o2) {
                 Integer order1;
                 Integer order2;
@@ -347,6 +352,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         myModule.remove(persistencePackage);
     }
 
+    @Override
     public PersistenceModule getCompatibleModule(OperationType operationType) {
         PersistenceModule myModule = null;
         for (PersistenceModule module : modules) {

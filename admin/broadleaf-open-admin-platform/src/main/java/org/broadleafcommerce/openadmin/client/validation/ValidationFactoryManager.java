@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.validation;
 
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
+
 import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 import com.smartgwt.client.widgets.form.validator.Validator;
 
@@ -27,8 +29,9 @@ import java.util.Map;
 /**
  * 
  * @author jfischer
- *
+ * @deprecated see {@link EntityValidatorService}
  */
+@Deprecated
 public class ValidationFactoryManager extends ArrayList<ValidationFactory> {
     
     private static final long serialVersionUID = 1L;

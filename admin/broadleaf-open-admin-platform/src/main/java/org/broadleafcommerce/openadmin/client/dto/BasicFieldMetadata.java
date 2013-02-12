@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.client.dto;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -269,6 +270,10 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.groupOrder = groupOrder;
     }
 
+    /**
+     * @return the validation configurations for this property keyed by the fully-qualified name of the
+     * {@link PropertyValidator} implementation
+     */
     public Map<String, Map<String, String>> getValidationConfigurations() {
         return validationConfigurations;
     }
