@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
@@ -29,7 +28,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
@@ -55,21 +53,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.beans.PropertyEditorSupport;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various checkout operations
@@ -411,12 +407,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             payments.put(ccInfo, ccReference);
 
-            initializeOrderForCheckout(cart);
-
             CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
 
             if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
-                processFailedOrderCheckout(cart);
                 populateModelWithShippingReferenceData(request, model);
                 result.rejectValue("creditCardNumber", "payment.exception", null, null);
                 return getCheckoutView();
@@ -452,34 +445,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 billingInfoForm.setAddress(billing);
             }
         }
-    }
-
-    /**
-     * This method initializes the order for checkout by setting
-     * the order number, status, and the submit date.
-     *
-     * @param order
-     */
-    protected void initializeOrderForCheckout(Order order) {
-        order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
-        order.setStatus(OrderStatus.SUBMITTED);
-        order.setSubmitDate(Calendar.getInstance().getTime());
-    }
-
-    /**
-     * This method dictates what actions need to be taken if there is a failure during the checkout process.
-     * Normally called when either the transaction success is false (e.g. payment declined by gateway)
-     * or an unknown error occurs during the Checkout Workflow (e.g. a CheckoutException is thrown)
-     *
-     * The default behavior is to reverse the status of the order and set the submit date and order number to null.
-     *
-     * @param order
-     */
-    protected void processFailedOrderCheckout(Order order) throws PricingException {
-        order.setOrderNumber(null);
-        order.setStatus(OrderStatus.IN_PROCESS);
-        order.setSubmitDate(null);
-        orderService.save(order, false);
     }
 
     /**
