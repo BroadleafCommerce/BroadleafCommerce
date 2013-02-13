@@ -18,17 +18,19 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.service.CompositePaymentService;
+import org.broadleafcommerce.core.payment.service.exception.InsufficientFundsException;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.Resource;
+import java.util.Map.Entry;
 
-import java.util.Map;
+import javax.annotation.Resource;
 
 public class PaymentServiceActivity extends BaseActivity {
     
@@ -38,14 +40,14 @@ public class PaymentServiceActivity extends BaseActivity {
     private CompositePaymentService compositePaymentService;
     
     @Value("${stop.checkout.on.single.payment.failure}")
-    protected String stopCheckoutOnSinglePaymentFailure;
+    protected Boolean stopCheckoutOnSinglePaymentFailure;
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
         CompositePaymentResponse response = compositePaymentService.executePayment(seed.getOrder(), seed.getInfos(), seed.getPaymentResponse());
         
-        for (Map.Entry<PaymentInfo, PaymentResponseItem> entry : response.getPaymentResponse().getResponseItems().entrySet()) {
+        for (Entry<PaymentInfo, PaymentResponseItem> entry : response.getPaymentResponse().getResponseItems().entrySet()) {
             checkTransactionStatus(context, entry.getValue());
             if (context.isStopped()) {
                 String log = "Stopping checkout workflow due to payment response code: ";
@@ -58,11 +60,24 @@ public class PaymentServiceActivity extends BaseActivity {
             }
         }
 
+        // Validate that the total amount collected is not less than the order total
+        Money paidAmount = new Money(0);
+        for (Entry<PaymentInfo, PaymentResponseItem> entry : response.getPaymentResponse().getResponseItems().entrySet()) {
+            if (entry.getValue().getTransactionSuccess()) {
+                paidAmount = paidAmount.add(entry.getValue().getTransactionAmount());
+            }
+        }
+
+        if (paidAmount.lessThan(seed.getOrder().getTotal())) {
+            throw new InsufficientFundsException(String.format("Order total was [%s] but paid amount was [%s]",
+                    seed.getOrder().getTotal(), paidAmount));
+        }
+
         return context;
     }
     
     protected void checkTransactionStatus(ProcessContext context, PaymentResponseItem paymentResponseItem) {
-        if ("true".equalsIgnoreCase(stopCheckoutOnSinglePaymentFailure) &&
+        if ((stopCheckoutOnSinglePaymentFailure != null && stopCheckoutOnSinglePaymentFailure) &&
                 paymentResponseItem.getTransactionSuccess() != null && !paymentResponseItem.getTransactionSuccess()) {
             context.stopProcess();
         }
