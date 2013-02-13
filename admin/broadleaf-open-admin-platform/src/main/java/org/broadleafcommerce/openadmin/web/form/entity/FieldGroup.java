@@ -10,6 +10,15 @@ public class FieldGroup {
     protected int order;
     List<Field> fields = new ArrayList<Field>();
 
+    public Boolean getIsVisible() {
+        for (Field f : fields) {
+            if (f.getIsVisible()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getTitle() {
         return title;
     }

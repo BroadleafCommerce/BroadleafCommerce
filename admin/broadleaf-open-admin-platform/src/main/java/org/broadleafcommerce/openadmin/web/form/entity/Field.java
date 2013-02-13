@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+
 
 
 /**
@@ -30,6 +32,11 @@ public class Field {
     protected String displayValue;
     protected String foreignKeyDisplayValueProperty;
     protected String idOverride;
+
+    public Boolean getIsVisible() {
+        return !(fieldType.equals(SupportedFieldType.ID.toString()) ||
+                fieldType.equals(SupportedFieldType.HIDDEN.toString()) || fieldType.equals(SupportedFieldType.FOREIGN_KEY.toString()));
+    }
 
     public String getDisplayValue() {
         return displayValue == null ? value : displayValue;

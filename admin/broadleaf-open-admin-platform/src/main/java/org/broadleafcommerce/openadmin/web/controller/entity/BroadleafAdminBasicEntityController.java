@@ -186,13 +186,18 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
                             Entity[] rows = service.getRecords(fmd.getCollectionCeilingEntity(), null);
                             ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
-                            listGrid.setListGridType("adornedTarget");
 
                             EntityForm entityForm = formService.buildAdornedListForm(fmd, adornedList, id);
 
                             model.addAttribute("listGrid", listGrid);
                             model.addAttribute("entityForm", entityForm);
-                            model.addAttribute("viewType", "modalAdornedListGrid");
+                            if (fmd.getMaintainedAdornedTargetFields().length > 0) {
+                                listGrid.setListGridType("adornedTargetWithForm");
+                                model.addAttribute("viewType", "modalAdornedListGridForm");
+                            } else {
+                                listGrid.setListGridType("adornedTarget");
+                                model.addAttribute("viewType", "modalAdornedListGrid");
+                            }
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
