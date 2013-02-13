@@ -83,5 +83,17 @@
     </bean>
 
     <mo:override id="blMetadataOverrides"/>
+    
+    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
+                <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
+                <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
+                <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
+                <value>classpath:/messages/OpenAdminMessages</value>
+            </list>
+        </property>
+    </bean>
 
 </beans>

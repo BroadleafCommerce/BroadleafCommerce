@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.common.util;
 
+/**
+ * 
+ * @deprecated instead, use {@link BroadleafMergeResourceBundleMessageSource}
+ */
+@Deprecated
 public class ResourceBundleExtensionPoint {
 
     private String[] basenameExtensions = new String[0];

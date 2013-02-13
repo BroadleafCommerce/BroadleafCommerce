@@ -143,5 +143,15 @@
             </mo:field>
         </mo:overrideItem>
     </mo:override>
+    
+    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:/messages/CustomerCareMessages</value>
+                <value>classpath:/messages/MerchandisingMessages</value>
+                <value>classpath:/messages/PromotionMessages</value>
+            </list>
+        </property>
+    </bean>
 
 </beans>
