@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
@@ -66,9 +67,12 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         CheckoutSeed seed = null;
         try {
+            orderService.save(order, false);
             seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);
             return seed;
+        } catch (PricingException e) {
+            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e, seed);
         } catch (WorkflowException e) {
             Throwable cause = e;
             while (e.getCause() != null) {
