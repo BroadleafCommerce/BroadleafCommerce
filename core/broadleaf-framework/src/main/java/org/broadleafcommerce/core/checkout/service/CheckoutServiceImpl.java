@@ -69,7 +69,13 @@ public class CheckoutServiceImpl implements CheckoutService {
         try {
             order = orderService.save(order, false);
             seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
+
             checkoutWorkflow.doActivities(seed);
+
+            // We need to pull the order off the seed and save it here in case any activity modified the order.
+            order = orderService.save(seed.getOrder(), false);
+            seed.setOrder(order);
+
             return seed;
         } catch (PricingException e) {
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e, seed);
