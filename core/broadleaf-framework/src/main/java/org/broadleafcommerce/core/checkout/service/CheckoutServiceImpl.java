@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.checkout.service;
 
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
@@ -24,15 +23,14 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 @Service("blCheckoutService")
 public class CheckoutServiceImpl implements CheckoutService {
@@ -68,15 +66,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         CheckoutSeed seed = null;
         try {
-            order.setSubmitDate(SystemTime.asDate());
-            order = orderService.save(order, false);
-
             seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);
-
             return seed;
-        } catch (PricingException e) {
-            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e, seed);
         } catch (WorkflowException e) {
             Throwable cause = e;
             while (e.getCause() != null) {
