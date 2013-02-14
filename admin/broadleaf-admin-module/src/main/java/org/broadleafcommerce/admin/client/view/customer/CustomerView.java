@@ -16,22 +16,26 @@
 
 package org.broadleafcommerce.admin.client.view.customer;
 
-import com.google.gwt.core.client.GWT;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
+
+import com.google.gwt.core.client.GWT;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.Side;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 /**
  * 
@@ -61,8 +65,19 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
         listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("customerListTitle"), entityDataSource, false);
         leftVerticalLayout.addMember(listDisplay);
        
+        TabSet topTabSet = new TabSet();
+        topTabSet.setID("customerTopTabSet");
+        topTabSet.setTabBarPosition(Side.TOP);
+        topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
+        topTabSet.setWidth100();
+        topTabSet.setHeight100();
+        topTabSet.setPaneMargin(0);
+
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("detailsTabTitle"));
+        detailsTab.setID("customerDetailsTab");
+
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("customerDetailsTitle"), entityDataSource);
-        dynamicFormDisplay.setWidth("50%");
+        //  dynamicFormDisplay.setWidth("50%");
         ToolStrip toolbar = dynamicFormDisplay.getToolbar();
         toolbar.addFill();
 
@@ -77,9 +92,15 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
 
         toolbar.addButton(updateLoginButton);
         toolbar.addSpacer(6);
+
+        detailsTab.setPane(dynamicFormDisplay);
+
+        topTabSet.addTab(detailsTab);
+
         leftVerticalLayout.setParentElement(this);
         addMember(leftVerticalLayout);
-        addMember(dynamicFormDisplay);
+        addMember(topTabSet);
+
     }
 
     @Override

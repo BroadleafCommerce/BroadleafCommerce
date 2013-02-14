@@ -24,6 +24,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -60,21 +61,25 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
         }
     )
     @Column(name = "FULFILLMENT_OPTION_ID")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "NAME")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_name")
     protected String name;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_longDescription")
     protected String longDescription;
 
     @Column(name = "USE_FLAT_RATES")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_useFlatRates")
     protected Boolean useFlatRates = true;
 
     @Column(name = "FULFILLMENT_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "Fulfillment Type", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_fulfillmentType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
     @Override
