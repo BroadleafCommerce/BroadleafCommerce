@@ -16,6 +16,22 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,27 +50,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.broadleafcommerce.common.audit.Auditable;
-import org.broadleafcommerce.common.audit.AuditableListener;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
-
 @Entity
 @EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
 public class CustomerImpl implements Customer {
 
