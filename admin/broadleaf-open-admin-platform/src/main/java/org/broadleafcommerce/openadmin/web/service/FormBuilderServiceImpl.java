@@ -26,25 +26,27 @@ import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.stereotype.Service;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -65,37 +67,44 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
                 if (fmd.isProminent() != null && fmd.isProminent()) {
-                    Field hf = new Field();
-                    hf.setName(p.getName());
-                    hf.setFriendlyName(fmd.getFriendlyName());
+                    Field hf = new Field()
+                            .withName(p.getName())
+                            .withFriendlyName(fmd.getFriendlyName());
                     hfs.add(hf);
                 }
             }
         }
 
-        ListGrid lg = new ListGrid();
-        lg.setClassName(cmd.getCeilingType());
-        lg.setHeaderFields(hfs);
+        return buildListGrid(cmd, entities, hfs);
+    }
 
-        // For each of the entities (rows) in the list grid, we need to build the associated
-        // ListGridRecord and set the required fields on the record. These fields are the same ones
-        // that are used for the column headers
-        for (Entity e : entities) {
-            ListGridRecord record = new ListGridRecord();
-            record.setId(e.findProperty("id").getValue());
+    @Override
+    public ListGrid buildMapListGrid(MapMetadata mmd, ClassMetadata cmd, Entity[] entities) {
+        List<Field> hfs = new ArrayList<Field>();
 
-            for (Field headerField : hfs) {
-                Property p = e.findProperty(headerField.getName());
-                Field recordField = new Field();
-                recordField.setName(headerField.getName());
-                recordField.setValue(p.getValue());
-                record.getFields().add(recordField);
+        Property p2 = cmd.getPMap().get("key");
+        Field hf = new Field()
+                .withName(p2.getName())
+                .withFriendlyName(p2.getMetadata().getFriendlyName());
+        hfs.add(hf);
+
+        // Determine which fields are going to be used in the table header
+        // For now, only consider field prominence annotations
+        for (Property p : cmd.getProperties()) {
+            if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
+                if (fmd.getTargetClass().equals(mmd.getValueClassName())) {
+                    if (fmd.isProminent() != null && fmd.isProminent()) {
+                        hf = new Field()
+                                .withName(p.getName())
+                                .withFriendlyName(fmd.getFriendlyName());
+                        hfs.add(hf);
+                    }
+                }
             }
-
-            lg.getRecords().add(record);
         }
 
-        return lg;
+        return buildListGrid(cmd, entities, hfs);
     }
 
     @Override
@@ -103,15 +112,19 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Field> hfs = new ArrayList<Field>();
         for (String fieldName : fmd.getGridVisibleFields()) {
             Property p = cmd.getPMap().get(fieldName);
-            Field hf = new Field();
-            hf.setName(p.getName());
-            hf.setFriendlyName(p.getMetadata().getFriendlyName());
+            Field hf = new Field()
+                    .withName(p.getName())
+                    .withFriendlyName(p.getMetadata().getFriendlyName());
             hfs.add(hf);
         }
 
+        return buildListGrid(cmd, entities, hfs);
+    }
+
+    protected ListGrid buildListGrid(ClassMetadata cmd, Entity[] entities, List<Field> headerFields) {
         ListGrid lg = new ListGrid();
         lg.setClassName(cmd.getCeilingType());
-        lg.setHeaderFields(hfs);
+        lg.setHeaderFields(headerFields);
 
         // For each of the entities (rows) in the list grid, we need to build the associated
         // ListGridRecord and set the required fields on the record. These fields are the same ones
@@ -120,11 +133,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ListGridRecord record = new ListGridRecord();
             record.setId(e.findProperty("id").getValue());
 
-            for (Field headerField : hfs) {
+            for (Field headerField : headerFields) {
                 Property p = e.findProperty(headerField.getName());
-                Field recordField = new Field();
-                recordField.setName(headerField.getName());
-                recordField.setValue(p.getValue());
+                Field recordField = new Field()
+                        .withName(headerField.getName())
+                        .withValue(p.getValue());
                 record.getFields().add(recordField);
             }
 
@@ -133,6 +146,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         return lg;
     }
+
 
     @Override
     public RuleBuilder buildRuleBuilder(ClassMetadata cmd, Entity[] entities, String[] ruleVars, String[] configKeys) {
@@ -165,54 +179,25 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Override
     public void buildFormMetadata(ClassMetadata cmd, final EntityForm ef) {
         for (final Property p : cmd.getProperties()) {
-            p.getMetadata().accept(new MetadataVisitor() {
+            if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
 
-                @Override
-                public void visit(BasicFieldMetadata fmd) {
-                    // We have all polymorphic types here since we're looping through the metadata
-                    // for the class. Filter out ones that do not apply to this particular entity.
+                String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
 
-                    String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+                // Create the field and set some basic attributes
+                Field f = new Field()
+                        .withName(p.getName())
+                        .withFieldType(fieldType)
+                        .withFriendlyName(p.getMetadata().getFriendlyName())
+                        .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
 
-                    // Create the field and set some basic attributes
-                    Field f = new Field();
-                    f.setName(p.getName());
-                    f.setFieldType(fieldType);
-                    f.setFriendlyName(p.getMetadata().getFriendlyName());
-                    if (StringUtils.isBlank(f.getFriendlyName())) {
-                        f.setFriendlyName(f.getName());
-                    }
-
-                    // Set additional attributes
-                    f.setForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
-
-                    // Add the field to the appropriate FieldGroup
-                    String groupName = ((BasicFieldMetadata) p.getMetadata()).getGroup();
-                    groupName = groupName == null ? "Default" : groupName;
-                    FieldGroup fieldGroup = ef.getGroups().get(groupName);
-                    if (fieldGroup == null) {
-                        fieldGroup = new FieldGroup();
-                        fieldGroup.setTitle(groupName);
-                        ef.getGroups().put(groupName, fieldGroup);
-                    }
-                    fieldGroup.getFields().add(f);
+                if (StringUtils.isBlank(f.getFriendlyName())) {
+                    f.setFriendlyName(f.getName());
                 }
 
-                @Override
-                public void visit(BasicCollectionMetadata fmd) {
-
-                }
-
-                @Override
-                public void visit(MapMetadata fmd) {
-
-                }
-
-                @Override
-                public void visit(AdornedTargetCollectionMetadata fmd) {
-
-                }
-            });
+                // Add the field to the appropriate FieldGroup
+                ef.addField(f, fmd.getGroup());
+            }
         }
     }
 
@@ -223,8 +208,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         final EntityForm ef = new EntityForm();
         ef.setEntityType(adornedList.getAdornedTargetEntityClassname());
 
-        ClassMetadata collectionMetadata =
-                adminEntityService.getClassMetadata(adornedMd.getCollectionCeilingEntity(), adornedList);
+        PersistencePackageRequest request = PersistencePackageRequest.adorned()
+                .withClassName(adornedMd.getCollectionCeilingEntity())
+                .withAdornedList(adornedList);
+        ClassMetadata collectionMetadata = adminEntityService.getClassMetadata(request);
 
         for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
             Property p = collectionMetadata.getPMap().get(targetFieldName);
@@ -232,52 +219,38 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
 
             // Create the field and set some basic attributes
-            Field f = new Field();
-            f.setName(p.getName());
-            f.setFieldType(fieldType);
-            f.setFriendlyName(p.getMetadata().getFriendlyName());
+            Field f = new Field()
+                    .withName(p.getName())
+                    .withFieldType(fieldType)
+                    .withFriendlyName(p.getMetadata().getFriendlyName())
+                    .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+
             if (StringUtils.isBlank(f.getFriendlyName())) {
                 f.setFriendlyName(f.getName());
             }
 
-            // Set additional attributes
-            f.setForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
-
             // Add the field to the appropriate FieldGroup
-            String groupName = ((BasicFieldMetadata) p.getMetadata()).getGroup();
-            groupName = groupName == null ? "Default" : groupName;
-            FieldGroup fieldGroup = ef.getGroups().get(groupName);
-            if (fieldGroup == null) {
-                fieldGroup = new FieldGroup();
-                fieldGroup.setTitle(groupName);
-                ef.getGroups().put(groupName, fieldGroup);
-            }
-            fieldGroup.getFields().add(f);
+            ef.addField(f, fmd.getGroup());
         }
 
-        FieldGroup fieldGroup = ef.getGroups().get(EntityForm.HIDDEN_GROUP);
-        if (fieldGroup == null) {
-            fieldGroup = new FieldGroup();
-            ef.getGroups().put(EntityForm.HIDDEN_GROUP, fieldGroup);
-        }
+        Field f = new Field()
+                .withName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty())
+                .withFieldType(SupportedFieldType.HIDDEN.toString())
+                .withValue(parentId);
+        ef.addField(f, EntityForm.HIDDEN_GROUP);
 
-        Field f = new Field();
-        f.setName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
-        f.setFieldType(SupportedFieldType.HIDDEN.toString());
-        f.setValue(parentId);
-        fieldGroup.getFields().add(f);
-
-        f = new Field();
-        f.setName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
-        f.setFieldType(SupportedFieldType.HIDDEN.toString());
-        f.setIdOverride("adornedTargetIdProperty");
-        fieldGroup.getFields().add(f);
+        f = new Field()
+                .withName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty())
+                .withFieldType(SupportedFieldType.HIDDEN.toString())
+                .withIdOverride("adornedTargetIdProperty");
+        ef.addField(f, EntityForm.HIDDEN_GROUP);
 
         return ef;
     }
 
     @Override
-    public EntityForm buildEntityForm(final EntityForm ef, ClassMetadata cmd, final Entity entity, final Map<String, Entity[]> subCollections)
+    public EntityForm buildEntityForm(final EntityForm ef, ClassMetadata cmd, final Entity entity,
+            final Map<String, Entity[]> subCollections)
             throws ClassNotFoundException, ServiceException, ApplicationSecurityException {
         buildFormMetadata(cmd, ef);
 
@@ -302,14 +275,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 public void visit(BasicCollectionMetadata fmd) {
                     try {
                         Entity[] subCollectionEntities = subCollections.get(p.getName());
-                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(fmd.getCollectionCeilingEntity());
+                        ClassMetadata subCollMd = adminEntityService.getClassMetadata(fmd.getCollectionCeilingEntity());
 
                         if (fmd.getRuleBuilderVars().length > 0) {
-                            RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(subCollectionMd, subCollectionEntities,
+                            RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(subCollMd, subCollectionEntities,
                                     fmd.getRuleBuilderVars(), fmd.getRuleBuilderConfigKeys());
                             ef.getCollectionRuleBuilders().add(subCollectionRuleBuilder);
                         } else {
-                            ListGrid subCollectionGrid = buildListGrid(subCollectionMd, subCollectionEntities);
+                            ListGrid subCollectionGrid = buildListGrid(subCollMd, subCollectionEntities);
                             subCollectionGrid.setSubCollectionFieldName(p.getName());
                             subCollectionGrid.setAddMethodType(fmd.getAddMethodType());
                             subCollectionGrid.setListGridType("inline");
@@ -323,7 +296,27 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                 @Override
                 public void visit(MapMetadata fmd) {
+                    try {
+                        ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective()
+                                .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
 
+                        MapStructure map = (MapStructure) fmd.getPersistencePerspective()
+                                .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+
+                        Entity[] subCollectionEntities = subCollections.get(p.getName());
+
+                        PersistencePackageRequest request = PersistencePackageRequest.map()
+                                .withClassName(fmd.getTargetClass())
+                                .withMapStructure(map)
+                                .addForeignKey(foreignField);
+                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(request);
+
+                        ListGrid subCollectionGrid = buildMapListGrid(fmd, subCollectionMd, subCollectionEntities);
+                        subCollectionGrid.setSubCollectionFieldName(p.getName());
+                        ef.getCollectionListGrids().add(subCollectionGrid);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
                 @Override
@@ -331,8 +324,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     try {
                         AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                                 .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+
                         Entity[] subCollectionEntities = subCollections.get(p.getName());
-                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(fmd.getCollectionCeilingEntity(), adornedList);
+
+                        PersistencePackageRequest request = PersistencePackageRequest.adorned()
+                                .withClassName(fmd.getCollectionCeilingEntity())
+                                .withAdornedList(adornedList);
+                        ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(request);
 
                         ListGrid subCollectionGrid = buildAdornedListGrid(fmd, subCollectionMd, subCollectionEntities);
                         subCollectionGrid.setSubCollectionFieldName(p.getName());
@@ -348,5 +346,3 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
 }
-
-

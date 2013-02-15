@@ -29,6 +29,7 @@ import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.controller.BroadleafAdminAbstractController;
@@ -43,11 +44,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -70,8 +71,9 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String sectionKey) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        ClassMetadata cmd = service.getClassMetadata(sectionClassName);
-        Entity[] rows = service.getRecords(sectionClassName, null);
+        PersistencePackageRequest ppr = PersistencePackageRequest.standard().withClassName(sectionClassName);
+        ClassMetadata cmd = service.getClassMetadata(ppr);
+        Entity[] rows = service.getRecords(ppr);
 
         ListGrid listGrid = formService.buildListGrid(cmd, rows);
         listGrid.setListGridType("main");
@@ -142,7 +144,9 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                             String collectionClassName = fmd.getForeignKeyClass();
 
                             ClassMetadata collectionMetadata = service.getClassMetadata(collectionClassName);
-                            Entity[] rows = service.getRecords(collectionClassName, null);
+                            PersistencePackageRequest request = PersistencePackageRequest.standard()
+                                    .withClassName(collectionClassName);
+                            Entity[] rows = service.getRecords(request);
 
                             ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
                             listGrid.setListGridType("toOne");
@@ -156,15 +160,20 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                     @Override
                     public void visit(BasicCollectionMetadata fmd) {
                         try {
-                            ForeignKey[] foreignKeys = new ForeignKey[] { (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY) };
-                            ClassMetadata collectionMetadata = service.getClassMetadata(fmd.getCollectionCeilingEntity(), foreignKeys, null);
+                            ForeignKey foreignKey = (ForeignKey) fmd.getPersistencePerspective()
+                                    .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                            
+                            PersistencePackageRequest request = PersistencePackageRequest.standard()
+                                    .withClassName(fmd.getCollectionCeilingEntity())
+                                    .addForeignKey(foreignKey);
+                            ClassMetadata collectionMetadata = service.getClassMetadata(request);
 
                             if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
                                 EntityForm entityForm = formService.createEntityForm(collectionMetadata);
                                 model.addAttribute("entityForm", entityForm);
                                 model.addAttribute("viewType", "modalEntityForm");
                             } else {
-                                Entity[] rows = service.getRecords(fmd.getCollectionCeilingEntity(), foreignKeys);
+                                Entity[] rows = service.getRecords(request);
                                 ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
                                 listGrid.setListGridType("basicCollection");
                                 model.addAttribute("listGrid", listGrid);
@@ -182,9 +191,12 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                             AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                                     .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 
-                            ClassMetadata collectionMetadata = service.getClassMetadata(fmd.getCollectionCeilingEntity(), adornedList);
+                            PersistencePackageRequest request = PersistencePackageRequest.adorned()
+                                    .withClassName(fmd.getCollectionCeilingEntity())
+                                    .withAdornedList(adornedList);
+                            ClassMetadata collectionMetadata = service.getClassMetadata(request);
 
-                            Entity[] rows = service.getRecords(fmd.getCollectionCeilingEntity(), null);
+                            Entity[] rows = service.getRecords(request);
                             ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
 
                             EntityForm entityForm = formService.buildAdornedListForm(fmd, adornedList, id);
@@ -241,7 +253,12 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                     AdornedTargetCollectionMetadata fmd = ((AdornedTargetCollectionMetadata) p.getMetadata());
                     AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                             .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-                    subCollectionMd = service.getClassMetadata(fmd.getCollectionCeilingEntity(), adornedList);
+
+                    PersistencePackageRequest ppr = PersistencePackageRequest.adorned()
+                            .withClassName(fmd.getCollectionCeilingEntity())
+                            .withAdornedList(adornedList);
+                    subCollectionMd = service.getClassMetadata(ppr);
+
                     listGrid = formService.buildAdornedListGrid(fmd, subCollectionMd, rows);
                 } else {
                     subCollectionMd = null;

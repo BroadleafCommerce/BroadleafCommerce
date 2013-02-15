@@ -17,12 +17,10 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -37,13 +35,10 @@ public interface AdminEntityService {
     public ClassMetadata getClassMetadata(String className)
             throws ServiceException, ApplicationSecurityException;
 
-    public ClassMetadata getClassMetadata(String className, AdornedTargetList adornedList)
+    public ClassMetadata getClassMetadata(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException;
 
-    public ClassMetadata getClassMetadata(String className, ForeignKey[] foreignKeys, String configKey)
-            throws ServiceException, ApplicationSecurityException;
-
-    public Entity[] getRecords(String className, ForeignKey[] foreignKeys, FilterAndSortCriteria... fascs)
+    public Entity[] getRecords(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException;
 
     public Entity getRecord(String className, String id)

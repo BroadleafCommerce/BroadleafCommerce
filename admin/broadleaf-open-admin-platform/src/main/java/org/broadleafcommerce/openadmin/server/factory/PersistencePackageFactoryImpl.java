@@ -18,11 +18,11 @@ package org.broadleafcommerce.openadmin.server.factory;
 
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,46 +32,50 @@ import org.springframework.stereotype.Service;
 public class PersistencePackageFactoryImpl implements PersistencePackageFactory {
     
     @Override
-    public PersistencePackage standard(String className, String[] customCriteria, ForeignKey[] foreignKeys,
-            String configurationKey) {
+    public PersistencePackage create(PersistencePackageRequest request) {
         PersistencePerspective persistencePerspective = new PersistencePerspective();
-        persistencePerspective.setOperationTypes(getDefaultOperationTypes());
+
         persistencePerspective.setAdditionalForeignKeys(new ForeignKey[] {});
         persistencePerspective.setAdditionalNonPersistentProperties(new String[] {});
-        if (foreignKeys != null) {
-            for (ForeignKey fk : foreignKeys) {
+
+        if (request.getForeignKeys() != null) {
+            for (ForeignKey fk : request.getForeignKeys()) {
                 persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, fk);
             }
         }
 
+        switch (request.getType()) {
+            case STANDARD:
+                persistencePerspective.setOperationTypes(getDefaultOperationTypes());
+                break;
+
+            case ADORNED:
+                persistencePerspective.setOperationTypes(getOperationTypes(OperationType.ADORNEDTARGETLIST));
+                persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST,
+                        request.getAdornedList());
+                break;
+
+            case MAP:
+                persistencePerspective.setOperationTypes(getOperationTypes(OperationType.MAP));
+                persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE,
+                        request.getMapStructure());
+                break;
+        }
+
         PersistencePackage pp = new PersistencePackage();
-        pp.setCeilingEntityFullyQualifiedClassname(className);
+        pp.setCeilingEntityFullyQualifiedClassname(request.getClassName());
         pp.setFetchTypeFullyQualifiedClassname(null);
         pp.setPersistencePerspective(persistencePerspective);
-        pp.setCustomCriteria(customCriteria);
-        pp.setEntity(null);
+        pp.setCustomCriteria(request.getCustomCriteria());
         pp.setCsrfToken(null);
+
+        if (request.getEntity() != null) {
+            pp.setEntity(request.getEntity());
+        }
+
         return pp;
     }
 
-    @Override
-    public PersistencePackage adornedTarget(String className, String[] customCriteria, AdornedTargetList adornedList) {
-        PersistencePerspective persistencePerspective = new PersistencePerspective();
-        persistencePerspective.setOperationTypes(getOperationTypes(OperationType.ADORNEDTARGETLIST));
-        persistencePerspective.setAdditionalForeignKeys(new ForeignKey[] {});
-        persistencePerspective.setAdditionalNonPersistentProperties(new String[] {});
-        persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, adornedList);
-
-        PersistencePackage pp = new PersistencePackage();
-        pp.setCeilingEntityFullyQualifiedClassname(className);
-        pp.setFetchTypeFullyQualifiedClassname(null);
-        pp.setPersistencePerspective(persistencePerspective);
-        pp.setCustomCriteria(customCriteria);
-        pp.setEntity(null);
-        pp.setCsrfToken(null);
-        return pp;
-    }
-    
     protected OperationTypes getDefaultOperationTypes() {
         OperationTypes operationTypes = new OperationTypes();
         operationTypes.setFetchType(OperationType.BASIC);

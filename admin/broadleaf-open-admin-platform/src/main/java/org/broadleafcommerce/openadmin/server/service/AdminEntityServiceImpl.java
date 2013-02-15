@@ -23,16 +23,19 @@ import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -56,44 +59,41 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Resource(name = "blDynamicEntityRemoteService")
     protected DynamicEntityService service;
-    
+
     @Resource(name = "blPersistencePackageFactory")
     protected PersistencePackageFactory persistencePackageFactory;
 
     @Override
     public ClassMetadata getClassMetadata(String className) throws ServiceException, ApplicationSecurityException {
-        ClassMetadata cmd = inspect(className, null, null).getClassMetaData();
-        cmd.setCeilingType(className);
-        return cmd;
-    }
-    
-    @Override
-    public ClassMetadata getClassMetadata(String className, AdornedTargetList adornedList) throws ServiceException, ApplicationSecurityException {
-        ClassMetadata cmd = inspect(className, adornedList).getClassMetaData();
-        cmd.setCeilingType(className);
-        return cmd;
+        PersistencePackageRequest request = PersistencePackageRequest.standard()
+                .withClassName(className);
+        return getClassMetadata(request);
     }
 
     @Override
-    public ClassMetadata getClassMetadata(String className, ForeignKey[] foreignKeys, String configKey) throws ServiceException, ApplicationSecurityException {
-        ClassMetadata cmd = inspect(className, foreignKeys, configKey).getClassMetaData();
-        cmd.setCeilingType(className);
-        return cmd;
-    }
-
-    @Override
-    public Entity[] getRecords(String className, ForeignKey[] foreignKeys, FilterAndSortCriteria... fascs)
+    public ClassMetadata getClassMetadata(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException {
-        return fetch(className, foreignKeys, null, fascs).getRecords();
+        ClassMetadata cmd = inspect(request).getClassMetaData();
+        cmd.setCeilingType(request.getClassName());
+        return cmd;
+    }
+
+    @Override
+    public Entity[] getRecords(PersistencePackageRequest request) throws ServiceException, ApplicationSecurityException {
+        return fetch(request).getRecords();
     }
 
     @Override
     public Entity getRecord(String className, String id) throws ServiceException, ApplicationSecurityException {
         FilterAndSortCriteria fasc = new FilterAndSortCriteria("id");
         fasc.setFilterValue(id);
-        
-        Entity[] entities = fetch(className, new ForeignKey[] {}, null, fasc).getRecords();
-        
+
+        PersistencePackageRequest request = PersistencePackageRequest.standard()
+                .withClassName(className)
+                .addFilterAndSortCriteria(fasc);
+
+        Entity[] entities = fetch(request).getRecords();
+
         if (entities == null || entities.length > 1) {
             throw new RuntimeException("More than one entity found with the same id");
         }
@@ -106,48 +106,54 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     public Entity[] getRecordsForCollection(final ClassMetadata containingClassMetadata, final String containingEntityId,
             final Property collectionProperty)
             throws ServiceException, ApplicationSecurityException {
-        final Entity[][] recordContainer = new Entity[1][];
+        final PersistencePackageRequest request = new PersistencePackageRequest();
 
         collectionProperty.getMetadata().accept(new MetadataVisitor() {
 
             @Override
             public void visit(MapMetadata fmd) {
-                // TODO Auto-generated method stub
+                ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
+                        .get(PersistencePerspectiveItemType.FOREIGNKEY);
 
+                MapStructure mapStructure = (MapStructure) fmd.getPersistencePerspective()
+                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+
+                FilterAndSortCriteria fasc = new FilterAndSortCriteria(foreignField.getManyToField());
+                fasc.setFilterValue(containingEntityId);
+
+                request.withType(PersistencePackageRequest.Type.MAP)
+                        .withClassName(fmd.getTargetClass())
+                        .withMapStructure(mapStructure)
+                        .addForeignKey(foreignField)
+                        .addFilterAndSortCriteria(fasc);
             }
 
             @Override
             public void visit(AdornedTargetCollectionMetadata fmd) {
-                try {
-                    AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
-                            .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
+                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 
-                    String manyToField = adornedList.getCollectionFieldName();
-                    FilterAndSortCriteria fasc = new FilterAndSortCriteria(manyToField);
-                    fasc.setFilterValue(containingEntityId);
+                FilterAndSortCriteria fasc = new FilterAndSortCriteria(adornedList.getCollectionFieldName());
+                fasc.setFilterValue(containingEntityId);
 
-                    recordContainer[0] = fetch(fmd.getCollectionCeilingEntity(), adornedList, fasc).getRecords();
-                } catch (Exception e) {
-                    throw new IllegalArgumentException(e);
-                }
+                request.withType(PersistencePackageRequest.Type.ADORNED)
+                        .withClassName(fmd.getCollectionCeilingEntity())
+                        .withAdornedList(adornedList)
+                        .addFilterAndSortCriteria(fasc);
             }
 
             @Override
             public void visit(BasicCollectionMetadata fmd) {
-                try {
-                    // Establish the filter criteria for the subcollection -- we want to get all results for the 
-                    // subcollection for the current containing entity id
-                    ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
-                            .get(PersistencePerspectiveItemType.FOREIGNKEY);
+                ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
+                        .get(PersistencePerspectiveItemType.FOREIGNKEY);
 
-                    FilterAndSortCriteria fasc = new FilterAndSortCriteria(foreignField.getManyToField());
-                    fasc.setFilterValue(containingEntityId);
+                FilterAndSortCriteria fasc = new FilterAndSortCriteria(foreignField.getManyToField());
+                fasc.setFilterValue(containingEntityId);
 
-                    recordContainer[0] = fetch(fmd.getCollectionCeilingEntity(),
-                            new ForeignKey[] { foreignField }, null, fasc).getRecords();
-                } catch (Exception e) {
-                    throw new IllegalArgumentException(e);
-                }
+                request.withType(PersistencePackageRequest.Type.STANDARD)
+                        .withClassName(fmd.getCollectionCeilingEntity())
+                        .addForeignKey(foreignField)
+                        .addFilterAndSortCriteria(fasc);
             }
 
             @Override
@@ -157,7 +163,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             }
         });
 
-        return recordContainer[0];
+        try {
+            return fetch(request).getRecords();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
@@ -168,53 +178,27 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         final ClassMetadata cmd = getClassMetadata(containingClassName);
         for (final Property p : cmd.getProperties()) {
-            p.getMetadata().accept(new MetadataVisitor() {
-
-                @Override
-                public void visit(BasicCollectionMetadata fmd) {
-                    try {
-                        Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p);
-                        map.put(p.getName(), rows);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+            if (p.getMetadata() instanceof CollectionMetadata) {
+                try {
+                    Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p);
+                    map.put(p.getName(), rows);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-
-                @Override
-                public void visit(AdornedTargetCollectionMetadata fmd) {
-                    try {
-                        Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p);
-                        map.put(p.getName(), rows);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                @Override
-                public void visit(MapMetadata fmd) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void visit(BasicFieldMetadata fmd) {
-                    // TODO Auto-generated method stub
-                }
-            });
-
+            }
         }
 
         return map;
     }
 
     @Override
-    public Entity addSubCollectionEntity(EntityForm entityForm, String className, String fieldName, final String parentId)
+    public Entity addSubCollectionEntity(EntityForm entityForm, String className, final String fieldName,
+            final String parentId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
         // Find the FieldMetadata for this collection field
-        ClassMetadata cmd = getClassMetadata(className);
+        final ClassMetadata cmd = getClassMetadata(className);
 
         final List<Property> properties = new ArrayList<Property>();
-        // Build the property array from the field map. Note that we leave 1 extra slot for the foreign key reference
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
             Property p = new Property();
             p.setName(entry.getKey());
@@ -222,68 +206,56 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             properties.add(p);
         }
 
-        final Entity entity = new Entity();
+        final PersistencePackageRequest request = new PersistencePackageRequest()
+                .withEntity(new Entity());
 
-        final List<ForeignKey> additionalForeignKeys = new ArrayList<ForeignKey>();
-
-        final AdornedTargetList[] adornedListContainer = new AdornedTargetList[1];
-
-        for (Property p : cmd.getProperties()) {
-            if (p.getName().equals(fieldName)) {
-                p.getMetadata().accept(new MetadataVisitor() {
-
-                    @Override
-                    public void visit(MapMetadata fmd) {
-                        // TODO Auto-generated method stub
-
-                    }
-
-                    @Override
-                    public void visit(AdornedTargetCollectionMetadata fmd) {
-                        AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
-                                .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-                        entity.setType(new String[] { adornedList.getAdornedTargetEntityClassname() });
-                        adornedListContainer[0] = adornedList;
-                    }
-
-                    @Override
-                    public void visit(BasicCollectionMetadata fmd) {
-                        ForeignKey foreignField = null;
-                        if (fmd != null) {
-                            foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
-                                    .get(PersistencePerspectiveItemType.FOREIGNKEY);
-                            Property p = new Property();
-                            p.setName(foreignField.getManyToField());
-                            p.setValue(parentId);
-                            properties.add(p);
-                        }
-
-                        additionalForeignKeys.add(foreignField);
-
-                        entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
-                    }
-
-                    @Override
-                    public void visit(BasicFieldMetadata fmd) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });
+        cmd.getPMap().get(fieldName).getMetadata().accept(new MetadataVisitor() {
+            @Override
+            public void visit(MapMetadata fmd) {
+                request.setType(PersistencePackageRequest.Type.MAP);
             }
-        }
+
+            @Override
+            public void visit(AdornedTargetCollectionMetadata fmd) {
+                AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
+                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+
+                request.setType(PersistencePackageRequest.Type.ADORNED);
+                request.getEntity().setType(new String[] { adornedList.getAdornedTargetEntityClassname() });
+                request.setAdornedList(adornedList);
+            }
+
+            @Override
+            public void visit(BasicCollectionMetadata fmd) {
+                ForeignKey foreignField = null;
+                if (fmd != null) {
+                    foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
+                            .get(PersistencePerspectiveItemType.FOREIGNKEY);
+                    Property fp = new Property();
+                    fp.setName(foreignField.getManyToField());
+                    fp.setValue(parentId);
+                    properties.add(fp);
+                }
+
+                request.setType(PersistencePackageRequest.Type.STANDARD);
+                request.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
+                request.addForeignKey(foreignField);
+            }
+
+            @Override
+            public void visit(BasicFieldMetadata fmd) {
+                throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was" +
+                        " not a collection field.", fieldName, cmd.getCeilingType()));
+            }
+        });
 
         Property[] propArr = new Property[properties.size()];
         properties.toArray(propArr);
-        entity.setProperties(propArr);
+        request.getEntity().setProperties(propArr);
 
-        ForeignKey[] additionalKeys = new ForeignKey[additionalForeignKeys.size()];
-        additionalKeys = additionalForeignKeys.toArray(additionalKeys);
+        request.withClassName(request.getEntity().getType()[0]);
 
-        if (adornedListContainer[0] != null) {
-            return add(entity, entity.getType()[0], null, adornedListContainer[0]);
-        } else {
-            return add(entity, entity.getType()[0], additionalKeys, null);
-        }
+        return add(request);
     }
 
     @Override
@@ -303,102 +275,37 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         entity.setProperties(properties);
         entity.setType(new String[] { entityForm.getEntityType() });
 
-        return update(entity, className, null, null);
+        PersistencePackageRequest request = PersistencePackageRequest.standard()
+                .withEntity(entity)
+                .withClassName(className);
+        return update(request);
     }
 
-    /**
-     * Executes a database add for the given entity and class
-     * 
-     * @param entity
-     * @param clazz
-     * @return the updated entity
-     * @throws ServiceException
-     * @throws ApplicationSecurityException
-     */
-    protected Entity add(Entity entity, String className, ForeignKey[] foreignKeys, String configKey)
+    protected Entity add(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
-        pkg.setEntity(entity);
+        PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.add(pkg);
     }
 
-    protected Entity add(Entity entity, String className, String[] customCriteria, AdornedTargetList adornedList)
+    protected Entity update(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.adornedTarget(className, customCriteria, adornedList);
-        pkg.setEntity(entity);
-        return service.add(pkg);
-    }
-
-    /**
-     * Executes a database update for the given entity and class
-     * 
-     * @param entity
-     * @param clazz
-     * @return the updated entity
-     * @throws ServiceException
-     * @throws ApplicationSecurityException
-     */
-    protected Entity update(Entity entity, String className, ForeignKey[] foreignKeys, String configKey)
-            throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
-        pkg.setEntity(entity);
+        PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.update(pkg);
     }
 
-    /**
-     * Executes a database inspect for the given class
-     * 
-     * @param className the fully qualified name of the class to use
-     * @param foreignKeys any foreign keys applicable to this perspective
-     * @param configKey any configuration key to consider with this persistence perspective
-     * @return the DynamicResultSet (note that this will not have any entities, only metadata)
-     * @throws ServiceException
-     * @throws ApplicationSecurityException
-     */
-    protected DynamicResultSet inspect(String className, ForeignKey[] foreignKeys, String configKey)
+    protected DynamicResultSet inspect(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
+        PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.inspect(pkg);
     }
 
-    protected DynamicResultSet inspect(String className, AdornedTargetList adornedList)
+    protected DynamicResultSet fetch(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.adornedTarget(className, null, adornedList);
-        return service.inspect(pkg);
-    }
+        PersistencePackage pkg = persistencePackageFactory.create(request);
 
-    /**
-     * Executes a database fetch for the given class, foreign keys, and any applicable filter and sort criteria
-     * 
-     * @param clazz
-     * @param foreignKeys
-     * @param fascs
-     * @return the DynamicResultSet (note that this will not have any metadata, only entities)
-     * @throws ServiceException
-     * @throws ApplicationSecurityException
-     */
-    protected DynamicResultSet fetch(String className, ForeignKey[] foreignKeys, String configKey,
-            FilterAndSortCriteria... fascs)
-            throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.standard(className, null, foreignKeys, configKey);
         CriteriaTransferObject cto = getDefaultCto();
-        
-        if (fascs != null) {
-            for (FilterAndSortCriteria fasc : fascs) {
-                cto.add(fasc);
-            }
-        }
-
-        return service.fetch(pkg, cto);
-    }
-    
-    protected DynamicResultSet fetch(String className, AdornedTargetList adornedList, FilterAndSortCriteria... fascs)
-            throws ServiceException, ApplicationSecurityException {
-        PersistencePackage pkg = persistencePackageFactory.adornedTarget(className, null, adornedList);
-        CriteriaTransferObject cto = getDefaultCto();
-
-        if (fascs != null) {
-            for (FilterAndSortCriteria fasc : fascs) {
+        if (request.getFilterAndSortCriteria() != null) {
+            for (FilterAndSortCriteria fasc : request.getFilterAndSortCriteria()) {
                 cto.add(fasc);
             }
         }
@@ -406,9 +313,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return service.fetch(pkg, cto);
     }
 
-    /**
-     * @return a default CriteriaTransferObject set up to fetch a maximum of 75 results
-     */
     protected CriteriaTransferObject getDefaultCto() {
         CriteriaTransferObject cto = new CriteriaTransferObject();
         cto.setFirstResult(0);
@@ -417,5 +321,3 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
 }
-
-

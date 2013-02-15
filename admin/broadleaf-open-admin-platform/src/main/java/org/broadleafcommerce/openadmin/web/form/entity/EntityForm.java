@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 public class EntityForm {
 
     public static final String HIDDEN_GROUP = "hiddenGroup";
+    public static final String DEFAULT_GROUP_NAME = "Default";
 
     protected String id;
     protected String entityType;
@@ -62,6 +63,19 @@ public class EntityForm {
                 }
             }
         }
+    }
+
+    public void addField(Field field, String groupName) {
+        groupName = groupName == null ? "Default" : groupName;
+
+        FieldGroup fieldGroup = getGroups().get(groupName);
+        if (fieldGroup == null) {
+            fieldGroup = new FieldGroup();
+            fieldGroup.setTitle(groupName);
+            getGroups().put(groupName, fieldGroup);
+        }
+
+        fieldGroup.getFields().add(field);
     }
 
     public String getId() {

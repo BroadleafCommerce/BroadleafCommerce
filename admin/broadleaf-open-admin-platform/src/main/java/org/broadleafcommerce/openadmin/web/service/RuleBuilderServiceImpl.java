@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.translation.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.translation.RuleBuilderUtil;
@@ -26,9 +26,12 @@ import org.broadleafcommerce.openadmin.web.translation.dto.ConditionsDTO;
 import org.broadleafcommerce.openadmin.web.translation.dto.RuleBuilderDTO;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
 import java.io.IOException;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -44,7 +47,12 @@ public class RuleBuilderServiceImpl implements RuleBuilderService {
             throws ServiceException, ApplicationSecurityException, MVELTranslationException, IOException {
         ConditionsDTO conditions = null;
         for (RuleBuilderDTO dto : dtoList) {
-            ClassMetadata cmd = adminEntityService.getClassMetadata(dto.getCeilingEntity(), dto.getForeignKeys(), dto.getConfigKey());
+            PersistencePackageRequest request = PersistencePackageRequest.standard()
+                    .withClassName(dto.getCeilingEntity())
+                    .withForeignKeys(dto.getForeignKeys())
+                    .withConfigKey(dto.getConfigKey());
+            ClassMetadata cmd = adminEntityService.getClassMetadata(request);
+
             RuleBuilderUtil ruleBuilderUtil = new RuleBuilderUtil();
             conditions = ruleBuilderUtil.createConditionsDTO(mvel, cmd.getProperties());
             //ObjectMapper mapper = new ObjectMapper();

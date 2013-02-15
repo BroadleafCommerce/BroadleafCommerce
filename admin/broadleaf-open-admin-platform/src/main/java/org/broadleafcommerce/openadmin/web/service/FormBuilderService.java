@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadat
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -87,5 +88,7 @@ public interface FormBuilderService {
      * @see {@link FieldGroup}
      */
     public void buildFormMetadata(ClassMetadata cmd, final EntityForm ef);
+
+    public ListGrid buildMapListGrid(MapMetadata fmd, ClassMetadata cmd, Entity[] entities);
 
 }
