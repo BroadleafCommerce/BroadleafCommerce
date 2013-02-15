@@ -213,6 +213,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             @Override
             public void visit(MapMetadata fmd) {
                 request.setType(PersistencePackageRequest.Type.MAP);
+                //TODO apa
             }
 
             @Override
@@ -305,9 +306,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         CriteriaTransferObject cto = getDefaultCto();
         if (request.getFilterAndSortCriteria() != null) {
-            for (FilterAndSortCriteria fasc : request.getFilterAndSortCriteria()) {
-                cto.add(fasc);
-            }
+            cto.addAll(request.getFilterAndSortCriteria());
         }
 
         return service.fetch(pkg, cto);

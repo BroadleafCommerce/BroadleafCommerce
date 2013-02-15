@@ -16,12 +16,15 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectConverter;
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Generic persistent entity criteria transfer object
@@ -114,6 +117,34 @@ public class CriteriaTransferObject implements IsSerializable, Serializable {
         criteriaMap.put(criteria.getPropertyId(), criteria);
     }
     
+    /**
+     * Adds all of the given {@link FilterAndSortCriteria} instances
+     * to this transfer object.
+     * 
+     * @param criterias
+     * 
+     * @see #add(FilterAndSortCriteria)
+     */
+    public void addAll(Collection<FilterAndSortCriteria> criterias) {
+        for (FilterAndSortCriteria fasc : criterias) {
+            add(fasc);
+        }
+    }
+
+    /**
+     * Adds all of the given {@link FilterAndSortCriteria} instances
+     * to this transfer object.
+     * 
+     * @param criterias
+     * 
+     * @see #add(FilterAndSortCriteria)
+     */
+    public void addAll(FilterAndSortCriteria[] criterias) {
+        for (FilterAndSortCriteria fasc : criterias) {
+            add(fasc);
+        }
+    }
+
     /**
      * Returns a {@link FilterAndSortCriteria} instance
      * with the given <tt>propertyId</tt>.
