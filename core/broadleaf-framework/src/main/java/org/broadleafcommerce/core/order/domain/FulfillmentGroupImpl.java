@@ -35,7 +35,6 @@ import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
 import java.math.BigDecimal;
@@ -94,15 +93,15 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Retail_Shipping_Price", order=1, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal retailShippingPrice;
+    protected BigDecimal retailFulfillmentPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Sale_Shipping_Price", order=2, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal saleShippingPrice;
+    protected BigDecimal saleFulfillmentPrice;
 
     @Column(name = "PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price", order=3, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal shippingPrice;   
+    protected BigDecimal fulfillmentPrice;
 
     @Column(name = "TYPE")
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=4, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
@@ -178,29 +177,24 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
     
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
     
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
         
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
 
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
     
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @JoinTable(name = "BLC_FG_FG_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
 
@@ -314,13 +308,23 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
 
     @Override
+    public Money getRetailFulfillmentPrice() {
+        return retailFulfillmentPrice == null ? null : BroadleafCurrencyUtils.getMoney(retailFulfillmentPrice, getOrder().getCurrency());
+    }
+
+    @Override
+    public void setRetailFulfillmentPrice(Money retailFulfillmentPrice) {
+        this.retailFulfillmentPrice = Money.toAmount(retailFulfillmentPrice);
+    }
+
+    @Override
     public Money getRetailShippingPrice() {
-        return retailShippingPrice == null ? null : BroadleafCurrencyUtils.getMoney(retailShippingPrice, getOrder().getCurrency());
+        return getRetailFulfillmentPrice();
     }
 
     @Override
     public void setRetailShippingPrice(Money retailShippingPrice) {
-        this.retailShippingPrice = Money.toAmount(retailShippingPrice);
+        setRetailFulfillmentPrice(retailShippingPrice);
     }
 
     @Override
@@ -389,23 +393,43 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
 
     @Override
+    public Money getSaleFulfillmentPrice() {
+        return saleFulfillmentPrice == null ? null : BroadleafCurrencyUtils.getMoney(saleFulfillmentPrice, getOrder().getCurrency());
+    }
+
+    @Override
+    public void setSaleFulfillmentPrice(Money saleFulfillmentPrice) {
+        this.saleFulfillmentPrice = Money.toAmount(saleFulfillmentPrice);
+    }
+
+    @Override
     public Money getSaleShippingPrice() {
-        return saleShippingPrice == null ? null : BroadleafCurrencyUtils.getMoney(saleShippingPrice, getOrder().getCurrency());
+        return getSaleFulfillmentPrice();
     }
 
     @Override
     public void setSaleShippingPrice(Money saleShippingPrice) {
-        this.saleShippingPrice = Money.toAmount(saleShippingPrice);
+        setSaleFulfillmentPrice(saleShippingPrice);
+    }
+
+    @Override
+    public Money getFulfillmentPrice() {
+        return fulfillmentPrice == null ? null : BroadleafCurrencyUtils.getMoney(fulfillmentPrice, getOrder().getCurrency());
+    }
+
+    @Override
+    public void setFulfillmentPrice(Money fulfillmentPrice) {
+        this.fulfillmentPrice = Money.toAmount(fulfillmentPrice);
     }
 
     @Override
     public Money getShippingPrice() {
-        return shippingPrice == null ? null : BroadleafCurrencyUtils.getMoney(shippingPrice, getOrder().getCurrency());
+        return getFulfillmentPrice();
     }
 
     @Override
     public void setShippingPrice(Money shippingPrice) {
-        this.shippingPrice = Money.toAmount(shippingPrice);
+        setFulfillmentPrice(shippingPrice);
     }
     
     @Override

@@ -67,7 +67,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * @deprecated The retail price used in sales calculations will be set during 
      * price finalization but otherwise is not used by the system.
      * 
-     * If trying to override a price or set a fixed price, use {@link #setBasePrice(Money)}
+     * If trying to override a price or set a fixed price, use {@link #setOverridePrice(Money)}
      * along with {@link #setDiscountingAllowed(boolean)}
      * 
      * @param retailPrice
@@ -75,7 +75,8 @@ public interface OrderItem extends Serializable, Cloneable {
     public void setRetailPrice(Money retailPrice);
 
     /**
-     * The sale price of the item (e.g. SKU) that was added to the {@link Order} at the time that it was added.      
+     * The sale price of the item (e.g. SKU) that was added to the {@link Order} at the time that that updatePrices
+     * was last called.      
      * 
      * @return
      */
@@ -111,7 +112,7 @@ public interface OrderItem extends Serializable, Cloneable {
 
     /**
      * @deprecated
-     * Should not be called.   Consider {@link setBasePrice(Money price)} along with {@link #setDiscountingAllowed(boolean)}
+     * Should not be called.   Consider {@link setOverridePrice(Money price)} along with {@link #setDiscountingAllowed(boolean)}
      * to set the price to a final value.    Otherwise, the system will compute the price as part of the
      * discounting and dynamic price evaluation.     
      * 
@@ -231,19 +232,24 @@ public interface OrderItem extends Serializable, Cloneable {
     public String getName();
 
     /**
-     * Used to reset the base price of the item before the pricing engine
-     * executes.   
+     * Used to reset the base price of the item that the pricing engine uses. 
      * 
-     * Intended to be called after an event which could effect the base price of the
-     * item.   For example, a registered user might be subject to different prices
-     * than a guest user, so after logging in, the system would call this method.
+     * Generally, this will update the retailPrice and salePrice based on the 
+     * corresponding value in the SKU.   
      * 
-     * Other scenarios include the result of automatic bundling or loading a stale
-     * cart from the database.
+     * Since prices can change based on system activities such as 
+     * locale changes and customer authentication, this method is used to 
+     * ensure that all cart items reflect the current base price before
+     * executing other pricing / adjustment operations. 
+     * 
+     * Other known scenarios that can effect the base prices include the automatic bundling 
+     * or loading a stale cart from the database.
+     * 
+     * See notes in subclasses for specific behavior of this method.
      *      
      * @return true if the base prices changed as a result of this call
      */
-    public boolean updatePrices();
+    public boolean updateSaleAndRetailBasePrices();
 
     /**
      * Sets the name of this order item. 

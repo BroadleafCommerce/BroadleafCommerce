@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.offer.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
@@ -26,6 +24,9 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+
+import java.util.List;
 
 public interface OfferDao {
 
@@ -48,6 +49,8 @@ public interface OfferDao {
     CandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer();
 
     OrderItemAdjustment createOrderItemAdjustment();
+
+    OrderItemPriceDetailAdjustment createOrderItemPriceDetailAdjustment();
 
     OrderAdjustment createOrderAdjustment();
 

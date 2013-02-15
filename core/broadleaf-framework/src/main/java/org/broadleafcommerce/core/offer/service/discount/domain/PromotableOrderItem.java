@@ -16,32 +16,23 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemContainer;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 
-public interface PromotableOrderItem {
+public interface PromotableOrderItem extends Serializable {
     
     /**
      * Adds the item to the rule variables map.
      * @param ruleVars
      */
     void updateRuleVariables(Map<String, Object> ruleVars);
-
-    /**
-     * Returns the list of orderAdjustments being proposed for the order.
-     * This will be converted to actual order adjustments on completion of the offer processing.
-     * @return
-     */
-    List<PromotableOrderItemAdjustment> getCandidateItemAdjustments();
-
-    /**
-     * Adds the adjustment to the item's adjustment list and discounts the
-     * item's prices by the value of the adjustment.
-     * 
-     * @param orderAdjustment
-     */
-    void addOrderItemAdjustments(PromotableOrderItemAdjustment itemAdjustment);
 
     /**
      * Returns true if this item can receive item level discounts.
@@ -54,111 +45,101 @@ public interface PromotableOrderItem {
      */
     boolean isOrderItemContainer();
 
-    //     /**
-    //     * Adds the adjustment to the order item's adjustment list and discounts the
-    //     * order item's adjustment price by the value of the adjustment.
-    //     * @param orderItemAdjustment
-    //     */
-    //    public void addOrderItemAdjustment(PromotableOrderItemAdjustment orderItemAdjustment);
-    //
-    //    /**
-    //     * The price after discounts if all applicable discounts are applied
-    //     * to the retail price.
-    //     *
-    //     * @return
-    //     */
-    //    public Money getRetailAdjustmentPrice();
-    //
-    //
-    //    public void setRetailAdjustmentPrice(Money adjustmentPrice);
-    //
-    //    /**
-    //     * The price after discounts if all applicable discounts are applied
-    //     * to the sale price.
-    //     *
-    //     */
-    //    public Money getSaleAdjustmentPrice();
-    //
-    //    public void setSaleAdjustmentPrice(Money adjustmentPrice);
-    //
-    //
-    //    public boolean isNotCombinableOfferApplied();
-    //    
-    //    public boolean isHasOrderItemAdjustments();
-    //    
-    //    public List<PromotionDiscount> getPromotionDiscounts();
-    //    
-    //    public void setPromotionDiscounts(List<PromotionDiscount> promotionDiscounts);
-    //    
-    //    public List<PromotionQualifier> getPromotionQualifiers();
-    //    
-    //    public void setPromotionQualifiers(List<PromotionQualifier> promotionQualifiers);
-    //    
-    //    public int getQuantityAvailableToBeUsedAsQualifier(Offer promotion);
-    //    
-    //    public int getQuantityAvailableToBeUsedAsTarget(Offer promotion);
-    //    
-    //    public void addPromotionQualifier(PromotableCandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity);
-    //    
-    //    public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, Set<OfferItemCriteria> itemCriteria, int quantity);
-    //    
-    //    public void clearAllNonFinalizedQuantities();
-    //    
-    //    public void clearAllDiscount();
-    //    
-    //    public void clearAllQualifiers();
-    //    
-    //    public void finalizeQuantities();
-    //    
-    //    public List<PromotableOrderItem> split();
-    //    
-    //    public OrderItem getDelegate();
-    //
-    //    public void setDelegate(OrderItem discreteOrderItem);
-    //    
-    //    public void reset();
-    //    
-    //    public PromotionQualifier lookupOrCreatePromotionQualifier(PromotableCandidateItemOffer candidatePromotion);
-    //    
-    //    public PromotionDiscount lookupOrCreatePromotionDiscount(PromotableCandidateItemOffer candidatePromotion);
-    //    
-    //    public void clearAllNonFinalizedDiscounts();
-    //    
-    //    public void clearAllNonFinalizedQualifiers();
-    //    
-    //    public int getPromotionDiscountMismatchQuantity();
-    //    
-    //    public void computeAdjustmentPrice();
-    //    
-    //    public int removeAllAdjustments();
-    //    
-    //    public void assignFinalPrice();
-    //    
-    //    public Money getCurrentPrice();
-    //    
-    //    public int getQuantity();
-    //    
-    //    public void setQuantity(int quantity);
-    //    
-    //    public Sku getSku();
-    //    
-    //    public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
-    //    
-    //    public Money getSalePrice();
-    //    
-    //    public Money getRetailPrice();
-    //    
-    //    public void addCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer);
-    //    
-    //    public PromotableOrderItem clone();
-    //
-    //    /**
-    //     * Removes all zero based adjustments and sets the adjusted price on the delegate.
-    //     *
-    //     * @param useSaleAdjustments
-    //     * @return
-    //     */
-    //    int fixAdjustments(boolean useSaleAdjustments);
-    //
-    //    public void resetAdjustmentPrice();
+    /**
+     * Returns an OrderItemContainer for this OrderItem or null if this item is not 
+     * an instance of OrderItemContainer.  
+     */
+    OrderItemContainer getOrderItemContainer();
+
+    /**
+     * Returns the salePrice without adjustments
+     */
+    Money getSalePriceBeforeAdjustments();
+
+    /**
+     * Returns the retailPrice without adjustments
+     */
+    Money getRetailPriceBeforeAdjustments();
+
+    /**
+     * Returns true if the item has a sale price that is lower than the retail price.
+     */
+    boolean isOnSale();
+
+    /**
+     * Returns the list of priceDetails associated with this item.
+     * @return
+     */
+    List<PromotableOrderItemPriceDetail> getPromotableOrderItemPriceDetails();
+
+    /**
+     * Return the salePriceBeforeAdjustments if the passed in param is true.
+     * Otherwise return the retailPriceBeforeAdjustments.
+     * @return
+     */
+    Money getPriceBeforeAdjustments(boolean applyToSalePrice);
+
+    /**
+     * Returns the basePrice of the item (baseSalePrice or baseRetailPrice)
+     * @return
+     */
+    Money getCurrentBasePrice();
+
+    /**
+     * Returns the quantity for this orderItem
+     * @return
+     */
+    int getQuantity();
+
+    /**
+     * Returns the currency of the related order.
+     * @return
+     */
+    BroadleafCurrency getCurrency();
+
+    /**
+     * Effectively deletes all priceDetails associated with this item and r
+     */
+    void removeAllItemAdjustments();
+
+    /**
+     * Merges any priceDetails that share the same adjustments.
+     */
+    void mergeLikeDetails();
+
+    /**
+     * Returns the id of the contained OrderItem
+     */
+    Long getOrderItemId();
+
+    /**
+     * Returns the value of all adjustments.
+     */
+    Money calculateTotalAdjustmentValue();
+
+    /**
+     * Returns the final total for this item taking into account the finalized
+     * adjustments.    Intended to be called after the adjustments have been 
+     * finalized.
+     */
+    Money calculateTotalWithAdjustments();
+
+    /**
+     * Returns the total for this item if not adjustments applied.
+     */
+    Money calculateTotalWithoutAdjustments();
+
+    /**
+     * Creates a new detail with the associated quantity.   Intended for use as part of the PriceDetail split.
+     * @param quantity
+     * @return
+     */
+    PromotableOrderItemPriceDetail createNewDetail(int quantity);
+
+    /**
+     * Returns the underlying orderItem.    Manipulation of the underlying orderItem is not recommended.
+     * This method is intended for unit test and read only access although that is not strictly enforced.    
+     * @return
+     */
+    OrderItem getOrderItem();
 }

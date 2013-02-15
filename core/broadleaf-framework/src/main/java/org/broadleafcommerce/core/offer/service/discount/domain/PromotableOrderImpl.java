@@ -16,8 +16,10 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.OrderItemPriceComparator;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -40,29 +42,51 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected List<PromotableOrderItem> discountableOrderItems;
     protected boolean currentSortParam = false;
     protected List<PromotableFulfillmentGroup> fulfillmentGroups;
-    protected boolean notCombinableOfferAppliedAtAnyLevel = false;
-    protected boolean notCombinableOfferApplied = false;
-    protected boolean totalitarianOfferApplied = false;
     protected List<PromotableOrderAdjustment> candidateOrderOfferAdjustments = new ArrayList<PromotableOrderAdjustment>();
-    protected Money orderSubTotalWithOfferAdjustments;
-    protected Money orderSubTotalWithoutOfferAdjustments;
+    protected boolean includeOrderAndItemAdjustments = false;
     
-    public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory) {
+    public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory, boolean includeOrderAndItemAdjustments) {
         this.order = order;
         this.itemFactory = itemFactory;
+        this.includeOrderAndItemAdjustments = includeOrderAndItemAdjustments;
+
+        if (includeOrderAndItemAdjustments) {
+            createOrderAdjustments();
+        }
     }
-    
+
+    /**
+     * Bring over the order adjustments.   Intended to be used when processing
+     * fulfillment orders.
+     */
+    protected void createOrderAdjustments() {
+        if (order.getOrderAdjustments() != null) {
+            for (OrderAdjustment adjustment : order.getOrderAdjustments()) {
+                if (adjustment.getOffer() != null) {
+                    PromotableCandidateOrderOffer pcoo = itemFactory.createPromotableCandidateOrderOffer(this, adjustment.getOffer());
+                    PromotableOrderAdjustment adj = itemFactory.createPromotableOrderAdjustment(pcoo, this);
+                    candidateOrderOfferAdjustments.add(adj);
+                }
+            }
+        }
+    }
+
     @Override
     public void setOrderSubTotalToPriceWithoutAdjustments() {
         Money calculatedSubTotal = calculateOrderSubTotalWithoutOrderAdjustments();
         order.setSubTotal(calculatedSubTotal);
-        orderSubTotalWithoutOfferAdjustments = calculatedSubTotal;
     }
+    
+    @Override
+    public void setOrderSubTotalToPriceWithAdjustments() {
+        Money calculatedSubTotal = calculateSubtotalWithAdjustments();
+        order.setSubTotal(calculatedSubTotal);
+    }    
 
     private Money calculateOrderSubTotalWithoutOrderAdjustments() {
         Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(order.getCurrency());
         for (OrderItem orderItem : order.getOrderItems()) {
-            calculatedSubTotal = calculatedSubTotal.add(orderItem.getPriceBeforeAdjustments(true).multiply(orderItem.getQuantity()));
+            calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalPrice());
         }
         return calculatedSubTotal;
     }
@@ -78,6 +102,11 @@ public class PromotableOrderImpl implements PromotableOrder {
         }
 
         return allOrderItems;
+    }
+
+    // Return the discountableOrderItems in the current order.
+    public List<PromotableOrderItem> getDiscountableOrderItems() {
+        return getDiscountableOrderItems(currentSortParam);
     }
 
 
@@ -108,13 +137,13 @@ public class PromotableOrderImpl implements PromotableOrder {
 
         for (PromotableOrderItem promotableOrderItem : getAllOrderItems()) {
             if (promotableOrderItem.isDiscountingAllowed()) {
-                addPromotableOrderItem(orderItem, discountableOrderItems);
+                discountableOrderItems.add(promotableOrderItem);
             } else {
                 if (promotableOrderItem.isOrderItemContainer()) {
-                    OrderItemContainer orderItemContainer = (OrderItemContainer) orderItem;
+                    OrderItemContainer orderItemContainer = promotableOrderItem.getOrderItemContainer();
                     if (orderItemContainer.getAllowDiscountsOnChildItems()) {
                         for (OrderItem containedOrderItem : orderItemContainer.getOrderItems()) {
-                            if (!containedOrderItem.isDiscountingAllowed()) {
+                            if (containedOrderItem.isDiscountingAllowed()) {
                                 addPromotableOrderItem(containedOrderItem, discountableOrderItems);
                             }
                         }
@@ -127,8 +156,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
 
     protected void addPromotableOrderItem(OrderItem orderItem, List<PromotableOrderItem> discountableOrderItems) {
-        PromotableOrderItem item = itemFactory.createPromotableOrderItem(orderItem, PromotableOrderImpl.this);
-        item.computeAdjustmentPrice();
+        PromotableOrderItem item = itemFactory.createPromotableOrderItem(orderItem, PromotableOrderImpl.this, includeOrderAndItemAdjustments);
         discountableOrderItems.add(item);
     }
 
@@ -154,31 +182,34 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
 
     @Override
-    public void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment) {
-        if (orderSubTotalWithOfferAdjustments == null) {
-            orderSubTotalWithOfferAdjustments = calculateOrderSubTotalWithoutOrderAdjustments();
-        }
-        
-        orderSubTotalWithOfferAdjustments = orderSubTotalWithOfferAdjustments.subtract(orderAdjustment.getValue());
+    public void addCandidateOrderAdjustment(PromotableOrderAdjustment orderAdjustment) {
         candidateOrderOfferAdjustments.add(orderAdjustment);
-        
-        if (!orderAdjustment.getDelegate().getOffer().isCombinableWithOtherOffers()) {
-            notCombinableOfferApplied = true;
-        }
-        resetTotalitarianOfferApplied();
     }
 
+    @Override
+    public void removeAllCandidateOfferAdjustments() {
+        removeAllCandidateItemOfferAdjustments();
+        removeAllCandidateFulfillmentOfferAdjustments();
+        removeAllCandidateOrderOfferAdjustments();
+    }
 
     @Override
-    public boolean containsNotStackableOrderOffer() {
-        boolean isContainsNotStackableOrderOffer = false;
-        for (PromotableOrderAdjustment orderAdjustment : getCandidateOrderAdjustments()) {
-            if (!orderAdjustment.getDelegate().getOffer().isStackable()) {
-                isContainsNotStackableOrderOffer = true;
-                break;
-            }
+    public void removeAllCandidateOrderOfferAdjustments() {
+        candidateOrderOfferAdjustments.clear();
+    }
+
+    @Override
+    public void removeAllCandidateItemOfferAdjustments() {
+        for (PromotableOrderItem promotableOrderItem : getDiscountableOrderItems()) {
+            promotableOrderItem.removeAllItemAdjustments();
         }
-        return isContainsNotStackableOrderOffer;
+    }
+
+    @Override
+    public void removeAllCandidateFulfillmentOfferAdjustments() {
+        for (PromotableFulfillmentGroup fulfillmentGroup : getFulfillmentGroups()) {
+            fulfillmentGroup.removeAllCandidateAdjustments();
+        }
     }
 
     public void updateRuleVariables(Map<String, Object> ruleVars) {
@@ -192,48 +223,114 @@ public class PromotableOrderImpl implements PromotableOrder {
     
 
     @Override
-    public void resetTotalitarianOfferApplied() {
-        totalitarianOfferApplied = false;
-        notCombinableOfferAppliedAtAnyLevel = false;
-        for (PromotableOrderAdjustment adjustment : getCandidateOrderAdjustments()) {
-            if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
+    public boolean isTotalitarianOfferApplied() {
+        boolean totalitarianOfferApplied = false;
+        for (PromotableOrderAdjustment adjustment : candidateOrderOfferAdjustments) {
+            if (adjustment.isTotalitarian()) {
                 totalitarianOfferApplied = true;
                 break;
             }
-            if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-                notCombinableOfferAppliedAtAnyLevel = true;
-                break;
+        }
+        if (!totalitarianOfferApplied) {
+            for (PromotableOrderItemPriceDetail itemPriceDetail : getAllPromotableOrderItemPriceDetails()) {
+                totalitarianOfferApplied = itemPriceDetail.isTotalitarianOfferApplied();
             }
         }
-        if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
-            for (PromotableOrderItem promotableOrderItem : getDiscountableOrderItems(currentSortParam)) {
-                for (PromotableOrderItemAdjustment adjustment : promotableOrderItem.getCandidateItemAdjustments()) {
-                    if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
-                        totalitarianOfferApplied = true;
-                    }
-                    if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-                        notCombinableOfferAppliedAtAnyLevel = true;
-                    }
-                }
-            }
-        }
-        if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
+        if (!totalitarianOfferApplied) {
             for (PromotableFulfillmentGroup fg : getFulfillmentGroups()) {
-                for (PromotableFulfillmentGroupAdjustment adjustment : fg.getCandidateFulfillmentGroupAdjustments()) {
-                    if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
-                        totalitarianOfferApplied = true;
-                    }
-                    if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-                        notCombinableOfferAppliedAtAnyLevel = true;
-                    }
+                if (fg.isTotalitarianOfferApplied()) {
+                    return true;
                 }
             }
         }
+        return totalitarianOfferApplied;
     }
 
     @Override
-    public Money getSubtotalWithAdjustments() {
+    public Money calculateOrderAdjustmentTotal() {
+        Money orderAdjustmentTotal = BroadleafCurrencyUtils.getMoney(order.getCurrency());
+        for (PromotableOrderAdjustment adjustment : candidateOrderOfferAdjustments) {
+            orderAdjustmentTotal = orderAdjustmentTotal.add(adjustment.getAdjustmentValue());
+        }
+        return orderAdjustmentTotal;
+    }
 
+    @Override
+    public Money calculateItemAdjustmentTotal() {
+        Money itemAdjustmentTotal = BroadleafCurrencyUtils.getMoney(order.getCurrency());
+
+        for (PromotableOrderItem item : getDiscountableOrderItems()) {
+            itemAdjustmentTotal = itemAdjustmentTotal.add(item.calculateTotalAdjustmentValue());
+        }
+        return itemAdjustmentTotal;
+    }
+
+    public List<PromotableOrderItemPriceDetail> getAllPromotableOrderItemPriceDetails() {
+        List<PromotableOrderItemPriceDetail> allPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
+        for (PromotableOrderItem item : getDiscountableOrderItems()) {
+            allPriceDetails.addAll(item.getPromotableOrderItemPriceDetails());
+        }
+        return allPriceDetails;
+    }
+
+    public BroadleafCurrency getOrderCurrency() {
+        return this.order.getCurrency();
+    }
+
+    public void setTotalFufillmentCharges(Money totalFulfillmentCharges) {
+        order.setTotalFulfillmentCharges(totalFulfillmentCharges);
+    }
+
+    protected boolean isNotCombinableOrderOfferApplied() {
+        for (PromotableOrderAdjustment adjustment : candidateOrderOfferAdjustments) {
+            if (!adjustment.isCombinable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canApplyOrderOffer(PromotableCandidateOrderOffer offer) {
+        if (isTotalitarianOfferApplied()) {
+            return false;
+        }
+        
+        if (isNotCombinableOrderOfferApplied()) {
+            return false;
+        }
+        
+        if (!offer.isCombinable() || offer.isTotalitarian()) {
+            // Only allow a combinable or totalitarian offer if this is the first adjustment.
+            return candidateOrderOfferAdjustments.size() == 0;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean canApplyItemOffer(PromotableCandidateItemOffer offer) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public Money calculateSubtotalWithoutAdjustments() {
+        Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(order.getCurrency());
+        for (PromotableOrderItem orderItem : getAllOrderItems()) {
+            calculatedSubTotal = calculatedSubTotal.add(orderItem.calculateTotalWithoutAdjustments());
+        }
+        return calculatedSubTotal;
+    }
+
+    @Override
+    public Money calculateSubtotalWithAdjustments() {
+        Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(order.getCurrency());
+        for (PromotableOrderItem orderItem : getAllOrderItems()) {
+            calculatedSubTotal = calculatedSubTotal.add(orderItem.calculateTotalWithAdjustments());
+        }
+        calculatedSubTotal = calculatedSubTotal.subtract(calculateOrderAdjustmentTotal());
+        return calculatedSubTotal;
     }
 
     //    protected boolean notCombinableOfferAppliedAtAnyLevel = false;
@@ -290,53 +387,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     //        }
     //    }
 
-    //    
-    //    
-    //    @Override
-    //    public void removeAllAdjustments() {
-    //        removeAllItemAdjustments();
-    //        removeAllFulfillmentAdjustments();
-    //        removeAllOrderAdjustments();
-    //    }
-    //
-    //    @Override
-    //    public void removeAllOrderAdjustments() {
-    //        if (delegate.getOrderAdjustments() != null) {
-    //            for (OrderAdjustment adjustment : delegate.getOrderAdjustments()) {
-    //                adjustment.setOrder(null);
-    //            }
-    //            delegate.getOrderAdjustments().clear();
-    //        }
-    //        adjustmentPrice = null;
-    //        notCombinableOfferApplied = false;
-    //        hasOrderAdjustments = false;
-    //        resetTotalitarianOfferApplied();
-    //   }
-    //
-    //    @Override
-    //    public void removeAllItemAdjustments() {
-    //        for (OrderItem orderItem : getDelegate().getOrderItems()) {
-    //            orderItem.removeAllAdjustments();
-    //            adjustmentPrice = null;
-    //            resetTotalitarianOfferApplied();
-    //            if (orderItem instanceof BundleOrderItem) {
-    //                for (DiscreteOrderItem discreteOrderItem : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
-    //                    discreteOrderItem.setPrice(null);
-    //                    discreteOrderItem.assignFinalPrice();
-    //                }
-    //            }
-    //            orderItem.setPrice(null);
-    //            orderItem.assignFinalPrice();
-    //        }
-    //        splitItems.clear();
-    //    }
-    //
-    //    @Override
-    //    public void removeAllFulfillmentAdjustments() {
-    //        for (PromotableFulfillmentGroup fulfillmentGroup : getFulfillmentGroups()) {
-    //            fulfillmentGroup.removeAllAdjustments();
-    //        }
-    //    }
+
     //    
     //    @Override
     //    public Money getAdjustmentPrice() {

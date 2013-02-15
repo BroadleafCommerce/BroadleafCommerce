@@ -345,4 +345,14 @@ public class NullOrderImpl implements Order {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
+    @Override
+    public Money getTotalFulfillmentCharges() {
+        return null;
+    }
+
+    @Override
+    public void setTotalFulfillmentCharges(Money totalFulfillmentCharges) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
 }

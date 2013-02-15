@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.order.service.workflow.update;
 
-import org.broadleafcommerce.core.offer.service.OrderItemMergeService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -33,9 +32,6 @@ public class UpdateOrderItemActivity extends BaseActivity {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-
-    @Resource(name = "blOrderItemMergeService")
-    protected OrderItemMergeService orderItemMergeService;
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {

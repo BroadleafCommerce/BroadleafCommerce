@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.Offer;
 
 import java.io.Serializable;
 
@@ -27,37 +28,46 @@ import java.io.Serializable;
  * 
  * @author bpolster
  */
-public interface PromotableFulfillmentGroupAdjustment extends Serializable {
+public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
 
     /**
-     * Returns the associated promotableFulfillmentGroup
+     * Returns the associated promotableOrderItemPriceDetail
      * @return
      */
-    public PromotableFulfillmentGroup getPromotableFulfillmentGroup();
+    PromotableOrderItemPriceDetail getPromotableOrderItemPriceDetail();
 
     /**
-     * Returns the associated promotableCandidateOrderOffer
+     * Returns the associated promotableCandidateItemOffer
      * @return
      */
-    public PromotableCandidateFulfillmentGroupOffer getPromotableCandidateFulfillmentGroupOffer();
+    Offer getOffer();
 
     /**
-     * Returns the value of this adjustment 
+     * Returns the value of this adjustment if only retail prices
+     * can be used.
      * @return
      */
-    public Money getSaleAdjustmentValue();
+    Money getRetailAdjustmentValue();
 
     /**
-     * Returns the value of this adjustment 
+     * Returns the value of this adjustment if sale prices
+     * can be used.
      * @return
      */
-    public Money getRetailAdjustmentValue();
+    Money getSaleAdjustmentValue();
 
     /**
-     * Returns the value of this adjustment 
+     * Returns the value of this adjustment.
+     * can be used.
      * @return
      */
-    public Money getAdjustmentValue();
+    Money getAdjustmentValue();
+
+    /**
+     * Returns true if the value was applied to the sale price.
+     * @return
+     */
+    boolean isAppliedToSalePrice();
 
     /**
      * Returns true if this adjustment represents a combinable offer.
@@ -68,11 +78,16 @@ public interface PromotableFulfillmentGroupAdjustment extends Serializable {
      * Returns true if this adjustment represents a totalitarian offer.   
      */
     boolean isTotalitarian();
-    
-    /**
-     * Updates the adjustmentValue to the sales or retail value based on the passed in param
-     */
-    void finalizeAdjustment(boolean useSaleAdjustments);
 
-    boolean isAppliedToSalePrice();
+    /**
+     * Returns the id of the contained offer.
+     * @return
+     */
+    Long getOfferId();
+
+    /**
+     * Sets the adjustment price based on the passed in parameter.
+     */
+    void finalizeAdjustment(boolean useSalePrice);
+
 }

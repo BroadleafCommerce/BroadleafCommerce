@@ -18,33 +18,43 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferDTO;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.dao.OfferDao;
+import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
-import org.broadleafcommerce.core.offer.domain.OrderAdjustmentDTO;
-import org.broadleafcommerce.core.offer.service.OrderItemMergeService;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.order.dao.OrderItemDao;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 /**
- * @author jfischer
+ * @author jfischer, bpolster
  */
 @Service("blOrderOfferProcessor")
 public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements OrderOfferProcessor {
@@ -54,8 +64,11 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
-    @Resource(name = "blOrderItemMergeService")
-    protected OrderItemMergeService orderItemMergeService;
+    @Resource(name = "blOfferDao")
+    protected OfferDao offerDao;
+
+    @Resource(name = "blOrderItemDao")
+    protected OrderItemDao orderItemDao;
 
     @Override
     public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
@@ -138,13 +151,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder, PromotableOrderItem promotableOrderItem, PromotableFulfillmentGroup promotableFulfillmentGroup) {
         boolean appliesToItem = false;
         String rule = null;
-        if (offer.getAppliesToOrderRules() != null && offer.getAppliesToOrderRules().trim().length() != 0) {
-            rule = offer.getAppliesToOrderRules();
-        } else {
-            OfferRule orderRule = offer.getOfferMatchRules().get(OfferRuleType.ORDER.getType());
-            if (orderRule != null) {
-                rule = orderRule.getMatchRule();
-            }
+        OfferRule orderRule = offer.getOfferMatchRules().get(OfferRuleType.ORDER.getType());
+        if (orderRule != null) {
+            rule = orderRule.getMatchRule();
         }
 
         if (rule != null) {
@@ -153,7 +162,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             promotableOrder.updateRuleVariables(vars);
             vars.put("offer", offer);
             if (promotableFulfillmentGroup != null) {
-                vars.put("fulfillmentGroup", promotableFulfillmentGroup.getDelegate());
+                promotableFulfillmentGroup.updateRuleVariables(vars);
             }
             if (promotableOrderItem != null) {
                 promotableOrderItem.updateRuleVariables(vars);
@@ -170,9 +179,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     protected PromotableCandidateOrderOffer createCandidateOrderOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
-        CandidateOrderOffer candidateOffer = new CandidateOrderOfferDTO(promotableOrder.getOrder(), offer);
-
-        PromotableCandidateOrderOffer promotableCandidateOrderOffer = promotableItemFactory.createPromotableCandidateOrderOffer(candidateOffer, promotableOrder);
+        PromotableCandidateOrderOffer promotableCandidateOrderOffer = promotableItemFactory.createPromotableCandidateOrderOffer(promotableOrder, offer);
         qualifiedOrderOffers.add(promotableCandidateOrderOffer);
 
         return promotableCandidateOrderOffer;
@@ -200,62 +207,48 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     @Override
-    public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder promotableOrder) {
+    public void applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder promotableOrder) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
-        boolean orderOffersApplied = false;
         Iterator<PromotableCandidateOrderOffer> orderOfferIterator = orderOffers.iterator();
         while (orderOfferIterator.hasNext()) {
             PromotableCandidateOrderOffer orderOffer = orderOfferIterator.next();
-            if (orderOffer.getOffer().getTreatAsNewFormat() == null || !orderOffer.getOffer().getTreatAsNewFormat()) {
-                if ((orderOffer.getOffer().isStackable()) || !promotableOrder.isHasOrderAdjustments()) {
-                    boolean alreadyContainsNotCombinableOfferAtAnyLevel = promotableOrder.isNotCombinableOfferAppliedAtAnyLevel();
-                    applyOrderOffer(promotableOrder, orderOffer);
-                    orderOffersApplied = true;
-                    if (!orderOffer.getOffer().isCombinableWithOtherOffers() || alreadyContainsNotCombinableOfferAtAnyLevel) {
-                        orderOffersApplied = compareAndAdjustOrderAndItemOffers(promotableOrder, orderOffersApplied);
-                        if (orderOffersApplied) {
-                            break;
-                        } else {
-                            orderOfferIterator.remove();
-                        }
-                    }
-                }
-            } else {
-                if (!promotableOrder.containsNotStackableOrderOffer() || !promotableOrder.isHasOrderAdjustments()) {
-                    boolean alreadyContainsTotalitarianOffer = promotableOrder.isTotalitarianOfferApplied();
 
-                    // TODO:  Add filter for item-subtotal
-                    applyOrderOffer(order, orderOffer);
-                    orderOffersApplied = true;
-                    if (
-                            (orderOffer.getOffer().isTotalitarianOffer() != null && orderOffer.getOffer().isTotalitarianOffer()) ||
-                                    alreadyContainsTotalitarianOffer
-                            ) {
-                        orderOffersApplied = compareAndAdjustOrderAndItemOffers(promotableOrder, orderOffersApplied);
-                        if (orderOffersApplied) {
-                            break;
-                        } else {
-                            orderOfferIterator.remove();
-                        }
-                    } else if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
-                        break;
+            if (promotableOrder.canApplyOrderOffer(orderOffer)) {
+                applyOrderOffer(promotableOrder, orderOffer);
+                if (orderOffer.isTotalitarian()) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Totalitarian Order Offer Applied.   Comparing order and item offers for best outcome.");
                     }
+
+                    compareAndAdjustOrderAndItemOffers(promotableOrder);
+                    break;
                 }
+                
+                if (!orderOffer.isCombinable()) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Non-Combinable Order Offer Applied with id=[" + orderOffer.getOffer().getId() +"].  No other order offers can be applied");
+                    }
+                    break;
+                }
+                    
             }
         }
-        return orderOffersApplied;
     }
 
-    protected boolean compareAndAdjustOrderAndItemOffers(PromotableOrder promotableOrder, boolean orderOffersApplied) {
-        if (promotableOrder.getAdjustmentPrice().greaterThanOrEqual(promotableOrder.calculateOrderItemsCurrentPrice())) {
-            // item offer is better; remove not combinable order offer and process other order offers
-            promotableOrder.removeAllOrderAdjustments();
-            orderOffersApplied = false;
+    /**
+     * Called when the system must determine whether to apply order or item adjustments.
+     * @param promotableOrder
+     * @param orderOffersApplied
+     */
+    protected void compareAndAdjustOrderAndItemOffers(PromotableOrder promotableOrder) {
+        Money orderAdjustmentTotal = promotableOrder.calculateOrderAdjustmentTotal();
+        Money itemAdjustmentTotal = promotableOrder.calculateItemAdjustmentTotal();
+
+        if (orderAdjustmentTotal.greaterThanOrEqual(itemAdjustmentTotal)) {
+            promotableOrder.removeAllCandidateOrderOfferAdjustments();
         } else {
-            // totalitarian order offer is better; remove all item offers
-            promotableOrder.removeAllItemAdjustments();
+            promotableOrder.removeAllCandidateItemOfferAdjustments();
         }
-        return orderOffersApplied;
     }
 
     /**
@@ -265,17 +258,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      * @param orderOffer a CandidateOrderOffer to apply to an Order
      */
     protected void applyOrderOffer(PromotableOrder promotableOrder, PromotableCandidateOrderOffer orderOffer) {
-        OrderAdjustment orderAdjustment = new OrderAdjustmentDTO();
-        orderAdjustment.init(promotableOrder.getOrder(), orderOffer.getOffer(), orderOffer.getOffer().getName());
-        PromotableOrderAdjustment promotableOrderAdjustment = promotableItemFactory.createPromotableOrderAdjustment(orderAdjustment, promotableOrder);
-        //add to adjustment
-        promotableOrder.addOrderAdjustments(promotableOrderAdjustment);
-    }
-
-    @Override
-    public void compileOrderTotal(PromotableOrder promotableOrder) {
-        promotableOrder.assignOrderItemsFinalPrice();
-        promotableOrder.setSubTotal(promotableOrder.calculateOrderItemsFinalPrice(true));
+        PromotableOrderAdjustment promotableOrderAdjustment = promotableItemFactory.createPromotableOrderAdjustment(orderOffer, promotableOrder);
+        promotableOrder.addCandidateOrderAdjustment(promotableOrderAdjustment);
     }
 
     @Override
@@ -286,5 +270,273 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Override
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
         this.promotableItemFactory = promotableItemFactory;
+    }
+    
+    protected Map<Long, PromotableOrderAdjustment> buildPromotableOrderAdjustmentsMap(PromotableOrder promotableOrder) {
+        Map<Long, PromotableOrderAdjustment> adjustmentsMap = new HashMap<Long, PromotableOrderAdjustment>();
+        for (PromotableOrderAdjustment adjustment : promotableOrder.getCandidateOrderAdjustments()) {
+            adjustmentsMap.put(adjustment.getOffer().getId(), adjustment);
+        }
+        return adjustmentsMap;
+    }
+
+    protected void synchronizeOrderAdjustments(PromotableOrder promotableOrder) {
+        Order order = promotableOrder.getOrder();
+
+        if (order.getOrderAdjustments().isEmpty() && promotableOrder.getCandidateOrderAdjustments().isEmpty()) {
+            return;
+        }
+
+        Map<Long, PromotableOrderAdjustment> newAdjustmentsMap = buildPromotableOrderAdjustmentsMap(promotableOrder);
+        Iterator<OrderAdjustment> orderAdjIterator = order.getOrderAdjustments().iterator();
+
+        while (orderAdjIterator.hasNext()) {
+            OrderAdjustment adjustment = orderAdjIterator.next();
+            if (adjustment.getOffer() != null) {
+                Long offerId = adjustment.getOffer().getId();
+                PromotableOrderAdjustment promotableAdjustment = newAdjustmentsMap.remove(offerId);
+                if (promotableAdjustment != null) {
+                    if (!adjustment.getValue().equals(promotableAdjustment.getAdjustmentValue())) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Updating value for order adjustment with offer Id " + offerId + " to " +
+                                    promotableAdjustment.getAdjustmentValue());
+                        }
+                        adjustment.setValue(promotableAdjustment.getAdjustmentValue());
+                    }
+                } else {
+                    // No longer using this order adjustment, remove it.
+                    orderAdjIterator.remove();
+                }
+            }
+        }
+
+        for (PromotableOrderAdjustment promotableOrderAdjustment : newAdjustmentsMap.values()) {
+            // Add the newly introduced adjustments.
+            Offer offer = promotableOrderAdjustment.getOffer();
+            OrderAdjustment orderAdjustment = offerDao.createOrderAdjustment();
+            orderAdjustment.init(order, offer, offer.getName());
+            order.getOrderAdjustments().add(orderAdjustment);
+        }
+    }
+
+    protected void synchronizeOrderItems(PromotableOrder promotableOrder) {
+        Order order = promotableOrder.getOrder();
+        Map<Long, PromotableOrderItem> promotableItemMap = buildPromotableItemMap(promotableOrder);
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            PromotableOrderItem promotableItem = promotableItemMap.get(orderItem.getId());
+            synchronizeItemPriceDetails(orderItem, promotableItem);
+        }
+    }
+
+    protected Map<Long, PromotableOrderItem> buildPromotableItemMap(PromotableOrder promotableOrder) {
+        Map<Long, PromotableOrderItem> promotableItemMap = new HashMap<Long, PromotableOrderItem>();
+        for (PromotableOrderItem item : promotableOrder.getDiscountableOrderItems()) {
+            promotableItemMap.put(item.getOrderItemId(), item);
+        }
+        return promotableItemMap;
+    }
+
+    protected void synchronizeItemPriceDetails(OrderItem orderItem, PromotableOrderItem promotableOrderItem) {
+        Map<String, PromotableOrderItemPriceDetail> promotableDetailsMap = buildPromotableDetailsMap(promotableOrderItem);
+        Map<Long, OrderItemPriceDetail> unmatchedDetailsMap = new HashMap<Long, OrderItemPriceDetail>();
+
+        for (OrderItemPriceDetail orderItemPriceDetail : orderItem.getOrderItemPriceDetails()) {
+            String detailKey = buildItemPriceDetailKey(orderItemPriceDetail);
+            PromotableOrderItemPriceDetail promotableDetail = promotableDetailsMap.remove(detailKey);
+            if (promotableDetail != null) {
+                processMatchingDetails(orderItemPriceDetail, promotableDetail);
+            } else {
+                unmatchedDetailsMap.put(orderItemPriceDetail.getId(), orderItemPriceDetail);
+            }
+        }
+
+        Iterator<OrderItemPriceDetail> unmatchedDetailsIterator = unmatchedDetailsMap.values().iterator();
+
+        for (PromotableOrderItemPriceDetail priceDetail : promotableDetailsMap.values()) {
+            if (unmatchedDetailsIterator.hasNext()) {
+                // Reuse an existing priceDetail
+                OrderItemPriceDetail existingDetail = unmatchedDetailsIterator.next();
+                updatePriceDetail(existingDetail, priceDetail);
+                unmatchedDetailsIterator.remove();
+            } else {
+                // Create a new priceDetail
+                OrderItemPriceDetail newPriceDetail = orderItemDao.createOrderItemPriceDetail();
+                updatePriceDetail(newPriceDetail, priceDetail);
+            }
+        }
+
+        // Add any new details        
+        Iterator<OrderItemPriceDetail> pdIterator = orderItem.getOrderItemPriceDetails().iterator();
+        while (pdIterator.hasNext()) {
+            OrderItemPriceDetail currentDetail = pdIterator.next();
+            if (unmatchedDetailsMap.containsKey(currentDetail.getId())) {
+                pdIterator.remove();
+            }
+        }
+    }
+
+    protected void updatePriceDetail(OrderItemPriceDetail itemDetail,
+            PromotableOrderItemPriceDetail promotableDetail) {
+        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = buildItemDetailAdjustmentMap(itemDetail);
+
+        if (itemDetail.getQuantity() != promotableDetail.getQuantity()) {
+            itemDetail.setQuantity(promotableDetail.getQuantity());
+        }
+
+        for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableDetail.getCandidateItemAdjustments()) {
+            OrderItemPriceDetailAdjustment itemAdjustment = itemAdjustmentMap.remove(adjustment.getOfferId());
+            if (itemAdjustment != null) {
+                // Update existing adjustment
+                if (!itemAdjustment.getValue().equals(adjustment.getAdjustmentValue())) {
+                    updateItemAdjustment(itemAdjustment, adjustment);
+                }
+            } else {
+                // Add a new adjustment
+                OrderItemPriceDetailAdjustment newItemAdjustment = offerDao.createOrderItemPriceDetailAdjustment();
+                newItemAdjustment.init(itemDetail, adjustment.getOffer(), null);
+                updateItemAdjustment(newItemAdjustment, adjustment);
+                itemDetail.getOrderItemPriceDetailAdjustments().add(newItemAdjustment);
+            }
+        }
+
+        if (itemAdjustmentMap.size() > 0) {
+            // Remove adjustments that were on the order item but no longer needed.
+            List<Long> adjustmentIdsToRemove = new ArrayList<Long>();
+            for (OrderItemPriceDetailAdjustment adjustmentToRemove : itemAdjustmentMap.values()) {
+                adjustmentIdsToRemove.add(adjustmentToRemove.getId());
+            }
+
+            Iterator<OrderItemPriceDetailAdjustment> iterator = itemDetail.getOrderItemPriceDetailAdjustments().iterator();
+            while (iterator.hasNext()) {
+                OrderItemPriceDetailAdjustment adj = iterator.next();
+                if (adjustmentIdsToRemove.contains(adj.getId())) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    protected void updateItemAdjustment(OrderItemPriceDetailAdjustment itemAdjustment,
+            PromotableOrderItemPriceDetailAdjustment promotableAdjustment) {
+        itemAdjustment.setValue(promotableAdjustment.getAdjustmentValue());
+        itemAdjustment.setSalesPriceValue(promotableAdjustment.getSaleAdjustmentValue());
+        itemAdjustment.setRetailPriceValue(promotableAdjustment.getRetailAdjustmentValue());
+        itemAdjustment.setAppliedToSalePrice(promotableAdjustment.isAppliedToSalePrice());
+    }
+
+    protected void processMatchingDetails(OrderItemPriceDetail itemDetail,
+            PromotableOrderItemPriceDetail promotableItemDetail) {
+        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = buildItemDetailAdjustmentMap(itemDetail);
+
+        if (itemDetail.getQuantity() != promotableItemDetail.getQuantity()) {
+            itemDetail.setQuantity(promotableItemDetail.getQuantity());
+        }
+        
+        for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableItemDetail.getCandidateItemAdjustments()) {
+            OrderItemPriceDetailAdjustment itemAdjustment = itemAdjustmentMap.get(adjustment.getOfferId());
+            if (!itemAdjustment.getValue().equals(adjustment.getAdjustmentValue())) {
+                itemAdjustment.setValue(adjustment.getAdjustmentValue());
+                itemAdjustment.setAppliedToSalePrice(adjustment.isAppliedToSalePrice());
+            }
+        }
+    }
+
+    protected Map<Long, OrderItemPriceDetailAdjustment> buildItemDetailAdjustmentMap(OrderItemPriceDetail itemDetail) {
+        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = new HashMap<Long, OrderItemPriceDetailAdjustment>();
+        for (OrderItemPriceDetailAdjustment adjustment : itemDetail.getOrderItemPriceDetailAdjustments()) {
+            itemAdjustmentMap.put(adjustment.getOffer().getId(), adjustment);
+        }
+        return itemAdjustmentMap;
+    }
+
+    protected String buildItemPriceDetailKey(OrderItemPriceDetail itemDetail) {
+        List<Long> offerIds = new ArrayList<Long>();
+        for (OrderItemPriceDetailAdjustment adjustment : itemDetail.getOrderItemPriceDetailAdjustments()) {
+            Long offerId = adjustment.getOffer().getId();
+            offerIds.add(offerId);
+        }
+        Collections.sort(offerIds);
+        return itemDetail.getOrderItem().getId() + offerIds.toString();
+    }
+
+    protected Map<String, PromotableOrderItemPriceDetail> buildPromotableDetailsMap(PromotableOrderItem item) {
+        Map<String, PromotableOrderItemPriceDetail> detailsMap = new HashMap<String, PromotableOrderItemPriceDetail>();
+        for (PromotableOrderItemPriceDetail detail : item.getPromotableOrderItemPriceDetails()) {
+            detailsMap.put(detail.buildDetailKey(), detail);
+        }
+        return detailsMap;
+    }
+
+    protected void synchronizeFulfillmentGroups(PromotableOrder promotableOrder) {
+        Order order = promotableOrder.getOrder();
+        Map<Long, PromotableFulfillmentGroup> fgMap = buildPromotableFulfillmentGroupMap(promotableOrder);
+
+        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+            synchronizeFulfillmentGroupAdjustments(fg, fgMap.get(fg.getId()));
+        }
+    }
+
+    protected Map<Long, PromotableFulfillmentGroup> buildPromotableFulfillmentGroupMap(PromotableOrder order) {
+        Map<Long, PromotableFulfillmentGroup> fgMap = new HashMap<Long, PromotableFulfillmentGroup>();
+        for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
+            fgMap.put(fg.getFulfillmentGroup().getId(), fg);
+        }
+        return fgMap;
+    }
+
+    protected Map<Long, PromotableFulfillmentGroupAdjustment> buildPromFulfillmentAdjMap(PromotableFulfillmentGroup fg) {
+        Map<Long, PromotableFulfillmentGroupAdjustment> fgMap = new HashMap<Long, PromotableFulfillmentGroupAdjustment>();
+        for (PromotableFulfillmentGroupAdjustment adjustment : fg.getCandidateFulfillmentGroupAdjustments()) {
+            fgMap.put(adjustment.getPromotableCandidateFulfillmentGroupOffer().getOffer().getId(), adjustment);
+        }
+        return fgMap;
+    }
+
+    protected void synchronizeFulfillmentGroupAdjustments(FulfillmentGroup fg, PromotableFulfillmentGroup promotableFG) {
+        Iterator<FulfillmentGroupAdjustment> adjustmentIterator = fg.getFulfillmentGroupAdjustments().iterator();
+        Map<Long, PromotableFulfillmentGroupAdjustment> promotableAdjMap = buildPromFulfillmentAdjMap(promotableFG);
+
+        // First try and update existing adjustment records
+        while (adjustmentIterator.hasNext()) {
+            FulfillmentGroupAdjustment currentAdj = adjustmentIterator.next();
+            PromotableFulfillmentGroupAdjustment newAdj = promotableAdjMap.remove(currentAdj.getOffer().getId());
+            if (newAdj != null) {
+                if (!currentAdj.getValue().equals(newAdj.getAdjustmentValue())) {
+                    // Update the currentAdj.
+                    currentAdj.setValue(newAdj.getAdjustmentValue());
+                }
+            } else {
+                // Removing no longer valid adjustment
+                adjustmentIterator.remove();
+            }
+        }
+
+        // Now add missing adjustments
+        for (PromotableFulfillmentGroupAdjustment newAdj : promotableAdjMap.values()) {
+            FulfillmentGroupAdjustment fa = offerDao.createFulfillmentGroupAdjustment();
+            fa.setFulfillmentGroup(fg);
+            fa.init(fg, newAdj.getPromotableCandidateFulfillmentGroupOffer().getOffer(), null);
+            fa.setValue(newAdj.getAdjustmentValue());
+            fg.getFulfillmentGroupAdjustments().add(fa);
+        }
+
+    }
+
+    @Override
+    public void synchronizeAdjustmentsAndPrices(PromotableOrder promotableOrder) {
+        synchronizeOrderAdjustments(promotableOrder);
+        synchronizeOrderItems(promotableOrder);
+        synchronizeFulfillmentGroups(promotableOrder);
+    }
+
+    @Override
+    public void setOfferDao(OfferDao offerDao) {
+        this.offerDao = offerDao;
+    }
+
+    @Override
+    public void setOrderItemDao(OrderItemDao orderItemDao) {
+        this.orderItemDao = orderItemDao;
     }
 }

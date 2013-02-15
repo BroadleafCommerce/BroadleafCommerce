@@ -28,51 +28,51 @@ public interface OrderItemPriceDetail extends Serializable {
      * The unique identifier of this OrderItem
      * @return
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the unique id of the OrderItem.   Typically left blank for new items and Broadleaf will
      * set using the next sequence number.
      * @param id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Reference back to the containing orderItem.
      * @return
      */
-    public OrderItem getOrderItem();
+    OrderItem getOrderItem();
 
     /**
      * Sets the orderItem for this itemPriceDetail.
      * @param order
      */
-    public void setOrderItem(OrderItem order);
+    void setOrderItem(OrderItem order);
 
     /**
      * Returns a List of the adjustments that effected this priceDetail. 
      * @return a  List of OrderItemPriceDetailAdjustment
      */
-    public List<OrderItemPriceDetailAdjustment> getOrderItemPriceDetailAdjustments();
+    List<OrderItemPriceDetailAdjustment> getOrderItemPriceDetailAdjustments();
 
     /**
      * Sets the list of OrderItemPriceDetailAdjustment
      * @param orderItemPriceDetailAdjustments
      */
-    public void setOrderItemAdjustments(List<OrderItemPriceDetailAdjustment> orderItemPriceDetailAdjustments);
+    void setOrderItemAdjustments(List<OrderItemPriceDetailAdjustment> orderItemPriceDetailAdjustments);
 
     /**
      * The quantity of this {@link OrderItemPriceDetail}.
      * 
      * @return
      */
-    public int getQuantity();
+    int getQuantity();
 
     /**
      * Returns the quantity
      * @param quantity
      */
-    public void setQuantity(int quantity);
+    void setQuantity(int quantity);
 
     /**
      * Returns the value of all adjustments for a single quantity of the item.
@@ -81,20 +81,32 @@ public interface OrderItemPriceDetail extends Serializable {
      *
      * @return
      */
-    public Money getAdjustmentValue();
+    Money getAdjustmentValue();
 
     /**
      * Returns getAdjustmentValue() * the quantity.
      *
      * @return
      */
-    public Money getTotalAdjustmentValue();
+    Money getTotalAdjustmentValue();
 
     /**
      * Returns the total adjustedPrice.
      *
      * @return
      */
-    public Money getTotalAdjustedPrice();
+    Money getTotalAdjustedPrice();
+
+    /**
+     * Indicates that the adjustments were based off of the item's sale price.
+     * @return
+     */
+    boolean useSalePrice();
+
+    /**
+     * Set that the adjustments should be taken off of the item's sale price.
+     * @param useSalePrice
+     */
+    void setUseSalePrice(boolean useSalePrice);
 
 }

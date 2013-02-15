@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.order.service.workflow.remove;
 
-import org.broadleafcommerce.core.offer.service.OrderItemMergeService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
@@ -43,9 +42,6 @@ public class RemoveOrderItemActivity extends BaseActivity {
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-
-    @Resource(name = "blOrderItemMergeService")
-    protected OrderItemMergeService orderItemMergeService;
     
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();

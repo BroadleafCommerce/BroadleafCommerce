@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
@@ -33,5 +34,7 @@ public interface OrderItemDao {
     OrderItem saveOrderItem(OrderItem orderItem);
     
     public PersonalMessage createPersonalMessage();
+
+    OrderItemPriceDetail createOrderItemPriceDetail();
 
 }

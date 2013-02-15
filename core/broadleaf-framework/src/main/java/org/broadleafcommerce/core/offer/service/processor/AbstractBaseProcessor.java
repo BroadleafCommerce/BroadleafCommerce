@@ -25,8 +25,8 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -113,7 +113,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                 // Checking if targets meet subtotal for item offer with no item criteria.
                 Money accumulatedTotal = null;
                 for (PromotableOrderItem orderItem : candidateItem.getCandidateTargets()) {                     
-                    Money itemPrice = orderItem.getCurrentPrice().multiply(orderItem.getQuantity());
+                    Money itemPrice = orderItem.getCurrentBasePrice().multiply(orderItem.getQuantity());
                     accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
                     if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
                         if (LOG.isTraceEnabled()) {
@@ -137,7 +137,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                         for (PromotableOrderItem item : promotableItems) {
                             if (!usedItems.contains(item)) {
                                 usedItems.add(item);
-                                Money itemPrice = item.getCurrentPrice().multiply(item.getQuantity());
+                                Money itemPrice = item.getCurrentBasePrice().multiply(item.getQuantity());
                                 accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
                                 if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
                                     if (LOG.isTraceEnabled()) {
@@ -190,9 +190,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         if (criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule().trim().length() != 0) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("discreteOrderItem", orderItem.getDelegate());
-            vars.put("orderItem", orderItem.getDelegate());
-            vars.put("bundleOrderItem", orderItem.getDelegate());
+            orderItem.updateRuleVariables(vars);
             Boolean expressionOutcome = executeExpression(criteria.getOrderItemMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;
@@ -246,26 +244,40 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
      * marked as qualifiers or targets.  This method removes those items from being used as targets or
      * qualifiers so they are eligible for other promotions.
-     * @param chargeableItems
+     * @param priceDetails
      */
-    protected void clearAllNonFinalizedQuantities(List<PromotableOrderItem> chargeableItems) {
-        for(PromotableOrderItem chargeableItem : chargeableItems) {
-            chargeableItem.clearAllNonFinalizedQuantities();
+    protected void clearAllNonFinalizedQuantities(List<PromotableOrderItemPriceDetail> priceDetails) {
+        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+            priceDetail.clearAllNonFinalizedQuantities();
         }
     }
     
-    protected void finalizeQuantities(List<PromotableOrderItem> chargeableItems) {
-        for(PromotableOrderItem chargeableItem : chargeableItems) {
-            chargeableItem.finalizeQuantities();
+    /**
+     * Updates the finalQuanties for the PromotionDiscounts and PromotionQualifiers. 
+     * Called after we have confirmed enough qualifiers and targets for the promotion.
+     * @param priceDetails
+     */
+    protected void finalizeQuantities(List<PromotableOrderItemPriceDetail> priceDetails) {
+        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+            priceDetail.finalizeQuantities();
         }
     }
     
-    @Override
-    public void clearOffersandAdjustments(PromotableOrder order) {
-        order.removeAllCandidateOffers();
-        order.removeAllAdjustments();
+    /**
+     * Checks to see if the discountQty matches the detailQty.   If not, splits the 
+     * priceDetail.
+     * 
+     * @param priceDetails
+     */
+    protected void splitDetailsIfNecessary(List<PromotableOrderItemPriceDetail> priceDetails) {
+        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+            PromotableOrderItemPriceDetail splitDetail = priceDetail.splitIfNecessary();
+            if (splitDetail != null) {
+                priceDetail.getPromotableOrderItem().getPromotableOrderItemPriceDetails().add(splitDetail);
+            }
+        }
     }
-    
+
     @Override
     public List<Offer> filterOffers(List<Offer> offers, Customer customer) {
         List<Offer> filteredOffers = new ArrayList<Offer>();

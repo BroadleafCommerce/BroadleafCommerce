@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.offer.domain;
 import java.util.List;
 
 /**
- * add advanced offer support to an Offer
+ * Add advanced offer support to an Offer
  * 
  * @author Priyesh Patel
  */

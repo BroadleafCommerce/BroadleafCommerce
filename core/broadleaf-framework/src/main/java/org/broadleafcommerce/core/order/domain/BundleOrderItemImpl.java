@@ -273,7 +273,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
     
     @Override
-    public boolean updatePrices() {
+    public boolean updateSaleAndRetailBasePrices() {
         boolean updated = false;
 
         // Only need to update prices if we are not summing the contained items to determine

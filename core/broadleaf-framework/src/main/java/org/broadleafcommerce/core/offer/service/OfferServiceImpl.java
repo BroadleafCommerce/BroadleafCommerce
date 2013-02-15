@@ -257,46 +257,39 @@ public class OfferServiceImpl implements OfferService {
          */
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
-            PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
+            PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order, false);
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getCustomer());
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("No offers applicable to this order.");
                 }
-                
-                // Remove offers that might have been applied in prior runs of the promotion engine.
-                orderOfferProcessor.clearAllOfferAdjustmentsAndFinalizePrice(order);
-                return;
             } else {
                 List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
                 List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
 
                 itemOfferProcessor.filterOffers(promotableOrder, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
 
-                if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
-                    orderOfferProcessor.clearAllOfferAdjustmentsAndFinalizePrice(order);
-                } else {
+                if (! (qualifiedItemOffers.isEmpty() && qualifiedOrderOffers.isEmpty())) {                
                     // At this point, we should have a PromotableOrder that contains PromotableItems each of which
                     // has a list of candidatePromotions that might be applied.
 
                     // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
                     itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
                 }
-                // TODO:  Finalize Cart
             }
+            orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
 
             orderService.save(order, false);
         }
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
-            PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order);
-            promotableOrder.removeAllCandidateFulfillmentGroupOffers();
-            promotableOrder.removeAllFulfillmentAdjustments();
+            PromotableOrder promotableOrder =
+                    promotableItemFactory.createPromotableOrder(order, true);
             List<Offer> possibleFGOffers = new ArrayList<Offer>();
             for (Offer offer : offers) {
                 if (offer.getType().getType().equals(OfferType.FULFILLMENT_GROUP.getType())) {

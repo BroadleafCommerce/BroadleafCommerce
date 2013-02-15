@@ -41,11 +41,11 @@ import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemReque
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 @Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
@@ -111,7 +111,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             feePrice.setDiscreteOrderItem(item);
         }
 
-        item.updatePrices();
+        item.updateSaleAndRetailBasePrices();
         item.assignFinalPrice();
         
         item.setPersonalMessage(itemRequest.getPersonalMessage());
@@ -124,7 +124,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         populateDiscreteOrderItem(item, itemRequest);
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
-        item.updatePrices();
+        item.updateSaleAndRetailBasePrices();
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
@@ -166,7 +166,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
-        item.updatePrices();
+        item.updateSaleAndRetailBasePrices();
         item.assignFinalPrice();
         item.getWrappedItems().addAll(itemRequest.getWrappedItems());
         for (OrderItem orderItem : item.getWrappedItems()) {
@@ -238,7 +238,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
         }
 
-        bundleOrderItem.updatePrices();
+        bundleOrderItem.updateSaleAndRetailBasePrices();
         bundleOrderItem.assignFinalPrice();
         
         bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);

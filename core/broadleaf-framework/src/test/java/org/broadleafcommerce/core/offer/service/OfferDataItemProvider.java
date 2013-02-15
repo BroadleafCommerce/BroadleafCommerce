@@ -29,6 +29,8 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OfferRuleImpl;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
@@ -46,6 +48,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
@@ -81,7 +85,12 @@ public class OfferDataItemProvider {
 
     public static Long orderItemId = 1L;
     public static Long orderId = 1L;
+    public static Long offerId = 1L;
     
+    public static Long getOfferId() {
+        return offerId++;
+    }
+
     public static Long getOrderItemId() {
         return orderItemId++;
     }
@@ -117,6 +126,16 @@ public class OfferDataItemProvider {
         };
     }
     
+    public static IAnswer<OrderItemPriceDetailAdjustment> getCreateOrderItemPriceDetailAdjustmentAnswer() {
+        return new IAnswer<OrderItemPriceDetailAdjustment>() {
+
+            @Override
+            public OrderItemPriceDetailAdjustment answer() throws Throwable {
+                return new OrderItemPriceDetailAdjustmentImpl();
+            }
+        };
+    }
+
     public static IAnswer<OrderItem> getAddOrderItemToOrderAnswer() {
         return new IAnswer<OrderItem>() {
             @Override
@@ -175,6 +194,7 @@ public class OfferDataItemProvider {
         };
     }
     
+
     public static IAnswer<Order> getRemoveItemFromOrderAnswer() {
         return new IAnswer<Order>() {
             @Override
@@ -250,6 +270,11 @@ public class OfferDataItemProvider {
         orderItem1.setId(getOrderItemId());
         orderItem1.setOrder(order);
         
+        OrderItemPriceDetail priceDetail1 = new OrderItemPriceDetailImpl();
+        priceDetail1.setOrderItem(orderItem1);
+        priceDetail1.setQuantity(2);
+        orderItem1.getOrderItemPriceDetails().add(priceDetail1);
+        
         order.getOrderItems().add(orderItem1);
         
         DiscreteOrderItem orderItem2 = new DiscreteOrderItemImpl();
@@ -264,6 +289,11 @@ public class OfferDataItemProvider {
         orderItem2.setPrice(new Money(29.99D));
         orderItem2.setId(getOrderItemId());
         orderItem2.setOrder(order);
+        
+        OrderItemPriceDetail priceDetail2 = new OrderItemPriceDetailImpl();
+        priceDetail2.setOrderItem(orderItem2);
+        priceDetail2.setQuantity(3);
+        orderItem2.getOrderItemPriceDetails().add(priceDetail2);
         
         order.getOrderItems().add(orderItem2);
         
@@ -368,7 +398,7 @@ public class OfferDataItemProvider {
         
         orders.put(order.getId(), order);
         
-        PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl());
+        PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(), false);
         
         return promotableOrder;
     }
@@ -421,7 +451,7 @@ public class OfferDataItemProvider {
         offer.setType(offerType);
         offer.setValue(value);
         offer.setTreatAsNewFormat(true);
-        
+        offer.setId(getOfferId());
         return offer;
     }
     

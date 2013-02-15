@@ -17,12 +17,9 @@
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.ItemOfferComparator;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
@@ -31,7 +28,8 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemAdjustment;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.springframework.stereotype.Service;
 
@@ -52,59 +50,38 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
      */
-    public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
-        boolean isNewFormat = !CollectionUtils.isEmpty(offer.getQualifyingItemCriteria()) || !CollectionUtils.isEmpty(offer.getTargetItemCriteria());
+    public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers,
+            Offer offer) {
         boolean itemLevelQualification = false;
-        boolean offerCreated = false;
+
         for (PromotableOrderItem promotableOrderItem : order.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice())) {
-            if(couldOfferApplyToOrder(offer, order, promotableOrderItem)) {
-                if (!isNewFormat) {
-                    //support legacy offers
-                    PromotableCandidateItemOffer candidate = createCandidateItemOffer(qualifiedItemOffers, offer, promotableOrderItem);
-                    if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
-                        candidate.getCandidateTargets().add(promotableOrderItem);
-                    }
-                    offerCreated = true;
-                    continue;
-                }
+            if (couldOfferApplyToOrder(offer, order, promotableOrderItem)) {
                 itemLevelQualification = true;
                 break;
             }
             for (PromotableFulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                 if(couldOfferApplyToOrder(offer, order, promotableOrderItem, fulfillmentGroup)) {
-                    if (!isNewFormat) {
-                        //support legacy offers
-                        PromotableCandidateItemOffer candidate = createCandidateItemOffer(qualifiedItemOffers, offer, promotableOrderItem);
-                        if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
-                            candidate.getCandidateTargets().add(promotableOrderItem);
-                        }
-                        offerCreated = true;
-                        continue;
-                    }
                     itemLevelQualification = true;
                     break;
                 }
             }
         }
         //Item Qualification - new for 1.5!
-        if (itemLevelQualification && !offerCreated) {
-            CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, order.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice()));
+        if (itemLevelQualification) {
+            CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer,
+                    order.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice()));
             PromotableCandidateItemOffer candidateOffer = null;
             if (candidates.isMatchedQualifier()) {
                 //we don't know the final target yet, so put null for the order item for now
-                candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null);
+                candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null, order);
                 candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateQualifiersMap());
             }
             if (candidates.isMatchedTarget() && candidates.isMatchedQualifier()) {
                 if (candidateOffer == null) {
                     //we don't know the final target yet, so put null for the order item for now
-                    candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null);
+                    candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null, order);
                 }
-                for (PromotableOrderItem candidateItem : candidates.getCandidateTargets()) {
-                    PromotableCandidateItemOffer itemOffer = candidateOffer.clone();
-                    itemOffer.setOrderItem(candidateItem);
-                    candidateItem.addCandidateItemOffer(itemOffer);
-                }
+
                 candidateOffer.getCandidateTargets().addAll(candidates.getCandidateTargets());
             }
         }
@@ -118,14 +95,11 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @param promotableOrderItem the specific order item
      * @return the candidate item offer
      */
-    protected PromotableCandidateItemOffer createCandidateItemOffer(List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer, PromotableOrderItem promotableOrderItem) {
-        CandidateItemOffer candidateOffer = offerDao.createCandidateItemOffer();
-        candidateOffer.setOffer(offer);
-        PromotableCandidateItemOffer promotableCandidateItemOffer = promotableItemFactory.createPromotableCandidateItemOffer(candidateOffer);
-        if (promotableOrderItem != null) {
-            promotableOrderItem.addCandidateItemOffer(promotableCandidateItemOffer);
-        }
-        promotableCandidateItemOffer.setOrderItem(promotableOrderItem);
+    protected PromotableCandidateItemOffer createCandidateItemOffer(List<PromotableCandidateItemOffer> qualifiedItemOffers,
+            Offer offer, PromotableOrderItem promotableOrderItem, PromotableOrder promotableOrder) {
+
+        PromotableCandidateItemOffer promotableCandidateItemOffer =
+                promotableItemFactory.createPromotableCandidateItemOffer(promotableOrder, offer);
         qualifiedItemOffers.add(promotableCandidateItemOffer);
         
         return promotableCandidateItemOffer;
@@ -136,370 +110,215 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#applyAllItemOffers(java.util.List, java.util.List)
      */
     @Override
-    public boolean applyAllItemOffers(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
+    public void applyAllItemOffers(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
         // Iterate through the collection of CandidateItemOffers. Remember that each one is an offer that may apply to a
         // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
         // The same offer may be applied to different Order Items
-        //
-        // isCombinableWithOtherOffers - not combinable with any offers in the order
-        // isStackable - cannot be stack on top of an existing item offer back, other offers can be stack of top of it
-        //
-        boolean itemOffersApplied = false;
-        int appliedItemOffersCount = 0;
-        boolean isLegacyFormat = false;
+        
         for (PromotableCandidateItemOffer itemOffer : itemOffers) {
-            int beforeCount = appliedItemOffersCount;
-            PromotableOrderItem orderItem = itemOffer.getOrderItem();
-            if (orderItem != null) {
-                isLegacyFormat = true;
-                appliedItemOffersCount = applyLegacyAdjustments(appliedItemOffersCount, itemOffer, beforeCount, orderItem);
-            } else {
-                // TODO:  Add filter for item-subtotal
-                skipOfferIfSubtotalRequirementNotMet(order, itemOffer);
-                appliedItemOffersCount = applyAdjustments(order, appliedItemOffersCount, itemOffer, beforeCount);
+            if (offerMeetsSubtotalRequirements(order, itemOffer)) {
+                applyItemOffer(order, itemOffer);
             }
         }
-        if (isLegacyFormat) {
-            appliedItemOffersCount = checkLegacyAdjustments(order.getDiscountableDiscreteOrderItems(), appliedItemOffersCount);
-        } else {
-            appliedItemOffersCount = checkAdjustments(order, appliedItemOffersCount);
-        }
-        if (appliedItemOffersCount > 0) {
-            itemOffersApplied = true;
-        }
-        return itemOffersApplied;
     }
     
     
-    protected boolean skipOfferIfSubtotalRequirementNotMet(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+    protected boolean offerMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         if (itemOffer.getOffer().getQualifyingItemSubTotal() == null || itemOffer.getOffer().getQualifyingItemSubTotal().lessThanOrEqual(Money.ZERO)) {
-            return false;
+            return true;
         }
+
+        //TODO:  Check subtotal requirement before continuing
            
-        /*
-        boolean notCombinableOfferApplied = false;
-        boolean offerApplied = false;
-        List<PromotableOrderItem> allSplitItems = order.getAllSplitItems();
-        for (PromotableOrderItem targetItem : allSplitItems) {
-            notCombinableOfferApplied = targetItem.isNotCombinableOfferApplied();
-            if (!offerApplied) {
-                offerApplied = targetItem.isHasOrderItemAdjustments();
-            }
-            if (notCombinableOfferApplied) {
-                break;
-            }
-        }
-        
-        if (
-                !notCombinableOfferApplied && (
-                    (
-                            (itemOffer.getOffer().isCombinableWithOtherOffers() || itemOffer.getOffer().isTotalitarianOffer() == null || !itemOffer.getOffer().isTotalitarianOffer()) 
-                            //&& itemOffer.getOffer().isStackable()
-                    ) 
-                    || !offerApplied
-                )
-            ) 
-        {
-            // At this point, we should not have any official adjustment on the order
-            // for this item.
-            applyItemQualifiersAndTargets(itemOffer, order);
-            allSplitItems = order.getAllSplitItems();
-            for (PromotableOrderItem splitItem : allSplitItems) {
-                for (PromotionDiscount discount : splitItem.getPromotionDiscounts()) {
-                    if (discount.getPromotion().equals(itemOffer.getOffer())) {
-                        applyOrderItemAdjustment(itemOffer, splitItem);
-                        break;
-                    }
-                }
-            }
-        }
-        // check if not combinable offer is better than sale price; if no, remove the not combinable offer so 
-        // that another offer may be applied to the item
-        if ((!itemOffer.getOffer().isCombinableWithOtherOffers() || (itemOffer.getOffer().isTotalitarianOffer() != null && itemOffer.getOffer().isTotalitarianOffer())) && appliedItemOffersCount > beforeCount) { 
-            Money adjustmentTotal = new Money(0D);
-            Money saleTotal = new Money(0D);
-            for (PromotableOrderItem splitItem : allSplitItems) {
-                adjustmentTotal = adjustmentTotal.add(splitItem.getCurrentPrice().multiply(splitItem.getQuantity()));
-                saleTotal = saleTotal.add(splitItem.getPriceBeforeAdjustments(true).multiply(splitItem.getQuantity()));
-            }
-            if (adjustmentTotal.greaterThanOrEqual(saleTotal)) {
-                // adjustment price is not best price, remove adjustments for this item
-                for (PromotableOrderItem splitItem : allSplitItems) {
-                    if (splitItem.isHasOrderItemAdjustments()) {
-                        appliedItemOffersCount--;
-                    }
-                }
-                order.getSplitItems().clear();
-            }
-        }
-        return appliedItemOffersCount;
-        */
         return false;
+    }
+
+    protected boolean isTotalitarianOfferAppliedToAnyItem(PromotableOrder order) {
+        List<PromotableOrderItemPriceDetail> allPriceDetails = order.getAllPromotableOrderItemPriceDetails();       
+        for (PromotableOrderItemPriceDetail targetItem : allPriceDetails) {
+            if (targetItem.isTotalitarianOfferApplied()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Private method used by applyAdjustments to create an OrderItemAdjustment from a CandidateOrderOffer
+     * and associates the OrderItemAdjustment to the OrderItem.
+     *
+     * @param orderOffer a CandidateOrderOffer to apply to an Order
+     */
+    protected void applyOrderItemAdjustment(PromotableCandidateItemOffer itemOffer, PromotableOrderItemPriceDetail itemPriceDetail) {
+        PromotableOrderItemPriceDetailAdjustment promotableOrderItemPriceDetailAdjustment = promotableItemFactory.createPromotableOrderItemPriceDetailAdjustment(itemOffer, itemPriceDetail);        
+        itemPriceDetail.addCandidateItemPriceDetailAdjustment(promotableOrderItemPriceDetailAdjustment);
+    }
+    
+    /**
+     * The itemOffer has been qualified and prior methods added PromotionDiscount objects onto the ItemPriceDetail.
+     * This code will convert the PromotionDiscounts into Adjustments
+     * @param order
+     * @param itemOffer
+     */
+    protected void applyAdjustments(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+        List<PromotableOrderItemPriceDetail> itemPriceDetails = order.getAllPromotableOrderItemPriceDetails();
+        for (PromotableOrderItemPriceDetail itemPriceDetail : itemPriceDetails) {
+            for (PromotionDiscount discount : itemPriceDetail.getPromotionDiscounts()) {
+                if (discount.getPromotion().equals(itemOffer.getOffer())) {
+                    applyOrderItemAdjustment(itemOffer, itemPriceDetail);
+                    break;
+                }
+            }
+        }
     }
      
 
-    protected int applyAdjustments(PromotableOrder order, int appliedItemOffersCount, PromotableCandidateItemOffer itemOffer, int beforeCount) {
-        boolean notCombinableOfferApplied = false;
-        boolean offerApplied = false;
-        List<PromotableOrderItem> allSplitItems = order.getAllSplitItems();
-        for (PromotableOrderItem targetItem : allSplitItems) {
-            notCombinableOfferApplied = targetItem.isNotCombinableOfferApplied();
-            if (!offerApplied) {
-                offerApplied = targetItem.isHasOrderItemAdjustments();
+    protected void applyItemOffer(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+        applyItemQualifiersAndTargets(itemOffer, order);
+        applyAdjustments(order, itemOffer);
+    }
+
+    /**
+     * Some promotions can only apply to the retail price.    This method determines whether
+     * retailPrice only promotions should be used instead of those that can apply to the sale
+     * price as well.
+     * 
+     * @param order
+     * @return
+     */
+    protected void chooseSaleOrRetailAdjustments(PromotableOrder order) {
+        List<PromotableOrderItemPriceDetail> itemPriceDetails = order.getAllPromotableOrderItemPriceDetails();
+        for (PromotableOrderItemPriceDetail itemDetail : itemPriceDetails) {
+            itemDetail.chooseSaleOrRetailAdjustments();                
+        }
+        mergePriceDetails(order);
+    }
+
+    /**
+     * Checks to see if any priceDetails need to be combined and if so, combines them.
+     * 
+     * @param order
+     * @return
+     */
+    protected void mergePriceDetails(PromotableOrder order) {
+        List<PromotableOrderItem> items = order.getAllOrderItems();
+        for (PromotableOrderItem item : items) {
+            item.mergeLikeDetails();
+        }
+    }
+
+   
+    protected void applyItemQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
+        boolean matchFound = false;
+        
+        do {
+            boolean qualifiersFound = markQualifiers(itemOffer, order);
+            boolean targetsFound = markTargets(itemOffer, order);
+            
+            if (qualifiersFound && targetsFound) {
+                finalizeQuantities(order.getAllPromotableOrderItemPriceDetails());
+            } else {
+                clearAllNonFinalizedQuantities(order.getAllPromotableOrderItemPriceDetails());
+                matchFound = false;
+                break;
             }
-            if (notCombinableOfferApplied) {
+
+            // If we found a match, try again to see if the promotion can be applied again.
+        } while (matchFound);
+        
+        splitDetailsIfNecessary(order.getAllPromotableOrderItemPriceDetails());
+    }
+
+    protected List<PromotableOrderItemPriceDetail> buildPriceDetailListFromOrderItems(List<PromotableOrderItem> items) {
+        List<PromotableOrderItemPriceDetail> itemPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
+        for (PromotableOrderItem item : items) {
+            for (PromotableOrderItemPriceDetail detail : item.getPromotableOrderItemPriceDetails()) {
+                itemPriceDetails.add(detail);
+            }
+        }
+        return itemPriceDetails;
+    }
+
+    /**
+     * Loop through ItemCriteria and mark qualifiers required to give the promotion to 1 or more targets.
+     * @param itemOffer
+     * @param order
+     * @return
+     */
+    protected boolean markQualifiers(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
+        for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
+            List<PromotableOrderItem> promotableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
+
+            List<PromotableOrderItemPriceDetail> priceDetails = buildPriceDetailListFromOrderItems(promotableItems);
+            
+            Collections.sort(priceDetails, getQualifierItemComparator(itemOffer.getOffer().getApplyDiscountToSalePrice()));
+
+            // Calculate the number of qualifiers needed that will not receive the promotion.  
+            // These will be reserved first before the target is assigned.
+            int qualifierQtyNeeded = itemCriteria.getQuantity();
+            
+            for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+                
+                // Mark Qualifiers
+                if (qualifierQtyNeeded > 0) {
+                    int itemQtyAvailableToBeUsedAsQualifier = priceDetail.getQuantityAvailableToBeUsedAsQualifier(itemOffer);
+                    if (itemQtyAvailableToBeUsedAsQualifier > 0) {
+                        int qtyToMarkAsQualifier = Math.min(qualifierQtyNeeded, itemQtyAvailableToBeUsedAsQualifier);
+                        qualifierQtyNeeded -= qtyToMarkAsQualifier;
+                        priceDetail.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
+                    }
+                }
+                
+                if (qualifierQtyNeeded == 0) {
+                    break;
+                }
+            }
+
+            if (qualifierQtyNeeded != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Loop through ItemCriteria and mark targets that can get this promotion to give the promotion to 1 or more targets.
+     * @param itemOffer
+     * @param order
+     * @return
+     */
+    protected boolean markTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
+        Offer promotion = itemOffer.getOffer();
+        List<PromotableOrderItem> promotableItems = itemOffer.getCandidateTargets();
+        List<PromotableOrderItemPriceDetail> priceDetails = buildPriceDetailListFromOrderItems(promotableItems);
+
+        int receiveQtyNeeded = 0;
+        for (OfferItemCriteria targetCriteria : itemOffer.getOffer().getTargetItemCriteria()) {
+            receiveQtyNeeded += targetCriteria.getQuantity();
+        }
+
+        Collections.sort(priceDetails, getTargetItemComparator(promotion.getApplyDiscountToSalePrice()));
+        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+            if (receiveQtyNeeded > 0) {
+                int itemQtyAvailableToBeUsedAsTarget = priceDetail.getQuantityAvailableToBeUsedAsTarget(itemOffer);
+                if (itemQtyAvailableToBeUsedAsTarget > 0) {
+                    if ((promotion.getMaxUses() == 0) || (itemOffer.getUses() < promotion.getMaxUses())) {
+                        int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
+                        receiveQtyNeeded -= qtyToMarkAsTarget;
+                        priceDetail.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
+                    }
+                }
+            }
+
+            if (receiveQtyNeeded == 0) {
+                itemOffer.addUse();
                 break;
             }
         }
-        if (
-                !notCombinableOfferApplied && (
-                    (
-                            (itemOffer.getOffer().isCombinableWithOtherOffers() || itemOffer.getOffer().isTotalitarianOffer() == null || !itemOffer.getOffer().isTotalitarianOffer()) 
-                            //&& itemOffer.getOffer().isStackable()
-                    ) 
-                    || !offerApplied
-                )
-            ) 
-        {
-            // At this point, we should not have any official adjustment on the order
-            // for this item.
-            applyItemQualifiersAndTargets(itemOffer, order);
-            allSplitItems = order.getAllSplitItems();
-            for (PromotableOrderItem splitItem : allSplitItems) {
-                for (PromotionDiscount discount : splitItem.getPromotionDiscounts()) {
-                    if (discount.getPromotion().equals(itemOffer.getOffer())) {
-                        applyOrderItemAdjustment(itemOffer, splitItem);
-                        appliedItemOffersCount++;
-                        break;
-                    }
-                }
-            }
-        }
-        // check if not combinable offer is better than sale price; if no, remove the not combinable offer so 
-        // that another offer may be applied to the item
-        if ((!itemOffer.getOffer().isCombinableWithOtherOffers() || (itemOffer.getOffer().isTotalitarianOffer() != null && itemOffer.getOffer().isTotalitarianOffer())) && appliedItemOffersCount > beforeCount) { 
-            Money adjustmentTotal = new Money(0D);
-            Money saleTotal = new Money(0D);
-            for (PromotableOrderItem splitItem : allSplitItems) {
-                adjustmentTotal = adjustmentTotal.add(splitItem.getCurrentPrice().multiply(splitItem.getQuantity()));
-                saleTotal = saleTotal.add(splitItem.getPriceBeforeAdjustments(true).multiply(splitItem.getQuantity()));
-            }
-            if (adjustmentTotal.greaterThanOrEqual(saleTotal)) {
-                // adjustment price is not best price, remove adjustments for this item
-                for (PromotableOrderItem splitItem : allSplitItems) {
-                    if (splitItem.isHasOrderItemAdjustments()) {
-                        appliedItemOffersCount--;
-                    }
-                }
-                order.getSplitItems().clear();
-            }
-        }
-        return appliedItemOffersCount;
+
+        return (receiveQtyNeeded == 0);
     }
 
-    protected int checkAdjustments(PromotableOrder order, int appliedItemOffersCount) {
-        if (appliedItemOffersCount > 0) {
-            List<PromotableOrderItem> allSplitItems = order.getAllSplitItems();
-            // compare adjustment price to sales price and remove adjustments if sales price is better
-            for (PromotableOrderItem splitItem : allSplitItems) {
-                if (splitItem.isHasOrderItemAdjustments()) {
-                    boolean useSaleAdjustments = false;
-                    int adjustmentsRemoved = 0;
-                    
-                    Money adjustmentPrice;
-                    if (splitItem.getDelegate().getIsOnSale()) {
-                        if (splitItem.getSaleAdjustmentPrice().lessThanOrEqual(splitItem.getRetailAdjustmentPrice())) {
-                            adjustmentPrice = splitItem.getSaleAdjustmentPrice();
-                            useSaleAdjustments = true;
-                        }  else {
-                            adjustmentPrice = splitItem.getRetailAdjustmentPrice();
-                        }
-
-                        if (! adjustmentPrice.lessThan(splitItem.getSalePrice())) {
-                            adjustmentsRemoved = adjustmentsRemoved + splitItem.removeAllAdjustments();
-                        }
-                    } else {
-                        if (! splitItem.getRetailAdjustmentPrice().lessThan(splitItem.getRetailPrice())) {
-                            adjustmentsRemoved = adjustmentsRemoved + splitItem.removeAllAdjustments();
-                        }
-                    }
-
-                    adjustmentsRemoved = adjustmentsRemoved + splitItem.fixAdjustments(useSaleAdjustments);
-                    appliedItemOffersCount -= adjustmentsRemoved;
-                }
-
-
-            }
-            orderItemMergeService.mergeSplitItems(order);
-        }
-        return appliedItemOffersCount;
-    }
-
-    protected int checkLegacyAdjustments(List<PromotableOrderItem> discreteOrderItems, int appliedItemOffersCount) {
-        if (appliedItemOffersCount > 0) {
-            for (PromotableOrderItem discreteOrderItem : discreteOrderItems) {
-                if (discreteOrderItem.isHasOrderItemAdjustments()) {
-                    boolean useSaleAdjustments = false;
-                    int adjustmentsRemoved = 0;
-
-                    Money adjustmentPrice;
-                    if (discreteOrderItem.getDelegate().getIsOnSale()) {
-                        if (discreteOrderItem.getSaleAdjustmentPrice().lessThanOrEqual(discreteOrderItem.getRetailAdjustmentPrice())) {
-                            adjustmentPrice = discreteOrderItem.getSaleAdjustmentPrice();
-                            useSaleAdjustments = true;
-                        }  else {
-                            adjustmentPrice = discreteOrderItem.getRetailAdjustmentPrice();
-                        }
-
-                        if (! adjustmentPrice.lessThanOrEqual(discreteOrderItem.getSalePrice())) {
-                            adjustmentsRemoved = adjustmentsRemoved + discreteOrderItem.removeAllAdjustments();
-                        }
-                    } else {
-                        if (! discreteOrderItem.getRetailAdjustmentPrice().lessThanOrEqual(discreteOrderItem.getRetailPrice())) {
-                            adjustmentsRemoved = adjustmentsRemoved + discreteOrderItem.removeAllAdjustments();
-                        }
-                    }
-
-                    adjustmentsRemoved = adjustmentsRemoved + discreteOrderItem.fixAdjustments(useSaleAdjustments);
-                    appliedItemOffersCount -= adjustmentsRemoved;
-                }
-            }
-        }
-        return appliedItemOffersCount;
-    }
-
-    protected int applyLegacyAdjustments(int appliedItemOffersCount, PromotableCandidateItemOffer itemOffer, int beforeCount, PromotableOrderItem orderItem) {
-        //legacy promotion
-        if (!orderItem.isNotCombinableOfferApplied()) {
-            if ((itemOffer.getOffer().isCombinableWithOtherOffers() && itemOffer.getOffer().isStackable()) || !orderItem.isHasOrderItemAdjustments()) {
-                applyOrderItemAdjustment(itemOffer, orderItem);
-                appliedItemOffersCount++;
-            }
-        }
-        // check if not combinable offer is better than sale price; if no, remove the not combinable offer so 
-        // that another offer may be applied to the item
-        if (!itemOffer.getOffer().isCombinableWithOtherOffers() && appliedItemOffersCount > beforeCount) { 
-            Money adjustmentTotal = new Money(0D);
-            Money saleTotal = new Money(0D);
-            adjustmentTotal = adjustmentTotal.add(orderItem.getCurrentPrice().multiply(orderItem.getQuantity()));
-            saleTotal = saleTotal.add(orderItem.getPriceBeforeAdjustments(true).multiply(orderItem.getQuantity()));
-            if (adjustmentTotal.greaterThanOrEqual(saleTotal)) {
-                // adjustment price is not best price, remove adjustments for this item
-                orderItem.removeAllAdjustments();
-                appliedItemOffersCount--;
-            }
-        }
-        return appliedItemOffersCount;
-    }
-    
-    protected void applyItemQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
-        Offer promotion = itemOffer.getOffer();
-        boolean matchFound = false;
-        do {
-            matchFound = false;
-            int totalQualifiersNeeded = 0;
-            for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
-                totalQualifiersNeeded += itemCriteria.getQuantity();
-            }
-            int receiveQtyNeeded = 0;
-            for (OfferItemCriteria targetCriteria : promotion.getTargetItemCriteria()) {
-                receiveQtyNeeded += targetCriteria.getQuantity();
-            }
-            
-            checkAll: {
-                for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
-                    List<PromotableOrderItem> chargeableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
-                    
-                    Collections.sort(chargeableItems, getQualifierItemComparator(promotion.getApplyDiscountToSalePrice()));
-
-                    // Calculate the number of qualifiers needed that will not receive the promotion.  
-                    // These will be reserved first before the target is assigned.
-                    int qualifierQtyNeeded = itemCriteria.getQuantity();
-                    
-                    for (PromotableOrderItem chargeableItem : chargeableItems) {
-                        
-                        // Mark Qualifiers
-                        if (qualifierQtyNeeded > 0) {
-                            int itemQtyAvailableToBeUsedAsQualifier = chargeableItem.getQuantityAvailableToBeUsedAsQualifier(promotion);
-                            if (itemQtyAvailableToBeUsedAsQualifier > 0) {
-                                int qtyToMarkAsQualifier = Math.min(qualifierQtyNeeded, itemQtyAvailableToBeUsedAsQualifier);
-                                qualifierQtyNeeded -= qtyToMarkAsQualifier;
-                                chargeableItem.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
-                            }
-                        }
-                        
-                        if (qualifierQtyNeeded == 0) {
-                            totalQualifiersNeeded -= itemCriteria.getQuantity();
-                            break;
-                        }
-                    }
-                    if (qualifierQtyNeeded != 0) {
-                        break checkAll;
-                    }
-                }
-                checkTargets :{
-                    List<PromotableOrderItem> chargeableItems = itemOffer.getCandidateTargets();
-                    Collections.sort(chargeableItems, getTargetItemComparator(promotion.getApplyDiscountToSalePrice()));
-                    for (PromotableOrderItem chargeableItem : chargeableItems) {
-                        // Mark Targets
-                        if (receiveQtyNeeded > 0) {
-                            int itemQtyAvailableToBeUsedAsTarget = chargeableItem.getQuantityAvailableToBeUsedAsTarget(promotion);
-                            if (itemQtyAvailableToBeUsedAsTarget > 0) {
-                                if (promotion.getMaxUses() == 0 || itemOffer.getUses() < promotion.getMaxUses()) {
-                                    int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
-                                    receiveQtyNeeded -= qtyToMarkAsTarget;
-                                    //atLeastOneCriteriaMatched = true;
-                                    chargeableItem.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
-                                }
-                            }
-                        }
-                        
-                        if (receiveQtyNeeded == 0) {
-                            itemOffer.addUse();
-                            break checkTargets;
-                        }
-                    }
-                }
-            }
-            boolean criteriaMatched = true;
-            if (receiveQtyNeeded != 0 || totalQualifiersNeeded != 0) {
-                // This ItemCriteria did not match.  Therefore, we need to clear all non-finalized quantities.
-                for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
-                    List<PromotableOrderItem> chargeableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
-                    clearAllNonFinalizedQuantities(chargeableItems);
-                }
-                clearAllNonFinalizedQuantities(itemOffer.getCandidateTargets());
-                criteriaMatched = false;
-            }
-            
-            if (criteriaMatched) {
-                matchFound = true;
-                finalizeQuantities(order.getDiscountableDiscreteOrderItems());
-            }
-            //This promotion may be able to be applied multiple times if there is enough
-            //product quantity in the order. Continue to loop through the order until
-            //there are no more matches
-        } while (matchFound);
-        
-        if (order.getSplitItems().size() == 0) {
-            orderItemMergeService.initializeSplitItems(order);
-        }
-        List<PromotableOrderItem> allSplitItems = order.getAllSplitItems();
-        for (PromotableOrderItem chargeableItem : allSplitItems) {
-            if (itemOffer.getCandidateTargets().contains(chargeableItem)) {
-                List<PromotableOrderItem> splitItems = chargeableItem.split();
-                if (splitItems != null && splitItems.size() > 0) {
-                    // Remove this item from the list
-                    List<PromotableOrderItem> temp = order.searchSplitItems(chargeableItem);
-                    if (!CollectionUtils.isEmpty(temp)) {
-                        temp.remove(chargeableItem);
-                        temp.addAll(splitItems);
-                    }
-                }
-            } 
-        }
-    }
-    
     /**
      * Used in {@link #applyItemQualifiersAndTargets(PromotableCandidateItemOffer, PromotableOrder)} allow for customized
      * sorting for which qualifier items should be attempted to be used first for a promotion. Default behavior
@@ -508,12 +327,12 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @param applyToSalePrice - whether or not the Comparator should use the sale price for comparison
      * @return
      */
-    protected Comparator<PromotableOrderItem> getQualifierItemComparator(final boolean applyToSalePrice) {
-        return new Comparator<PromotableOrderItem>() {
+    protected Comparator<PromotableOrderItemPriceDetail> getQualifierItemComparator(final boolean applyToSalePrice) {
+        return new Comparator<PromotableOrderItemPriceDetail>() {
             @Override
-            public int compare(PromotableOrderItem o1, PromotableOrderItem o2) {
-                Money price = o1.getPriceBeforeAdjustments(applyToSalePrice);
-                Money price2 = o2.getPriceBeforeAdjustments(applyToSalePrice);
+            public int compare(PromotableOrderItemPriceDetail o1, PromotableOrderItemPriceDetail o2) {
+                Money price = o1.getPromotableOrderItem().getPriceBeforeAdjustments(applyToSalePrice);
+                Money price2 = o2.getPromotableOrderItem().getPriceBeforeAdjustments(applyToSalePrice);
                 
                 // highest amount first
                 return price2.compareTo(price);
@@ -537,31 +356,17 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @param applyToSalePrice - whether or not the Comparator should use the sale price for comparison
      * @return
      */
-    protected Comparator<PromotableOrderItem> getTargetItemComparator(final boolean applyToSalePrice) {
-        return new Comparator<PromotableOrderItem>() {
+    protected Comparator<PromotableOrderItemPriceDetail> getTargetItemComparator(final boolean applyToSalePrice) {
+        return new Comparator<PromotableOrderItemPriceDetail>() {
             @Override
-            public int compare(PromotableOrderItem o1, PromotableOrderItem o2) {
-                Money price = o1.getPriceBeforeAdjustments(applyToSalePrice);
-                Money price2 = o2.getPriceBeforeAdjustments(applyToSalePrice);
+            public int compare(PromotableOrderItemPriceDetail o1, PromotableOrderItemPriceDetail o2) {
+                Money price = o1.getPromotableOrderItem().getPriceBeforeAdjustments(applyToSalePrice);
+                Money price2 = o2.getPromotableOrderItem().getPriceBeforeAdjustments(applyToSalePrice);
                 
                 // highest amount first
                 return price2.compareTo(price);
             }
         };
-    }
-
-    /**
-     * Private method used by applyAllItemOffers to create an OrderItemAdjustment from a CandidateItemOffer
-     * and associates the OrderItemAdjustment to the OrderItem.
-     *
-     * @param itemOffer a CandidateItemOffer to apply to an OrderItem
-     */
-    protected void applyOrderItemAdjustment(PromotableCandidateItemOffer itemOffer, PromotableOrderItem orderItem) {
-        OrderItemAdjustment itemAdjustment = offerDao.createOrderItemAdjustment();
-        itemAdjustment.init(orderItem.getDelegate(), itemOffer.getOffer(), itemOffer.getOffer().getName());
-        //add to adjustment
-        PromotableOrderItemAdjustment promotableOrderItemAdjustment = promotableItemFactory.createPromotableOrderItemAdjustment(itemAdjustment, orderItem);
-        orderItem.addOrderItemAdjustment(promotableOrderItemAdjustment); //This is how we can tell if an item has been discounted
     }
     
     @Override
@@ -591,7 +396,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             // potential order savings.
             applyAllItemOffers(qualifiedItemOffers, order);
         }
-        
+
+        chooseSaleOrRetailAdjustments(order);
+
         if (!qualifiedOrderOffers.isEmpty()) {
             // Sort order offers by priority and discount
             Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
@@ -599,12 +406,14 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             qualifiedOrderOffers = removeTrailingNotCombinableOrderOffers(qualifiedOrderOffers);
             applyAllOrderOffers(qualifiedOrderOffers, order);
         }
+
+        order.setOrderSubTotalToPriceWithAdjustments();
         
-        compileOrderTotal(order);
-        
+        // TODO: only do this if absolutely required.    If you find one that no longer qualifies, then 
+        // pull it out and reapply.
         if (!qualifiedOrderOffers.isEmpty() && !qualifiedItemOffers.isEmpty()) {
             List<PromotableCandidateOrderOffer> finalQualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
-            order.removeAllOrderAdjustments();
+            order.removeAllCandidateOrderOfferAdjustments();
             for (PromotableCandidateOrderOffer candidateOrderOffer : qualifiedOrderOffers) {
                 // recheck the list of order offers and verify if they still apply with the new subtotal
                 /*
@@ -623,6 +432,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             Collections.sort(finalQualifiedOrderOffers, new BeanComparator("priority"));
             if (!finalQualifiedOrderOffers.isEmpty()) {
                 applyAllOrderOffers(finalQualifiedOrderOffers, order);
+                order.setOrderSubTotalToPriceWithAdjustments();
             }  
         }
     }

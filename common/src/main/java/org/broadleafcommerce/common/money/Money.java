@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.money;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.util.CurrencyAdapter;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
@@ -45,8 +46,28 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     
     public static final Money ZERO = new Money(BigDecimal.ZERO);
 
+    protected static String getCurrencyCode(BroadleafCurrency blCurrency) {
+        if (blCurrency != null) {
+            return blCurrency.getCurrencyCode();
+        } else {
+            return defaultCurrency().getCurrencyCode();
+        }
+    }
+
     public Money(Currency currency) {
         this(BankersRounding.zeroAmount(), currency);
+    }
+
+    public Money(BroadleafCurrency blCurrency) {
+        this(0, Currency.getInstance(getCurrencyCode(blCurrency)));
+    }
+
+    public Money(BigDecimal amount, BroadleafCurrency blCurrency) {
+        this(amount, Currency.getInstance(getCurrencyCode(blCurrency)));
+    }
+
+    public Money(BigDecimal amount, BroadleafCurrency blCurrency, int scale) {
+        this(amount, Currency.getInstance(getCurrencyCode(blCurrency)), scale);
     }
 
     public Money() {

@@ -16,99 +16,35 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.offer.domain.AdvancedOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.core.offer.domain.OfferTier;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PromotableCandidateItemOfferImpl implements PromotableCandidateItemOffer {
+public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding implements PromotableCandidateItemOffer, OfferHolder {
     
     private static final long serialVersionUID = 1L;
-    
-    protected Money potentialSavings; 
-    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
-    protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
-    protected CandidateItemOffer delegate;
-    protected PromotableOrderItem orderItem;
+    protected Offer offer;
+    protected PromotableOrder promotableOrder;
+    protected Money potentialSavings;
     protected int uses = 0;
     
-    public PromotableCandidateItemOfferImpl(CandidateItemOffer candidateItemOffer) {
-        this.delegate = candidateItemOffer;
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+    protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
+    
+
+    public PromotableCandidateItemOfferImpl(PromotableOrder promotableOrder, Offer offer) {
+        assert (offer != null);
+        assert (promotableOrder != null);
+        this.offer = offer;
+        this.promotableOrder = promotableOrder;
     }
     
-    @Override
-    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
-        return candidateQualifiersMap;
-    }
-
-    @Override
-    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
-        this.candidateQualifiersMap = candidateItemsMap;
-    }
-    
-    @Override
-    public List<PromotableOrderItem> getCandidateTargets() {
-        return candidateTargets;
-    }
-
-    @Override
-    public void setCandidateTargets(List<PromotableOrderItem> candidateTargets) {
-        this.candidateTargets = candidateTargets;
-    }
-
-    private BigDecimal retriveTierForItem(Long i) {
-        OfferTier maxTier = null;
-        for (OfferTier t : ((AdvancedOffer) delegate.getOffer()).getOfferTiers()) {
-            maxTier = t;
-            if (i <= t.getMinQuantity()) {
-                return t.getAmount();
-            }
-        }
-        if (maxTier != null) {
-            return maxTier.getAmount();
-        }
-        return BigDecimal.ZERO;
-    }
-
-    @Override
-    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
-        Money savings = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, orderItem.getDelegate().getOrder().getCurrency());
-        Money salesPrice = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
-        BigDecimal offerValue = delegate.getOffer().getValue();
-        if (delegate.getOffer() instanceof AdvancedOffer && ((AdvancedOffer) delegate.getOffer()).isTieredOffer()) {
-            offerValue = retriveTierForItem((long) orderItem.getQuantity());
-        }
-        if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-            //Price reduction by a fixed amount
-            savings = savings.add(BroadleafCurrencyUtils.getMoney(offerValue, orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings));
-        } else if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-            //Price reduction by a percent off
-            BigDecimal savingsPercent = offerValue.divide(new BigDecimal(100));
-            savings = savings.add(salesPrice.multiply(savingsPercent).multiply(qtyToReceiveSavings));
-        } else {
-            //Different price (presumably less than the normal price)
-            savings = savings.add(salesPrice.multiply(qtyToReceiveSavings).subtract(BroadleafCurrencyUtils.getMoney(offerValue, orderItem.getDelegate().getOrder().getCurrency()).multiply(qtyToReceiveSavings)));
-        }
-        return savings;
-    }
-    
-    @Override
-    public Money getPotentialSavings() {
-        if (potentialSavings == null) {
-            potentialSavings = calculatePotentialSavings();
-        }
-        return potentialSavings;
-    }
-
     /**
      * This method determines how much the customer might save using this promotion for the
      * purpose of sorting promotions with the same priority. The assumption is that any possible
@@ -124,13 +60,14 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
      * 
      * @return
      */
-    @Override
     public Money calculatePotentialSavings() {
-        Money savings = new Money(0);
+        Money savings = new Money(0D);
         int maxUses = calculateMaximumNumberOfUses();
         int appliedCount = 0;
         
         for (PromotableOrderItem chgItem : candidateTargets) {
+            // TODO:  BCP - Transferred the original logic but it looks like there is a bug here
+            //        when a targetItemCriteria has a quantity > 1.
             int qtyToReceiveSavings = Math.min(chgItem.getQuantity(), maxUses);
             savings = calculateSavingsForOrderItem(chgItem, qtyToReceiveSavings);
 
@@ -142,7 +79,40 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
         
         return savings;
     }
-    
+
+    public BroadleafCurrency getCurrency() {
+        return promotableOrder.getOrderCurrency();
+    }
+
+    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
+        Money savings = new Money(0D);
+        Money price = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
+
+        BigDecimal offerUnitValue = PromotableOfferUtility.determineOfferUnitValue(offer, this);
+        savings = PromotableOfferUtility.computeAdjustmentValue(price, offerUnitValue, this, this);
+        return savings.multiply(qtyToReceiveSavings);
+    }
+
+    /**
+     * Returns the number of items that potentially could be targets for the offer.   Due to combination or bogo
+     * logic, they may not all get the tiered offer price.
+     */
+    public int calculateTargetQuantityForTieredOffer() {
+        int returnQty = 0;
+        for (PromotableOrderItem promotableOrderItem : candidateTargets) {
+            returnQty += promotableOrderItem.getQuantity();
+        }
+        return returnQty;
+    }
+
+    @Override
+    public Money getPotentialSavings() {
+        if (potentialSavings == null) {
+            potentialSavings = calculatePotentialSavings();
+        }
+        return potentialSavings;
+    }
+
     /**
      * Determines the maximum number of times this promotion can be used based on the
      * ItemCriteria and promotion's maxQty setting.
@@ -154,7 +124,7 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
         //iterate through the target criteria and find the least amount of max uses. This will be the overall
         //max usage, since the target criteria are grouped together in "and" style.
         int numberOfUsesForThisItemCriteria = maxMatchesFound;
-        for (OfferItemCriteria targetCriteria : delegate.getOffer().getTargetItemCriteria()) {
+        for (OfferItemCriteria targetCriteria : getOffer().getTargetItemCriteria()) {
             int temp = calculateMaxUsesForItemCriteria(targetCriteria, getOffer());
             numberOfUsesForThisItemCriteria = Math.min(numberOfUsesForThisItemCriteria, temp);
         }
@@ -170,9 +140,9 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
         int numberOfTargets = 0;
         int numberOfUsesForThisItemCriteria = 9999;
         
-        if (candidateTargets != null && itemCriteria != null) {
+        if (itemCriteria != null) {
             for(PromotableOrderItem potentialTarget : candidateTargets) {
-                numberOfTargets += potentialTarget.getQuantityAvailableToBeUsedAsTarget(promotion);
+                numberOfTargets += potentialTarget.getQuantity();
             }
             numberOfUsesForThisItemCriteria = numberOfTargets / itemCriteria.getQuantity();
         }
@@ -181,48 +151,33 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
     }
     
     @Override
-    public CandidateItemOffer getDelegate() {
-        return delegate;
-    }
-    
-    @Override
-    public void reset() {
-        delegate = null;
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
+        return candidateQualifiersMap;
     }
 
     @Override
-    public void setOrderItem(PromotableOrderItem orderItem) {
-        if (orderItem != null) {
-            this.orderItem = orderItem;
-            delegate.setOrderItem(this.orderItem.getDelegate());
-        }
+    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
+        this.candidateQualifiersMap = candidateItemsMap;
     }
 
     @Override
-    public PromotableCandidateItemOffer clone() {
-        PromotableCandidateItemOfferImpl copy = new PromotableCandidateItemOfferImpl(delegate.clone());
-        copy.orderItem = this.orderItem;
-        return copy;
+    public List<PromotableOrderItem> getCandidateTargets() {
+        return candidateTargets;
     }
-    
+
+    @Override
+    public void setCandidateTargets(List<PromotableOrderItem> candidateTargets) {
+        this.candidateTargets = candidateTargets;
+    }
+
     @Override
     public int getPriority() {
-        return delegate.getPriority();
+        return offer.getPriority();
     }
     
     @Override
     public Offer getOffer() {
-        return delegate.getOffer();
-    }
-    
-    @Override
-    public void setOffer(Offer offer) {
-        delegate.setOffer(offer);
-    }
-    
-    @Override
-    public PromotableOrderItem getOrderItem() {
-        return orderItem;
+        return offer;
     }
 
     @Override

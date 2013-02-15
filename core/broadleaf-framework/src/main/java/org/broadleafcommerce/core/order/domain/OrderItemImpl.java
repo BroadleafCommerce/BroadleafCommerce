@@ -111,21 +111,23 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Order order;
 
+    @Column(name = "PRICE", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Price", order = 1, group = "OrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
+    protected BigDecimal price;
+
+    @Column(name = "QUANTITY", nullable = false)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Quantity", order = 2, group = "OrderItemImpl_Pricing")
+    protected int quantity;
+
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Retail_Price", order=2, group = "OrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Retail_Price", order = 3, group = "OrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Sale_Price", order=3, group = "OrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Sale_Price", order = 4, group = "OrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
-    @Column(name = "PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Price", order=4, group = "OrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
-    protected BigDecimal price;
 
-    @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Quantity", order=5, group = "OrderItemImpl_Pricing")
-    protected int quantity;
     
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=1, group = "OrderItemImpl_Description", prominent=true, groupOrder = 1)
@@ -366,7 +368,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     @Override
-    public boolean updatePrices() {
+    public boolean updateSaleAndRetailBasePrices() {
         return false;
     }
     
@@ -377,7 +379,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     
     @Override
     public Money getCurrentPrice() {
-        updatePrices();
+        updateSaleAndRetailBasePrices();
         Money currentPrice = null;
         if (getPrice() != null) {
             currentPrice = getPrice();
@@ -391,14 +393,13 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     
     @Override
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
-        updatePrices();
-        Money currentPrice = null;
+        updateSaleAndRetailBasePrices();
+
         if (getSalePrice() != null && allowSalesPrice) {
-            currentPrice = getSalePrice();
+            return getSalePrice();
         } else {
-            currentPrice = getRetailPrice();
+            return getRetailPrice();
         }
-        return currentPrice;
     }
     
     @Override

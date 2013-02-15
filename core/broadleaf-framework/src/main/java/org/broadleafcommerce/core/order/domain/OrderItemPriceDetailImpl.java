@@ -73,6 +73,10 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail {
     @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_Item_Quantity", order = 5, group = "OrderItemPriceDetailImpl_Pricing")
     protected int quantity;
 
+    @Column(name = "USE_SALE_PRICE")
+    @AdminPresentation(excluded = true)
+    protected Boolean useSalePrice;
+
     @Override
     public Long getId() {
         return id;
@@ -130,6 +134,26 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail {
     @Override
     public Money getTotalAdjustmentValue() {
         return getAdjustmentValue().multiply(quantity);
+    }
+
+    @Override
+    public Money getTotalAdjustedPrice() {
+        Money basePrice = orderItem.getPriceBeforeAdjustments(useSalePrice());
+        return basePrice.multiply(quantity).subtract(getTotalAdjustmentValue());
+    }
+
+    @Override
+    public boolean useSalePrice() {
+        if (useSalePrice == null) {
+            return false;
+        } else {
+            return useSalePrice;
+        }
+    }
+
+    @Override
+    public void setUseSalePrice(boolean useSalePrice) {
+        this.useSalePrice = Boolean.valueOf(useSalePrice);
     }
 
 }

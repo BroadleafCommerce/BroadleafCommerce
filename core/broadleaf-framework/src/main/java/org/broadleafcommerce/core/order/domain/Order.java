@@ -260,20 +260,33 @@ public interface Order extends Serializable {
     public void setTotalTax(Money totalTax);
 
     /**
-     * Gets the total shipping that should be charged for this {@link Order}. This value should be equivalent to the
-     * summation of {@link FulfillmentGroup#getTotal()} for each {@link FulfillmentGroup} associated with this {@link Order}
-     * 
-     * @return the total shipping cost of this {@link Order}
+     * @deprected - use {@link #getTotalFulfillmentCharges()} instead.
      */
     public Money getTotalShipping();
 
     /**
-     * Set the total shipping cost of this {@link Order}. Used in the {@link FulfillmentGroupPricingActivity} after the cost
-     * of each {@link FulfillmentGroup} has been calculated.
+     * @deprecated - Use {@link #setTotalFulfillmentCharges(Money)} instead.
      * 
      * @param totalShipping
      */
     public void setTotalShipping(Money totalShipping);
+
+    /**
+     * Gets the total fulfillment costs that should be charged for this {@link Order}. This value should be equivalent to 
+     * the summation of {@link FulfillmentGroup#getTotal()} for each {@link FulfillmentGroup} associated with this 
+     * {@link Order}
+     * 
+     * @return the total fulfillment cost of this {@link Order}
+     */
+    public Money getTotalFulfillmentCharges();
+
+    /**
+     * Set the total fulfillment cost of this {@link Order}. Used in the {@link FulfillmentGroupPricingActivity} after the cost
+     * of each {@link FulfillmentGroup} has been calculated.
+     * 
+     * @param totalShipping
+     */
+    public void setTotalFulfillmentCharges(Money totalFulfillmentCharges);
 
     /**
      * Gets all the {@link PaymentInfo}s associated with this {@link Order}. An {@link Order} can have many

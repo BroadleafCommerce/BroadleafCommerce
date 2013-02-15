@@ -205,7 +205,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     }
 
     @Override
-    public boolean updatePrices() {
+    public boolean updateSaleAndRetailBasePrices() {
         Money skuRetailPrice = getSku().getRetailPrice();
         Money skuSalePrice = (getSku().getSalePrice() == null ? null : getSku().getSalePrice());
 

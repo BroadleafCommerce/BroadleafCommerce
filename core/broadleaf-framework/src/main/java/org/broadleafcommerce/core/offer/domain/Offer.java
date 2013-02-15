@@ -66,8 +66,18 @@ public interface Offer extends Serializable {
 
     public void setEndDate(Date endDate);
 
+    /**
+     * @deprecated
+     * Use isCombinable instead.
+     * @return
+     */
     public boolean isStackable();
 
+    /**
+     * @deprecated
+     * calls {@link #setCombinableWithOtherOffers(boolean)}
+     * @param stackable
+     */
     public void setStackable(boolean stackable);
 
     public String getTargetSystem();

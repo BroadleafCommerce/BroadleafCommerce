@@ -16,38 +16,32 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.offer.domain.Offer;
+import java.math.RoundingMode;
 
-import java.io.Serializable;
-
-public interface PromotableOrderAdjustment extends Serializable {
+/**
+ * Interface to centralize the promotion rounding functionality found in several of the Promotable classes.
+ * @author bpolster
+ *
+ */
+public interface PromotionRounding {
+    
+    /**
+     * It is sometimes problematic to offer percentage-off offers with regards to rounding. For example,
+     * consider an item that costs 9.99 and has a 50% promotion. To be precise, the offer value is 4.995,
+     * but this may be a strange value to display to the user depending on the currency being used.
+     */
+    boolean isRoundOfferValues();
 
     /**
-     * Returns the associated promotableOrder
+     * Returns the rounding mode to use for rounding operations. 
      * @return
      */
-    public PromotableOrder getPromotableOrder();
+    RoundingMode getRoundingMode();
 
     /**
-     * Returns the associated promotableCandidateOrderOffer
+     * Returns the scale to use when rounding.
      * @return
      */
-    public Offer getOffer();
-
-    /**
-     * Returns the value of this adjustment
-     * @return
-     */
-    public Money getAdjustmentValue();
-
-    /**
-     * Returns true if this adjustment represents a combinable offer.
-     */
-    boolean isCombinable();
-
-    /**
-     * Returns true if this adjustment represents a totalitarian offer.
-     */
-    boolean isTotalitarian();
+    int getRoundingScale();
+    
 }

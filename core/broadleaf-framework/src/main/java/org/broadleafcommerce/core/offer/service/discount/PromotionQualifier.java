@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.offer.service.discount;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+
+import java.io.Serializable;
 
 /**
  * Records the usage of this item as qualifier or target of
@@ -77,6 +77,23 @@ public class PromotionQualifier implements Serializable{
     public void resetQty(int qty) {
         quantity = qty;
         finalizedQuantity = qty;
+    }
+
+    public PromotionQualifier split(int splitItemQty) {
+        PromotionQualifier returnQualifier = copy();
+        int newQty = finalizedQuantity - splitItemQty;
+
+        if (newQty <= 0) {
+            throw new IllegalArgumentException("Splitting PromotionQualifier resulted in a negative quantity");
+        }
+
+        setFinalizedQuantity(newQty);
+        setQuantity(newQty);
+
+        returnQualifier.setQuantity(splitItemQty);
+        returnQualifier.setFinalizedQuantity(splitItemQty);
+
+        return returnQualifier;
     }
 
 }

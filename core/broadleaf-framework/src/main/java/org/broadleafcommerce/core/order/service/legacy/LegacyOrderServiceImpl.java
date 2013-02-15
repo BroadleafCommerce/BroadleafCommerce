@@ -60,13 +60,13 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import javax.annotation.Resource;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * This legacy implementation should no longer be used as of 2.0
@@ -900,7 +900,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
                 bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
             }
 
-            bundleOrderItem.updatePrices();
+            bundleOrderItem.updateSaleAndRetailBasePrices();
             bundleOrderItem.assignFinalPrice();
 
             List<OrderItem> orderItems = order.getOrderItems();

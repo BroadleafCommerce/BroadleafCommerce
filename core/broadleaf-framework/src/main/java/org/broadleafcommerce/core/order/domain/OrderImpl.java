@@ -135,7 +135,7 @@ public class OrderImpl implements Order {
 
     @Column(name = "TOTAL_SHIPPING", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = "OrderImpl_Order", order=10, fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal totalShipping;
+    protected BigDecimal totalFulfillmentCharges;
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = "OrderImpl_Order", order=3, fieldType=SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode")
@@ -383,12 +383,22 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getTotalShipping() {
-        return totalShipping == null ? null : BroadleafCurrencyUtils.getMoney(totalShipping, getCurrency());
+        return getTotalFulfillmentCharges();
     }
 
     @Override
     public void setTotalShipping(Money totalShipping) {
-        this.totalShipping = Money.toAmount(totalShipping);
+        setTotalFulfillmentCharges(totalShipping);
+    }
+
+    @Override
+    public Money getTotalFulfillmentCharges() {
+        return totalFulfillmentCharges == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentCharges, getCurrency());
+    }
+
+    @Override
+    public void setTotalFulfillmentCharges(Money totalFulfillmentCharges) {
+        this.totalFulfillmentCharges = Money.toAmount(totalFulfillmentCharges);
     }
 
     @Override
@@ -535,7 +545,7 @@ public class OrderImpl implements Order {
     public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
-            if (orderItem.updatePrices()) {
+            if (orderItem.updateSaleAndRetailBasePrices()) {
                 updated = true;
             }
         }

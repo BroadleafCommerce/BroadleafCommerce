@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
 import java.math.BigDecimal;
@@ -28,33 +27,68 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     
     private static final long serialVersionUID = 1L;
     
-    protected OrderAdjustment delegate;
+    protected PromotableCandidateOrderOffer promotableCandidateOrderOffer;
     protected PromotableOrder promotableOrder;
+    protected Money adjustmentValue;
+    protected Offer offer;
     
-    public PromotableOrderAdjustmentImpl(OrderAdjustment orderAdjustment, PromotableOrder order) {
-        this.delegate = orderAdjustment;
-        this.promotableOrder = order;
+    protected boolean roundOfferValues = true;
+    protected int roundingScale = 2;
+    protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
+
+    public PromotableOrderAdjustmentImpl(PromotableCandidateOrderOffer promotableCandidateOrderOffer, PromotableOrder promotableOrder) {
+        assert (promotableOrder != null);
+        assert (promotableCandidateOrderOffer != null);
+
+        this.promotableCandidateOrderOffer = promotableCandidateOrderOffer;
+        this.promotableOrder = promotableOrder;
+        this.offer = promotableCandidateOrderOffer.getOffer();
+        computeAdjustmentValue();
     }
     
     @Override
-    public void reset() {
-        delegate = null;
-    }
-    
-    @Override
-    public OrderAdjustment getDelegate() {
-        return delegate;
+    public PromotableOrder getPromotableOrder() {
+        return promotableOrder;
     }
     
     @Override
     public Offer getOffer() {
-        return delegate.getOffer();
+        return offer;
+    }
+    
+    /*
+     * Calculates the value of the adjustment by first getting the current value of the order and then
+     * calculating the value of this adjustment.   
+     * 
+     * If this adjustment value is greater than the currentOrderValue (e.g. would make the order go negative
+     * then the adjustment value is set to the value of the order).  
+     */
+    protected void computeAdjustmentValue() {
+        adjustmentValue = new Money(promotableOrder.getOrderCurrency());
+        Money currentOrderValue = promotableOrder.calculateSubtotalWithAdjustments();
+
+        // Note: FIXED_PRICE not calculated as this is not a valid option for offers.
+        if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
+            adjustmentValue = new Money(offer.getValue(), promotableOrder.getOrderCurrency());            
+        } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
+            BigDecimal offerValue = currentOrderValue.getAmount().multiply(offer.getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+            
+            if (isRoundOfferValues()) {
+                offerValue = offerValue.setScale(roundingScale, roundingMode);
+            }
+            adjustmentValue = new Money(offerValue, promotableOrder.getOrderCurrency(), 5);
+        }
+
+        if (currentOrderValue.lessThan(adjustmentValue)) {
+            adjustmentValue = currentOrderValue;
+        }
+    }
+    
+    @Override
+    public Money getAdjustmentValue() {
+        return adjustmentValue;
     }
 
-    protected boolean roundOfferValues = true;
-    protected int roundingScale = 2;
-    protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
-    
     /**
      * It is sometimes problematic to offer percentage-off offers with regards to rounding. For example,
      * consider an item that costs 9.99 and has a 50% promotion. To be precise, the offer value is 4.995,
@@ -72,7 +106,11 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     public void setRoundingScale(int roundingScale) {
         this.roundingScale = roundingScale;
     }
-    
+
+    public int getRoundingScale() {
+        return roundingScale;
+    }
+
     /**
      * @see #isRoundOfferValues()
      * 
@@ -82,41 +120,20 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
         this.roundingMode = roundingMode;
     }
 
-    /*
-     * Calculates the value of the adjustment
-     */
-    @Override
-    public void computeAdjustmentValue() {
-        if (getOffer() != null && promotableOrder != null) {
-            Money adjustmentPrice = promotableOrder.get(); // get the current price of the item with all adjustments
-            if (adjustmentPrice == null) {
-                adjustmentPrice = promotableOrder.getSubTotal();
-            }
-            if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
-            }
-            if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                BigDecimal offerValue = adjustmentPrice.getAmount().subtract(delegate.getOffer().getValue());
-                delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
-            }
-            if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
-                if (isRoundOfferValues()) {
-                    offerValue = offerValue.setScale(roundingScale, roundingMode);
-                }
-                delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
-            }
-            if (adjustmentPrice.lessThan(delegate.getValue())) {
-                delegate.setValue(adjustmentPrice);
-            }
-        }
+    public RoundingMode getRoundingMode() {
+        return roundingMode;
     }
-    
+
     @Override
-    public Money getValue() {
-        if (delegate.getValue() == null || delegate.getValue().isZero()) {
-            computeAdjustmentValue();
-        }
-        return delegate.getValue();
+    public boolean isCombinable() {
+        Boolean combinable = offer.isCombinableWithOtherOffers();
+        return (combinable != null && combinable);
     }
+
+    @Override
+    public boolean isTotalitarian() {
+        Boolean totalitarian = offer.isTotalitarianOffer();
+        return (totalitarian != null && totalitarian.booleanValue());
+    }
+
 }

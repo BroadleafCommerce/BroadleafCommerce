@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 
@@ -29,20 +30,34 @@ public interface PromotableOrder extends Serializable {
      * Sets the order subTotal to the sum of item total prices without
      * adjustments.     
      */
-    public void setOrderSubTotalToPriceWithoutAdjustments();
+    void setOrderSubTotalToPriceWithoutAdjustments();
+
+    /**
+     * Sets the order subTotal to the sum of item total prices without
+     * adjustments.     
+     */
+    void setOrderSubTotalToPriceWithAdjustments();
 
     /**
      * Returns all OrderItems for the order wrapped with PromotableOrderItem
      * @return
      */
-    public List<PromotableOrderItem> getAllOrderItems();
+    List<PromotableOrderItem> getAllOrderItems();
 
     /**
-     * Returns all OrderItems that can recieve discounts.
+     * Returns all OrderItems that can receive discounts.  Sorts the results by SalePrice or RetailPrice 
+     * depending upon the passed in variable.
+     * @param sortBySalePrice
+     * @return
+     */
+    List<PromotableOrderItem> getDiscountableOrderItems(boolean sortBySalePrice);
+
+    /**
+     * Returns all OrderItems that can receive discounts.
      * @param applyDiscountToSalePrice
      * @return
      */
-    public List<PromotableOrderItem> getDiscountableOrderItems(boolean applyDiscountToSalePrice);
+    List<PromotableOrderItem> getDiscountableOrderItems();
 
     /**
      * Returns the fulfillmentGroups associated with the order after converting them to 
@@ -50,20 +65,20 @@ public interface PromotableOrder extends Serializable {
      * 
      * @return
      */
-    public List<PromotableFulfillmentGroup> getFulfillmentGroups();
+    List<PromotableFulfillmentGroup> getFulfillmentGroups();
 
     /**
      * Returns true if this promotableOrder has any order adjustments.
      * @return
      */
-    public boolean isHasOrderAdjustments();
+    boolean isHasOrderAdjustments();
 
     /**
      * Returns the list of orderAdjustments being proposed for the order.
      * This will be converted to actual order adjustments on completion of the offer processing.
      * @return
      */
-    public List<PromotableOrderAdjustment> getCandidateOrderAdjustments();
+    List<PromotableOrderAdjustment> getCandidateOrderAdjustments();
 
     /**
      * Adds the adjustment to the order's adjustment list and discounts the
@@ -71,49 +86,125 @@ public interface PromotableOrder extends Serializable {
      * 
      * @param orderAdjustment
      */
-    public void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment);
+    void addCandidateOrderAdjustment(PromotableOrderAdjustment orderAdjustment);
 
     /**
-     * Returns true if this order contains a notStackable order offer.    
-     * @return
+     * Removes all order, order item, and fulfillment adjustments from the order
+     * and resets the adjustment price.
      */
-    public boolean containsNotStackableOrderOffer();
+    void removeAllCandidateOfferAdjustments();
+
+    /**
+     * Removes all order adjustments from the order and resets the adjustment
+     * price. 
+     */
+    void removeAllCandidateOrderOfferAdjustments();
+
+    /**
+     * Removes all adjustments from the order's order items and resets the
+     * adjustment price for each item. 
+     */
+    void removeAllCandidateItemOfferAdjustments();
+
+    /**
+     * Removes all adjustments from the order's fulfillment items and resets the
+     * adjustment price for each item. 
+     */
+    void removeAllCandidateFulfillmentOfferAdjustments();
 
     /**
      * Adds the underlying order to the rule variable map.
      */
-    public void updateRuleVariables(Map<String, Object> ruleVars);
+    void updateRuleVariables(Map<String, Object> ruleVars);
 
     /**
      * Returns the associated order.
      */
-    public Order getOrder();
+    Order getOrder();
 
     /**
-     * Loops through adjustments and sets the totalitarian and notCombinableAtAnyLevel indicators.
+     * Returns true if a totalitarian offer has been applied.   A totalitarian offer is
+     * an offer that does not allow any other offers to be used at the same time.   As 
+     * opposed to a "non-combinable" offer which can't be used with other offers of the
+     * same type but can be used with other offers of a different type (e.g. a non-combinable order offer
+     * can be used with a non-combinable item offer).         
+     * @return
      */
-    void resetTotalitarianOfferApplied();
+    boolean isTotalitarianOfferApplied();
 
     /**
-     * Returns the subtotal for this promotable order with all order adjustments applied
+     * Calculates the total adjustment to be received from the order adjustments.
+     *
+     * @return
      */
-    Money getSubtotalWithAdjustments();
+    Money calculateOrderAdjustmentTotal();
+
+    /**
+     * Calculates the total adjustment to be received from the item adjustments.
+     *
+     * @return
+     */
+    Money calculateItemAdjustmentTotal();
+
+    /**
+     * Returns all of the price detail items for this order.   
+     * @return
+     */
+    List<PromotableOrderItemPriceDetail> getAllPromotableOrderItemPriceDetails();
+
+    /**
+     * Returns true if this order can apply another order promotion. 
+     * Returns false if a totalitarian or not-combinable offer has already been applied
+     * Returns false if the passed in order is not-combinable or totalitarian and this order already has adjustments
+     */
+    boolean canApplyOrderOffer(PromotableCandidateOrderOffer offer);
+
+    /**
+     * Returns true if this order can apply another order promotion. 
+     * Returns false if a totalitarian or not-combinable offer has already been applied
+     * Returns false if the passed in order is not-combinable or totalitarian and this order already has adjustments
+     * Returns false if the passed in order is not-combinable or totalitarian and the sale price is better than 
+     * the adjusted price.
+     */
+    boolean canApplyItemOffer(PromotableCandidateItemOffer offer);
+
+    /**
+     * Returns the {@link BroadleafCurrency} for the current order.
+     * @return
+     */
+    BroadleafCurrency getOrderCurrency();
+
+    /**
+     * Sets the total fulfillmentCharges the order.
+     * @param totalFulfillmentCharges
+     */
+    void setTotalFufillmentCharges(Money totalFulfillmentCharges);
+
+    /**
+     * Returns the price of the order without adjustments.
+     * @return
+     */
+    Money calculateSubtotalWithoutAdjustments();
+
+    /**
+     * Returns the price of the order with adjustments.
+     * @return
+     */
+    Money calculateSubtotalWithAdjustments();
 
     //    /**
     //     * Returns true if this order contains a notStackable fulfillmentGroup offer.    
     //     * @return
     //     */
-    //    public boolean containsNotStackableFulfillmentGroupOffer();
+    //    boolean containsNotStackableFulfillmentGroupOffer();
 
-    //    public Money calculateTaxableItemTotal();
+    //    Money calculateTaxableItemTotal();
     //
-    //    public Money calculateItemTotal();
+    //    Money calculateItemTotal();
 
-    //    public boolean isNotCombinableOfferAppliedAtAnyLevel();
     //
-    //    public boolean isNotCombinableOfferApplied();
-    //
-    //    public void resetTotalitarianOfferApplied();
+    //    boolean isNotCombinableOfferApplied();
+
     //
     //    /**
     //     * Adds the adjustment to the order's adjustment list and discounts the
@@ -121,29 +212,29 @@ public interface PromotableOrder extends Serializable {
     //     * 
     //     * @param orderAdjustment
     //     */
-    //    public void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment);
+    //    void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment);
     //
     //    /**
     //     * Removes all order, order item, and fulfillment adjustments from the order
     //     * and resets the adjustment price.
     //     */
-    //    public void removeAllAdjustments();
+    //    void removeAllAdjustments();
     //
     //    /**
     //     * Removes all order adjustments from the order and resets the adjustment
     //     * price. This method does not remove order item or fulfillment adjustments
     //     * from the order.
     //     */
-    //    public void removeAllOrderAdjustments();
+    //    void removeAllOrderAdjustments();
     //
     //    /**
     //     * Removes all adjustments from the order's order items and resets the
     //     * adjustment price for each item. This method does not remove order or
     //     * fulfillment adjustments from the order.
     //     */
-    //    public void removeAllItemAdjustments();
+    //    void removeAllItemAdjustments();
     //
-    //    public void removeAllFulfillmentAdjustments();
+    //    void removeAllFulfillmentAdjustments();
     //
     //    /**
     //     * Returns the price of the order with the order offers applied (item offers
@@ -152,70 +243,70 @@ public interface PromotableOrder extends Serializable {
     //     * @return the order price with the order offers applied (item offers are
     //     *         not applied)
     //     */
-    //    public Money getAdjustmentPrice();
+    //    Money getAdjustmentPrice();
     //
-    //    public void setAdjustmentPrice(Money adjustmentPrice);
+    //    void setAdjustmentPrice(Money adjustmentPrice);
     //
 
     //
-    //    public boolean isTotalitarianOfferApplied();
+    //    boolean isTotalitarianOfferApplied();
     //
-    //    public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied);
+    //    void setTotalitarianOfferApplied(boolean totalitarianOfferApplied);
     //
-    //    public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel);
+    //    void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel);
     //    
-    //    public void removeAllCandidateOffers();
+    //    void removeAllCandidateOffers();
     //
-    //    public void removeAllCandidateOrderOffers();
+    //    void removeAllCandidateOrderOffers();
     //    
-    //    public void removeAllCandidateFulfillmentGroupOffers();
+    //    void removeAllCandidateFulfillmentGroupOffers();
 
     //    
-    //    public void removeAllAddedOfferCodes();
+    //    void removeAllAddedOfferCodes();
     //    
-    //    public void addCandidateOrderOffer(PromotableCandidateOrderOffer candidateOrderOffer);
-    //    
-
-    //
-    //    public void setDelegate(Order order);
-    //    
-    //    public Money calculateOrderItemsCurrentPrice();
-    //    
-    //    public Money calculateOrderItemsPriceWithoutAdjustments();
-    //    
-    //    public void resetFulfillmentGroups();
-    //    
-    //    public void resetDiscreteOrderItems();
-    //    
-    //    public Money getSubTotal();
+    //    void addCandidateOrderOffer(PromotableCandidateOrderOffer candidateOrderOffer);
     //    
 
+    //
+    //    void setDelegate(Order order);
     //    
-    //    public void setTotalShipping(Money totalShipping);
+    //    Money calculateOrderItemsCurrentPrice();
+    //    
+    //    Money calculateOrderItemsPriceWithoutAdjustments();
+    //    
+    //    void resetFulfillmentGroups();
+    //    
+    //    void resetDiscreteOrderItems();
+    //    
+    //    Money getSubTotal();
+    //    
+
+    //    
+    //    void setTotalShipping(Money totalShipping);
     //    
     //
     //    
-    //    public void setSubTotal(Money subTotal);
+    //    void setSubTotal(Money subTotal);
     //    
-    //    public void assignOrderItemsFinalPrice();
+    //    void assignOrderItemsFinalPrice();
     //    
-    //    public Customer getCustomer();
+    //    Customer getCustomer();
     //    
-    //    public List<PromotableOrderItem> getDiscreteOrderItems();
+    //    List<PromotableOrderItem> getDiscreteOrderItems();
     //
-    //    public List<BundleOrderItemSplitContainer> getBundleSplitItems();
+    //    List<BundleOrderItemSplitContainer> getBundleSplitItems();
     //
-    //    public void setBundleSplitItems(List<BundleOrderItemSplitContainer> bundleSplitItems);
+    //    void setBundleSplitItems(List<BundleOrderItemSplitContainer> bundleSplitItems);
     //
-    //    public List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key);
+    //    List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key);
     //
-    //    public OrderItem searchSplitItemsForKey(OrderItem orderItem);
+    //    OrderItem searchSplitItemsForKey(OrderItem orderItem);
     //
-    //    public List<OrderMultishipOption> getMultiShipOptions();
+    //    List<OrderMultishipOption> getMultiShipOptions();
     //
-    //    public void setMultiShipOptions(List<OrderMultishipOption> multiShipOptions);
+    //    void setMultiShipOptions(List<OrderMultishipOption> multiShipOptions);
     //
-    //    public boolean isHasMultiShipOptions();
+    //    boolean isHasMultiShipOptions();
     //
-    //    public void setHasMultiShipOptions(boolean hasMultiShipOptions);
+    //    void setHasMultiShipOptions(boolean hasMultiShipOptions);
 }
