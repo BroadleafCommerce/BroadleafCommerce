@@ -39,4 +39,6 @@ public interface CustomerPaymentService {
 
     public CustomerPayment setAsDefaultPayment(CustomerPayment payment);
 
+    public Customer deleteCustomerPaymentFromCustomer(Customer customer, CustomerPayment payment);
+
 }
