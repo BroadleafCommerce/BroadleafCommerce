@@ -50,12 +50,20 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
                 break;
 
             case ADORNED:
+                if (request.getAdornedList() == null) {
+                    throw new IllegalArgumentException("ADORNED type requires the adornedList to be set");
+                }
+
                 persistencePerspective.setOperationTypes(getOperationTypes(OperationType.ADORNEDTARGETLIST));
                 persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST,
                         request.getAdornedList());
                 break;
 
             case MAP:
+                if (request.getMapStructure() == null) {
+                    throw new IllegalArgumentException("MAP type requires the mapStructure to be set");
+                }
+
                 persistencePerspective.setOperationTypes(getOperationTypes(OperationType.MAP));
                 persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE,
                         request.getMapStructure());

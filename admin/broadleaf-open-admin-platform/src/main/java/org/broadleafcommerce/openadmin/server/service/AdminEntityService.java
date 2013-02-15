@@ -32,29 +32,106 @@ import java.util.Map;
  */
 public interface AdminEntityService {
 
+    /**
+     * Convenience method to return class metadata for a class name
+     * 
+     * @param className
+     * @return ClassMetadata for the given class
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     * 
+     * @see #getClassMetadata(PersistencePackageRequest)
+     */
     public ClassMetadata getClassMetadata(String className)
             throws ServiceException, ApplicationSecurityException;
 
+    /**
+     * Returns class metadata for the given request object
+     * 
+     * @param request
+     * @return ClassMetadata for the given request
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
     public ClassMetadata getClassMetadata(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException;
 
+    /**
+     * Returns an Entity[] representing the records that were found for the given request.
+     * 
+     * @param request
+     * @return the Entity[]
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
     public Entity[] getRecords(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException;
 
+    /**
+     * Returns a specific record for the given className and primary key id
+     * 
+     * @param className
+     * @param id
+     * @return the Entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
     public Entity getRecord(String className, String id)
             throws ServiceException, ApplicationSecurityException;
 
+    /**
+     * Returns the Entity[] representing the records that belong to the specified collectionProperty for the 
+     * given containingClass and the primary key for the containingClass
+     * 
+     * @param containingClassMetadata
+     * @param containingEntityId
+     * @param collectionProperty
+     * @return the Entity[]
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
     public Entity[] getRecordsForCollection(final ClassMetadata containingClassMetadata, final String containingEntityId,
             final Property collectionProperty)
             throws ServiceException, ApplicationSecurityException;
 
+    /**
+     * Returns all records for all subcollections of the specified containingClass and its primary key
+     * @param containingClassName
+     * @param containingEntityId
+     * @return all Entity[] for all collections for the specified containingClass
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     * 
+     * @see #getRecordsForCollection(ClassMetadata, String, Property)
+     */
     public Map<String, Entity[]> getRecordsForAllSubCollections(final String containingClassName,
             final String containingEntityId)
             throws ServiceException, ApplicationSecurityException;
 
+    /**
+     * Adds an Entity for the specified collection
+     * 
+     * @param entityForm
+     * @param className
+     * @param fieldName
+     * @param parentId
+     * @return the persisted Entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     * @throws ClassNotFoundException
+     */
     public Entity addSubCollectionEntity(EntityForm entityForm, String className, String fieldName, String parentId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
+    /**
+     * Updates the given entity
+     * 
+     * @param entityForm
+     * @param className
+     * @return the persisted Entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
     public Entity updateEntity(EntityForm entityForm, String className)
             throws ServiceException, ApplicationSecurityException;
 
