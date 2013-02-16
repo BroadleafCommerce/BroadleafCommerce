@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,24 +51,43 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
      */
-    public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers,
-            Offer offer) {
+    public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
+        boolean isNewFormat = !CollectionUtils.isEmpty(offer.getQualifyingItemCriteria()) || !CollectionUtils.isEmpty(offer.getTargetItemCriteria());
         boolean itemLevelQualification = false;
-
-        for (PromotableOrderItem promotableOrderItem : order.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice())) {
-            if (couldOfferApplyToOrder(offer, order, promotableOrderItem)) {
+        boolean offerCreated = false;
+        for (PromotableOrderItem promotableOrderItem : order.getDiscountableOrderItems()) {
+            if(couldOfferApplyToOrder(offer, order, promotableOrderItem)) {
+                if (!isNewFormat) {
+                    //support legacy offers
+                    PromotableCandidateItemOffer candidate =
+                            createCandidateItemOffer(qualifiedItemOffers, offer, promotableOrderItem, order);
+                    if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
+                        candidate.getCandidateTargets().add(promotableOrderItem);
+                    }
+                    offerCreated = true;
+                    continue;
+                }
                 itemLevelQualification = true;
                 break;
             }
             for (PromotableFulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                 if(couldOfferApplyToOrder(offer, order, promotableOrderItem, fulfillmentGroup)) {
+                    if (!isNewFormat) {
+                        //support legacy offers
+                        PromotableCandidateItemOffer candidate = createCandidateItemOffer(qualifiedItemOffers, offer, promotableOrderItem, order);
+                        if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
+                            candidate.getCandidateTargets().add(promotableOrderItem);
+                        }
+                        offerCreated = true;
+                        continue;
+                    }
                     itemLevelQualification = true;
                     break;
                 }
             }
         }
         //Item Qualification - new for 1.5!
-        if (itemLevelQualification) {
+        if (itemLevelQualification && !offerCreated) {
             CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer,
                     order.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice()));
             PromotableCandidateItemOffer candidateOffer = null;

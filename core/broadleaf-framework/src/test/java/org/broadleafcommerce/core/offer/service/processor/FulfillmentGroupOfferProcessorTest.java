@@ -142,6 +142,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
 
         EasyMock.expect(offerDaoMock.createOrderItemPriceDetailAdjustment()).andAnswer(OfferDataItemProvider.getCreateOrderItemPriceDetailAdjustmentAnswer()).anyTimes();
+        EasyMock.expect(offerDaoMock.createFulfillmentGroupAdjustment()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupAdjustmentAnswer()).anyTimes();
 
         EasyMock.expect(orderServiceMock.findOrderById(EasyMock.isA(Long.class))).andAnswer(new IAnswer<Order>() {
             @Override
@@ -221,17 +222,14 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         offers.get(2).setValue(new BigDecimal("1"));
 
         offerService.applyOffersToOrder(offers, promotableOrder.getOrder());
-
         offerService.applyFulfillmentGroupOffersToOrder(offers, promotableOrder.getOrder());
 
         fgAdjustmentCount = 0;
+        order = promotableOrder.getOrder();
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             fgAdjustmentCount += fg.getFulfillmentGroupAdjustments().size();
         }
-        fgAdjustmentCount = 0;
-        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-            fgAdjustmentCount += fg.getFulfillmentGroupAdjustments().size();
-        }
+
         //The totalitarian fg offer is now a better deal than the order item offers, therefore the totalitarian fg offer is applied
         //and the order item offers are removed
         assertTrue(fgAdjustmentCount == 2);

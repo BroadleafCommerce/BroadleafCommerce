@@ -23,6 +23,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
+import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -132,6 +134,16 @@ public class OfferDataItemProvider {
             @Override
             public OrderItemPriceDetailAdjustment answer() throws Throwable {
                 return new OrderItemPriceDetailAdjustmentImpl();
+            }
+        };
+    }
+
+    public static IAnswer<FulfillmentGroupAdjustment> getCreateFulfillmentGroupAdjustmentAnswer() {
+        return new IAnswer<FulfillmentGroupAdjustment>() {
+
+            @Override
+            public FulfillmentGroupAdjustment answer() throws Throwable {
+                return new FulfillmentGroupAdjustmentImpl();
             }
         };
     }

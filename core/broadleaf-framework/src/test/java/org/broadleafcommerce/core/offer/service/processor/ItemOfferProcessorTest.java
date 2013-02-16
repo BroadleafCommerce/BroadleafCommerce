@@ -17,6 +17,8 @@
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
+import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
@@ -24,6 +26,7 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
+import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
@@ -38,6 +41,7 @@ import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
@@ -61,6 +65,7 @@ public class ItemOfferProcessorTest extends TestCase {
 
     private OfferDao offerDaoMock;
     private OrderService orderServiceMock;
+    private OfferServiceImpl offerService;
     private OrderItemService orderItemServiceMock;
     private FulfillmentGroupItemDao fgItemDaoMock;
     private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
@@ -71,6 +76,9 @@ public class ItemOfferProcessorTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
+
+        CustomerOfferDao customerOfferDaoMock = EasyMock.createMock(CustomerOfferDao.class);
+        OfferCodeDao offerCodeDaoMock = EasyMock.createMock(OfferCodeDao.class);
         offerDaoMock = EasyMock.createMock(OfferDao.class);
         orderServiceMock = EasyMock.createMock(OrderService.class);
         orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
@@ -81,6 +89,20 @@ public class ItemOfferProcessorTest extends TestCase {
         itemProcessor = new ItemOfferProcessorImpl();
         itemProcessor.setOfferDao(offerDaoMock);
         itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+
+        offerService = new OfferServiceImpl();
+
+        OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
+        orderProcessor.setOfferDao(offerDaoMock);
+        orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+
+        offerService.setCustomerOfferDao(customerOfferDaoMock);
+        offerService.setOfferCodeDao(offerCodeDaoMock);
+        offerService.setOfferDao(offerDaoMock);
+        offerService.setOrderOfferProcessor(orderProcessor);
+        offerService.setItemOfferProcessor(itemProcessor);
+        offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerService.setOrderService(orderServiceMock);
     }
 
     public void replay() {
@@ -102,15 +124,13 @@ public class ItemOfferProcessorTest extends TestCase {
     }
 
     public void testFilterItemLevelOffer() {
-        EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andReturn(new CandidateItemOfferImpl()).times(4);
-
         replay();
 
         PromotableOrder order = dataProvider.createBasicOrder();
         List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
         List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",
-            OfferDiscountType.PERCENT_OFF,
+                OfferDiscountType.PERCENT_OFF,
             null,
             null
         );
@@ -273,25 +293,18 @@ public class ItemOfferProcessorTest extends TestCase {
         verify();
     }
 
-    private boolean checkOrderItemOfferApplied(PromotableOrder order) {
-        return checkOrderItemOfferAppliedCount(order) > 1;
-    }
-
-    private int checkOrderItemOfferAppliedCount(PromotableOrder order) {
+    private int checkOrderItemOfferAppliedCount(Order order) {
         int count = 0;
-        for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
-            if (detail.getCandidateItemAdjustments().size() > 0) {
-                count = count + detail.getCandidateItemAdjustments().size();
+        for (OrderItem item : order.getOrderItems()) {
+            for (OrderItemPriceDetail detail : item.getOrderItemPriceDetails()) {
+                count = count + detail.getOrderItemPriceDetailAdjustments().size();
             }
         }
         return count;
     }
 
     public void testApplyAllItemOffers() throws Exception {
-        Answer answer = new Answer();
-        Answer2 answer2 = new Answer2();
-        EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);
-        EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(4);
+        EasyMock.expect(offerDaoMock.createOrderItemPriceDetailAdjustment()).andAnswer(OfferDataItemProvider.getCreateOrderItemPriceDetailAdjustmentAnswer()).anyTimes();
 
         EasyMock.expect(fgServiceMock.addItemToFulfillmentGroup(EasyMock.isA(FulfillmentGroupItemRequest.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
         EasyMock.expect(orderServiceMock.removeItem(EasyMock.isA(Long.class), EasyMock.isA(Long.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
@@ -328,10 +341,12 @@ public class ItemOfferProcessorTest extends TestCase {
         ).get(0);
         offer1.setId(1L);
 
-        List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
-        itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);
+        List<Offer> offers = new ArrayList<Offer>();
+        offers.add(offer1);
 
-        itemProcessor.applyAllItemOffers(qualifiedOffers, order);
+
+        List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
+        offerService.applyOffersToOrder(offers, order.getOrder());
 
         assertTrue(order.getOrder().getTotalAdjustmentsValue().getAmount().doubleValue() > 0);
 
@@ -341,22 +356,39 @@ public class ItemOfferProcessorTest extends TestCase {
         offer1.setApplyDiscountToSalePrice(false);
         order.getDiscountableOrderItems().get(0).getOrderItem().setSalePrice(new Money(1D));
         order.getDiscountableOrderItems().get(1).getOrderItem().setSalePrice(new Money(1D));
-        itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);
+        offerService.applyOffersToOrder(offers, order.getOrder());
 
-
-
-        itemProcessor.applyAllItemOffers(qualifiedOffers, order);
-
-        assertFalse(checkOrderItemOfferApplied(order));
+        assertTrue(order.getOrder().getTotalAdjustmentsValue().getAmount().doubleValue() == 0);
 
         verify();
     }
 
     public void testApplyAdjustments() throws Exception {
-        Answer answer = new Answer();
-        Answer2 answer2 = new Answer2();
-        EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);
-        EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(7);
+        EasyMock.expect(offerDaoMock.createOrderItemPriceDetailAdjustment()).andAnswer(OfferDataItemProvider.getCreateOrderItemPriceDetailAdjustmentAnswer()).anyTimes();
+
+        EasyMock.expect(fgServiceMock.addItemToFulfillmentGroup(EasyMock.isA(FulfillmentGroupItemRequest.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
+        EasyMock.expect(orderServiceMock.removeItem(EasyMock.isA(Long.class), EasyMock.isA(Long.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
+        EasyMock.expect(orderServiceMock.save(EasyMock.isA(Order.class), EasyMock.isA(Boolean.class))).andAnswer(OfferDataItemProvider.getSaveOrderAnswer()).anyTimes();
+
+        EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
+
+        EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
+        EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
+
+        EasyMock.expect(multishipOptionServiceMock.findOrderMultishipOptions(EasyMock.isA(Long.class))).andAnswer(new IAnswer<List<OrderMultishipOption>>() {
+
+            @Override
+            public List<OrderMultishipOption> answer() throws Throwable {
+                return new ArrayList<OrderMultishipOption>();
+            }
+        }).anyTimes();
+
+        multishipOptionServiceMock.deleteAllOrderMultishipOptions(EasyMock.isA(Order.class));
+        EasyMock.expectLastCall().anyTimes();
+        EasyMock.expect(fgServiceMock.collapseToOneFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
+        EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
+        fgItemDaoMock.delete(EasyMock.isA(FulfillmentGroupItem.class));
+        EasyMock.expectLastCall().anyTimes();
 
         replay();
 
@@ -379,57 +411,52 @@ public class ItemOfferProcessorTest extends TestCase {
         ).get(0);
         offer2.setId(2L);
 
+        List<Offer> offerListWithOneOffer = new ArrayList<Offer>();
+        offerListWithOneOffer.add(offer1);
+
+        List<Offer> offerListWithTwoOffers = new ArrayList<Offer>();
+        offerListWithTwoOffers.add(offer1);
+        offerListWithTwoOffers.add(offer2);
+
         List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
-        itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);
-        assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offer1) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
-        itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer2);
-        assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(1).getOffer().equals(offer2) && qualifiedOffers.get(1).getCandidateQualifiersMap().size() == 1);
+        offerService.applyOffersToOrder(offerListWithOneOffer, order.getOrder());
+        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 1);
 
-        itemProcessor.applyAdjustments(order, qualifiedOffers.get(0));
-        assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
+        // Add the second offer.   The first was nonCombinable so it should still be 1
+        order = dataProvider.createBasicOrder();
+        offerService.applyOffersToOrder(offerListWithTwoOffers, order.getOrder());
+        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 1);
 
-        itemProcessor.applyAdjustments(order, qualifiedOffers.get(1));
 
-        //the first offer is not combinable, the a new adjustment will not be created for the second offer
-        assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
-
-        order.removeAllCandidateOfferAdjustments();
-
+        // Reset offer1 to combinable.   Now both should be applied.
         offer1.setCombinableWithOtherOffers(true);
-        itemProcessor.applyAdjustments(order, qualifiedOffers.get(0));
-        itemProcessor.applyAdjustments(order, qualifiedOffers.get(1));
+        order = dataProvider.createBasicOrder();
+        offerService.applyOffersToOrder(offerListWithTwoOffers, order.getOrder());
+        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 2);
 
-        //the first offer is now combinable, so both offer may be applied
-        assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
-
-        order.removeAllCandidateOfferAdjustments();
-
+        // Offer 1 back to nonCombinable but don't allow discount to the sale price
+        // and make the sale price a better overall offer
         offer1.setCombinableWithOtherOffers(false);
         offer1.setApplyDiscountToSalePrice(false);
+        order = dataProvider.createBasicOrder();
         order.getDiscountableOrderItems().get(1).getOrderItem().setSalePrice(new Money(10D));
-        itemProcessor.applyAdjustments(order, qualifiedOffers.get(0));
+        offerService.applyOffersToOrder(offerListWithOneOffer, order.getOrder());
+        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 0);
 
-        //the first offer is not combinable and the discount is less than the sale price
-        assertTrue(checkOrderItemOfferAppliedCount(order) == 0);
+        // Try again with two offers.   The second should be applied.    
+        offerService.applyOffersToOrder(offerListWithTwoOffers, order.getOrder());
+        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 1);
 
-        itemProcessor.applyAdjustments(order, qualifiedOffers.get(1));
-
-        //since the non-combinable offer was removed, the second offer is now available to be applied
-        assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
-
-        order.removeAllCandidateItemOfferAdjustments();
-
+        // Trying with 2nd offer as nonCombinable.
         offer1.setCombinableWithOtherOffers(true);
         order.getDiscountableOrderItems().get(1).getOrderItem().setSalePrice(null);
         offer2.setCombinableWithOtherOffers(false);
-        itemProcessor.applyAdjustments(order, qualifiedOffers.get(0));
 
-        assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
+        offerService.applyOffersToOrder(offerListWithOneOffer, order.getOrder());
+        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 1);
 
-        itemProcessor.applyAdjustments(order, qualifiedOffers.get(1));
-
-        assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
-
+        offerService.applyOffersToOrder(offerListWithTwoOffers, order.getOrder());
+        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 2);
         verify();
     }
 

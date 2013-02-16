@@ -153,6 +153,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
                 detail.setQuantity(getQuantity());
                 detail.getPromotionDiscounts().clear();
                 detail.getPromotionQualifiers().clear();
+                detail.removeAllAdjustments();
                 first = false;
             } else {
                 // Get rid of all other details

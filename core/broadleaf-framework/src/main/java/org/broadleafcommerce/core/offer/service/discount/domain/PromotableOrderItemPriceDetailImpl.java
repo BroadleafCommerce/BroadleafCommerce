@@ -123,6 +123,8 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
                     // Adjustments are not as good as the retail price.
                     promotableOrderItemPriceDetailAdjustments.clear();
                     adjustedTotal = retailPriceBeforeAdjustments;
+                } else {
+                    adjustedTotal = retailAdjustmentPrice;
                 }
             }
 
@@ -145,6 +147,11 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
 
         adjustedTotal = adjustedTotal.multiply(quantity);
 
+    }
+
+    public void removeAllAdjustments() {
+        promotableOrderItemPriceDetailAdjustments.clear();
+        chooseSaleOrRetailAdjustments();
     }
 
     protected void finalizeAdjustments(boolean useSaleAdjustments) {
@@ -363,12 +370,19 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         Money priceWithAdjustments = null;
         if (allowSalePrice) {
             priceWithAdjustments = promotableOrderItem.getSalePriceBeforeAdjustments();
+            if (priceWithAdjustments == null) {
+                return promotableOrderItem.getRetailPriceBeforeAdjustments();
+            }
         } else {
             priceWithAdjustments = promotableOrderItem.getRetailPriceBeforeAdjustments();
         }
 
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
-            priceWithAdjustments = priceWithAdjustments.subtract(adjustment.getAdjustmentValue());
+            if (allowSalePrice) {
+                priceWithAdjustments = priceWithAdjustments.subtract(adjustment.getSaleAdjustmentValue());
+            } else {
+                priceWithAdjustments = priceWithAdjustments.subtract(adjustment.getRetailAdjustmentValue());
+            }
         }
 
         return priceWithAdjustments;

@@ -56,6 +56,12 @@ public interface PromotableOrderItemPriceDetail {
     void chooseSaleOrRetailAdjustments();
 
     /**
+     * Removes all adjustments from this detail.   Typically called when it has been determined
+     * that another "totalitarian" offer has been applied.
+     */
+    void removeAllAdjustments();
+
+    /**
      * Returns the promotion discounts applied to this detail object.
      * @return 
      */
