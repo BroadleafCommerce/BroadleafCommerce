@@ -191,11 +191,41 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             }
         }
     }
+
+    /**
+     * Return false if a totalitarian offer has already been applied and this order already has
+     * item adjustments. 
+     *      
+     * @param order
+     * @param itemOffer
+     * @return
+     */
+    protected boolean itemOfferCanBeApplied(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+
+        for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
+            for (PromotableOrderItemPriceDetailAdjustment adjustment : detail.getCandidateItemAdjustments()) {
+                if (adjustment.isTotalitarian() || !adjustment.isCombinable()) {
+                    // A totalitarian or nonCombinable offer has already been applied.
+                    return false;
+                } else {
+                    // This offer is totalitarian or nonCombinable and another offer has already been 
+                    // applied to one of the items.
+                    if (itemOffer.getOffer().isTotalitarianOffer() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
      
 
     protected void applyItemOffer(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-        applyItemQualifiersAndTargets(itemOffer, order);
-        applyAdjustments(order, itemOffer);
+        if (itemOfferCanBeApplied(order, itemOffer)) {
+            applyItemQualifiersAndTargets(itemOffer, order);
+            applyAdjustments(order, itemOffer);
+        }
     }
 
     /**

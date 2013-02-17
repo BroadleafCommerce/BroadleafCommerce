@@ -63,7 +63,17 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     @Override
     public boolean isTotalitarianOfferApplied() {
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
-            if (adjustment.getOffer().isTotalitarianOffer()) {
+            if (adjustment.isTotalitarian()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isNonCombinableOfferApplied() {
+        for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
+            if (!adjustment.isCombinable()) {
                 return true;
             }
         }
@@ -228,12 +238,15 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         // 3. If this promotion is combinable then any quantities that have received discounts from
         //    other combinable promotions are eligible to receive this discount as well
         boolean combinable = promotion.isCombinableWithOtherOffers();
+        if (!combinable && isNonCombinableOfferApplied()) {
+            return 0;
+        }
 
         // Any quantities of this item that have already received the promotion are not eligible.
         for (PromotionDiscount promotionDiscount : promotionDiscounts) {
-            if (promotionDiscount.getPromotion().equals(promotion) || !combinable) {
+            if (promotionDiscount.getPromotion().equals(promotion)) {
                 qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
-            } else if (promotionDiscount.getPromotion().isCombinableWithOtherOffers()) {
+            } else {
                 // The other promotion is Combinable, but we must make sure that the item qualifier also allows
                 // it to be reused as a target.   
                 OfferItemRestrictionRuleType qualifierType = promotionDiscount.getPromotion().getOfferItemTargetRuleType();

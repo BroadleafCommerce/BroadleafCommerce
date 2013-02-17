@@ -148,6 +148,8 @@ public class OfferServiceTest extends TestCase {
 
     public void testApplyOffersToOrder_Order() throws Exception {
         final ThreadLocal<Order> myOrder = new ThreadLocal<Order>();
+        EasyMock.expect(offerDaoMock.createOrderItemPriceDetailAdjustment()).andAnswer(OfferDataItemProvider.getCreateOrderItemPriceDetailAdjustmentAnswer()).anyTimes();
+
         CandidateOrderOfferAnswer candidateOrderOfferAnswer = new CandidateOrderOfferAnswer();
         OrderAdjustmentAnswer orderAdjustmentAnswer = new OrderAdjustmentAnswer();
         EasyMock.expect(offerDaoMock.createCandidateOrderOffer()).andAnswer(candidateOrderOfferAnswer).atLeastOnce();
@@ -216,12 +218,7 @@ public class OfferServiceTest extends TestCase {
         offerService.applyOffersToOrder(offers, order);
 
         //with the item offers in play, the subtotal restriction for the order offer is no longer valid
-        adjustmentCount = 0;
-        for (OrderItem item : order.getOrderItems()) {
-            if (item.getOrderItemAdjustments() != null) {
-                adjustmentCount += item.getOrderItemAdjustments().size();
-            }
-        }
+        adjustmentCount = countItemAdjustments(order, adjustmentCount);
 
         assertTrue(adjustmentCount == 2);
         adjustmentCount = order.getOrderAdjustments().size();
@@ -237,12 +234,7 @@ public class OfferServiceTest extends TestCase {
         offerService.applyOffersToOrder(offers, order);
 
         //now that the order restriction has been lessened, even with the item level discounts applied, the order offer still qualifies
-        adjustmentCount = 0;
-        for (OrderItem item : order.getOrderItems()) {
-            if (item.getOrderItemAdjustments() != null) {
-                adjustmentCount += item.getOrderItemAdjustments().size();
-            }
-        }
+        adjustmentCount = countItemAdjustments(order, adjustmentCount);
 
         assertTrue(adjustmentCount == 2);
         adjustmentCount = order.getOrderAdjustments().size();
@@ -327,8 +319,22 @@ public class OfferServiceTest extends TestCase {
         verify();
     }
 
+    private int countItemAdjustments(Order order, int adjustmentCount) {
+        for (OrderItem item : order.getOrderItems()) {
+            for (OrderItemPriceDetail detail : item.getOrderItemPriceDetails()) {
+                if (detail.getOrderItemPriceDetailAdjustments() != null) {
+                    adjustmentCount += detail.getOrderItemPriceDetailAdjustments().size();
+                }
+
+            }
+        }
+        return adjustmentCount;
+    }
+
     public void testApplyOffersToOrder_Items() throws Exception {
         final ThreadLocal<Order> myOrder = new ThreadLocal<Order>();
+        EasyMock.expect(offerDaoMock.createOrderItemPriceDetailAdjustment()).andAnswer(OfferDataItemProvider.getCreateOrderItemPriceDetailAdjustmentAnswer()).anyTimes();
+
         CandidateItemOfferAnswer answer = new CandidateItemOfferAnswer();
         OrderItemAdjustmentAnswer answer2 = new OrderItemAdjustmentAnswer();
         EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);

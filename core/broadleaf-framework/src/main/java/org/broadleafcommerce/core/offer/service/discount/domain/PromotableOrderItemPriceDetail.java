@@ -47,6 +47,11 @@ public interface PromotableOrderItemPriceDetail {
      * @return
      */
     boolean isTotalitarianOfferApplied();
+    
+    /**
+     * Returns true if a non-combinable offer has been applied to this item.
+     */
+    boolean isNonCombinableOfferApplied();
 
     /**
      * This method will check to see if the salePriceAdjustments or retailPriceAdjustments are better

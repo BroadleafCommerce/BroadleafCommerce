@@ -114,6 +114,13 @@ public interface Offer extends Serializable {
 
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
 
+    /**
+     * Returns false if this offer is not combinable with other offers of the same type.
+     * For example, if this is an Item offer it could be combined with other Order or FG offers
+     * but it cannot be combined with other Item offers.
+     * 
+     * @return
+     */
     public boolean isCombinableWithOtherOffers();
 
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
