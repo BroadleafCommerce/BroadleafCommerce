@@ -315,7 +315,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         if (pd == null) {
             return;
         }
-        pd.incrementQuantity(quantity);
+        pd.incrementQuantity(qtyToMarkAsTarget);
         pd.setItemCriteria(itemCriteria);
         pd.setCandidateItemOffer(itemOffer);
     }

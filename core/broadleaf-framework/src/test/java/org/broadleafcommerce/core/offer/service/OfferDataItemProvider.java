@@ -138,6 +138,18 @@ public class OfferDataItemProvider {
         };
     }
 
+    public static IAnswer<OrderItemPriceDetail> getCreateOrderItemPriceDetailAnswer() {
+        return new IAnswer<OrderItemPriceDetail>() {
+
+            @Override
+            public OrderItemPriceDetail answer() throws Throwable {
+                return new OrderItemPriceDetailImpl();
+            }
+        };
+    }
+
+    
+    
     public static IAnswer<FulfillmentGroupAdjustment> getCreateFulfillmentGroupAdjustmentAnswer() {
         return new IAnswer<FulfillmentGroupAdjustment>() {
 
