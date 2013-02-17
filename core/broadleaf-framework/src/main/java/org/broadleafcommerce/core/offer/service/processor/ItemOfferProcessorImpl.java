@@ -185,11 +185,41 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         for (PromotableOrderItemPriceDetail itemPriceDetail : itemPriceDetails) {
             for (PromotionDiscount discount : itemPriceDetail.getPromotionDiscounts()) {
                 if (discount.getPromotion().equals(itemOffer.getOffer())) {
+                    if (itemOffer.getOffer().isTotalitarianOffer() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                        // We've decided to apply this adjustment but if it doesn't actually reduce
+                        // the value of the item
+                        if (adjustmentIsNotGoodEnoughToBeApplied(itemOffer, itemPriceDetail)) {
+                            break;
+                        }
+
+                    }
                     applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                     break;
                 }
             }
         }
+    }
+
+    /**
+     * The adjustment might not be better than the sale price.
+     * @param itemOffer
+     * @param detail
+     * @return
+     */
+    protected boolean adjustmentIsNotGoodEnoughToBeApplied(PromotableCandidateItemOffer itemOffer,
+            PromotableOrderItemPriceDetail detail) {
+        if (!itemOffer.getOffer().getApplyDiscountToSalePrice()) {
+            Money salePrice = detail.getPromotableOrderItem().getSalePriceBeforeAdjustments();
+            Money retailPrice = detail.getPromotableOrderItem().getRetailPriceBeforeAdjustments();
+            Money savings = itemOffer.calculateSavingsForOrderItem(detail.getPromotableOrderItem(), 1);
+            if (salePrice != null) {
+                if (salePrice.lessThan(retailPrice.subtract(savings))) {
+                    // Not good enough
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

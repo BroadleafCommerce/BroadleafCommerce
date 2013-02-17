@@ -439,7 +439,7 @@ public class ItemOfferProcessorTest extends TestCase {
         offer1.setCombinableWithOtherOffers(false);
         offer1.setApplyDiscountToSalePrice(false);
         order = dataProvider.createBasicOrder();
-        order.getDiscountableOrderItems().get(1).getOrderItem().setSalePrice(new Money(10D));
+        order.getOrder().getOrderItems().get(1).setSalePrice(new Money(10D));
         offerService.applyOffersToOrder(offerListWithOneOffer, order.getOrder());
         assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 0);
 
@@ -449,21 +449,20 @@ public class ItemOfferProcessorTest extends TestCase {
 
         // Trying with 2nd offer as nonCombinable.
         offer1.setCombinableWithOtherOffers(true);
-        order.getDiscountableOrderItems().get(1).getOrderItem().setSalePrice(null);
+        order.getOrder().getOrderItems().get(1).setSalePrice(null);        
         offer2.setCombinableWithOtherOffers(false);
 
         offerService.applyOffersToOrder(offerListWithOneOffer, order.getOrder());
         assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 1);
 
         offerService.applyOffersToOrder(offerListWithTwoOffers, order.getOrder());
-        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 2);
+        // BCP:   Changed this test.   2nd offer is notCombinable so only one gets applied. 
+        // Old logic had it applying anyway.
+        assertTrue(checkOrderItemOfferAppliedCount(order.getOrder()) == 1);
         verify();
     }
 
     public void testApplyItemQualifiersAndTargets() throws Exception {
-        Answer answer = new Answer();
-        EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(3);
-
         replay();
 
         PromotableOrder order = dataProvider.createBasicOrder();

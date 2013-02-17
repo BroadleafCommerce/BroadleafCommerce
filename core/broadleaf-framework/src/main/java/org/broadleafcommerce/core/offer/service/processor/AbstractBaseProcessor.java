@@ -71,7 +71,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
             for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
                 checkForItemRequirements(candidates, criteria, promotableOrderItems, false);
-                if (!candidates.isMatchedQualifier()) {
+                if (!candidates.isMatchedTarget()) {
                     break;
                 }
             }

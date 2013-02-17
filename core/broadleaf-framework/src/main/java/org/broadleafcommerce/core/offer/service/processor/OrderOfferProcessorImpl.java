@@ -404,13 +404,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             // Remove adjustments that were on the order item but no longer needed.
             List<Long> adjustmentIdsToRemove = new ArrayList<Long>();
             for (OrderItemPriceDetailAdjustment adjustmentToRemove : itemAdjustmentMap.values()) {
-                adjustmentIdsToRemove.add(adjustmentToRemove.getId());
+                adjustmentIdsToRemove.add(adjustmentToRemove.getOffer().getId());
             }
 
             Iterator<OrderItemPriceDetailAdjustment> iterator = itemDetail.getOrderItemPriceDetailAdjustments().iterator();
             while (iterator.hasNext()) {
                 OrderItemPriceDetailAdjustment adj = iterator.next();
-                if (adjustmentIdsToRemove.contains(adj.getId())) {
+                if (adjustmentIdsToRemove.contains(adj.getOffer().getId())) {
                     iterator.remove();
                 }
             }
