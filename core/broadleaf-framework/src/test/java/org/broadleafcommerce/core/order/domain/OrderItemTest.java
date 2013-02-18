@@ -103,8 +103,11 @@ public class OrderItemTest extends TestCase {
         assertTrue(quantity==1);
         
         testOffer.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER);
+        candidateOffer.getOffer().setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.TARGET);
+
         quantity = priceDetail1.getQuantityAvailableToBeUsedAsQualifier(candidateOffer);
-        //this item received a different promotion, but the restriction rule is QUALIFIER, so this item can be a qualifier for this promotion
+        //this item received a different promotion, but the restriction rule is QUALIFIER, so this item can be a qualifier 
+        // for this promotion
         assertTrue(quantity==2);
         
         priceDetail1.getPromotionDiscounts().clear();
@@ -125,9 +128,11 @@ public class OrderItemTest extends TestCase {
         assertTrue(quantity==1);
         
         testOffer.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER);
+        candidateOffer.getOffer().setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER);
         
         quantity = priceDetail1.getQuantityAvailableToBeUsedAsQualifier(candidateOffer);
-        //this item qualified for a different promotion, but the restriction rule is QUALIFIER, so this item can be a qualifier for this promotion
+        // this item qualified for a different promotion, but the restriction rule is QUALIFIER, 
+        // so this item can be a qualifier for this promotion
         assertTrue(quantity==2);
     }
     
@@ -153,15 +158,29 @@ public class OrderItemTest extends TestCase {
         discount.setPromotion(tempOffer);
         
         quantity = priceDetail1.getQuantityAvailableToBeUsedAsTarget(candidateOffer);
-        //this item received a different promotion, but the restriction rule is NONE, so this item cannot be a qualifier for this promotion
+        //this item received a different promotion, but the restriction rule is NONE, so this item cannot be a qualifier 
+        //for this promotion
         assertTrue(quantity==1);
         
         tempOffer.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.TARGET);
         quantity = priceDetail1.getQuantityAvailableToBeUsedAsTarget(candidateOffer);
-        //this item received a different promotion, but the restriction rule is QUALIFIER, so this item can be a qualifier for this promotion
-        assertTrue(quantity==2);
+        // this item received a different promotion, but the restriction rule is TARGET, 
+        // so this item can be a target of this promotion but since the "candidateOffer"
+        // is set to NONE, the quantity can only be 1
+        assertTrue(quantity == 1);
         
+        // Now set the candidateOffer to be "TARGET" and we can use the quantity
+        // for both promotions.
+        candidateOffer.getOffer().setOfferItemTargetRuleType(OfferItemRestrictionRuleType.TARGET);
+        quantity = priceDetail1.getQuantityAvailableToBeUsedAsTarget(candidateOffer);
+        // this item received a different promotion, but the restriction rule is TARGET, 
+        // so this item can be a target of this promotion but since the "candidateOffer"
+        // is set to NONE, the quantity can only be 1
+        assertTrue(quantity == 2);
+
         priceDetail1.getPromotionDiscounts().clear();
+        // rest candidate offer
+        candidateOffer.getOffer().setOfferItemTargetRuleType(OfferItemRestrictionRuleType.NONE);
         
         PromotionQualifier qualifier = new PromotionQualifier();
         qualifier.setPromotion(offer);
@@ -175,13 +194,15 @@ public class OrderItemTest extends TestCase {
         qualifier.setPromotion(tempOffer);
         
         quantity = priceDetail1.getQuantityAvailableToBeUsedAsTarget(candidateOffer);
-        //this item qualified for a different promotion, but the restriction rule is NONE, so this item cannot be a qualifier for this promotion
+        //this item qualified for a different promotion, but the restriction rule is NONE, 
+        // so this item cannot be a qualifier for this promotion
         assertTrue(quantity==1);
-        
+
         tempOffer.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.TARGET);
-        
+        candidateOffer.getOffer().setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER);
         quantity = priceDetail1.getQuantityAvailableToBeUsedAsTarget(candidateOffer);
-        //this item qualified for a different promotion, but the restriction rule is QUALIFIER, so this item can be a qualifier for this promotion
+        //this item qualified for a different promotion, but the restriction rule is QUALIFIER, 
+        // so this item can be a qualifier for this promotion
         assertTrue(quantity==2);
     }
 }

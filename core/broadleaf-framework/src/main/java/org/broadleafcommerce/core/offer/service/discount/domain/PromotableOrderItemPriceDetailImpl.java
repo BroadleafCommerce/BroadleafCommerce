@@ -227,6 +227,28 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         this.quantity = quantity;
     }
 
+    private boolean restrictTarget(Offer offer, boolean targetType) {
+        OfferItemRestrictionRuleType qualifierType;
+        if (targetType) {
+            qualifierType = offer.getOfferItemTargetRuleType();
+        } else {
+            qualifierType = offer.getOfferItemQualifierRuleType();
+        }
+        return OfferItemRestrictionRuleType.NONE.equals(qualifierType) ||
+                OfferItemRestrictionRuleType.QUALIFIER.equals(qualifierType);
+    }
+
+    private boolean restrictQualifier(Offer offer, boolean targetType) {
+        OfferItemRestrictionRuleType qualifierType;
+        if (targetType) {
+            qualifierType = offer.getOfferItemTargetRuleType();
+        } else {
+            qualifierType = offer.getOfferItemQualifierRuleType();
+        }
+        return OfferItemRestrictionRuleType.NONE.equals(qualifierType) ||
+                OfferItemRestrictionRuleType.TARGET.equals(qualifierType);
+    }
+
     @Override
     public int getQuantityAvailableToBeUsedAsTarget(PromotableCandidateItemOffer itemOffer) {
         int qtyAvailable = quantity;
@@ -243,28 +265,28 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         }
 
         // Any quantities of this item that have already received the promotion are not eligible.
+        // Also, any quantities of this item that have received another promotion are not eligible
+        // if this promotion cannot be combined with another discount.
         for (PromotionDiscount promotionDiscount : promotionDiscounts) {
-            if (promotionDiscount.getPromotion().equals(promotion)) {
+            if (promotionDiscount.getPromotion().equals(promotion) || restrictTarget(promotion, true)) {
                 qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
             } else {
                 // The other promotion is Combinable, but we must make sure that the item qualifier also allows
-                // it to be reused as a target.   
-                OfferItemRestrictionRuleType qualifierType = promotionDiscount.getPromotion().getOfferItemTargetRuleType();
-                if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.QUALIFIER.equals(qualifierType)) {
+                // it to be reused as a target.                   
+                if (restrictTarget(promotionDiscount.getPromotion(), true)) {
                     qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
                 }
             }
         }
 
         // 4.  Any quantities of this item that have been used as a qualifier for this promotion are not eligible as targets
-        // 5.  Any quantities of this item that have been used as a qualifier for another promotion that does not allow the qualifier to be reused
-        //     must be deduced from the qtyAvailable.
+        // 5.  Any quantities of this item that have been used as a qualifier for another promotion that does 
+        //     not allow the qualifier to be reused must be deduced from the qtyAvailable.
         for (PromotionQualifier promotionQualifier : promotionQualifiers) {
-            if (promotionQualifier.getPromotion().equals(promotion)) {
+            if (promotionQualifier.getPromotion().equals(promotion) || restrictQualifier(promotion, true)) {
                 qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
             } else {
-                OfferItemRestrictionRuleType qualifierType = promotionQualifier.getPromotion().getOfferItemQualifierRuleType();
-                if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.QUALIFIER.equals(qualifierType)) {
+                if (restrictTarget(promotionQualifier.getPromotion(), false)) {
                     qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
                 }
             }
@@ -343,6 +365,19 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
                 promotionQualifier.setQuantity(promotionQualifier.getFinalizedQuantity());
             }
         }
+
+        Iterator<PromotionDiscount> promotionDiscountIterator = promotionDiscounts.iterator();
+        while (promotionDiscountIterator.hasNext()) {
+            PromotionDiscount promotionDiscount = promotionDiscountIterator.next();
+            if (promotionDiscount.getFinalizedQuantity() == 0) {
+                // If there are no quantities of this item that are finalized, then remove the item.
+                promotionDiscountIterator.remove();
+            } else {
+                // Otherwise, set the quantity to the number of finalized items.
+                promotionDiscount.setQuantity(promotionDiscount.getFinalizedQuantity());
+            }
+        }
+
     }
 
     @Override
@@ -352,12 +387,11 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
 
         // Any quantities of this item that have already received the promotion are not eligible.
         for (PromotionDiscount promotionDiscount : promotionDiscounts) {
-            if (promotionDiscount.getPromotion().equals(promotion)) {
+            if (promotionDiscount.getPromotion().equals(promotion) || restrictTarget(promotion, false)) {
                 qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
             } else {
-                // Item's that receive other discounts might still be allowed to be qualifiers 
-                OfferItemRestrictionRuleType qualifierType = promotionDiscount.getPromotion().getOfferItemTargetRuleType();
-                if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.TARGET.equals(qualifierType)) {
+                // Item's that receive other discounts might still be allowed to be qualifiers                 
+                if (restrictQualifier(promotionDiscount.getPromotion(), true)) {
                     qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
                 }
             }
@@ -366,11 +400,10 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         // Any quantities of this item that have already been used as a qualifier for this promotion or for 
         // another promotion that has a qualifier type of NONE or TARGET_ONLY cannot be used for this promotion
         for (PromotionQualifier promotionQualifier : promotionQualifiers) {
-            if (promotionQualifier.getPromotion().equals(promotion)) {
+            if (promotionQualifier.getPromotion().equals(promotion) || restrictQualifier(promotion, false)) {
                 qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
             } else {
-                OfferItemRestrictionRuleType qualifierType = promotionQualifier.getPromotion().getOfferItemQualifierRuleType();
-                if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.TARGET.equals(qualifierType)) {
+                if (restrictQualifier(promotionQualifier.getPromotion(), false)) {
                     qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
                 }
             }
@@ -466,6 +499,11 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
                 PromotionQualifier newQualifier = currentQualifier.split(splitItemQty);
                 newDetail.getPromotionQualifiers().add(newQualifier);
             }            
+        }
+
+        for (PromotableOrderItemPriceDetailAdjustment existingAdjustment : promotableOrderItemPriceDetailAdjustments) {
+            PromotableOrderItemPriceDetailAdjustment newAdjustment = existingAdjustment.copy();
+            newDetail.addCandidateItemPriceDetailAdjustment(newAdjustment);
         }
 
         return newDetail;

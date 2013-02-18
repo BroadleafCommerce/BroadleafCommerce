@@ -62,7 +62,7 @@ public class OrderOfferProcessorTest extends TestCase {
     public void testFilterOffers() throws Exception {
         replay();
         
-        PromotableOrder order = dataProvider.createBasicOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder();
         List<Offer> offers = dataProvider.createCustomerBasedOffer("customer.registered==true", dataProvider.yesterday(), dataProvider.yesterday(), OfferDiscountType.PERCENT_OFF);
         orderProcessor.filterOffers(offers, order.getOrder().getCustomer());
         //confirm out-of-date orders are filtered out
@@ -84,7 +84,7 @@ public class OrderOfferProcessorTest extends TestCase {
     public void testFilterOrderLevelOffer() throws Exception {
         replay();
         
-        PromotableOrder order = dataProvider.createBasicOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder();
         List<PromotableCandidateOrderOffer> qualifiedOffers = new ArrayList<PromotableCandidateOrderOffer>();
         List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>20", OfferDiscountType.PERCENT_OFF);
         
@@ -113,7 +113,7 @@ public class OrderOfferProcessorTest extends TestCase {
     public void testCouldOfferApplyToOrder() throws Exception {
         replay();
         
-        PromotableOrder order = dataProvider.createBasicOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder();
         List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>20", OfferDiscountType.PERCENT_OFF);
         boolean couldApply = orderProcessor.couldOfferApplyToOrder(offers.get(0), order, order.getDiscountableOrderItems().get(0), order.getFulfillmentGroups().get(0));
         //test that the valid order offer is included
@@ -130,7 +130,7 @@ public class OrderOfferProcessorTest extends TestCase {
     public void testCouldOrderItemMeetOfferRequirement() throws Exception {
         replay();
         
-        PromotableOrder order = dataProvider.createBasicOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder();
         List<Offer> offers = dataProvider.createOrderBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
         boolean couldApply = orderProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableOrderItems().get(0));
         //test that the valid order offer is included
@@ -147,7 +147,7 @@ public class OrderOfferProcessorTest extends TestCase {
     public void testCouldOfferApplyToOrderItems() throws Exception {
         replay();
         
-        PromotableOrder order = dataProvider.createBasicOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder();
         List<Offer> offers = dataProvider.createOrderBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
         List<PromotableOrderItem> orderItems = new ArrayList<PromotableOrderItem>();
         for (PromotableOrderItem orderItem : order.getDiscountableOrderItems()) {

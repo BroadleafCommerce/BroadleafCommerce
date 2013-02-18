@@ -36,6 +36,10 @@ public interface PromotableCandidateItemOffer extends Serializable {
 
     public Money getPotentialSavings();
 
+    public void setPotentialSavings(Money savings);
+
+    public boolean hasQualifyingItemCriteria();
+
     /**
      * Public only for unit testing - not intended to be called
      */

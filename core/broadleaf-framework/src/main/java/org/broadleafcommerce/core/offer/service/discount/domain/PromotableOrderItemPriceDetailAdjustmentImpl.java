@@ -141,4 +141,15 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
             adjustmentValue = retailAdjustmentValue;
         }
     }
+
+    @Override
+    public PromotableOrderItemPriceDetailAdjustment copy() {
+        PromotableOrderItemPriceDetailAdjustmentImpl newAdjustment = new PromotableOrderItemPriceDetailAdjustmentImpl(
+                promotableCandidateItemOffer, promotableOrderItemPriceDetail);
+        newAdjustment.adjustmentValue = adjustmentValue;
+        newAdjustment.saleAdjustmentValue = saleAdjustmentValue;
+        newAdjustment.retailAdjustmentValue = retailAdjustmentValue;
+        newAdjustment.appliedToSalePrice = appliedToSalePrice;
+        return newAdjustment;
+    }
 }

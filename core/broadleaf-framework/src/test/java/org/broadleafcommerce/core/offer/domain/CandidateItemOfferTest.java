@@ -131,11 +131,6 @@ public class CandidateItemOfferTest extends TestCase {
         promotableCandidate.getCandidateTargets().addAll(items);
     }
     
-    public void testCalculatePotentialSavings() throws Exception {
-        Money savings = promotableCandidate.getPotentialSavings();
-        assertTrue(savings.equals(new Money(4D)));
-    }
-    
     public void testCalculateSavingsForOrderItem() throws Exception {
         Money savings = promotableCandidate.calculateSavingsForOrderItem(promotableOrderItem, 1);
         assertTrue(savings.equals(new Money(2D)));

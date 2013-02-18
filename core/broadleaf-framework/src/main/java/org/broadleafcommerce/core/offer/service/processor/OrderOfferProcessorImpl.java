@@ -221,7 +221,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     }
 
                     compareAndAdjustOrderAndItemOffers(promotableOrder);
-                    break;
+                    continue;
                 }
                 
                 if (!orderOffer.isCombinable()) {
@@ -233,6 +233,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     
             }
         }
+        promotableOrder.getOrder().setSubTotal(promotableOrder.calculateSubtotalWithAdjustments());
     }
 
     /**
@@ -245,9 +246,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         Money itemAdjustmentTotal = promotableOrder.calculateItemAdjustmentTotal();
 
         if (orderAdjustmentTotal.greaterThanOrEqual(itemAdjustmentTotal)) {
-            promotableOrder.removeAllCandidateOrderOfferAdjustments();
-        } else {
             promotableOrder.removeAllCandidateItemOfferAdjustments();
+        } else {
+            promotableOrder.removeAllCandidateOrderOfferAdjustments();
         }
     }
 
@@ -315,6 +316,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             Offer offer = promotableOrderAdjustment.getOffer();
             OrderAdjustment orderAdjustment = offerDao.createOrderAdjustment();
             orderAdjustment.init(order, offer, offer.getName());
+            orderAdjustment.setValue(promotableOrderAdjustment.getAdjustmentValue());
             order.getOrderAdjustments().add(orderAdjustment);
         }
     }
@@ -362,11 +364,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             } else {
                 // Create a new priceDetail
                 OrderItemPriceDetail newPriceDetail = orderItemDao.createOrderItemPriceDetail();
+                newPriceDetail.setOrderItem(orderItem);
                 updatePriceDetail(newPriceDetail, priceDetail);
+                orderItem.getOrderItemPriceDetails().add(newPriceDetail);
             }
         }
 
-        // Add any new details        
+        // Remove any unmatched details        
         Iterator<OrderItemPriceDetail> pdIterator = orderItem.getOrderItemPriceDetails().iterator();
         while (pdIterator.hasNext()) {
             OrderItemPriceDetail currentDetail = pdIterator.next();

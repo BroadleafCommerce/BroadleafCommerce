@@ -69,7 +69,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
             // TODO:  BCP - Transferred the original logic but it looks like there is a bug here
             //        when a targetItemCriteria has a quantity > 1.
             int qtyToReceiveSavings = Math.min(chgItem.getQuantity(), maxUses);
-            savings = calculateSavingsForOrderItem(chgItem, qtyToReceiveSavings);
+            savings = savings.add(calculateSavingsForOrderItem(chgItem, qtyToReceiveSavings));
 
             appliedCount = appliedCount + qtyToReceiveSavings;
             if (appliedCount >= maxUses) {
@@ -85,7 +85,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     }
 
     public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
-        Money savings = new Money(0D);
+        Money savings = new Money(promotableOrder.getOrderCurrency());
         Money price = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
 
         BigDecimal offerUnitValue = PromotableOfferUtility.determineOfferUnitValue(offer, this);
@@ -108,9 +108,19 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public Money getPotentialSavings() {
         if (potentialSavings == null) {
-            potentialSavings = calculatePotentialSavings();
+            return new Money(promotableOrder.getOrderCurrency());
         }
         return potentialSavings;
+    }
+
+    @Override
+    public void setPotentialSavings(Money potentialSavings) {
+        this.potentialSavings = potentialSavings;
+    }
+
+    @Override
+    public boolean hasQualifyingItemCriteria() {
+        return (offer.getQualifyingItemCriteria() != null && !offer.getQualifyingItemCriteria().isEmpty());
     }
 
     /**

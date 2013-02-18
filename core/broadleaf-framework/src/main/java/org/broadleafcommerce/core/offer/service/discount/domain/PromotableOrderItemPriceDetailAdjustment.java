@@ -90,4 +90,12 @@ public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
      */
     void finalizeAdjustment(boolean useSalePrice);
 
+    /**
+     * Copy this adjustment.   Used when a detail that contains this adjustment needs to be split.
+     * @param discountQty
+     * @param copy
+     * @return
+     */
+    public PromotableOrderItemPriceDetailAdjustment copy();
+
 }

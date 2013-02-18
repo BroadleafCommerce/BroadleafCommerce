@@ -329,7 +329,6 @@ public class PromotableOrderImpl implements PromotableOrder {
         for (PromotableOrderItem orderItem : getAllOrderItems()) {
             calculatedSubTotal = calculatedSubTotal.add(orderItem.calculateTotalWithAdjustments());
         }
-        calculatedSubTotal = calculatedSubTotal.subtract(calculateOrderAdjustmentTotal());
         return calculatedSubTotal;
     }
 

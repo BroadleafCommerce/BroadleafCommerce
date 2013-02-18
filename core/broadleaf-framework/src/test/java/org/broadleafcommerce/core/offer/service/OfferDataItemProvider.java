@@ -247,7 +247,13 @@ public class OfferDataItemProvider {
         };
     }
     
-    public PromotableOrder createBasicOrder() {
+    public PromotableOrder createBasicPromotableOrder() {
+        Order order = createBasicOrder();
+        PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(), false);
+        return promotableOrder;
+    }
+
+    public Order createBasicOrder() {
         Order order = new OrderImpl();
         order.setId(getOrderId());
         
@@ -421,10 +427,7 @@ public class OfferDataItemProvider {
         order.setSubTotal(new Money((2 * 19.99D) + (3 * 29.99D)));
         
         orders.put(order.getId(), order);
-        
-        PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(), false);
-        
-        return promotableOrder;
+        return order;
     }
     
     public Offer createOffer(

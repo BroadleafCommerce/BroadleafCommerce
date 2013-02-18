@@ -38,4 +38,6 @@ public interface PromotableCandidateOrderOffer extends Serializable {
 
     boolean isCombinable();
 
+    int getPriority();
+
 }

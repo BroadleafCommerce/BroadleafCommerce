@@ -95,4 +95,9 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
         Boolean totalitarian = offer.isTotalitarianOffer();
         return (totalitarian != null && totalitarian.booleanValue());
     }
+
+    @Override
+    public int getPriority() {
+        return offer.getPriority();
+    }
 }
