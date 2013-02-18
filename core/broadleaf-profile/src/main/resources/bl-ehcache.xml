@@ -45,4 +45,11 @@
         overflowToDisk="true"
         timeToLiveSeconds="600"/>
         
+     <cache
+        name="blCustomerElements"
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="600"/>
+        
 </ehcache>

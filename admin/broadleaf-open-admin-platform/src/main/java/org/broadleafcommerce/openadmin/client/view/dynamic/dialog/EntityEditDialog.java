@@ -43,6 +43,7 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 
@@ -97,7 +98,7 @@ public class EntityEditDialog extends Window {
         stack.addMember(dynamicForm);
 
         hStack.addMember(stack);
-
+        addOtherItems(stack);
         pictureStack = new VStack();
         pictureStack.setLayoutTopMargin(20);
         previewContainer = new VStack();
@@ -140,6 +141,10 @@ public class EntityEditDialog extends Window {
         hLayout.setLayoutBottomMargin(40);
         vLayout.addMember(hLayout);
         addItem(vLayout);
+    }
+
+    protected void addOtherItems(Layout layout) {
+        //stub in case useres want to add additional items in derived classes
     }
 
     public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {

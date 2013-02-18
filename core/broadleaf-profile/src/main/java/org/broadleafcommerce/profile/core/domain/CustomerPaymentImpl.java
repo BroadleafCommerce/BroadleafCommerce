@@ -54,7 +54,7 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class, optional=false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = AddressImpl.class, optional=false)
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="CUSTOMERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address billingAddress;
@@ -62,6 +62,10 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @Column(name = "PAYMENT_TOKEN")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Token", order=1, group = "CustomerPaymentImpl_Identification", groupOrder = 1)
     protected String paymentToken;
+
+    @Column(name = "IS_DEFAULT")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Default_Customer_Payment")
+    protected boolean isDefault = false;
 
     @ElementCollection
     @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns=@JoinColumn(name="CUSTOMER_PAYMENT_ID"))
@@ -109,6 +113,16 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @Override
     public void setPaymentToken(String paymentToken) {
         this.paymentToken = paymentToken;
+    }
+
+    @Override
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    @Override
+    public void setDefault(boolean aDefault) {
+        this.isDefault = aDefault;
     }
 
     @Override

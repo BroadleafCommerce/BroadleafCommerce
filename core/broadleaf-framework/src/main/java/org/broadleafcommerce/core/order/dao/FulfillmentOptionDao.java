@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
 import java.util.List;
 
@@ -31,5 +32,7 @@ public interface FulfillmentOptionDao {
     public FulfillmentOption save(FulfillmentOption option);
     
     public List<FulfillmentOption> readAllFulfillmentOptions();
+
+    public List<FulfillmentOption> readAllFulfillmentOptionsByFulfillmentType(FulfillmentType type);
 
 }

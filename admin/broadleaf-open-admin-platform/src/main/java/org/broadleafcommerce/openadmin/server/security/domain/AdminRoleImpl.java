@@ -49,7 +49,6 @@ public class AdminRoleImpl implements AdminRole {
     protected Long id;
 
     @Column(name = "NAME", nullable=false, unique = true)
-    @Index(name="ADMINROLE_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order=1, group = "AdminRoleImpl_Role", prominent=true)
     protected String name;
 
