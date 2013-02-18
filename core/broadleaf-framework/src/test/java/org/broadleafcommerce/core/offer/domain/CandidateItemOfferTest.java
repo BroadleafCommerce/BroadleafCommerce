@@ -64,14 +64,6 @@ public class CandidateItemOfferTest extends TestCase {
     protected void setUp() throws Exception {
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();
         
-        offer = dataProvider.createItemBasedOfferWithItemCriteria(
-            "order.subTotal.getAmount()>20", 
-            OfferDiscountType.PERCENT_OFF, 
-            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
-            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
-        ).get(0);
-        candidateOffer = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
-        
         CandidateItemOfferImpl candidate = new CandidateItemOfferImpl();
         
         Category category1 = new CategoryImpl();
@@ -116,6 +108,13 @@ public class CandidateItemOfferTest extends TestCase {
         orderItem1.setOrder(order);
         
         promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(), false);
+        offer = dataProvider.createItemBasedOfferWithItemCriteria(
+                "order.subTotal.getAmount()>20",
+                OfferDiscountType.PERCENT_OFF,
+                "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))",
+                "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
+                ).get(0);
+        candidateOffer = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
         
         promotableOrderItem = new PromotableOrderItemImpl(orderItem1, null, new PromotableItemFactoryImpl(), false);
         OrderItemPriceDetail pdetail = new OrderItemPriceDetailImpl();
