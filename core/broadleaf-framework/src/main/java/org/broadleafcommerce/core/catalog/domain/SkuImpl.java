@@ -45,6 +45,14 @@ import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -67,13 +75,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -536,7 +537,7 @@ public class SkuImpl implements Sku {
             if (hasDefaultSku()) {
                 return lookupDefaultSku().isDiscountable();
             }
-            return null;
+            return Boolean.FALSE;
         }
         return discountable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
