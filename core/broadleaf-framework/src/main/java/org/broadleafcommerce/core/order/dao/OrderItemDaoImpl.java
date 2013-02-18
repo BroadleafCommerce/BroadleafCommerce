@@ -80,4 +80,12 @@ public class OrderItemDaoImpl implements OrderItemDao {
     public OrderItemPriceDetail createOrderItemPriceDetail() {
         return new OrderItemPriceDetailImpl();
     }
+
+    public void initializeOrderItemPriceDetails(OrderItem item) {
+        OrderItemPriceDetail detail = createOrderItemPriceDetail();
+        detail.setOrderItem(item);
+        detail.setQuantity(item.getQuantity());
+        detail.setUseSalePrice(item.getIsOnSale());
+        item.getOrderItemPriceDetails().add(detail);
+    }
 }

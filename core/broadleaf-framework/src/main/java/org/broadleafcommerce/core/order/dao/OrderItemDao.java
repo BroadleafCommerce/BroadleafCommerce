@@ -33,8 +33,13 @@ public interface OrderItemDao {
 
     OrderItem saveOrderItem(OrderItem orderItem);
     
-    public PersonalMessage createPersonalMessage();
+    PersonalMessage createPersonalMessage();
 
     OrderItemPriceDetail createOrderItemPriceDetail();
+
+    /**
+     * Sets the initial orderItemPriceDetail for the item.
+     */
+    void initializeOrderItemPriceDetails(OrderItem item);
 
 }
