@@ -22,6 +22,7 @@ import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -90,5 +91,8 @@ public interface FormBuilderService {
     public void buildFormMetadata(ClassMetadata cmd, final EntityForm ef);
 
     public ListGrid buildMapListGrid(MapMetadata fmd, ClassMetadata cmd, Entity[] entities);
+
+    public EntityForm buildMapForm(MapMetadata mapMd, MapStructure mapStructure, ClassMetadata cmd, String parentId)
+            throws ServiceException, ApplicationSecurityException;
 
 }

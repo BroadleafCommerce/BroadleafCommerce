@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
@@ -217,7 +218,26 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
                     @Override
                     public void visit(MapMetadata fmd) {
-                        // TODO Auto-generated method stub
+                        try {
+                            MapStructure mapStructure = (MapStructure) fmd.getPersistencePerspective()
+                                    .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+
+                            ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().
+                                    getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+
+                            PersistencePackageRequest request = PersistencePackageRequest.map()
+                                    .withClassName(fmd.getTargetClass())
+                                    .withMapStructure(mapStructure)
+                                    .addForeignKey(foreignField);
+
+                            ClassMetadata collectionMetadata = service.getClassMetadata(request);
+
+                            EntityForm entityForm = formService.buildMapForm(fmd, mapStructure, collectionMetadata, id);
+                            model.addAttribute("entityForm", entityForm);
+                            model.addAttribute("viewType", "modalMapEntityForm");
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
 
                     }
                 });
@@ -250,7 +270,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                     subCollectionMd = service.getClassMetadata(((BasicCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
                     listGrid = formService.buildListGrid(subCollectionMd, rows);
                 } else if (p.getMetadata() instanceof AdornedTargetCollectionMetadata) {
-                    AdornedTargetCollectionMetadata fmd = ((AdornedTargetCollectionMetadata) p.getMetadata());
+                    AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) p.getMetadata();
                     AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
                             .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 
@@ -260,6 +280,20 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                     subCollectionMd = service.getClassMetadata(ppr);
 
                     listGrid = formService.buildAdornedListGrid(fmd, subCollectionMd, rows);
+                } else if (p.getMetadata() instanceof MapMetadata) {
+                    MapMetadata fmd = (MapMetadata) p.getMetadata();
+                    ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective()
+                            .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                    MapStructure map = (MapStructure) fmd.getPersistencePerspective()
+                            .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+
+                    PersistencePackageRequest ppr = PersistencePackageRequest.map()
+                            .withClassName(fmd.getTargetClass())
+                            .withMapStructure(map)
+                            .addForeignKey(foreignField);
+                    subCollectionMd = service.getClassMetadata(ppr);
+
+                    listGrid = formService.buildMapListGrid(fmd, subCollectionMd, rows);
                 } else {
                     subCollectionMd = null;
                     listGrid = null;

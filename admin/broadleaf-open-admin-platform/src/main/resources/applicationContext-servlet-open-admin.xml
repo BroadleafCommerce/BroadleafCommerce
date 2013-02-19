@@ -52,6 +52,7 @@
         <property name="processors">
             <set>
                 <ref bean="blAdminUserProcessor"/>
+                <ref bean="blAdminComponentIdProcessor"/>
                 <ref bean="blAdminModuleProcessor"/>
                 <ref bean="blAdminSectionHrefProcessor"/>
                 <ref bean="blAdminPromoOrderItemProcessor"/>

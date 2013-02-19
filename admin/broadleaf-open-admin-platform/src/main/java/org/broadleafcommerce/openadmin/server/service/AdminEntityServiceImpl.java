@@ -192,7 +192,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity addSubCollectionEntity(EntityForm entityForm, String className, final String fieldName,
+    public Entity addSubCollectionEntity(final EntityForm entityForm, String className, final String fieldName,
             final String parentId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
         // Find the FieldMetadata for this collection field
@@ -212,8 +212,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         cmd.getPMap().get(fieldName).getMetadata().accept(new MetadataVisitor() {
             @Override
             public void visit(MapMetadata fmd) {
+                ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective()
+                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                MapStructure map = (MapStructure) fmd.getPersistencePerspective()
+                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+
                 request.setType(PersistencePackageRequest.Type.MAP);
-                //TODO apa
+                request.getEntity().setType(new String[] { entityForm.getEntityType() });
+                request.setMapStructure(map);
+                request.addForeignKey(foreignField);
             }
 
             @Override

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -36,6 +37,7 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
+import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
@@ -243,6 +245,65 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty())
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withIdOverride("adornedTargetIdProperty");
+        ef.addField(f, EntityForm.HIDDEN_GROUP);
+
+        return ef;
+    }
+
+    @Override
+    public EntityForm buildMapForm(MapMetadata mapMd, MapStructure mapStructure, ClassMetadata cmd, String parentId)
+            throws ServiceException, ApplicationSecurityException {
+        final EntityForm ef = new EntityForm();
+        ef.setEntityType(mapMd.getTargetClass());
+
+        ComboField keyField = new ComboField();
+        keyField.withName("key")
+                .withFieldType("combo_field")
+                .withFriendlyName("Key");
+
+        if (mapMd.getKeys() != null) {
+            for (String[] key : mapMd.getKeys()) {
+                keyField.putOption(key[0], key[1]);
+            }
+        } else {
+            PersistencePackageRequest ppr = PersistencePackageRequest.standard()
+                    .withClassName(mapMd.getMapKeyOptionEntityClass());
+
+            Entity[] rows = adminEntityService.getRecords(ppr);
+
+            for (Entity entity : rows) {
+                String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();
+                String keyDisplayValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityDisplayField()).getValue();
+                keyField.putOption(keyValue, keyDisplayValue);
+            }
+        }
+
+        ef.addField(keyField, EntityForm.MAP_KEY_GROUP);
+
+        for (Property p : cmd.getProperties()) {
+            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), mapStructure.getValueClassName())) {
+                BasicFieldMetadata fmd = ((BasicFieldMetadata) p.getMetadata());
+                String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+
+                Field f = new Field()
+                        .withName(p.getName())
+                        .withFieldType(fieldType)
+                        .withFriendlyName(p.getMetadata().getFriendlyName())
+                        .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+
+                if (StringUtils.isBlank(f.getFriendlyName())) {
+                    f.setFriendlyName(f.getName());
+                }
+
+                // Add the field to the appropriate FieldGroup
+                ef.addField(f, fmd.getGroup());
+            }
+        }
+
+        Field f = new Field()
+                .withName("symbolicId")
+                .withFieldType(SupportedFieldType.HIDDEN.toString())
+                .withValue(parentId);
         ef.addField(f, EntityForm.HIDDEN_GROUP);
 
         return ef;

@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 public class EntityForm {
 
     public static final String HIDDEN_GROUP = "hiddenGroup";
+    public static final String MAP_KEY_GROUP = "keyGroup";
     public static final String DEFAULT_GROUP_NAME = "Default";
 
     protected String id;
