@@ -1,11 +1,18 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +58,55 @@ public class PersistencePackageRequest {
 
     public static PersistencePackageRequest map() {
         return new PersistencePackageRequest(Type.MAP);
+    }
+
+    public static PersistencePackageRequest fromMetadata(FieldMetadata md) {
+        final PersistencePackageRequest request = new PersistencePackageRequest();
+
+        md.accept(new MetadataVisitor() {
+
+            @Override
+            public void visit(BasicFieldMetadata fmd) {
+                request.setType(Type.STANDARD);
+                request.setClassName(fmd.getForeignKeyClass());
+            }
+
+            @Override
+            public void visit(BasicCollectionMetadata fmd) {
+                ForeignKey foreignKey = (ForeignKey) fmd.getPersistencePerspective()
+                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+
+                request.setType(Type.STANDARD);
+                request.setClassName(fmd.getCollectionCeilingEntity());
+                request.addForeignKey(foreignKey);
+            }
+
+            @Override
+            public void visit(AdornedTargetCollectionMetadata fmd) {
+                AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
+                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+
+                request.setType(Type.ADORNED);
+                request.setClassName(fmd.getCollectionCeilingEntity());
+                request.setAdornedList(adornedList);
+            }
+
+            @Override
+            public void visit(MapMetadata fmd) {
+                MapStructure mapStructure = (MapStructure) fmd.getPersistencePerspective()
+                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+
+                ForeignKey foreignKey = (ForeignKey) fmd.getPersistencePerspective().
+                        getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+
+                request.setType(Type.MAP);
+                request.setClassName(fmd.getTargetClass());
+                request.setMapStructure(mapStructure);
+                request.addForeignKey(foreignKey);
+            }
+        });
+
+        return request;
     }
 
     /* ************ */

@@ -17,29 +17,25 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
@@ -94,176 +90,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         Entity[] entities = fetch(request).getRecords();
 
-        if (entities == null || entities.length > 1) {
-            throw new RuntimeException("More than one entity found with the same id");
-        }
+        Assert.isTrue(entities != null && entities.length == 1);
 
         Entity entity = entities[0];
         return entity;
-    }
-
-    @Override
-    public Entity[] getRecordsForCollection(final ClassMetadata containingClassMetadata, final String containingEntityId,
-            final Property collectionProperty)
-            throws ServiceException, ApplicationSecurityException {
-        final PersistencePackageRequest request = new PersistencePackageRequest();
-
-        collectionProperty.getMetadata().accept(new MetadataVisitor() {
-
-            @Override
-            public void visit(MapMetadata fmd) {
-                ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
-                        .get(PersistencePerspectiveItemType.FOREIGNKEY);
-
-                MapStructure mapStructure = (MapStructure) fmd.getPersistencePerspective()
-                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-
-                FilterAndSortCriteria fasc = new FilterAndSortCriteria(foreignField.getManyToField());
-                fasc.setFilterValue(containingEntityId);
-
-                request.withType(PersistencePackageRequest.Type.MAP)
-                        .withClassName(fmd.getTargetClass())
-                        .withMapStructure(mapStructure)
-                        .addForeignKey(foreignField)
-                        .addFilterAndSortCriteria(fasc);
-            }
-
-            @Override
-            public void visit(AdornedTargetCollectionMetadata fmd) {
-                AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
-                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-
-                FilterAndSortCriteria fasc = new FilterAndSortCriteria(adornedList.getCollectionFieldName());
-                fasc.setFilterValue(containingEntityId);
-
-                request.withType(PersistencePackageRequest.Type.ADORNED)
-                        .withClassName(fmd.getCollectionCeilingEntity())
-                        .withAdornedList(adornedList)
-                        .addFilterAndSortCriteria(fasc);
-            }
-
-            @Override
-            public void visit(BasicCollectionMetadata fmd) {
-                ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
-                        .get(PersistencePerspectiveItemType.FOREIGNKEY);
-
-                FilterAndSortCriteria fasc = new FilterAndSortCriteria(foreignField.getManyToField());
-                fasc.setFilterValue(containingEntityId);
-
-                request.withType(PersistencePackageRequest.Type.STANDARD)
-                        .withClassName(fmd.getCollectionCeilingEntity())
-                        .addForeignKey(foreignField)
-                        .addFilterAndSortCriteria(fasc);
-            }
-
-            @Override
-            public void visit(BasicFieldMetadata fmd) {
-                throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was not a " +
-                        "collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
-            }
-        });
-
-        try {
-            return fetch(request).getRecords();
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    @Override
-    public Map<String, Entity[]> getRecordsForAllSubCollections(final String containingClassName,
-            final String containingEntityId)
-            throws ServiceException, ApplicationSecurityException {
-        final Map<String, Entity[]> map = new HashMap<String, Entity[]>();
-
-        final ClassMetadata cmd = getClassMetadata(containingClassName);
-        for (final Property p : cmd.getProperties()) {
-            if (p.getMetadata() instanceof CollectionMetadata) {
-                try {
-                    Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p);
-                    map.put(p.getName(), rows);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return map;
-    }
-
-    @Override
-    public Entity addSubCollectionEntity(final EntityForm entityForm, String className, final String fieldName,
-            final String parentId)
-            throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
-        // Find the FieldMetadata for this collection field
-        final ClassMetadata cmd = getClassMetadata(className);
-
-        final List<Property> properties = new ArrayList<Property>();
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            Property p = new Property();
-            p.setName(entry.getKey());
-            p.setValue(entry.getValue().getValue());
-            properties.add(p);
-        }
-
-        final PersistencePackageRequest request = new PersistencePackageRequest()
-                .withEntity(new Entity());
-
-        cmd.getPMap().get(fieldName).getMetadata().accept(new MetadataVisitor() {
-            @Override
-            public void visit(MapMetadata fmd) {
-                ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective()
-                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-                MapStructure map = (MapStructure) fmd.getPersistencePerspective()
-                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-
-                request.setType(PersistencePackageRequest.Type.MAP);
-                request.getEntity().setType(new String[] { entityForm.getEntityType() });
-                request.setMapStructure(map);
-                request.addForeignKey(foreignField);
-            }
-
-            @Override
-            public void visit(AdornedTargetCollectionMetadata fmd) {
-                AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
-                        .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-
-                request.setType(PersistencePackageRequest.Type.ADORNED);
-                request.getEntity().setType(new String[] { adornedList.getAdornedTargetEntityClassname() });
-                request.setAdornedList(adornedList);
-            }
-
-            @Override
-            public void visit(BasicCollectionMetadata fmd) {
-                ForeignKey foreignField = null;
-                if (fmd != null) {
-                    foreignField = (ForeignKey) fmd.getPersistencePerspective().getPersistencePerspectiveItems()
-                            .get(PersistencePerspectiveItemType.FOREIGNKEY);
-                    Property fp = new Property();
-                    fp.setName(foreignField.getManyToField());
-                    fp.setValue(parentId);
-                    properties.add(fp);
-                }
-
-                request.setType(PersistencePackageRequest.Type.STANDARD);
-                request.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
-                request.addForeignKey(foreignField);
-            }
-
-            @Override
-            public void visit(BasicFieldMetadata fmd) {
-                throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was" +
-                        " not a collection field.", fieldName, cmd.getCeilingType()));
-            }
-        });
-
-        Property[] propArr = new Property[properties.size()];
-        properties.toArray(propArr);
-        request.getEntity().setProperties(propArr);
-
-        request.withClassName(request.getEntity().getType()[0]);
-
-        return add(request);
     }
 
     @Override
@@ -289,6 +119,114 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return update(request);
     }
 
+    @Override
+    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, String containingEntityId,
+            Property collectionProperty)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata());
+        FilterAndSortCriteria fasc;
+
+        FieldMetadata md = collectionProperty.getMetadata();
+
+        if (md instanceof BasicCollectionMetadata) {
+            fasc = new FilterAndSortCriteria(ppr.getForeignKeys()[0].getManyToField());
+        } else if (md instanceof AdornedTargetCollectionMetadata) {
+            fasc = new FilterAndSortCriteria(ppr.getAdornedList().getCollectionFieldName());
+        } else if (md instanceof MapMetadata) {
+            fasc = new FilterAndSortCriteria(ppr.getForeignKeys()[0].getManyToField());
+        } else {
+            throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was not a " +
+                    "collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
+        }
+
+        fasc.setFilterValue(containingEntityId);
+        ppr.addFilterAndSortCriteria(fasc);
+
+        return fetch(ppr).getRecords();
+    }
+
+    @Override
+    public Map<String, Entity[]> getRecordsForAllSubCollections(String containingClassName, String containingEntityId)
+            throws ServiceException, ApplicationSecurityException {
+        Map<String, Entity[]> map = new HashMap<String, Entity[]>();
+
+        ClassMetadata cmd = getClassMetadata(containingClassName);
+        for (Property p : cmd.getProperties()) {
+            if (p.getMetadata() instanceof CollectionMetadata) {
+                Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p);
+                map.put(p.getName(), rows);
+            }
+        }
+
+        return map;
+    }
+
+    @Override
+    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, String parentId)
+            throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
+        // Assemble the properties from the entity form
+        List<Property> properties = new ArrayList<Property>();
+        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+            Property p = new Property();
+            p.setName(entry.getKey());
+            p.setValue(entry.getValue().getValue());
+            properties.add(p);
+        }
+
+        FieldMetadata md = field.getMetadata();
+
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+                .withEntity(new Entity());
+
+        if (md instanceof BasicCollectionMetadata) {
+            BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
+            ppr.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
+
+            Property fp = new Property();
+            fp.setName(ppr.getForeignKeys()[0].getManyToField());
+            fp.setValue(parentId);
+            properties.add(fp);
+        } else if (md instanceof AdornedTargetCollectionMetadata) {
+            ppr.getEntity().setType(new String[] { ppr.getAdornedList().getAdornedTargetEntityClassname() });
+        } else if (md instanceof MapMetadata) {
+            ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
+        } else {
+            throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was" +
+                    " not a collection field.", field.getName(), mainMetadata.getCeilingType()));
+        }
+
+        ppr.setClassName(ppr.getEntity().getType()[0]);
+
+        Property[] propArr = new Property[properties.size()];
+        properties.toArray(propArr);
+        ppr.getEntity().setProperties(propArr);
+
+        return add(ppr);
+    }
+
+    @Override
+    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId)
+            throws ServiceException, ApplicationSecurityException {
+        Property p = new Property();
+        p.setName("id");
+        p.setValue(itemId);
+
+        Entity entity = new Entity();
+        entity.setProperties(new Property[] { p });
+
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(field.getMetadata())
+                .withEntity(entity);
+
+        if (field.getMetadata() instanceof BasicCollectionMetadata) {
+            BasicCollectionMetadata fmd = (BasicCollectionMetadata) field.getMetadata();
+            entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
+        } else {
+            throw new RuntimeException("not yet");
+        }
+
+        remove(ppr);
+    }
+
     protected Entity add(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
@@ -305,6 +243,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             throws ServiceException, ApplicationSecurityException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.inspect(pkg);
+    }
+
+    protected void remove(PersistencePackageRequest request)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackage pkg = persistencePackageFactory.create(request);
+        service.remove(pkg);
     }
 
     protected DynamicResultSet fetch(PersistencePackageRequest request)

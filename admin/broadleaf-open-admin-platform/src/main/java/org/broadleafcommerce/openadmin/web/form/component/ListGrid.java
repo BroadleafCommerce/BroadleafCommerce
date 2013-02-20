@@ -14,8 +14,20 @@ public class ListGrid {
     protected List<ListGridRecord> records = new ArrayList<ListGridRecord>();
     protected int startIndex = 0;
     protected AddMethodType addMethodType;
-    protected String subCollectionFieldName = null;
     protected String listGridType;
+
+    protected String containingEntityId = null;
+    protected String subCollectionFieldName = null;
+
+    public enum Type {
+        MAIN,
+        INLINE,
+        TO_ONE,
+        BASIC,
+        ADORNED,
+        ADORNED_WITH_FORM,
+        MAP
+    }
 
     public String getClassName() {
         return className;
@@ -57,20 +69,28 @@ public class ListGrid {
         this.addMethodType = addMethodType;
     }
 
+    public String getListGridType() {
+        return listGridType;
+    }
+
+    public void setListGridType(Type listGridType) {
+        this.listGridType = listGridType.toString().toLowerCase();
+    }
+
+    public String getContainingEntityId() {
+        return containingEntityId;
+    }
+
+    public void setContainingEntityId(String containingEntityId) {
+        this.containingEntityId = containingEntityId;
+    }
+
     public String getSubCollectionFieldName() {
         return subCollectionFieldName;
     }
 
     public void setSubCollectionFieldName(String subCollectionFieldName) {
         this.subCollectionFieldName = subCollectionFieldName;
-    }
-
-    public String getListGridType() {
-        return listGridType;
-    }
-
-    public void setListGridType(String listGridType) {
-        this.listGridType = listGridType;
     }
 
 }

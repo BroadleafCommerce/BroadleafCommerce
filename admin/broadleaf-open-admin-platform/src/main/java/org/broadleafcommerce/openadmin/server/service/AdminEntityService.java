@@ -90,8 +90,8 @@ public interface AdminEntityService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity[] getRecordsForCollection(final ClassMetadata containingClassMetadata, final String containingEntityId,
-            final Property collectionProperty)
+    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, String containingEntityId,
+            Property collectionProperty)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -104,23 +104,10 @@ public interface AdminEntityService {
      * 
      * @see #getRecordsForCollection(ClassMetadata, String, Property)
      */
-    public Map<String, Entity[]> getRecordsForAllSubCollections(final String containingClassName,
-            final String containingEntityId)
+    public Map<String, Entity[]> getRecordsForAllSubCollections(String containingClassName, String containingEntityId)
             throws ServiceException, ApplicationSecurityException;
 
-    /**
-     * Adds an Entity for the specified collection
-     * 
-     * @param entityForm
-     * @param className
-     * @param fieldName
-     * @param parentId
-     * @return the persisted Entity
-     * @throws ServiceException
-     * @throws ApplicationSecurityException
-     * @throws ClassNotFoundException
-     */
-    public Entity addSubCollectionEntity(EntityForm entityForm, String className, String fieldName, String parentId)
+    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, String parentId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
     /**
@@ -134,5 +121,9 @@ public interface AdminEntityService {
      */
     public Entity updateEntity(EntityForm entityForm, String className)
             throws ServiceException, ApplicationSecurityException;
+
+    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId)
+            throws ServiceException, ApplicationSecurityException;
+
 
 }

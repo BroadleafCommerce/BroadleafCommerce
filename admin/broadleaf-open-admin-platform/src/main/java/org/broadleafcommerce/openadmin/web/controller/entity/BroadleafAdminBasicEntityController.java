@@ -16,20 +16,17 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
@@ -44,6 +41,8 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 import java.util.Map;
 
@@ -76,8 +75,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity[] rows = service.getRecords(ppr);
 
-        ListGrid listGrid = formService.buildListGrid(cmd, rows);
-        listGrid.setListGridType("main");
+        ListGrid listGrid = formService.buildMainListGrid(rows, cmd);
 
         model.addAttribute("listGrid", listGrid);
         model.addAttribute("viewType", "listGrid");
@@ -95,7 +93,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         Entity entity = service.getRecord(sectionClassName, id);
         Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
 
-        EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap);
+        EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
         
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "entityForm");
@@ -118,8 +116,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
 
             //re-initialize the field groups as well as sub collections
-            formService.buildEntityForm(entityForm, cmd, entity, subRecordsMap);
+            EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
+            formService.setEntityFormValues(newForm, entityForm);
 
+            model.addAttribute("entityForm", newForm);
             model.addAttribute("viewType", "entityForm");
             setModelAttributes(model, sectionKey);
             return "modules/dynamicModule";
@@ -128,120 +128,72 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "redirect:/" + sectionKey + "/" + id;
     }
 
-    public String showAddCollectionItem(final HttpServletRequest request, HttpServletResponse response, final Model model,
+    public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
-            final String id,
+            String id,
             String collectionField) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
 
-        for (final Property p : mainMetadata.getProperties()) {
-            if (p.getName().equals(collectionField)) {
-                p.getMetadata().accept(new MetadataVisitor() {
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
 
-                    @Override
-                    public void visit(BasicFieldMetadata fmd) {
-                        try {
-                            String collectionClassName = fmd.getForeignKeyClass();
+        if (md instanceof BasicFieldMetadata) {
+            Entity[] rows = service.getRecords(ppr);
 
-                            ClassMetadata collectionMetadata = service.getClassMetadata(collectionClassName);
-                            PersistencePackageRequest request = PersistencePackageRequest.standard()
-                                    .withClassName(collectionClassName);
-                            Entity[] rows = service.getRecords(request);
+            ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
 
-                            ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
-                            listGrid.setListGridType("toOne");
-                            model.addAttribute("listGrid", listGrid);
-                            model.addAttribute("viewType", "modalListGrid");
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+            model.addAttribute("listGrid", listGrid);
+            model.addAttribute("viewType", "modalListGrid");
+        } else if (md instanceof BasicCollectionMetadata) {
+            BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
 
-                    @Override
-                    public void visit(BasicCollectionMetadata fmd) {
-                        try {
-                            ForeignKey foreignKey = (ForeignKey) fmd.getPersistencePerspective()
-                                    .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-                            
-                            PersistencePackageRequest request = PersistencePackageRequest.standard()
-                                    .withClassName(fmd.getCollectionCeilingEntity())
-                                    .addForeignKey(foreignKey);
-                            ClassMetadata collectionMetadata = service.getClassMetadata(request);
+            // When adding items to basic collections, we will sometimes show a form to persist a new record
+            // and sometimes show a list grid to allow the user to associate an existing record.
+            if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
+                ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+                EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
 
-                            if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
-                                EntityForm entityForm = formService.createEntityForm(collectionMetadata);
-                                model.addAttribute("entityForm", entityForm);
-                                model.addAttribute("viewType", "modalEntityForm");
-                            } else {
-                                Entity[] rows = service.getRecords(request);
-                                ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
-                                listGrid.setListGridType("basicCollection");
-                                model.addAttribute("listGrid", listGrid);
-                                model.addAttribute("viewType", "modalListGrid");
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
+                model.addAttribute("entityForm", entityForm);
+                model.addAttribute("viewType", "modalEntityForm");
+            } else {
+                Entity[] rows = service.getRecords(ppr);
+                ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
 
-                    }
-
-                    @Override
-                    public void visit(AdornedTargetCollectionMetadata fmd) {
-                        try {
-                            AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
-                                    .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-
-                            PersistencePackageRequest request = PersistencePackageRequest.adorned()
-                                    .withClassName(fmd.getCollectionCeilingEntity())
-                                    .withAdornedList(adornedList);
-                            ClassMetadata collectionMetadata = service.getClassMetadata(request);
-
-                            Entity[] rows = service.getRecords(request);
-                            ListGrid listGrid = formService.buildListGrid(collectionMetadata, rows);
-
-                            EntityForm entityForm = formService.buildAdornedListForm(fmd, adornedList, id);
-
-                            model.addAttribute("listGrid", listGrid);
-                            model.addAttribute("entityForm", entityForm);
-                            if (fmd.getMaintainedAdornedTargetFields().length > 0) {
-                                listGrid.setListGridType("adornedTargetWithForm");
-                                model.addAttribute("viewType", "modalAdornedListGridForm");
-                            } else {
-                                listGrid.setListGridType("adornedTarget");
-                                model.addAttribute("viewType", "modalAdornedListGrid");
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-
-                    @Override
-                    public void visit(MapMetadata fmd) {
-                        try {
-                            MapStructure mapStructure = (MapStructure) fmd.getPersistencePerspective()
-                                    .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-
-                            ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective().
-                                    getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-
-                            PersistencePackageRequest request = PersistencePackageRequest.map()
-                                    .withClassName(fmd.getTargetClass())
-                                    .withMapStructure(mapStructure)
-                                    .addForeignKey(foreignField);
-
-                            ClassMetadata collectionMetadata = service.getClassMetadata(request);
-
-                            EntityForm entityForm = formService.buildMapForm(fmd, mapStructure, collectionMetadata, id);
-                            model.addAttribute("entityForm", entityForm);
-                            model.addAttribute("viewType", "modalMapEntityForm");
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }
-                });
+                model.addAttribute("listGrid", listGrid);
+                model.addAttribute("viewType", "modalListGrid");
             }
+        } else if (md instanceof AdornedTargetCollectionMetadata) {
+            AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
+
+            // Even though this field represents an adorned target collection, the list we want to show in the modal
+            // is the standard list grid for the target entity of this field
+            ppr.setType(PersistencePackageRequest.Type.STANDARD);
+
+            ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+
+            Entity[] rows = service.getRecords(ppr);
+            ListGrid listGrid = formService.buildMainListGrid(rows, collectionMetadata);
+            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+
+            model.addAttribute("listGrid", listGrid);
+            model.addAttribute("entityForm", entityForm);
+
+            if (fmd.getMaintainedAdornedTargetFields().length > 0) {
+                listGrid.setListGridType(ListGrid.Type.ADORNED_WITH_FORM);
+                model.addAttribute("viewType", "modalAdornedListGridForm");
+            } else {
+                listGrid.setListGridType(ListGrid.Type.ADORNED);
+                model.addAttribute("viewType", "modalAdornedListGrid");
+            }
+        } else if (md instanceof MapMetadata) {
+            MapMetadata fmd = (MapMetadata) md;
+            ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+
+            EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
+            model.addAttribute("entityForm", entityForm);
+            model.addAttribute("viewType", "modalMapEntityForm");
         }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -249,69 +201,56 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/modalContainer";
     }
 
-    public String saveNewCollectionItem(HttpServletRequest request, HttpServletResponse response, final Model model,
+    public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
-            final String id,
+            String id,
             String collectionField,
-            final EntityForm entityForm) throws Exception {
+            EntityForm entityForm) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
         // First, we must save the collection entity
-        service.addSubCollectionEntity(entityForm, mainClassName, collectionField, id);
+        service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id);
 
         // Next, we must get the new list grid that represents this collection
-        for (Property p : mainMetadata.getProperties()) {
-            if (p.getName().equals(collectionField)) {
-                Entity[] rows = service.getRecordsForCollection(mainMetadata, id, p);
-                ClassMetadata subCollectionMd;
-                ListGrid listGrid;
-                if (p.getMetadata() instanceof BasicCollectionMetadata) {
-                    subCollectionMd = service.getClassMetadata(((BasicCollectionMetadata) p.getMetadata()).getCollectionCeilingEntity());
-                    listGrid = formService.buildListGrid(subCollectionMd, rows);
-                } else if (p.getMetadata() instanceof AdornedTargetCollectionMetadata) {
-                    AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) p.getMetadata();
-                    AdornedTargetList adornedList = (AdornedTargetList) fmd.getPersistencePerspective()
-                            .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-
-                    PersistencePackageRequest ppr = PersistencePackageRequest.adorned()
-                            .withClassName(fmd.getCollectionCeilingEntity())
-                            .withAdornedList(adornedList);
-                    subCollectionMd = service.getClassMetadata(ppr);
-
-                    listGrid = formService.buildAdornedListGrid(fmd, subCollectionMd, rows);
-                } else if (p.getMetadata() instanceof MapMetadata) {
-                    MapMetadata fmd = (MapMetadata) p.getMetadata();
-                    ForeignKey foreignField = (ForeignKey) fmd.getPersistencePerspective()
-                            .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-                    MapStructure map = (MapStructure) fmd.getPersistencePerspective()
-                            .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-
-                    PersistencePackageRequest ppr = PersistencePackageRequest.map()
-                            .withClassName(fmd.getTargetClass())
-                            .withMapStructure(map)
-                            .addForeignKey(foreignField);
-                    subCollectionMd = service.getClassMetadata(ppr);
-
-                    listGrid = formService.buildMapListGrid(fmd, subCollectionMd, rows);
-                } else {
-                    subCollectionMd = null;
-                    listGrid = null;
-                }
-
-                if (listGrid != null) {
-                    listGrid.setSubCollectionFieldName(collectionField);
-                    listGrid.setListGridType("inline");
-                    model.addAttribute("listGrid", listGrid);
-                }
-
-                break;
-            }
-        }
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
+        model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
         return "views/modalListGrid";
+    }
+
+    public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String id,
+            String collectionField,
+            String collectionItemId) throws Exception {
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+
+        // First, we must remove the collection entity
+        service.removeSubCollectionEntity(mainMetadata, collectionProperty, id, collectionItemId);
+
+        // Next, we must get the new list grid that represents this collection
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
+        model.addAttribute("listGrid", listGrid);
+
+        // We return the new list grid so that it can replace the currently visible one
+        setModelAttributes(model, sectionKey);
+        return "views/modalListGrid";
+    }
+
+    protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, String id, Property collectionProperty)
+            throws ServiceException, ApplicationSecurityException {
+        Entity[] rows = service.getRecordsForCollection(mainMetadata, id, collectionProperty);
+
+        ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
+        listGrid.setListGridType(ListGrid.Type.INLINE);
+
+        return listGrid;
     }
 
     protected String getClassNameForSection(String sectionKey) {

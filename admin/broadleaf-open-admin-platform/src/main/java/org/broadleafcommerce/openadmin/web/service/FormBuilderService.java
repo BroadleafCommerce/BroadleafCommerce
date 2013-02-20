@@ -23,10 +23,10 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
@@ -37,62 +37,37 @@ import java.util.Map;
  */
 public interface FormBuilderService {
 
-    public ListGrid buildListGrid(ClassMetadata cmd, Entity[] entities);
+    public ListGrid buildMainListGrid(Entity[] entities, ClassMetadata cmd)
+            throws ServiceException, ApplicationSecurityException;
 
+    public ListGrid buildCollectionListGrid(String containingEntityId, Entity[] entities, Property field)
+            throws ServiceException, ApplicationSecurityException;
+
+
+    public EntityForm buildEntityForm(ClassMetadata cmd);
+
+    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity);
+
+    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, Entity[]> collectionRecords)
+            throws ServiceException, ApplicationSecurityException;
+
+    public void setEntityFormValues(EntityForm destinationForm, EntityForm sourceForm);
+
+    
     public RuleBuilder buildRuleBuilder(ClassMetadata cmd, Entity[] entities, String[] ruleVars, String[] configKeys);
 
-    /**
-     * Fills out all of the fields in the given {@link EntityForm} with actual values from <b>e</b>. This will also
-     * fill out the {@link EntityForm#getCollectionListGrids()} based on the given <b>subCollections</b>
-     * 
-     * @param ef the form DTO to fill out
-     * @param cmd the metadata associated with the form
-     * @param e the entity for which the fields from <b>ef</b> should derive their values
-     * @param subCollections the additional collections that are associated with <b>ef</b> keyed by their property name
-     * from the represented entity (for instance, the list of OrderItems for an Order would be keyed by the 'orderItems'
-     * field)
-     * @return the same <b>ef</b> that was passed in, but filled out with values from <b>e</b> and <b>subCollections<b>
-     */
-    public EntityForm buildEntityForm(EntityForm ef, ClassMetadata cmd, Entity e, Map<String, Entity[]> subCollections)
-            throws ClassNotFoundException, ServiceException, ApplicationSecurityException;
 
-    /**
-     * Instantiates a new {@link EntityForm} based on the information gleaned from <b>cmd</b>. Delegates to
-     * {@link #buildFormMetadata(ClassMetadata, EntityForm)} for instantiating the field groups for display.
-     * 
-     * @param cmd
-     * @return a new {@link EntityForm} with its {@link FieldGroup}s properly initialized and ready for Display
-     * @see {@link #buildFormMetadata(ClassMetadata, EntityForm)}
-     */
-    public EntityForm createEntityForm(ClassMetadata cmd, Entity e, Map<String, Entity[]> subCollections)
-            throws ClassNotFoundException, ServiceException, ApplicationSecurityException;
 
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
             String parentId)
             throws ServiceException, ApplicationSecurityException;
 
-    public ListGrid buildAdornedListGrid(AdornedTargetCollectionMetadata fmd, ClassMetadata cmd, Entity[] entities);
-
-    /**
-     * Convenience method for creating an {@link EntityForm} and building its metadata.
-     * @param cmd
-     * @return a newly created {@link EntityForm} with its display properties instantiated
-     * @see {@link #buildFormMetadata(ClassMetadata, EntityForm)}
-     */
-    public EntityForm createEntityForm(ClassMetadata cmd);
-
-    /**
-     * Initial building of the display metadata associated with displaying an {@link EntityForm}. For instance, this method
-     * will initialize the {@link FieldGroup} display properties for the given <b>ef</b>.
-     * 
-     * @see {@link EntityForm#getGroups()}
-     * @see {@link FieldGroup}
-     */
-    public void buildFormMetadata(ClassMetadata cmd, final EntityForm ef);
-
-    public ListGrid buildMapListGrid(MapMetadata fmd, ClassMetadata cmd, Entity[] entities);
-
     public EntityForm buildMapForm(MapMetadata mapMd, MapStructure mapStructure, ClassMetadata cmd, String parentId)
             throws ServiceException, ApplicationSecurityException;
+
+
+
+
+
 
 }
