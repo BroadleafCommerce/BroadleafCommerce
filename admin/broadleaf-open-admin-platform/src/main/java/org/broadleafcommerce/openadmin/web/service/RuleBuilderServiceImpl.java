@@ -54,7 +54,7 @@ public class RuleBuilderServiceImpl implements RuleBuilderService {
             ClassMetadata cmd = adminEntityService.getClassMetadata(request);
 
             RuleBuilderUtil ruleBuilderUtil = new RuleBuilderUtil();
-            conditions = ruleBuilderUtil.createConditionsDTO(mvel, cmd.getProperties());
+            conditions = ruleBuilderUtil.createConditionsDTO(mvel, cmd.getProperties(), cmd.getPolymorphicEntities());
             //ObjectMapper mapper = new ObjectMapper();
             //json = mapper.writeValueAsString(conditions);
         }

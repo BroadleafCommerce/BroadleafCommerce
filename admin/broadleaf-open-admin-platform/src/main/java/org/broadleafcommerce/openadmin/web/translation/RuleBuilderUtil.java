@@ -18,7 +18,9 @@ package org.broadleafcommerce.openadmin.web.translation;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.server.util.PolymorphicEntityMapUtil;
 import org.broadleafcommerce.openadmin.web.translation.dto.ConditionsDTO;
 import org.broadleafcommerce.openadmin.web.translation.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.translation.dto.ExpressionDTO;
@@ -42,19 +44,19 @@ public class RuleBuilderUtil {
     protected GroupingTranslator groupingTranslator = new GroupingTranslator();
     protected PhraseTranslator phraseTranslator = new PhraseTranslator();
 
-    public ConditionsDTO createConditionsDTO(String mvel, Property[] properties) throws MVELTranslationException {
+    public ConditionsDTO createConditionsDTO(String mvel, Property[] properties, ClassTree polymorphicEntities) throws MVELTranslationException {
         if (mvel == null || mvel.length() == 0) {
             return null;
         }
 
         Group group = groupingTranslator.createGroups(mvel);
-        return createConditionsDTO(null, group, properties);
+        return createConditionsDTO(null, group, properties, polymorphicEntities);
     }
 
-    public ConditionsDTO createConditionsDTO(ConditionsDTO parentDTO, Group group, Property[] properties) throws MVELTranslationException {
+    public ConditionsDTO createConditionsDTO(ConditionsDTO parentDTO, Group group, Property[] properties, ClassTree polymorphicEntities) throws MVELTranslationException {
         ConditionsDTO conditions = new ConditionsDTO();
         for (Property p : properties) {
-            appendField(conditions, p);
+            appendField(conditions, p, polymorphicEntities);
         }
 
         if (group.getOperatorType() == null) {
@@ -78,7 +80,7 @@ public class RuleBuilderUtil {
         return conditions;
     }
 
-    public void appendField(ConditionsDTO dto, Property property) {
+    public void appendField(ConditionsDTO dto, Property property, ClassTree polymorphicEntities) {
 
         if (property.getMetadata() instanceof BasicFieldMetadata) {
             BasicFieldMetadata metadata = (BasicFieldMetadata) property.getMetadata();
@@ -87,16 +89,18 @@ public class RuleBuilderUtil {
             String friendlyName = metadata.getOwningClassFriendlyName();
             if (friendlyName == null || friendlyName.equals("")) {
                 String fqcn = metadata.getInheritedFromType();
-                //TODO fix this
-                //if (fqcn != null) {
-                //    friendlyName = ((DynamicEntityDataSource) delegate).getPolymorphicEntities().get(fqcn);
-                //}
-                //if (friendlyName == null) {
-                //    fqcn = ((DynamicEntityDataSource) delegate).getDefaultNewEntityFullyQualifiedClassname();
-                //    friendlyName = ((DynamicEntityDataSource) delegate).getPolymorphicEntities().get(fqcn);
-                //}
+                PolymorphicEntityMapUtil mapUtil = new PolymorphicEntityMapUtil();
+
+                if (fqcn != null) {
+                    friendlyName = mapUtil.convertClassTreeToMap(polymorphicEntities).get(fqcn);
+                }
+                if (friendlyName == null) {
+                    //TODO: ?? fix this
+                    //fqcn = ((DynamicEntityDataSource) delegate).getDefaultNewEntityFullyQualifiedClassname();
+                    friendlyName = mapUtil.convertClassTreeToMap(polymorphicEntities).get(fqcn);
+                }
             }
-            if (!property.getName().startsWith(friendlyName) && !friendlyName.contains("DTO")) {
+            if (friendlyName!=null && !property.getName().startsWith(friendlyName) && !friendlyName.contains("DTO")) {
                 friendlyName = friendlyName + " - " + property.getName();
             }
 

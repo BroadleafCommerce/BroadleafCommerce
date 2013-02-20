@@ -1,5 +1,6 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
@@ -79,7 +80,9 @@ public class PersistencePackageRequest {
     }
 
     public PersistencePackageRequest withForeignKeys(ForeignKey[] foreignKeys) {
-        setForeignKeys(foreignKeys);
+        if (ArrayUtils.isNotEmpty(foreignKeys)) {
+            setForeignKeys(foreignKeys);
+        }
         return this;
     }
 
@@ -89,7 +92,9 @@ public class PersistencePackageRequest {
     }
 
     public PersistencePackageRequest withFilterAndSortCriteria(FilterAndSortCriteria[] filterAndSortCriteria) {
-        setFilterAndSortCriteria(filterAndSortCriteria);
+        if (ArrayUtils.isNotEmpty(filterAndSortCriteria)) {
+            setFilterAndSortCriteria(filterAndSortCriteria);
+        }
         return this;
     }
 
@@ -104,7 +109,9 @@ public class PersistencePackageRequest {
     }
 
     public PersistencePackageRequest withCustomCriteria(String[] customCriteria) {
-        setCustomCriteria(customCriteria);
+        if (ArrayUtils.isNotEmpty(customCriteria)) {
+            setCustomCriteria(customCriteria);
+        }
         return this;
     }
 
