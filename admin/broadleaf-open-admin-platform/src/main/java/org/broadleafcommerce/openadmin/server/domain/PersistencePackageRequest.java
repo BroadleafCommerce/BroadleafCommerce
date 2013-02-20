@@ -12,6 +12,7 @@ import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class PersistencePackageRequest {
     protected AdornedTargetList adornedList;
     protected MapStructure mapStructure;
     protected Entity entity;
+
+    protected OperationTypes operationTypesOverride = null;
 
     // These properties are accessed via getters and setters that operate on arrays.
     // We back them with a list so that we can have the convenience .add methods
@@ -78,6 +81,7 @@ public class PersistencePackageRequest {
 
                 request.setType(Type.STANDARD);
                 request.setClassName(fmd.getCollectionCeilingEntity());
+                request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.addForeignKey(foreignKey);
             }
 
@@ -88,6 +92,7 @@ public class PersistencePackageRequest {
 
                 request.setType(Type.ADORNED);
                 request.setClassName(fmd.getCollectionCeilingEntity());
+                request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setAdornedList(adornedList);
             }
 
@@ -101,6 +106,7 @@ public class PersistencePackageRequest {
 
                 request.setType(Type.MAP);
                 request.setClassName(fmd.getTargetClass());
+                request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setMapStructure(mapStructure);
                 request.addForeignKey(foreignKey);
             }
@@ -280,6 +286,14 @@ public class PersistencePackageRequest {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
+    }
+
+    public OperationTypes getOperationTypesOverride() {
+        return operationTypesOverride;
+    }
+
+    public void setOperationTypesOverride(OperationTypes operationTypesOverride) {
+        this.operationTypesOverride = operationTypesOverride;
     }
 
 }

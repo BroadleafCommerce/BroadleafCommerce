@@ -169,6 +169,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
             // Even though this field represents an adorned target collection, the list we want to show in the modal
             // is the standard list grid for the target entity of this field
+            ppr.setOperationTypesOverride(null);
             ppr.setType(PersistencePackageRequest.Type.STANDARD);
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
@@ -231,8 +232,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
+        String priorKey = request.getParameter("key");
+
         // First, we must remove the collection entity
-        service.removeSubCollectionEntity(mainMetadata, collectionProperty, id, collectionItemId);
+        service.removeSubCollectionEntity(mainMetadata, collectionProperty, id, collectionItemId, priorKey);
 
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);

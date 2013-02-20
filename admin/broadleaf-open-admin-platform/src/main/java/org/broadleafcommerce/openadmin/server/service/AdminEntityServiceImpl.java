@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
@@ -205,24 +206,64 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId)
+    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
+            String priorKey)
             throws ServiceException, ApplicationSecurityException {
-        Property p = new Property();
-        p.setName("id");
-        p.setValue(itemId);
+        List<Property> properties = new ArrayList<Property>();
+
+        Property p;
 
         Entity entity = new Entity();
-        entity.setProperties(new Property[] { p });
-
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(field.getMetadata())
                 .withEntity(entity);
 
         if (field.getMetadata() instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) field.getMetadata();
+
+            p = new Property();
+            p.setName("id");
+            p.setValue(itemId);
+            properties.add(p);
+
+            p = new Property();
+            p.setName(ppr.getForeignKeys()[0].getManyToField());
+            p.setValue(parentId);
+            properties.add(p);
+
             entity.setType(new String[] { fmd.getCollectionCeilingEntity() });
-        } else {
-            throw new RuntimeException("not yet");
+        } else if (field.getMetadata() instanceof AdornedTargetCollectionMetadata) {
+            AdornedTargetList adornedList = ppr.getAdornedList();
+
+            p = new Property();
+            p.setName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
+            p.setValue(parentId);
+            properties.add(p);
+
+            p = new Property();
+            p.setName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+            p.setValue(itemId);
+            properties.add(p);
+
+            entity.setType(new String[] { adornedList.getAdornedTargetEntityClassname() });
+        } else if (field.getMetadata() instanceof MapMetadata) {
+            MapMetadata fmd = (MapMetadata) field.getMetadata();
+
+            p = new Property();
+            p.setName("symbolicId");
+            p.setValue(parentId);
+            properties.add(p);
+
+            p = new Property();
+            p.setName("priorKey");
+            p.setValue(priorKey);
+            properties.add(p);
+
+            entity.setType(new String[] { fmd.getTargetClass() });
         }
+
+        Property[] propArr = new Property[properties.size()];
+        properties.toArray(propArr);
+        ppr.getEntity().setProperties(propArr);
 
         remove(ppr);
     }

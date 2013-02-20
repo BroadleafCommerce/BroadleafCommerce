@@ -70,6 +70,10 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
                 break;
         }
 
+        if (request.getOperationTypesOverride() != null) {
+            persistencePerspective.setOperationTypes(request.getOperationTypesOverride());
+        }
+
         PersistencePackage pp = new PersistencePackage();
         pp.setCeilingEntityFullyQualifiedClassname(request.getClassName());
         pp.setFetchTypeFullyQualifiedClassname(null);

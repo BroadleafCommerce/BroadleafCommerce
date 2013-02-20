@@ -122,7 +122,8 @@ public interface AdminEntityService {
     public Entity updateEntity(EntityForm entityForm, String className)
             throws ServiceException, ApplicationSecurityException;
 
-    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId)
+    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
+            String priorKey)
             throws ServiceException, ApplicationSecurityException;
 
 
