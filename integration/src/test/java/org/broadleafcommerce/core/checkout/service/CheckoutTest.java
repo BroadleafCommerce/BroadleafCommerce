@@ -54,12 +54,12 @@ import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 public class CheckoutTest extends BaseTest {
 
@@ -313,8 +313,6 @@ public class CheckoutTest extends BaseTest {
     private void addSampleItemToOrder(Order order, FulfillmentGroup group) {
         DiscreteOrderItem item = new DiscreteOrderItemImpl();
         item.setOrder(order);
-        item.setPrice(new Money(14.99D));
-        item.setRetailPrice(new Money(14.99D));
         item.setQuantity(1);
 
         Sku newSku = new SkuImpl();

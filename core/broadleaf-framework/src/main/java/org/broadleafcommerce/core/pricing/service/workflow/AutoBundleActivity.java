@@ -156,7 +156,7 @@ public class AutoBundleActivity extends BaseActivity {
                         newOrderItem.setQuantity(item.getQuantity() * bundleOrderItem.getQuantity());
                         newOrderItem.setSkuBundleItem(null);
                         newOrderItem.setBundleOrderItem(null);   
-                        newOrderItem.updateSaleAndRetailBasePrices();
+                        newOrderItem.updateSaleAndRetailPrices();
                         newOrderItem.setOrder(order);
                         unbundledItems.add(newOrderItem);
                     }
@@ -240,7 +240,7 @@ public class AutoBundleActivity extends BaseActivity {
                 newOrderItem.setQuantity(skuMatches - skusRequired);
                 newOrderItem = (DiscreteOrderItem) orderItemDao.save(newOrderItem);
                 newOrderItem.setOrder(order);
-                newOrderItem.updateSaleAndRetailBasePrices();
+                newOrderItem.updateSaleAndRetailPrices();
 
                 // Re-associate fulfillment group item to newOrderItem
                 FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(newSkuBundleItem.getSku().getId());
@@ -263,7 +263,7 @@ public class AutoBundleActivity extends BaseActivity {
             }
         }
 
-        bundleOrderItem.updateSaleAndRetailBasePrices();
+        bundleOrderItem.updateSaleAndRetailPrices();
 
         order.getOrderItems().add(bundleOrderItem);
         order =  orderService.save(order, false);

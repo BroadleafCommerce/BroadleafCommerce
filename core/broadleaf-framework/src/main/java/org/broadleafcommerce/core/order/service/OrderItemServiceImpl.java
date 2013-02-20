@@ -110,9 +110,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         for (DiscreteOrderItemFeePrice feePrice : item.getDiscreteOrderItemFeePrices()) {
             feePrice.setDiscreteOrderItem(item);
         }
-
-        item.updateSaleAndRetailBasePrices();
-        item.assignFinalPrice();
         
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
@@ -124,8 +121,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         populateDiscreteOrderItem(item, itemRequest);
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
-        item.updateSaleAndRetailBasePrices();
-        item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
         return item;
@@ -148,7 +143,6 @@ public class OrderItemServiceImpl implements OrderItemService {
             item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
         }
 
-        item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
         return item;
@@ -166,8 +160,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
-        item.updateSaleAndRetailBasePrices();
-        item.assignFinalPrice();
+        item.updateSaleAndRetailPrices();
         item.getWrappedItems().addAll(itemRequest.getWrappedItems());
         for (OrderItem orderItem : item.getWrappedItems()) {
             orderItem.setGiftWrapOrderItem(item);
@@ -194,7 +187,6 @@ public class OrderItemServiceImpl implements OrderItemService {
                 discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
             }
             item.getDiscreteOrderItems().add(discreteOrderItem);
-            item.assignFinalPrice();
         }
 
         return item;
@@ -237,9 +229,6 @@ public class OrderItemServiceImpl implements OrderItemService {
             bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
             bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
         }
-
-        bundleOrderItem.updateSaleAndRetailBasePrices();
-        bundleOrderItem.assignFinalPrice();
         
         bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
         return bundleOrderItem;

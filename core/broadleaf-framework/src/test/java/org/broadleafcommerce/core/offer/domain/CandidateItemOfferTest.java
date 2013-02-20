@@ -101,8 +101,6 @@ public class CandidateItemOfferTest extends TestCase {
         orderItem1.setProduct(product1);
         orderItem1.setQuantity(2);
         orderItem1.setSku(sku1);
-        orderItem1.setRetailPrice(new Money(19.99D));
-        orderItem1.setPrice(new Money(19.99D));
         
         Order order = new OrderImpl();
         orderItem1.setOrder(order);

@@ -94,6 +94,14 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Tax", order=9, group = "FulfillmentGroupItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
+    @Column(name = "TOTAL_ITEM_AMOUNT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, group = "FulfillmentGroupItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
+    protected BigDecimal totalItemAmount;
+
+    @Column(name = "TOTAL_ITEM_TAXABLE_AMOUNT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, group = "FulfillmentGroupItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
+    protected BigDecimal totalItemTaxableAmount;
+
     @Override
     public Long getId() {
         return id;
@@ -134,20 +142,42 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         this.quantity = quantity;
     }
 
-    @Override
     public Money getRetailPrice() {
         return orderItem.getRetailPrice();
     }
 
-    @Override
     public Money getSalePrice() {
         return orderItem.getSalePrice();
     }
 
-    @Override
     public Money getPrice() {
-        return orderItem.getPrice();
+        return orderItem.getAveragePrice();
     }
+
+    protected Money convertToMoney(BigDecimal amount) {
+        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, orderItem.getOrder().getCurrency());
+    }
+
+    @Override
+    public Money getTotalItemAmount() {
+        return convertToMoney(totalItemAmount);
+    }
+
+    @Override
+    public void setTotalItemAmount(Money amount) {
+        totalItemAmount = amount.getAmount();
+    }
+
+    @Override
+    public Money getTotalItemTaxableAmount() {
+        return convertToMoney(totalItemTaxableAmount);
+    }
+
+    @Override
+    public void setTotalItemTaxableAmount(Money taxableAmount) {
+        totalItemTaxableAmount = taxableAmount.getAmount();
+    }
+
 
     @Override
     public FulfillmentGroupStatusType getStatus() {
@@ -211,6 +241,8 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
             clonedFulfillmentGroupItem.setFulfillmentGroup(getFulfillmentGroup());
             clonedFulfillmentGroupItem.setOrderItem(getOrderItem());
             clonedFulfillmentGroupItem.setQuantity(getQuantity());
+            clonedFulfillmentGroupItem.setTotalItemAmount(getTotalItemAmount());
+            clonedFulfillmentGroupItem.setTotalItemTaxableAmount(getTotalItemTaxableAmount());
             if (getStatus() != null) {
                 clonedFulfillmentGroupItem.setStatus(getStatus());
             }

@@ -49,16 +49,13 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
     protected Long orderItemId;
 
     @XmlElement
-    protected Money retailPrice;
-
-    @XmlElement
-    protected Money salePrice;
-
-    @XmlElement
     protected Money totalTax;
 
     @XmlElement
     protected Integer quantity;
+
+    @XmlElement
+    protected Money totalItemAmount;
 
     @Override
     public void wrap(FulfillmentGroupItem model, HttpServletRequest request) {
@@ -72,10 +69,9 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
             this.orderItemId = model.getOrderItem().getId();
         }
 
-        this.retailPrice = model.getRetailPrice();
-        this.salePrice = model.getSalePrice();
         this.totalTax = model.getTotalTax();
         this.quantity = model.getQuantity();
+        this.totalItemAmount = model.getTotalItemAmount();
     }
 
     @Override

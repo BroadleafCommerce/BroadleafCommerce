@@ -545,7 +545,7 @@ public class OrderImpl implements Order {
     public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
-            if (orderItem.updateSaleAndRetailBasePrices()) {
+            if (orderItem.updateSaleAndRetailPrices()) {
                 updated = true;
             }
         }

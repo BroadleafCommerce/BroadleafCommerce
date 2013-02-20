@@ -900,9 +900,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
                 bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
             }
 
-            bundleOrderItem.updateSaleAndRetailBasePrices();
-            bundleOrderItem.assignFinalPrice();
-
             List<OrderItem> orderItems = order.getOrderItems();
             orderItems.add(bundleOrderItem);
             return updateOrder(order, priceOrder);

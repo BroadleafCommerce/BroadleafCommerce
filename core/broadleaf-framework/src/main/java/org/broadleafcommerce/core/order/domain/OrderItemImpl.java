@@ -167,6 +167,12 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @AdminPresentation(excluded = true)
     protected Boolean itemTaxable;
 
+    @Column(name = "RETAIL_PRICE_OVERRIDE")
+    protected Boolean retailPriceOverride;
+
+    @Column(name = "SALE_PRICE_OVERRIDE")
+    protected Boolean salePriceOverride;
+
     @Column(name = "DISCOUNTS_ALLOWED")
     @AdminPresentation(excluded = true)
     protected Boolean discountsAllowed;
@@ -190,6 +196,9 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     
     @Override
     public Money getRetailPrice() {
+        if (retailPrice == null) {
+            updateSaleAndRetailPrices();
+        }
         return convertToMoney(retailPrice);
     }
 
@@ -200,7 +209,19 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getSalePrice() {
-        return convertToMoney(salePrice);
+        if (salePrice == null) {
+            updateSaleAndRetailPrices();
+        }
+        if (salePrice != null) {
+            Money returnPrice = convertToMoney(salePrice);
+            if (retailPrice != null && returnPrice.greaterThan(getRetailPrice())) {
+                return getRetailPrice();
+            } else {
+                return returnPrice;
+            }
+        } else {
+            return getRetailPrice();
+        }
     }
 
     @Override
@@ -215,6 +236,11 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public void setPrice(Money finalPrice) {
+        setRetailPrice(finalPrice);
+        setSalePrice(finalPrice);
+        setRetailPriceOverride(true);
+        setSalePriceOverride(true);
+        setDiscountingAllowed(false);
         this.price = Money.toAmount(finalPrice);
     }
 
@@ -368,34 +394,22 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     @Override
-    public boolean updateSaleAndRetailBasePrices() {
+    public boolean updateSaleAndRetailPrices() {
+        if (salePrice == null) {
+            salePrice = retailPrice;
+        }
         return false;
     }
     
     @Override
     public void assignFinalPrice() {
-        setPrice(getCurrentPrice());
+        Money finalPrice = getTotalPrice().divide(quantity);
+        price = finalPrice.getAmount();
     }
-    
-    @Override
-    public Money getCurrentPrice() {
-        updateSaleAndRetailBasePrices();
-        Money currentPrice = null;
-        if (getPrice() != null) {
-            currentPrice = getPrice();
-        } else if (getSalePrice() != null) {
-            currentPrice = getSalePrice();
-        } else {
-            currentPrice = getRetailPrice();
-        }
-        return currentPrice;
-    }
-    
+
     @Override
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
-        updateSaleAndRetailBasePrices();
-
-        if (getSalePrice() != null && allowSalesPrice) {
+        if (allowSalesPrice) {
             return getSalePrice();
         } else {
             return getRetailPrice();
@@ -641,11 +655,17 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getAveragePrice() {
+        if (quantity == 0) {
+            return price == null ? null : BroadleafCurrencyUtils.getMoney(price, getOrder().getCurrency());
+        }
         return getTotalPrice().divide(quantity);
     }
 
     @Override
     public Money getAverageAdjustmentValue() {
+        if (quantity == 0) {
+            return null;
+        }
         return getTotalAdjustmentValue().divide(quantity);
     }
 
@@ -665,23 +685,26 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Override
     public Money getTotalPrice() {
         Money returnValue = convertToMoney(BigDecimal.ZERO);
-        if (orderItemPriceDetails != null) {
+        if (orderItemPriceDetails != null && orderItemPriceDetails.size() > 0) {
             for (OrderItemPriceDetail oipd : orderItemPriceDetails) {
                 returnValue = returnValue.add(oipd.getTotalAdjustedPrice());
             }
         } else {
-            // Support for legacy orders
-            returnValue = getPrice();
+            if (price != null) {
+                returnValue = convertToMoney(price).multiply(quantity);
+            } else {
+                return getSalePrice().multiply(quantity);
+            }
         }
         
         return returnValue;
-    }    
+    }
 
     @Override
     public Money getTotalTaxableAmount() {
         Money returnValue = convertToMoney(BigDecimal.ZERO);
         if (isTaxable()) {
-            return getTotalPrice();
+            return getTotalPrice().subtract(getProratedOrderAdjustment());
         }
         return returnValue;
     }
@@ -694,16 +717,6 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Override
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
-    }
-
-    @Override
-    public Money getTaxableProratedOrderAdjustment() {
-        return convertToMoney(taxableProratedOrderAdjustment);
-    }
-
-    @Override
-    public void setTaxableProratedOrderAdjustment(Money taxableProratedOrderAdjustment) {
-        this.taxableProratedOrderAdjustment = Money.toAmount(taxableProratedOrderAdjustment);
     }
 
     @Override
@@ -724,5 +737,33 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Override
     public void setProratedFulfillmentCharges(Money proratedFulfillmentCharge) {
         this.proratedFulfillmentCharge = Money.toAmount(proratedFulfillmentCharge);
+    }
+
+    @Override
+    public void setRetailPriceOverride(boolean override) {
+        this.salePriceOverride = Boolean.valueOf(override);
+    }
+
+    @Override
+    public boolean isRetailPriceOverride() {
+        if (retailPriceOverride == null) {
+            return false;
+        } else {
+            return retailPriceOverride.booleanValue();
+        }
+    }
+
+    @Override
+    public void setSalePriceOverride(boolean override) {
+        this.salePriceOverride = Boolean.valueOf(override);
+    }
+
+    @Override
+    public boolean isSalePriceOverride() {
+        if (salePriceOverride == null) {
+            return false;
+        } else {
+            return salePriceOverride.booleanValue();
+        }
     }
 }

@@ -87,7 +87,7 @@ public class SimpleTaxModule implements TaxModule {
                             fgItem.getTaxes().add(tax);
                         }
                         tax.setRate(new BigDecimal(factor));
-                        tax.setAmount(fgItem.getPrice().multiply(fgItem.getQuantity()).multiply(factor));
+                        tax.setAmount(fgItem.getTotalItemAmount().multiply(factor));
                     }
                 }
             }

@@ -32,26 +32,26 @@ public interface OrderItem extends Serializable, Cloneable {
      * The unique identifier of this OrderItem
      * @return
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the unique id of the OrderItem.   Typically left null for new items and Broadleaf will
      * set using the next sequence number.
      * @param id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Reference back to the containing order.
      * @return
      */
-    public Order getOrder();
+    Order getOrder();
 
     /**
      * Sets the order for this orderItem.
      * @param order
      */
-    public void setOrder(Order order);
+    void setOrder(Order order);
 
     /**
      * The retail price of the item that was added to the {@link Order} at the time that this was added. This is preferable
@@ -61,37 +61,73 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getRetailPrice();
+    Money getRetailPrice();
 
     /**
-     * @deprecated The retail price used in sales calculations will be set during 
-     * price finalization but otherwise is not used by the system.
+     * Calling this method will manually set the retailPrice.    It will also make a call to 
+     * {@link #setRetailPriceOverride(true)}
      * 
-     * If trying to override a price or set a fixed price, use {@link #setOverridePrice(Money)}
-     * along with {@link #setDiscountingAllowed(boolean)}
+     * Consider also calling {@link #setDiscountingAllowed(boolean)} with a value of false to restrict
+     * discounts after manually setting the retail price.    
      * 
      * @param retailPrice
      */
-    public void setRetailPrice(Money retailPrice);
+    void setRetailPrice(Money retailPrice);
 
     /**
-     * The sale price of the item (e.g. SKU) that was added to the {@link Order} at the time that that updatePrices
-     * was last called.      
-     * 
+     * Indicates that the retail price was manually set.  A typical usage might be for a 
+     * CSR who has override privileges to control setting the price.   This will automatically be set
+     * by calling {@link #setRetailPrice(Money)}
+     */
+    void setRetailPriceOverride(boolean override);
+
+    /**
+     * Returns true if the retail price was manually set.   If the retail price is manually set,
+     * calls to updatePrices() will not do anything.
      * @return
      */
-    public Money getSalePrice();
+    boolean isRetailPriceOverride();
 
     /**
-     * @deprecated - The sale price used in price calculations will be
-     * set by the system when prices are finalized prior to order submission.
+     * Returns the salePrice for this item.    Note this method will return the lower of the retailPrice
+     * or salePrice.    It will return the retailPrice instead of null.
      * 
-     * If trying to override a price or set a fixed price, use {@link #setBasePrice(Money)}
-     * along with {@link #setDiscountingAllowed(boolean)}
+     * For SKU based pricing, a call to {@link #updateSaleAndRetailPrices()} will ensure that the 
+     * retailPrice being used is current.
+     *
+     * @return
+     */
+    Money getSalePrice();
+
+    /**
+     * Calling this method will manually set the salePrice.    It will also make a call to 
+     * {@link #setSalePriceSetManually(true)}
+     *      
+     * Typically for {@link DiscreteOrderItem}s, the prices will be set with a call to {@link #updateSaleAndRetailPrices()}
+     * which will use the Broadleaf dynamic pricing engine or the values directly tied to the SKU.
      * 
      * @param salePrice
      */
-    public void setSalePrice(Money salePrice);
+    void setSalePrice(Money salePrice);
+
+    /**
+     * Indicates that the sale price was manually set.  A typical usage might be for a 
+     * CSR who has override privileges to control setting the price.
+     * 
+     * Consider also calling {@link #setDiscountingAllowed(boolean)} with a value of false to restrict
+     * discounts after manually setting the retail price.   
+     * 
+     * If the salePrice is not lower than the retailPrice, the system will return the retailPrice when
+     * a call to {@link #getSalePrice()} is made.
+     */
+    void setSalePriceOverride(boolean override);
+
+    /**
+     * Returns true if the sale price was manually set.   If the retail price is manually set,
+     * calls to updatePrices() will not do anything.
+     * @return
+     */
+    boolean isSalePriceOverride();
 
     /**
      * @deprecated 
@@ -100,7 +136,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getAdjustmentValue();
+    Money getAdjustmentValue();
 
     /**
      * @deprecated
@@ -108,17 +144,23 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getPrice();
+    Money getPrice();
 
     /**
      * @deprecated
-     * Should not be called.   Consider {@link setOverridePrice(Money price)} along with {@link #setDiscountingAllowed(boolean)}
-     * to set the price to a final value.    Otherwise, the system will compute the price as part of the
-     * discounting and dynamic price evaluation.     
+     * Calling this method is the same as calling the following:
+     * 
+     * {@link #setRetailPrice(Money)}
+     * {@link #setSalePrice(Money)}
+     * {@link #setRetailPriceOverride(true)}
+     * {@link #setSalePriceOverride(true)}      
+     * {@link #setDiscountingAllowed(false)}          
+     * 
+     * This has the effect of setting the price in a way that no discounts or adjustments can be made.
      * 
      * @param price
      */
-    public void setPrice(Money price);   
+    void setPrice(Money price);
 
 
 
@@ -127,12 +169,12 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public int getQuantity();
+    int getQuantity();
 
     /**
      * Sets the quantity of this item
      */
-    public void setQuantity(int quantity);
+    void setQuantity(int quantity);
     
     /**
      * Collection of priceDetails for this orderItem.    
@@ -143,29 +185,29 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * Generally, an OrderItem will have 1 ItemPriceDetail record for each uniquely priced version of the item.
      */
-    public List<OrderItemPriceDetail> getOrderItemPriceDetails();    
+    List<OrderItemPriceDetail> getOrderItemPriceDetails();
 
     /**
      * Returns the list of orderItem price details.
      * @see {@link #getOrderItemPriceDetails()}
      * @param orderItemPriceDetails
      */
-    public void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails);
+    void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails);
 
-    public Category getCategory();
+    Category getCategory();
 
-    public void setCategory(Category category);
+    void setCategory(Category category);
 
-    public List<CandidateItemOffer> getCandidateItemOffers();
+    List<CandidateItemOffer> getCandidateItemOffers();
 
-    public void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers);
+    void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers);
 
     /**    
      * Returns item level adjustment for versions of Broadleaf Commerce prior to 2.3.0 which replaced
      * this concept with OrderItemPriceDetail adjustments.
      * @return a List of OrderItemAdjustment
      */
-    public List<OrderItemAdjustment> getOrderItemAdjustments();
+    List<OrderItemAdjustment> getOrderItemAdjustments();
 
     /**
      * @deprecated
@@ -173,21 +215,21 @@ public interface OrderItem extends Serializable, Cloneable {
      * prevent unnecessary item splitting of OrderItems when evaluating promotions 
      * in the pricing engine.
      */
-    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
+    void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
 
-    public PersonalMessage getPersonalMessage();
+    PersonalMessage getPersonalMessage();
 
-    public void setPersonalMessage(PersonalMessage personalMessage);
+    void setPersonalMessage(PersonalMessage personalMessage);
 
-    public boolean isInCategory(String categoryName);
+    boolean isInCategory(String categoryName);
 
-    public GiftWrapOrderItem getGiftWrapOrderItem();
+    GiftWrapOrderItem getGiftWrapOrderItem();
 
-    public void setGiftWrapOrderItem(GiftWrapOrderItem giftWrapOrderItem);
+    void setGiftWrapOrderItem(GiftWrapOrderItem giftWrapOrderItem);
 
-    public OrderItemType getOrderItemType();
+    OrderItemType getOrderItemType();
 
-    public void setOrderItemType(OrderItemType orderItemType);
+    void setOrderItemType(OrderItemType orderItemType);
 
     /**
      * @deprecated
@@ -199,45 +241,48 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getTaxablePrice();
+    Money getTaxablePrice();
 
     /**
      * Default implementation uses {@link #getSalePrice()} &lt; {@link #getRetailPrice()}
      * 
      * @return
      */
-    public boolean getIsOnSale();
+    boolean getIsOnSale();
     
     /**
      * If true, this item can be discounted..
      */
-    public boolean isDiscountingAllowed();
+    boolean isDiscountingAllowed();
     
     /**
      * Turns off discount processing for this line item.
      * @param disableDiscounts
      */
-    public void setDiscountingAllowed(boolean discountingAllowed);
+    void setDiscountingAllowed(boolean discountingAllowed);
 
     /**
      * Returns true if this item received a discount. 
      * @return
      */
-    public boolean getIsDiscounted();
+    boolean getIsDiscounted();
     
     /**
      * Generally copied from the Sku.getName()
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * Used to reset the base price of the item that the pricing engine uses. 
      * 
      * Generally, this will update the retailPrice and salePrice based on the 
-     * corresponding value in the SKU.   
+     * corresponding value in the SKU.  
      * 
-     * Since prices can change based on system activities such as 
+     * If the retail or sale price was manually set, this method will not change
+     * those prices.
+     * 
+     * For non-manually set prices, prices can change based on system activities such as 
      * locale changes and customer authentication, this method is used to 
      * ensure that all cart items reflect the current base price before
      * executing other pricing / adjustment operations. 
@@ -249,19 +294,21 @@ public interface OrderItem extends Serializable, Cloneable {
      *      
      * @return true if the base prices changed as a result of this call
      */
-    public boolean updateSaleAndRetailBasePrices();
+    boolean updateSaleAndRetailPrices();
 
     /**
      * Sets the name of this order item. 
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
-    public OrderItem clone();
+    OrderItem clone();
 
-    public void assignFinalPrice();
-    
-    public Money getCurrentPrice();
+    /**
+     * Used to set the final price of the item and corresponding details.
+     * @param useSalePrice
+     */
+    void assignFinalPrice();
     
     /**
      * Returns the unit price of this item.   If the parameter allowSalesPrice is true, will 
@@ -270,36 +317,36 @@ public interface OrderItem extends Serializable, Cloneable {
      * @param allowSalesPrice
      * @return
      */
-    public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
+    Money getPriceBeforeAdjustments(boolean allowSalesPrice);
     
     /**
      * Used by the promotion engine to add offers that might apply to this orderItem.
      * @param candidateItemOffer
      */
-    public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer);
+    void addCandidateItemOffer(CandidateItemOffer candidateItemOffer);
     
     /**
      * Removes all candidate offers.   Used by the promotion engine which subsequently adds 
      * the candidate offers that might apply back to this item.
      */
-    public void removeAllCandidateItemOffers();
+    void removeAllCandidateItemOffers();
     
     /**
      * Removes all adjustment for this order item and reset the adjustment price.
      */
-    public int removeAllAdjustments();    
+    int removeAllAdjustments();
 
     /**
      * A list of arbitrary attributes added to this item.
      */
-    public Map<String,OrderItemAttribute> getOrderItemAttributes();
+    Map<String, OrderItemAttribute> getOrderItemAttributes();
 
     /**
      * Sets the map of order item attributes.
      *
      * @param orderItemAttributes
      */
-    public void setOrderItemAttributes(Map<String,OrderItemAttribute> orderItemAttributes);
+    void setOrderItemAttributes(Map<String, OrderItemAttribute> orderItemAttributes);
     
     /**
      * Returns the average unit display price for the item.  
@@ -317,7 +364,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getAveragePrice();
+    Money getAveragePrice();
 
     /**
      * Returns the average unit item adjustments.
@@ -337,7 +384,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getAverageAdjustmentValue();
+    Money getAverageAdjustmentValue();
 
     /**
      * Returns the total for all item level adjustments.
@@ -347,7 +394,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getTotalAdjustmentValue();
+    Money getTotalAdjustmentValue();
 
     /**
      * Returns the total price to be paid for this order item including item-level adjustments.
@@ -357,14 +404,14 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getTotalPrice();
+    Money getTotalPrice();
     
     /**
      * Returns whether or not this item is taxable. If this flag is not set, it returns true by default
      * 
      * @return the taxable flag. If null, returns true
      */
-    public Boolean isTaxable();
+    Boolean isTaxable();
 
     /**
      * Sets whether or not this item is taxable.   Generally, this has been copied from the 
@@ -372,7 +419,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @param taxable
      */
-    public void setTaxable(Boolean taxable);    
+    void setTaxable(Boolean taxable);
     
     /**
      * Returns the total amount of this item subject to taxes.
@@ -381,36 +428,21 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getTotalTaxableAmount();    
+    Money getTotalTaxableAmount();
 
     /**
      * Returns the total taxes paid (or due) for this OrderItem. 
      * 
      * @return
      */
-    public Money getTotalTax();
+    Money getTotalTax();
     
     /**
      * Sets the total taxes paid (or due) for this OrderItem. 
      * 
      * @return
      */
-    public void setTotalTax(Money tax);
-
-    /**
-     * Order level discounts need to be distributed to the item level.    Most of these will 
-     * effect the taxes owed but in some cases they may not.    This method returns the 
-     * total of the total order adjustments that do reduce the overall taxes.
-     * 
-     * @return
-     */
-    public Money getTaxableProratedOrderAdjustment();
-    
-    /**
-     * Sets the relative order level discounts that are distributed to the item level and that should
-     * reduce the amount of taxes paid.        
-     */
-    public void setTaxableProratedOrderAdjustment(Money taxableProratedOrderAdjustment);
+    void setTotalTax(Money tax);
 
     /**
      * The value of an order-level offer gets distributed to each of the OrderItems.   This field 
@@ -418,24 +450,24 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
-    public Money getProratedOrderAdjustment();
+    Money getProratedOrderAdjustment();
 
     /**
      * Sets the pro-rated amount of order-level offer that benefits this OrderItem.
      * 
      */
-    public void setProratedOrderAdjustment(Money proratedOrderAdjustmentAmount);
+    void setProratedOrderAdjustment(Money proratedOrderAdjustmentAmount);
 
     /**
      * This field represents the value of fulfillment charges gets distributed to each of the OrderItems   
      * 
      * @return
      */
-    public Money getProratedFulfillmentCharges();
+    Money getProratedFulfillmentCharges();
 
     /**
      * Sets the prorated fulfillment charges that apply to this OrderItem   
      * 
      */
-    public void setProratedFulfillmentCharges(Money proratedFulfillmentCharges);
+    void setProratedFulfillmentCharges(Money proratedFulfillmentCharges);
 }

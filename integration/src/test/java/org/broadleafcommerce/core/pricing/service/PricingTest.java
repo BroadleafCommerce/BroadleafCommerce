@@ -63,12 +63,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class PricingTest extends BaseTest {
@@ -286,8 +286,6 @@ public class PricingTest extends BaseTest {
         order.setTotal(total);
 
         DiscreteOrderItem item = new DiscreteOrderItemImpl();
-        item.setPrice(new Money(10D));
-        item.setRetailPrice(new Money(15D));
         Sku sku = new SkuImpl();
         sku.setRetailPrice(new Money(15D));
         sku.setDiscountable(true);

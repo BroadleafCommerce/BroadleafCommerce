@@ -57,7 +57,6 @@ public class OrderItemTest extends TestCase {
         discreteOrderItem1.setOrderItemType(OrderItemType.DISCRETE);
         discreteOrderItem1.setQuantity(2);
         discreteOrderItem1.setRetailPrice(new Money(19.99D));
-        discreteOrderItem1.setPrice(new Money(19.99D));
         
         OrderItemPriceDetail pdetail = new OrderItemPriceDetailImpl();
         pdetail.setOrderItem(discreteOrderItem1);

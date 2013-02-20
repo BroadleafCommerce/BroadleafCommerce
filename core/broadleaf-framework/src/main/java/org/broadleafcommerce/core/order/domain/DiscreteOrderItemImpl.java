@@ -204,9 +204,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         return order;
     }
 
-    @Override
-    public boolean updateSaleAndRetailBasePrices() {
-        Money skuRetailPrice = getSku().getRetailPrice();
+    private boolean updateSalePrice() {
+        if (isSalePriceOverride()) {
+            return false;
+        }
+
         Money skuSalePrice = (getSku().getSalePrice() == null ? null : getSku().getSalePrice());
 
         // Override retail/sale prices from skuBundle.
@@ -214,7 +216,34 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             if (skuBundleItem.getSalePrice() != null) {
                 skuSalePrice = skuBundleItem.getSalePrice();
             }
+        }
 
+        boolean updated = false;
+        //use the sku prices - the retail and sale prices could be null
+        if (skuSalePrice != null && !skuSalePrice.equals(salePrice)) {
+            baseSalePrice = skuSalePrice.getAmount();
+            salePrice = skuSalePrice.getAmount();
+            updated = true;
+        }
+
+        // Adjust prices by adding in fees if they are attached.
+        if (getDiscreteOrderItemFeePrices() != null) {
+            for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
+                Money returnPrice = convertToMoney(salePrice);
+                salePrice = returnPrice.add(fee.getAmount()).getAmount();
+            }
+        }
+        return updated;
+    }
+
+    private boolean updateRetailPrice() {
+        if (isRetailPriceOverride()) {
+            return false;
+        }
+        Money skuRetailPrice = getSku().getRetailPrice();
+
+        // Override retail/sale prices from skuBundle.
+        if (skuBundleItem != null) {
             if (skuBundleItem.getRetailPrice() != null) {
                 skuRetailPrice = skuBundleItem.getRetailPrice();
             }
@@ -222,25 +251,25 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null
-        if (!skuRetailPrice.equals(getRetailPrice())) {
-            setBaseRetailPrice(skuRetailPrice);
-            setRetailPrice(skuRetailPrice);
-            updated = true;
-        }
-        if (skuSalePrice != null && !skuSalePrice.equals(getSalePrice())) {
-            setBaseSalePrice(skuSalePrice);
-            setSalePrice(skuSalePrice);
+        if (!skuRetailPrice.equals(retailPrice)) {
+            baseRetailPrice = skuRetailPrice.getAmount();
+            retailPrice = skuRetailPrice.getAmount();
             updated = true;
         }
 
         // Adjust prices by adding in fees if they are attached.
         if (getDiscreteOrderItemFeePrices() != null) {
             for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
-                setSalePrice(getSalePrice().add(fee.getAmount()));
-                setRetailPrice(getRetailPrice().add(fee.getAmount()));
+                Money returnPrice = convertToMoney(retailPrice);
+                retailPrice = returnPrice.add(fee.getAmount()).getAmount();
             }
         }
         return updated;
+    }
+
+    @Override
+    public boolean updateSaleAndRetailPrices() {
+        return updateSalePrice() || updateRetailPrice();
     }
 
     @Override

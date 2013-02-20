@@ -47,7 +47,7 @@ public class DynamicPriceDiscreteOrderItemImpl extends DiscreteOrderItemImpl imp
     }
 
     @Override
-    public boolean updateSaleAndRetailBasePrices() {
+    public boolean updateSaleAndRetailPrices() {
         return false;
     }
 

@@ -130,6 +130,24 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
+    public Money getProratedOrderAdjustment() {
+        if (shouldSumItems()) {
+            Money proratedOrderAdjustment = BroadleafCurrencyUtils.getMoney(getOrder().getCurrency());
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                proratedOrderAdjustment = proratedOrderAdjustment.add(discreteOrderItem.getProratedOrderAdjustment());
+            }
+            return proratedOrderAdjustment;
+        } else {
+            return super.getProratedOrderAdjustment();
+        }
+    }
+
+    @Override
+    public boolean isPricingAtContainerLevel() {
+        return !shouldSumItems();
+    }
+
+    @Override
     public boolean isDiscountingAllowed() {
         if (shouldSumItems()) {
             return false;
@@ -272,25 +290,41 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         return false;
     }
     
-    @Override
-    public boolean updateSaleAndRetailBasePrices() {
-        boolean updated = false;
-
+    private boolean updateSalePrice() {
+        if (isSalePriceOverride()) {
+            return false;
+        }
         // Only need to update prices if we are not summing the contained items to determine
         // the price.
         if (! shouldSumItems()) {
-            if (getSku() != null && !getSku().getRetailPrice().equals(getRetailPrice())) {
-                setBaseRetailPrice(getSku().getRetailPrice());
-                setRetailPrice(getSku().getRetailPrice());
-                updated = true;
-            }
-            if (getSku() != null && getSku().getSalePrice() != null && !getSku().getSalePrice().equals(getSalePrice())) {
-                setBaseSalePrice(getSku().getSalePrice());
-                setSalePrice(getSku().getSalePrice());
-                updated = true;
+            if (getSku() != null && !getSku().getSalePrice().equals(salePrice)) {
+                baseSalePrice = getSku().getSalePrice().getAmount();
+                salePrice = getSku().getSalePrice().getAmount();
+                return true;
             }
         }
-        return updated;
+        return false;
+    }
+
+    private boolean updateRetailPrice() {
+        if (isRetailPriceOverride()) {
+            return false;
+        }
+        // Only need to update prices if we are not summing the contained items to determine
+        // the price.
+        if (! shouldSumItems()) {
+            if (getSku() != null && !getSku().getRetailPrice().equals(retailPrice)) {
+                baseRetailPrice = getSku().getRetailPrice().getAmount();
+                retailPrice = getSku().getRetailPrice().getAmount();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateSaleAndRetailPrices() {
+        return updateSalePrice() || updateRetailPrice();
     }
 
     @Override
