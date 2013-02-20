@@ -83,11 +83,13 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money(int amount) {
-        this(BigDecimal.valueOf(amount).setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN), defaultCurrency());
+        this(BigDecimal.valueOf(amount).setScale(BankersRounding.getScaleForCurrency(defaultCurrency()),
+                RoundingMode.HALF_EVEN), defaultCurrency());
     }
 
     public Money(long amount) {
-        this(BigDecimal.valueOf(amount).setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN), defaultCurrency());
+        this(BigDecimal.valueOf(amount).setScale(BankersRounding.getScaleForCurrency(defaultCurrency()),
+                RoundingMode.HALF_EVEN), defaultCurrency());
     }
 
     public Money(String amount) {
@@ -107,19 +109,19 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money(int amount, Currency currency) {
-        this(BigDecimal.valueOf(amount).setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN), currency);
+        this(BigDecimal.valueOf(amount).setScale(BankersRounding.getScaleForCurrency(currency), RoundingMode.HALF_EVEN), currency);
     }
 
     public Money(int amount, String currencyCode) {
-        this(BigDecimal.valueOf(amount).setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN), Currency.getInstance(currencyCode));
+        this(BigDecimal.valueOf(amount).setScale(BankersRounding.getScaleForCurrency(Currency.getInstance(currencyCode)), RoundingMode.HALF_EVEN), Currency.getInstance(currencyCode));
     }
 
     public Money(long amount, Currency currency) {
-        this(BigDecimal.valueOf(amount).setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN), currency);
+        this(BigDecimal.valueOf(amount).setScale(BankersRounding.getScaleForCurrency(currency), RoundingMode.HALF_EVEN), currency);
     }
 
     public Money(long amount, String currencyCode) {
-        this(BigDecimal.valueOf(amount).setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN), Currency.getInstance(currencyCode));
+        this(BigDecimal.valueOf(amount).setScale(BankersRounding.getScaleForCurrency(Currency.getInstance(currencyCode)), RoundingMode.HALF_EVEN), Currency.getInstance(currencyCode));
     }
 
     public Money(String amount, Currency currency) {
@@ -175,7 +177,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
             }
         }
         
-        return new Money(amount.add(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
+        return new Money(amount.add(other.amount), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }
 
     public Money subtract(Money other) {
@@ -192,7 +194,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
             }
         }
         
-        return new Money(amount.subtract(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
+        return new Money(amount.subtract(other.amount), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }
 
     public Money multiply(double amount) {
@@ -201,12 +203,12 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
 
     public Money multiply(int amount) {
         BigDecimal value = BigDecimal.valueOf(amount);
-        value = value.setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+        value = value.setScale(BankersRounding.getScaleForCurrency(currency), RoundingMode.HALF_EVEN);
         return multiply(value);
     }
 
     public Money multiply(BigDecimal multiplier) {
-        return new Money(amount.multiply(multiplier), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
+        return new Money(amount.multiply(multiplier), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }
 
     public Money divide(double amount) {
@@ -215,12 +217,12 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
 
     public Money divide(int amount) {
         BigDecimal value = BigDecimal.valueOf(amount);
-        value = value.setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+        value = value.setScale(BankersRounding.getScaleForCurrency(currency), RoundingMode.HALF_EVEN);
         return divide(value);
     }
 
     public Money divide(BigDecimal divisor) {
-        return new Money(amount.divide(divisor, amount.precision(), RoundingMode.HALF_EVEN), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
+        return new Money(amount.divide(divisor, amount.precision(), RoundingMode.HALF_EVEN), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }
 
     public Money abs() {
@@ -390,7 +392,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     private static BigDecimal valueOf(String amount) {
         BigDecimal value = new BigDecimal(amount);
         if (value.scale() < 2) {
-            value = value.setScale(BankersRounding.DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+            value = value.setScale(BankersRounding.getScaleForCurrency(defaultCurrency()), RoundingMode.HALF_EVEN);
         }
         
         return value;
