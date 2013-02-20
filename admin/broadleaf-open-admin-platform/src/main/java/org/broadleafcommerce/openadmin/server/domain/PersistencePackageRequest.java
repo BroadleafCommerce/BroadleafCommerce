@@ -63,6 +63,14 @@ public class PersistencePackageRequest {
         return new PersistencePackageRequest(Type.MAP);
     }
 
+    /**
+     * Creates a semi-populate PersistencePacakageRequest based on the specified FieldMetadata. This initializer
+     * will copy over persistence perspective items from the metadata as well as set the appropriate OperationTypes
+     * as specified in the annotation/xml configuration for the field.
+     * 
+     * @param md
+     * @return the newly created PersistencePackageRequest
+     */
     public static PersistencePackageRequest fromMetadata(FieldMetadata md) {
         final PersistencePackageRequest request = new PersistencePackageRequest();
 

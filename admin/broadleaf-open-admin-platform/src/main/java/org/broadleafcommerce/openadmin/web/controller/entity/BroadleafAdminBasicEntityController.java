@@ -67,6 +67,16 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     @Resource(name = "blEntityFormValidator")
     protected EntityFormValidator entityValidator;
 
+    /**
+     * Renders the main entity listing for the specified class, which is based on the current sectionKey
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @return the return view path
+     * @throws Exception
+     */
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
@@ -84,6 +94,17 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/dynamicModule";
     }
 
+    /**
+     * Renders the main entity form for the specified entity
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param id
+     * @return the return view path
+     * @throws Exception
+     */
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id) throws Exception {
@@ -102,6 +123,20 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/dynamicModule";
     }
 
+    /**
+     * Attempts to save the given entity. If validation is unsuccessful, it will re-render the entity form with
+     * error fields highlighted. On a successful save, it will refresh the entity page.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param id
+     * @param entityForm
+     * @param result
+     * @return the return view path
+     * @throws Exception
+     */
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id,
@@ -128,6 +163,49 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "redirect:/" + sectionKey + "/" + id;
     }
 
+    /**
+     * Shows the modal dialog that is used to add an item to a given collection. There are several possible outcomes
+     * of this call depending on the type of the specified collection field.
+     * 
+     * <ul>
+     *  <li>
+     *    <b>Basic Field</b> - Renders a list grid that allows the user to click on an entity and select it. Used by
+     *    "to-one" fields such as "defaultCategory".
+     *  </li>
+     *  <li>
+     *    <b>Basic Collection (Persist)</b> - Renders a blank form for the specified target entity so that the user may
+     *    enter information and associate the record with this collection. Used by fields such as ProductAttribute.
+     *  </li>
+     *  <li>
+     *    <b>Basic Collection (Lookup)</b> - Renders a list grid that allows the user to click on an entity and select it. 
+     *    Used by fields such as "allParentCategories".
+     *  </li>
+     *  <li>
+     *    <b>Adorned Collection (without form)</b> - Renders a list grid that allows the user to click on an entity and 
+     *    select it. The view rendered by this is identical to basic collection (lookup), but will perform the operation
+     *    on an adorned field, which may carry extra meta-information about the created relationship, such as order.
+     *  </li>
+     *  <li>
+     *    <b>Adorned Collection (with form)</b> - Renders a list grid that allows the user to click on an entity and 
+     *    select it. Once the user selects the entity, he will be presented with an empty form based on the specified
+     *    "maintainedAdornedTargetFields" for this field. Used by fields such as "crossSellProducts", which in addition
+     *    to linking an entity, provide extra fields, such as a promotional message.
+     *  </li>
+     *  <li>
+     *    <b>Map Collection</b> - Renders a form for the target entity that has an additional key field. This field is
+     *    populated either from the configured map keys, or as a result of a lookup in the case of a key based on another
+     *    entity. Used by fields such as the mediaMap on a Sku.
+     *  </li>
+     *  
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param id
+     * @param collectionField
+     * @return the return view path
+     * @throws Exception
+     */
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id,
@@ -202,6 +280,19 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/modalContainer";
     }
 
+    /**
+     * Adds the requested collection item
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param id
+     * @param collectionField
+     * @param entityForm
+     * @return the return view path
+     * @throws Exception
+     */
     public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id,
@@ -223,6 +314,22 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "views/modalListGrid";
     }
 
+    /**
+     * Removes the requested collection item
+     * 
+     * Note that the request must contain a parameter called "key" when attempting to remove a collection item from a 
+     * map collection.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param id
+     * @param collectionField
+     * @param collectionItemId
+     * @return the return view path
+     * @throws Exception
+     */
     public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id,

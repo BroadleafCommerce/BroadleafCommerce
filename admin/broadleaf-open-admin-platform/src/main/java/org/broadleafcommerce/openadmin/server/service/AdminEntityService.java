@@ -80,6 +80,18 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
+     * Updates the given entity
+     * 
+     * @param entityForm
+     * @param className
+     * @return the persisted Entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    public Entity updateEntity(EntityForm entityForm, String className)
+            throws ServiceException, ApplicationSecurityException;
+
+    /**
      * Returns the Entity[] representing the records that belong to the specified collectionProperty for the 
      * given containingClass and the primary key for the containingClass
      * 
@@ -107,21 +119,33 @@ public interface AdminEntityService {
     public Map<String, Entity[]> getRecordsForAllSubCollections(String containingClassName, String containingEntityId)
             throws ServiceException, ApplicationSecurityException;
 
-    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, String parentId)
-            throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
-
     /**
-     * Updates the given entity
+     * Adds an item into the specified collection
      * 
      * @param entityForm
-     * @param className
+     * @param mainMetadata
+     * @param field
+     * @param parentId
      * @return the persisted Entity
      * @throws ServiceException
      * @throws ApplicationSecurityException
+     * @throws ClassNotFoundException
      */
-    public Entity updateEntity(EntityForm entityForm, String className)
-            throws ServiceException, ApplicationSecurityException;
+    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, String parentId)
+            throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
+
+        /**
+     * Removes the given item from the specified collection.
+     * 
+     * @param mainMetadata
+     * @param field
+     * @param parentId
+     * @param itemId
+     * @param priorKey - only needed for Map type collections
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
     public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
             String priorKey)
             throws ServiceException, ApplicationSecurityException;
