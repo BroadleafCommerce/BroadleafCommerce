@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -118,6 +119,55 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 .withEntity(entity)
                 .withClassName(className);
         return update(request);
+    }
+
+    @Override
+    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, String containingEntityId,
+            Property collectionProperty, String collectionItemId)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata());
+
+        FieldMetadata md = collectionProperty.getMetadata();
+
+        Entity entity = null;
+
+        if (md instanceof AdornedTargetCollectionMetadata) {
+            FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getAdornedList().getCollectionFieldName());
+            fasc.setFilterValue(containingEntityId);
+            ppr.addFilterAndSortCriteria(fasc);
+
+            fasc = new FilterAndSortCriteria(ppr.getAdornedList().getCollectionFieldName() + "Target");
+            fasc.setFilterValue(collectionItemId);
+            ppr.addFilterAndSortCriteria(fasc);
+
+            Entity[] entities = fetch(ppr).getRecords();
+            Assert.isTrue(entities != null && entities.length == 1);
+            entity = entities[0];
+        } else if (md instanceof MapMetadata) {
+            FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getForeignKeys()[0].getManyToField());
+            fasc.setFilterValue(containingEntityId);
+            ppr.addFilterAndSortCriteria(fasc);
+
+            Entity[] entities = fetch(ppr).getRecords();
+            for (Entity e : entities) {
+                Property p = e.getPMap().get("id");
+                if (p.getValue().equals(collectionItemId)) {
+                    entity = e;
+                    break;
+                }
+            }
+        } else {
+            throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was not an " +
+                    "advanced collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
+        }
+
+        if (entity == null) {
+            throw new NoResultException(String.format("Could not find record for class [%s], field [%s], main entity id " +
+                    "[%s], collection entity id [%s]", containingClassMetadata.getCeilingType(),
+                    collectionProperty.getName(), containingEntityId, collectionItemId));
+        }
+
+        return entity;
     }
 
     @Override
@@ -203,6 +253,55 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         ppr.getEntity().setProperties(propArr);
 
         return add(ppr);
+    }
+
+    @Override
+    public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
+            String parentId, String collectionItemId)
+            throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
+        // Assemble the properties from the entity form
+        List<Property> properties = new ArrayList<Property>();
+        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+            Property p = new Property();
+            p.setName(entry.getKey());
+            p.setValue(entry.getValue().getValue());
+            properties.add(p);
+        }
+
+        FieldMetadata md = field.getMetadata();
+
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+                .withEntity(new Entity());
+
+        if (md instanceof BasicCollectionMetadata) {
+            BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
+            ppr.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
+
+            Property fp = new Property();
+            fp.setName(ppr.getForeignKeys()[0].getManyToField());
+            fp.setValue(parentId);
+            properties.add(fp);
+        } else if (md instanceof AdornedTargetCollectionMetadata) {
+            ppr.getEntity().setType(new String[] { ppr.getAdornedList().getAdornedTargetEntityClassname() });
+        } else if (md instanceof MapMetadata) {
+            ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
+        } else {
+            throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was" +
+                    " not a collection field.", field.getName(), mainMetadata.getCeilingType()));
+        }
+
+        ppr.setClassName(ppr.getEntity().getType()[0]);
+
+        Property p = new Property();
+        p.setName("id");
+        p.setValue(collectionItemId);
+        properties.add(p);
+
+        Property[] propArr = new Property[properties.size()];
+        properties.toArray(propArr);
+        ppr.getEntity().setProperties(propArr);
+
+        return update(ppr);
     }
 
     @Override

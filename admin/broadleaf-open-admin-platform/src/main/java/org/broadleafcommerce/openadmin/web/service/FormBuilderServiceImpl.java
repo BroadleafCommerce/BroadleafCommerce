@@ -21,6 +21,7 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
@@ -93,6 +94,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         List<Field> headerFields = new ArrayList<Field>();
         ListGrid.Type type = null;
+        boolean editable = false;
 
         // Get the header fields for this list grid. Note that the header fields are different depending on the
         // kind of field this is.
@@ -124,6 +126,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             type = ListGrid.Type.BASIC;
+            
+            if (((BasicCollectionMetadata) fmd).getAddMethodType().equals(AddMethodType.PERSIST)) {
+                editable = true;
+            }
         } else if (fmd instanceof AdornedTargetCollectionMetadata) {
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
 
@@ -136,6 +142,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             type = ListGrid.Type.ADORNED;
+
+            if (((AdornedTargetCollectionMetadata) fmd).getMaintainedAdornedTargetFields().length > 0) {
+                editable = true;
+            }
         } else if (fmd instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) fmd;
 
@@ -160,11 +170,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             type = ListGrid.Type.MAP;
+            editable = true;
         }
 
         ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities);
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setContainingEntityId(containingEntityId);
+        listGrid.setEditable(editable);
 
         return listGrid;
     }
@@ -245,6 +257,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity) {
         // Get the empty form with appropriate fields
         EntityForm ef = buildEntityForm(cmd);
+
         ef.setId(entity.findProperty("id").getValue());
         ef.setEntityType(entity.getType()[0]);
 
@@ -305,7 +318,39 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public void setEntityFormValues(EntityForm destinationForm, EntityForm sourceForm) {
+    public void populateEntityFormFields(EntityForm ef, Entity entity) {
+        ef.setId(entity.findProperty("id").getValue());
+        ef.setEntityType(entity.getType()[0]);
+
+        for (Entry<String, Field> entry : ef.getFields().entrySet()) {
+            Property entityProp = entity.findProperty(entry.getKey());
+            if (entityProp != null) {
+                entry.getValue().setValue(entityProp.getValue());
+                entry.getValue().setDisplayValue(entityProp.getDisplayValue());
+            }
+        }
+    }
+
+    @Override
+    public void populateAdornedEntityFormFields(EntityForm ef, Entity entity, AdornedTargetList adornedList) {
+        Field field = ef.getFields().get(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+        Property entityProp = entity.findProperty("id");
+        field.setValue(entityProp.getValue());
+
+        field = ef.getFields().get(adornedList.getSortField());
+        entityProp = entity.findProperty(adornedList.getSortField());
+        field.setValue(entityProp.getValue());
+    }
+
+    @Override
+    public void populateMapEntityFormFields(EntityForm ef, Entity entity) {
+        Field field = ef.getFields().get("priorKey");
+        Property entityProp = entity.findProperty("key");
+        field.setValue(entityProp.getValue());
+    }
+
+    @Override
+    public void copyEntityFormValues(EntityForm destinationForm, EntityForm sourceForm) {
         for (Entry<String, Field> entry : sourceForm.getFields().entrySet()) {
             Field destinationField = destinationForm.getFields().get(entry.getKey());
             destinationField.setValue(entry.getValue().getValue());
@@ -347,6 +392,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty())
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withIdOverride("adornedTargetIdProperty");
+        ef.addField(f, EntityForm.HIDDEN_GROUP);
+
+        f = new Field()
+                .withName(adornedList.getSortField())
+                .withFieldType(SupportedFieldType.HIDDEN.toString());
         ef.addField(f, EntityForm.HIDDEN_GROUP);
 
         return ef;
@@ -401,6 +451,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withName("symbolicId")
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withValue(parentId);
+        ef.addField(f, EntityForm.HIDDEN_GROUP);
+
+        f = new Field()
+                .withName("priorKey")
+                .withFieldType(SupportedFieldType.HIDDEN.toString());
         ef.addField(f, EntityForm.HIDDEN_GROUP);
 
         return ef;

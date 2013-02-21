@@ -101,12 +101,37 @@ public interface FormBuilderService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
+     * Sets values for all fields found on the EntityForm from the specified entity.
+     * 
+     * @param ef
+     * @param entity
+     */
+    public void populateEntityFormFields(EntityForm ef, Entity entity);
+
+    /**
+     * Sets values for the necessary adorned fields on the EntityForm from the specified entity.
+     * 
+     * @param ef
+     * @param entity
+     * @param adornedList
+     */
+    public void populateAdornedEntityFormFields(EntityForm ef, Entity entity, AdornedTargetList adornedList);
+
+    /**
+     * Sets values for the necessary map fields on the EntityForm from the specified entity.
+     * 
+     * @param ef
+     * @param entity
+     */
+    public void populateMapEntityFormFields(EntityForm ef, Entity entity);
+
+    /**
      * Copies all values for fields from the destinationForm into the sourceForm.
      * 
      * @param destinationForm
      * @param sourceForm
      */
-    public void setEntityFormValues(EntityForm destinationForm, EntityForm sourceForm);
+    public void copyEntityFormValues(EntityForm destinationForm, EntityForm sourceForm);
 
 
     /**
@@ -145,5 +170,10 @@ public interface FormBuilderService {
      */
     public EntityForm buildMapForm(MapMetadata mapMd, MapStructure mapStructure, ClassMetadata cmd, String parentId)
             throws ServiceException, ApplicationSecurityException;
+
+
+
+
+
 
 }

@@ -16,6 +16,8 @@ public class ListGrid {
     protected AddMethodType addMethodType;
     protected String listGridType;
 
+    protected boolean editable = false;
+
     protected String containingEntityId = null;
     protected String subCollectionFieldName = null;
 
@@ -75,6 +77,14 @@ public class ListGrid {
 
     public void setListGridType(Type listGridType) {
         this.listGridType = listGridType.toString().toLowerCase();
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 
     public String getContainingEntityId() {

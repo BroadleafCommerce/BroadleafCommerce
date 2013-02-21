@@ -92,6 +92,21 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
+     * Gets an Entity representing a specific collection item
+     * 
+     * @param containingClassMetadata
+     * @param containingEntityId
+     * @param collectionProperty
+     * @param collectionItemId
+     * @return the Entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, String containingEntityId,
+            Property collectionProperty, String collectionItemId)
+            throws ServiceException, ApplicationSecurityException;
+
+    /**
      * Returns the Entity[] representing the records that belong to the specified collectionProperty for the 
      * given containingClass and the primary key for the containingClass
      * 
@@ -134,8 +149,24 @@ public interface AdminEntityService {
     public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, String parentId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
+    /**
+     * Updates the specified collection item
+     * 
+     * @param entityForm
+     * @param mainMetadata
+     * @param field
+     * @param parentId
+     * @param collectionItemId
+     * @return the persisted Entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     * @throws ClassNotFoundException
+     */
+    public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
+            String parentId, String collectionItemId)
+            throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
-        /**
+    /**
      * Removes the given item from the specified collection.
      * 
      * @param mainMetadata
@@ -149,6 +180,5 @@ public interface AdminEntityService {
     public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
             String priorKey)
             throws ServiceException, ApplicationSecurityException;
-
 
 }

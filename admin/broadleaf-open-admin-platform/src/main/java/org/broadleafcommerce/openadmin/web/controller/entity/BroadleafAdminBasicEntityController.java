@@ -152,7 +152,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
             //re-initialize the field groups as well as sub collections
             EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
-            formService.setEntityFormValues(newForm, entityForm);
+            formService.copyEntityFormValues(newForm, entityForm);
 
             model.addAttribute("entityForm", newForm);
             model.addAttribute("viewType", "entityForm");
@@ -280,6 +280,67 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/modalContainer";
     }
 
+    public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String id,
+            String collectionField,
+            String collectionItemId) throws Exception {
+        /*
+         * TODO APA
+         * also refactor the list grid html stuff to load one that loads the toolbar included
+         * basic collection persist, same form 
+         * adorned collection with form 
+         * map collections
+         */
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
+
+        if (md instanceof BasicCollectionMetadata &&
+                ((BasicCollectionMetadata) md).getAddMethodType().equals(AddMethodType.PERSIST)) {
+            BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
+
+            ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+            Entity entity = service.getRecord(fmd.getCollectionCeilingEntity(), collectionItemId);
+
+            EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity);
+
+            model.addAttribute("entityForm", entityForm);
+            model.addAttribute("viewType", "modalEntityForm");
+        } else if (md instanceof AdornedTargetCollectionMetadata &&
+                ((AdornedTargetCollectionMetadata) md).getMaintainedAdornedTargetFields().length > 0) {
+            AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
+
+            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, id, collectionProperty, collectionItemId);
+
+            formService.populateEntityFormFields(entityForm, entity);
+            formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
+
+            model.addAttribute("entityForm", entityForm);
+            model.addAttribute("viewType", "modalAdornedFormOnly");
+        } else if (md instanceof MapMetadata) {
+            MapMetadata fmd = (MapMetadata) md;
+
+            ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, id, collectionProperty, collectionItemId);
+            EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
+
+            formService.populateEntityFormFields(entityForm, entity);
+            formService.populateMapEntityFormFields(entityForm, entity);
+
+            model.addAttribute("entityForm", entityForm);
+            model.addAttribute("viewType", "modalMapEntityForm");
+        }
+
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        setModelAttributes(model, sectionKey);
+        return "modules/modalContainer";
+    }
+
     /**
      * Adds the requested collection item
      * 
@@ -304,6 +365,41 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
         // First, we must save the collection entity
         service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id);
+
+        // Next, we must get the new list grid that represents this collection
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
+        model.addAttribute("listGrid", listGrid);
+
+        // We return the new list grid so that it can replace the currently visible one
+        setModelAttributes(model, sectionKey);
+        return "views/modalListGrid";
+    }
+
+    /**
+     * Updates the specified collection item
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param id
+     * @param collectionField
+     * @param entityForm
+     * @return the return view path
+     * @throws Exception
+     */
+    public String updateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String id,
+            String collectionField,
+            String collectionItemId,
+            EntityForm entityForm) throws Exception {
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+
+        // First, we must save the collection entity
+        service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id, collectionItemId);
 
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);

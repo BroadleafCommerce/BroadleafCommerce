@@ -366,7 +366,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             }
             
             
-            validate(entity, instance, null);
+            //FIXME: //validate(entity, instance, null);
             if (!entity.isValidationFailure()) {
                 //only save if the validation passes
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
