@@ -198,11 +198,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public RuleBuilder buildRuleBuilder(ClassMetadata cmd, Entity[] entities, String[] ruleVars, String[] configKeys) {
+    public RuleBuilder buildRuleBuilder(String fieldName, String friendlyName, Entity[] entities) {
         RuleBuilder rb = new RuleBuilder();
-        rb.setClassName(cmd.getCeilingType());
-        rb.setRuleVars(ruleVars);
-        rb.setConfigKeys(configKeys);
+        rb.setFieldName(fieldName);
+        rb.setFriendlyName(friendlyName);
         rb.setEntities(entities);
 
         return rb;
@@ -285,10 +284,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (p.getMetadata() instanceof BasicCollectionMetadata) {
                 BasicCollectionMetadata fmd = (BasicCollectionMetadata) p.getMetadata();
 
-                if (fmd.getRuleBuilderVars().length > 0) {
-                    ClassMetadata subCollectionMd = adminEntityService.getClassMetadata(fmd.getCollectionCeilingEntity());
-                    RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(subCollectionMd, subCollectionEntities,
-                            fmd.getRuleBuilderVars(), fmd.getRuleBuilderConfigKeys());
+                if (fmd.isRuleBuilder()) {
+                    RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(p.getName(), fmd.getFriendlyName(),
+                            subCollectionEntities);
                     ef.getCollectionRuleBuilders().add(subCollectionRuleBuilder);
 
                     continue;

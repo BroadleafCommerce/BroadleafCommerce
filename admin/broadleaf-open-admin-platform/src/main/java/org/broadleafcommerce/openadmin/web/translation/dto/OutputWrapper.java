@@ -25,7 +25,17 @@ public class OutputWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    protected String containerId;
+
     protected ConditionsDTO conditions;
+
+    public String getContainerId() {
+        return containerId;
+    }
+
+    public void setContainerId(String containerId) {
+        this.containerId = containerId;
+    }
 
     public ConditionsDTO getConditions() {
         return conditions;

@@ -191,13 +191,14 @@ public class OfferImpl implements Offer, Status {
     @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, manyToField = "targetOffer", friendlyName = "OfferImpl_qualifyingItemCriteria", ruleBuilder=true)
     protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
     @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, manyToField = "targetOffer", friendlyName = "targetItemCriteria", ruleBuilderConfigKeys = {"promotionOrderItem"}, ruleBuilderVars = {"orderItem"})
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, manyToField = "targetOffer", friendlyName = "OfferImpl_targetItemCriteria", ruleBuilder=true)
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")

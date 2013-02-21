@@ -108,16 +108,15 @@ public interface FormBuilderService {
      */
     public void setEntityFormValues(EntityForm destinationForm, EntityForm sourceForm);
 
+
     /**
      * Creates a rule builder for the specified parameters.
-     * 
-     * @param cmd
+     *
+     * @param fieldName
+     * @param friendlyName
      * @param entities
-     * @param ruleVars
-     * @param configKeys
-     * @return the RuleBuilder
      */
-    public RuleBuilder buildRuleBuilder(ClassMetadata cmd, Entity[] entities, String[] ruleVars, String[] configKeys);
+    public RuleBuilder buildRuleBuilder(String fieldName, String friendlyName, Entity[] entities);
 
     /**
      * Builds the EntityForm used in modal dialogs when adding items to adorned target collections.

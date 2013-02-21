@@ -438,8 +438,7 @@ public class FieldMetadataOverride {
     private OperationType fetchType;
     private OperationType inspectType;
     private Boolean useServerSideInspectionCache;
-    private String[] ruleBuilderConfigKeys;
-    private String[] ruleBuilderVars;
+    private Boolean ruleBuilder;
 
     public String getTargetElementId() {
         return targetElementId;
@@ -513,20 +512,12 @@ public class FieldMetadataOverride {
         this.updateType = updateType;
     }
 
-    public String[] getRuleBuilderConfigKeys() {
-        return ruleBuilderConfigKeys;
+    public Boolean getRuleBuilder() {
+        return ruleBuilder;
     }
 
-    public void setRuleBuilderConfigKeys(String[] ruleBuilderConfigKeys) {
-        this.ruleBuilderConfigKeys = ruleBuilderConfigKeys;
-    }
-
-    public String[] getRuleBuilderVars() {
-        return ruleBuilderVars;
-    }
-
-    public void setRuleBuilderVars(String[] ruleBuilderVars) {
-        this.ruleBuilderVars = ruleBuilderVars;
+    public void setRuleBuilder(Boolean ruleBuilder) {
+        this.ruleBuilder = ruleBuilder;
     }
 
     //basic collection fields

@@ -39,16 +39,16 @@ import java.util.List;
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-@Component("blAdminPromoOrderItemProcessor")
-public class AdminPromoOrderItemProcessor extends AbstractModelVariableModifierProcessor {
+@Component("blAdminRuleBuilderProcessor")
+public class AdminRuleBuilderProcessor extends AbstractModelVariableModifierProcessor {
 
     private RuleBuilderService ruleBuilderService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
-    public AdminPromoOrderItemProcessor() {
-        super("admin_promo_order_item");
+    public AdminRuleBuilderProcessor() {
+        super("admin_rule_builder");
     }
 
     @Override
@@ -59,39 +59,47 @@ public class AdminPromoOrderItemProcessor extends AbstractModelVariableModifierP
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
         String resultVar = element.getAttributeValue("resultVar");
-        OutputWrapper wrapper = new OutputWrapper();
+        List<OutputWrapper> wrappers = new ArrayList<OutputWrapper>();
         initServices(arguments);
 
         try {
-            //String ceilingOfferItem = "org.broadleafcommerce.core.offer.domain.OfferItemCriteria";
-            //ForeignKey[] fksTargetOfferItem = new ForeignKey[]{new ForeignKey("targetOffer", "org.broadleafcommerce.core.offer.domain.OfferImpl", null)};
-            //RuleBuilderDTO dtoOfferItem = new RuleBuilderDTO(ceilingOfferItem, null, fksTargetOfferItem);
-            //ForeignKey[] fksQualifyOfferItem = new ForeignKey[]{new ForeignKey("qualifyingOffer", "org.broadleafcommerce.core.offer.domain.OfferImpl", null)};
-            //RuleBuilderDTO dtoQualifyOfferItem = new RuleBuilderDTO(ceilingOfferItem, null, fksQualifyOfferItem);
+            String fieldName = (String) StandardExpressionProcessor.processExpression(arguments,
+                    element.getAttributeValue("fieldName"));
+            String ceilingEntity = (String) StandardExpressionProcessor.processExpression(arguments,
+                    element.getAttributeValue("ceilingEntity"));
+            String configKey = (String) StandardExpressionProcessor.processExpression(arguments,
+                    element.getAttributeValue("configKey"));
+            String mvelProperty = (String) StandardExpressionProcessor.processExpression(arguments,
+                    element.getAttributeValue("mvelProperty"));
+            Entity[] entities = (Entity[]) StandardExpressionProcessor.processExpression(arguments,
+                    element.getAttributeValue("entities"));
 
-            Entity[] entities = (Entity[]) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("entities"));
+            if (entities != null && mvelProperty != null && ceilingEntity != null &&
+                    configKey != null && fieldName != null) {
 
-            String mvelPropertyName = "orderItemMatchRule";
-            String mvel = null;
-            if (entities != null) {
+                int i=0;
                 for (Entity e : entities) {
+                    String mvel = null;
                     for (Property p : e.getProperties()) {
-                        if (mvelPropertyName.equals(p.getName())){
+                        if (mvelProperty.equals(p.getName())){
                             mvel = p.getValue();
                         }
                     }
+
+                    if (mvel != null) {
+                        RuleBuilderDTO dtoOrderItem = new RuleBuilderDTO(ceilingEntity, configKey, null);
+                        List<RuleBuilderDTO> dtoList = new ArrayList<RuleBuilderDTO>();
+                        dtoList.add(dtoOrderItem);
+                        OutputWrapper wrapper = new OutputWrapper();
+                        wrapper.setConditions(ruleBuilderService.buildConditionsDTO(dtoList, mvel));
+                        wrapper.setContainerId(fieldName+i);
+                        wrappers.add(wrapper);
+                    }
+                    i++;
+
                 }
-            }
 
-            if (mvel != null) {
-                String ceilingOrderItem = "org.broadleafcommerce.core.order.domain.OrderItem";
-                String configKeyOrderItem = "promotionOrderItem";
-                RuleBuilderDTO dtoOrderItem = new RuleBuilderDTO(ceilingOrderItem, configKeyOrderItem, null);
 
-                List<RuleBuilderDTO> dtoList = new ArrayList<RuleBuilderDTO>();
-                dtoList.add(dtoOrderItem);
-
-                wrapper.setConditions(ruleBuilderService.buildConditionsDTO(dtoList, mvel));
             }
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -103,7 +111,7 @@ public class AdminPromoOrderItemProcessor extends AbstractModelVariableModifierP
             e.printStackTrace();
         }
 
-        addToModel(arguments, resultVar, wrapper);
+        addToModel(arguments, resultVar, wrappers);
     }
 
     protected void initServices(Arguments arguments) {
@@ -116,3 +124,4 @@ public class AdminPromoOrderItemProcessor extends AbstractModelVariableModifierP
     }
 
 }
+

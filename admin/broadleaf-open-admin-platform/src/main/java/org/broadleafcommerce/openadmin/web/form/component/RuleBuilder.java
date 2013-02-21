@@ -23,33 +23,27 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
  */
 public class RuleBuilder {
 
-    protected String className;
-    protected String[] ruleVars;
-    protected String[] configKeys;
+    protected String fieldName;
+    protected String friendlyName;
     protected Entity[] entities;
+    protected String ceilingEntity;
+    protected String configKey;
+    protected String mvelProperty;
 
-    public String getClassName() {
-        return className;
+    public String getFieldName() {
+        return fieldName;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 
-    public String[] getRuleVars() {
-        return ruleVars;
+    public String getFriendlyName() {
+        return friendlyName;
     }
 
-    public void setRuleVars(String[] ruleVars) {
-        this.ruleVars = ruleVars;
-    }
-
-    public String[] getConfigKeys() {
-        return configKeys;
-    }
-
-    public void setConfigKeys(String[] configKeys) {
-        this.configKeys = configKeys;
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
     }
 
     public Entity[] getEntities() {
@@ -58,5 +52,29 @@ public class RuleBuilder {
 
     public void setEntities(Entity[] entities) {
         this.entities = entities;
+    }
+
+    public String getCeilingEntity() {
+        return ceilingEntity;
+    }
+
+    public void setCeilingEntity(String ceilingEntity) {
+        this.ceilingEntity = ceilingEntity;
+    }
+
+    public String getConfigKey() {
+        return configKey;
+    }
+
+    public void setConfigKey(String configKey) {
+        this.configKey = configKey;
+    }
+
+    public String getMvelProperty() {
+        return mvelProperty;
+    }
+
+    public void setMvelProperty(String mvelProperty) {
+        this.mvelProperty = mvelProperty;
     }
 }

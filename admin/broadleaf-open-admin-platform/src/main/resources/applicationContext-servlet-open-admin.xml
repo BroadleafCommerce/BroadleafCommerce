@@ -56,7 +56,7 @@
                 <ref bean="blAdminListGridLinkProcessor"/>
                 <ref bean="blAdminModuleProcessor"/>
                 <ref bean="blAdminSectionHrefProcessor"/>
-                <ref bean="blAdminPromoOrderItemProcessor"/>
+                <ref bean="blAdminRuleBuilderProcessor"/>
             </set>
         </property>
     </bean>
