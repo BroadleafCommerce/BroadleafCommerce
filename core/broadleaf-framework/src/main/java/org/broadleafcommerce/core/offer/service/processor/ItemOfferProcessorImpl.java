@@ -475,6 +475,12 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     protected void markQualifiersAndTargets(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         boolean matchFound = true;
 
+        if (itemOffer.getOffer().getQualifyingItemCriteria().isEmpty() &&
+                itemOffer.getOffer().getTargetItemCriteria().isEmpty()) {
+            return;
+        }
+
+        int count = 1;
         do {
             boolean qualifiersFound = markQualifiers(itemOffer, order);
             boolean targetsFound = markTargets(itemOffer, order);
@@ -492,7 +498,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     @Override
     @SuppressWarnings("unchecked")
-    public void applyAndCompareOrderAndItemOffers(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, List<PromotableCandidateItemOffer> qualifiedItemOffers) {
+    public void applyAndCompareOrderAndItemOffers(PromotableOrder order,
+            List<PromotableCandidateOrderOffer> qualifiedOrderOffers,
+            List<PromotableCandidateItemOffer> qualifiedItemOffers) {
         if (!qualifiedItemOffers.isEmpty()) {
             calculatePotentialSavings(qualifiedItemOffers, order);
             // Sort order item offers by priority and potential total discount

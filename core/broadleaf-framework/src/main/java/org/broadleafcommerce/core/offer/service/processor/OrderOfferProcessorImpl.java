@@ -323,18 +323,21 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     protected void synchronizeOrderItems(PromotableOrder promotableOrder) {
         Order order = promotableOrder.getOrder();
-        Map<Long, PromotableOrderItem> promotableItemMap = buildPromotableItemMap(promotableOrder);
+        Map<OrderItem, PromotableOrderItem> promotableItemMap = buildPromotableItemMap(promotableOrder);
 
         for (OrderItem orderItem : order.getOrderItems()) {
-            PromotableOrderItem promotableItem = promotableItemMap.get(orderItem.getId());
+            PromotableOrderItem promotableItem = promotableItemMap.get(orderItem);
+            if (promotableItem == null) {
+                continue;
+            }
             synchronizeItemPriceDetails(orderItem, promotableItem);
         }
     }
 
-    protected Map<Long, PromotableOrderItem> buildPromotableItemMap(PromotableOrder promotableOrder) {
-        Map<Long, PromotableOrderItem> promotableItemMap = new HashMap<Long, PromotableOrderItem>();
+    protected Map<OrderItem, PromotableOrderItem> buildPromotableItemMap(PromotableOrder promotableOrder) {
+        Map<OrderItem, PromotableOrderItem> promotableItemMap = new HashMap<OrderItem, PromotableOrderItem>();
         for (PromotableOrderItem item : promotableOrder.getDiscountableOrderItems()) {
-            promotableItemMap.put(item.getOrderItemId(), item);
+            promotableItemMap.put(item.getOrderItem(), item);
         }
         return promotableItemMap;
     }
@@ -461,7 +464,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             offerIds.add(offerId);
         }
         Collections.sort(offerIds);
-        return itemDetail.getOrderItem().getId() + offerIds.toString();
+        return itemDetail.getOrderItem().toString() + offerIds.toString();
     }
 
     protected Map<String, PromotableOrderItemPriceDetail> buildPromotableDetailsMap(PromotableOrderItem item) {

@@ -278,6 +278,7 @@ public class OfferServiceImpl implements OfferService {
                 }
             }
             orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
+            order.setSubTotal(order.calculateSubTotal());
 
             orderService.save(order, false);
         }

@@ -456,7 +456,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
             offerIds.add(offerId);
         }
         Collections.sort(offerIds);
-        return promotableOrderItem.getOrderItemId() + offerIds.toString();
+        return promotableOrderItem.getOrderItem().toString() + offerIds.toString();
     }
 
     @Override
