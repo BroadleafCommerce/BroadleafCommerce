@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 
 /**
@@ -48,6 +49,17 @@ public class BroadleafCurrencyUtils {
         } else {
             return new Money();
         }
+    }
+
+    public static Currency getCurrency(Money money) {
+        if (money == null) {
+            return Money.defaultCurrency();
+        }
+        return (money.getCurrency() == null) ? Money.defaultCurrency() : money.getCurrency();
+    }
+
+    public static Currency getCurrency(BroadleafCurrency currency) {
+        return (currency == null) ? Money.defaultCurrency() : Currency.getInstance(currency.getCurrencyCode());
     }
 
 }
