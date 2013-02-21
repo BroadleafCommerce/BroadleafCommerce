@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -47,18 +48,18 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
         
         Money orderSavings = order.getOrderAdjustmentsValue();
         if (orderSavings == null) {
-            orderSavings = new Money(order.getCurrency());
+            orderSavings = new Money(BroadleafCurrencyUtils.getCurrency(order.getCurrency()));
         }
         Money orderSubTotal = order.getSubTotal();
         if (orderSubTotal == null || orderSubTotal.lessThan(orderSavings)) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("Subtotal is null or less than orderSavings in DistributeOrderSavingsActivity.java.  " +
-                		"Resetting orderSavings to match subTotal");                
+                        "No distribution is taking place.");
             }
-            orderSavings = orderSubTotal;
+            return context;
         }                                       
         
-        Money savingsDistributed = new Money(order.getCurrency());
+        Money savingsDistributed = new Money(BroadleafCurrencyUtils.getCurrency(order.getCurrency()));
         for (OrderItem orderItem : order.getOrderItems()) {
             savingsDistributed = savingsDistributed.add(updateOrderItemSavingsTotal(orderItem, orderSubTotal, orderSavings));
         }
@@ -108,7 +109,7 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
         if (orderItem instanceof OrderItemContainer) {
             OrderItemContainer container = (OrderItemContainer) orderItem;
             if (!container.isPricingAtContainerLevel()) {
-                Money returnSavings = new Money(orderItem.getOrder().getCurrency());
+                Money returnSavings = new Money(BroadleafCurrencyUtils.getCurrency(orderItem.getOrder().getCurrency()));
                 for (OrderItem containedItem : container.getOrderItems()) {
                     Money prorataOrderSavings = updateOrderItemSavingsTotal(containedItem, subTotal, orderSavings);
                     containedItem.setProratedOrderAdjustment(prorataOrderSavings.multiply(orderItem.getQuantity()));
@@ -118,9 +119,9 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
             }
         }
         Money itemTotal = orderItem.getTotalPrice();
-        Money prorataOrderSavings = new Money(orderSavings.getCurrency());
-        if (orderSavings.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-            orderItem.setProratedOrderAdjustment(new Money(orderSavings.getCurrency()));
+        Money prorataOrderSavings = new Money(BroadleafCurrencyUtils.getCurrency(orderSavings));
+        if (orderSavings == null || (orderSavings.getAmount().compareTo(BigDecimal.ZERO) == 0)) {
+            orderItem.setProratedOrderAdjustment(new Money(BroadleafCurrencyUtils.getCurrency(orderSavings)));
         } else {
             prorataOrderSavings = itemTotal.divide(subTotal.getAmount()).multiply(orderSavings.getAmount());
             orderItem.setProratedOrderAdjustment(prorataOrderSavings);
@@ -130,7 +131,8 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
     }
 
     public long countNumberOfUnits(Money difference) {
-        double numUnits = difference.multiply(Math.pow(10, difference.getCurrency().getDefaultFractionDigits())).doubleValue();
+        double numUnits = difference.multiply(Math.pow(10,
+                BroadleafCurrencyUtils.getCurrency(difference).getDefaultFractionDigits())).doubleValue();
         return Math.round(numUnits);
     }
 
@@ -140,7 +142,7 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
      * @return
      */
     public Money getUnitAmount(Money difference) {
-        Currency currency = difference.getCurrency();
+        Currency currency = BroadleafCurrencyUtils.getCurrency(difference);
         BigDecimal divisor = new BigDecimal(Math.pow(10, currency.getDefaultFractionDigits()));
         BigDecimal unitAmount = new BigDecimal("1").divide(divisor);
 
@@ -149,5 +151,6 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
         }
         return new Money(unitAmount, currency);
     }
+
 
 }
