@@ -50,7 +50,7 @@ public class SkuPricingConsiderationContext {
     public static boolean hasDynamicPricing() {
         return (
                     getSkuPricingConsiderationContext() != null && 
-                    getSkuPricingConsiderationContext().size() > 0 &&
+                getSkuPricingConsiderationContext().size() >= 0 &&
                     getSkuPricingService() != null
                    ); 
     }
