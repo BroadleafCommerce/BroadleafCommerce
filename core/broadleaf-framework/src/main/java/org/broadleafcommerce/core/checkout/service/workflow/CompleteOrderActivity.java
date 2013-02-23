@@ -16,15 +16,23 @@
 
 package org.broadleafcommerce.core.checkout.service.workflow;
 
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class CompleteOrderActivity extends BaseActivity {
 
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
+
         seed.getOrder().setStatus(OrderStatus.SUBMITTED);
+        seed.getOrder().setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
+        seed.getOrder().setSubmitDate(Calendar.getInstance().getTime());
+
         return context;
     }
 

@@ -124,7 +124,7 @@ public class ValidateAddRequestActivity extends BaseActivity {
             for (ProductOption productOption : product.getProductOptions()) {
                 if (productOption.getRequired()) {
                     if (attributeValues.get(productOption.getAttributeName()) == null) {
-                        throw new RequiredAttributeNotProvidedException("Unable to add to cart. Required attribute was not provided: " + productOption.getAttributeName());
+                        throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName());
                     } else {
                         attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
                     }
