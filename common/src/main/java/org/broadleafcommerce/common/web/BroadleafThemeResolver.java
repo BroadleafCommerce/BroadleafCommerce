@@ -18,6 +18,7 @@ package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,5 +29,13 @@ import javax.servlet.http.HttpServletRequest;
  * @author bpolster
  */
 public interface BroadleafThemeResolver {
+    
+    /**
+     * 
+     * @deprecated Use {@link #resolveTheme(WebRequest, Site)} instead
+     */
+    @Deprecated
     public Theme resolveTheme(HttpServletRequest request, Site site);
+    
+    public Theme resolveTheme(WebRequest request, Site site);
 }

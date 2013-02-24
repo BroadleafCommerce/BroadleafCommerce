@@ -16,10 +16,11 @@
 
 package org.broadleafcommerce.common.web;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Responsible for determining the SandBox to use for the current request. 
@@ -32,5 +33,20 @@ import org.broadleafcommerce.common.site.domain.Site;
  * @author bpolster
  */
 public interface BroadleafSandBoxResolver  {
+
+    /**
+     * @deprecated use {@link #resolveSandBox(WebRequest, Site)} instead
+     */
+    @Deprecated
     public SandBox resolveSandBox(HttpServletRequest request, Site site);
+
+    /**
+     * Resolve the sandbox for the given site and request
+     * 
+     * @param request
+     * @param site
+     * @return the sandbox for the current request
+     */
+    public SandBox resolveSandBox(WebRequest request, Site site);
+
 }
