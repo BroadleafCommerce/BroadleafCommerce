@@ -27,6 +27,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,8 +38,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -49,15 +49,14 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "ProductOptionValueId")
+    @GeneratedValue(generator = "ProductOptionValueId")
     @GenericGenerator(
-        name="ProductOptionValueId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="ProductOptionValueImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl")
-        }
-    )
+            name = "ProductOptionValueId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "ProductOptionValueImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl")
+            })
     @Column(name = "PRODUCT_OPTION_VALUE_ID")
     protected Long id;
 
@@ -65,12 +64,12 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @AdminPresentation(friendlyName = "Attribute_Value")
     protected String attributeValue;
 
-    @Column(name ="DISPLAY_ORDER")
+    @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "Display_Order")
     protected Long displayOrder;
-    
-    @Column(name = "PRICE_ADJUSTMENT", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Adjustment", fieldType=SupportedFieldType.MONEY)
+
+    @Column(name = "PRICE_ADJUSTMENT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "Adjustment", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal priceAdjustment;
 
     @ManyToOne(targetEntity = ProductOptionImpl.class)
@@ -106,24 +105,21 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     public void setDisplayOrder(Long displayOrder) {
         this.displayOrder = displayOrder;
     }
-    
+
     @Override
     public Money getPriceAdjustment() {
 
-      Money returnPrice = null;
-        
-       
+        Money returnPrice = null;
+
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-         
-                DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this,priceAdjustment == null ? null : new Money(priceAdjustment), SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-                returnPrice = dynamicPrices.getPriceAdjustment(); 
-          
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this, priceAdjustment == null ? null : new Money(priceAdjustment), SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+            returnPrice = dynamicPrices.getPriceAdjustment();
         } else {
             if (priceAdjustment != null) {
-                returnPrice = new Money(priceAdjustment,Money.defaultCurrency());
+                returnPrice = new Money(priceAdjustment, Money.defaultCurrency());
             }
         }
-        
+
         return returnPrice;
     }
 

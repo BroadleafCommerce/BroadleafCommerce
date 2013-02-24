@@ -104,11 +104,21 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         DynamicSkuPricingService savedPricingService = SkuPricingConsiderationContext.getSkuPricingService();
         try {
             Long numProducts = productDao.readCountAllActiveProducts(SystemTime.asDate());
-            LOG.debug("There are " + numProducts + " total products");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("There are " + numProducts + " total products");
+            }
             int page = 0;
             while ((page * pageSize) < numProducts) {
                 buildIncrementalIndex(page, pageSize);
                 page++;
+            }
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Optimizing the index...");
+                }
+                SolrContext.getReindexServer().optimize();
+            } catch (SolrServerException e) {
+                throw new ServiceException("Could not rebuild index", e);
             }
         } catch (ServiceException e) {
             throw e;

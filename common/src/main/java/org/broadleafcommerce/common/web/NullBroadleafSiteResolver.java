@@ -16,10 +16,12 @@
 
 package org.broadleafcommerce.common.web;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Returns null for the Site (typical for non-multi-site implementations of
@@ -32,6 +34,11 @@ public class NullBroadleafSiteResolver implements BroadleafSiteResolver {
 
     @Override
     public Site resolveSite(HttpServletRequest request) {
+        return resolveSite(new ServletWebRequest(request));
+    }
+    
+    @Override
+    public Site resolveSite(WebRequest request) {
         return null;
     }
     
