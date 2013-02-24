@@ -61,6 +61,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                     //support legacy offers
                     PromotableCandidateItemOffer candidate =
                             createCandidateItemOffer(qualifiedItemOffers, offer, promotableOrderItem, order);
+                    candidate.setLegacyOffer(true);
                     if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
                         candidate.getCandidateTargets().add(promotableOrderItem);
                     }
@@ -195,6 +196,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                     }
                     applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                     break;
+                } else if (itemOffer.isLegacyOffer()) {
+                    // if legacy itemOffer then just apply it
+                    applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                 }
             }
         }
@@ -289,8 +293,12 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
    
     protected void applyItemQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
-        markQualifiersAndTargets(order, itemOffer);
-        splitDetailsIfNecessary(order.getAllPromotableOrderItemPriceDetails());
+        if (itemOffer.isLegacyOffer()) {
+            return;
+        } else {
+            markQualifiersAndTargets(order, itemOffer);
+            splitDetailsIfNecessary(order.getAllPromotableOrderItemPriceDetails());
+        }
     }
 
     protected List<PromotableOrderItemPriceDetail> buildPriceDetailListFromOrderItems(List<PromotableOrderItem> items) {
@@ -474,12 +482,6 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected void markQualifiersAndTargets(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         boolean matchFound = true;
-
-        if (itemOffer.getOffer().getQualifyingItemCriteria().isEmpty() &&
-                itemOffer.getOffer().getTargetItemCriteria().isEmpty()) {
-            return;
-        }
-
         int count = 1;
         do {
             boolean qualifiersFound = markQualifiers(itemOffer, order);

@@ -71,4 +71,8 @@ public interface PromotableCandidateItemOffer extends Serializable {
     public int getUses();
 
     public void addUse();
+    
+    public boolean isLegacyOffer();
+    
+    public void setLegacyOffer(boolean legacyOffer);
 }
