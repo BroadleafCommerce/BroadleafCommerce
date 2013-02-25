@@ -33,7 +33,6 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     protected PromotableOrder promotableOrder;
     protected Money potentialSavings;
     protected int uses = 0;
-    protected boolean legacyOffer;
     
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
     protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
@@ -203,11 +202,6 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
 
     @Override
     public boolean isLegacyOffer() {
-        return legacyOffer;
-    }
-
-    @Override
-    public void setLegacyOffer(boolean legacyOffer) {
-        this.legacyOffer = legacyOffer;
+        return offer.getQualifyingItemCriteria().isEmpty() && offer.getTargetItemCriteria().isEmpty();
     }
 }

@@ -200,7 +200,8 @@ public class LegacyPricingTest extends BaseTest {
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D))); // Shipping is not taxable
+        // Distribute Order Savings Activity is on.
+        assert (order.getTotalTax().equals((order.getSubTotal().subtract(order.getOrderAdjustmentsValue())).multiply(0.05D))); // Shipping is not taxable
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).subtract(order.getOrderAdjustmentsValue())));
     }
 

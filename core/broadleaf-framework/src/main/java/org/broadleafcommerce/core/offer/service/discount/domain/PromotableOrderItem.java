@@ -35,6 +35,11 @@ public interface PromotableOrderItem extends Serializable {
     void updateRuleVariables(Map<String, Object> ruleVars);
 
     /**
+     * Called by pricing engine to reset the state of this item.    
+     */
+    void resetPriceDetails();
+
+    /**
      * Returns true if this item can receive item level discounts.
      * @return
      */

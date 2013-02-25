@@ -553,6 +553,15 @@ public class OrderImpl implements Order {
     }
 
     @Override
+    public boolean finalizeItemPrices() {
+        boolean updated = false;
+        for (OrderItem orderItem : orderItems) {
+            orderItem.finalizePrice();
+        }
+        return updated;
+    }
+
+    @Override
     public Map<String, OrderAttribute> getOrderAttributes() {
         return orderAttributes;
     }

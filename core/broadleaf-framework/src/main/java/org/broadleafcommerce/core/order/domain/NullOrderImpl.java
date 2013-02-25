@@ -355,4 +355,9 @@ public class NullOrderImpl implements Order {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
+    @Override
+    public boolean finalizeItemPrices() {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
 }

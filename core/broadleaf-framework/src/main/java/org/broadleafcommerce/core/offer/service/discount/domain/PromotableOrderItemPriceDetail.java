@@ -41,6 +41,13 @@ public interface PromotableOrderItemPriceDetail {
      */
     List<PromotableOrderItemPriceDetailAdjustment> getCandidateItemAdjustments();
 
+    /**
+     * Returns true if this detail has nonCombinable adjustments.   Used primarily with legacy offers (prior to 2.0)
+     * 
+     * @return
+     */
+    boolean hasNonCombinableAdjustments();
+
 
     /**
      * Returns true if a notCombinableOffer or totalitarian offer was applied to this priceDetail.
@@ -178,4 +185,11 @@ public interface PromotableOrderItemPriceDetail {
      * @return
      */
     PromotableOrderItemPriceDetail splitIfNecessary();
+    
+    /**
+     * Returns true if the sale adjustments should be used.
+     * @return
+     */
+    boolean useSaleAdjustments();
+
 }

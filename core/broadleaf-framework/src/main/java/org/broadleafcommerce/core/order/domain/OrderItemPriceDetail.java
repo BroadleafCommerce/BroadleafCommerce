@@ -101,7 +101,7 @@ public interface OrderItemPriceDetail extends Serializable {
      * Indicates that the adjustments were based off of the item's sale price.
      * @return
      */
-    boolean useSalePrice();
+    boolean getUseSalePrice();
 
     /**
      * Set that the adjustments should be taken off of the item's sale price.

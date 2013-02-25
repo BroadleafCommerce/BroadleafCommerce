@@ -401,6 +401,12 @@ public interface Order extends Serializable {
      */
     public boolean updatePrices();
     
+    /**
+     * Updates the averagePriceField for all order items.
+     * @return
+     */
+    public boolean finalizeItemPrices();
+
     public Money getFulfillmentGroupAdjustmentsValue();
     
     public void addOfferCode(OfferCode addedOfferCode);

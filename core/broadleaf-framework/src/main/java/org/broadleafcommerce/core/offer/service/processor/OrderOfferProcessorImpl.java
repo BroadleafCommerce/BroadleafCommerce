@@ -395,6 +395,11 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             itemDetail.setQuantity(promotableDetail.getQuantity());
         }
 
+        if (itemDetail.getUseSalePrice() != promotableDetail.useSaleAdjustments()) {
+            itemDetail.setUseSalePrice(promotableDetail.useSaleAdjustments());
+        }
+
+
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableDetail.getCandidateItemAdjustments()) {
             OrderItemPriceDetailAdjustment itemAdjustment = itemAdjustmentMap.remove(adjustment.getOfferId());
             if (itemAdjustment != null) {
@@ -468,7 +473,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             offerIds.add(offerId);
         }
         Collections.sort(offerIds);
-        return itemDetail.getOrderItem().toString() + offerIds.toString();
+        return itemDetail.getOrderItem().toString() + offerIds.toString() + itemDetail.getUseSalePrice();
     }
 
     protected Map<String, PromotableOrderItemPriceDetail> buildPromotableDetailsMap(PromotableOrderItem item) {

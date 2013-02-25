@@ -269,7 +269,16 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public boolean updateSaleAndRetailPrices() {
-        return updateSalePrice() || updateRetailPrice();
+        boolean salePriceUpdated = updateSalePrice();
+        boolean retailPriceUpdated = updateRetailPrice();
+        if (!isRetailPriceOverride() && !isSalePriceOverride()) {
+            if (salePrice != null) {
+                price = salePrice;
+            } else {
+                price = retailPrice;
+            }
+        }
+        return salePriceUpdated || retailPriceUpdated;
     }
 
     @Override

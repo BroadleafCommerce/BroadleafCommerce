@@ -37,6 +37,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -55,13 +56,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         boolean isNewFormat = !CollectionUtils.isEmpty(offer.getQualifyingItemCriteria()) || !CollectionUtils.isEmpty(offer.getTargetItemCriteria());
         boolean itemLevelQualification = false;
         boolean offerCreated = false;
+
         for (PromotableOrderItem promotableOrderItem : order.getDiscountableOrderItems()) {
             if(couldOfferApplyToOrder(offer, order, promotableOrderItem)) {
                 if (!isNewFormat) {
-                    //support legacy offers
-                    PromotableCandidateItemOffer candidate =
-                            createCandidateItemOffer(qualifiedItemOffers, offer, promotableOrderItem, order);
-                    candidate.setLegacyOffer(true);
+                    //support legacy offers                   
+                    PromotableCandidateItemOffer candidate = createCandidateItemOffer(qualifiedItemOffers, offer, order);
+                   
                     if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
                         candidate.getCandidateTargets().add(promotableOrderItem);
                     }
@@ -75,7 +76,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 if(couldOfferApplyToOrder(offer, order, promotableOrderItem, fulfillmentGroup)) {
                     if (!isNewFormat) {
                         //support legacy offers
-                        PromotableCandidateItemOffer candidate = createCandidateItemOffer(qualifiedItemOffers, offer, promotableOrderItem, order);
+                        PromotableCandidateItemOffer candidate = createCandidateItemOffer(qualifiedItemOffers, offer, order);
                         if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
                             candidate.getCandidateTargets().add(promotableOrderItem);
                         }
@@ -94,13 +95,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             PromotableCandidateItemOffer candidateOffer = null;
             if (candidates.isMatchedQualifier()) {
                 //we don't know the final target yet, so put null for the order item for now
-                candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null, order);
+                candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, order);
                 candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateQualifiersMap());
             }
             if (candidates.isMatchedTarget() && candidates.isMatchedQualifier()) {
                 if (candidateOffer == null) {
                     //we don't know the final target yet, so put null for the order item for now
-                    candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null, order);
+                    candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, order);
                 }
 
                 candidateOffer.getCandidateTargets().addAll(candidates.getCandidateTargets());
@@ -113,11 +114,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * 
      * @param qualifiedItemOffers the container list for candidate item offers
      * @param offer the offer in question
-     * @param promotableOrderItem the specific order item
      * @return the candidate item offer
      */
     protected PromotableCandidateItemOffer createCandidateItemOffer(List<PromotableCandidateItemOffer> qualifiedItemOffers,
-            Offer offer, PromotableOrderItem promotableOrderItem, PromotableOrder promotableOrder) {
+            Offer offer, PromotableOrder promotableOrder) {
 
         PromotableCandidateItemOffer promotableCandidateItemOffer =
                 promotableItemFactory.createPromotableCandidateItemOffer(promotableOrder, offer);
@@ -196,10 +196,29 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                     }
                     applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                     break;
-                } else if (itemOffer.isLegacyOffer()) {
-                    // if legacy itemOffer then just apply it
-                    applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                 }
+            }
+        }
+    }
+
+    /**
+     * Legacy adjustments use the stackable flag instead of item qualifiers and targets
+     * @param order
+     * @param itemOffer
+     */
+    protected void applyLegacyAdjustments(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
+        for (PromotableOrderItem item : itemOffer.getCandidateTargets()) {
+            for (PromotableOrderItemPriceDetail itemPriceDetail : item.getPromotableOrderItemPriceDetails()) {
+                if (!itemOffer.getOffer().isStackable() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                    if (itemPriceDetail.getCandidateItemAdjustments().size() != 0) {
+                        continue;
+                    }
+                } else {
+                    if (itemPriceDetail.hasNonCombinableAdjustments()) {
+                        continue;
+                    }
+                }
+                applyOrderItemAdjustment(itemOffer, itemPriceDetail);
             }
         }
     }
@@ -238,19 +257,19 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
         for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
             for (PromotableOrderItemPriceDetailAdjustment adjustment : detail.getCandidateItemAdjustments()) {
-                if (adjustment.isTotalitarian() || !adjustment.isCombinable()) {
-                    // A totalitarian or nonCombinable offer has already been applied.
+                if (adjustment.isTotalitarian() || itemOffer.getOffer().isTotalitarianOffer()) {
+                    // A totalitarian offer has already been applied or this offer is totalitarian
+                    // and another offer was already applied.
                     return false;
-                } else {
-                    // This offer is totalitarian or nonCombinable and another offer has already been 
-                    // applied to one of the items.
-                    if (itemOffer.getOffer().isTotalitarianOffer() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
-                        return false;
-                    }
+                } else if (itemOffer.isLegacyOffer()) {
+                    continue;
+                } else if (!adjustment.isCombinable() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                    // A nonCombinable offer has been applied or this is a non-combinable offer
+                    // and adjustments have already been applied.
+                    return false;
                 }
             }
         }
-
         return true;
     }
      
@@ -258,7 +277,11 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     protected void applyItemOffer(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         if (itemOfferCanBeApplied(order, itemOffer)) {
             applyItemQualifiersAndTargets(itemOffer, order);
-            applyAdjustments(order, itemOffer);
+            if (itemOffer.isLegacyOffer()) {
+                applyLegacyAdjustments(order, itemOffer);
+            } else {
+                applyAdjustments(order, itemOffer);
+            }
         }
     }
 
@@ -464,16 +487,23 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         if (itemOffers.size() > 1) {
             for (PromotableCandidateItemOffer itemOffer : itemOffers) {
                 Money potentialSavings = new Money(order.getOrderCurrency());
-                markQualifiersAndTargets(order, itemOffer);
-                for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
-                    PromotableOrderItem item = detail.getPromotableOrderItem();
-                    for (PromotionDiscount discount : detail.getPromotionDiscounts()) {
+                if (itemOffer.isLegacyOffer()) {
+                    for (PromotableOrderItem item : itemOffer.getCandidateTargets()) {
                         potentialSavings = potentialSavings.add(
-                                itemOffer.calculateSavingsForOrderItem(item, discount.getQuantity()));
+                                itemOffer.calculateSavingsForOrderItem(item, item.getQuantity()));
                     }
-                    // Reset state back for next offer
-                    detail.getPromotionDiscounts().clear();
-                    detail.getPromotionQualifiers().clear();
+                } else {
+                    markQualifiersAndTargets(order, itemOffer);
+                    for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
+                        PromotableOrderItem item = detail.getPromotableOrderItem();
+                        for (PromotionDiscount discount : detail.getPromotionDiscounts()) {
+                            potentialSavings = potentialSavings.add(
+                                    itemOffer.calculateSavingsForOrderItem(item, discount.getQuantity()));
+                        }
+                        // Reset state back for next offer
+                        detail.getPromotionDiscounts().clear();
+                        detail.getPromotionQualifiers().clear();
+                    }
                 }
                 itemOffer.setPotentialSavings(potentialSavings);
             }
@@ -482,6 +512,12 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
     protected void markQualifiersAndTargets(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         boolean matchFound = true;
+
+        if (itemOffer.getOffer().getQualifyingItemCriteria().isEmpty() &&
+                itemOffer.getOffer().getTargetItemCriteria().isEmpty()) {
+            return;
+        }
+
         int count = 1;
         do {
             boolean qualifiersFound = markQualifiers(itemOffer, order);
@@ -498,6 +534,76 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         } while (matchFound);
     }
 
+    protected boolean offerListStartsWithNonCombinable(List<PromotableCandidateItemOffer> offerList) {
+        if (offerList.size() > 1) {
+            PromotableCandidateItemOffer offer = offerList.get(0);
+            if (offer.getOffer().isTotalitarianOffer() || !offer.getOffer().isCombinableWithOtherOffers()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method could be overridden to potentially run all permutations of offers.
+     * A reasonable alternative is to have a permutation with nonCombinable offers
+     * and another with combinable offers. 
+     *
+     * @param offers
+     * @return
+     */
+    protected List<List<PromotableCandidateItemOffer>> buildItemOfferPermutations(
+            List<PromotableCandidateItemOffer> offers) {
+        List<List<PromotableCandidateItemOffer>> listOfOfferLists = new ArrayList<List<PromotableCandidateItemOffer>>();
+        // add the default list
+        listOfOfferLists.add(offers);
+
+        if (offerListStartsWithNonCombinable(offers)) {
+            List<PromotableCandidateItemOffer> listWithoutTotalitarianOrNonCombinables =
+                    new ArrayList<PromotableCandidateItemOffer>(offers);
+
+            Iterator<PromotableCandidateItemOffer> offerIterator = listWithoutTotalitarianOrNonCombinables.iterator();
+            while (offerIterator.hasNext()) {
+                PromotableCandidateItemOffer offer = offerIterator.next();
+                if (offer.getOffer().isTotalitarianOffer() || !offer.getOffer().isCombinableWithOtherOffers()) {
+                    offerIterator.remove();
+                }
+            }
+
+            if (listWithoutTotalitarianOrNonCombinables.size() > 0) {
+                listOfOfferLists.add(listWithoutTotalitarianOrNonCombinables);
+            }
+        }
+
+        return listOfOfferLists;
+    }
+
+    protected void determineBestPermutation(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
+        List<List<PromotableCandidateItemOffer>> permutations = buildItemOfferPermutations(itemOffers);
+        List<PromotableCandidateItemOffer> bestOfferList = null;
+        Money lowestSubtotal = null;
+        if (permutations.size() > 1) {
+            for (List<PromotableCandidateItemOffer> offerList : permutations) {
+                applyAllItemOffers(offerList, order);
+                chooseSaleOrRetailAdjustments(order);
+                Money testSubtotal = order.calculateSubtotalWithAdjustments();
+
+                if (lowestSubtotal == null || testSubtotal.lessThan(lowestSubtotal)) {
+                    lowestSubtotal = testSubtotal;
+                    bestOfferList = offerList;
+                }
+
+                // clear price details
+                for (PromotableOrderItem item : order.getDiscountableOrderItems()) {
+                    item.resetPriceDetails();
+                }
+            }
+        } else {
+            bestOfferList = permutations.get(0);
+        }
+        applyAllItemOffers(bestOfferList, order);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void applyAndCompareOrderAndItemOffers(PromotableOrder order,
@@ -507,16 +613,15 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             calculatePotentialSavings(qualifiedItemOffers, order);
             // Sort order item offers by priority and potential total discount
             Collections.sort(qualifiedItemOffers, ItemOfferComparator.INSTANCE);
+            
+            if (qualifiedItemOffers.size() > 1) {
+                determineBestPermutation(qualifiedItemOffers, order);
+            } else {
+                applyAllItemOffers(qualifiedItemOffers, order);
 
-            // At this point, the list of qualifiedItemOffers contains all
-            // offers that might effect an item on this order.   The orders have
-            // been sorted in the order they will be applied based on the
-            // potential order savings.
-            applyAllItemOffers(qualifiedItemOffers, order);
+            }
         }
-
         chooseSaleOrRetailAdjustments(order);
-
         order.setOrderSubTotalToPriceWithAdjustments();
 
         if (!qualifiedOrderOffers.isEmpty()) {
@@ -552,6 +657,32 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 applyAllOrderOffers(finalQualifiedOrderOffers, order);
                 order.setOrderSubTotalToPriceWithAdjustments();
             }  
+        }
+    }
+
+    /**
+     * Gets rid of totalitarian and nonCombinable item offers that can't possibly be applied.
+     * @param qualifiedItemOffers
+     */
+    private void removeTrailingNonCombinableOrTotalitarianOffers(List<PromotableCandidateItemOffer> qualifiedItemOffers) {
+        boolean first = true;
+        Iterator<PromotableCandidateItemOffer> offerIterator = qualifiedItemOffers.iterator();
+        if (offerIterator.hasNext()) {
+            // ignore the first one.
+            offerIterator.next();
+        }
+
+        while (offerIterator.hasNext()) {
+            PromotableCandidateItemOffer itemOffer = offerIterator.next();
+            if (itemOffer.getOffer().isTotalitarianOffer()) {
+                // Remove Totalitarian offers that aren't the first offer.
+                offerIterator.remove();
+            } else {
+                if (!itemOffer.isLegacyOffer() && !itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                    // Remove nonCombinable offers that aren't the first offer
+                    offerIterator.remove();
+                }
+            }
         }
     }
 }

@@ -42,6 +42,13 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -58,13 +65,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -526,12 +526,20 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public Boolean isTotalitarianOffer() {
-        return totalitarianOffer;
+        if (totalitarianOffer == null) {
+            return false;
+        } else {
+            return totalitarianOffer.booleanValue();
+        }
     }
 
     @Override
     public void setTotalitarianOffer(Boolean totalitarianOffer) {
-        this.totalitarianOffer = totalitarianOffer;
+        if (totalitarianOffer == null) {
+            this.totalitarianOffer = false;
+        } else {
+            this.totalitarianOffer = totalitarianOffer;
+        }
     }
 
     @Override

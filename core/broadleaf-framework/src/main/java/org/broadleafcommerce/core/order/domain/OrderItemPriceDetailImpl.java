@@ -138,12 +138,12 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail {
 
     @Override
     public Money getTotalAdjustedPrice() {
-        Money basePrice = orderItem.getPriceBeforeAdjustments(useSalePrice());
+        Money basePrice = orderItem.getPriceBeforeAdjustments(getUseSalePrice());
         return basePrice.multiply(quantity).subtract(getTotalAdjustmentValue());
     }
 
     @Override
-    public boolean useSalePrice() {
+    public boolean getUseSalePrice() {
         if (useSalePrice == null) {
             return false;
         } else {

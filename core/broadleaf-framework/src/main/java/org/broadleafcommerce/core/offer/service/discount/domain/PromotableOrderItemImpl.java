@@ -54,6 +54,12 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         initializePriceDetails();
     }
 
+    @Override
+    public void resetPriceDetails() {
+        itemPriceDetails.clear();
+        initializePriceDetails();
+    }
+
     private void initializePriceDetails() {
         if (includeAdjustments) {
             for (OrderItemPriceDetail detail : orderItem.getOrderItemPriceDetails()) {

@@ -56,6 +56,16 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         return Collections.unmodifiableList(promotableOrderItemPriceDetailAdjustments);
     }
 
+    @Override
+    public boolean hasNonCombinableAdjustments() {
+        for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
+            if (!adjustment.isCombinable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected boolean hasOrderItemAdjustments() {
         return promotableOrderItemPriceDetailAdjustments.size() > 0;
     }
@@ -149,6 +159,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
 
         if (adjustedTotal == null) {
             if (salePriceBeforeAdjustments != null) {
+                this.useSaleAdjustments = true;
                 adjustedTotal = salePriceBeforeAdjustments;
             } else {
                 adjustedTotal = retailPriceBeforeAdjustments;
@@ -456,7 +467,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
             offerIds.add(offerId);
         }
         Collections.sort(offerIds);
-        return promotableOrderItem.getOrderItem().toString() + offerIds.toString();
+        return promotableOrderItem.getOrderItem().toString() + offerIds.toString() + useSaleAdjustments;
     }
 
     @Override
@@ -519,6 +530,11 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
             }
         }
         return returnDetail;
+    }
+
+    @Override
+    public boolean useSaleAdjustments() {
+        return useSaleAdjustments;
     }
 
 }

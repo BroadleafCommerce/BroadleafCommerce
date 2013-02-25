@@ -297,6 +297,12 @@ public interface OrderItem extends Serializable, Cloneable {
     boolean updateSaleAndRetailPrices();
 
     /**
+     * Called by the pricing engine after prices have been computed.   Allows the
+     * system to set the averagePrice that is stored for the item.
+     */
+    void finalizePrice();
+
+    /**
      * Sets the name of this order item. 
      * @param name
      */

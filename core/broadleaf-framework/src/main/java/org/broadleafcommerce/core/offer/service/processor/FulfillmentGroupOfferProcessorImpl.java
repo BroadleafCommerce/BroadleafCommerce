@@ -92,6 +92,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         for (PromotableFulfillmentGroup fulfillmentGroupMember : order.getFulfillmentGroups()) {
             PromotableFulfillmentGroup fulfillmentGroup = fulfillmentGroupMember;
             Money fulfillmentCharges = fulfillmentGroup.getFinalizedPriceWithAdjustments();
+            fulfillmentGroup.getFulfillmentGroup().setFulfillmentPrice(fulfillmentCharges);
             totalFulfillmentCharges = totalFulfillmentCharges.add(fulfillmentCharges);
         }
         order.setTotalFufillmentCharges(totalFulfillmentCharges);

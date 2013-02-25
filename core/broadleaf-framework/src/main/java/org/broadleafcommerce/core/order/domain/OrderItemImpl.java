@@ -402,6 +402,11 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
     
     @Override
+    public void finalizePrice() {
+        price = getAveragePrice().getAmount();
+    }
+
+    @Override
     public void assignFinalPrice() {
         Money finalPrice = getTotalPrice().divide(quantity);
         price = finalPrice.getAmount();
@@ -741,7 +746,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public void setRetailPriceOverride(boolean override) {
-        this.salePriceOverride = Boolean.valueOf(override);
+        this.retailPriceOverride = Boolean.valueOf(override);
     }
 
     @Override
