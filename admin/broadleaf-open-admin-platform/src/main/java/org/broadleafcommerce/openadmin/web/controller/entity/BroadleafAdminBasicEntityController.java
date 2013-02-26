@@ -256,6 +256,26 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     }
 
     /**
+     * Attempts to remove the given entity.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param id
+     * @return the return view path
+     * @throws Exception
+     */
+    public String removeEntity(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String id,
+            EntityForm entityForm, BindingResult result) throws Exception {
+        service.removeEntity(entityForm);
+
+        return "redirect:/" + sectionKey;
+    }
+
+    /**
      * Shows the modal dialog that is used to select a "to-one" collection item. For example, this could be used to show
      * a list of categories for the ManyToOne field "defaultCategory" in Product.
      * 

@@ -228,8 +228,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
 
                 // Create the field and set some basic attributes
-                Field f = new Field()
-                        .withName(property.getName())
+                Field f;
+                if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())) {
+                    f = new ComboField();
+                    for (String[] option : fmd.getEnumerationValues()) {
+                        ((ComboField) f).putOption(option[0], option[1]);
+                    }
+                } else {
+                    f = new Field();
+                }
+
+                f.withName(property.getName())
                         .withFieldType(fieldType)
                         .withOrder(fmd.getOrder())
                         .withFriendlyName(fmd.getFriendlyName())

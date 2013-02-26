@@ -103,6 +103,16 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
+     * Removes the given entity
+     * 
+     * @param entityForm
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    public void removeEntity(EntityForm entityForm)
+            throws ServiceException, ApplicationSecurityException;
+
+    /**
      * Gets an Entity representing a specific collection item
      * 
      * @param containingClassMetadata
@@ -191,6 +201,7 @@ public interface AdminEntityService {
     public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
             String priorKey)
             throws ServiceException, ApplicationSecurityException;
+
 
 
 

@@ -112,6 +112,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return update(ppr);
     }
 
+    @Override
+    public void removeEntity(EntityForm entityForm)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm);
+        remove(ppr);
+    }
+
     protected PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm) {
         // Build the property array from the field map
         Property[] properties = new Property[entityForm.getFields().size()];
