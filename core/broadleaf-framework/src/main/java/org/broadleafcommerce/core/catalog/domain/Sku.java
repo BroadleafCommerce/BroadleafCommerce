@@ -360,16 +360,30 @@ public interface Sku extends Serializable {
      * Whether this Sku can be sorted by a machine
      * 
      * @return <b>true</b> if this Sku can be sorted by a machine
+     * @deprecated use {@link #getIsMachineSortable()} instead since that is the correct bean notation
      */
     public Boolean isMachineSortable();
+
+    /**
+     * Whether this Sku can be sorted by a machine
+     * 
+     */
+    public Boolean getIsMachineSortable();
 
     /**
      * Sets whether or not this Sku can be sorted by a machine
      * 
      * @param isMachineSortable
+     * @deprecated use {@link #setIsMachineSortable(Boolean)} instead since that is the correct bean notation
      */
     public void setMachineSortable(Boolean isMachineSortable);
     
+    /**
+     * Sets whether or not this Sku can be sorted by a machine
+     * @param isMachineSortable
+     */
+    public void setIsMachineSortable(Boolean isMachineSortable);
+
     /**
      * Gets all the extra fees for this particular Sku. If the fee type is FULFILLMENT, these are stored
      * on {@link FulfillmentGroup#getFulfillmentGroupFees()} for an Order
