@@ -40,6 +40,9 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     private Integer order;
     private String owningClassFriendlyName;
 
+    private String tab;
+    private Integer tabOrder;
+
     //temporary fields
     private Boolean childrenExcluded;
     private String targetClass;
@@ -181,6 +184,22 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     public void setChildrenExcluded(Boolean childrenExcluded) {
         this.childrenExcluded = childrenExcluded;
+    }
+
+    public String getTab() {
+        return tab;
+    }
+
+    public void setTab(String tab) {
+        this.tab = tab;
+    }
+
+    public Integer getTabOrder() {
+        return tabOrder;
+    }
+
+    public void setTabOrder(Integer tabOrder) {
+        this.tabOrder = tabOrder;
     }
 
     public abstract FieldMetadata cloneFieldMetadata();

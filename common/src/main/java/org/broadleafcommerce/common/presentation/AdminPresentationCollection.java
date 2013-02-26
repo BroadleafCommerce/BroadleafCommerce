@@ -125,6 +125,27 @@ public @interface AdminPresentationCollection {
     int order() default 99999;
 
     /**
+     * Optional - only required if you want the field to appear under a different tab
+     * 
+     * Specify a GUI tab for this field
+     * 
+     * @return the tab for this field
+     */
+    String tab() default "General";
+
+    /**
+     * Optional - only required if you want to order the appearance of the tabs in the UI
+     * 
+     * Specify an order for this tab. Tabs will be sorted int he resulting form in 
+     * ascending order based on this parameter.
+     * 
+     * The default tab will render with an order of 100.
+     * 
+     * @return the order for this tab
+     */
+    int tabOrder() default 100;
+
+    /**
      * <p>Optional - only required if you want the resulting collection grid element to
      * appear somewhere other than below the main detail form</p>
      *

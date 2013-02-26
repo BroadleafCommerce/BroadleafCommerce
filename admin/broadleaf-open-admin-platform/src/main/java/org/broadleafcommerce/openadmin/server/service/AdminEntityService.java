@@ -80,6 +80,17 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
+     * Persists the given entity
+     * 
+     * @param entityForm
+     * @return the persisted Entity
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    public Entity addEntity(EntityForm entityForm)
+            throws ServiceException, ApplicationSecurityException;
+
+    /**
      * Updates the given entity
      * 
      * @param entityForm
@@ -88,7 +99,7 @@ public interface AdminEntityService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity updateEntity(EntityForm entityForm, String className)
+    public Entity updateEntity(EntityForm entityForm)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -180,5 +191,7 @@ public interface AdminEntityService {
     public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
             String priorKey)
             throws ServiceException, ApplicationSecurityException;
+
+
 
 }

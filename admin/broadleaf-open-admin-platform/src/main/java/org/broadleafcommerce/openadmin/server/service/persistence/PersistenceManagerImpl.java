@@ -47,10 +47,6 @@ import org.springframework.stereotype.Component;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +56,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -175,38 +175,56 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         Arrays.sort(properties, new Comparator<Property>() {
             @Override
             public int compare(Property o1, Property o2) {
-                Integer order1;
-                Integer order2;
-                String friendlyName1;
-                String friendlyName2;
-                String name1;
-                String name2;
+                // First, we sort by which tab the property will appear in
+                Integer tabOrder1 = o1.getMetadata().getTabOrder() == null ? 99999 : o1.getMetadata().getTabOrder();
+                Integer tabOrder2 = o2.getMetadata().getTabOrder() == null ? 99999 : o2.getMetadata().getTabOrder();
+
+                int c = tabOrder1.compareTo(tabOrder2);
+                if (c != 0) {
+                    return c;
+                }
+
+                // If we're looking at the same tab, then we inspect the group order
+                Integer groupOrder1 = null;
+                Integer groupOrder2 = null;
                 if (o1.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata b1 = (BasicFieldMetadata) o1.getMetadata();
-                    order1 = b1.getGroupOrder()==null?99999:b1.getGroupOrder();
-                } else {
-                    order1 = 99999;
+                    groupOrder1 = b1.getGroupOrder();
                 }
+                groupOrder1 = groupOrder1 == null ? 99999 : groupOrder1;
+
                 if (o2.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata b2 = (BasicFieldMetadata) o2.getMetadata();
-                    order2 = b2.getGroupOrder()==null?99999:b2.getGroupOrder();
-                } else {
-                    order2 = 99999;
+                    groupOrder2 = b2.getGroupOrder();
                 }
-                order1 += o1.getMetadata().getOrder() == null?99999:o1.getMetadata().getOrder();
-                order2 += o2.getMetadata().getOrder() == null?99999:o2.getMetadata().getOrder();
-                friendlyName1 = o1.getMetadata().getFriendlyName() == null?"zzzzz":o1.getMetadata().getFriendlyName();
-                friendlyName2 = o2.getMetadata().getFriendlyName() == null?"zzzzz":o2.getMetadata().getFriendlyName();
-                name1 = o1.getName() == null?"zzzzz":o1.getName();
-                name2 = o2.getName() == null?"zzzzz":o2.getName();
+                groupOrder2 = groupOrder2 == null ? 99999 : groupOrder2;
 
-                int c = order1.compareTo(order2);
-                if (c == 0) {
-                    c = friendlyName1.compareTo(friendlyName2);
-                    if (c == 0) {
-                        c = name1.compareTo(name2);
-                    }
+                c = groupOrder1.compareTo(groupOrder2);
+                if (c != 0) {
+                    return c;
                 }
+
+                // If we're looking at the same group, then inspect the field order
+                Integer fieldOrder1 = o1.getMetadata().getOrder() == null ? 99999 : o1.getMetadata().getOrder();
+                Integer fieldOrder2 = o2.getMetadata().getOrder() == null ? 99999 : o2.getMetadata().getOrder();
+
+                c = fieldOrder1.compareTo(fieldOrder2);
+                if (c != 0) {
+                    return c;
+                }
+
+                // If the fields have the same order, we'll look at the friendly name of the field
+                String friendlyName1 = o1.getMetadata().getFriendlyName() == null ? "zzzz" : o1.getMetadata().getFriendlyName();
+                String friendlyName2 = o2.getMetadata().getFriendlyName() == null ? "zzzz" : o2.getMetadata().getFriendlyName();
+                c = friendlyName1.compareTo(friendlyName2);
+                if (c != 0) {
+                    return c;
+                }
+
+                // If the fields' friendly names were the same, we'll just return the result for comparing names
+                String name1 = o1.getName() == null ? "zzzzz" : o1.getName();
+                String name2 = o2.getName() == null ? "zzzzz" : o2.getName();
+                c = name1.compareTo(name2);
                 return c;
             }
         });

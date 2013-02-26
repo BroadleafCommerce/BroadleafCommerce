@@ -361,6 +361,8 @@ public class Metadata {
             override.setFriendlyName(map.friendlyName());
             override.setReadOnly(map.readOnly());
             override.setOrder(map.order());
+            override.setTab(map.tab());
+            override.setTabOrder(map.tabOrder());
             override.setSecurityLevel(map.securityLevel());
             override.setTargetElementId(map.targetUIElementId());
             override.setAddType(map.operationTypes().addType());
@@ -395,6 +397,8 @@ public class Metadata {
             override.setFriendlyName(adornedTargetCollection.friendlyName());
             override.setReadOnly(adornedTargetCollection.readOnly());
             override.setOrder(adornedTargetCollection.order());
+            override.setTab(adornedTargetCollection.tab());
+            override.setTabOrder(adornedTargetCollection.tabOrder());
             override.setSecurityLevel(adornedTargetCollection.securityLevel());
             override.setTargetElementId(adornedTargetCollection.targetUIElementId());
             override.setAddType(adornedTargetCollection.operationTypes().addType());
@@ -421,6 +425,8 @@ public class Metadata {
             override.setFriendlyName(annotColl.friendlyName());
             override.setReadOnly(annotColl.readOnly());
             override.setOrder(annotColl.order());
+            override.setTab(annotColl.tab());
+            override.setTabOrder(annotColl.tabOrder());
             override.setSecurityLevel(annotColl.securityLevel());
             override.setTargetElementId(annotColl.targetUIElementId());
             override.setAddType(annotColl.operationTypes().addType());
@@ -446,6 +452,8 @@ public class Metadata {
             override.setGroup(annot.group());
             override.setGroupCollapsed(annot.groupCollapsed());
             override.setGroupOrder(annot.groupOrder());
+            override.setTab(annot.tab());
+            override.setTabOrder(annot.tabOrder());
             override.setHelpText(annot.helpText());
             override.setHint(annot.hint());
             override.setLargeEntry(annot.largeEntry());
@@ -566,6 +574,12 @@ public class Metadata {
         }
         if (basicFieldMetadata.getGroupCollapsed()!=null) {
             metadata.setGroupCollapsed(basicFieldMetadata.getGroupCollapsed());
+        }
+        if (basicFieldMetadata.getTab() != null) {
+            metadata.setTab(basicFieldMetadata.getTab());
+        }
+        if (basicFieldMetadata.getTabOrder() != null) {
+            metadata.setTabOrder(basicFieldMetadata.getTabOrder());
         }
         if (basicFieldMetadata.isLargeEntry()!=null) {
             metadata.setLargeEntry(basicFieldMetadata.isLargeEntry());
@@ -898,6 +912,13 @@ public class Metadata {
             metadata.setOrder(map.getOrder());
         }
 
+        if (map.getTab() != null) {
+            metadata.setTab(map.getTab());
+        }
+        if (map.getTabOrder() != null) {
+            metadata.setTabOrder(map.getTabOrder());
+        }
+
         if (map.getTargetElementId() != null) {
             metadata.setTargetElementId(map.getTargetElementId());
         }
@@ -1113,6 +1134,13 @@ public class Metadata {
             metadata.setOrder(adornedTargetCollectionMetadata.getOrder());
         }
 
+        if (adornedTargetCollectionMetadata.getTab() != null) {
+            metadata.setTab(adornedTargetCollectionMetadata.getTab());
+        }
+        if (adornedTargetCollectionMetadata.getTabOrder() != null) {
+            metadata.setTabOrder(adornedTargetCollectionMetadata.getTabOrder());
+        }
+
         if (!StringUtils.isEmpty(adornedTargetCollectionMetadata.getTargetElementId())) {
             metadata.setTargetElementId(adornedTargetCollectionMetadata.getTargetElementId());
         }
@@ -1254,6 +1282,13 @@ public class Metadata {
         }
         if (collectionMetadata.getOrder() != null) {
             metadata.setOrder(collectionMetadata.getOrder());
+        }
+
+        if (collectionMetadata.getTab() != null) {
+            metadata.setTab(collectionMetadata.getTab());
+        }
+        if (collectionMetadata.getTabOrder() != null) {
+            metadata.setTabOrder(collectionMetadata.getTabOrder());
         }
 
         if (!StringUtils.isEmpty(collectionMetadata.getTargetElementId())) {

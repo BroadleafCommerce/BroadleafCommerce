@@ -59,14 +59,14 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 
-import javax.annotation.Resource;
-
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -301,6 +301,8 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         contentTypeFieldMetadata.setFriendlyName("PagesCustomPersistenceHandler_Page_Template");
         contentTypeFieldMetadata.setGroup("PagesCustomPersistenceHandler_Description");
         contentTypeFieldMetadata.setOrder(2);
+        contentTypeFieldMetadata.setTab("General");
+        contentTypeFieldMetadata.setTabOrder(100);
         contentTypeFieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         contentTypeFieldMetadata.setProminent(false);
         contentTypeFieldMetadata.setBroadleafEnumeration("");

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -23,6 +24,7 @@ import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadat
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
@@ -44,6 +46,8 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
+import java.net.URLDecoder;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -95,6 +99,93 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     }
 
     /**
+     * Renders the modal form that is used to add a new parent level entity. Note that this form cannot render any
+     * subcollections as operations on those collections require the parent level entity to first be saved and have 
+     * and id. Once the entity is initially saved, we will redirect the user to the normal manage entity screen where 
+     * they can then perform operations on sub collections.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param entityType
+     * @return the return view path
+     * @throws Exception
+     */
+    public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String entityType) throws Exception {
+        String sectionClassName = getClassNameForSection(sectionKey);
+
+        ClassMetadata cmd = service.getClassMetadata(sectionClassName);
+
+        // If the entity type isn't specified, we need to determine if there are various polymorphic types for this entity.
+        if (StringUtils.isBlank(entityType)) {
+            if (cmd.getPolymorphicEntities().getChildren().length == 0) {
+                entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
+            } else {
+                entityType = getDefaultEntityType();
+            }
+        } else {
+            entityType = URLDecoder.decode(entityType, "UTF-8");
+        }
+
+        // If we still don't have a type selected, that means that there were indeed multiple possible types and we 
+        // will be allowing the user to pick his desired type.
+        if (StringUtils.isBlank(entityType)) {
+            List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
+            model.addAttribute("entityTypes", entityTypes);
+            model.addAttribute("viewType", "entityTypeSelection");
+        } else {
+            ClassMetadata specificTypeMd = service.getClassMetadata(entityType);
+            EntityForm entityForm = formService.buildEntityForm(specificTypeMd);
+
+            // When we initially build the class metadata (and thus, the entity form), we had all of the possible
+            // polymorphic fields built out. Now that we have a concrete entity type to render, we can remove the
+            // fields that are not applicable for this given entity type.
+            formService.removeNonApplicableFields(cmd, entityForm, entityType);
+
+            model.addAttribute("entityForm", entityForm);
+            model.addAttribute("viewType", "entityAddForm");
+        }
+
+        //Entity entity = service.getRecord(sectionClassName, id);
+        //Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
+
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("modalHeaderType", "addEntity");
+        setModelAttributes(model, sectionKey);
+        return "modules/modalContainer";
+    }
+
+    public String addEntity(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            EntityForm entityForm, BindingResult result) throws Exception {
+        String sectionClassName = getClassNameForSection(sectionKey);
+
+        Entity entity = service.addEntity(entityForm);
+        entityValidator.validate(entityForm, entity, result);
+
+        /*
+        if (result.hasErrors()) {
+            ClassMetadata cmd = service.getClassMetadata(sectionClassName);
+            Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
+
+            //re-initialize the field groups as well as sub collections
+            EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
+            formService.copyEntityFormValues(newForm, entityForm);
+
+            model.addAttribute("entityForm", newForm);
+            model.addAttribute("viewType", "entityForm");
+            setModelAttributes(model, sectionKey);
+            return "modules/dynamicModule";
+        }
+        */
+
+        return "redirect:/" + sectionKey + "/" + entity.getPMap().get("id").getValue();
+    }
+
+    /**
      * Renders the main entity form for the specified entity
      * 
      * @param request
@@ -119,6 +210,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "entityForm");
 
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
         return "modules/dynamicModule";
     }
@@ -143,7 +235,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             EntityForm entityForm, BindingResult result) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        Entity entity = service.updateEntity(entityForm, sectionClassName);
+        Entity entity = service.updateEntity(entityForm);
         entityValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
@@ -164,14 +256,47 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     }
 
     /**
+     * Shows the modal dialog that is used to select a "to-one" collection item. For example, this could be used to show
+     * a list of categories for the ManyToOne field "defaultCategory" in Product.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param collectionField
+     * @return the return view path
+     * @throws Exception
+     */
+    public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String collectionField) throws Exception {
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
+        if (md instanceof BasicFieldMetadata) {
+            Entity[] rows = service.getRecords(ppr);
+
+            ListGrid listGrid = formService.buildCollectionListGrid(null, rows, collectionProperty);
+
+            model.addAttribute("listGrid", listGrid);
+            model.addAttribute("viewType", "modalListGrid");
+        }
+
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("modalHeaderType", "selectCollectionItem");
+        model.addAttribute("collectionProperty", collectionProperty);
+        setModelAttributes(model, sectionKey);
+        return "modules/modalContainer";
+    }
+
+    /**
      * Shows the modal dialog that is used to add an item to a given collection. There are several possible outcomes
      * of this call depending on the type of the specified collection field.
      * 
      * <ul>
-     *  <li>
-     *    <b>Basic Field</b> - Renders a list grid that allows the user to click on an entity and select it. Used by
-     *    "to-one" fields such as "defaultCategory".
-     *  </li>
      *  <li>
      *    <b>Basic Collection (Persist)</b> - Renders a blank form for the specified target entity so that the user may
      *    enter information and associate the record with this collection. Used by fields such as ProductAttribute.
@@ -217,14 +342,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
 
-        if (md instanceof BasicFieldMetadata) {
-            Entity[] rows = service.getRecords(ppr);
-
-            ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
-
-            model.addAttribute("listGrid", listGrid);
-            model.addAttribute("viewType", "modalListGrid");
-        } else if (md instanceof BasicCollectionMetadata) {
+        if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
 
             // When adding items to basic collections, we will sometimes show a form to persist a new record
@@ -276,6 +394,8 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("modalHeaderType", "addCollectionItem");
+        model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";
     }
@@ -337,6 +457,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("modalHeaderType", "updateCollectionItem");
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";
     }
@@ -447,6 +568,22 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
         return "views/modalListGrid";
+    }
+
+    protected List<ClassTree> getAddEntityTypes(ClassTree classTree) {
+        return classTree.getCollapsedClassTrees();
+    }
+
+    /*
+     * This method is called when attempting to add new entities that have a polymorphic tree. 
+     * 
+     * If this method returns null, there is no default type set for this particular entity type, and the user will be 
+     * presented with a selection of possible types to utilize.
+     * 
+     * If it returns a non-null value, the returned fullyQualifiedClassname will be used and will bypass the selection step.
+     */
+    protected String getDefaultEntityType() {
+        return null;
     }
 
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, String id, Property collectionProperty)

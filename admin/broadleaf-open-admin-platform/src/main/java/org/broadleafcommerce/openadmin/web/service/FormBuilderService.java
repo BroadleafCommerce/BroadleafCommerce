@@ -69,6 +69,16 @@ public interface FormBuilderService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
+     * Loops through all of the fields that are specified in given class metadata and removes fields that
+     * are not applicable for the given polymorphic entity type from the entity form.
+     * 
+     * @param cmd
+     * @param entityForm
+     * @param entityType
+     */
+    public void removeNonApplicableFields(ClassMetadata cmd, EntityForm entityForm, String entityType);
+
+    /**
      * Builds an EntityForm that has all of the appropriate fields set up without any values.
      * 
      * @param cmd
@@ -170,10 +180,5 @@ public interface FormBuilderService {
      */
     public EntityForm buildMapForm(MapMetadata mapMd, MapStructure mapStructure, ClassMetadata cmd, String parentId)
             throws ServiceException, ApplicationSecurityException;
-
-
-
-
-
 
 }

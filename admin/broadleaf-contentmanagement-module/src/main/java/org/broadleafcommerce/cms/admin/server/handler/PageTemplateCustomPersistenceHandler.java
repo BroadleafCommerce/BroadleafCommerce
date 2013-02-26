@@ -51,14 +51,14 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Created by jfischer
@@ -152,6 +152,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     fieldMetadata.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
                     fieldMetadata.setGroup(group.getName());
                     fieldMetadata.setGroupOrder(groupCount);
+                    fieldMetadata.setTab("General");
+                    fieldMetadata.setTabOrder(100);
                     fieldMetadata.setGroupCollapsed(group.getInitCollapsedFlag());
                     fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
                     fieldMetadata.setLargeEntry(definition.getTextAreaFlag());

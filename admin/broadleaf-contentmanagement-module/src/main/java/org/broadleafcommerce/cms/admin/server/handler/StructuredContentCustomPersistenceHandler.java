@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
@@ -59,13 +55,19 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.hibernate.Criteria;
 import org.hibernate.tool.hbm2x.StringUtils;
 
-import javax.annotation.Resource;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -152,6 +154,8 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         fieldMetadata.setFriendlyName("StructuredContentCustomPersistenceHandler_Locale");
         fieldMetadata.setGroup("StructuredContentCustomPersistenceHandler_Description");
         fieldMetadata.setOrder(3);
+        fieldMetadata.setTab("General");
+        fieldMetadata.setTabOrder(100);
         fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         fieldMetadata.setProminent(true);
         fieldMetadata.setBroadleafEnumeration("");

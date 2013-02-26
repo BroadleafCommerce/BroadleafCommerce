@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
-import eu.medsea.mimeutil.MimeType;
-import eu.medsea.mimeutil.MimeUtil;
-import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
-import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.logging.Log;
@@ -62,7 +55,15 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.hibernate.Criteria;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+
+import eu.medsea.mimeutil.MimeType;
+import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Blob;
@@ -72,6 +73,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Created by jfischer
@@ -417,6 +420,8 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         fieldMetadata.setName("file");
         fieldMetadata.setFriendlyName("StaticAssetCustomPersistenceHandler_File");
         fieldMetadata.setGroup("StaticAssetCustomPersistenceHandler_Upload");
+        fieldMetadata.setTab("General");
+        fieldMetadata.setTabOrder(100);
         fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         fieldMetadata.setProminent(false);
         fieldMetadata.setBroadleafEnumeration("");

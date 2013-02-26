@@ -91,6 +91,8 @@ public class FieldMetadataOverride {
     private VisibilityEnum visibility;
     private String group;
     private Integer groupOrder;
+    private String tab;
+    private Integer tabOrder;
     private Boolean groupCollapsed;
     private SupportedFieldType explicitFieldType;
     private Boolean largeEntry;
@@ -294,6 +296,22 @@ public class FieldMetadataOverride {
 
     public Boolean getReadOnly() {
         return readOnly;
+    }
+
+    public String getTab() {
+        return tab;
+    }
+
+    public void setTab(String tab) {
+        this.tab = tab;
+    }
+
+    public Integer getTabOrder() {
+        return tabOrder;
+    }
+
+    public void setTabOrder(Integer tabOrder) {
+        this.tabOrder = tabOrder;
     }
 
     public void setReadOnly(Boolean readOnly) {

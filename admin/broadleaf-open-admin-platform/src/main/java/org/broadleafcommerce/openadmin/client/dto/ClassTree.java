@@ -16,9 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import java.io.Serializable;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jfischer
@@ -45,6 +47,10 @@ public class ClassTree implements IsSerializable, Serializable {
         //do nothing
     }
 
+    public boolean hasChildren() {
+        return children.length > 0;
+    }
+
     public int finalizeStructure(int start) {
         left = start;
         start++;
@@ -55,6 +61,20 @@ public class ClassTree implements IsSerializable, Serializable {
         right = start;
 
         return start;
+    }
+
+    public List<ClassTree> getCollapsedClassTrees() {
+        List<ClassTree> list = new ArrayList<ClassTree>();
+        addChildren(this, list);
+        return list;
+    }
+
+    protected void addChildren(ClassTree tree, List<ClassTree> list) {
+        list.add(tree);
+
+        for (ClassTree child : tree.getChildren()) {
+            addChildren(child, list);
+        }
     }
 
     public ClassTree find(String fullyQualifiedClassname) {

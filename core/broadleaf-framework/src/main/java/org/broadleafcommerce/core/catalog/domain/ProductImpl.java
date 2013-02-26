@@ -167,14 +167,18 @@ public class ProductImpl implements Product, Status {
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence", dataSourceName = "crossSaleProductsDS", maintainedAdornedTargetFields = {"promotionMessage"}, gridVisibleFields = {"defaultSku.name", "promotionMessage"})
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle",
+            tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "crossSaleProductsDS",
+            maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value="sequence")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "upsaleProductsTitle", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence", dataSourceName = "upSaleProductsDS", maintainedAdornedTargetFields = {"promotionMessage"}, gridVisibleFields = {"defaultSku.name", "promotionMessage"})
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "upsaleProductsTitle",
+            tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "upSaleProductsDS",
+            maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
     /** The all skus. */

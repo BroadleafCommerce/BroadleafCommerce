@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
@@ -238,7 +239,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
 
                 // Add the field to the appropriate FieldGroup
-                ef.addField(f, fmd.getGroup());
+                ef.addField(f, fmd.getGroup(), fmd.getTab());
+            }
+        }
+    }
+    
+    @Override
+    public void removeNonApplicableFields(ClassMetadata cmd, EntityForm entityForm, String entityType) {
+        for (Property p : cmd.getProperties()) {
+            if (!ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), entityType)) {
+                entityForm.removeField(p.getName());
             }
         }
     }
@@ -311,7 +321,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p);
             listGrid.setListGridType(ListGrid.Type.INLINE);
 
-            ef.getCollectionListGrids().add(listGrid);
+            ef.addListGrid(listGrid, ((CollectionMetadata) p.getMetadata()).getTab());
         }
 
         return ef;
@@ -386,18 +396,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty())
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withValue(parentId);
-        ef.addField(f, EntityForm.HIDDEN_GROUP);
+        ef.addHiddenField(f);
 
         f = new Field()
                 .withName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty())
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withIdOverride("adornedTargetIdProperty");
-        ef.addField(f, EntityForm.HIDDEN_GROUP);
+        ef.addHiddenField(f);
 
         f = new Field()
                 .withName(adornedList.getSortField())
                 .withFieldType(SupportedFieldType.HIDDEN.toString());
-        ef.addField(f, EntityForm.HIDDEN_GROUP);
+        ef.addHiddenField(f);
 
         return ef;
     }
@@ -432,7 +442,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 keyField.putOption(keyValue, keyDisplayValue);
             }
         }
-        ef.addField(keyField, EntityForm.MAP_KEY_GROUP);
+        ef.addField(keyField, EntityForm.MAP_KEY_GROUP, EntityForm.DEFAULT_TAB_NAME);
 
         // Set the fields for this form
         List<Property> mapFormProperties = new ArrayList<Property>(Arrays.asList(cmd.getProperties()));
@@ -451,12 +461,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withName("symbolicId")
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withValue(parentId);
-        ef.addField(f, EntityForm.HIDDEN_GROUP);
+        ef.addHiddenField(f);
 
         f = new Field()
                 .withName("priorKey")
                 .withFieldType(SupportedFieldType.HIDDEN.toString());
-        ef.addField(f, EntityForm.HIDDEN_GROUP);
+        ef.addHiddenField(f);
 
         return ef;
     }

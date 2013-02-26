@@ -97,6 +97,8 @@ public abstract class CollectionMetadata extends FieldMetadata {
         ((CollectionMetadata) metadata).setMutable(mutable);
         ((CollectionMetadata) metadata).setCustomCriteria(customCriteria);
         ((CollectionMetadata) metadata).setRuleBuilder(ruleBuilder);
+        ((CollectionMetadata) metadata).setTab(getTab());
+        ((CollectionMetadata) metadata).setTabOrder(getTabOrder());
         return metadata;
     }
 

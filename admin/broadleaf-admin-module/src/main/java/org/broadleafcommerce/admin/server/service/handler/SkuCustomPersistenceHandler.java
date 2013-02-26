@@ -49,13 +49,13 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
-import javax.annotation.Resource;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Phillip Verheyden
@@ -131,6 +131,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 metadata.setFriendlyName(option.getLabel());
                 metadata.setGroup("");
                 metadata.setOrder(order);
+                metadata.setTab("General");
+                metadata.setTabOrder(99999);
                 metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
                 metadata.setProminent(true);
                 metadata.setBroadleafEnumeration("");

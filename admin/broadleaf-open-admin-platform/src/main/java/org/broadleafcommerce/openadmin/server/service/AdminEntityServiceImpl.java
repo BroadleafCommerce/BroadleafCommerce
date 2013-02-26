@@ -99,8 +99,20 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity updateEntity(EntityForm entityForm, String className)
+    public Entity addEntity(EntityForm entityForm)
             throws ServiceException, ApplicationSecurityException {
+        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm);
+        return add(ppr);
+    }
+
+    @Override
+    public Entity updateEntity(EntityForm entityForm)
+            throws ServiceException, ApplicationSecurityException {
+        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm);
+        return update(ppr);
+    }
+
+    protected PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm) {
         // Build the property array from the field map
         Property[] properties = new Property[entityForm.getFields().size()];
         int i = 0;
@@ -115,10 +127,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         entity.setProperties(properties);
         entity.setType(new String[] { entityForm.getEntityType() });
 
-        PersistencePackageRequest request = PersistencePackageRequest.standard()
+        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withEntity(entity)
-                .withClassName(className);
-        return update(request);
+                .withClassName(entityForm.getEntityType());
+
+        return ppr;
     }
 
     @Override
