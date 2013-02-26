@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -175,16 +176,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         Arrays.sort(properties, new Comparator<Property>() {
             @Override
             public int compare(Property o1, Property o2) {
-                // First, we sort by which tab the property will appear in
                 Integer tabOrder1 = o1.getMetadata().getTabOrder() == null ? 99999 : o1.getMetadata().getTabOrder();
                 Integer tabOrder2 = o2.getMetadata().getTabOrder() == null ? 99999 : o2.getMetadata().getTabOrder();
 
-                int c = tabOrder1.compareTo(tabOrder2);
-                if (c != 0) {
-                    return c;
-                }
-
-                // If we're looking at the same tab, then we inspect the group order
                 Integer groupOrder1 = null;
                 Integer groupOrder2 = null;
                 if (o1.getMetadata() instanceof BasicFieldMetadata) {
@@ -199,33 +193,22 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
                 groupOrder2 = groupOrder2 == null ? 99999 : groupOrder2;
 
-                c = groupOrder1.compareTo(groupOrder2);
-                if (c != 0) {
-                    return c;
-                }
-
-                // If we're looking at the same group, then inspect the field order
                 Integer fieldOrder1 = o1.getMetadata().getOrder() == null ? 99999 : o1.getMetadata().getOrder();
                 Integer fieldOrder2 = o2.getMetadata().getOrder() == null ? 99999 : o2.getMetadata().getOrder();
 
-                c = fieldOrder1.compareTo(fieldOrder2);
-                if (c != 0) {
-                    return c;
-                }
-
-                // If the fields have the same order, we'll look at the friendly name of the field
                 String friendlyName1 = o1.getMetadata().getFriendlyName() == null ? "zzzz" : o1.getMetadata().getFriendlyName();
                 String friendlyName2 = o2.getMetadata().getFriendlyName() == null ? "zzzz" : o2.getMetadata().getFriendlyName();
-                c = friendlyName1.compareTo(friendlyName2);
-                if (c != 0) {
-                    return c;
-                }
 
-                // If the fields' friendly names were the same, we'll just return the result for comparing names
                 String name1 = o1.getName() == null ? "zzzzz" : o1.getName();
                 String name2 = o2.getName() == null ? "zzzzz" : o2.getName();
-                c = name1.compareTo(name2);
-                return c;
+
+                return new CompareToBuilder()
+                        .append(tabOrder1, tabOrder2)
+                        .append(groupOrder1, groupOrder2)
+                        .append(fieldOrder1, fieldOrder2)
+                        .append(friendlyName1, friendlyName2)
+                        .append(name1, name2)
+                        .toComparison();
             }
         });
         classMetadata.setProperties(properties);

@@ -231,7 +231,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 Field f = new Field()
                         .withName(property.getName())
                         .withFieldType(fieldType)
-                        .withFriendlyName(property.getMetadata().getFriendlyName())
+                        .withOrder(fmd.getOrder())
+                        .withFriendlyName(fmd.getFriendlyName())
                         .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
 
                 if (StringUtils.isBlank(f.getFriendlyName())) {
@@ -239,7 +240,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
 
                 // Add the field to the appropriate FieldGroup
-                ef.addField(f, fmd.getGroup(), fmd.getTab());
+                ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
             }
         }
     }
@@ -321,7 +322,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p);
             listGrid.setListGridType(ListGrid.Type.INLINE);
 
-            ef.addListGrid(listGrid, ((CollectionMetadata) p.getMetadata()).getTab());
+            CollectionMetadata md = ((CollectionMetadata) p.getMetadata());
+            ef.addListGrid(listGrid, md.getTab(), md.getTabOrder());
         }
 
         return ef;
@@ -442,7 +444,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 keyField.putOption(keyValue, keyDisplayValue);
             }
         }
-        ef.addField(keyField, EntityForm.MAP_KEY_GROUP, EntityForm.DEFAULT_TAB_NAME);
+        ef.addMapKeyField(keyField);
 
         // Set the fields for this form
         List<Property> mapFormProperties = new ArrayList<Property>(Arrays.asList(cmd.getProperties()));

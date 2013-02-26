@@ -92,10 +92,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         ListGrid listGrid = formService.buildMainListGrid(rows, cmd);
 
         model.addAttribute("listGrid", listGrid);
-        model.addAttribute("viewType", "listGrid");
+        model.addAttribute("viewType", "entityList");
 
         setModelAttributes(model, sectionKey);
-        return "modules/dynamicModule";
+        return "modules/defaultContainer";
     }
 
     /**
@@ -146,7 +146,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             formService.removeNonApplicableFields(cmd, entityForm, entityType);
 
             model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "entityAddForm");
+            model.addAttribute("viewType", "entityAdd");
         }
 
         //Entity entity = service.getRecord(sectionClassName, id);
@@ -178,7 +178,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             model.addAttribute("entityForm", newForm);
             model.addAttribute("viewType", "entityForm");
             setModelAttributes(model, sectionKey);
-            return "modules/dynamicModule";
+            return "modules/defaultContainer";
         }
         */
 
@@ -208,11 +208,11 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
         
         model.addAttribute("entityForm", entityForm);
-        model.addAttribute("viewType", "entityForm");
+        model.addAttribute("viewType", "entityEdit");
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
-        return "modules/dynamicModule";
+        return "modules/defaultContainer";
     }
 
     /**
@@ -247,9 +247,9 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             formService.copyEntityFormValues(newForm, entityForm);
 
             model.addAttribute("entityForm", newForm);
-            model.addAttribute("viewType", "entityForm");
+            model.addAttribute("viewType", "entityEdit");
             setModelAttributes(model, sectionKey);
-            return "modules/dynamicModule";
+            return "modules/defaultContainer";
         }
 
         return "redirect:/" + sectionKey + "/" + id;
@@ -282,7 +282,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             ListGrid listGrid = formService.buildCollectionListGrid(null, rows, collectionProperty);
 
             model.addAttribute("listGrid", listGrid);
-            model.addAttribute("viewType", "modalListGrid");
+            model.addAttribute("viewType", "modal/simpleSelectEntity");
         }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -351,14 +351,16 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
                 ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
                 EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
 
+                entityForm.getTabs().iterator().next().getIsVisible();
+
                 model.addAttribute("entityForm", entityForm);
-                model.addAttribute("viewType", "modalEntityForm");
+                model.addAttribute("viewType", "modal/simpleAddEntity");
             } else {
                 Entity[] rows = service.getRecords(ppr);
                 ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
 
                 model.addAttribute("listGrid", listGrid);
-                model.addAttribute("viewType", "modalListGrid");
+                model.addAttribute("viewType", "modal/simpleSelectEntity");
             }
         } else if (md instanceof AdornedTargetCollectionMetadata) {
             AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
@@ -372,25 +374,25 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
             Entity[] rows = service.getRecords(ppr);
             ListGrid listGrid = formService.buildMainListGrid(rows, collectionMetadata);
+            listGrid.setSubCollectionFieldName(collectionField);
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
-
-            model.addAttribute("listGrid", listGrid);
-            model.addAttribute("entityForm", entityForm);
 
             if (fmd.getMaintainedAdornedTargetFields().length > 0) {
                 listGrid.setListGridType(ListGrid.Type.ADORNED_WITH_FORM);
-                model.addAttribute("viewType", "modalAdornedListGridForm");
             } else {
                 listGrid.setListGridType(ListGrid.Type.ADORNED);
-                model.addAttribute("viewType", "modalAdornedListGrid");
             }
+
+            model.addAttribute("listGrid", listGrid);
+            model.addAttribute("entityForm", entityForm);
+            model.addAttribute("viewType", "modal/adornedSelectEntity");
         } else if (md instanceof MapMetadata) {
             MapMetadata fmd = (MapMetadata) md;
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
 
             EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
             model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modalMapEntityForm");
+            model.addAttribute("viewType", "modal/mapAddEntity");
         }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -429,7 +431,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity);
 
             model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modalEntityForm");
+            model.addAttribute("viewType", "modal/simpleEditEntity");
         } else if (md instanceof AdornedTargetCollectionMetadata &&
                 ((AdornedTargetCollectionMetadata) md).getMaintainedAdornedTargetFields().length > 0) {
             AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
@@ -441,7 +443,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
 
             model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modalAdornedFormOnly");
+            model.addAttribute("viewType", "modal/adornedEditEntity");
         } else if (md instanceof MapMetadata) {
             MapMetadata fmd = (MapMetadata) md;
 
@@ -453,7 +455,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             formService.populateMapEntityFormFields(entityForm, entity);
 
             model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modalMapEntityForm");
+            model.addAttribute("viewType", "modal/mapEditEntity");
         }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -493,7 +495,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
-        return "views/modalListGrid";
+        return "views/standaloneListGrid";
     }
 
     /**
@@ -528,7 +530,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
-        return "views/modalListGrid";
+        return "views/standaloneListGrid";
     }
 
     /**
@@ -567,7 +569,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
-        return "views/modalListGrid";
+        return "views/standaloneListGrid";
     }
 
     protected List<ClassTree> getAddEntityTypes(ClassTree classTree) {

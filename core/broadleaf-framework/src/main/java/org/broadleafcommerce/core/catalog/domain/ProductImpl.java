@@ -128,7 +128,7 @@ public class ProductImpl implements Product, Status {
     protected String url;
 
     @Column(name = "URL_KEY")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "Seo_Group",groupOrder=2)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order = 2, group = "Seo_Group", groupOrder = 2)
     protected String urlKey;
 
     @Column(name = "DISPLAY_TEMPLATE")

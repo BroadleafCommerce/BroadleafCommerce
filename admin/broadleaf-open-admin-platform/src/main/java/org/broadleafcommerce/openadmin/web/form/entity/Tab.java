@@ -1,17 +1,31 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Tab {
 
     protected String title;
-    protected int order;
-    List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
-    List<ListGrid> listGrids = new ArrayList<ListGrid>();
+    protected Integer order;
+
+    Set<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
+
+        @Override
+        public int compare(FieldGroup o1, FieldGroup o2) {
+            return new CompareToBuilder()
+                    .append(o1.getOrder(), o2.getOrder())
+                    .append(o1.getTitle(), o2.getTitle())
+                    .toComparison();
+        }
+    });
+
+    Set<ListGrid> listGrids = new HashSet<ListGrid>();
 
     public Boolean getIsVisible() {
         if (listGrids.size() > 0) {
@@ -27,9 +41,9 @@ public class Tab {
         return false;
     }
 
-    public FieldGroup getGroup(String groupTitle) {
+    public FieldGroup findGroup(String groupTitle) {
         for (FieldGroup fg : fieldGroups) {
-            if (fg.getTitle().equals(groupTitle)) {
+            if (fg.getTitle() != null && fg.getTitle().equals(groupTitle)) {
                 return fg;
             }
         }
@@ -44,28 +58,28 @@ public class Tab {
         this.title = title;
     }
 
-    public int getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
-    public void setOrder(int order) {
+    public void setOrder(Integer order) {
         this.order = order;
     }
 
-    public List<FieldGroup> getFieldGroups() {
+    public Set<FieldGroup> getFieldGroups() {
         return fieldGroups;
     }
 
-    public List<ListGrid> getListGrids() {
+    public void setFieldGroups(Set<FieldGroup> fieldGroups) {
+        this.fieldGroups = fieldGroups;
+    }
+
+    public Set<ListGrid> getListGrids() {
         return listGrids;
     }
 
-    public void setListGrids(List<ListGrid> listGrids) {
+    public void setListGrids(Set<ListGrid> listGrids) {
         this.listGrids = listGrids;
-    }
-
-    public void setFieldGroups(List<FieldGroup> fieldGroups) {
-        this.fieldGroups = fieldGroups;
     }
 
 }

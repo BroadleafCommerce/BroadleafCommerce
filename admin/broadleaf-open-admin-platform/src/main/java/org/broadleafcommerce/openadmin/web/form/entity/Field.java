@@ -32,6 +32,7 @@ public class Field {
     protected String displayValue;
     protected String foreignKeyDisplayValueProperty;
     protected String idOverride;
+    protected Integer order;
     
     /* ************ */
     /* WITH METHODS */
@@ -69,6 +70,11 @@ public class Field {
     
     public Field withIdOverride(String idOverride) {
         setIdOverride(idOverride);
+        return this;
+    }
+
+    public Field withOrder(Integer order) {
+        setOrder(order);
         return this;
     }
 
@@ -139,6 +145,14 @@ public class Field {
 
     public void setIdOverride(String idOverride) {
         this.idOverride = idOverride;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 
 }
