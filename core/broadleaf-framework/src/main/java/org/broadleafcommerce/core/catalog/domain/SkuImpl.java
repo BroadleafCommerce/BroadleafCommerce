@@ -54,6 +54,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -742,15 +750,28 @@ public class SkuImpl implements Sku {
     }
 
     @Override
+    @Deprecated
     public Boolean isMachineSortable() {
         if (isMachineSortable == null && hasDefaultSku()) {
             return lookupDefaultSku().isMachineSortable();
         }
-        return isMachineSortable;
+        return isMachineSortable == null ? false : isMachineSortable;
+    }
+
+    public Boolean getIsMachineSortable() {
+        if (isMachineSortable == null && hasDefaultSku()) {
+            return lookupDefaultSku().getIsMachineSortable();
+        }
+        return isMachineSortable == null ? false : isMachineSortable;
     }
 
     @Override
+    @Deprecated
     public void setMachineSortable(Boolean isMachineSortable) {
+        this.isMachineSortable = isMachineSortable;
+    }
+
+    public void setIsMachineSortable(Boolean isMachineSortable) {
         this.isMachineSortable = isMachineSortable;
     }
 
