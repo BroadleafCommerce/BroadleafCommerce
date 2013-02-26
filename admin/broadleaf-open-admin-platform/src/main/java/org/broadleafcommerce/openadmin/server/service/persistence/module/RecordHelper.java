@@ -16,24 +16,28 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.w3c.dom.DOMException;
 
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -66,4 +70,14 @@ public interface RecordHelper {
 
     public PersistenceModule getCompatibleModule(OperationType operationType);
     
+    /**
+     * @return the date formatter suitable for converting Date, Calendar and Timestamp to their String representations
+     */
+    public SimpleDateFormat getDateFormatter();
+
+    /**
+     * @return the decimal formatter suitable for converting Double and BigDecimal to their String representations
+     */
+    public DecimalFormat getDecimalFormatter();
+
 }
