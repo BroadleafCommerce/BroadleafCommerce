@@ -182,7 +182,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 List<Class<?>> entities = new ArrayList<Class<?>>();
                 for (Object item : getSessionFactory().getAllClassMetadata().values()) {
                     ClassMetadata metadata = (ClassMetadata) item;
-                    Class<?> mappedClass = metadata.getMappedClass(EntityMode.POJO);
+                    Class<?> mappedClass = metadata.getMappedClass();
                     if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
                         entities.add(mappedClass);
                     }

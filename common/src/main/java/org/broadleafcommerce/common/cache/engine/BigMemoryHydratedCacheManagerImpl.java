@@ -24,7 +24,7 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cache.CacheKey;
+import org.hibernate.cache.spi.CacheKey;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.persistence;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -34,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TableGenerator;
-
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -69,7 +67,7 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
             for (Object item : sessionFactory.getAllClassMetadata().values()) {
                 ClassMetadata metadata = (ClassMetadata) item;
                 String idProperty = metadata.getIdentifierPropertyName();
-                Class<?> mappedClass = metadata.getMappedClass(EntityMode.POJO);
+                Class<?> mappedClass = metadata.getMappedClass();
                 Field idField;
                 try {
                     idField = mappedClass.getDeclaredField(idProperty);

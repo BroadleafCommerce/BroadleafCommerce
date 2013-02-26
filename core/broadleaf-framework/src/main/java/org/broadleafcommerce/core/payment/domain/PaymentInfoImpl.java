@@ -30,12 +30,13 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
-import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -43,13 +44,12 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,11 +108,12 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
     @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_IP_Address", order=4, group = "PaymentInfoImpl_Description")
     protected String customerIpAddress;
-    
-    @CollectionOfElements
-    @JoinTable(name = "BLC_PAYINFO_ADDITIONAL_FIELDS", joinColumns = @JoinColumn(name = "PAYMENT_ID"))
-    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150, nullable = false) })
-    @Column(name = "FIELD_VALUE")
+
+    @ElementCollection
+    @MapKeyColumn(name="FIELD_NAME")
+    @Column(name="FIELD_VALUE")
+    @CollectionTable(name="BLC_PAYINFO_ADDITIONAL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
+    @BatchSize(size = 50)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Transient

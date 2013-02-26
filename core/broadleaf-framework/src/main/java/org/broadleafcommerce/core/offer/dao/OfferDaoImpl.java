@@ -78,10 +78,6 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     public void delete(Offer offer) {
-//      if (!em.contains(offer)) {
-//          offer = readOfferById(offer.getId());
-//      }
-//        em.remove(offer);
         ((Status) offer).setArchived('Y');
         em.merge(offer);
     }
@@ -111,6 +107,7 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     public List<Offer> readOffersByAutomaticDeliveryType() {
+        em.flush();
         Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
         query.setParameter("specifiedDate", SystemTime.asDate());
         List<Offer> result = query.getResultList();

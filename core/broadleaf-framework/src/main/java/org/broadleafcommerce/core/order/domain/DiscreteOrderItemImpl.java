@@ -35,23 +35,22 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,12 +95,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected SkuBundleItem skuBundleItem;
-    
-    @CollectionOfElements
-    @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "NAME", nullable = false) })
-    @Column(name = "VALUE")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
+
+    @ElementCollection
+    @MapKeyColumn(name="NAME")
+    @Column(name="VALUE")
+    @CollectionTable(name="BLC_ORDER_ITEM_ADD_ATTR", joinColumns=@JoinColumn(name="ORDER_ITEM_ID"))
     @BatchSize(size = 50)
     protected Map<String, String> additionalAttributes = new HashMap<String, String>();
     
