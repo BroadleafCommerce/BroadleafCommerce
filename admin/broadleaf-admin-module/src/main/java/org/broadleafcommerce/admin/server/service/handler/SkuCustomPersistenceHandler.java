@@ -19,8 +19,10 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -49,13 +51,18 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
-import javax.annotation.Resource;
-
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
 
 /**
  * @author Phillip Verheyden
@@ -168,8 +175,13 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, 
                                                                     ceilingEntityFullyQualifiedClassname, originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
+            //allow subclasses to provide additional criteria before executing the query
+            applyAdditionalFetchCriteria(queryCriteria, persistencePackage);
+
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, 
                                                Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
+            //allow subclasses to filter more
+            records = filterFetchList(records, persistencePackage);
             
             //Convert Skus into the client-side Entity representation
             Entity[] payload = helper.getRecords(originalProps, records);
@@ -195,6 +207,44 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 Sku sku = (Sku)records.get(i);
                 Entity entity = payload[i];
                 
+                //In the list of Skus from the database, it is possible that some important properties (like name,
+                //description, etc) are actually null. This isn't a problem on the site because the getters for Sku
+                //use the defaultSku on this Sku's product if they are null. Nothing like this happens for displaying the
+                //list of Skus in the admin, however, because everything is done via property reflection. Let's attempt to
+                //actually call the getters (using bean utils) if the properties are null from this Sku, so that values
+                //actually come back from the defaultSku (just like on the site)
+                for (Property property : entity.getProperties()) {
+                    if (StringUtils.isEmpty(property.getValue())) {
+                        //only attempt the getter on the first-level Sku properties
+                        String propertyName = property.getName();
+                        if (propertyName.contains(".")) {
+                            StringTokenizer tokens = new StringTokenizer(propertyName, ".");
+                            propertyName = tokens.nextToken();
+                        }
+                        Object value = PropertyUtils.getProperty(sku, propertyName);
+
+                        String strVal;
+                        if (value == null) {
+                            strVal = null;
+                        } else {
+                            if (Date.class.isAssignableFrom(value.getClass())) {
+                                strVal = helper.getDateFormatter().format((Date) value);
+                            } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
+                                strVal = helper.getDateFormatter().format(new Date(((Timestamp) value).getTime()));
+                            } else if (Calendar.class.isAssignableFrom(value.getClass())) {
+                                strVal = helper.getDateFormatter().format(((Calendar) value).getTime());
+                            } else if (Double.class.isAssignableFrom(value.getClass())) {
+                                strVal = helper.getDecimalFormatter().format(value);
+                            } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
+                                strVal = helper.getDecimalFormatter().format(((BigDecimal) value).doubleValue());
+                            } else {
+                                strVal = value.toString();
+                            }
+                        }
+                        property.setValue(strVal);
+                    }
+                }
+
                 List<ProductOptionValue> optionValues = sku.getProductOptionValues();
                 for (ProductOptionValue value : optionValues) {
                     Property optionProperty = new Property();
@@ -209,6 +259,29 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
+    }
+
+    /**
+     * Available override point for subclasses if they would like to add additional criteria via the queryCritiera. At the
+     * point that this method has been called, criteria from the frontend has already been applied, thus allowing you to
+     * override from there as well
+     * 
+     */
+    public void applyAdditionalFetchCriteria(PersistentEntityCriteria queryCriteria, PersistencePackage persistencePackage) {
+        //unimplemented
+    }
+
+    /**
+     * After applying the criteria and performing the fetch, this allows additional filtering from the list of Skus that was
+     * returned. This is available for subclasses to implement if because you actually have Skus available from thist list,
+     * but note that there could still be performance implications as at this point, the database has already been hit. For
+     * maximum performance, consider using the {@link #applyAdditionalFetchCriteria(PersistentEntityCriteria, PersistencePackage)}
+     * and applying the filtering there.
+     * 
+     * @param skus - the list of Skus returned from the database
+     */
+    public List<Serializable> filterFetchList(List<Serializable> skus, PersistencePackage persistencePackage) {
+        return skus;
     }
     
     @Override
