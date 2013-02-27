@@ -22,9 +22,10 @@ import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -35,6 +36,11 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
     public static final String ITEM_DISCOUNT_TARGET_FIELD_BUILDER = "ORDER_ITEM_FIELDS";
     public static final String ITEM_DISCOUNT_TARGET_MVEL = "orderItemMatchRule";
     public static final String ITEM_DISCOUNT_TARGET_QUANTITY = "quantity";
+
+    @Override
+    public String getSectionCustomCriteria() {
+        return "Offer";
+    }
 
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
              String id) throws Exception {

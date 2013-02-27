@@ -33,19 +33,6 @@ import java.util.Map;
 public interface AdminEntityService {
 
     /**
-     * Convenience method to return class metadata for a class name
-     * 
-     * @param className
-     * @return ClassMetadata for the given class
-     * @throws ServiceException
-     * @throws ApplicationSecurityException
-     * 
-     * @see #getClassMetadata(PersistencePackageRequest)
-     */
-    public ClassMetadata getClassMetadata(String className)
-            throws ServiceException, ApplicationSecurityException;
-
-    /**
      * Returns class metadata for the given request object
      * 
      * @param request
@@ -68,15 +55,15 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
-     * Returns a specific record for the given className and primary key id
+     * Returns a specific record for the given request and primary key id
      * 
-     * @param className
+     * @param request
      * @param id
      * @return the Entity
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity getRecord(String className, String id)
+    public Entity getRecord(PersistencePackageRequest request, String id)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -143,8 +130,9 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
-     * Returns all records for all subcollections of the specified containingClass and its primary key
-     * @param containingClassName
+     * Returns all records for all subcollections of the specified request and its primary key
+     * 
+     * @param ppr
      * @param containingEntityId
      * @return all Entity[] for all collections for the specified containingClass
      * @throws ServiceException
@@ -152,7 +140,7 @@ public interface AdminEntityService {
      * 
      * @see #getRecordsForCollection(ClassMetadata, String, Property)
      */
-    public Map<String, Entity[]> getRecordsForAllSubCollections(String containingClassName, String containingEntityId)
+    public Map<String, Entity[]> getRecordsForAllSubCollections(PersistencePackageRequest ppr, String containingEntityId)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -201,8 +189,6 @@ public interface AdminEntityService {
     public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
             String priorKey)
             throws ServiceException, ApplicationSecurityException;
-
-
 
 
 }

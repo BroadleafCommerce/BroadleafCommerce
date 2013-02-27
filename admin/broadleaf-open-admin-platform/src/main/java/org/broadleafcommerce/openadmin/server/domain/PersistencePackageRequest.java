@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
@@ -200,7 +201,9 @@ public class PersistencePackageRequest {
     }
 
     public PersistencePackageRequest addCustomCriteria(String customCriteria) {
-        this.customCriteria.add(customCriteria);
+        if (StringUtils.isNotBlank(customCriteria)) {
+            this.customCriteria.add(customCriteria);
+        }
         return this;
     }
 

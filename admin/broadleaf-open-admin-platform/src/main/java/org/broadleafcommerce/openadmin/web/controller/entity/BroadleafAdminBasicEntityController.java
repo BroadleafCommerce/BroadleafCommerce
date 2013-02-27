@@ -85,7 +85,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String sectionKey) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        PersistencePackageRequest ppr = PersistencePackageRequest.standard().withClassName(sectionClassName);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity[] rows = service.getRecords(ppr);
 
@@ -117,7 +117,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String entityType) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        ClassMetadata cmd = service.getClassMetadata(sectionClassName);
+        ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName));
 
         // If the entity type isn't specified, we need to determine if there are various polymorphic types for this entity.
         if (StringUtils.isBlank(entityType)) {
@@ -137,7 +137,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             model.addAttribute("entityTypes", entityTypes);
             model.addAttribute("viewType", "entityTypeSelection");
         } else {
-            ClassMetadata specificTypeMd = service.getClassMetadata(entityType);
+            ClassMetadata specificTypeMd = service.getClassMetadata(getSectionPersistencePackageRequest(entityType));
             EntityForm entityForm = formService.buildEntityForm(specificTypeMd);
 
             // When we initially build the class metadata (and thus, the entity form), we had all of the possible
@@ -201,9 +201,12 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String id) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        ClassMetadata cmd = service.getClassMetadata(sectionClassName);
-        Entity entity = service.getRecord(sectionClassName, id);
-        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
+
+        ClassMetadata cmd = service.getClassMetadata(ppr);
+        Entity entity = service.getRecord(ppr, id);
+
+        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
 
         EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
         
@@ -235,12 +238,14 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             EntityForm entityForm, BindingResult result) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
+
         Entity entity = service.updateEntity(entityForm);
         entityValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
-            ClassMetadata cmd = service.getClassMetadata(sectionClassName);
-            Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
+            ClassMetadata cmd = service.getClassMetadata(ppr);
+            Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
 
             //re-initialize the field groups as well as sub collections
             EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
@@ -291,7 +296,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String sectionKey,
             String collectionField) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
@@ -356,7 +361,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String id,
             String collectionField) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
@@ -435,7 +440,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
          * map collections
          */
         String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
@@ -446,7 +451,8 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            Entity entity = service.getRecord(fmd.getCollectionCeilingEntity(), collectionItemId);
+            PersistencePackageRequest ppr2 = getSectionPersistencePackageRequest(fmd.getCollectionCeilingEntity());
+            Entity entity = service.getRecord(ppr2, collectionItemId);
 
             EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity);
 
@@ -503,7 +509,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String collectionField,
             EntityForm entityForm) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
         // First, we must save the collection entity
@@ -538,7 +544,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String collectionItemId,
             EntityForm entityForm) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
         // First, we must save the collection entity
@@ -575,7 +581,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String collectionField,
             String collectionItemId) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(mainClassName);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
         String priorKey = request.getParameter("key");
@@ -631,6 +637,17 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         model.addAttribute("sectionKey", sectionKey);
         model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
         model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
+    }
+
+    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName) {
+        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
+                .withClassName(sectionClassName)
+                .addCustomCriteria(getSectionCustomCriteria());
+        return ppr;
+    }
+
+    protected String getSectionCustomCriteria() {
+        return null;
     }
 
     public void initBinder(WebDataBinder binder) {

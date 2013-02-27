@@ -62,13 +62,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     protected PersistencePackageFactory persistencePackageFactory;
 
     @Override
-    public ClassMetadata getClassMetadata(String className) throws ServiceException, ApplicationSecurityException {
-        PersistencePackageRequest request = PersistencePackageRequest.standard()
-                .withClassName(className);
-        return getClassMetadata(request);
-    }
-
-    @Override
     public ClassMetadata getClassMetadata(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException {
         ClassMetadata cmd = inspect(request).getClassMetaData();
@@ -82,13 +75,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity getRecord(String className, String id) throws ServiceException, ApplicationSecurityException {
+    public Entity getRecord(PersistencePackageRequest request, String id) throws ServiceException, ApplicationSecurityException {
         FilterAndSortCriteria fasc = new FilterAndSortCriteria("id");
         fasc.setFilterValue(id);
-
-        PersistencePackageRequest request = PersistencePackageRequest.standard()
-                .withClassName(className)
-                .addFilterAndSortCriteria(fasc);
+        request.addFilterAndSortCriteria(fasc);
 
         Entity[] entities = fetch(request).getRecords();
 
@@ -217,14 +207,19 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Map<String, Entity[]> getRecordsForAllSubCollections(String containingClassName, String containingEntityId)
+    public Map<String, Entity[]> getRecordsForAllSubCollections(PersistencePackageRequest ppr, String containingEntityId)
             throws ServiceException, ApplicationSecurityException {
         Map<String, Entity[]> map = new HashMap<String, Entity[]>();
 
-        ClassMetadata cmd = getClassMetadata(containingClassName);
+        ClassMetadata cmd = getClassMetadata(ppr);
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof CollectionMetadata) {
                 Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p);
+
+                //TODO APA Figure out where else to do this
+                //String collectionClass = ((CollectionMetadata) p.getMetadata()).getCollectionCeilingEntity();
+                //ClassMetadata collectionMd = getClassMetadata(collectionClass);
+
                 map.put(p.getName(), rows);
             }
         }

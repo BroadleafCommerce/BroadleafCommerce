@@ -198,10 +198,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             for (Field headerField : headerFields) {
                 Property p = e.findProperty(headerField.getName());
-                Field recordField = new Field()
-                        .withName(headerField.getName())
-                        .withValue(p.getValue());
-                record.getFields().add(recordField);
+                if (p != null) {
+                    Field recordField = new Field()
+                            .withName(headerField.getName())
+                            .withValue(p.getValue());
+                    record.getFields().add(recordField);
+                }
             }
 
             listGrid.getRecords().add(record);
