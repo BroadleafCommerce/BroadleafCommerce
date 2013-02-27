@@ -20,6 +20,8 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -50,6 +53,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -60,6 +64,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -80,8 +85,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        String[] customCriteria = persistencePackage.getCustomCriteria();
-        return !ArrayUtils.isEmpty(customCriteria) && "productSkuList".equals(customCriteria[0]) && Sku.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        try {
+            //since this is the default for all Skus, it's possible that we are providing custom criteria for this
+            //Sku lookup. In that case, we probably want to delegate to a child class, so only use this particular
+            //persistence handler if there is no custom criteria being used
+            Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
+            return Sku.class.isAssignableFrom(testClass) && ArrayUtils.isEmpty(persistencePackage.getCustomCriteria());
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
     
     @Override
@@ -140,6 +152,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 metadata.setOrder(order);
                 metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
                 metadata.setProminent(true);
+                metadata.setVisibility(VisibilityEnum.NOT_SPECIFIED);
                 metadata.setBroadleafEnumeration("");
                 metadata.setReadOnly(false);
                 metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
@@ -176,16 +189,19 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                                                                     ceilingEntityFullyQualifiedClassname, originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
             //allow subclasses to provide additional criteria before executing the query
-            applyAdditionalFetchCriteria(queryCriteria, persistencePackage);
+            applyAdditionalFetchCriteria(queryCriteria, cto, persistencePackage);
 
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, 
                                                Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
+            //records = filterListByProductOptionValues(cto, records);
+
             //allow subclasses to filter more
-            records = filterFetchList(records, persistencePackage);
+            records = filterFetchList(records, cto, persistencePackage);
             
             //Convert Skus into the client-side Entity representation
             Entity[] payload = helper.getRecords(originalProps, records);
-            int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
+            //int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
+            int totalRecords = records.size();
             
             //Communicate to the front-end to allow form editing for all of the product options available for the current
             //Product to allow inserting Skus one at a time
@@ -261,14 +277,63 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
+    //    protected List<Serializable> filterListByProductOptionValues(CriteriaTransferObject cto, List<Serializable> skus) {
+    //
+    //
+    //        
+    //        //now that we have the product option values
+    //        if (productOptionValueFilterIDs.size() > 0) {
+    //            List<Serializable> filteredSkus = new ArrayList<Serializable>();
+    //            for (Serializable sku : skus) {
+    //                Sku record = (Sku) sku;
+    //                for (ProductOptionValue value : record.getProductOptionValues()) {
+    //                    if (productOptionValueFilterIDs.contains(value.getId())) {
+    //                        filteredSkus.add(sku);
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //            return filteredSkus;
+    //        }
+    //        return skus;
+    //    }
+
     /**
-     * Available override point for subclasses if they would like to add additional criteria via the queryCritiera. At the
+     * <p>Available override point for subclasses if they would like to add additional criteria via the queryCritiera. At the
      * point that this method has been called, criteria from the frontend has already been applied, thus allowing you to
-     * override from there as well
+     * override from there as well.</p>
+     * <p>Subclasses that choose to override this should also call this super method so that correct filter criteria
+     * can be applied for product option values</p>
      * 
      */
-    public void applyAdditionalFetchCriteria(PersistentEntityCriteria queryCriteria, PersistencePackage persistencePackage) {
-        //unimplemented
+    public void applyAdditionalFetchCriteria(PersistentEntityCriteria queryCriteria, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+        //TODO: this should be fully implemented and replace what is currently there for filtering the list of Skus by
+        //product option values using the PersistentEntityCritiera rather than executing the query and then filtering the
+        //resulting list. Potentially gives back incorrect results with pagination
+
+        //        Set<String> filterPropertySet = cto.getPropertyIdSet();
+        //
+        //        final List<Long> productOptionValueFilterIDs = new ArrayList<Long>();
+        //        for (String filterProperty : filterPropertySet) {
+        //            if (filterProperty.startsWith(PRODUCT_OPTION_FIELD_PREFIX)) {
+        //                FilterAndSortCriteria criteria = cto.get(filterProperty);
+        //                productOptionValueFilterIDs.add(Long.parseLong(criteria.getFilterValues()[0]));
+        //            }
+        //        }
+        //        if (productOptionValueFilterIDs.size() > 0) {
+        //
+        //            ((NestedPropertyCriteria) queryCriteria).add(
+        //                    new FilterCriterion(new AssociationPath(new AssociationPathElement("productOptionValues")),
+        //                            "id",
+        //                            productOptionValueFilterIDs,
+        //                            false,
+        //                            new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, productOptionValueFilterIDs.size()) {
+        //                @Override
+        //                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+        //                                    return Restrictions.in(targetPropertyName, directValues);
+        //                }
+        //            }));
+        //        }
     }
 
     /**
@@ -280,7 +345,35 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * 
      * @param skus - the list of Skus returned from the database
      */
-    public List<Serializable> filterFetchList(List<Serializable> skus, PersistencePackage persistencePackage) {
+    public List<Serializable> filterFetchList(List<Serializable> skus, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+        Set<String> filterPropertySet = cto.getPropertyIdSet();
+
+        final List<Long> productOptionValueFilterIDs = new ArrayList<Long>();
+        for (String filterProperty : filterPropertySet) {
+            if (filterProperty.startsWith(PRODUCT_OPTION_FIELD_PREFIX)) {
+                FilterAndSortCriteria criteria = cto.get(filterProperty);
+                productOptionValueFilterIDs.add(Long.parseLong(criteria.getFilterValues()[0]));
+            }
+        }
+        if (productOptionValueFilterIDs.size() > 0) {
+            List<Serializable> result = new ArrayList<Serializable>();
+            for (Serializable record : skus) {
+                Sku sku = (Sku) record;
+                //convert the option values into their Long representations
+                ArrayList<Long> skuOptionValueIds = new ArrayList<Long>();
+                CollectionUtils.collect(sku.getProductOptionValues(), new Transformer() {
+                    @Override
+                    public Object transform(Object input) {
+                        return ((ProductOptionValue)input).getId();
+                    }
+                }, skuOptionValueIds);
+                //grab the intersection of the filter option values
+                if (CollectionUtils.containsAny(skuOptionValueIds, productOptionValueFilterIDs)) {
+                    result.add(sku);
+                }
+            }
+        }
+
         return skus;
     }
     
