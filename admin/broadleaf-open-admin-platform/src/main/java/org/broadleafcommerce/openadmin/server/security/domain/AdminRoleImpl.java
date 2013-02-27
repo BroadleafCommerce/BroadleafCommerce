@@ -16,17 +16,33 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * 
@@ -49,7 +65,7 @@ public class AdminRoleImpl implements AdminRole {
     protected Long id;
 
     @Column(name = "NAME", nullable=false, unique = true)
-    @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order=1, group = "AdminRoleImpl_Role", prominent=true)
+    @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order = 1, group = "AdminRoleImpl_Role")
     protected String name;
 
     @Column(name = "DESCRIPTION", nullable=false)
@@ -67,6 +83,8 @@ public class AdminRoleImpl implements AdminRole {
     @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "adminPermissionsTitle", manyToField = "allRoles",
+            operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminPermission> allPermissions= new HashSet<AdminPermission>();
 
 

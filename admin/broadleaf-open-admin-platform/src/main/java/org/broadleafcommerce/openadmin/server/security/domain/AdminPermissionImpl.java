@@ -16,16 +16,20 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,9 +46,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 
@@ -73,7 +74,7 @@ public class AdminPermissionImpl implements AdminPermission {
 
     @Column(name = "PERMISSION_TYPE", nullable=false)
     @Index(name="ADMINPERM_TYPE_INDEX", columnNames={"PERMISSION_TYPE"})
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Permission_Type", order=3, group = "AdminPermissionImpl_Permission", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.security.service.type.PermissionType")
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Permission_Type", order = 3, group = "AdminPermissionImpl_Permission", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.openadmin.server.security.service.type.PermissionType", prominent = true)
     protected String type;
 
     @Column(name = "DESCRIPTION", nullable=false)
