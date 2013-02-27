@@ -56,8 +56,10 @@ public class AdminListGridLinkProcessor extends AbstractAttributeModifierAttrPro
         ListGrid listGrid = (ListGrid) StandardExpressionProcessor.processExpression(arguments, expressions[1]);
         ListGridRecord record = (ListGridRecord) StandardExpressionProcessor.processExpression(arguments, expressions[2]);
         String attr = (String) StandardExpressionProcessor.processExpression(arguments, expressions[3]);
-        
+
         String link = "/" + sectionKey + "/";
+        //TODO  apa This is slow. 
+        link = (String) StandardExpressionProcessor.processExpression(arguments, "@{" + link + "}");
 
         if (listGrid.getContainingEntityId() != null && StringUtils.isNotBlank(listGrid.getSubCollectionFieldName())) {
             link += listGrid.getContainingEntityId() + "/" + listGrid.getSubCollectionFieldName() + "/";
