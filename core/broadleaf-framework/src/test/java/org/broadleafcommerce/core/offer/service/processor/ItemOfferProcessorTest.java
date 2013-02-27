@@ -451,9 +451,9 @@ public class ItemOfferProcessorTest extends TestCase {
         offerService.applyOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 0);
 
-        // Try again with two offers.   The second should be applied.    
+        // Try again with two offers.   The second should be applied.   
         offerService.applyOffersToOrder(offerListWithTwoOffers, order);
-        assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
+        assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
 
         // Trying with 2nd offer as nonCombinable.
         offer1.setCombinableWithOtherOffers(true);
