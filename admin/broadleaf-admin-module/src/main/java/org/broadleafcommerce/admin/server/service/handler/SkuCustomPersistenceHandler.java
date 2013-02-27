@@ -20,8 +20,6 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,8 +49,16 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider.FilterDataStrategy;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 
@@ -204,20 +210,18 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, 
                                                                     ceilingEntityFullyQualifiedClassname, originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
+
+            applyProductOptionValueCriteria(queryCriteria, cto, persistencePackage);
+
             //allow subclasses to provide additional criteria before executing the query
             applyAdditionalFetchCriteria(queryCriteria, cto, persistencePackage);
-
+            
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, 
                                                Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
-            //records = filterListByProductOptionValues(cto, records);
-
-            //allow subclasses to filter more
-            records = filterFetchList(records, cto, persistencePackage);
             
             //Convert Skus into the client-side Entity representation
             Entity[] payload = helper.getRecords(originalProps, records);
-            //int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
-            int totalRecords = records.size();
+            int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
             
             //Communicate to the front-end to allow form editing for all of the product options available for the current
             //Product to allow inserting Skus one at a time
@@ -293,75 +297,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
-    //    protected List<Serializable> filterListByProductOptionValues(CriteriaTransferObject cto, List<Serializable> skus) {
-    //
-    //
-    //        
-    //        //now that we have the product option values
-    //        if (productOptionValueFilterIDs.size() > 0) {
-    //            List<Serializable> filteredSkus = new ArrayList<Serializable>();
-    //            for (Serializable sku : skus) {
-    //                Sku record = (Sku) sku;
-    //                for (ProductOptionValue value : record.getProductOptionValues()) {
-    //                    if (productOptionValueFilterIDs.contains(value.getId())) {
-    //                        filteredSkus.add(sku);
-    //                        break;
-    //                    }
-    //                }
-    //            }
-    //            return filteredSkus;
-    //        }
-    //        return skus;
-    //    }
-
-    /**
-     * <p>Available override point for subclasses if they would like to add additional criteria via the queryCritiera. At the
-     * point that this method has been called, criteria from the frontend has already been applied, thus allowing you to
-     * override from there as well.</p>
-     * <p>Subclasses that choose to override this should also call this super method so that correct filter criteria
-     * can be applied for product option values</p>
-     * 
-     */
-    public void applyAdditionalFetchCriteria(PersistentEntityCriteria queryCriteria, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
-        //TODO: this should be fully implemented and replace what is currently there for filtering the list of Skus by
-        //product option values using the PersistentEntityCritiera rather than executing the query and then filtering the
-        //resulting list. Potentially gives back incorrect results with pagination
-
-        //        Set<String> filterPropertySet = cto.getPropertyIdSet();
-        //
-        //        final List<Long> productOptionValueFilterIDs = new ArrayList<Long>();
-        //        for (String filterProperty : filterPropertySet) {
-        //            if (filterProperty.startsWith(PRODUCT_OPTION_FIELD_PREFIX)) {
-        //                FilterAndSortCriteria criteria = cto.get(filterProperty);
-        //                productOptionValueFilterIDs.add(Long.parseLong(criteria.getFilterValues()[0]));
-        //            }
-        //        }
-        //        if (productOptionValueFilterIDs.size() > 0) {
-        //
-        //            ((NestedPropertyCriteria) queryCriteria).add(
-        //                    new FilterCriterion(new AssociationPath(new AssociationPathElement("productOptionValues")),
-        //                            "id",
-        //                            productOptionValueFilterIDs,
-        //                            false,
-        //                            new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, productOptionValueFilterIDs.size()) {
-        //                @Override
-        //                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-        //                                    return Restrictions.in(targetPropertyName, directValues);
-        //                }
-        //            }));
-        //        }
-    }
-
-    /**
-     * After applying the criteria and performing the fetch, this allows additional filtering from the list of Skus that was
-     * returned. This is available for subclasses to implement if because you actually have Skus available from thist list,
-     * but note that there could still be performance implications as at this point, the database has already been hit. For
-     * maximum performance, consider using the {@link #applyAdditionalFetchCriteria(PersistentEntityCriteria, PersistencePackage)}
-     * and applying the filtering there.
-     * 
-     * @param skus - the list of Skus returned from the database
-     */
-    public List<Serializable> filterFetchList(List<Serializable> skus, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+    protected void applyProductOptionValueCriteria(PersistentEntityCriteria queryCriteria, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
         Set<String> filterPropertySet = cto.getPropertyIdSet();
 
         final List<Long> productOptionValueFilterIDs = new ArrayList<Long>();
@@ -372,25 +308,33 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
         }
         if (productOptionValueFilterIDs.size() > 0) {
-            List<Serializable> result = new ArrayList<Serializable>();
-            for (Serializable record : skus) {
-                Sku sku = (Sku) record;
-                //convert the option values into their Long representations
-                ArrayList<Long> skuOptionValueIds = new ArrayList<Long>();
-                CollectionUtils.collect(sku.getProductOptionValues(), new Transformer() {
-                    @Override
-                    public Object transform(Object input) {
-                        return ((ProductOptionValue)input).getId();
-                    }
-                }, skuOptionValueIds);
-                //grab the intersection of the filter option values
-                if (CollectionUtils.containsAny(skuOptionValueIds, productOptionValueFilterIDs)) {
-                    result.add(sku);
-                }
-            }
-        }
 
-        return skus;
+            ((NestedPropertyCriteria) queryCriteria).add(
+                    new FilterCriterion(new AssociationPath(new AssociationPathElement("productOptionValues")),
+                            "id",
+                            productOptionValueFilterIDs,
+                            false,
+                            new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, productOptionValueFilterIDs.size()) {
+
+                                @Override
+                                @SuppressWarnings("unchecked")
+                                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                                    return Restrictions.in(targetPropertyName, (List<Long>) directValues[0]);
+                                }
+                            }));
+        }
+    }
+
+    /**
+     * <p>Available override point for subclasses if they would like to add additional criteria via the queryCritiera. At the
+     * point that this method has been called, criteria from the frontend has already been applied, thus allowing you to
+     * override from there as well.</p>
+     * <p>Subclasses that choose to override this should also call this super method so that correct filter criteria
+     * can be applied for product option values</p>
+     * 
+     */
+    public void applyAdditionalFetchCriteria(PersistentEntityCriteria queryCriteria, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+        //unimplemented
     }
     
     @Override
