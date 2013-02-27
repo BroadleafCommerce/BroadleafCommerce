@@ -18,12 +18,13 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -31,31 +32,23 @@ import java.util.List;
 public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityController {
 
     public static final String ITEM_DISCOUNT_TARGET_FIELD_NAME = "targetItemCriteria";
-    public static final String ITEM_DISCOUNT_TARGET_CONFIG_KEY = "promotionOrderItem";
-    public static final String ITEM_DISCOUNT_TARGET_CEILING_ENTITY = "org.broadleafcommerce.core.order.domain.OrderItem";
+    public static final String ITEM_DISCOUNT_TARGET_FIELD_BUILDER = "ORDER_ITEM_FIELDS";
     public static final String ITEM_DISCOUNT_TARGET_MVEL = "orderItemMatchRule";
-
-    public static final String ITEM_QUALIFICATION_FIELD_NAME = "qualifyingItemCriteria";
-    public static final String ITEM_QUALIFICATION_CONFIG_KEY = "promotionOrderItem";
-    public static final String ITEM_QUALIFICATION_CEILING_ENTITY = "org.broadleafcommerce.core.order.domain.OrderItem";
-    public static final String ITEM_QUALIFICATION_MVEL = "orderItemMatchRule";
+    public static final String ITEM_DISCOUNT_TARGET_QUANTITY = "quantity";
 
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
              String id) throws Exception {
         String view = super.viewEntityForm(request, response, model, "offer", id);
         EntityForm entityForm = (EntityForm) model.asMap().get("entityForm");
 
-        List<RuleBuilder> ruleBuilders = entityForm.getCollectionRuleBuilders();
-        for (RuleBuilder builder : ruleBuilders) {
-            if (ITEM_DISCOUNT_TARGET_FIELD_NAME.equals(builder.getFieldName())){
-                builder.setConfigKey(ITEM_DISCOUNT_TARGET_CONFIG_KEY);
-                builder.setCeilingEntity(ITEM_DISCOUNT_TARGET_CEILING_ENTITY);
-                builder.setMvelProperty(ITEM_DISCOUNT_TARGET_MVEL);
-            }
-            if (ITEM_QUALIFICATION_FIELD_NAME.equals(builder.getFieldName())){
-                builder.setConfigKey(ITEM_QUALIFICATION_CONFIG_KEY);
-                builder.setCeilingEntity(ITEM_QUALIFICATION_CEILING_ENTITY);
-                builder.setMvelProperty(ITEM_QUALIFICATION_MVEL);
+        for (Tab tab : entityForm.getTabs()) {
+            Set<RuleBuilder> ruleBuilders = tab.getRuleBuilders();
+            for (RuleBuilder builder : ruleBuilders) {
+                if (ITEM_DISCOUNT_TARGET_FIELD_NAME.equals(builder.getFieldName())){
+                    builder.setFieldBuilder(ITEM_DISCOUNT_TARGET_FIELD_BUILDER);
+                    builder.setMvelProperty(ITEM_DISCOUNT_TARGET_MVEL);
+                    builder.setQuantityProperty(ITEM_DISCOUNT_TARGET_QUANTITY);
+                }
             }
         }
 

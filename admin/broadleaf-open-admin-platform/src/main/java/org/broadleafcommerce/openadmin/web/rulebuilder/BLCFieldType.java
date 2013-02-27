@@ -14,34 +14,13 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation.dto;
-
-import java.io.Serializable;
+package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class OptionsDTO implements Serializable {
+public enum BLCFieldType {
 
-    private static final long serialVersionUID = 1L;
+    NONE, TEXT, SELECT, RANGE
 
-    protected String label;
-
-    protected String name;
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

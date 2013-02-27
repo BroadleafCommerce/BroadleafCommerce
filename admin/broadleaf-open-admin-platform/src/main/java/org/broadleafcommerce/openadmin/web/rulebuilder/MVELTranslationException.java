@@ -14,44 +14,29 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation.dto;
-
-import java.io.Serializable;
+package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class ExpressionDTO extends DataDTO implements Serializable {
+public class MVELTranslationException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    protected String name;
-
-    protected String operator;
-
-    protected String value;
-
-    public String getName() {
-        return name;
+    public MVELTranslationException() {
+        super();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public MVELTranslationException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public String getOperator() {
-        return operator;
+    public MVELTranslationException(String message) {
+        super(message);
     }
 
-    public void setOperator(String operator) {
-        this.operator = operator;
+    public MVELTranslationException(Throwable cause) {
+        super(cause);
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation.dto;
+package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,9 +26,19 @@ public class DataDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    protected Integer quantity;
+
     protected String groupOperator;
 
     protected ArrayList<DataDTO> groups;
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 
     public String getGroupOperator() {
         return groupOperator;

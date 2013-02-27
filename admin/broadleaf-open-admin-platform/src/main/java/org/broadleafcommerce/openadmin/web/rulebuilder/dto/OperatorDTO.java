@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation.dto;
+package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import java.io.Serializable;
 

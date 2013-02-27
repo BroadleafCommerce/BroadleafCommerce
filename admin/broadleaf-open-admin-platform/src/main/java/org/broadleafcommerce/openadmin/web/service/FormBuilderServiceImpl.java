@@ -320,11 +320,21 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 if (fmd.isRuleBuilder()) {
                     RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(p.getName(), fmd.getFriendlyName(),
                             subCollectionEntities);
-                    ef.getCollectionRuleBuilders().add(subCollectionRuleBuilder);
-
+                    ef.addRuleBuilder(subCollectionRuleBuilder, null, null);
                     continue;
                 }
 
+            }
+
+            if (p.getMetadata() instanceof MapMetadata) {
+                MapMetadata fmd = (MapMetadata) p.getMetadata();
+
+                if (fmd.isRuleBuilder()) {
+                    RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(p.getName(), fmd.getFriendlyName(),
+                            subCollectionEntities);
+                    ef.addRuleBuilder(subCollectionRuleBuilder, null, null);
+                    continue;
+                }
             }
 
             String containingEntityId = entity.getPMap().get("id").getValue();

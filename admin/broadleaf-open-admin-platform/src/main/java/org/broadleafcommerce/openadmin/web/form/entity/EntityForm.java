@@ -33,8 +33,6 @@ public class EntityForm {
         }
     });
 
-    protected List<RuleBuilder> collectionRuleBuilders = new ArrayList<RuleBuilder>();
-
     // This is used to data-bind when this entity form is submitted
     protected Map<String, Field> fields = null;
 
@@ -153,6 +151,21 @@ public class EntityForm {
         tab.getListGrids().add(listGrid);
     }
 
+    public void addRuleBuilder(RuleBuilder ruleBuilder, String tabName, Integer tabOrder) {
+        tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
+        tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
+
+        Tab tab = findTab(tabName);
+        if (tab == null) {
+            tab = new Tab();
+            tab.setTitle(tabName);
+            tab.setOrder(tabOrder);
+            tabs.add(tab);
+        }
+
+        tab.getRuleBuilders().add(ruleBuilder);
+    }
+
     public String getId() {
         return id;
     }
@@ -167,14 +180,6 @@ public class EntityForm {
 
     public void setEntityType(String entityType) {
         this.entityType = entityType;
-    }
-
-    public List<RuleBuilder> getCollectionRuleBuilders() {
-        return collectionRuleBuilders;
-    }
-
-    public void setCollectionRuleBuilders(List<RuleBuilder> collectionRuleBuilders) {
-        this.collectionRuleBuilders = collectionRuleBuilders;
     }
 
     public Set<Tab> getTabs() {

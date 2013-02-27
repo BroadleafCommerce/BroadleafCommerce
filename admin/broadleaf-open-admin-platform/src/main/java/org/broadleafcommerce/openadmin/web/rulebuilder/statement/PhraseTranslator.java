@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation.statement;
+package org.broadleafcommerce.openadmin.web.rulebuilder.statement;
 
-import org.broadleafcommerce.openadmin.web.translation.BLCOperator;
-import org.broadleafcommerce.openadmin.web.translation.MVELTranslationException;
+import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
+import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 
 /**
  * @author jfischer

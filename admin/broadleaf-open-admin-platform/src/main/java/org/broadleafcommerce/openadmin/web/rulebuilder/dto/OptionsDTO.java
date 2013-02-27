@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation.dto;
+package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class FieldDTO implements Serializable {
+public class OptionsDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     protected String label;
 
     protected String name;
-
-    protected ArrayList<OptionsDTO> options = new ArrayList<OptionsDTO>();
-
-    protected ArrayList<OperatorDTO> operators = new ArrayList<OperatorDTO>();
 
     public String getLabel() {
         return label;
@@ -48,21 +43,5 @@ public class FieldDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public ArrayList<OptionsDTO> getOptions() {
-        return options;
-    }
-
-    public void setOptions(ArrayList<OptionsDTO> options) {
-        this.options = options;
-    }
-
-    public ArrayList<OperatorDTO> getOperators() {
-        return operators;
-    }
-
-    public void setOperators(ArrayList<OperatorDTO> operators) {
-        this.operators = operators;
     }
 }

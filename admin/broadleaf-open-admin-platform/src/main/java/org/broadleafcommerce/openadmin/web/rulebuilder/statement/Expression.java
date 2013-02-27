@@ -14,34 +14,40 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation.dto;
+package org.broadleafcommerce.openadmin.web.rulebuilder.statement;
 
-import java.io.Serializable;
+import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
 
 /**
+ * @author jfischer
  * @author Elbert Bautista (elbertbautista)
  */
-public class OutputWrapper implements Serializable {
+public class Expression {
+    protected String field;
+    protected BLCOperator operator;
+    protected String value;
 
-    private static final long serialVersionUID = 1L;
-
-    protected String containerId;
-
-    protected ConditionsDTO conditions;
-
-    public String getContainerId() {
-        return containerId;
+    public String getField() {
+        return field;
     }
 
-    public void setContainerId(String containerId) {
-        this.containerId = containerId;
+    public void setField(String field) {
+        this.field = field.trim();
     }
 
-    public ConditionsDTO getConditions() {
-        return conditions;
+    public BLCOperator getOperator() {
+        return operator;
     }
 
-    public void setConditions(ConditionsDTO conditions) {
-        this.conditions = conditions;
+    public void setOperator(BLCOperator operator) {
+        this.operator = operator;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value.trim();
     }
 }

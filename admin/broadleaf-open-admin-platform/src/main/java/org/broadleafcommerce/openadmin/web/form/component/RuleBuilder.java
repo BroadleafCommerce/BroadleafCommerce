@@ -26,9 +26,9 @@ public class RuleBuilder {
     protected String fieldName;
     protected String friendlyName;
     protected Entity[] entities;
-    protected String ceilingEntity;
-    protected String configKey;
+    protected String fieldBuilder;
     protected String mvelProperty;
+    protected String quantityProperty;
 
     public String getFieldName() {
         return fieldName;
@@ -54,20 +54,12 @@ public class RuleBuilder {
         this.entities = entities;
     }
 
-    public String getCeilingEntity() {
-        return ceilingEntity;
+    public String getFieldBuilder() {
+        return fieldBuilder;
     }
 
-    public void setCeilingEntity(String ceilingEntity) {
-        this.ceilingEntity = ceilingEntity;
-    }
-
-    public String getConfigKey() {
-        return configKey;
-    }
-
-    public void setConfigKey(String configKey) {
-        this.configKey = configKey;
+    public void setFieldBuilder(String fieldBuilder) {
+        this.fieldBuilder = fieldBuilder;
     }
 
     public String getMvelProperty() {
@@ -76,5 +68,13 @@ public class RuleBuilder {
 
     public void setMvelProperty(String mvelProperty) {
         this.mvelProperty = mvelProperty;
+    }
+
+    public String getQuantityProperty() {
+        return quantityProperty;
+    }
+
+    public void setQuantityProperty(String quantityProperty) {
+        this.quantityProperty = quantityProperty;
     }
 }

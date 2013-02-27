@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation;
+package org.broadleafcommerce.openadmin.web.rulebuilder.service;
+
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public enum BLCFieldType {
+public interface RuleBuilderFieldService {
 
-    NONE, TEXT, SELECT
+    public String getName();
+
+    public FieldWrapper buildFields();
 
 }

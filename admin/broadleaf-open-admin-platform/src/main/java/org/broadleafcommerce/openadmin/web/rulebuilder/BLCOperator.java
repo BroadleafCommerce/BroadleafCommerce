@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.translation;
+package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 /**
  * @author Elbert Bautista (elbertbautista)

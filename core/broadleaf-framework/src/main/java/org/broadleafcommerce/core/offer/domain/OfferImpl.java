@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -210,6 +212,15 @@ public class OfferImpl implements Offer, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationMap(
+            friendlyName = "OfferImpl_offerMatchRules",
+            keyPropertyFriendlyName = "OfferImpl_offerMatchRules_Key",
+            ruleBuilder = true,
+            keys = {
+                    @AdminPresentationMapKey(keyName = "ORDER", friendlyKeyName = "OfferImpl_offerMatchRules_order"),
+                    @AdminPresentationMapKey(keyName = "CUSTOMER", friendlyKeyName = "OfferImpl_offerMatchRules_customer")
+            }
+    )
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
