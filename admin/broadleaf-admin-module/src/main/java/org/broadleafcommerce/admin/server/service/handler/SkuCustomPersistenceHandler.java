@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -84,31 +85,46 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        try {
-            //since this is the default for all Skus, it's possible that we are providing custom criteria for this
-            //Sku lookup. In that case, we probably want to delegate to a child class, so only use this particular
-            //persistence handler if there is no custom criteria being used
-            Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
-            return Sku.class.isAssignableFrom(testClass) && ArrayUtils.isEmpty(persistencePackage.getCustomCriteria());
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return canHandle(persistencePackage, persistencePackage.getPersistencePerspective().getOperationTypes().getInspectType());
     }
     
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return canHandleInspect(persistencePackage);
+        OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
+        return canHandle(persistencePackage, fetchType);
     }
     
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return canHandleInspect(persistencePackage);
+        OperationType addType = persistencePackage.getPersistencePerspective().getOperationTypes().getAddType();
+        return canHandle(persistencePackage, addType);
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return canHandleInspect(persistencePackage);
+        OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
+        return canHandle(persistencePackage, updateType);
+    }
+
+    /**
+     * Since this is the default for all Skus, it's possible that we are providing custom criteria for this
+     * Sku lookup. In that case, we probably want to delegate to a child class, so only use this particular
+     * persistence handler if there is no custom criteria being used and the ceiling entity is an instance of Sku. The
+     * exception to this rule is when we are pulling back Media, since the admin actually uses Sku for the ceiling entity
+     * class name. That should be handled by the map structure module though, so only handle things in the Sku custom
+     * persistence handler for OperationType.BASIC
+     * 
+     */
+    protected Boolean canHandle(PersistencePackage persistencePackage, OperationType operationType) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        try {
+
+            Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
+            return Sku.class.isAssignableFrom(testClass) && ArrayUtils.isEmpty(persistencePackage.getCustomCriteria()) &&
+                    OperationType.BASIC.equals(operationType);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     /**

@@ -90,41 +90,44 @@ public class SkuBasicClientEntityModule extends BasicClientEntityModule {
                     response.setTotalRows(result.getTotalRecords());
                     /*** END COPY FROM BasicClientEntityModule ***/
                     
-                    // First, hide all of the productOption fields becauase they may not be applicable to this particular 
-                    // product
-                    for (DataSourceField field : dataSource.getFields()) {
-                        if (field.getName().startsWith("productOption")) {
-                            field.setAttribute("formHidden", FormHiddenEnum.HIDDEN);
+                    //only execute the below code if there are actual results returned
+                    if (result.getTotalRecords() > 0) {
+                        // First, hide all of the productOption fields becauase they may not be applicable to this particular 
+                        // product
+                        for (DataSourceField field : dataSource.getFields()) {
+                            if (field.getName().startsWith("productOption")) {
+                                field.setAttribute("formHidden", FormHiddenEnum.HIDDEN);
+                            }
                         }
-                    }
-                    
-                    //In order to make the form display show up properly for creating a new single Sku, make all the product
-                    //options for the Product visible on the form
-                    if (result.getClassMetaData().getProperties() != null) {
-                        for (Property property : result.getClassMetaData().getProperties()) {
-                            DataSourceField field = ((ListGridDataSource)dataSource).getField(property.getName());
-                            field.setAttribute("formHidden", FormHiddenEnum.VISIBLE);
+
+                        //In order to make the form display show up properly for creating a new single Sku, make all the product
+                        //options for the Product visible on the form
+                        if (result.getClassMetaData().getProperties() != null) {
+                            for (Property property : result.getClassMetaData().getProperties()) {
+                                DataSourceField field = ((ListGridDataSource) dataSource).getField(property.getName());
+                                field.setAttribute("formHidden", FormHiddenEnum.VISIBLE);
+                            }
                         }
-                    }
-                    
-                    //Build up a list of the product options that are relevant for this list of Skus
-                    List<String> productOptionFields = new ArrayList<String>();
-                    for (Entity entity : result.getRecords()) {
-                        for (Property property : entity.getProperties()) {
-                            if (property.getName().startsWith("productOption")) {
-                                if (!productOptionFields.contains(property.getName())) {
-                                    productOptionFields.add(property.getName());
+
+                        //Build up a list of the product options that are relevant for this list of Skus
+                        List<String> productOptionFields = new ArrayList<String>();
+                        for (Entity entity : result.getRecords()) {
+                            for (Property property : entity.getProperties()) {
+                                if (property.getName().startsWith("productOption")) {
+                                    if (!productOptionFields.contains(property.getName())) {
+                                        productOptionFields.add(property.getName());
+                                    }
                                 }
                             }
                         }
-                    }
-                    //Now hide/show all the product option fields based on the current list of Skus
-                    for (DataSourceField field : dataSource.getFields()) {
-                        if (field.getName().startsWith("productOption")) {
-                            if (productOptionFields.contains(field.getName())) {
-                                ((ListGrid)((ListGridDataSource)dataSource).getAssociatedGrid()).showField(field.getName());
-                            } else {
-                                ((ListGrid)((ListGridDataSource)dataSource).getAssociatedGrid()).hideField(field.getName());
+                        //Now hide/show all the product option fields based on the current list of Skus
+                        for (DataSourceField field : dataSource.getFields()) {
+                            if (field.getName().startsWith("productOption")) {
+                                if (productOptionFields.contains(field.getName())) {
+                                    ((ListGrid) ((ListGridDataSource) dataSource).getAssociatedGrid()).showField(field.getName());
+                                } else {
+                                    ((ListGrid) ((ListGridDataSource) dataSource).getAssociatedGrid()).hideField(field.getName());
+                                }
                             }
                         }
                     }
