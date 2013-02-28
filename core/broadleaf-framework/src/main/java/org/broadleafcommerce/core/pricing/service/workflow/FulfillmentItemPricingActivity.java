@@ -66,8 +66,13 @@ public class FulfillmentItemPricingActivity extends BaseActivity {
                     fgItemList.add(fgItem);
 
 
+                    Money totalItemAmount = orderItem.getTotalPrice();
                     // Update the prorated totals
-                    Money totalItemAmount = orderItem.getTotalPrice().subtract(orderItem.getProratedOrderAdjustment());
+                    Money proratedOrderAdjustment = orderItem.getProratedOrderAdjustment();
+                    if (proratedOrderAdjustment != null) {
+                        totalItemAmount = totalItemAmount.subtract(orderItem.getProratedOrderAdjustment());
+                    }
+
                     fgItem.setTotalItemAmount(totalItemAmount.multiply(fgItemQty).divide(orderItemQty));
                     if (orderItem.isTaxable()) {
                         Money totalTaxAmount = orderItem.getTotalTaxableAmount();
@@ -77,8 +82,13 @@ public class FulfillmentItemPricingActivity extends BaseActivity {
                         fgItem.setTotalItemTaxableAmount(new Money(getCurrency(fulfillmentGroup)));
                     }
                 } else {
+                    Money totalItemAmount = orderItem.getTotalPrice();
+                    Money proratedOrderAdjustment = orderItem.getProratedOrderAdjustment();
+                    if (proratedOrderAdjustment != null) {
+                        totalItemAmount = totalItemAmount.subtract(orderItem.getProratedOrderAdjustment());
+                    }
                     // Quantity matches, just bring over the itemTotals                    
-                    fgItem.setTotalItemAmount(orderItem.getTotalPrice().subtract(orderItem.getProratedOrderAdjustment()));
+                    fgItem.setTotalItemAmount(totalItemAmount);
                     if (orderItem.isTaxable()) {
                         fgItem.setTotalItemTaxableAmount(orderItem.getTotalTaxableAmount());
                     } else {

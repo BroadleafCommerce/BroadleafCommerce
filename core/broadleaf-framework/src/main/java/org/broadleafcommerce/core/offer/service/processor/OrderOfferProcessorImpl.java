@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.springframework.stereotype.Service;
 
@@ -325,11 +326,33 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    protected List<OrderItem> buildOrderItemList(Order order) {
+        List<OrderItem> orderItemList = new ArrayList<OrderItem>();
+        for (OrderItem currentItem : order.getOrderItems()) {
+            if (currentItem instanceof OrderItemContainer) {
+                OrderItemContainer container = (OrderItemContainer) currentItem;
+                if (container.isPricingAtContainerLevel()) {
+                    orderItemList.add(currentItem);
+                } else {
+                    for (OrderItem containedItem : container.getOrderItems()) {
+                        orderItemList.add(containedItem);
+                    }
+                }
+            } else {
+                orderItemList.add(currentItem);
+            }
+        }
+
+        return orderItemList;
+    }
+
     protected void synchronizeOrderItems(PromotableOrder promotableOrder) {
         Order order = promotableOrder.getOrder();
         Map<OrderItem, PromotableOrderItem> promotableItemMap = buildPromotableItemMap(promotableOrder);
 
-        for (OrderItem orderItem : order.getOrderItems()) {
+        List<OrderItem> orderItemList = buildOrderItemList(order);
+
+        for (OrderItem orderItem : orderItemList) {
             PromotableOrderItem promotableItem = promotableItemMap.get(orderItem);
             if (promotableItem == null) {
                 continue;

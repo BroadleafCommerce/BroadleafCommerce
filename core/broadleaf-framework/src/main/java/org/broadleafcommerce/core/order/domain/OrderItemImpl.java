@@ -709,7 +709,11 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     public Money getTotalTaxableAmount() {
         Money returnValue = convertToMoney(BigDecimal.ZERO);
         if (isTaxable()) {
-            return getTotalPrice().subtract(getProratedOrderAdjustment());
+            if (proratedOrderAdjustment != null) {
+                return getTotalPrice().subtract(getProratedOrderAdjustment());
+            } else {
+                return getTotalPrice();
+            }
         }
         return returnValue;
     }

@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -52,7 +54,6 @@ import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -60,9 +61,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author apazzolini
@@ -496,13 +499,30 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+        Order order = findOrderById(orderId);
+        if (automaticallyMergeLikeItems) {
+            OrderItem item = findMatchingItem(order, orderItemRequestDTO);
+            if (item != null) {
+                orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
+                orderItemRequestDTO.setOrderItemId(item.getId());
+                try {
+                    return updateItemQuantity(orderId, orderItemRequestDTO, priceOrder);                    
+                } catch (RemoveFromCartException e) {
+                    throw new AddToCartException("Unexpected error - system tried to remove item while adding to cart", e);
+                } catch (UpdateCartException e) {
+                    throw new AddToCartException("Could not update quantity for matched item", e);
+                }
+            }
+        }
+
         try {
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            CartOperationRequest cartOpRequest = new CartOperationRequest(order, orderItemRequestDTO, priceOrder);
             CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
         }
+
     }
 
     @Override
@@ -639,5 +659,67 @@ public class OrderServiceImpl implements OrderService {
         }
         
         return cause;
+    }
+
+    /**
+     * Returns true if the two items attributes exactly match.
+     * @param item1
+     * @param item2
+     * @return
+     */
+    protected boolean compareAttributes(Map<String, String> item1Attributes, OrderItemRequestDTO item2) {
+        int item1AttributeSize = item1Attributes == null ? 0 : item1Attributes.size();
+        int item2AttributeSize = item2.getItemAttributes() == null ? 0 : item2.getItemAttributes().size();
+
+        if (item1AttributeSize != item2AttributeSize) {
+            return false;
+        }
+
+        for (String key : item2.getItemAttributes().keySet()) {
+            String itemOneValue = item1Attributes.get(key);
+            String itemTwoValue = item2.getItemAttributes().get(key);
+            if (!itemTwoValue.equals(itemOneValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected boolean itemMatches(Sku item1Sku, Product item1Product, Map<String, String> item1Attributes,
+            OrderItemRequestDTO item2) {
+        // Must match on SKU and options
+        if (item1Sku != null && item2.getSkuId() != null) {
+            if (item1Sku.getId().equals(item2.getSkuId())) {
+                return compareAttributes(item1Attributes, item2);
+            }
+        } else {
+            if (item1Product != null && item2.getProductId() != null) {
+                if (item1Product.getId().equals(item2.getProductId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected OrderItem findMatchingItem(Order order, OrderItemRequestDTO itemToFind) {
+        if (order == null) {
+            return null;
+        }
+        for (OrderItem currentItem : order.getOrderItems()) {
+            if (currentItem instanceof DiscreteOrderItem) {
+                DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
+                if (itemMatches(discreteItem.getSku(), discreteItem.getProduct(), discreteItem.getAdditionalAttributes(),
+                        itemToFind)) {
+                    return discreteItem;
+                }
+            } else if (currentItem instanceof BundleOrderItem) {
+                BundleOrderItem bundleItem = (BundleOrderItem) currentItem;
+                if (itemMatches(bundleItem.getSku(), bundleItem.getProduct(), null, itemToFind)) {
+                    return bundleItem;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -297,7 +297,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         // Only need to update prices if we are not summing the contained items to determine
         // the price.
         if (! shouldSumItems()) {
-            if (getSku() != null && !getSku().getSalePrice().equals(salePrice)) {
+            if (getSku() != null && getSku().getSalePrice() != null && !getSku().getSalePrice().equals(salePrice)) {
                 baseSalePrice = getSku().getSalePrice().getAmount();
                 salePrice = getSku().getSalePrice().getAmount();
                 return true;
