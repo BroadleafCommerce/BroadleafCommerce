@@ -100,12 +100,12 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     @Override
     public void init(OrderItemPriceDetail orderItemPriceDetail, Offer offer, String reason) {
         this.orderItemPriceDetail = orderItemPriceDetail;
-        this.offer = offer;
+        setOffer(offer);
         if (reason == null) {
             this.reason = reason;
             this.reason = offer.getName();
         }
-        this.offerName = offer.getName();
+
     }
 
     @Override
