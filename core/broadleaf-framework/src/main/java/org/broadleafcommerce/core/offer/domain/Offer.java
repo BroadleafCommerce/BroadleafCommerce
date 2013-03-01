@@ -214,4 +214,8 @@ public interface Offer extends Serializable {
     
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
 
+    void setMarketingMessage(String marketingMessage);
+
+    String getMarketingMessage();
+
 }

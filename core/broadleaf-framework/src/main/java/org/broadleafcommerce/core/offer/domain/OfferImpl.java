@@ -106,6 +106,11 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 4, group = "OfferImpl_Description", largeEntry=true, prominent=true, groupOrder = 1)
     protected String description;
 
+    @Column(name = "MARKETING_MESSASGE")
+    @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSASGE" })
+    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = 3, group = "OfferImpl_Description", groupOrder = 1)
+    protected String marketingMessage;
+
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 1, group = "OfferImpl_Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType", groupOrder = 1)
@@ -496,6 +501,16 @@ public class OfferImpl implements Offer, Status {
     @Deprecated
     public int getUses() {
         return uses;
+    }
+
+    @Override
+    public String getMarketingMessage() {
+        return marketingMessage;
+    }
+
+    @Override
+    public void setMarketingMessage(String marketingMessage) {
+        this.marketingMessage = marketingMessage;
     }
 
     @Override

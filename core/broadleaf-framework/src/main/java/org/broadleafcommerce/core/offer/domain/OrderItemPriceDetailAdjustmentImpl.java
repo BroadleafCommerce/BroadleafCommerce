@@ -151,7 +151,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     public void setOffer(Offer offer) {
         this.offer = offer;
         if (offer != null) {
-            this.offerName = offer.getName();
+            this.offerName = offer.getMarketingMessage() != null ? offer.getMarketingMessage() : offer.getName();
         }
     }
 
