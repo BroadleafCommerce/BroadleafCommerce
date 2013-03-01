@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 
 import java.util.ArrayList;
@@ -26,30 +28,70 @@ import java.util.ArrayList;
  */
 public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFieldService{
 
-    protected ArrayList<String> fields = new ArrayList<String>();
+    protected ArrayList<FieldData> fields = new ArrayList<FieldData>();
 
     @Override
     public FieldWrapper buildFields() {
         FieldWrapper wrapper = new FieldWrapper();
 
-        for (String field : fields) {
-            String[] values = field.split("\\|");
+        for (FieldData field : fields) {
             FieldDTO fieldDTO = new FieldDTO();
-            fieldDTO.setLabel(values[0]);
-            fieldDTO.setName(values[1]);
-            fieldDTO.setOperators(values[2]);
-            fieldDTO.setOptions(values[3]);
+            fieldDTO.setLabel(field.getFieldLabel());
+            fieldDTO.setName(field.getFieldName());
+            fieldDTO.setOperators(field.getOperators());
+            fieldDTO.setOptions(field.getOptions());
             wrapper.getFields().add(fieldDTO);
         }
 
         return wrapper;
     }
 
-    public ArrayList<String> getFields() {
+    @Override
+    public SupportedFieldType getSupportedFieldType(String fieldName) {
+        SupportedFieldType type = null;
+        if (fieldName != null) {
+            for (FieldData field : fields) {
+                if (fieldName.equals(field.getFieldName())){
+                    return field.getFieldType();
+                }
+            }
+        }
+        return type;
+    }
+
+    @Override
+    public SupportedFieldType getSecondaryFieldType(String fieldName) {
+        SupportedFieldType type = null;
+        if (fieldName != null) {
+            for (FieldData field : fields) {
+                if (fieldName.equals(field.getFieldName())){
+                    return field.getSecondaryFieldType();
+                }
+            }
+        }
+        return type;
+    }
+
+    @Override
+    public FieldDTO getField(String fieldName) {
+        for (FieldData field : fields) {
+            if (field.getFieldName().equals(fieldName)) {
+                FieldDTO fieldDTO = new FieldDTO();
+                fieldDTO.setLabel(field.getFieldLabel());
+                fieldDTO.setName(field.getFieldName());
+                fieldDTO.setOperators(field.getOperators());
+                fieldDTO.setOptions(field.getOptions());
+                return fieldDTO;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<FieldData> getFields() {
         return fields;
     }
 
-    public void setFields(ArrayList<String> fields) {
+    public void setFields(ArrayList<FieldData> fields) {
         this.fields = fields;
     }
 }

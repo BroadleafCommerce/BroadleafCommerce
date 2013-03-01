@@ -18,22 +18,25 @@ package org.broadleafcommerce.openadmin.web.processor;
 
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
-import org.broadleafcommerce.openadmin.web.rulebuilder.RuleBuilderUtil;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.spring3.context.SpringWebContext;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
-
-import java.util.ArrayList;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blAdminRuleBuilderProcessor")
 public class AdminRuleBuilderProcessor extends AbstractModelVariableModifierProcessor {
+
+    private RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -49,6 +52,7 @@ public class AdminRuleBuilderProcessor extends AbstractModelVariableModifierProc
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
+        initServices(arguments);
         DataWrapper dataWrapper = new DataWrapper();
 
         String mvelProperty = (String) StandardExpressionProcessor.processExpression(arguments,
@@ -57,18 +61,35 @@ public class AdminRuleBuilderProcessor extends AbstractModelVariableModifierProc
                 element.getAttributeValue("quantityProperty"));
         Entity[] entities = (Entity[]) StandardExpressionProcessor.processExpression(arguments,
                 element.getAttributeValue("entities"));
+        String fieldBuilder = (String) StandardExpressionProcessor.processExpression(arguments,
+                element.getAttributeValue("fieldBuilder"));
 
-        if (entities != null && mvelProperty != null) {
+        if (entities != null && mvelProperty != null && fieldBuilder != null) {
 
-            RuleBuilderUtil ruleBuilderUtil = new RuleBuilderUtil();
+            MVELToDataWrapperTranslator mvelToDataWrapperTranslator = new MVELToDataWrapperTranslator();
             try {
-                dataWrapper = ruleBuilderUtil.createRuleData(entities, mvelProperty, quantityProperty);
+                RuleBuilderFieldService ruleBuilderFieldService =
+                        ruleBuilderFieldServiceFactory.createInstance(fieldBuilder);
+                if (ruleBuilderFieldService != null) {
+                    dataWrapper = mvelToDataWrapperTranslator.createRuleData(entities, mvelProperty,
+                            quantityProperty, ruleBuilderFieldService);
+                }
             } catch (MVELTranslationException e) {
                 //Do nothing right now
             }
         }
 
         addToModel(arguments, "dataWrapper", dataWrapper);
+    }
+
+    protected void initServices(Arguments arguments) {
+        final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();
+
+        if (ruleBuilderFieldServiceFactory == null) {
+            ruleBuilderFieldServiceFactory = (RuleBuilderFieldServiceFactory)
+                    applicationContext.getBean("blRuleBuilderFieldServiceFactory");
+        }
+
     }
 
 }

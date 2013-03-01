@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,27 +27,83 @@ import org.springframework.stereotype.Service;
 public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //Fields are block initialized for now.
-    //String array of the form: ["label"|"name"|"operators"|"options"]
     //next steps: extensibility mechanism, support i18N
     {
-        fields.add("Order Item - Item Name|name|blcOperators_Text|[]");
-        fields.add("Order Item - Item Price|basePrice|blcOperators_Numeric|[]");
-        fields.add("Order Item - Item Quantity|quantity|blcOperators_Numeric|[]");
-        fields.add("Order Item - Item Retail Price|retailPrice|blcOperators_Numeric|[]");
-        fields.add("Order Item - Item Sale Price|salePrice|blcOperators_Numeric|[]");
-        fields.add("Category - ID|category.id|blcOperators_Text|[]");
-        fields.add("Category - Name|category.name|blcOperators_Text|[]");
-        fields.add("Category - Fulfillment Type|category.fulfillmentType|blcOperators_Enumeration|blcOptions_FulfillmentType");
-        fields.add("Category - Inventory Type|category.inventoryType|blcOperators_Enumeration|blcOptions_InventoryType");
-        fields.add("Category - URL|category.url|blcOperators_Text|[]");
-        fields.add("Product - URL|product.url|blcOperators_Text|[]");
-        fields.add("Product - Is Featured Product|product.isFeaturedProduct|blcOperators_Boolean|[]");
-        fields.add("Sku - Fulfillment Type|sku.fulfillmentType|blcOperators_Enumeration|blcOptions_FulfillmentType");
-        fields.add("Sku - Inventory Type|sku.inventoryType|blcOperators_Enumeration|blcOptions_InventoryType");
+        fields.add(new FieldData.Builder()
+                .label("Order Item - Item Name")
+                .name("name")
+                .operators("blcOperators_Text")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Order Item - Item Price")
+                .name("basePrice")
+                .operators("blcOperators_Numeric")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Order Item - Item Quantity")
+                .name("quantity")
+                .operators("blcOperators_Numeric")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Order Item - Item Retail Price")
+                .name("retailPrice")
+                .operators("blcOperators_Numeric")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Order Item - Item Sale Price")
+                .name("salePrice")
+                .operators("blcOperators_Numeric")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Category - ID")
+                .name("category.id")
+                .operators("blcOperators_Text")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Category - Name")
+                .name("category.name")
+                .operators("blcOperators_Text")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Category - Fulfillment Type")
+                .name("category.fulfillmentType")
+                .operators("blcOperators_Enumeration")
+                .options("blcOptions_FulfillmentType").build());
+        fields.add(new FieldData.Builder()
+                .label("Category - Inventory Type")
+                .name("category.inventoryType")
+                .operators("blcOperators_Enumeration")
+                .options("blcOptions_InventoryType").build());
+        fields.add(new FieldData.Builder()
+                .label("Category - URL")
+                .name("category.url")
+                .operators("blcOperators_Text")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Product - URL")
+                .name("product.url")
+                .operators("blcOperators_Text")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Product - Is Featured Product")
+                .name("product.isFeaturedProduct")
+                .operators("blcOperators_Boolean")
+                .options("[]").build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Fulfillment Type")
+                .name("sku.fulfillmentType")
+                .operators("blcOperators_Enumeration")
+                .options("blcOptions_FulfillmentType").build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Inventory Type")
+                .name("sku.inventoryType")
+                .operators("blcOperators_Enumeration")
+                .options("blcOptions_InventoryType").build());
     }
 
     @Override
     public String getName() {
         return "ORDER_ITEM_FIELDS";
     }
+
 }

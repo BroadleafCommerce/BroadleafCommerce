@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 
 /**
@@ -26,5 +28,11 @@ public interface RuleBuilderFieldService {
     public String getName();
 
     public FieldWrapper buildFields();
+
+    public FieldDTO getField(String fieldName);
+
+    public SupportedFieldType getSupportedFieldType(String fieldName);
+
+    public SupportedFieldType getSecondaryFieldType(String fieldName);
 
 }

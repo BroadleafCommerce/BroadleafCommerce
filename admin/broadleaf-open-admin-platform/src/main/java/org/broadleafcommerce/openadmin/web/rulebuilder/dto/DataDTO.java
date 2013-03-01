@@ -30,7 +30,7 @@ public class DataDTO implements Serializable {
 
     protected String groupOperator;
 
-    protected ArrayList<DataDTO> groups;
+    protected ArrayList<DataDTO> groups = new ArrayList<DataDTO>();
 
     public Integer getQuantity() {
         return quantity;
