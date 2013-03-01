@@ -33,72 +33,100 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .label("Order Item - Item Name")
                 .name("name")
                 .operators("blcOperators_Text")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Order Item - Item Price")
                 .name("basePrice")
                 .operators("blcOperators_Numeric")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.MONEY)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Order Item - Item Quantity")
                 .name("quantity")
                 .operators("blcOperators_Numeric")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.INTEGER)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Order Item - Item Retail Price")
                 .name("retailPrice")
                 .operators("blcOperators_Numeric")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.MONEY)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Order Item - Item Sale Price")
                 .name("salePrice")
                 .operators("blcOperators_Numeric")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.MONEY)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Category - ID")
                 .name("category.id")
                 .operators("blcOperators_Text")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.ID)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Category - Name")
                 .name("category.name")
                 .operators("blcOperators_Text")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Category - Fulfillment Type")
                 .name("category.fulfillmentType")
                 .operators("blcOperators_Enumeration")
-                .options("blcOptions_FulfillmentType").build());
+                .options("blcOptions_FulfillmentType")
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Category - Inventory Type")
                 .name("category.inventoryType")
                 .operators("blcOperators_Enumeration")
-                .options("blcOptions_InventoryType").build());
+                .options("blcOptions_InventoryType")
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Category - URL")
                 .name("category.url")
                 .operators("blcOperators_Text")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Product - URL")
                 .name("product.url")
                 .operators("blcOperators_Text")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Product - Is Featured Product")
                 .name("product.isFeaturedProduct")
                 .operators("blcOperators_Boolean")
-                .options("[]").build());
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Sku - Fulfillment Type")
                 .name("sku.fulfillmentType")
                 .operators("blcOperators_Enumeration")
-                .options("blcOptions_FulfillmentType").build());
+                .options("blcOptions_FulfillmentType")
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
         fields.add(new FieldData.Builder()
                 .label("Sku - Inventory Type")
                 .name("sku.inventoryType")
                 .operators("blcOperators_Enumeration")
-                .options("blcOptions_InventoryType").build());
+                .options("blcOptions_InventoryType")
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
     }
 
     @Override

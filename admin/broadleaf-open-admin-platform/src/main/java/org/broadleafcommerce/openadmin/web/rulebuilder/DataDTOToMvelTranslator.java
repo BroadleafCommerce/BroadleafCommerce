@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
@@ -30,7 +29,7 @@ import java.util.List;
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class DataDTOToMvelTranslator {
+public class DataDTOToMVELTranslator {
 
     public String createMVEL(String entityKey, DataDTO dataDTO, RuleBuilderFieldService fieldService)
             throws MVELTranslationException {
@@ -45,7 +44,10 @@ public class DataDTOToMvelTranslator {
 
     protected void buildMVEL(DataDTO dataDTO, StringBuffer sb, String entityKey, String groupOperator,
                              RuleBuilderFieldService fieldService) throws MVELTranslationException {
-        BLCOperator operator = BLCOperator.valueOf(dataDTO.getGroupOperator());
+        BLCOperator operator = null;
+        if (dataDTO instanceof ExpressionDTO) {
+            operator = BLCOperator.valueOf(((ExpressionDTO) dataDTO).getOperator());
+        }
         ArrayList<DataDTO> groups = dataDTO.getGroups();
         if (sb.length() != 0 && sb.charAt(sb.length() - 1) != '(' && groupOperator != null) {
             BLCOperator groupOp = BLCOperator.valueOf(groupOperator);
@@ -57,12 +59,8 @@ public class DataDTOToMvelTranslator {
                     sb.append("||");
             }
         }
-        if (groups.size() == 1) {
-            DataDTO criteria = groups.get(0);
-            if (criteria instanceof ExpressionDTO) {
-                buildExpression((ExpressionDTO)dataDTO, sb, entityKey, operator, fieldService);
-            }
-            //todo handle subgroup
+        if (dataDTO instanceof ExpressionDTO) {
+            buildExpression((ExpressionDTO)dataDTO, sb, entityKey, operator, fieldService);
         } else {
             boolean includeTopLevelParenthesis = false;
             if (sb.length() != 0 || BLCOperator.NOT.equals(operator)) {
