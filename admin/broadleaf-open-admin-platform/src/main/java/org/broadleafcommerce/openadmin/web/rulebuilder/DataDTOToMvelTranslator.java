@@ -32,7 +32,8 @@ import java.util.List;
  */
 public class DataDTOToMvelTranslator {
 
-    public String createMVEL(String entityKey, DataDTO dataDTO, RuleBuilderFieldService fieldService) throws IncompatibleMVELTranslationException {
+    public String createMVEL(String entityKey, DataDTO dataDTO, RuleBuilderFieldService fieldService)
+            throws MVELTranslationException {
         StringBuffer sb = new StringBuffer();
         buildMVEL(dataDTO, sb, entityKey, null, fieldService);
         String response = sb.toString().trim();
@@ -42,7 +43,8 @@ public class DataDTOToMvelTranslator {
         return response;
     }
 
-    protected void buildMVEL(DataDTO dataDTO, StringBuffer sb, String entityKey, String groupOperator, RuleBuilderFieldService fieldService) throws IncompatibleMVELTranslationException {
+    protected void buildMVEL(DataDTO dataDTO, StringBuffer sb, String entityKey, String groupOperator,
+                             RuleBuilderFieldService fieldService) throws MVELTranslationException {
         BLCOperator operator = BLCOperator.valueOf(dataDTO.getGroupOperator());
         ArrayList<DataDTO> groups = dataDTO.getGroups();
         if (sb.length() != 0 && sb.charAt(sb.length() - 1) != '(' && groupOperator != null) {
@@ -83,7 +85,7 @@ public class DataDTOToMvelTranslator {
 
     protected void buildExpression(ExpressionDTO expressionDTO, StringBuffer sb, String entityKey,
             BLCOperator operator, RuleBuilderFieldService fieldService)
-            throws IncompatibleMVELTranslationException {
+            throws MVELTranslationException {
         String field = expressionDTO.getName();
         SupportedFieldType type = fieldService.getSupportedFieldType(field);
         SupportedFieldType secondaryType = fieldService.getSecondaryFieldType(field);
@@ -357,7 +359,7 @@ public class DataDTOToMvelTranslator {
                                    SupportedFieldType type, SupportedFieldType secondaryType, String operator,
                                    boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
                                    boolean isNegation, boolean ignoreQuotes)
-            throws IncompatibleMVELTranslationException {
+            throws MVELTranslationException {
 
         if (operator.equals("==") && !isFieldComparison && value.length > 1) {
             sb.append("(");
@@ -427,7 +429,7 @@ public class DataDTOToMvelTranslator {
     protected String formatValue(String fieldName, String entityKey, SupportedFieldType type,
                                  SupportedFieldType secondaryType, Object[] value,
                                  boolean isFieldComparison, boolean ignoreCase,
-                                 boolean ignoreQuotes) throws IncompatibleMVELTranslationException {
+                                 boolean ignoreQuotes) throws MVELTranslationException {
         StringBuffer response = new StringBuffer();
         if (isFieldComparison) {
             switch(type) {
@@ -464,7 +466,7 @@ public class DataDTOToMvelTranslator {
                         try {
                             Double.parseDouble(value[j].toString());
                         } catch (Exception e) {
-                            throw new IncompatibleMVELTranslationException("Cannot format value for the field ("
+                            throw new MVELTranslationException("Cannot format value for the field ("
                                     + fieldName + ") based on field type. The type of field is Decimal, " +
                                     "and you entered: (" + value[j] +")");
                         }
@@ -490,7 +492,7 @@ public class DataDTOToMvelTranslator {
                             try {
                                 Integer.parseInt(value[j].toString());
                             } catch (Exception e) {
-                                throw new IncompatibleMVELTranslationException("Cannot format value for the field (" +
+                                throw new MVELTranslationException("Cannot format value for the field (" +
                                         fieldName + ") based on field type. The type of field is Integer, " +
                                         "and you entered: (" + value[j] +")");
                             }
@@ -501,7 +503,7 @@ public class DataDTOToMvelTranslator {
                         try {
                             Integer.parseInt(value[j].toString());
                         } catch (Exception e) {
-                            throw new IncompatibleMVELTranslationException("Cannot format value for the field (" +
+                            throw new MVELTranslationException("Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Integer, " +
                                     "and you entered: (" + value[j] +")");
                         }
@@ -511,7 +513,7 @@ public class DataDTOToMvelTranslator {
                         try {
                             Double.parseDouble(value[j].toString());
                         } catch (Exception e) {
-                            throw new IncompatibleMVELTranslationException("Cannot format value for the field (" +
+                            throw new MVELTranslationException("Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Money, " +
                                     "and you entered: (" + value[j] +")");
                         }
