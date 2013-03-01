@@ -57,6 +57,8 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
@@ -149,6 +151,16 @@ public class OfferDataItemProvider {
             @Override
             public OrderItemPriceDetail answer() throws Throwable {
                 return new OrderItemPriceDetailImpl();
+            }
+        };
+    }
+
+    public static IAnswer<OrderItemQualifier> getCreateOrderItemQualifierAnswer() {
+        return new IAnswer<OrderItemQualifier>() {
+
+            @Override
+            public OrderItemQualifier answer() throws Throwable {
+                return new OrderItemQualifierImpl();
             }
         };
     }

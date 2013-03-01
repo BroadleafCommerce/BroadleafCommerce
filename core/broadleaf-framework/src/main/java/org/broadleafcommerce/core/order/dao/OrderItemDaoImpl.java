@@ -22,6 +22,8 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Repository;
@@ -79,6 +81,10 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     public OrderItemPriceDetail createOrderItemPriceDetail() {
         return new OrderItemPriceDetailImpl();
+    }
+
+    public OrderItemQualifier createOrderItemQualifier() {
+        return new OrderItemQualifierImpl();
     }
 
     public void initializeOrderItemPriceDetails(OrderItem item) {

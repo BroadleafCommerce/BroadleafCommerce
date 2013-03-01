@@ -217,6 +217,22 @@ public interface OrderItem extends Serializable, Cloneable {
      */
     void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
 
+    /**    
+     * If any quantity of this item was used to qualify for an offer, then this returned list
+     * will indicate the offer and the relevant quantity.   
+     * 
+     * As an example, a BuyOneGetOneFree offer would have 1 qualifier and 1 adjustment.
+     * 
+     * @return a List of OrderItemAdjustment
+     */
+    List<OrderItemQualifier> getOrderItemQualifiers();
+
+    /**
+     * Sets the list of OrderItemQualifiers
+     * 
+     */
+    void setOrderItemQualifiers(List<OrderItemQualifier> orderItemQualifiers);
+
     PersonalMessage getPersonalMessage();
 
     void setPersonalMessage(PersonalMessage personalMessage);

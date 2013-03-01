@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
-import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
@@ -42,7 +41,6 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected OrderItem orderItem;
     protected PromotableItemFactory itemFactory;
     protected List<PromotableOrderItemPriceDetail> itemPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
-    protected List<PromotionQualifier> promotionQualifiers = new ArrayList<PromotionQualifier>();
     protected boolean includeAdjustments;
 
     public PromotableOrderItemImpl(OrderItem orderItem, PromotableOrder promotableOrder, PromotableItemFactory itemFactory,

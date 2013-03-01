@@ -48,6 +48,8 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
@@ -157,6 +159,9 @@ public class OfferServiceTest extends TestCase {
         OrderItemPriceDetailAnswer orderItemPriceDetailAnswer = new OrderItemPriceDetailAnswer();
         EasyMock.expect(orderItemDaoMock.createOrderItemPriceDetail()).andAnswer(orderItemPriceDetailAnswer).atLeastOnce();
 
+        OrderItemQualifierAnswer orderItemQualifierAnswer = new OrderItemQualifierAnswer();
+        EasyMock.expect(orderItemDaoMock.createOrderItemQualifier()).andAnswer(orderItemQualifierAnswer).atLeastOnce();
+
         CandidateItemOfferAnswer candidateItemOfferAnswer = new CandidateItemOfferAnswer();
         OrderItemAdjustmentAnswer orderItemAdjustmentAnswer = new OrderItemAdjustmentAnswer();
 
@@ -216,8 +221,10 @@ public class OfferServiceTest extends TestCase {
 
         //with the item offers in play, the subtotal restriction for the order offer is no longer valid
         adjustmentCount = countItemAdjustments(order);
+        int qualifierCount = countItemQualifiers(order);
 
         assertTrue(adjustmentCount == 2);
+        assertTrue(qualifierCount == 2);
         adjustmentCount = order.getOrderAdjustments().size();
         assertTrue(adjustmentCount == 0);
         //assertTrue(order.getSubTotal().equals(new Money(124.95D)));
@@ -234,8 +241,10 @@ public class OfferServiceTest extends TestCase {
         //now that the order restriction has been lessened, even with the item level discounts applied, 
         // the order offer still qualifies
         adjustmentCount = countItemAdjustments(order);
+        qualifierCount = countItemQualifiers(order);
 
         assertTrue(adjustmentCount == 2);
+        assertTrue(qualifierCount == 2);
         adjustmentCount = order.getOrderAdjustments().size();
         assertTrue(adjustmentCount == 1);
         assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(112.45D)));
@@ -260,8 +269,10 @@ public class OfferServiceTest extends TestCase {
 
         //there is a non combinable order offer now
         adjustmentCount = countItemAdjustments(order);
+        qualifierCount = countItemQualifiers(order);
 
         assertTrue(adjustmentCount == 2);
+        assertTrue(qualifierCount == 2);
         adjustmentCount = order.getOrderAdjustments().size();
         assertTrue(adjustmentCount == 1);
         assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(112.45D)));
@@ -275,8 +286,10 @@ public class OfferServiceTest extends TestCase {
 
         //there is a totalitarian order offer now - it is better than the item offers - the item offers are removed
         adjustmentCount = countItemAdjustments(order);
+        qualifierCount = countItemQualifiers(order);
 
         assertTrue(adjustmentCount == 0);
+        assertTrue(qualifierCount == 0);
         adjustmentCount = order.getOrderAdjustments().size();
         assertTrue(adjustmentCount == 1);
         assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(116.95D)));
@@ -316,6 +329,16 @@ public class OfferServiceTest extends TestCase {
         return adjustmentCount;
     }
 
+    private int countItemQualifiers(Order order) {
+        int qualifierCount = 0;
+        for (OrderItem item : order.getOrderItems()) {
+            for (OrderItemQualifier qualifier : item.getOrderItemQualifiers()) {
+                qualifierCount = qualifierCount += qualifier.getQuantity();
+            }
+        }
+        return qualifierCount;
+    }
+
     public void testApplyOffersToOrder_Items() throws Exception {
         final ThreadLocal<Order> myOrder = new ThreadLocal<Order>();
         EasyMock.expect(offerDaoMock.createOrderItemPriceDetailAdjustment()).andAnswer(OfferDataItemProvider.getCreateOrderItemPriceDetailAdjustmentAnswer()).anyTimes();
@@ -325,6 +348,9 @@ public class OfferServiceTest extends TestCase {
 
         OrderItemPriceDetailAnswer orderItemPriceDetailAnswer = new OrderItemPriceDetailAnswer();
         EasyMock.expect(orderItemDaoMock.createOrderItemPriceDetail()).andAnswer(orderItemPriceDetailAnswer).atLeastOnce();
+
+        OrderItemQualifierAnswer orderItemQualifierAnswer = new OrderItemQualifierAnswer();
+        EasyMock.expect(orderItemDaoMock.createOrderItemQualifier()).andAnswer(orderItemQualifierAnswer).atLeastOnce();
 
         EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
         EasyMock.expect(orderServiceMock.save(EasyMock.isA(Order.class),EasyMock.isA(Boolean.class))).andAnswer(OfferDataItemProvider.getSaveOrderAnswer()).anyTimes();
@@ -447,6 +473,14 @@ public class OfferServiceTest extends TestCase {
         @Override
         public OrderItemPriceDetail answer() throws Throwable {
             return new OrderItemPriceDetailImpl();
+        }
+    }
+
+    public class OrderItemQualifierAnswer implements IAnswer<OrderItemQualifier> {
+
+        @Override
+        public OrderItemQualifier answer() throws Throwable {
+            return new OrderItemQualifierImpl();
         }
     }
 }

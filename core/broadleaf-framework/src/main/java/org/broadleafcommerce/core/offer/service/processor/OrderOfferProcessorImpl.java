@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
+import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
@@ -43,6 +44,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -358,6 +360,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 continue;
             }
             synchronizeItemPriceDetails(orderItem, promotableItem);
+            synchronizeItemQualifiers(orderItem, promotableItem);
+
         }
     }
 
@@ -406,6 +410,51 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             OrderItemPriceDetail currentDetail = pdIterator.next();
             if (unmatchedDetailsMap.containsKey(currentDetail.getId())) {
                 pdIterator.remove();
+            }
+        }
+    }
+
+    protected void synchronizeItemQualifiers(OrderItem orderItem, PromotableOrderItem promotableOrderItem) {
+        Map<Long, PromotionQualifier> qualifiersMap = buildPromotableQualifiersMap(promotableOrderItem);
+        Map<Long, OrderItemQualifier> unmatchedQualifiersMap = new HashMap<Long, OrderItemQualifier>();
+
+        for (OrderItemQualifier orderItemQualifier : orderItem.getOrderItemQualifiers()) {
+            PromotionQualifier promotableQualifier = qualifiersMap.remove(orderItemQualifier.getOffer().getId());
+            if (promotableQualifier != null) {
+                // Offer was used as a qualifier on previous run.   Update quantity if needed.
+                if (orderItemQualifier.getQuantity() != promotableQualifier.getQuantity()) {
+                    orderItemQualifier.setQuantity(new Long(promotableQualifier.getQuantity()));
+                }
+            } else {
+                unmatchedQualifiersMap.put(orderItemQualifier.getId(), orderItemQualifier);
+            }
+        }
+
+        Iterator<OrderItemQualifier> unmatchedQualifiersIterator = unmatchedQualifiersMap.values().iterator();
+
+        for (PromotionQualifier qualifier : qualifiersMap.values()) {
+            if (unmatchedQualifiersIterator.hasNext()) {
+                // Reuse an existing qualifier
+                OrderItemQualifier existingQualifier = unmatchedQualifiersIterator.next();
+                existingQualifier.setOffer(qualifier.getPromotion());
+                existingQualifier.setQuantity(Long.valueOf(qualifier.getQuantity()));
+                unmatchedQualifiersIterator.remove();
+            } else {
+                // Create a new qualifier
+                OrderItemQualifier newQualifier = orderItemDao.createOrderItemQualifier();
+                newQualifier.setOrderItem(orderItem);
+                newQualifier.setOffer(qualifier.getPromotion());
+                newQualifier.setQuantity(Long.valueOf(qualifier.getQuantity()));
+                orderItem.getOrderItemQualifiers().add(newQualifier);
+            }
+        }
+
+        // Remove any unmatched qualifiers        
+        Iterator<OrderItemQualifier> qIterator = orderItem.getOrderItemQualifiers().iterator();
+        while (qIterator.hasNext()) {
+            OrderItemQualifier currentQualifier = qIterator.next();
+            if (unmatchedQualifiersMap.containsKey(currentQualifier.getId())) {
+                qIterator.remove();
             }
         }
     }
@@ -505,6 +554,21 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             detailsMap.put(detail.buildDetailKey(), detail);
         }
         return detailsMap;
+    }
+
+    protected Map<Long, PromotionQualifier> buildPromotableQualifiersMap(PromotableOrderItem item) {
+        Map<Long, PromotionQualifier> qualifiersMap = new HashMap<Long, PromotionQualifier>();
+        for (PromotableOrderItemPriceDetail detail : item.getPromotableOrderItemPriceDetails()) {
+            for (PromotionQualifier qualifier : detail.getPromotionQualifiers()) {
+                PromotionQualifier existingQualifier = qualifiersMap.get(qualifier.getPromotion().getId());
+                if (existingQualifier != null) {
+                    existingQualifier.setQuantity(existingQualifier.getQuantity() + qualifier.getQuantity());
+                } else {
+                    qualifiersMap.put(qualifier.getPromotion().getId(), qualifier);
+                }
+            }
+        }
+        return qualifiersMap;
     }
 
     protected void synchronizeFulfillmentGroups(PromotableOrder promotableOrder) {

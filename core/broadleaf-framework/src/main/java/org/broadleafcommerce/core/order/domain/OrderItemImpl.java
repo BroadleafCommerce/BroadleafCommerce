@@ -150,6 +150,10 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemQualifierImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    protected List<OrderItemQualifier> orderItemQualifiers = new ArrayList<OrderItemQualifier>();
+
     @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
@@ -337,7 +341,16 @@ public class OrderItemImpl implements OrderItem, Cloneable {
             }
         }
         return false;
+    }
 
+    @Override
+    public List<OrderItemQualifier> getOrderItemQualifiers() {
+        return this.orderItemQualifiers;
+    }
+
+    @Override
+    public void setOrderItemQualifiers(List<OrderItemQualifier> orderItemQualifiers) {
+        this.orderItemQualifiers = orderItemQualifiers;
     }
 
     @Override
