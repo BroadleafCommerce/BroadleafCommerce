@@ -21,6 +21,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
+ * Factory class that returns the appropriate RuleBuilderFieldService
+ * given the service name. The services are injected into the factory defined in applicationContext-servlet-open-admin.xml
+ * @see org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 public class RuleBuilderFieldServiceFactory {

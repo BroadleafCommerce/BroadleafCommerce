@@ -21,13 +21,16 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.springframework.stereotype.Service;
 
 /**
+ * An implementation of a RuleBuilderFieldService
+ * that constructs metadata necessary
+ * to build the supported fields for an Order Item entity
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 @Service("blOrderItemFieldService")
 public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
-    //Fields are block initialized for now.
-    //next steps: extensibility mechanism, support i18N
+    //TODO: extensibility mechanism, support i18N
     {
         fields.add(new FieldData.Builder()
                 .label("Order Item - Item Name")

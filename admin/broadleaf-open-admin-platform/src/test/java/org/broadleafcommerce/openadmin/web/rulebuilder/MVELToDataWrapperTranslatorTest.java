@@ -35,6 +35,10 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         orderItemFieldService = new OrderItemFieldServiceImpl();
     }
 
+    /**
+     * Tests the creation of a DataWrapper given an mvel/quantity property
+     * @throws MVELTranslationException
+     */
     public void testCreateRuleData() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 

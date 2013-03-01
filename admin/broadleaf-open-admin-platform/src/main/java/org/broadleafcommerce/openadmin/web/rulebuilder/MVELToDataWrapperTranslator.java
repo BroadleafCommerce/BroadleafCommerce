@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Utility class to convert an MVEL string into a DataWrapper object
+ * which can then be serialized on your view.
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 public class MVELToDataWrapperTranslator {

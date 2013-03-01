@@ -33,8 +33,10 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
     }
 
     /**
-     *
+     * Tests the creation of an MVEL expression from a DataDTO
      * @throws MVELTranslationException
+     *
+     * Here's an example of a DataWrapper with a single DataDTO
      *
      * [{"quantity":"1",
      *  "groupOperator":"AND",
