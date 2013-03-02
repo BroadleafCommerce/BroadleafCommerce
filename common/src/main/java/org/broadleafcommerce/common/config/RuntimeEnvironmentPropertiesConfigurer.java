@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.config;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -99,6 +100,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     protected RuntimeEnvironmentKeyResolver keyResolver;
     protected Set<String> environments = Collections.emptySet();
     protected Set<Resource> propertyLocations;
+    protected Set<Resource> overridableProperyLocations;
     protected StringValueResolver stringValueResolver;
 
     public RuntimeEnvironmentPropertiesConfigurer() {
@@ -114,8 +116,11 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         
         // Prepend the default property locations to the specified property locations (if any)
         Set<Resource> combinedLocations = new LinkedHashSet<Resource>();
+        if (!CollectionUtils.isEmpty(overridableProperyLocations)) {
+            combinedLocations.addAll(overridableProperyLocations);
+        }
         combinedLocations.addAll(defaultPropertyLocations);
-        if (propertyLocations != null && propertyLocations.size() > 0) {
+        if (!CollectionUtils.isEmpty(propertyLocations)) {
             combinedLocations.addAll(propertyLocations);
         }
         propertyLocations = combinedLocations;
@@ -294,6 +299,17 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
      */
     public void setPropertyLocations(Set<Resource> propertyLocations) {
         this.propertyLocations = propertyLocations;
+    }
+
+    /**
+     * Sets the directory from which to read environment-specific properties
+     * files; note that it must end with a '/'. Note, these properties may be
+     * overridden by those defined in propertyLocations and any "runtime-properties" directories
+     *
+     * @param overridableProperyLocations location containing overridable environment properties
+     */
+    public void setOverridableProperyLocations(Set<Resource> overridableProperyLocations) {
+        this.overridableProperyLocations = overridableProperyLocations;
     }
 
     private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
