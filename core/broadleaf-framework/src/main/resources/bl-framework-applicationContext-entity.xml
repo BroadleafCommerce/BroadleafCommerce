@@ -50,7 +50,7 @@
     <bean id="org.broadleafcommerce.core.offer.domain.OrderItemAdjustment" class="org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.OrderItemPriceDetail" class="org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.OrderItemQualifier" class="org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl" scope="prototype"/>    
-    <bean id="org.broadleafcommerce.core.order.domain.OrderItemPriceDetailAdjustment" class="org.broadleafcommerce.core.order.domain.OrderItemPriceDetailAdjustmentImpl" scope="prototype"/>    
+    <bean id="org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment" class="org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl" scope="prototype"/>    
     <bean id="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment" class="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.pricing.domain.ShippingRate" class="org.broadleafcommerce.core.pricing.domain.ShippingRateImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OfferInfo" class="org.broadleafcommerce.core.offer.domain.OfferInfoImpl" scope="prototype"/>
