@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.sandbox.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -37,6 +39,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import java.lang.reflect.Method;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -44,6 +47,7 @@ import javax.persistence.TableGenerator;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class SandBoxImpl implements SandBox {
 
+    private static final Log LOG = LogFactory.getLog(SandBoxImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -166,5 +170,37 @@ public class SandBoxImpl implements SandBox {
             return false;
         return true;
     }
-    
+
+    public void checkCloneable(SandBox sandBox) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = sandBox.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !sandBox.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+        }
+    }
+
+    @Override
+    public SandBox clone() {
+        SandBox clone;
+        try {
+            clone = (SandBox) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setId(id);
+            clone.setName(name);
+            clone.setAuthor(author);
+            clone.setSandBoxType(getSandBoxType());
+
+            if (site != null) {
+                clone.setSite(site.clone());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
+    }
 }

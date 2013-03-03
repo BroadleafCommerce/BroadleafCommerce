@@ -98,4 +98,6 @@ public interface Site extends Serializable {
      * @param sandbox
      */
     public void setProductionSandbox(SandBox sandbox);
+
+    public Site clone();
 }

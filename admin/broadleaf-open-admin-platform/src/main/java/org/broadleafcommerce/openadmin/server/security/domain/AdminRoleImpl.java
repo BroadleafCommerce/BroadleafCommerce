@@ -16,15 +16,29 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +53,8 @@ import java.util.Set;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "AdminRoleImpl_baseAdminRole")
 public class AdminRoleImpl implements AdminRole {
+
+    private static final Log LOG = LogFactory.getLog(AdminRoleImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -104,6 +120,43 @@ public class AdminRoleImpl implements AdminRole {
 
     public void setAllPermissions(Set<AdminPermission> allPermissions) {
         this.allPermissions = allPermissions;
+    }
+
+    public void checkCloneable(AdminRole adminRole) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = adminRole.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !adminRole.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+        }
+    }
+
+    @Override
+    public AdminRole clone() {
+        AdminRole clone;
+        try {
+            clone = (AdminRole) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setId(id);
+            clone.setName(name);
+            clone.setDescription(description);
+
+            //don't clone the allUsers collection, as it would cause a recursion
+
+            if (allPermissions != null) {
+                for (AdminPermission permission : allPermissions) {
+                    AdminPermission permissionClone = permission.clone();
+                    clone.getAllPermissions().add(permissionClone);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
     }
 
 }

@@ -28,6 +28,8 @@ import java.util.Set;
  *
  */
 public interface AdminPermission extends Serializable {
+
+    public void setId(Long id);
     public Long getId();
     public String getName();
     public void setName(String name);
@@ -44,4 +46,6 @@ public interface AdminPermission extends Serializable {
     public Set<AdminUser> getAllUsers();
 
     public void setAllUsers(Set<AdminUser> allUsers);
+
+    public AdminPermission clone();
 }

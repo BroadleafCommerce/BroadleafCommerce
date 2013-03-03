@@ -16,20 +16,38 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +62,8 @@ import java.util.Set;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "AdminUserImpl_baseAdminUser")
 public class AdminUserImpl implements AdminUser {
-    
+
+    private static final Log LOG = LogFactory.getLog(AdminUserImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -201,5 +220,55 @@ public class AdminUserImpl implements AdminUser {
 
     public void setAllPermissions(Set<AdminPermission> allPermissions) {
         this.allPermissions = allPermissions;
+    }
+
+    public void checkCloneable(AdminUser adminUser) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = adminUser.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !adminUser.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+        }
+    }
+
+    @Override
+    public AdminUser clone() {
+        AdminUser clone;
+        try {
+            clone = (AdminUser) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setId(id);
+            clone.setName(name);
+            clone.setLogin(login);
+            clone.setPassword(password);
+            clone.setEmail(email);
+            clone.setPhoneNumber(phoneNumber);
+            clone.setActiveStatusFlag(activeStatusFlag);
+
+            if (allRoles != null) {
+                for (AdminRole role : allRoles) {
+                    AdminRole roleClone = role.clone();
+                    clone.getAllRoles().add(roleClone);
+                }
+            }
+
+            if (allPermissions != null) {
+                for (AdminPermission permission : allPermissions) {
+                    AdminPermission permissionClone = permission.clone();
+                    clone.getAllPermissions().add(permissionClone);
+                }
+            }
+
+            if (overrideSandBox != null) {
+                clone.setOverrideSandBox(overrideSandBox.clone());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
     }
 }

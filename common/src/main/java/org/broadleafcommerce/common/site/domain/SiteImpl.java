@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.site.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -34,6 +36,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import java.lang.reflect.Method;
 
 /**
  * Created by bpolster.
@@ -45,6 +48,7 @@ import javax.persistence.TableGenerator;
 public class SiteImpl implements Site {
 
     private static final long serialVersionUID = 1L;
+    private static final Log LOG = LogFactory.getLog(SiteImpl.class);
 
     @Id
     @GeneratedValue(generator = "SiteId", strategy = GenerationType.TABLE)
@@ -117,6 +121,37 @@ public class SiteImpl implements Site {
     @Override
     public void setProductionSandbox(SandBox productionSandbox) {
         this.productionSandbox = productionSandbox;
+    }
+
+    public void checkCloneable(Site site) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = site.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !site.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+        }
+    }
+
+    @Override
+    public Site clone() {
+        Site clone;
+        try {
+            clone = (Site) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setId(id);
+            clone.setName(name);
+            clone.setSiteIdentifierType(siteIdentifierType);
+            clone.setSiteIdentifierValue(siteIdentifierValue);
+
+            //don't clone productionSandbox, as it would cause a recursion
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
     }
 }
 
