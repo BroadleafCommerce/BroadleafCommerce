@@ -212,17 +212,29 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money divide(double amount) {
-        return divide(valueOf(amount));
+        return this.divide(amount, RoundingMode.HALF_EVEN);
+    }
+
+    public Money divide(double amount, RoundingMode roundingMode) {
+        return divide(valueOf(amount), roundingMode);
     }
 
     public Money divide(int amount) {
+        return this.divide(amount, RoundingMode.HALF_EVEN);
+    }
+
+    public Money divide(int amount, RoundingMode roundingMode) {
         BigDecimal value = BigDecimal.valueOf(amount);
         value = value.setScale(BankersRounding.getScaleForCurrency(currency), RoundingMode.HALF_EVEN);
-        return divide(value);
+        return divide(value, roundingMode);
     }
 
     public Money divide(BigDecimal divisor) {
-        return new Money(amount.divide(divisor, amount.precision(), RoundingMode.HALF_EVEN), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
+        return this.divide(divisor, RoundingMode.HALF_EVEN);
+    }
+
+    public Money divide(BigDecimal divisor, RoundingMode roundingMode) {
+        return new Money(amount.divide(divisor, amount.precision(), roundingMode), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }
 
     public Money abs() {
