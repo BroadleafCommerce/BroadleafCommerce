@@ -368,6 +368,19 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
+    public Money getTotalPrice() {
+        Money returnValue = convertToMoney(BigDecimal.ZERO);
+        if (shouldSumItems()) {
+            for (OrderItem containedItem : getOrderItems()) {
+                returnValue = returnValue.add(containedItem.getTotalPrice());
+            }
+        } else {
+            returnValue = super.getTotalPrice();
+        }
+        return returnValue;
+    }
+
+    @Override
     public OrderItem clone() {
         BundleOrderItemImpl orderItem = (BundleOrderItemImpl) super.clone();
         if (discreteOrderItems != null) {
