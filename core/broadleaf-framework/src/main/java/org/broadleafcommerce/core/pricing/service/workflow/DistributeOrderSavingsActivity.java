@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
@@ -34,6 +33,12 @@ import java.math.BigDecimal;
  * prior to computing taxes.   
  * 
  * Having this value on the orderItem also facilitates return and refund processing.
+ * 
+ * Note:  For BundleOrderItem (or any other implementation of OrderItemContainer), the 
+ * pro-rated savings are stored with the BundleOrderItem and not the constituent items.   This is due to the fact
+ * that in some scenarios it would be impossible to handle penny rounding issues if the value was stored at the item
+ * levels and the bundle quantity was > 1.    Downstream processes must account for this detail (e.g. such as in an OMS
+ * system's item calculation methods used for returns).
  * 
  * @author bpolster
  */
@@ -80,21 +85,6 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
     }
 
     public long applyDifference(OrderItem orderItem, long numApplicationsNeeded, Money unitAmount) {
-        if (orderItem instanceof OrderItemContainer) {
-            OrderItemContainer container = (OrderItemContainer) orderItem;
-            if (!container.isPricingAtContainerLevel()) {
-                long totalTimesApplied = 0;
-                for (OrderItem containedItem : container.getOrderItems()) {
-                    long timesApplied = applyDifference(containedItem, numApplicationsNeeded, unitAmount);
-                    totalTimesApplied += timesApplied;
-                    numApplicationsNeeded = numApplicationsNeeded - timesApplied;
-                    if (numApplicationsNeeded == 0) {
-                        return totalTimesApplied;
-                    }
-                }
-                return totalTimesApplied;
-            }
-        }
         BigDecimal numTimesToApply = new BigDecimal(Math.min(numApplicationsNeeded, orderItem.getQuantity()));
 
         Money oldOrderAdjustment = orderItem.getProratedOrderAdjustment();
@@ -105,18 +95,6 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
     }
 
     public Money updateOrderItemSavingsTotal(OrderItem orderItem, Money subTotal, Money orderSavings) {
-        if (orderItem instanceof OrderItemContainer) {
-            OrderItemContainer container = (OrderItemContainer) orderItem;
-            if (!container.isPricingAtContainerLevel()) {
-                Money returnSavings = new Money(BroadleafCurrencyUtils.getCurrency(orderItem.getOrder().getCurrency()));
-                for (OrderItem containedItem : container.getOrderItems()) {
-                    Money prorataOrderSavings = updateOrderItemSavingsTotal(containedItem, subTotal, orderSavings);
-                    containedItem.setProratedOrderAdjustment(prorataOrderSavings.multiply(orderItem.getQuantity()));
-                    returnSavings = returnSavings.add(containedItem.getProratedOrderAdjustment());
-                }
-                return returnSavings;
-            }
-        }
         Money itemTotal = orderItem.getTotalPrice();
         Money prorataOrderSavings = new Money(BroadleafCurrencyUtils.getCurrency(orderSavings));
         if (orderSavings == null || (orderSavings.getAmount().compareTo(BigDecimal.ZERO) == 0)) {
