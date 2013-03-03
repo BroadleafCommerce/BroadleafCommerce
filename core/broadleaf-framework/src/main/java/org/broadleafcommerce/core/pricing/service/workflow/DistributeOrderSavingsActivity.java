@@ -27,7 +27,6 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 
 /**
  * This activity distributes the order savings to the OrderItems in the order.
@@ -67,7 +66,7 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
         Money difference = orderSavings.subtract(savingsDistributed);
         if (!(difference.getAmount().compareTo(BigDecimal.ZERO) == 0)) {
             long numApplicationsNeeded = countNumberOfUnits(difference);
-            Money unitAmount = getUnitAmount(difference);
+            Money unitAmount = BroadleafCurrencyUtils.getUnitAmount(difference);
             for (OrderItem orderItem : order.getOrderItems()) {
                 numApplicationsNeeded = numApplicationsNeeded -
                         applyDifference(orderItem, numApplicationsNeeded, unitAmount);
@@ -135,22 +134,4 @@ public class DistributeOrderSavingsActivity extends BaseActivity {
                 BroadleafCurrencyUtils.getCurrency(difference).getDefaultFractionDigits())).doubleValue();
         return Math.round(numUnits);
     }
-
-    /**
-     * Returns the unit amount (e.g. .01 for US)
-     * @param currency
-     * @return
-     */
-    public Money getUnitAmount(Money difference) {
-        Currency currency = BroadleafCurrencyUtils.getCurrency(difference);
-        BigDecimal divisor = new BigDecimal(Math.pow(10, currency.getDefaultFractionDigits()));
-        BigDecimal unitAmount = new BigDecimal("1").divide(divisor);
-
-        if (difference.lessThan(BigDecimal.ZERO)) {
-            unitAmount = unitAmount.negate();
-        }
-        return new Money(unitAmount, currency);
-    }
-
-
 }

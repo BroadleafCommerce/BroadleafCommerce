@@ -732,16 +732,6 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     @Override
-    public Money getTotalTax() {
-        return convertToMoney(totalTax);
-    }
-
-    @Override
-    public void setTotalTax(Money totalTax) {
-        this.totalTax = Money.toAmount(totalTax);
-    }
-
-    @Override
     public Money getProratedOrderAdjustment() {
         return convertToMoney(proratedOrderAdjustment);
     }

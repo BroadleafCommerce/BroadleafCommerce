@@ -62,4 +62,20 @@ public class BroadleafCurrencyUtils {
         return (currency == null) ? Money.defaultCurrency() : Currency.getInstance(currency.getCurrencyCode());
     }
 
+    /**
+     * Returns the unit amount (e.g. .01 for US and all other 2 decimal currencies)
+     * @param currency
+     * @return
+     */
+    public static Money getUnitAmount(Money difference) {
+        Currency currency = BroadleafCurrencyUtils.getCurrency(difference);
+        BigDecimal divisor = new BigDecimal(Math.pow(10, currency.getDefaultFractionDigits()));
+        BigDecimal unitAmount = new BigDecimal("1").divide(divisor);
+
+        if (difference.lessThan(BigDecimal.ZERO)) {
+            unitAmount = unitAmount.negate();
+        }
+        return new Money(unitAmount, currency);
+    }
+
 }

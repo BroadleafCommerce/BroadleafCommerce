@@ -129,7 +129,7 @@ public class SimpleTaxModule implements TaxModule {
                     fulfillmentGroup.getTaxes().add(tax);
                 }
                 tax.setRate(new BigDecimal(factor));
-                tax.setAmount(fulfillmentGroup.getShippingPrice().multiply(factor));
+                tax.setAmount(fulfillmentGroup.getFulfillmentPrice().multiply(factor));
             }
         }
 

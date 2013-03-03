@@ -453,20 +453,6 @@ public interface OrderItem extends Serializable, Cloneable {
     Money getTotalTaxableAmount();
 
     /**
-     * Returns the total taxes paid (or due) for this OrderItem. 
-     * 
-     * @return
-     */
-    Money getTotalTax();
-    
-    /**
-     * Sets the total taxes paid (or due) for this OrderItem. 
-     * 
-     * @return
-     */
-    void setTotalTax(Money tax);
-
-    /**
      * The value of an order-level offer gets distributed to each of the OrderItems.   This field 
      * represents that value.   
      * 
