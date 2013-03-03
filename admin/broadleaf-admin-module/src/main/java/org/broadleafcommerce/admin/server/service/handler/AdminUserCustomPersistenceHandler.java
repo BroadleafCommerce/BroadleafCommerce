@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -55,7 +56,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
     protected AdminSecurityService adminSecurityService;
 
     @Resource(name="blAdminSecurityRemoteService")
-    protected AdminSecurityServiceRemote adminRemoteSecurityService;
+    protected SecurityVerifier adminRemoteSecurityService;
 
     @Override
     public Boolean willHandleSecurity(PersistencePackage persistencePackage) {

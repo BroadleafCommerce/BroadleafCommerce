@@ -34,6 +34,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerFilter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -78,7 +79,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
 
     @Resource(name="blAdminSecurityRemoteService")
-    protected AdminSecurityServiceRemote adminRemoteSecurityService;
+    protected SecurityVerifier adminRemoteSecurityService;
 
     @Resource(name="blPersistenceModules")
     protected PersistenceModule[] modules;
@@ -422,7 +423,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         this.customPersistenceHandlers = customPersistenceHandlers;
     }
 
-    public AdminSecurityServiceRemote getAdminRemoteSecurityService() {
+    public SecurityVerifier getAdminRemoteSecurityService() {
         return adminRemoteSecurityService;
     }
 

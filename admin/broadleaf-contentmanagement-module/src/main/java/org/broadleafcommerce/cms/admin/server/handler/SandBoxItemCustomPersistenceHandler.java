@@ -39,6 +39,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
@@ -66,7 +67,7 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
     protected AdminSecurityService adminSecurityService;
 
     @Resource(name="blAdminSecurityRemoteService")
-    protected AdminSecurityServiceRemote adminRemoteSecurityService;
+    protected SecurityVerifier adminRemoteSecurityService;
 
     @Override
     public Boolean willHandleSecurity(PersistencePackage persistencePackage) {
