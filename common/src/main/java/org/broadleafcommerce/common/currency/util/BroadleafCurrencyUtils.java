@@ -20,6 +20,8 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Currency;
 
 
@@ -30,6 +32,8 @@ import java.util.Currency;
  * @see {@link BroadleafCurrency}
  */
 public class BroadleafCurrencyUtils {
+
+    public static final MathContext ROUND_FLOOR_MATH_CONTEXT = new MathContext(0, RoundingMode.FLOOR);
 
     public static Money getMoney(BigDecimal amount, BroadleafCurrency currency) {
         if (amount == null) {
@@ -78,4 +82,34 @@ public class BroadleafCurrencyUtils {
         return new Money(unitAmount, currency);
     }
 
+    /**
+     * Returns the unit amount (e.g. .01 for US and all other 2 decimal currencies)
+     * @param currency
+     * @return
+     */
+    public static Money getUnitAmount(BroadleafCurrency blCurrency) {
+        Currency currency = getCurrency(blCurrency);
+        BigDecimal divisor = new BigDecimal(Math.pow(10, currency.getDefaultFractionDigits()));
+        BigDecimal unitAmount = new BigDecimal("1").divide(divisor);
+        return new Money(unitAmount, currency);
+    }
+
+    /**
+     * Returns the remainder amount if the passed in totalAmount was divided by the
+     * quantity taking into account the normal unit of the currency (e.g. .01 for US).
+     * @param currency
+     * @return
+     */
+    public static int calculateRemainder(Money totalAmount, int quantity) {
+        if (totalAmount == null || totalAmount.isZero() || quantity == 0) {
+            return 0;
+        }
+
+        // Use this to convert to a whole number (e.g. 1.05 becomes 105 in US currency).
+        BigDecimal multiplier = new BigDecimal(10).pow(totalAmount.getAmount().scale());
+        BigDecimal amount = totalAmount.getAmount().multiply(multiplier);
+
+        BigDecimal remainder = amount.remainder(new BigDecimal(quantity), ROUND_FLOOR_MATH_CONTEXT);
+        return remainder.toBigInteger().intValue();
+    }
 }
