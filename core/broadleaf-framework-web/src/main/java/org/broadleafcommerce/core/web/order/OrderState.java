@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.core.web.order;
 
-import java.util.HashMap;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import javax.annotation.Resource;
+
+import java.util.HashMap;
 
 /**
  * This class is used as a request-scope container for the current
@@ -36,9 +36,9 @@ import org.broadleafcommerce.profile.core.domain.Customer;
  */
 public class OrderState {
 
-    private HashMap<Long, Long> orders = new HashMap<Long, Long>();
+    private final HashMap<Long, Long> orders = new HashMap<Long, Long>();
 
-    @Resource(name="blOrderDao")
+    @Resource(name = "blOrderDao")
     private OrderDao orderDao;
     private boolean updatePrices = true;
 
@@ -58,7 +58,7 @@ public class OrderState {
             }
         }
         return order;
-        }
+    }
 
     public boolean isUpdatePrices() {
         return updatePrices;

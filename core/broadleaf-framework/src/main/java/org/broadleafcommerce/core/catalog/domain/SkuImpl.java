@@ -741,15 +741,28 @@ public class SkuImpl implements Sku {
     }
 
     @Override
+    @Deprecated
     public Boolean isMachineSortable() {
         if (isMachineSortable == null && hasDefaultSku()) {
             return lookupDefaultSku().isMachineSortable();
         }
-        return isMachineSortable;
+        return isMachineSortable == null ? false : isMachineSortable;
+    }
+
+    public Boolean getIsMachineSortable() {
+        if (isMachineSortable == null && hasDefaultSku()) {
+            return lookupDefaultSku().getIsMachineSortable();
+        }
+        return isMachineSortable == null ? false : isMachineSortable;
     }
 
     @Override
+    @Deprecated
     public void setMachineSortable(Boolean isMachineSortable) {
+        this.isMachineSortable = isMachineSortable;
+    }
+
+    public void setIsMachineSortable(Boolean isMachineSortable) {
         this.isMachineSortable = isMachineSortable;
     }
 

@@ -16,36 +16,61 @@
 
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
-import java.util.HashMap;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 
+import java.util.HashMap;
+
+import javax.annotation.Nonnull;
+
 /**
+ * <p>Interface for calculating dynamic pricing for a {@link Sku}. This should be hooked up via a custom subclass of 
+ * {@link org.broadleafcommerce.core.web.catalog.DefaultDynamicSkuPricingFilter} where an implementation of this class
+ * should be injected and returned in the getPricing() method.</p>
+ * 
+ * <p>Rather than implementing this interface directly, consider subclassing the {@link DefaultDynamicSkuPricingServiceImpl}
+ * and providing overrides to methods there.</p>
  * 
  * @author jfischer
- * 
+ * @see {@link DefaultDynamicSkuPricingServiceImpl}
+ * @see {@link org.broadleafcommerce.core.web.catalog.DefaultDynamicSkuPricingFilter}
+ * @see {@link SkuPricingConsiderationContext}
  */
 public interface DynamicSkuPricingService {
 
-    public DynamicSkuPrices getSkuPrices(Sku sku,
-            @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
-
     /**
-     *  getSkuBundleItemPrice method computes the sale price of a skuBundleItem
+     * While this method should return a {@link DynamicSkuPrices} (and not just null) the members of the result can all
+     * be null; they do not have to be set
+     * 
      * @param sku
      * @param skuPricingConsiderations
      * @return
      */
-    public DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem sku,
-            @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
+    @Nonnull
+    @SuppressWarnings("rawtypes")
+    public DynamicSkuPrices getSkuPrices(Sku sku, HashMap skuPricingConsiderations);
 
-    public DynamicSkuPrices getPriceAdjustment(
-            ProductOptionValueImpl productOptionValueImpl, Money priceAdjustment,
+    /**
+     * Used for t
+     * 
+     * @param sku
+     * @param skuPricingConsiderations
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    public DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem sku, HashMap skuPricingConsiderations);
+
+    /**
+     * Execute dynamic pricing on the price of a product option value. 
+     * @param productOptionValueImpl
+     * @param priceAdjustment
+     * @param skuPricingConsiderationContext
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    public DynamicSkuPrices getPriceAdjustment(ProductOptionValueImpl productOptionValueImpl, Money priceAdjustment,
             HashMap skuPricingConsiderationContext);
-
-   
 
 }
