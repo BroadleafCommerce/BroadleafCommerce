@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -58,7 +59,7 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
     private BroadleafThemeResolver themeResolver;
 
     @Override
-    public void process(WebRequest request) {
+    public void process(WebRequest request) throws SiteNotFoundException {
         Site site = siteResolver.resolveSite(request);
         Locale locale = localeResolver.resolveLocale(request);
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);

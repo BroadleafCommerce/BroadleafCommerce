@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.web;
 
+import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -59,6 +60,6 @@ public interface BroadleafWebRequestProcessor {
      * 
      * @param request
      */
-    public void process(WebRequest request);
+    public void process(WebRequest request) throws SiteNotFoundException;
     
 }

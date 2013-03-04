@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.web;
 
+import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.web.context.request.WebRequest;
 
@@ -34,7 +35,7 @@ public interface BroadleafSiteResolver  {
      * @deprecated Use {@link #resolveSite(WebRequest)} instead
      */
     @Deprecated
-    public Site resolveSite(HttpServletRequest request);
+    public Site resolveSite(HttpServletRequest request) throws SiteNotFoundException;
 
-    public Site resolveSite(WebRequest request);
+    public Site resolveSite(WebRequest request) throws SiteNotFoundException;
 }

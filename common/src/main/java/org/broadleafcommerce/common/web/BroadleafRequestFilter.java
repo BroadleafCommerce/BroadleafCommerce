@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
+import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,7 +29,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -92,10 +92,11 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
             request.setAttribute(REQUEST_DTO, new RequestDTOImpl(request));
         }
 
-        requestProcessor.process(new ServletWebRequest(request, response));
-
         try {
+            requestProcessor.process(new ServletWebRequest(request, response));
             filterChain.doFilter(request, response);
+        } catch (SiteNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_FOUND);
         } finally {
             SandBoxContext.setSandBoxContext(null);
         }
