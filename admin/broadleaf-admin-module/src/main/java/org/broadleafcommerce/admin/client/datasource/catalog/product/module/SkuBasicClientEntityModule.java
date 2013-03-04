@@ -100,6 +100,10 @@ public class SkuBasicClientEntityModule extends BasicClientEntityModule {
                             }
                         }
 
+                        // Hide the consolidated product options field. If someone is using this entity module, then the
+                        // intention would be to utilize each product option as a grid field
+                        dataSource.getField("consolidatedProductOptions").setAttribute("permanentlyHidden", true);
+
                         //In order to make the form display show up properly for creating a new single Sku, make all the product
                         //options for the Product visible on the form
                         if (result.getClassMetaData().getProperties() != null) {
