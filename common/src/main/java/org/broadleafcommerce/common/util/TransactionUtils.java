@@ -10,8 +10,13 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class TransactionUtils {
 
     public static TransactionStatus createTransaction(String name, int propagationBehavior, PlatformTransactionManager transactionManager) {
+        return createTransaction(name, propagationBehavior, transactionManager, false);
+    }
+
+    public static TransactionStatus createTransaction(String name, int propagationBehavior, PlatformTransactionManager transactionManager, boolean isReadOnly) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName(name);
+        def.setReadOnly(isReadOnly);
         def.setPropagationBehavior(propagationBehavior);
         return transactionManager.getTransaction(def);
     }

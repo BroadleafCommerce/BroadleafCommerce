@@ -53,7 +53,12 @@ public class AdminUserDaoImpl implements AdminUserDao {
     }
 
     public AdminUser saveAdminUser(AdminUser user) {
-        return em.merge(user);
+        if (em.contains(user) || user.getId() != null) {
+            return em.merge(user);
+        } else {
+            em.persist(user);
+            return user;
+        }
     }
 
     public AdminUser readAdminUserByUserName(String userName) {
