@@ -21,6 +21,13 @@ public class TransactionUtils {
         return transactionManager.getTransaction(def);
     }
 
+    public static TransactionStatus createTransaction(int propagationBehavior, PlatformTransactionManager transactionManager, boolean isReadOnly) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setReadOnly(isReadOnly);
+        def.setPropagationBehavior(propagationBehavior);
+        return transactionManager.getTransaction(def);
+    }
+
     public static void finalizeTransaction(TransactionStatus status, PlatformTransactionManager transactionManager, boolean isError) {
         boolean isActive = false;
         try {

@@ -54,14 +54,14 @@ public class UserManagementModule extends AbstractModule {
             userManagementPermissions
         );
         
-        setSection(
+        /*setSection(
             BLCMain.getMessageManager().getString("permissionManagementMainTitle"),
             "permission",
             "org.broadleafcommerce.openadmin.client.view.user.PermissionManagementView",
             "permissionPresenter",
             "org.broadleafcommerce.openadmin.client.presenter.user.PermissionManagementPresenter",
             userManagementPermissions
-        );
+        );*/
 
         setOrder(250);
         
