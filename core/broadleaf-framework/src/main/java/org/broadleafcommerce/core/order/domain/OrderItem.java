@@ -442,40 +442,4 @@ public interface OrderItem extends Serializable, Cloneable {
      * @param taxable
      */
     void setTaxable(Boolean taxable);
-    
-    /**
-     * Returns the total amount of this item subject to taxes.
-     * 
-     * This is calculated as {@link #getTotalPrice()} - {@link #getTaxableProratedOrderAdjustment()}
-     * 
-     * @return
-     */
-    Money getTotalTaxableAmount();
-
-    /**
-     * The value of an order-level offer gets distributed to each of the OrderItems.   This field 
-     * represents that value.   
-     * 
-     * @return
-     */
-    Money getProratedOrderAdjustment();
-
-    /**
-     * Sets the pro-rated amount of order-level offer that benefits this OrderItem.
-     * 
-     */
-    void setProratedOrderAdjustment(Money proratedOrderAdjustmentAmount);
-
-    /**
-     * This field represents the value of fulfillment charges gets distributed to each of the OrderItems   
-     * 
-     * @return
-     */
-    Money getProratedFulfillmentCharges();
-
-    /**
-     * Sets the prorated fulfillment charges that apply to this OrderItem   
-     * 
-     */
-    void setProratedFulfillmentCharges(Money proratedFulfillmentCharges);
 }

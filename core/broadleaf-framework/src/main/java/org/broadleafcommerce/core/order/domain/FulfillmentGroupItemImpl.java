@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
 import java.lang.reflect.Method;
@@ -84,9 +83,8 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @Index(name="FGITEM_STATUS_INDEX", columnNames={"STATUS"})
     private String status;
     
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @JoinTable(name = "BLC_FG_ITEM_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ITEM_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
     
@@ -101,6 +99,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @Column(name = "TOTAL_ITEM_TAXABLE_AMOUNT", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, group = "FulfillmentGroupItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalItemTaxableAmount;
+
+    @Column(name = "TAXABLE_PRORATED_ORDER_ADJ")
+    protected BigDecimal taxableProratedOrderAdjustment;
+
+    @Column(name = "PRORATED_ORDER_ADJ")
+    protected BigDecimal proratedOrderAdjustment;
 
     @Override
     public Long getId() {
@@ -166,6 +170,16 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @Override
     public void setTotalItemAmount(Money amount) {
         totalItemAmount = amount.getAmount();
+    }
+
+    @Override
+    public Money getProratedOrderAdjustmentAmount() {
+        return convertToMoney(proratedOrderAdjustment);
+    }
+
+    @Override
+    public void setProratedOrderAdjustmentAmount(Money proratedOrderAdjustment) {
+        this.proratedOrderAdjustment = proratedOrderAdjustment.getAmount();
     }
 
     @Override
@@ -251,6 +265,14 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         }
 
         return clonedFulfillmentGroupItem;
+    }
+
+    @Override
+    public boolean getHasProratedOrderAdjustments() {
+        if (proratedOrderAdjustment != null) {
+            return (proratedOrderAdjustment.compareTo(BigDecimal.ZERO) == 0);
+        }
+        return false;
     }
 
     @Override

@@ -381,6 +381,19 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
+    public Money getTotalTaxableAmount() {
+        Money returnValue = convertToMoney(BigDecimal.ZERO);
+        if (shouldSumItems()) {
+            for (OrderItem containedItem : getOrderItems()) {
+                returnValue = returnValue.add(containedItem.getTotalTaxableAmount());
+            }
+        } else {
+            returnValue = super.getTotalTaxableAmount();
+        }
+        return returnValue;
+    }
+
+    @Override
     public OrderItem clone() {
         BundleOrderItemImpl orderItem = (BundleOrderItemImpl) super.clone();
         if (discreteOrderItems != null) {

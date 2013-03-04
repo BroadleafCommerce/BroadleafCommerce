@@ -188,15 +188,6 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Column(name = "TOTAL_TAX")
     protected BigDecimal totalTax;
-
-    @Column(name = "TAXABLE_PRORATED_ORDER_ADJ")
-    protected BigDecimal taxableProratedOrderAdjustment;
-
-    @Column(name = "PRORATED_ORDER_ADJ")
-    protected BigDecimal proratedOrderAdjustment;
-
-    @Column(name = "PRORATED_FULFILLMENT_CHARGE")
-    protected BigDecimal proratedFulfillmentCharge;       
     
     @Override
     public Money getRetailPrice() {
@@ -719,39 +710,6 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     @Override
-    public Money getTotalTaxableAmount() {
-        Money returnValue = convertToMoney(BigDecimal.ZERO);
-        if (isTaxable()) {
-            if (proratedOrderAdjustment != null) {
-                return getTotalPrice().subtract(getProratedOrderAdjustment());
-            } else {
-                return getTotalPrice();
-            }
-        }
-        return returnValue;
-    }
-
-    @Override
-    public Money getProratedOrderAdjustment() {
-        return convertToMoney(proratedOrderAdjustment);
-    }
-
-    @Override
-    public void setProratedOrderAdjustment(Money proratedOrderAdjustment) {
-        this.proratedOrderAdjustment = Money.toAmount(proratedOrderAdjustment);
-    }
-
-    @Override
-    public Money getProratedFulfillmentCharges() {
-        return convertToMoney(proratedFulfillmentCharge);
-    }
-
-    @Override
-    public void setProratedFulfillmentCharges(Money proratedFulfillmentCharge) {
-        this.proratedFulfillmentCharge = Money.toAmount(proratedFulfillmentCharge);
-    }
-
-    @Override
     public void setRetailPriceOverride(boolean override) {
         this.retailPriceOverride = Boolean.valueOf(override);
     }
@@ -778,4 +736,5 @@ public class OrderItemImpl implements OrderItem, Cloneable {
             return salePriceOverride.booleanValue();
         }
     }
+
 }

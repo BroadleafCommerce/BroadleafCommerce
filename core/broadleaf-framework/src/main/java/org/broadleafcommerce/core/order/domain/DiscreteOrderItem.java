@@ -86,4 +86,12 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
 
     public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> orderItemFeePrices);
 
+    /**
+     * For items that are part of a bundle, this method will return the parent bundle item.  Otherwise,
+     * returns null.
+     * 
+     * @return
+     */
+    public BundleOrderItem findParentItem();
+
 }

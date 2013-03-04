@@ -28,10 +28,9 @@
         </property>
         <property name="activities">
             <list>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.DistributeOrderSavingsActivity" />
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />                
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity" />                
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity" />                                       
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity" />
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity"/>

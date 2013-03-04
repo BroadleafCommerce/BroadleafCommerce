@@ -108,21 +108,6 @@ public interface Order extends Serializable {
      */
     public void assignOrderItemsFinalPrice();
 
-    /** 
-     * @deprecated 
-     * Use {@link #calculateItemTotal()} or {@link #calculateTaxableItemTotal()} instead.      
-     * 
-     * @param includeNonTaxableItems - whether or not to use {@link OrderItem#getTaxablePrice()} or {@link OrderItem#getPrice()
-     * @return
-     */
-    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems);
-
-    /**
-     * Returns the total taxable item amount for this order.   This will include the item totals minus any item and
-     * order level adjustments.
-     */
-    public Money calculateTaxableItemTotal();
-
     /**
      * Returns the sum of the item totals. 
      * 
@@ -455,4 +440,9 @@ public interface Order extends Serializable {
 
     public void setLocale(Locale locale);
 
+    /**
+     * Returns true if this item has order adjustments.
+     * @return
+     */
+    boolean getHasOrderAdjustments();
 }

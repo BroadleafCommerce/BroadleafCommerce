@@ -407,4 +407,19 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         }
     }
 
+    @Override
+    public BundleOrderItem findParentItem() {
+        for (OrderItem orderItem : getOrder().getOrderItems()) {
+            if (orderItem instanceof BundleOrderItem) {
+                BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
+                for (OrderItem containedItem : bundleItem.getOrderItems()) {
+                    if (containedItem.equals(this)) {
+                        return bundleItem;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 }

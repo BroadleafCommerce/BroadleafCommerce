@@ -6,6 +6,8 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 
@@ -13,15 +15,19 @@ import java.math.BigDecimal;
 
 import junit.framework.TestCase;
 
-public class DistributeOrderSavingsActivityTest extends TestCase {
+public class FulfillmentItemPricingActivityTest extends TestCase {
 
     private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
-    private DistributeOrderSavingsActivity distributeSavingsActivity = new DistributeOrderSavingsActivity();
+    private FulfillmentItemPricingActivity fulfillmentItemPricingActivity = new FulfillmentItemPricingActivity();
 
     protected Money sumProratedOfferAdjustments(Order order) {
         Money returnVal = new Money(order.getCurrency());
-        for (OrderItem orderItem : order.getOrderItems()) {
-            returnVal = returnVal.add(orderItem.getProratedOrderAdjustment());
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                if (fulfillmentGroupItem.getProratedOrderAdjustmentAmount() != null) {
+                    returnVal = returnVal.add(fulfillmentGroupItem.getProratedOrderAdjustmentAmount());
+                }
+            }
         }
         return returnVal;
     }
@@ -31,7 +37,7 @@ public class DistributeOrderSavingsActivityTest extends TestCase {
         PricingContext context = new PricingContext();
         context.setSeedData(order);
 
-        distributeSavingsActivity.execute(context);
+        fulfillmentItemPricingActivity.execute(context);
         assertTrue(sumProratedOfferAdjustments(order).getAmount().compareTo(BigDecimal.ZERO) == 0);
     }
 
@@ -53,13 +59,15 @@ public class DistributeOrderSavingsActivityTest extends TestCase {
         PricingContext context = new PricingContext();
         context.setSeedData(order);
 
-        distributeSavingsActivity.execute(context);
+        fulfillmentItemPricingActivity.execute(context);
 
         // Each item is equally priced, so the adjustment should be .20 per item.
         Money proratedAdjustment = new Money(".20");
-        for (OrderItem orderItem : order.getOrderItems()) {
-            assertTrue(orderItem.getProratedOrderAdjustment().compareTo(
-                    proratedAdjustment.multiply(orderItem.getQuantity())) == 0);
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                assertTrue(fulfillmentGroupItem.getProratedOrderAdjustmentAmount().compareTo(
+                        proratedAdjustment.multiply(fulfillmentGroupItem.getQuantity())) == 0);
+            }
         }
     }
 
@@ -74,16 +82,18 @@ public class DistributeOrderSavingsActivityTest extends TestCase {
         PricingContext context = new PricingContext();
         context.setSeedData(order);
 
-        distributeSavingsActivity.execute(context);
+        fulfillmentItemPricingActivity.execute(context);
 
-        // Each item is equally priced, so the adjustment should be .20 per item.
         Money adj1 = new Money(".31");
         Money adj2 = new Money(".69");
-        for (OrderItem orderItem : order.getOrderItems()) {
-            if (orderItem.getSalePrice().equals(new Money("19.99"))) {
-                assertTrue(orderItem.getProratedOrderAdjustment().equals(adj1));
-            } else {
-                assertTrue(orderItem.getProratedOrderAdjustment().equals(adj2));
+
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                if (fulfillmentGroupItem.getSalePrice().equals(new Money("19.99"))) {
+                    assertTrue(fulfillmentGroupItem.getProratedOrderAdjustmentAmount().equals(adj1));
+                } else {
+                    assertTrue(fulfillmentGroupItem.getProratedOrderAdjustmentAmount().equals(adj2));
+                }
             }
         }
     }
@@ -107,7 +117,7 @@ public class DistributeOrderSavingsActivityTest extends TestCase {
         PricingContext context = new PricingContext();
         context.setSeedData(order);
 
-        distributeSavingsActivity.execute(context);
+        fulfillmentItemPricingActivity.execute(context);
 
         assertTrue(sumProratedOfferAdjustments(order).equals(
                 new Money(new BigDecimal(".05"), order.getCurrency())));
@@ -129,7 +139,7 @@ public class DistributeOrderSavingsActivityTest extends TestCase {
         PricingContext context = new PricingContext();
         context.setSeedData(order);
 
-        distributeSavingsActivity.execute(context);
+        fulfillmentItemPricingActivity.execute(context);
 
         assertTrue(sumProratedOfferAdjustments(order).equals(
                 new Money(new BigDecimal("1"), order.getCurrency())));
@@ -156,7 +166,7 @@ public class DistributeOrderSavingsActivityTest extends TestCase {
         PricingContext context = new PricingContext();
         context.setSeedData(order);
 
-        distributeSavingsActivity.execute(context);
+        fulfillmentItemPricingActivity.execute(context);
 
         assertTrue(sumProratedOfferAdjustments(order).equals(
                 new Money(new BigDecimal("1"), order.getCurrency())));

@@ -53,6 +53,10 @@ public interface FulfillmentGroupItem extends Serializable {
 
     public void setTotalItemAmount(Money amount);
     
+    public Money getProratedOrderAdjustmentAmount();
+
+    public void setProratedOrderAdjustmentAmount(Money amount);
+
     public Money getTotalItemTaxableAmount();
 
     public void setTotalItemTaxableAmount(Money amount);    
@@ -96,5 +100,11 @@ public interface FulfillmentGroupItem extends Serializable {
      * @param totalTax the total tax for this item
      */
     public void setTotalTax(Money totalTax);
-    
+
+    /**
+     * Returns true if this item has pro-rated order adjustments.
+     * @return
+     */
+    boolean getHasProratedOrderAdjustments();
+
 }

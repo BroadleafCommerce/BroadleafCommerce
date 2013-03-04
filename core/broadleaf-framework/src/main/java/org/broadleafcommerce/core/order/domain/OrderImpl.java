@@ -238,24 +238,6 @@ public class OrderImpl implements Order {
     }
 
     @Override
-    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
-        if (includeNonTaxableItems) {
-            return calculateTaxableItemTotal();
-        } else {
-            return calculateSubTotal();
-        }
-    }
-
-    @Override
-    public Money calculateTaxableItemTotal() {
-        Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getCurrency());
-        for (OrderItem orderItem : orderItems) {
-            calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalTaxableAmount());
-        }
-        return calculatedSubTotal;
-    }
-
-    @Override
     public Money calculateSubTotal() {
         Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getCurrency());
         for (OrderItem orderItem : orderItems) {
@@ -608,6 +590,15 @@ public class OrderImpl implements Order {
             count += doi.getQuantity();
         }
         return count;
+    }
+
+    @Override
+    public boolean getHasOrderAdjustments() {
+        Money orderAdjustmentsValue = getOrderAdjustmentsValue();
+        if (orderAdjustmentsValue != null) {
+            return (orderAdjustmentsValue.compareTo(BigDecimal.ZERO) != 0);
+        }
+        return false;
     }
 
     @Override
