@@ -73,11 +73,7 @@ public class DataDTOToMVELTranslator {
             }
             if (includeTopLevelParenthesis) sb.append("(");
             for (DataDTO dto : groups) {
-                String operatorName = null;
-                if (operator != null) {
-                    operatorName = operator.name();
-                }
-                buildMVEL(dto, sb, entityKey, operatorName, fieldService);
+                buildMVEL(dto, sb, entityKey, dataDTO.getGroupOperator(), fieldService);
             }
             if (includeTopLevelParenthesis) sb.append(")");
         }

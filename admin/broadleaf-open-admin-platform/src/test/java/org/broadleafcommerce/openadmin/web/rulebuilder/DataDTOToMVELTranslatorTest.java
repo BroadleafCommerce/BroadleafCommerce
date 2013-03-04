@@ -17,7 +17,9 @@
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 import junit.framework.TestCase;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.CustomerFieldServiceImpl;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderItemFieldServiceImpl;
 
 /**
@@ -26,10 +28,12 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderItemFieldSer
 public class DataDTOToMVELTranslatorTest extends TestCase {
 
     private OrderItemFieldServiceImpl orderItemFieldService;
+    private CustomerFieldServiceImpl customerFieldService;
 
     @Override
     protected void setUp() {
         orderItemFieldService = new OrderItemFieldServiceImpl();
+        customerFieldService = new CustomerFieldServiceImpl();
     }
 
     /**
@@ -59,5 +63,28 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         String translated = translator.createMVEL("discreteOrderItem", expressionDTO, orderItemFieldService);
         String mvel = "MVEL.eval(\"toUpperCase()\",discreteOrderItem.category.name)==MVEL.eval(\"toUpperCase()\",\"merchandise\")";
         assert(mvel.equals(translated));
+    }
+
+    public void testCustomerQualificationMVEL() throws MVELTranslationException {
+        DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
+        DataDTO dataDTO = new DataDTO();
+        dataDTO.setGroupOperator(BLCOperator.AND.name());
+
+        ExpressionDTO e1 = new ExpressionDTO();
+        e1.setName("emailAddress");
+        e1.setOperator(BLCOperator.NOT_EQUAL_FIELD.name());
+        e1.setValue("username");
+
+        ExpressionDTO e2 = new ExpressionDTO();
+        e2.setName("deactivated");
+        e2.setOperator(BLCOperator.EQUALS.name());
+        e2.setValue("true");
+
+        dataDTO.getGroups().add(e1);
+        dataDTO.getGroups().add(e2);
+
+        String translated = translator.createMVEL("customer", dataDTO, customerFieldService);
+        String mvel = "customer.emailAddress!=customer.username&&customer.deactivated==true";
+        assert (mvel.equals(translated));
     }
 }

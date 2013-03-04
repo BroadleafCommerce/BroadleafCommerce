@@ -89,6 +89,7 @@
         <property name="fieldServices">
             <list>
                 <ref bean="blOrderItemFieldService"/>
+                <ref bean="blCustomerFieldService"/>
             </list>
         </property>
     </bean>
