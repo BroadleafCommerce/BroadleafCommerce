@@ -130,19 +130,6 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
-    public Money getProratedOrderAdjustment() {
-        if (shouldSumItems()) {
-            Money proratedOrderAdjustment = BroadleafCurrencyUtils.getMoney(getOrder().getCurrency());
-            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                proratedOrderAdjustment = proratedOrderAdjustment.add(discreteOrderItem.getProratedOrderAdjustment());
-            }
-            return proratedOrderAdjustment;
-        } else {
-            return super.getProratedOrderAdjustment();
-        }
-    }
-
-    @Override
     public boolean isPricingAtContainerLevel() {
         return !shouldSumItems();
     }
@@ -376,19 +363,6 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             }
         } else {
             returnValue = super.getTotalPrice();
-        }
-        return returnValue;
-    }
-
-    @Override
-    public Money getTotalTaxableAmount() {
-        Money returnValue = convertToMoney(BigDecimal.ZERO);
-        if (shouldSumItems()) {
-            for (OrderItem containedItem : getOrderItems()) {
-                returnValue = returnValue.add(containedItem.getTotalTaxableAmount());
-            }
-        } else {
-            returnValue = super.getTotalTaxableAmount();
         }
         return returnValue;
     }

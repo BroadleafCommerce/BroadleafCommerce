@@ -92,11 +92,6 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
-    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
-        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
-    }
-
-    @Override
     public Money getTotal() {
         return null;
     }
@@ -333,11 +328,6 @@ public class NullOrderImpl implements Order {
 
     @Override
     public void setLocale(Locale locale) {
-    }
-
-    @Override
-    public Money calculateTaxableItemTotal() {
-        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
     @Override
