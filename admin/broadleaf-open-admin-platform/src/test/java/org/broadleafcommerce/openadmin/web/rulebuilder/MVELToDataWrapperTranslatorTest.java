@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.CustomerFieldServiceImpl;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderItemFieldServiceImpl;
 
 /**
@@ -29,10 +30,12 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderItemFieldSer
 public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     private OrderItemFieldServiceImpl orderItemFieldService;
+    private CustomerFieldServiceImpl customerFieldService;
 
     @Override
     protected void setUp() {
         orderItemFieldService = new OrderItemFieldServiceImpl();
+        customerFieldService = new CustomerFieldServiceImpl();
     }
 
     /**
@@ -65,5 +68,38 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(exp.getName().equals("category.name"));
         assert(exp.getOperator().equals(BLCOperator.IEQUALS.name()));
         assert(exp.getValue().equals("merchandise"));
+    }
+
+    public void testCustomerQualificationDataWrapper() throws MVELTranslationException {
+        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+
+        Property[] properties = new Property[1];
+        Property mvelProperty = new Property();
+        mvelProperty.setName("matchRule");
+        mvelProperty.setValue("customer.emailAddress!=customer.username&&customer.deactivated==true");
+        properties[0] = mvelProperty;
+        Entity[] entities = new Entity[1];
+        Entity entity = new Entity();
+        entity.setProperties(properties);
+        entities[0] = entity;
+
+        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, customerFieldService);
+        assert(dataWrapper.getData().size() == 1);
+        assert(dataWrapper.getData().get(0).getQuantity() == null);
+        assert(dataWrapper.getData().get(0).getGroupOperator().equals(BLCOperator.AND.name()));
+        assert(dataWrapper.getData().get(0).getGroups().size()==2);
+
+        assert(dataWrapper.getData().get(0).getGroups().get(0) instanceof ExpressionDTO);
+        ExpressionDTO e1 = (ExpressionDTO) dataWrapper.getData().get(0).getGroups().get(0);
+        assert(e1.getName().equals("emailAddress"));
+        assert(e1.getOperator().equals(BLCOperator.NOT_EQUAL_FIELD.name()));
+        assert(e1.getValue().equals("username"));
+
+        assert(dataWrapper.getData().get(0).getGroups().get(1) instanceof ExpressionDTO);
+        ExpressionDTO e2 = (ExpressionDTO) dataWrapper.getData().get(0).getGroups().get(1);
+        assert(e2.getName().equals("deactivated"));
+        assert(e2.getOperator().equals(BLCOperator.EQUALS.name()));
+        assert(e2.getValue().equals("true"));
+
     }
 }
