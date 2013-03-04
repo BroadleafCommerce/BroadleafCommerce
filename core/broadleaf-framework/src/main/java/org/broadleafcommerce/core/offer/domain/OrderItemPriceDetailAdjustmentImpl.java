@@ -76,18 +76,19 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     protected Offer offer;
 
     @Column(name = "OFFER_NAME")
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_offerName", order = 2, group = "OrderItemPriceDetailAdjustmentImpl_Description")
     protected String offerName;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_Item_Adjustment_Reason", order = 1, group = "OrderItemPriceDetailAdjustmentImpl_Description")
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_reason", order = 1, group = "OrderItemPriceDetailAdjustmentImpl_Description")
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_Item_Adjustment_Value", order = 2, group = "OrderItemPriceDetailAdjustmentImpl_Description", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_value", order = 2, group = "OrderItemPriceDetailAdjustmentImpl_Description", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "APPLIED_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_Apply_To_Sale_Price", order = 3, group = "OrderItemPriceDetailAdjustmentImpl_Description")
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_appliedToSalePrice", order = 3, group = "OrderItemPriceDetailAdjustmentImpl_Description")
     protected boolean appliedToSalePrice;
     
     @Transient

@@ -26,6 +26,8 @@ import org.broadleafcommerce.admin.client.datasource.order.OfferCodeListDataSour
 import org.broadleafcommerce.admin.client.datasource.order.OrderAdjustmentListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.OrderItemAdjustmentListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.OrderItemListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.order.OrderItemPriceDetailAdjustmentListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.order.OrderItemPriceDetailListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.OrderListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.PaymentAdditionalAttributesDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.PaymentInfoListDataSourceFactory;
@@ -49,6 +51,7 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -62,6 +65,8 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
@@ -84,6 +89,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
     protected SubPresentable offerCodePresenter;
     protected SubPresentable orderAdjustmentPresenter;
     protected SubPresentable orderItemAdjustmentPresenter;
+    protected CreateBasedListStructurePresenter orderItemPriceDetailPresenter;
     protected SubPresentable fulfillmentGroupAdjustmentPresenter;
     protected SubPresentable feesPresenter;
     protected SubPresentable paymentResponsePresenter;
@@ -112,6 +118,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
         offerCodePresenter.bind();
         orderAdjustmentPresenter.bind();
         orderItemAdjustmentPresenter.bind();
+        orderItemPriceDetailPresenter.bind();
         fulfillmentGroupAdjustmentPresenter.bind();
         feesPresenter.bind();
         paymentResponsePresenter.bind();
@@ -179,6 +186,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
                 if (event.getState()) {
                     orderItemAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderItemDS"), null);
                     feesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("discreteOrderItemFeePriceDS"), null);
+                    orderItemPriceDetailPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderItemDS"), null);
                 }
             }
         });
@@ -221,7 +229,26 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
                 }
             }
         });
+        orderItemPriceDetailPresenter.getRowDoubleClickedHandlerRegistration().removeHandler();
+        GridStructureDisplay detailPresenterView = getDisplay().getOrderItemPriceDetailDisplay();
 
+        detailPresenterView.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
+
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
+
+                OrderItemPriceDetailDialog dialog = new OrderItemPriceDetailDialog();
+                GridStructureDisplay display = ((GridStructureDisplay) ((CreateBasedListStructurePresenter) orderItemPriceDetailPresenter).getDisplay());
+                CreateBasedListStructurePresenter orderItemPriceDetailAdjustment = new CreateBasedListStructurePresenter("", dialog.getOrderItemPriceDetailAdjustmentDisplay(), BLCMain.getMessageManager().getString("newOrderItemPriceDetailTitle"));
+                orderItemPriceDetailAdjustment.setDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("orderItemPriceDetailAdjustmentDS"), new String[] { "offerName", "reason", "value", "appliedToSalePrice" }, new Boolean[] { false, false, false, false });
+                orderItemPriceDetailAdjustment.setReadOnly(true);
+                dialog.editRecord("View of Price Details", (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, null, null, true);
+                orderItemPriceDetailAdjustment.bind();
+                orderItemPriceDetailAdjustment.load(display.getGrid().getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("orderItemPriceDetailDS"));
+                dialog.getCancelButton().setTitle("Close");
+                orderItemPriceDetailAdjustment.setReadOnly(true);
+            }
+        });
         
         setReadOnly(true);
         //enable the toolbar so that the export button will be able to be clicked
@@ -355,38 +382,62 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
                 orderItemAdjustmentPresenter.setReadOnly(true);
             }
         }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemPriceDetailAdjustmentDS", new OrderItemPriceDetailAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
+
+            @Override
+            public void onSetupSuccess(final DataSource result) {
+
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemPriceDetailDS", new OrderItemPriceDetailListDataSourceFactory(), new AsyncCallbackAdapter() {
+
+            @Override
+            public void onSetupSuccess(DataSource result) {
+                orderItemPriceDetailPresenter = new CreateBasedListStructurePresenter("", getDisplay().getOrderItemPriceDetailDisplay(), BLCMain.getMessageManager().getString("newOrderItemPriceDetailTitle"));
+                orderItemPriceDetailPresenter.setDataSource((ListGridDataSource) result, new String[] { "quantity", "useSalePrice" }, new Boolean[] { false, false });
+                orderItemPriceDetailPresenter.setReadOnly(true);
+            }
+        }));
+
+
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupAdjustmentDS", new FulfillmentGroupAdjustmentListDataSourceFactory(), new AsyncCallbackAdapter() {
+
             @Override
             public void onSetupSuccess(DataSource result) {
                 fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter("", getDisplay().getFulfillmentGroupAdjustmentDisplay(), BLCMain.getMessageManager().getString("newFGAdjustmentTitle"));
-                fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
+                fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[] { "reason", "value", "offer.type" }, new Boolean[] { false, false, false });
                 fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("discreteOrderItemFeePriceDS", new DiscreteOrderItemFeePriceDataSourceFactory(), new AsyncCallbackAdapter() {
+
             @Override
             public void onSetupSuccess(DataSource result) {
                 feesPresenter = new CreateBasedListStructurePresenter("", getDisplay().getOrderItemFeeDisplay(), BLCMain.getMessageManager().getString("newOrderItemFeeTitle"));
-                feesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "amount", "reportingCode"}, new Boolean[]{false, false, false});
+                feesPresenter.setDataSource((ListGridDataSource) result, new String[] { "name", "amount", "reportingCode" }, new Boolean[] { false, false, false });
                 feesPresenter.setReadOnly(true);
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentResponseItemDS", new PaymentResponseItemListDataSourceFactory(), new AsyncCallbackAdapter() {
+
             @Override
             public void onSetupSuccess(DataSource result) {
                 paymentResponsePresenter = new CreateBasedListStructurePresenter("", getDisplay().getPaymentResponseDisplay(), null, BLCMain.getMessageManager().getString("paymentResponseListTitle"));
-                paymentResponsePresenter.setDataSource((ListGridDataSource) result, new String[]{"transactionTimestamp", "amountPaid", "transactionSuccess", "transactionType"}, new Boolean[]{false, false, false, false});
+                paymentResponsePresenter.setDataSource((ListGridDataSource) result, new String[] { "transactionTimestamp", "amountPaid", "transactionSuccess", "transactionType" }, new Boolean[] { false, false, false, false });
                 paymentResponsePresenter.setReadOnly(true);
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentLogDS", new PaymentLogListDataSourceFactory(), new AsyncCallbackAdapter() {
+
             @Override
             public void onSetupSuccess(DataSource result) {
                 paymentLogPresenter = new CreateBasedListStructurePresenter("", getDisplay().getPaymentLogDisplay(), null, BLCMain.getMessageManager().getString("paymentLogListTitle"));
-                paymentLogPresenter.setDataSource((ListGridDataSource) result, new String[]{"transactionTimestamp", "amountPaid", "transactionType", "transactionSuccess", "logType"}, new Boolean[]{false, false, false, false, false});
+                paymentLogPresenter.setDataSource((ListGridDataSource) result, new String[] { "transactionTimestamp", "amountPaid", "transactionType", "transactionSuccess", "logType" }, new Boolean[] { false, false, false, false, false });
                 paymentLogPresenter.setReadOnly(true);
+
             }
         }));
+
     }
-    
+
 }

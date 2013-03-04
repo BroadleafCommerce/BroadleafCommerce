@@ -54,6 +54,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
     protected SubItemView offerCodeDisplay;
     protected GridStructureView orderAdjustmentDisplay;
     protected GridStructureView orderItemAdjustmentDisplay;
+    protected GridStructureView orderItemPriceDetailDisplay;
     protected GridStructureView orderItemFeeDisplay;
     protected GridStructureView fulfillmentGroupAdjustmentDisplay;
     protected GridStructureView paymentResponseDisplay;
@@ -109,6 +110,12 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         orderItemAdjustmentDisplay.getAddButton().setVisible(false);
         orderItemAdjustmentDisplay.getRemoveButton().setVisible(false);
         ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemAdjustmentDisplay);
+
+        orderItemPriceDetailDisplay = new GridStructureView(BLCMain.getMessageManager().getString("orderItemPriceDetailListTitle"), false, false);
+        orderItemPriceDetailDisplay.getAddButton().setVisible(false);
+        orderItemPriceDetailDisplay.getRemoveButton().setVisible(false);
+        ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemPriceDetailDisplay);
+
         topTabSet.addTab(orderItemsTab);
         
         Tab fgTab = new Tab(BLCMain.getMessageManager().getString("fgTabTitle"));
@@ -191,12 +198,12 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
     public GridStructureDisplay getOrderAdjustmentDisplay() {
         return orderAdjustmentDisplay;
     }
-    
+
     @Override
     public GridStructureDisplay getOrderItemAdjustmentDisplay() {
         return orderItemAdjustmentDisplay;
     }
-    
+
     @Override
     public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay() {
         return fulfillmentGroupAdjustmentDisplay;
@@ -220,6 +227,11 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
     @Override
     public ToolStripButton getExportOrdersButton() {
         return exportOrdersButton;
+    }
+
+    @Override
+    public GridStructureDisplay getOrderItemPriceDetailDisplay() {
+        return orderItemPriceDetailDisplay;
     }
 
 }
