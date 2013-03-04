@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.CustomerFieldServiceImpl;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderFieldServiceImpl;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderItemFieldServiceImpl;
 
 /**
@@ -29,11 +30,13 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
 
     private OrderItemFieldServiceImpl orderItemFieldService;
     private CustomerFieldServiceImpl customerFieldService;
+    private OrderFieldServiceImpl orderFieldService;
 
     @Override
     protected void setUp() {
         orderItemFieldService = new OrderItemFieldServiceImpl();
         customerFieldService = new CustomerFieldServiceImpl();
+        orderFieldService = new OrderFieldServiceImpl();
     }
 
     /**
@@ -65,6 +68,27 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         assert(mvel.equals(translated));
     }
 
+    /**
+     * Tests the creation of a Customer Qualification MVEL expression from a DataDTO
+     * @throws MVELTranslationException
+     *
+     * [{"quantity":null,
+     *  "groupOperator":"AND",
+     *  "groups":[
+     *      {"quantity":null,
+     *      "groupOperator":null,
+     *      "groups":null,
+     *      "name":"emailAddress",
+     *      "operator":"NOT_EQUAL_FIELD",
+     *      "value":"username"},
+     *      {"quantity":null,
+     *      "groupOperator":null,
+     *      "groups":null,
+     *      "name":"deactivated",
+     *      "operator":"EQUALS",
+     *      "value":"true"}]
+     *  }]
+     */
     public void testCustomerQualificationMVEL() throws MVELTranslationException {
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
         DataDTO dataDTO = new DataDTO();
@@ -85,6 +109,71 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
 
         String translated = translator.createMVEL("customer", dataDTO, customerFieldService);
         String mvel = "customer.emailAddress!=customer.username&&customer.deactivated==true";
+        assert (mvel.equals(translated));
+    }
+
+    /**
+     * Tests the creation of an Order Qualification MVEL expression from a DataDTO
+     * @throws MVELTranslationException
+     *
+     * [{"quantity":null,
+     *  "groupOperator":"AND",
+     *  "groups":[
+     *      {"quantity":null,
+     *      "groupOperator":null,
+     *      "groups":null,
+     *      "name":"subTotal",
+     *      "operator":"GREATER_OR_EQUAL",
+     *      "value":"100"},
+     *      {"quantity":null,
+     *      "groupOperator":"OR",
+     *      "groups":[
+     *          {"quantity":null,
+     *          "groupOperator":null,
+     *          "groups":null,
+     *          "name":"currency.defaultFlag",
+     *          "operator":"EQUALS",
+     *          "value":"true"},
+     *          {"quantity":null,
+     *          "groupOperator":"null",
+     *          "groups":null,
+     *          "name":"locale.localeCode",
+     *          "operator":"EQUALS",
+     *          "value":"my"}]
+     *      }]
+     *  }]
+     */
+    public void testOrderQualificationMVEL() throws MVELTranslationException {
+        DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
+        DataDTO dataDTO = new DataDTO();
+        dataDTO.setGroupOperator(BLCOperator.AND.name());
+
+        ExpressionDTO expressionDTO = new ExpressionDTO();
+        expressionDTO.setName("subTotal");
+        expressionDTO.setOperator(BLCOperator.GREATER_OR_EQUAL.name());
+        expressionDTO.setValue("100");
+        dataDTO.getGroups().add(expressionDTO);
+
+        DataDTO d1 = new DataDTO();
+        d1.setGroupOperator(BLCOperator.OR.name());
+
+        ExpressionDTO e1 = new ExpressionDTO();
+        e1.setName("currency.defaultFlag");
+        e1.setOperator(BLCOperator.EQUALS.name());
+        e1.setValue("true");
+
+        ExpressionDTO e2 = new ExpressionDTO();
+        e2.setName("locale.localeCode");
+        e2.setOperator(BLCOperator.EQUALS.name());
+        e2.setValue("my");
+
+        d1.getGroups().add(e1);
+        d1.getGroups().add(e2);
+
+        dataDTO.getGroups().add(d1);
+
+        String translated = translator.createMVEL("order", dataDTO, orderFieldService);
+        String mvel = "order.subTotal.getAmount()>=100&&(order.currency.defaultFlag==true||order.locale.localeCode==\"my\")";
         assert (mvel.equals(translated));
     }
 }
