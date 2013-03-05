@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -64,7 +65,7 @@ public class AdminRoleImpl implements AdminRole {
     @AdminPresentation(friendlyName = "AdminRoleImpl_Admin_Role_ID", group = "AdminRoleImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @Column(name = "NAME", nullable=false, unique = true)
+    @Column(name = "NAME", nullable=false)
     @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order=1, group = "AdminRoleImpl_Role", prominent=true)
     protected String name;
 
