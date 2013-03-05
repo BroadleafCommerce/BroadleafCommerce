@@ -122,6 +122,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     @Override
+    public List<AdminPermission> readAdminPermissionsByIds(List<Long> ids) {
+        return adminPermissionDao.readAdminPermissionsByIds(ids);
+    }
+
+    @Override
     public AdminRole readAdminRoleById(Long id) {
         return adminRoleDao.readAdminRoleById(id);
     }
