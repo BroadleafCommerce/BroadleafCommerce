@@ -117,6 +117,20 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
+                .label("Product - Manufacturer")
+                .name("product.manufacturer")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Product - Model")
+                .name("product.model")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
                 .label("Sku - Fulfillment Type")
                 .name("sku.fulfillmentType")
                 .operators("blcOperators_Enumeration")

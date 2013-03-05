@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 import junit.framework.TestCase;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.CustomerFieldServiceImpl;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderFieldServiceImpl;
@@ -175,5 +176,74 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         String translated = translator.createMVEL("order", dataDTO, orderFieldService);
         String mvel = "order.subTotal.getAmount()>=100&&(order.currency.defaultFlag==true||order.locale.localeCode==\"my\")";
         assert (mvel.equals(translated));
+    }
+
+    /**
+     * Tests the creation of an Item Qualification MVEL expression from a DataDTO
+     * @throws MVELTranslationException
+     *
+     * [{"quantity":1,
+     *  "groupOperator":"AND",
+     *  "groups":[
+     *      {"quantity":null,
+     *      "groupOperator":null,
+     *      "groups":null,
+     *      "name":"category.name",
+     *      "operator":"EQUALS",
+     *      "value":"test category"
+     *      }]
+     *  },
+     *  {"quantity":2,
+     *  "groupOperator":"NOT",
+     *  "groups":[
+     *      {"quantity":null,
+     *      "groupOperator":null,
+     *      "groups":null,
+     *      "name":"product.manufacturer",
+     *      "operator":"EQUALS",
+     *      "value":"test manufacturer"},
+     *      {"quantity":null,
+     *      "groupOperator":null,
+     *      "groups":null,
+     *      "name":"product.model",
+     *      "operator":"EQUALS",
+     *      "value":"test model"
+     *      }]
+     *  }]
+     */
+    public void testItemQualificationMVEL() throws MVELTranslationException {
+        DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
+
+        DataDTO d1 = new DataDTO();
+        d1.setQuantity(1);
+        d1.setGroupOperator(BLCOperator.AND.name());
+        ExpressionDTO d1e1 = new ExpressionDTO();
+        d1e1.setName("category.name");
+        d1e1.setOperator(BLCOperator.EQUALS.name());
+        d1e1.setValue("test category");
+        d1.getGroups().add(d1e1);
+
+        String d1Translated = translator.createMVEL("discreteOrderItem", d1, orderItemFieldService);
+        String d1Mvel = "discreteOrderItem.category.name==\"test category\"";
+        assert(d1Mvel.equals(d1Translated));
+
+        DataDTO d2 = new DataDTO();
+        d2.setQuantity(2);
+        d2.setGroupOperator(BLCOperator.NOT.name());
+        ExpressionDTO d2e1 = new ExpressionDTO();
+        d2e1.setName("product.manufacturer");
+        d2e1.setOperator(BLCOperator.EQUALS.name());
+        d2e1.setValue("test manufacturer");
+        ExpressionDTO d2e2 = new ExpressionDTO();
+        d2e2.setName("product.model");
+        d2e2.setOperator(BLCOperator.EQUALS.name());
+        d2e2.setValue("test model");
+        d2.getGroups().add(d2e1);
+        d2.getGroups().add(d2e2);
+
+        String d2Translated = translator.createMVEL("discreteOrderItem", d2, orderItemFieldService);
+        String d2Mvel = "!(discreteOrderItem.product.manufacturer==\"test manufacturer\"&&discreteOrderItem.product.model==\"test model\")";
+        assert (d2Mvel.equals(d2Translated));
+
     }
 }

@@ -49,6 +49,8 @@ public class DataDTOToMVELTranslator {
         BLCOperator operator = null;
         if (dataDTO instanceof ExpressionDTO) {
             operator = BLCOperator.valueOf(((ExpressionDTO) dataDTO).getOperator());
+        } else {
+            operator = BLCOperator.valueOf(dataDTO.getGroupOperator());
         }
         ArrayList<DataDTO> groups = dataDTO.getGroups();
         if (sb.length() != 0 && sb.charAt(sb.length() - 1) != '(' && groupOperator != null) {
@@ -86,6 +88,12 @@ public class DataDTOToMVELTranslator {
         SupportedFieldType type = fieldService.getSupportedFieldType(field);
         SupportedFieldType secondaryType = fieldService.getSecondaryFieldType(field);
         Object[] value;
+
+        if (type == null) {
+            throw new MVELTranslationException("The DataDTO is not compatible with the RuleBuilderFieldService " +
+                    "associated with the current rules builder. Unable to find the field " +
+                    "specified: ("+field+")");
+        }
 
         if (
             SupportedFieldType.DATE.toString().equals(type.toString()) &&
