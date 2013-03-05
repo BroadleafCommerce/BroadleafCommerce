@@ -147,4 +147,64 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(d1e2.getValue().equals("my"));
 
     }
+
+    public void testItemQualificationDataWrapper() throws MVELTranslationException {
+        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+
+        Property[] p1 = new Property[2];
+        Property m1 = new Property();
+        m1.setName("orderItemMatchRule");
+        m1.setValue("discreteOrderItem.category.name==\"test category\"");
+        Property q1 = new Property();
+        q1.setName("quantity");
+        q1.setValue("1");
+        p1[0] = m1;
+        p1[1] = q1;
+        Entity e1 = new Entity();
+        e1.setProperties(p1);
+
+        Property[] p2 = new Property[2];
+        Property m2 = new Property();
+        m2.setName("orderItemMatchRule");
+        m2.setValue("!(discreteOrderItem.product.manufacturer==\"test manufacturer\"&&discreteOrderItem.product.model==\"test model\")");
+        Property q2 = new Property();
+        q2.setName("quantity");
+        q2.setValue("2");
+        p2[0] = m2;
+        p2[1] = q2;
+        Entity e2 = new Entity();
+        e2.setProperties(p2);
+
+        Entity[] entities = new Entity[2];
+        entities[0] = e1;
+        entities[1] = e2;
+
+        DataWrapper dataWrapper = translator.createRuleData(entities, "orderItemMatchRule", "quantity", orderItemFieldService);
+        assert(dataWrapper.getData().size() == 2);
+
+        assert(dataWrapper.getData().get(0).getQuantity() == 1);
+        assert(dataWrapper.getData().get(0).getGroupOperator().equals(BLCOperator.AND.name()));
+        assert(dataWrapper.getData().get(0).getGroups().size()==1);
+        assert(dataWrapper.getData().get(0).getGroups().get(0) instanceof ExpressionDTO);
+        ExpressionDTO exp1 = (ExpressionDTO) dataWrapper.getData().get(0).getGroups().get(0);
+        assert(exp1.getName().equals("category.name"));
+        assert(exp1.getOperator().equals(BLCOperator.EQUALS.name()));
+        assert(exp1.getValue().equals("test category"));
+
+        assert(dataWrapper.getData().get(1).getQuantity() == 2);
+        assert(dataWrapper.getData().get(1).getGroupOperator().equals(BLCOperator.NOT.name()));
+        assert(dataWrapper.getData().get(1).getGroups().size()==2);
+
+        assert(dataWrapper.getData().get(1).getGroups().get(0) instanceof ExpressionDTO);
+        ExpressionDTO expd1e1 = (ExpressionDTO) dataWrapper.getData().get(1).getGroups().get(0);
+        assert(expd1e1.getName().equals("product.manufacturer"));
+        assert(expd1e1.getOperator().equals(BLCOperator.EQUALS.name()));
+        assert(expd1e1.getValue().equals("test manufacturer"));
+
+        assert(dataWrapper.getData().get(1).getGroups().get(1) instanceof ExpressionDTO);
+        ExpressionDTO expd1e2 = (ExpressionDTO) dataWrapper.getData().get(1).getGroups().get(1);
+        assert(expd1e2.getName().equals("product.model"));
+        assert(expd1e2.getOperator().equals(BLCOperator.EQUALS.name()));
+        assert(expd1e2.getValue().equals("test model"));
+    }
 }
