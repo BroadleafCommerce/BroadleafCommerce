@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 import junit.framework.TestCase;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
-import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.CustomerFieldServiceImpl;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderFieldServiceImpl;
