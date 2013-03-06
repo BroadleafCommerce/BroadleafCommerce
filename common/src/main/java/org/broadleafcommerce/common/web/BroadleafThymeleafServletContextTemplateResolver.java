@@ -26,6 +26,8 @@ import org.thymeleaf.util.Validate;
  * if it exists.
  */
 public class BroadleafThymeleafServletContextTemplateResolver extends ServletContextTemplateResolver {    
+    
+    protected String templateFolder = "";
 
     @Override
     protected String computeResourceName(final TemplateProcessingParameters templateProcessingParameters) {
@@ -52,7 +54,7 @@ public class BroadleafThymeleafServletContextTemplateResolver extends ServletCon
         if (prefix != null && ! prefix.trim().equals("")) {
            
             if (themePath != null) {        
-                resourceName.append(prefix).append(themePath);
+                resourceName.append(prefix).append(themePath).append(templateFolder);
             }
         }
         resourceName.append(unaliasedName);
@@ -62,6 +64,14 @@ public class BroadleafThymeleafServletContextTemplateResolver extends ServletCon
         }
 
         return resourceName.toString();
+    }
+    
+    public String getTemplateFolder() {
+        return templateFolder;
+    }
+
+    public void setTemplateFolder(String templateFolder) {
+        this.templateFolder = templateFolder;
     }
     
 }
