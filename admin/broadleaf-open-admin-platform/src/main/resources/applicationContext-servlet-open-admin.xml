@@ -91,6 +91,7 @@
                 <ref bean="blOrderItemFieldService"/>
                 <ref bean="blCustomerFieldService"/>
                 <ref bean="blOrderFieldService"/>
+                <ref bean="blFulfillmentGroupFieldService"/>
             </list>
         </property>
     </bean>

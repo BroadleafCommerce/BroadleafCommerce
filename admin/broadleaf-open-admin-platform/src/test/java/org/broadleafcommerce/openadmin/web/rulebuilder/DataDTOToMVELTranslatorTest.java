@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.CustomerFieldServiceImpl;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.FulfillmentGroupFieldServiceImpl;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderFieldServiceImpl;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderItemFieldServiceImpl;
 
@@ -31,12 +32,14 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
     private OrderItemFieldServiceImpl orderItemFieldService;
     private CustomerFieldServiceImpl customerFieldService;
     private OrderFieldServiceImpl orderFieldService;
+    private FulfillmentGroupFieldServiceImpl fulfillmentGroupFieldService;
 
     @Override
     protected void setUp() {
         orderItemFieldService = new OrderItemFieldServiceImpl();
         customerFieldService = new CustomerFieldServiceImpl();
         orderFieldService = new OrderFieldServiceImpl();
+        fulfillmentGroupFieldService = new FulfillmentGroupFieldServiceImpl();
     }
 
     /**
@@ -244,5 +247,51 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         String d2Mvel = "!(discreteOrderItem.product.manufacturer==\"test manufacturer\"&&discreteOrderItem.product.model==\"test model\")";
         assert (d2Mvel.equals(d2Translated));
 
+    }
+
+    /**
+     * Tests the creation of a Fulfillment Group Qualification MVEL expression from a DataDTO
+     * @throws MVELTranslationException
+     *
+     * [{"quantity":null,
+     *  "groupOperator":"AND",
+     *  "groups":[
+     *      {"quantity":null,
+     *      "groupOperator":null,
+     *      "groups":null,
+     *      "name":"address.state.name",
+     *      "operator":"EQUALS",
+     *      "value":"Texas"},
+     *      {"quantity":null,
+     *      "groupOperator":null,
+     *      "groups":null,
+     *      "name":"retailShippingPrice",
+     *      "operator":"BETWEEN_INCLUSIVE",
+     *      "start":"99",
+     *      "end":"199"}]
+     *  }]
+     */
+    public void testFulfillmentQualificationMVEL() throws MVELTranslationException {
+        DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
+        DataDTO dataDTO = new DataDTO();
+        dataDTO.setGroupOperator(BLCOperator.AND.name());
+
+        ExpressionDTO e1 = new ExpressionDTO();
+        e1.setName("address.state.name");
+        e1.setOperator(BLCOperator.EQUALS.name());
+        e1.setValue("Texas");
+
+        ExpressionDTO e2 = new ExpressionDTO();
+        e2.setName("retailShippingPrice");
+        e2.setOperator(BLCOperator.BETWEEN_INCLUSIVE.name());
+        e2.setStart("99");
+        e2.setEnd("199");
+
+        dataDTO.getGroups().add(e1);
+        dataDTO.getGroups().add(e2);
+
+        String translated = translator.createMVEL("fulfillmentGroup", dataDTO, fulfillmentGroupFieldService);
+        String mvel = "fulfillmentGroup.address.state.name==\"Texas\"&&(fulfillmentGroup.retailShippingPrice.getAmount()>=99&&fulfillmentGroup.retailShippingPrice.getAmount()<=199)";
+        assert (mvel.equals(translated));
     }
 }
