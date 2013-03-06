@@ -68,8 +68,10 @@ public class MVELToDataWrapperTranslator {
             if (mvel != null) {
                 Group group = groupingTranslator.createGroups(mvel);
                 DataDTO dataDTO = createRuleDataDTO(null, group, fieldService);
-                dataDTO.setQuantity(qty);
-                dataWrapper.getData().add(dataDTO);
+                if (dataDTO != null) {
+                    dataDTO.setQuantity(qty);
+                    dataWrapper.getData().add(dataDTO);
+                }
             }
         }
 
@@ -103,10 +105,16 @@ public class MVELToDataWrapperTranslator {
         }
         for (Group subgroup : group.getSubGroups()) {
             DataDTO subCriteria = createRuleDataDTO(data, subgroup, fieldService);
-            data.getGroups().add(subCriteria);
+            if (subCriteria != null && !subCriteria.getGroups().isEmpty()) {
+                data.getGroups().add(subCriteria);
+            }
         }
 
-        return data;
+        if (data.getGroups() != null && !data.getGroups().isEmpty()) {
+            return data;
+        } else {
+            return null;
+        }
     }
 
     public void appendExpression(String phrase, RuleBuilderFieldService fieldService, int count, DataDTO parentDTO,
@@ -157,12 +165,9 @@ public class MVELToDataWrapperTranslator {
             }
             myCriteriaList.get(count-1).setStart(start);
             myCriteriaList.get(count-1).setEnd(end);
+            myCriteriaList.get(count-1).setValue(null);
             if (parentDTO != null) {
-                List<DataDTO> converted = new ArrayList<DataDTO>();
-                for (ExpressionDTO e : myCriteriaList) {
-                    converted.add(e);
-                }
-                parentDTO.getGroups().add(converted.remove(count-1));
+                parentDTO.getGroups().add(myCriteriaList.remove(count-1));
             }
         } else if (
             count > 0 &&
@@ -182,12 +187,9 @@ public class MVELToDataWrapperTranslator {
             }
             myCriteriaList.get(count-1).setStart(start);
             myCriteriaList.get(count-1).setEnd(end);
+            myCriteriaList.get(count-1).setValue(null);
             if (parentDTO != null) {
-                List<DataDTO> converted = new ArrayList<DataDTO>();
-                for (ExpressionDTO e : myCriteriaList) {
-                    converted.add(e);
-                }
-                parentDTO.getGroups().add(converted.remove(count-1));
+                parentDTO.getGroups().add(myCriteriaList.remove(count-1));
             }
         } else if (isProjection(temp.getValue())) {
             if (parentDTO != null) {
