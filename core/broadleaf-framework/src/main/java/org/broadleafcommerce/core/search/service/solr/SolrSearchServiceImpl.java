@@ -529,7 +529,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         final List<Long> productIds = new ArrayList<Long>();
         SolrDocumentList docs = response.getResults();
         for (SolrDocument doc : docs) {
-            productIds.add((Long) doc.getFieldValue(shs.getIdFieldName()));
+            Object temp = doc.getFieldValue(shs.getIdFieldName());
+            if (temp instanceof String) {
+                productIds.add(Long.parseLong((String) temp));
+            } else {
+                productIds.add((Long) temp);
+            }
         }
 
         List<Product> products = productDao.readProductsByIds(productIds);
