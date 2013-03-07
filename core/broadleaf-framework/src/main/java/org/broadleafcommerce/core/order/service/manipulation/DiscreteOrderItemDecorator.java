@@ -338,5 +338,24 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
         discreteOrderItem.setSplitParentItemId(id);
     }
 
+    @Override
+    public void setRetailPriceOverride(boolean override) {
+        discreteOrderItem.setRetailPriceOverride(override);
+    }
+
+    @Override
+    public boolean isRetailPriceOverride() {
+        return discreteOrderItem.isRetailPriceOverride();
+    }
+
+    @Override
+    public void setSalePriceOverride(boolean override) {
+        discreteOrderItem.setSalePriceOverride(override);
+    }
+
+    @Override
+    public boolean isSalePriceOverride() {
+        return discreteOrderItem.isSalePriceOverride();
+    }
 
 }

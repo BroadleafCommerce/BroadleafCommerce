@@ -45,6 +45,7 @@ public abstract class AbstractOrderItemRequest {
     protected Order order;
     protected int quantity;
     protected Money salePriceOverride;
+    protected Money retailPriceOverride;
     protected PersonalMessage personalMessage;
     protected Map<String,String> itemAttributes = new HashMap<String,String>();
     
@@ -104,6 +105,14 @@ public abstract class AbstractOrderItemRequest {
         this.salePriceOverride = salePriceOverride;
     }
 
+    public Money getRetailPriceOverride() {
+        return retailPriceOverride;
+    }
+
+    public void setRetailPriceOverride(Money retailPriceOverride) {
+        this.retailPriceOverride = retailPriceOverride;
+    }
+
     protected void copyProperties(AbstractOrderItemRequest newRequest) {
         newRequest.setCategory(category);
         newRequest.setItemAttributes(itemAttributes);
@@ -113,6 +122,7 @@ public abstract class AbstractOrderItemRequest {
         newRequest.setSku(sku);
         newRequest.setOrder(order);
         newRequest.setSalePriceOverride(salePriceOverride);
+        newRequest.setRetailPriceOverride(retailPriceOverride);
     }
 
     @Override

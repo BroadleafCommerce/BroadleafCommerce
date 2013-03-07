@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.order.domain.BundleOrderItemFeePrice;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -31,6 +32,8 @@ public class BundleOrderItemRequest {
     protected Order order;
     protected List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
     protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
+    protected Money salePriceOverride;
+    protected Money retailPriceOverride;
 
     
     public Order getOrder() {
@@ -81,6 +84,22 @@ public class BundleOrderItemRequest {
     public void setBundleOrderItemFeePrices(
             List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
         this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
+    }
+
+    public Money getSalePriceOverride() {
+        return salePriceOverride;
+    }
+
+    public void setSalePriceOverride(Money salePriceOverride) {
+        this.salePriceOverride = salePriceOverride;
+    }
+
+    public Money getRetailPriceOverride() {
+        return retailPriceOverride;
+    }
+
+    public void setRetailPriceOverride(Money retailPriceOverride) {
+        this.retailPriceOverride = retailPriceOverride;
     }
 
     @Override
