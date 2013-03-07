@@ -16,13 +16,24 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.rpc.RPCResponse;
-import com.smartgwt.client.types.*;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.FormErrorOrientation;
+import com.smartgwt.client.types.ImageStyle;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.TitleOrientation;
+import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Img;
@@ -32,13 +43,9 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 
 import java.util.Map;
 
@@ -49,7 +56,7 @@ import java.util.Map;
  */
 public class EntityEditDialog extends Window {
     
-    private DynamicForm dynamicForm;
+    protected DynamicForm dynamicForm;
     private ItemEditedHandler handler;
     private VStack pictureStack;
     protected boolean showMedia = false;
@@ -91,7 +98,7 @@ public class EntityEditDialog extends Window {
         stack.addMember(dynamicForm);
 
         hStack.addMember(stack);
-
+        addOtherItems(stack);
         pictureStack = new VStack();
         pictureStack.setLayoutTopMargin(20);
         previewContainer = new VStack();
@@ -110,22 +117,7 @@ public class EntityEditDialog extends Window {
                 if (dynamicForm.validate()) {
                     saveButton.disable();
                     cancelButton.disable();
-                    dynamicForm.saveData(new DSCallback() {
-                        public void execute(DSResponse response, Object rawData, DSRequest request) {
-                            if (response.getStatus()== RPCResponse.STATUS_SUCCESS) {
-                                Record record = response.getData()[0];
-                                if (handler != null) {
-                                    handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
-                                }
-                            }
-                            if (response.getStatus() != RPCResponse.STATUS_VALIDATION_ERROR) {
-                                hide();
-                                isHidden = true;
-                            }
-                            saveButton.enable();
-                            cancelButton.enable();
-                        }
-                    });
+                    saveData();
                 }
             }
         });
@@ -149,6 +141,10 @@ public class EntityEditDialog extends Window {
         hLayout.setLayoutBottomMargin(40);
         vLayout.addMember(hLayout);
         addItem(vLayout);
+    }
+
+    protected void addOtherItems(Layout layout) {
+        //stub in case useres want to add additional items in derived classes
     }
 
     public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
@@ -313,5 +309,44 @@ public class EntityEditDialog extends Window {
 
     public void setHidden(Boolean hidden) {
         isHidden = hidden;
+    }
+
+    protected void saveData() {
+        dynamicForm.saveData(new DSCallback() {
+            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                if (response.getStatus()== RPCResponse.STATUS_SUCCESS) {
+                    Record record = response.getData()[0];
+                    if (handler != null) {
+                        handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
+                    }
+                }
+                if (response.getStatus() != RPCResponse.STATUS_VALIDATION_ERROR) {
+                    hide();
+                    isHidden = true;
+                }
+                saveButton.enable();
+                cancelButton.enable();
+            }
+        });
+    }
+
+    public IButton getSaveButton() {
+        return saveButton;
+    }
+
+    public void setSaveButton(IButton saveButton) {
+        this.saveButton = saveButton;
+    }
+
+    public IButton getCancelButton() {
+        return cancelButton;
+    }
+
+    public void setCancelButton(IButton cancelButton) {
+        this.cancelButton = cancelButton;
+    }
+
+    public DynamicForm getDynamicForm() {
+        return dynamicForm;
     }
 }

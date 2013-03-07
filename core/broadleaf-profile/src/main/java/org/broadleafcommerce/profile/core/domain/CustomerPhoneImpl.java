@@ -30,11 +30,16 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerPhoneImpl implements CustomerPhone{
 
     private static final long serialVersionUID = 1L;
@@ -46,10 +51,12 @@ public class CustomerPhoneImpl implements CustomerPhone{
     protected Long id;
 
     @Column(name = "PHONE_NAME")
+    @AdminPresentation(friendlyName = "CustomerPhoneImpl_Phone_Name", order=1, group = "CustomerPhoneImpl_Identification", groupOrder = 1)
     protected String phoneName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
+    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)

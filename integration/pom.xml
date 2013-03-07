@@ -126,7 +126,7 @@
     </build>
     <profiles>
         <profile>
-            <id>blc-development</id>
+            <id>jrebel-debug</id>
             <build>
                 <plugins>
                     <plugin>
@@ -161,6 +161,17 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>test-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <executions>
                             <execution>
@@ -168,7 +179,7 @@
                                 <configuration>
                                     <argLine>
                                         -Dlegacy=true 
-                                        -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
+                                        -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
                                         -javaagent:${jrebel.path} -Drebel.log.stdout=true
                                     </argLine>
                                 </configuration>
@@ -177,7 +188,7 @@
                                 <id>non-legacy-test</id>
                                 <configuration>
                                     <argLine>
-                                        -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
+                                        -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
                                         -javaagent:${jrebel.path} -Drebel.log.stdout=true
                                     </argLine>
                                 </configuration>

@@ -26,7 +26,7 @@ import java.util.Set;
  * @author jfischer
  *
  */
-public interface AdminUser extends Serializable {
+public interface AdminUser extends AdminSecurityContext {
     public Long getId();
     public void setId(Long id);
     public String getName();

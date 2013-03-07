@@ -26,6 +26,11 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.openadmin.server.service.type.ContextType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -222,6 +227,26 @@ public class AdminUserImpl implements AdminUser {
         this.allPermissions = allPermissions;
     }
 
+    @Override
+    public ContextType getContextType() {
+        return ContextType.GLOBAL;
+    }
+
+    @Override
+    public void setContextType(ContextType contextType) {
+        //do nothing
+    }
+
+    @Override
+    public String getContextKey() {
+        return null;
+    }
+
+    @Override
+    public void setContextKey(String contextKey) {
+        //do nothing
+    }
+
     public void checkCloneable(AdminUser adminUser) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = adminUser.getClass().getMethod("clone", new Class[]{});
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !adminUser.getClass().getName().startsWith("org.broadleafcommerce")) {
@@ -271,4 +296,5 @@ public class AdminUserImpl implements AdminUser {
 
         return clone;
     }
+
 }

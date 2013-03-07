@@ -16,32 +16,77 @@
 
 package org.broadleafcommerce.core.workflow;
 
+import org.broadleafcommerce.core.workflow.state.RollbackHandler;
+
+import java.util.Map;
+
 public abstract class BaseActivity implements Activity {
     
     private ErrorHandler errorHandler;
     private String beanName;
 
+    private RollbackHandler rollbackHandler;
+    private String rollbackRegion;
+    private Map<String, Object> stateConfiguration;
+    private boolean automaticallyRegisterRollbackHandler = true;
 
-
+    @Override
     public ErrorHandler getErrorHandler() {
-        
         return errorHandler;
     }
 
+    @Override
     public void setBeanName(final String beanName) {
-        this.beanName = beanName; 
-
+        this.beanName = beanName;
     }
 
-    /**
-     * Set the fine grained error handler
-     * @param errorHandler
-     */
+    @Override
     public void setErrorHandler(final ErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
-    
+
+    @Override
     public String getBeanName() {
         return beanName;
+    }
+
+    @Override
+    public RollbackHandler getRollbackHandler() {
+        return rollbackHandler;
+    }
+
+    @Override
+    public void setRollbackHandler(RollbackHandler rollbackHandler) {
+        this.rollbackHandler = rollbackHandler;
+    }
+
+    @Override
+    public String getRollbackRegion() {
+        return rollbackRegion;
+    }
+
+    @Override
+    public void setRollbackRegion(String rollbackRegion) {
+        this.rollbackRegion = rollbackRegion;
+    }
+
+    @Override
+    public Map<String, Object> getStateConfiguration() {
+        return stateConfiguration;
+    }
+
+    @Override
+    public void setStateConfiguration(Map<String, Object> stateConfiguration) {
+        this.stateConfiguration = stateConfiguration;
+    }
+
+    @Override
+    public boolean getAutomaticallyRegisterRollbackHandler() {
+        return automaticallyRegisterRollbackHandler;
+    }
+
+    @Override
+    public void setAutomaticallyRegisterRollbackHandler(boolean automaticallyRegisterRollbackHandler) {
+        this.automaticallyRegisterRollbackHandler = automaticallyRegisterRollbackHandler;
     }
 }

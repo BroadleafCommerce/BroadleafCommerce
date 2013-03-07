@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,9 +29,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-
-import org.broadleafcommerce.common.encryption.EncryptionModule;
-import org.hibernate.annotations.Index;
 
 /**
  * 

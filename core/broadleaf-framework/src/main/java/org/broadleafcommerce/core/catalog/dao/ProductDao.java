@@ -190,7 +190,7 @@ public interface ProductDao {
     
     /**
      * Reads all products from the database that are currently active. That is, reads all products that
-     * are not archived and whose start and end dates surround the currentDate.
+     * are not archived and whose start and end dates surround the currentDate
      * 
      * @param currentDate
      * @return a list of all active products

@@ -16,6 +16,22 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,27 +50,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.broadleafcommerce.common.audit.Auditable;
-import org.broadleafcommerce.common.audit.AuditableListener;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
-
 @Entity
 @EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
 public class CustomerImpl implements Customer {
 
@@ -125,7 +125,26 @@ public class CustomerImpl implements Customer {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Attributes", dataSourceName = "customerAttributeDS")
-    protected List<CustomerAttribute> customerAttributes  = new ArrayList<CustomerAttribute>();    
+    protected List<CustomerAttribute> customerAttributes  = new ArrayList<CustomerAttribute>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Addresses", dataSourceName = "customerAddressesDS")
+    protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Phones", dataSourceName = "customerPhonesDS")
+    protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Payments", dataSourceName = "customerPaymentsDS")
+    protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
 
     @Transient
     protected String unencodedPassword;
@@ -381,6 +400,36 @@ public class CustomerImpl implements Customer {
     }
 
     @Override
+    public List<CustomerAddress> getCustomerAddresses() {
+        return customerAddresses;
+    }
+
+    @Override
+    public void setCustomerAddresses(List<CustomerAddress> customerAddresses) {
+        this.customerAddresses = customerAddresses;
+    }
+
+    @Override
+    public List<CustomerPhone> getCustomerPhones() {
+        return customerPhones;
+    }
+
+    @Override
+    public void setCustomerPhones(List<CustomerPhone> customerPhones) {
+        this.customerPhones = customerPhones;
+    }
+
+    @Override
+    public List<CustomerPayment> getCustomerPayments() {
+        return customerPayments;
+    }
+
+    @Override
+    public void setCustomerPayments(List<CustomerPayment> customerPayments) {
+        this.customerPayments = customerPayments;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -414,5 +463,4 @@ public class CustomerImpl implements Customer {
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
-
 }

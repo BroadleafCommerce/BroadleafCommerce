@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.core.workflow;
 
-public class WorkflowException extends Exception {
+import org.broadleafcommerce.common.exception.BroadleafException;
+
+public class WorkflowException extends BroadleafException {
 
     private static final long serialVersionUID = 1L;
 

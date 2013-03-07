@@ -34,7 +34,7 @@ public class CheckoutFormValidator implements Validator {
     public void validate(Object obj, Errors errors) {
         CheckoutForm checkoutForm = (CheckoutForm) obj;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.addressLine1", "addressLine1.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.primaryPhone", "phone.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.phonePrimary", "phone.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.city", "city.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.postalCode", "postalCode.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.firstName", "firstName.required");

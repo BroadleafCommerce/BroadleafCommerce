@@ -29,12 +29,21 @@ public class CombinedPaymentContextSeed {
     private PaymentActionType actionType;
     private Money orderTotal;
     private PaymentResponse paymentResponse;
-
+    private Money transactionAmount;
+    
     public CombinedPaymentContextSeed(Map<PaymentInfo, Referenced> infos, PaymentActionType actionType, Money orderTotal, PaymentResponse paymentResponse) {
         this.infos = infos;
         this.actionType = actionType;
         this.orderTotal = orderTotal;
         this.paymentResponse = paymentResponse;
+    }
+
+    public CombinedPaymentContextSeed(Map<PaymentInfo, Referenced> infos, PaymentActionType actionType, Money orderTotal, PaymentResponse paymentResponse, Money transactionAmount) {
+        this.infos = infos;
+        this.actionType = actionType;
+        this.orderTotal = orderTotal;
+        this.paymentResponse = paymentResponse;
+        this.transactionAmount = transactionAmount;
     }
 
     public Map<PaymentInfo, Referenced> getInfos() {
@@ -51,6 +60,10 @@ public class CombinedPaymentContextSeed {
 
     public PaymentResponse getPaymentResponse() {
         return paymentResponse;
+    }
+
+    public Money getTransactionAmount() {
+        return transactionAmount;
     }
 
 }

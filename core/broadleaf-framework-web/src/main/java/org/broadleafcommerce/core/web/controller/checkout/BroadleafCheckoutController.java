@@ -46,6 +46,8 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.joda.time.DateTime;
@@ -562,6 +564,19 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             public void setAsText(String text) {
                 Country country = countryService.findCountryByAbbreviation(text);
                 setValue(country);
+            }
+        });
+        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
+
+            @Override
+            public void setAsText(String text) {
+                if (!StringUtils.isBlank(text)) {
+                    Phone phone = new PhoneImpl();
+                    phone.setPhoneNumber(text);
+                    setValue(phone);
+                } else {
+                    setValue(null);
+                }
             }
         });
     }

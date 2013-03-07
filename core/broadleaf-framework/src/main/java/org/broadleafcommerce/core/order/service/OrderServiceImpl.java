@@ -52,7 +52,6 @@ import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -60,9 +59,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * @author apazzolini
@@ -496,6 +496,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+        // Don't allow overrides from this method.
+        orderItemRequestDTO.setOverrideRetailPrice(null);
+        orderItemRequestDTO.setOverrideSalePrice(null);
+        return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
+    }
+
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
+    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
             CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
@@ -591,6 +601,28 @@ public class OrderServiceImpl implements OrderService {
             }
             order.getPaymentInfos().remove(paymentInfo);
             paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfo.getId());
+            paymentInfoDao.delete(paymentInfo);
+        }
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo){
+        PaymentInfo paymentInfoToRemove = null;
+        for(PaymentInfo info : order.getPaymentInfos()){
+            if(info.equals(paymentInfo)){
+                paymentInfoToRemove = info;
+            }
+        }
+        if(paymentInfoToRemove != null){
+            try {
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfoToRemove.getReferenceNumber(), paymentInfo.getType());
+            } catch (WorkflowException e) {
+                // do nothing--this is an acceptable condition
+                LOG.debug("No secure payment is associated with the PaymentInfo", e);
+            }
+            order.getPaymentInfos().remove(paymentInfoToRemove);
+            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfoToRemove.getId());
             paymentInfoDao.delete(paymentInfo);
         }
     }

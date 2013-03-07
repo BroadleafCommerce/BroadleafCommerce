@@ -22,10 +22,16 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,11 +49,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -76,6 +77,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     protected OrderItem orderItem;
 
     @Column(name = "QUANTITY", nullable=false)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Quantity")
     protected int quantity;
 
     @Column(name = "STATUS")
@@ -148,13 +150,13 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     }
 
     @Override
-    public String getStatus() {
-        return status;
+    public FulfillmentGroupStatusType getStatus() {
+        return FulfillmentGroupStatusType.getInstance(this.status);
     }
 
     @Override
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(FulfillmentGroupStatusType status) {
+        this.status = status.getType();
     }
     
     @Override
@@ -206,10 +208,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
                 LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clonedFulfillmentGroupItem.getClass().getName(), e);
             }
 
-            clonedFulfillmentGroupItem.setFulfillmentGroup(fulfillmentGroup);
-            clonedFulfillmentGroupItem.setOrderItem(orderItem);
-            clonedFulfillmentGroupItem.setQuantity(quantity);
-            clonedFulfillmentGroupItem.setStatus(status);
+            clonedFulfillmentGroupItem.setFulfillmentGroup(getFulfillmentGroup());
+            clonedFulfillmentGroupItem.setOrderItem(getOrderItem());
+            clonedFulfillmentGroupItem.setQuantity(getQuantity());
+            if (getStatus() != null) {
+                clonedFulfillmentGroupItem.setStatus(getStatus());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

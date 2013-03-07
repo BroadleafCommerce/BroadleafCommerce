@@ -16,12 +16,27 @@
 
 package org.broadleafcommerce.openadmin.client.rules;
 
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+
+import java.util.List;
 
 public interface RulesDisplay {
 
+    public abstract List<ItemBuilderDisplay> getItemBuilderViews();
 
+    public abstract void setItemBuilderViews(List<ItemBuilderDisplay> itemBuilderViews);
 
+    public abstract VLayout getItemBuilderContainerLayout();
+
+    public abstract ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource);
+
+    public abstract void removeItemBuilder(ItemBuilderDisplay itemBuilder);
+
+    public abstract void removeAllItemBuilders();
+   
     public ToolStripButton getRulesSaveButton();
     
     public ToolStripButton getRulesRefreshButton(); 

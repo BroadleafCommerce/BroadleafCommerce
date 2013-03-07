@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.web.checkout.model;
 
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
 import java.io.Serializable;
 
@@ -52,6 +53,10 @@ public class BillingInfoForm implements Serializable {
     private String creditCardExpYear;
     private String selectedCreditCardType;
     private boolean useShippingAddress;
+
+    public BillingInfoForm() {
+        address.setPhonePrimary(new PhoneImpl());
+    }
 
     public String getPaymentMethod() {
         return paymentMethod;

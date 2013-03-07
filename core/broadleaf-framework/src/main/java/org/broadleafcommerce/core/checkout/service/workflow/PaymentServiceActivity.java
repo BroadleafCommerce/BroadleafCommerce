@@ -64,7 +64,7 @@ public class PaymentServiceActivity extends BaseActivity {
         Money paidAmount = new Money(0);
         for (Entry<PaymentInfo, PaymentResponseItem> entry : response.getPaymentResponse().getResponseItems().entrySet()) {
             if (entry.getValue().getTransactionSuccess()) {
-                paidAmount = paidAmount.add(entry.getValue().getAmountPaid());
+                paidAmount = paidAmount.add(entry.getValue().getTransactionAmount());
             }
         }
 

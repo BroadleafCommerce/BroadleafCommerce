@@ -17,18 +17,17 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-
-import java.util.List;
 
 /**
  * 
@@ -45,7 +44,7 @@ public class FulfillmentOptionDaoImpl implements FulfillmentOptionDao {
 
     @Override
     public FulfillmentOption readFulfillmentOptionById(final Long fulfillmentOptionId) {
-        return (FulfillmentOptionImpl) em.find(FulfillmentOptionImpl.class, fulfillmentOptionId);
+        return em.find(FulfillmentOptionImpl.class, fulfillmentOptionId);
     }
 
     @Override
@@ -56,6 +55,13 @@ public class FulfillmentOptionDaoImpl implements FulfillmentOptionDao {
     @Override
     public List<FulfillmentOption> readAllFulfillmentOptions() {
         TypedQuery<FulfillmentOption> query = em.createNamedQuery("BC_READ_ALL_FULFILLMENT_OPTIONS", FulfillmentOption.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<FulfillmentOption> readAllFulfillmentOptionsByFulfillmentType(FulfillmentType type) {
+        TypedQuery<FulfillmentOption> query = em.createNamedQuery("BC_READ_ALL_FULFILLMENT_OPTIONS_BY_TYPE", FulfillmentOption.class);
+        query.setParameter("fulfillmentType", type.getType());
         return query.getResultList();
     }
 }

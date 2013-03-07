@@ -6,5 +6,13 @@
     <named-query name="BC_READ_ALL_FULFILLMENT_OPTIONS" >
         <query>SELECT fulfillmentOption FROM org.broadleafcommerce.core.order.domain.FulfillmentOption fulfillmentOption</query>
     </named-query>
+    
+    
+    <named-query name="BC_READ_ALL_FULFILLMENT_OPTIONS_BY_TYPE" >
+        <query>SELECT fulfillmentOption FROM org.broadleafcommerce.core.order.domain.FulfillmentOption fulfillmentOption 
+        WHERE fulfillmentOption.fulfillmentType = :fulfillmentType</query>
+    </named-query>
+    
+    
 
 </entity-mappings>

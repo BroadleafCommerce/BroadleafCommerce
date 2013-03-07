@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -115,6 +116,9 @@ public class PaymentInfoImpl implements PaymentInfo {
     @CollectionTable(name="BLC_PAYINFO_ADDITIONAL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
     @BatchSize(size = 50)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
+
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentInfoDetailImpl.class, cascade = {CascadeType.ALL})
+    protected List<PaymentInfoDetail> details = new ArrayList<PaymentInfoDetail>();
 
     @Transient
     protected Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
@@ -227,6 +231,49 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Override
     public void setRequestParameterMap(Map<String, String[]> requestParameterMap) {
         this.requestParameterMap = requestParameterMap;
+    }
+
+    @Override
+    public List<PaymentInfoDetail> getPaymentInfoDetails() {
+        return details;
+    }
+
+    @Override
+    public void setPaymentInfoDetails(List<PaymentInfoDetail> details) {
+        this.details = details;
+    }
+
+    @Override
+    public Money getPaymentCapturedAmount() {
+        return getDetailsAmountForType(PaymentInfoDetailType.CAPTURE);
+    }
+
+    @Override
+    public Money getPaymentCreditedAmount() {
+        return getDetailsAmountForType(PaymentInfoDetailType.REFUND);
+    }
+
+    @Override
+    public Money getReverseAuthAmount() {
+        return getDetailsAmountForType(PaymentInfoDetailType.REVERSE_AUTH);
+    }
+
+    public Money getDetailsAmountForType(PaymentInfoDetailType type){
+        Money amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
+        for (PaymentInfoDetail detail : details){
+            if (type.equals(detail.getType())){
+                amount = amount.add(detail.getAmount());
+            }
+        }
+        return amount;
+    }
+
+    public BroadleafCurrency getCurrency() {
+        if (order != null) {
+            return order.getCurrency();
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -16,18 +16,20 @@
 
 package org.broadleafcommerce.core.payment.service.workflow;
 
-import java.util.Map;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
 
+import java.util.Map;
+
 public class PaymentSeed implements CompositePaymentResponse {
 
-    private Map<PaymentInfo, Referenced> infos;
     private Order order;
+    private Map<PaymentInfo, Referenced> infos;
     private PaymentResponse paymentResponse;
+    private Money transactionAmount;
 
     public PaymentSeed(Order order, Map<PaymentInfo, Referenced> infos, PaymentResponse paymentResponse) {
         this.order = order;
@@ -35,16 +37,27 @@ public class PaymentSeed implements CompositePaymentResponse {
         this.paymentResponse = paymentResponse;
     }
 
-    public Map<PaymentInfo, Referenced> getInfos() {
-        return infos;
+    public PaymentSeed(Order order, Map<PaymentInfo, Referenced> infos, PaymentResponse paymentResponse, Money transactionAmount) {
+        this.infos = infos;
+        this.order = order;
+        this.paymentResponse = paymentResponse;
+        this.transactionAmount = transactionAmount;
     }
 
     public Order getOrder() {
         return order;
     }
 
+    public Map<PaymentInfo, Referenced> getInfos() {
+        return infos;
+    }
+
     public PaymentResponse getPaymentResponse() {
         return paymentResponse;
+    }
+
+    public Money getTransactionAmount() {
+        return transactionAmount;
     }
 
 }

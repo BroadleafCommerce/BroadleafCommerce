@@ -49,6 +49,10 @@ public interface FulfillmentGroup extends Serializable {
 
     public void setOrder(Order order);
     
+    public void setSequence(Integer sequence);
+
+    public Integer getSequence();
+
     public FulfillmentOption getFulfillmentOption();
 
     public void setFulfillmentOption(FulfillmentOption fulfillmentOption);

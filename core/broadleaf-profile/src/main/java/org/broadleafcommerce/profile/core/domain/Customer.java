@@ -122,5 +122,16 @@ public interface Customer extends Serializable {
      * @param deactivated
      */
     public void setDeactivated(boolean deactivated);
-    
+
+    public List<CustomerAddress> getCustomerAddresses();
+
+    public void setCustomerAddresses(List<CustomerAddress> customerAddresses);
+
+    public List<CustomerPhone> getCustomerPhones();
+
+    public void setCustomerPhones(List<CustomerPhone> customerPhones);
+
+    public List<CustomerPayment> getCustomerPayments();
+
+    public void setCustomerPayments(List<CustomerPayment> customerPayments);
 }

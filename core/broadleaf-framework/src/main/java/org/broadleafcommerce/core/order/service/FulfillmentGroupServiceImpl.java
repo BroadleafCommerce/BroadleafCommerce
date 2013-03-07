@@ -29,12 +29,11 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
+import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,6 +41,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 @Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
@@ -61,6 +62,12 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     @Override
     @Transactional("blTransactionManager")
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
+        if (fulfillmentGroup.getSequence() == null) {
+            fulfillmentGroup.setSequence(
+                    fulfillmentGroupDao.readNextFulfillmentGroupSequnceForOrder(
+                            fulfillmentGroup.getOrder()));
+        }
+
         return fulfillmentGroupDao.save(fulfillmentGroup);
     }
 
@@ -372,8 +379,40 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         return order;
     }
 
+    @Override
     public FulfillmentGroupFee createFulfillmentGroupFee() {
         return fulfillmentGroupDao.createFulfillmentGroupFee();
+    }
+    
+    @Override
+    public List<FulfillmentGroup> findUnfulfilledFulfillmentGroups(int start,
+            int maxResults) {
+        return fulfillmentGroupDao.readUnfulfilledFulfillmentGroups(start, maxResults);
+    }
+
+    @Override
+    public List<FulfillmentGroup> findPartiallyFulfilledFulfillmentGroups(
+            int start, int maxResults) {
+        return fulfillmentGroupDao.readPartiallyFulfilledFulfillmentGroups(start, maxResults);
+    }
+
+    @Override
+    public List<FulfillmentGroup> findUnprocessedFulfillmentGroups(int start,
+            int maxResults) {
+        return fulfillmentGroupDao.readUnprocessedFulfillmentGroups(start, maxResults);
+    }
+
+    @Override
+    public List<FulfillmentGroup> findFulfillmentGroupsByStatus(
+            FulfillmentGroupStatusType status, int start, int maxResults,
+            boolean ascending) {
+        return fulfillmentGroupDao.readFulfillmentGroupsByStatus(status, start, maxResults, ascending);
+    }
+
+    @Override
+    public List<FulfillmentGroup> findFulfillmentGroupsByStatus(
+            FulfillmentGroupStatusType status, int start, int maxResults) {
+        return fulfillmentGroupDao.readFulfillmentGroupsByStatus(status, start, maxResults);
     }
 
 }

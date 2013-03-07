@@ -79,10 +79,9 @@ public class AutoBundleActivity extends BaseActivity {
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext)context).getSeedData();
         order = handleAutomaticBundling(order);
-        ((PricingContext) context).setSeedData(order);
+        context.setSeedData(order);
         return context;
     }
-
 
     public Order handleAutomaticBundling(Order order) throws PricingException, RemoveFromCartException {
         boolean itemsHaveBeenUnbundled = false;
@@ -374,4 +373,5 @@ public class AutoBundleActivity extends BaseActivity {
 
         return skuMatches / skuBundleItem.getQuantity();
     }
+
 }

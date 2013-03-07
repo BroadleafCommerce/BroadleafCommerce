@@ -22,8 +22,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -66,6 +68,7 @@ public class SiteImpl implements Site {
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order=3, group = "SiteImpl_Site")
+    @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
@@ -123,6 +126,16 @@ public class SiteImpl implements Site {
         this.productionSandbox = productionSandbox;
     }
 
+    @Override
+    public SiteResolutionType getSiteResolutionType() {
+        return SiteResolutionType.getInstance(siteIdentifierType);
+    }
+
+    @Override
+    public void setSiteResolutionType(SiteResolutionType siteResolutionType) {
+        this.siteIdentifierType = siteResolutionType.getType();
+    }
+
     public void checkCloneable(Site site) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = site.getClass().getMethod("clone", new Class[]{});
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !site.getClass().getName().startsWith("org.broadleafcommerce")) {
@@ -145,6 +158,7 @@ public class SiteImpl implements Site {
             clone.setName(name);
             clone.setSiteIdentifierType(siteIdentifierType);
             clone.setSiteIdentifierValue(siteIdentifierValue);
+            clone.setSiteResolutionType(getSiteResolutionType());
 
             //don't clone productionSandbox, as it would cause a recursion
         } catch (Exception e) {

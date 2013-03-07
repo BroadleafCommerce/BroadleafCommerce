@@ -19,14 +19,14 @@ package org.broadleafcommerce.admin.client.datasource.catalog.product;
 import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.module.SkuBasicClientEntityModule;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -56,7 +56,6 @@ public class ProductSkusDataSourceFactory implements DataSourceFactory {
          * the actual fields for the DataSource can change based on adding/removing Product Options
          */
         CustomCriteriaListGridDataSource dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, true, true, true, true);
-        dataSource.setCustomCriteria(new String[]{"productSkuList"});
         dataSource.buildFields(null, false, cb);
     }
 

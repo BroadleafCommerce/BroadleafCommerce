@@ -70,6 +70,10 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected BigDecimal amountPaid;
 
+    @Column(name = "TRANSACTION_AMOUNT", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
+    protected BigDecimal transactionAmount;
+
     @Column(name = "AUTHORIZATION_CODE")
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Authorization_Code", order = 3, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String authorizationCode;
@@ -219,14 +223,24 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         this.referenceNumber = referenceNumber;
     }
 
-    @Override
+    @Deprecated
     public Money getAmountPaid() {
         return BroadleafCurrencyUtils.getMoney(amountPaid, getCurrency());
     }
 
-    @Override
+    @Deprecated
     public void setAmountPaid(Money amountPaid) {
         this.amountPaid = Money.toAmount(amountPaid);
+    }
+
+    @Override
+    public Money getTransactionAmount() {
+        return BroadleafCurrencyUtils.getMoney(transactionAmount, getCurrency());
+    }
+
+    @Override
+    public void setTransactionAmount(Money transactionAmount) {
+        this.transactionAmount = Money.toAmount(transactionAmount);
     }
 
     @Override

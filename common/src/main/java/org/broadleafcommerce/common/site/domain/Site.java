@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.site.domain;
 
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 
 import java.io.Serializable;
 
@@ -50,17 +51,16 @@ public interface Site extends Serializable {
     public void setName(String name);
 
     /**
+     * @deprecated use {@link #getSiteResolutionType()}
      * Intended to be used along with the #getSiteIdentifierValue()
      * by the SiteResolver to determine if this is the current site.
-     *
-     * Example type usage could be HOSTNAME, IP-ADDRESS, URL-PARAMETER.
-     * Custom SiteResolvers can be written to determine the current Site.
      *
      * @return
      */
     public String getSiteIdentifierType();
 
     /**
+     * @deprecated Use {@link #setSiteResolutionType(SiteResolutionType)}
      * Sets the site identifier type.
      * @see #getSiteIdentifierType()
      * @param siteIdentifierType
@@ -68,7 +68,7 @@ public interface Site extends Serializable {
     public void setSiteIdentifierType(String siteIdentifierType);
 
     /**
-     * Used along with #getSiteIdentiferType() to determine the current
+     * Used along with {@link #getSiteResolutionType()} to determine the current
      * Site for a given request.
      *
      * @return
@@ -98,6 +98,22 @@ public interface Site extends Serializable {
      * @param sandbox
      */
     public void setProductionSandbox(SandBox sandbox);
+    
+    /**
+     * Intended to be used along with the #getSiteIdentifierValue()
+     * by an implementation of SiteResolver to determine 
+     * if this is the current site.   
+     *
+     * @return
+     */
+    public SiteResolutionType getSiteResolutionType();
 
+    /** 
+     * Sets the site resolution type.
+     * @see #getSiteResolutionType()
+     * @param siteResolutionType
+     */
+    public void setSiteResolutionType(SiteResolutionType siteResolutionType);
+    
     public Site clone();
 }

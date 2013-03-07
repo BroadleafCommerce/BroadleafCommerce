@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.payment.service.PaymentService;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,18 +33,35 @@ import java.util.Map;
 
 public class PaymentActivity extends BaseActivity {
 
+    public static final String ROLLBACK_PAYMENTCONTEXT = "rollback_paymentcontext";
+    public static final String ROLLBACK_RESPONSEITEM = "rollback_responseitem";
+    public static final String ROLLBACK_ACTIONTYPE = "rollback_actiontype";
+
     protected PaymentService paymentService;
     protected String userName;
+    protected boolean automaticallyRegisterRollbackHandlerForPayment = true;
+
+    public PaymentActivity() {
+        setAutomaticallyRegisterRollbackHandler(false);
+    }
 
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
-     */
+         * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
+         */
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CombinedPaymentContextSeed seed = ((WorkflowPaymentContext) context).getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
-        Money orderTotal = seed.getOrderTotal();
-        Money remainingTotal = seed.getOrderTotal();
+
+        // If seed has a specified total, use that; otherwise use order total.
+        Money transactionTotal, remainingTotal;
+        if (seed.getTransactionAmount() != null) {
+            transactionTotal = seed.getTransactionAmount();
+            remainingTotal = seed.getTransactionAmount();
+        } else {
+            transactionTotal = seed.getOrderTotal();
+            remainingTotal = seed.getOrderTotal();
+        }
         Map<PaymentInfo, Referenced> replaceItems = new HashMap<PaymentInfo, Referenced>();
         try {
             Iterator<PaymentInfo> itr = infos.keySet().iterator();
@@ -53,7 +71,7 @@ public class PaymentActivity extends BaseActivity {
                     Referenced referenced = infos.get(info);
                     itr.remove();
                     infos.remove(info);
-                    PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, referenced, userName);
+                    PaymentContextImpl paymentContext = new PaymentContextImpl(transactionTotal, remainingTotal, info, referenced, userName);
                     PaymentResponseItem paymentResponseItem;
                     if (seed.getActionType().equals(PaymentActionType.AUTHORIZE)) {
                         try {
@@ -109,13 +127,24 @@ public class PaymentActivity extends BaseActivity {
                         replaceItems.put(info, referenced);
                         throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
                     }
+                    if (getRollbackHandler() != null && automaticallyRegisterRollbackHandlerForPayment) {
+                        Map<String, Object> myState = new HashMap<String, Object>();
+                        if (getStateConfiguration() != null && !getStateConfiguration().isEmpty()) {
+                            myState.putAll(getStateConfiguration());
+                        }
+                        myState.put(ROLLBACK_ACTIONTYPE, seed.getActionType());
+                        myState.put(ROLLBACK_PAYMENTCONTEXT, paymentContext);
+                        myState.put(ROLLBACK_RESPONSEITEM, paymentResponseItem);
+
+                        ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), myState);
+                    }
                     if (paymentResponseItem != null) {
                         //validate payment response item
-                        if (paymentResponseItem.getAmountPaid() == null || paymentResponseItem.getTransactionTimestamp() == null || paymentResponseItem.getTransactionSuccess() == null) {
-                            throw new PaymentException("The PaymentResponseItem instance did not contain one or more of the following: amountPaid, transactionTimestamp or transactionSuccess");
+                        if (paymentResponseItem.getTransactionAmount() == null || paymentResponseItem.getTransactionTimestamp() == null || paymentResponseItem.getTransactionSuccess() == null) {
+                            throw new PaymentException("The PaymentResponseItem instance did not contain one or more of the following: transactionAmount, transactionTimestamp or transactionSuccess");
                         }
                         seed.getPaymentResponse().addPaymentResponseItem(info, paymentResponseItem);
-                        remainingTotal = remainingTotal.subtract(paymentResponseItem.getAmountPaid());
+                        remainingTotal = remainingTotal.subtract(paymentResponseItem.getTransactionAmount());
                     }
                 }
             }
@@ -142,4 +171,11 @@ public class PaymentActivity extends BaseActivity {
         this.userName = userName;
     }
 
+    public boolean getAutomaticallyRegisterRollbackHandlerForPayment() {
+        return automaticallyRegisterRollbackHandlerForPayment;
+    }
+
+    public void setAutomaticallyRegisterRollbackHandlerForPayment(boolean automaticallyRegisterRollbackHandlerForPayment) {
+        this.automaticallyRegisterRollbackHandlerForPayment = automaticallyRegisterRollbackHandlerForPayment;
+    }
 }

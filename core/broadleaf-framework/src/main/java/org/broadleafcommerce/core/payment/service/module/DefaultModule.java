@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.payment.service.module;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
@@ -23,34 +24,42 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 
 public class DefaultModule extends AbstractModule {
 
-    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, Money amountToAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("authorize not implemented.");
     }
 
-    public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processReverseAuthorize(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("reverse authorize not implemented.");
     }
 
-    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processAuthorizeAndDebit(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("authorizeAndDebit not implemented.");
     }
 
-    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processDebit(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("debit not implemented.");
     }
 
-    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processCredit(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("credit not implemented.");
     }
 
-    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processVoidPayment(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("voidPayment not implemented.");
     }
 
-    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
+    @Override
+    public PaymentResponseItem processBalance(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("balance not implemented.");
     }
 
+    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return false;
     }

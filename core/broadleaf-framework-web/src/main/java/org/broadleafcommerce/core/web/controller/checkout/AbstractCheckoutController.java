@@ -22,13 +22,11 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.payment.service.BroadleafPaymentInfoTypeService;
 import org.broadleafcommerce.core.payment.service.PaymentInfoFactory;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
-import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.OrderInfoFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.*;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -82,20 +80,23 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
 
+    @Resource(name = "blPaymentInfoTypeService")
+    protected BroadleafPaymentInfoTypeService paymentInfoTypeService;
+
     /* Factories */
     @Resource(name = "blCreditCardPaymentInfoFactory")
     protected PaymentInfoFactory creditCardPaymentInfoFactory;
-    
+
     /* Validators */
     @Resource(name = "blShippingInfoFormValidator")
     protected ShippingInfoFormValidator shippingInfoFormValidator;
-    
+
     @Resource(name = "blMultishipAddAddressFormValidator")
     protected MultishipAddAddressFormValidator multishipAddAddressFormValidator;
 
     @Resource(name = "blBillingInfoFormValidator")
     protected BillingInfoFormValidator billingInfoFormValidator;
-    
+
     @Resource(name = "blOrderInfoFormValidator")
     protected OrderInfoFormValidator orderInfoFormValidator;
 

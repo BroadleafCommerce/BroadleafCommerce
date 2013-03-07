@@ -16,9 +16,10 @@
 
 package org.broadleafcommerce.common.vendor.service.exception;
 
+import org.broadleafcommerce.common.exception.BroadleafException;
 import org.broadleafcommerce.common.vendor.service.message.PaymentResponse;
 
-public class PaymentException extends Exception {
+public class PaymentException extends BroadleafException {
 
     private static final long serialVersionUID = 1L;
 

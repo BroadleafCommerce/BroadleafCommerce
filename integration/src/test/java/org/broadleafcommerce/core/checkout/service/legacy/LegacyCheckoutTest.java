@@ -68,19 +68,19 @@ public class LegacyCheckoutTest extends BaseTest {
     @Resource(name="blEncryptionModule")
     private EncryptionModule encryptionModule;
     
-    @Resource
+    @Resource(name = "blCustomerService")
     private CustomerService customerService;
     
     @Resource(name = "blOrderService")
     private OrderService orderService;
     
-    @Resource
+    @Resource(name = "blCatalogService")
     private CatalogService catalogService;
     
     @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
 
-    @Resource
+    @Resource(name = "blSecurePaymentInfoService")
     private SecurePaymentInfoService securePaymentInfoService;
 
     @Test(groups = { "checkoutLegacy" }, dependsOnGroups = { "createCartForCustomerLegacy", "testShippingInsertLegacy" })
@@ -287,6 +287,7 @@ public class LegacyCheckoutTest extends BaseTest {
 
         };
 
+        order.getPaymentInfos().add(payment);
         Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
         map.put(payment, cc);
         return map;
