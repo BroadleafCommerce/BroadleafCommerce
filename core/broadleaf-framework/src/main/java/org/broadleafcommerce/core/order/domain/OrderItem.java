@@ -64,7 +64,8 @@ public interface OrderItem extends Serializable, Cloneable {
     Money getRetailPrice();
 
     /**
-     * Calling this method will manually set the retailPrice.    It will also make a call to 
+     * Calling this method will manually set the retailPrice.   To avoid the pricing engine
+     * resetting this price, you should also make a call to 
      * {@link #setRetailPriceOverride(true)}
      * 
      * Consider also calling {@link #setDiscountingAllowed(boolean)} with a value of false to restrict
@@ -102,6 +103,9 @@ public interface OrderItem extends Serializable, Cloneable {
     /**
      * Calling this method will manually set the salePrice.    It will also make a call to 
      * {@link #setSalePriceSetManually(true)}
+     * 
+     *  To avoid the pricing engine resetting this price, you should also make a call to 
+     *  {@link #setSalePriceOverride(true)}
      *      
      * Typically for {@link DiscreteOrderItem}s, the prices will be set with a call to {@link #updateSaleAndRetailPrices()}
      * which will use the Broadleaf dynamic pricing engine or the values directly tied to the SKU.
