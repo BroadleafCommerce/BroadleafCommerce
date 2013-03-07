@@ -16,16 +16,22 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -34,8 +40,6 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
 
     public static final String ITEM_DISCOUNT_TARGET_FIELD_NAME = "targetItemCriteria";
     public static final String ITEM_DISCOUNT_TARGET_FIELD_BUILDER = "ORDER_ITEM_FIELDS";
-    public static final String ITEM_DISCOUNT_TARGET_MVEL = "orderItemMatchRule";
-    public static final String ITEM_DISCOUNT_TARGET_QUANTITY = "quantity";
 
     @Override
     public String getSectionCustomCriteria() {
@@ -46,14 +50,27 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
              String id) throws Exception {
         String view = super.viewEntityForm(request, response, model, "offer", id);
         EntityForm entityForm = (EntityForm) model.asMap().get("entityForm");
+        Entity entity = (Entity) model.asMap().get("entity");
 
         for (Tab tab : entityForm.getTabs()) {
             Set<RuleBuilder> ruleBuilders = tab.getRuleBuilders();
             for (RuleBuilder builder : ruleBuilders) {
                 if (ITEM_DISCOUNT_TARGET_FIELD_NAME.equals(builder.getFieldName())){
                     builder.setFieldBuilder(ITEM_DISCOUNT_TARGET_FIELD_BUILDER);
-                    builder.setMvelProperty(ITEM_DISCOUNT_TARGET_MVEL);
-                    builder.setQuantityProperty(ITEM_DISCOUNT_TARGET_QUANTITY);
+                    String json = entity.getPMap().get("targetItemCriteriaJson").getValue();
+                    builder.setJson(json);
+
+                    //When using Thymeleaf, we need to convert it back to
+                    //a DataWrapper object because Thymeleaf escapes JSON strings.
+                    //Thymeleaf uses it's own object de-serializer
+                    //see: https://github.com/thymeleaf/thymeleaf/issues/84
+                    //see: http://forum.thymeleaf.org/Spring-Javascript-and-escaped-JSON-td4024739.html
+                    ObjectMapper mapper = new ObjectMapper();
+                    DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
+                    SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
+                    module.addDeserializer(DataDTO.class, dtoDeserializer);
+                    mapper.registerModule(module);
+                    builder.setDataWrapper(mapper.readValue(json, DataWrapper.class));
                 }
             }
         }

@@ -209,7 +209,8 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
 
         EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
-        
+
+        model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "entityEdit");
 

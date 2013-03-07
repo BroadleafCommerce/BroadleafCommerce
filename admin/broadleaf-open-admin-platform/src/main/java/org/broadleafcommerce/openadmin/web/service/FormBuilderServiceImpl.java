@@ -217,8 +217,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         RuleBuilder rb = new RuleBuilder();
         rb.setFieldName(fieldName);
         rb.setFriendlyName(friendlyName);
-        rb.setEntities(entities);
-
         return rb;
     }
 

@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
@@ -25,6 +32,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
@@ -42,20 +50,15 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.tool.hbm2x.StringUtils;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-
 import javax.annotation.Resource;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +76,10 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
+
+    @Resource(name = "blRuleBuilderFieldServiceFactory")
+    protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
+
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
         String[] customCriteria = persistencePackage.getCustomCriteria();
@@ -184,6 +190,34 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                     prop.setValue(fgRule.getMatchRule());
                     entities[j].addProperty(prop);
                 }
+
+                //Populate The TargetItemCriteria JSON field
+                int k=0;
+                Entity[] targetItemCriterias = new Entity[offer.getTargetItemCriteria().size()];
+                for (OfferItemCriteria oic : offer.getTargetItemCriteria()) {
+                    Property[] properties = new Property[2];
+                    Property mvelProperty = new Property();
+                    mvelProperty.setName("orderItemMatchRule");
+                    mvelProperty.setValue(oic.getOrderItemMatchRule());
+                    Property quantityProperty = new Property();
+                    quantityProperty.setName("quantity");
+                    quantityProperty.setValue(oic.getQuantity().toString());
+                    properties[0] = mvelProperty;
+                    properties[1] = quantityProperty;
+                    Entity criteria = new Entity();
+                    criteria.setProperties(properties);
+                    targetItemCriterias[k] = criteria;
+                    k++;
+                }
+
+                MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+                DataWrapper wrapper = translator.createRuleData(targetItemCriterias, "orderItemMatchRule", "quantity", ruleBuilderFieldServiceFactory.createInstance("ORDER_ITEM_FIELDS"));
+                ObjectMapper mapper = new ObjectMapper();
+                String targetItemCriteriaJson = mapper.writeValueAsString(wrapper);
+                Property targetItemCriteriaJsonProp = new Property();
+                targetItemCriteriaJsonProp.setName("targetItemCriteriaJson");
+                targetItemCriteriaJsonProp.setValue(targetItemCriteriaJson);
+                entities[j].addProperty(targetItemCriteriaJsonProp);
             }
             
             PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});

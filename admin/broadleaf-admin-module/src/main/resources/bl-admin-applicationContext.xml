@@ -154,4 +154,15 @@
         </property>
     </bean>
 
+    <bean id="blRuleBuilderFieldServiceFactory" class="org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory">
+        <property name="fieldServices">
+            <list>
+                <ref bean="blOrderItemFieldService"/>
+                <ref bean="blCustomerFieldService"/>
+                <ref bean="blOrderFieldService"/>
+                <ref bean="blFulfillmentGroupFieldService"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>

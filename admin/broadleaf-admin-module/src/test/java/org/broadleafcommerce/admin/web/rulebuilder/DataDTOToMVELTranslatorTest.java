@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.rulebuilder;
+package org.broadleafcommerce.admin.web.rulebuilder;
 
 import junit.framework.TestCase;
+import org.broadleafcommerce.admin.web.rulebuilder.service.CustomerFieldServiceImpl;
+import org.broadleafcommerce.admin.web.rulebuilder.service.FulfillmentGroupFieldServiceImpl;
+import org.broadleafcommerce.admin.web.rulebuilder.service.OrderFieldServiceImpl;
+import org.broadleafcommerce.admin.web.rulebuilder.service.OrderItemFieldServiceImpl;
+import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
+import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
+import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
-import org.broadleafcommerce.openadmin.web.rulebuilder.service.CustomerFieldServiceImpl;
-import org.broadleafcommerce.openadmin.web.rulebuilder.service.FulfillmentGroupFieldServiceImpl;
-import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderFieldServiceImpl;
-import org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderItemFieldServiceImpl;
 
 /**
  * @author Elbert Bautista (elbertbautista)

@@ -14,71 +14,78 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.rulebuilder.service;
+package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
 import org.springframework.stereotype.Service;
 
 /**
  * An implementation of a RuleBuilderFieldService
  * that constructs metadata necessary
- * to build the supported fields for a Customer entity
+ * to build the supported fields for an Order entity
  *
  * @author Elbert Bautista (elbertbautista)
  */
-@Service("blCustomerFieldService")
-public class CustomerFieldServiceImpl  extends AbstractRuleBuilderFieldService {
+@Service("blOrderFieldService")
+public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
     {
         fields.add(new FieldData.Builder()
-                .label("Customer - Deactivated")
-                .name("deactivated")
+                .label("Currency - Is Default Currency")
+                .name("currency.defaultFlag")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Customer - ID")
-                .name("id")
+                .label("Currency Code")
+                .name("currency.currencyCode")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Currency Name")
+                .name("currency.friendlyName")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Locale - Is Default Locale")
+                .name("locale.defaultFlag")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Locale Code")
+                .name("locale.localeCode")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Locale Name")
+                .name("locale.friendlyName")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Order Subtotal")
+                .name("subTotal")
                 .operators("blcOperators_Numeric")
                 .options("[]")
-                .type(SupportedFieldType.ID)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Customer - Receive Email")
-                .name("receiveEmail")
-                .operators("blcOperators_Boolean")
-                .options("[]")
-                .type(SupportedFieldType.BOOLEAN)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Customer - Registered")
-                .name("registered")
-                .operators("blcOperators_Boolean")
-                .options("[]")
-                .type(SupportedFieldType.BOOLEAN)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Customer - UserName")
-                .name("username")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Customer - Email Address")
-                .name("emailAddress")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
+                .type(SupportedFieldType.MONEY)
                 .build());
     }
 
     @Override
     public String getName() {
-        return "CUSTOMER_FIELDS";
+        return "ORDER_FIELDS";
     }
-
 }

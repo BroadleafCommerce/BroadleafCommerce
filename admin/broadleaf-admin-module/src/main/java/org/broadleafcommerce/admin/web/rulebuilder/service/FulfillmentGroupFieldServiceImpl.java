@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.rulebuilder.service;
+package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
 import org.springframework.stereotype.Service;
 
 /**

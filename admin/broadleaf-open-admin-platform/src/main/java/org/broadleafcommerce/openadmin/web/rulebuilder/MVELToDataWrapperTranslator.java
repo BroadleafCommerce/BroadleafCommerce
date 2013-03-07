@@ -97,11 +97,7 @@ public class MVELToDataWrapperTranslator {
             j++;
         }
         if (myCriteriaList.size() > 0) {
-            List<DataDTO> converted = new ArrayList<DataDTO>();
-            for (ExpressionDTO e : myCriteriaList) {
-                converted.add(e);
-            }
-            data.getGroups().addAll(converted);
+            data.getGroups().addAll(myCriteriaList);
         }
         for (Group subgroup : group.getSubGroups()) {
             DataDTO subCriteria = createRuleDataDTO(data, subgroup, fieldService);

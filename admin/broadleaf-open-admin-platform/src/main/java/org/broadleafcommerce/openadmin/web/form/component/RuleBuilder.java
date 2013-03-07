@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.form.component;
 
-import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -25,10 +25,9 @@ public class RuleBuilder {
 
     protected String fieldName;
     protected String friendlyName;
-    protected Entity[] entities;
     protected String fieldBuilder;
-    protected String mvelProperty;
-    protected String quantityProperty;
+    protected DataWrapper dataWrapper;
+    protected String json;
 
     public String getFieldName() {
         return fieldName;
@@ -46,14 +45,6 @@ public class RuleBuilder {
         this.friendlyName = friendlyName;
     }
 
-    public Entity[] getEntities() {
-        return entities;
-    }
-
-    public void setEntities(Entity[] entities) {
-        this.entities = entities;
-    }
-
     public String getFieldBuilder() {
         return fieldBuilder;
     }
@@ -62,19 +53,19 @@ public class RuleBuilder {
         this.fieldBuilder = fieldBuilder;
     }
 
-    public String getMvelProperty() {
-        return mvelProperty;
+    public DataWrapper getDataWrapper() {
+        return dataWrapper;
     }
 
-    public void setMvelProperty(String mvelProperty) {
-        this.mvelProperty = mvelProperty;
+    public void setDataWrapper(DataWrapper dataWrapper) {
+        this.dataWrapper = dataWrapper;
     }
 
-    public String getQuantityProperty() {
-        return quantityProperty;
+    public String getJson() {
+        return json;
     }
 
-    public void setQuantityProperty(String quantityProperty) {
-        this.quantityProperty = quantityProperty;
+    public void setJson(String json) {
+        this.json = json;
     }
 }
