@@ -55,7 +55,7 @@ public class SiteDaoImpl implements SiteDao {
         siteIdentifiers.add(domainPrefix);
 
         TypedQuery<Site> query = em.createQuery(
-                "from Site s where s.siteIdentifierValue in (:siteIdentifiers)", Site.class);
+                "from org.broadleafcommerce.common.site.domain.Site s where s.siteIdentifierValue in (:siteIdentifiers)", Site.class);
         query.setParameter("siteIdentifiers", siteIdentifiers);
         List<Site> results = query.getResultList();
         
