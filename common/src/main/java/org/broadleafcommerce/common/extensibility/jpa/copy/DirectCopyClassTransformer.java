@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
 import org.broadleafcommerce.common.logging.SupportLogManager;
@@ -29,14 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
 
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
@@ -88,6 +87,58 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                     logger.debug(String.format("Adding interface [%s]", i.getName()));
                     clazz.addInterface(i);
                 }
+
+                /*// Add extra class level annotations
+                ClassFile templateFile = template.getClassFile();
+                ConstPool templateConstantPool = templateFile.getConstPool();
+                ClassPool pool = ClassPool.getDefault();
+                AnnotationsAttribute templateAnnotationsAttribute = new AnnotationsAttribute(templateConstantPool, AnnotationsAttribute.visibleTag);
+                List<?> templateAttributes = templateFile.getAttributes();
+                for (Object object : templateAttributes) {
+                    if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                        AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                        Annotation[] items = attr.getAnnotations();
+                        for (Annotation legacyAnnotation : items) {
+                            templateAnnotationsAttribute.addAnnotation(legacyAnnotation);
+                        }
+                    }
+                }
+                Annotation[] annotationsToCopy = templateAnnotationsAttribute.getAnnotations();
+                if (!ArrayUtils.isEmpty(annotationsToCopy)) {
+                    ClassFile classFile = clazz.getClassFile();
+                    ConstPool constantPool = classFile.getConstPool();
+                    AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+                    List<?> attributes = classFile.getAttributes();
+                    Iterator<?> itr = attributes.iterator();
+                    while(itr.hasNext()) {
+                        Object object = itr.next();
+                        if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                            AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                            Annotation[] items = attr.getAnnotations();
+                            for (Annotation legacyAnnotation : items) {
+                                annotationsAttribute.addAnnotation(legacyAnnotation);
+                            }
+                            itr.remove();
+                        }
+                    }
+                    Annotation[] legacyAnnotations = annotationsAttribute.getAnnotations();
+                    for (Object copyVal : annotationsToCopy) {
+                        Annotation annotation = (Annotation) copyVal;
+                        boolean isFound = false;
+                        for (Annotation legacyAnnotation : legacyAnnotations) {
+                            if (legacyAnnotation.getTypeName().equals(annotation.getTypeName())) {
+                                isFound = true;
+                                break;
+                            }
+                        }
+                        if (!isFound) {
+                            logger.debug(String.format("Adding annotation [%s]", annotation.getTypeName()));
+                            pool.importPackage(annotation.getTypeName());
+                            annotationsAttribute.addAnnotation(annotation);
+                        }
+                    }
+                    classFile.addAttribute(annotationsAttribute);
+                }*/
                 
                 // Copy over all declared fields from the template class
                 // Note that we do not copy over fields with the @NonCopiedField annotation

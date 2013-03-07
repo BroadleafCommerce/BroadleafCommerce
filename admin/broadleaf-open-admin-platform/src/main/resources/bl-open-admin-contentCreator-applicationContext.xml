@@ -60,7 +60,7 @@
     </bean>
 
     <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>  
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
     
