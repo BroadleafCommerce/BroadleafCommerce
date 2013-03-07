@@ -339,7 +339,7 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
     }
 
     @Override
-    public void setRetailPriceOverride(boolean override) {
+    public void setRetailPriceOverride(Boolean override) {
         discreteOrderItem.setRetailPriceOverride(override);
     }
 
@@ -349,7 +349,7 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
     }
 
     @Override
-    public void setSalePriceOverride(boolean override) {
+    public void setSalePriceOverride(Boolean override) {
         discreteOrderItem.setSalePriceOverride(override);
     }
 
