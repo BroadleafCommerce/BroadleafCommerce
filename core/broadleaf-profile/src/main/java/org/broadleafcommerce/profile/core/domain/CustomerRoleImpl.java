@@ -47,12 +47,12 @@ public class CustomerRoleImpl implements CustomerRole {
     @Column(name = "CUSTOMER_ROLE_ID")
     protected Long id;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CustomerImpl.class, optional = false)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     @Index(name="CUSTROLE_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional = false)
+    @ManyToOne(targetEntity = RoleImpl.class, optional = false)
     @JoinColumn(name = "ROLE_ID")
     @Index(name="CUSTROLE_ROLE_INDEX", columnNames={"ROLE_ID"})
     protected Role role;
