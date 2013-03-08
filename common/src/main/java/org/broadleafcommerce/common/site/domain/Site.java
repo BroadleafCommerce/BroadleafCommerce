@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -114,6 +115,28 @@ public interface Site extends Serializable {
      * @param siteResolutionType
      */
     public void setSiteResolutionType(SiteResolutionType siteResolutionType);
-    
+
+    /**
+     * Retrieve a list of product, category and offer groupings that
+     * this site has access to
+     *
+     * @return a list of catalog groupings
+     */
+    public List<Catalog> getCatalogs();
+
+    /**
+     * Set the list of product, category and offer groupings that
+     * this site has access to
+     *
+     * @param catalogs a list of catalog groupings
+     */
+    public void setCatalogs(List<Catalog> catalogs);
+
+    /**
+     * Retrieve an deep copy of this site. Not bound by
+     * entity manager scope.
+     *
+     * @return a deep copy of this site
+     */
     public Site clone();
 }

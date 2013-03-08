@@ -20,15 +20,18 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository("blSiteDao")
 public class SiteDaoImpl implements SiteDao {
@@ -54,9 +57,15 @@ public class SiteDaoImpl implements SiteDao {
         siteIdentifiers.add(domain);
         siteIdentifiers.add(domainPrefix);
 
-        TypedQuery<Site> query = em.createQuery(
-                "from org.broadleafcommerce.common.site.domain.Site s where s.siteIdentifierValue in (:siteIdentifiers)", Site.class);
-        query.setParameter("siteIdentifiers", siteIdentifiers);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Site> criteria = builder.createQuery(Site.class);
+        Root<SiteImpl> site = criteria.from(SiteImpl.class);
+        criteria.select(site);
+
+        criteria.where(site.get("siteIdentifierValue").as(String.class).in(siteIdentifiers));
+        TypedQuery<Site> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
         List<Site> results = query.getResultList();
         
         for (Site currentSite : results) {
