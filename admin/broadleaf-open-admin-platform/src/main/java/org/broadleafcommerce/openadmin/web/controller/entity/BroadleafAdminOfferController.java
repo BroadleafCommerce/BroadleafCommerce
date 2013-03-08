@@ -50,6 +50,12 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
         String view = super.viewEntityForm(request, response, model, "offer", id);
         EntityForm entityForm = (EntityForm) model.asMap().get("entityForm");
         Entity entity = (Entity) model.asMap().get("entity");
+        String additionalClasses = (String) model.asMap().get("additionalClasses");
+        if (additionalClasses == null) {
+            additionalClasses = "";
+        }
+        additionalClasses = additionalClasses.concat(" rulebuilder-form ");
+        model.addAttribute("additionalClasses", additionalClasses);
 
         //TODO support i18N
         constructRuleBuilder(entityForm, entity, "appliesToOrderRules","Order Qualification",
