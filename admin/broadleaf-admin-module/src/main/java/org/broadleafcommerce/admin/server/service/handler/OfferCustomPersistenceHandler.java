@@ -51,6 +51,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
+import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -59,10 +60,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.tool.hbm2x.StringUtils;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -171,17 +174,31 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, Offer.class);
             Entity[] entities = helper.getRecords(offerProperties, records, null, null);
-            
+            MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+            ObjectMapper mapper = new ObjectMapper();
+
             //populate the rules from the new map associated with Offer
             for (int j=0;j<entities.length;j++) {
                 Offer offer = (Offer) records.get(j);
                 OfferRule orderRule = offer.getOfferMatchRules().get(OfferRuleType.ORDER.getType());
                 if (orderRule != null) {
                     entities[j].findProperty("appliesToOrderRules").setValue(orderRule.getMatchRule());
+
+                    //**** Admin 3.0 ****
+                    //Convert the MVEL into JSON and place as a new property on the entity: "appliesToOrderRulesJson"
+                    //Add the RuleBuilderFieldService property on the entity: "appliesToOrderRulesFieldService"
+                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,"appliesToOrderRulesJson",
+                            "appliesToOrderRulesFieldService","ORDER_FIELDS");
                 }
                 OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.CUSTOMER.getType());
                 if (customerRule != null) {
                     entities[j].findProperty("appliesToCustomerRules").setValue(customerRule.getMatchRule());
+
+                    //**** Admin 3.0 ****
+                    //Convert the MVEL into JSON and place as a new property on the entity: "appliesToCustomerRulesJson"
+                    //Add the RuleBuilderFieldService property on the entity: "appliesToCustomerRulesFieldService"
+                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,"appliesToCustomerRulesJson",
+                            "appliesToCustomerRulesFieldService","CUSTOMER_FIELDS");
                 }
                 OfferRule fgRule = offer.getOfferMatchRules().get(OfferRuleType.FULFILLMENT_GROUP.getType());
                 if (fgRule != null) {
@@ -189,35 +206,26 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                     prop.setName("appliesToFulfillmentGroupRules");
                     prop.setValue(fgRule.getMatchRule());
                     entities[j].addProperty(prop);
+
+                    //**** Admin 3.0 ****
+                    //Convert the MVEL into JSON and place as a new property on the entity:
+                    // "appliesToFulfillmentGroupRulesJson"
+                    //Add the RuleBuilderFieldService property on the entity: "appliesToFulfillmentGroupRulesFieldService"
+                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,"appliesToFulfillmentGroupRulesJson",
+                            "appliesToFulfillmentGroupRulesFieldService","FULFILLMENT_GROUP_FIELDS");
                 }
 
-                //Populate The TargetItemCriteria JSON field
-                int k=0;
-                Entity[] targetItemCriterias = new Entity[offer.getTargetItemCriteria().size()];
-                for (OfferItemCriteria oic : offer.getTargetItemCriteria()) {
-                    Property[] properties = new Property[2];
-                    Property mvelProperty = new Property();
-                    mvelProperty.setName("orderItemMatchRule");
-                    mvelProperty.setValue(oic.getOrderItemMatchRule());
-                    Property quantityProperty = new Property();
-                    quantityProperty.setName("quantity");
-                    quantityProperty.setValue(oic.getQuantity().toString());
-                    properties[0] = mvelProperty;
-                    properties[1] = quantityProperty;
-                    Entity criteria = new Entity();
-                    criteria.setProperties(properties);
-                    targetItemCriterias[k] = criteria;
-                    k++;
-                }
+                //**** Admin 3.0 ****
+                //Convert the MVEL into JSON and place as a new property on the entity: "targetItemCriteriaJson"
+                //Add the RuleBuilderFieldService property on the entity: "targetItemCriteriaFieldService"
+                convertItemCriteriaToJson(entities[j], translator, mapper, offer.getTargetItemCriteria(),
+                        "targetItemCriteriaJson", "targetItemCriteriaFieldService");
 
-                MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
-                DataWrapper wrapper = translator.createRuleData(targetItemCriterias, "orderItemMatchRule", "quantity", ruleBuilderFieldServiceFactory.createInstance("ORDER_ITEM_FIELDS"));
-                ObjectMapper mapper = new ObjectMapper();
-                String targetItemCriteriaJson = mapper.writeValueAsString(wrapper);
-                Property targetItemCriteriaJsonProp = new Property();
-                targetItemCriteriaJsonProp.setName("targetItemCriteriaJson");
-                targetItemCriteriaJsonProp.setValue(targetItemCriteriaJson);
-                entities[j].addProperty(targetItemCriteriaJsonProp);
+                //**** Admin 3.0 ****
+                //Convert the MVEL into JSON and place as a new property on the entity: "targetItemCriteriaJson"
+                //Add the RuleBuilderFieldService property on the entity: "targetItemCriteriaFieldService"
+                convertItemCriteriaToJson(entities[j], translator, mapper, offer.getQualifyingItemCriteria(),
+                        "qualifyingItemCriteriaJson", "qualifyingItemCriteriaFieldService");
             }
             
             PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
@@ -249,6 +257,67 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             LOG.error("Unable to perform fetch for entity" + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
+    }
+
+    protected void convertItemCriteriaToJson(Entity entity, MVELToDataWrapperTranslator translator, ObjectMapper mapper,
+                    Set<OfferItemCriteria> offerItemCriteria, String jsonProp, String fieldServiceProp)
+            throws MVELTranslationException, IOException {
+
+        int k=0;
+        Entity[] targetItemCriterias = new Entity[offerItemCriteria.size()];
+        for (OfferItemCriteria oic : offerItemCriteria) {
+            Property[] properties = new Property[2];
+            Property mvelProperty = new Property();
+            mvelProperty.setName("orderItemMatchRule");
+            mvelProperty.setValue(oic.getOrderItemMatchRule());
+            Property quantityProperty = new Property();
+            quantityProperty.setName("quantity");
+            quantityProperty.setValue(oic.getQuantity().toString());
+            properties[0] = mvelProperty;
+            properties[1] = quantityProperty;
+            Entity criteria = new Entity();
+            criteria.setProperties(properties);
+            targetItemCriterias[k] = criteria;
+            k++;
+        }
+
+        DataWrapper oiWrapper = translator.createRuleData(targetItemCriterias, "orderItemMatchRule", "quantity",
+                ruleBuilderFieldServiceFactory.createInstance("ORDER_ITEM_FIELDS"));
+        String json = mapper.writeValueAsString(oiWrapper);
+        Property jsonP = new Property();
+        jsonP.setName(jsonProp);
+        jsonP.setValue(json);
+        entity.addProperty(jsonP);
+        Property fieldServiceP = new Property();
+        fieldServiceP.setName(fieldServiceProp);
+        fieldServiceP.setValue("ORDER_ITEM_FIELDS");
+        entity.addProperty(fieldServiceP);
+    }
+
+    protected void convertMatchRuleToJson(Entity entity, MVELToDataWrapperTranslator translator, ObjectMapper mapper,
+                    OfferRule orderRule, String jsonProp, String fieldServiceProp, String fieldService)
+        throws MVELTranslationException, IOException {
+        Entity[] matchCriteria = new Entity[1];
+        Property[] properties = new Property[1];
+        Property mvelProperty = new Property();
+        mvelProperty.setName("matchRule");
+        mvelProperty.setValue(orderRule.getMatchRule());
+        properties[0] = mvelProperty;
+        Entity criteria = new Entity();
+        criteria.setProperties(properties);
+        matchCriteria[0] = criteria;
+
+        DataWrapper orderWrapper = translator.createRuleData(matchCriteria, "matchRule", null,
+                ruleBuilderFieldServiceFactory.createInstance(fieldService));
+        String json = mapper.writeValueAsString(orderWrapper);
+        Property p = new Property();
+        p.setName(jsonProp);
+        p.setValue(json);
+        entity.addProperty(p);
+        Property serviceP = new Property();
+        serviceP.setName(fieldServiceProp);
+        serviceP.setValue(fieldService);
+        entity.addProperty(serviceP);
     }
 
     protected void removeHTMLEncoding(Entity entity) {

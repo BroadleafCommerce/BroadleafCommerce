@@ -23,6 +23,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
@@ -31,6 +32,7 @@ import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -39,7 +41,6 @@ import java.util.Set;
 public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityController {
 
     public static final String ITEM_DISCOUNT_TARGET_FIELD_NAME = "targetItemCriteria";
-    public static final String ITEM_DISCOUNT_TARGET_FIELD_BUILDER = "ORDER_ITEM_FIELDS";
 
     @Override
     public String getSectionCustomCriteria() {
@@ -52,30 +53,39 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
         EntityForm entityForm = (EntityForm) model.asMap().get("entityForm");
         Entity entity = (Entity) model.asMap().get("entity");
 
+        //TODO remove RuleBuilder annotation from OfferImpl and just check entity properties directly
         for (Tab tab : entityForm.getTabs()) {
             Set<RuleBuilder> ruleBuilders = tab.getRuleBuilders();
             for (RuleBuilder builder : ruleBuilders) {
                 if (ITEM_DISCOUNT_TARGET_FIELD_NAME.equals(builder.getFieldName())){
-                    builder.setFieldBuilder(ITEM_DISCOUNT_TARGET_FIELD_BUILDER);
+                    builder.setFieldBuilder(entity.getPMap().get("targetItemCriteriaFieldService").getValue());
                     String json = entity.getPMap().get("targetItemCriteriaJson").getValue();
                     builder.setJson(json);
-
-                    //When using Thymeleaf, we need to convert it back to
-                    //a DataWrapper object because Thymeleaf escapes JSON strings.
-                    //Thymeleaf uses it's own object de-serializer
-                    //see: https://github.com/thymeleaf/thymeleaf/issues/84
-                    //see: http://forum.thymeleaf.org/Spring-Javascript-and-escaped-JSON-td4024739.html
-                    ObjectMapper mapper = new ObjectMapper();
-                    DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
-                    SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
-                    module.addDeserializer(DataDTO.class, dtoDeserializer);
-                    mapper.registerModule(module);
-                    builder.setDataWrapper(mapper.readValue(json, DataWrapper.class));
+                    builder.setDataWrapper(convertJsonToDataWrapper(json));
                 }
             }
         }
 
         return view;
+    }
+
+    /**
+     * When using Thymeleaf, we need to convert the JSON string back to
+     * a DataWrapper object because Thymeleaf escapes JSON strings.
+     * Thymeleaf uses it's own object de-serializer
+     * see: https://github.com/thymeleaf/thymeleaf/issues/84
+     * see: http://forum.thymeleaf.org/Spring-Javascript-and-escaped-JSON-td4024739.html
+     * @param json
+     * @return DataWrapper
+     * @throws IOException
+     */
+    protected DataWrapper convertJsonToDataWrapper(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
+        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
+        module.addDeserializer(DataDTO.class, dtoDeserializer);
+        mapper.registerModule(module);
+        return mapper.readValue(json, DataWrapper.class);
     }
 
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
