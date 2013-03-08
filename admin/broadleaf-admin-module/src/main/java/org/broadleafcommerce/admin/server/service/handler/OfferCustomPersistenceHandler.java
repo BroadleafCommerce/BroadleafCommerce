@@ -186,20 +186,32 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
                     //**** Admin 3.0 ****
                     //Convert the MVEL into JSON and place as a new property on the entity: "appliesToOrderRulesJson"
-                    //Add the RuleBuilderFieldService property on the entity: "appliesToOrderRulesFieldService"
-                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,"appliesToOrderRulesJson",
-                            "appliesToOrderRulesFieldService","ORDER_FIELDS");
+                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,
+                            "appliesToOrderRulesJson","ORDER_FIELDS");
                 }
+                //**** Admin 3.0 ****
+                //Add the RuleBuilderFieldService property on the entity: "appliesToOrderRulesFieldService"
+                Property appliesToOrderRulesFieldService = new Property();
+                appliesToOrderRulesFieldService.setName("appliesToOrderRulesFieldService");
+                appliesToOrderRulesFieldService.setValue("ORDER_FIELDS");
+                entities[j].addProperty(appliesToOrderRulesFieldService);
+
                 OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.CUSTOMER.getType());
                 if (customerRule != null) {
                     entities[j].findProperty("appliesToCustomerRules").setValue(customerRule.getMatchRule());
 
                     //**** Admin 3.0 ****
                     //Convert the MVEL into JSON and place as a new property on the entity: "appliesToCustomerRulesJson"
-                    //Add the RuleBuilderFieldService property on the entity: "appliesToCustomerRulesFieldService"
-                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,"appliesToCustomerRulesJson",
-                            "appliesToCustomerRulesFieldService","CUSTOMER_FIELDS");
+                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,
+                            "appliesToCustomerRulesJson","CUSTOMER_FIELDS");
                 }
+                //**** Admin 3.0 ****
+                //Add the RuleBuilderFieldService property on the entity: "appliesToCustomerRulesFieldService"
+                Property appliesToCustomerRulesFieldService = new Property();
+                appliesToCustomerRulesFieldService.setName("appliesToCustomerRulesFieldService");
+                appliesToCustomerRulesFieldService.setValue("CUSTOMER_FIELDS");
+                entities[j].addProperty(appliesToCustomerRulesFieldService);
+
                 OfferRule fgRule = offer.getOfferMatchRules().get(OfferRuleType.FULFILLMENT_GROUP.getType());
                 if (fgRule != null) {
                     Property prop = new Property();
@@ -210,10 +222,15 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                     //**** Admin 3.0 ****
                     //Convert the MVEL into JSON and place as a new property on the entity:
                     // "appliesToFulfillmentGroupRulesJson"
-                    //Add the RuleBuilderFieldService property on the entity: "appliesToFulfillmentGroupRulesFieldService"
-                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,"appliesToFulfillmentGroupRulesJson",
-                            "appliesToFulfillmentGroupRulesFieldService","FULFILLMENT_GROUP_FIELDS");
+                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,
+                            "appliesToFulfillmentGroupRulesJson","FULFILLMENT_GROUP_FIELDS");
                 }
+                //**** Admin 3.0 ****
+                //Add the RuleBuilderFieldService property on the entity: "appliesToFulfillmentGroupRulesFieldService"
+                Property appliesToFulfillmentGroupRulesFieldService = new Property();
+                appliesToFulfillmentGroupRulesFieldService.setName("appliesToFulfillmentGroupRulesFieldService");
+                appliesToFulfillmentGroupRulesFieldService.setValue("FULFILLMENT_GROUP_FIELDS");
+                entities[j].addProperty(appliesToFulfillmentGroupRulesFieldService);
 
                 //**** Admin 3.0 ****
                 //Convert the MVEL into JSON and place as a new property on the entity: "targetItemCriteriaJson"
@@ -295,7 +312,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     }
 
     protected void convertMatchRuleToJson(Entity entity, MVELToDataWrapperTranslator translator, ObjectMapper mapper,
-                    OfferRule orderRule, String jsonProp, String fieldServiceProp, String fieldService)
+                    OfferRule orderRule, String jsonProp, String fieldService)
         throws MVELTranslationException, IOException {
         Entity[] matchCriteria = new Entity[1];
         Property[] properties = new Property[1];
@@ -314,10 +331,6 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         p.setName(jsonProp);
         p.setValue(json);
         entity.addProperty(p);
-        Property serviceP = new Property();
-        serviceP.setName(fieldServiceProp);
-        serviceP.setValue(fieldService);
-        entity.addProperty(serviceP);
     }
 
     protected void removeHTMLEncoding(Entity entity) {

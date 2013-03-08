@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -38,21 +39,17 @@ import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
-import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -212,13 +209,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return listGrid;
     }
 
-    @Override
-    public RuleBuilder buildRuleBuilder(String fieldName, String friendlyName, Entity[] entities) {
-        RuleBuilder rb = new RuleBuilder();
-        rb.setFieldName(fieldName);
-        rb.setFriendlyName(friendlyName);
-        return rb;
-    }
+
 
     protected void setEntityFormFields(EntityForm ef, List<Property> properties) {
         for (Property property : properties) {
@@ -313,30 +304,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             Entity[] subCollectionEntities = collectionRecords.get(p.getName());
-
-            if (p.getMetadata() instanceof BasicCollectionMetadata) {
-                BasicCollectionMetadata fmd = (BasicCollectionMetadata) p.getMetadata();
-
-                if (fmd.isRuleBuilder()) {
-                    RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(p.getName(), fmd.getFriendlyName(),
-                            subCollectionEntities);
-                    ef.addRuleBuilder(subCollectionRuleBuilder, null, null);
-                    continue;
-                }
-
-            }
-
-            if (p.getMetadata() instanceof MapMetadata) {
-                MapMetadata fmd = (MapMetadata) p.getMetadata();
-
-                if (fmd.isRuleBuilder()) {
-                    RuleBuilder subCollectionRuleBuilder = buildRuleBuilder(p.getName(), fmd.getFriendlyName(),
-                            subCollectionEntities);
-                    ef.addRuleBuilder(subCollectionRuleBuilder, null, null);
-                    continue;
-                }
-            }
-
             String containingEntityId = entity.getPMap().get("id").getValue();
             ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p);
             listGrid.setListGridType(ListGrid.Type.INLINE);

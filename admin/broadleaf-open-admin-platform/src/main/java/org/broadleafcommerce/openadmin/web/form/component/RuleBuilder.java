@@ -26,8 +26,10 @@ public class RuleBuilder {
     protected String fieldName;
     protected String friendlyName;
     protected String fieldBuilder;
+    protected String styleClass;
     protected DataWrapper dataWrapper;
     protected String json;
+    protected String jsonFieldName;
 
     public String getFieldName() {
         return fieldName;
@@ -53,6 +55,14 @@ public class RuleBuilder {
         this.fieldBuilder = fieldBuilder;
     }
 
+    public String getStyleClass() {
+        return styleClass;
+    }
+
+    public void setStyleClass(String styleClass) {
+        this.styleClass = styleClass;
+    }
+
     public DataWrapper getDataWrapper() {
         return dataWrapper;
     }
@@ -67,5 +77,13 @@ public class RuleBuilder {
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public String getJsonFieldName() {
+        return jsonFieldName;
+    }
+
+    public void setJsonFieldName(String jsonFieldName) {
+        this.jsonFieldName = jsonFieldName;
     }
 }

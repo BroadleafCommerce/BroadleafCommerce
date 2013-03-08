@@ -40,8 +40,6 @@ import java.util.Set;
  */
 public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityController {
 
-    public static final String ITEM_DISCOUNT_TARGET_FIELD_NAME = "targetItemCriteria";
-
     @Override
     public String getSectionCustomCriteria() {
         return "Offer";
@@ -53,20 +51,42 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
         EntityForm entityForm = (EntityForm) model.asMap().get("entityForm");
         Entity entity = (Entity) model.asMap().get("entity");
 
-        //TODO remove RuleBuilder annotation from OfferImpl and just check entity properties directly
-        for (Tab tab : entityForm.getTabs()) {
-            Set<RuleBuilder> ruleBuilders = tab.getRuleBuilders();
-            for (RuleBuilder builder : ruleBuilders) {
-                if (ITEM_DISCOUNT_TARGET_FIELD_NAME.equals(builder.getFieldName())){
-                    builder.setFieldBuilder(entity.getPMap().get("targetItemCriteriaFieldService").getValue());
-                    String json = entity.getPMap().get("targetItemCriteriaJson").getValue();
-                    builder.setJson(json);
-                    builder.setDataWrapper(convertJsonToDataWrapper(json));
-                }
-            }
-        }
+        //TODO support i18N
+        constructRuleBuilder(entityForm, entity, "appliesToOrderRules","Order Qualification",
+                "rule-builder-simple","appliesToOrderRulesFieldService","appliesToOrderRulesJson");
+
+        constructRuleBuilder(entityForm, entity, "appliesToCustomerRules","Customer Qualification",
+                "rule-builder-simple","appliesToCustomerRulesFieldService","appliesToCustomerRulesJson");
+
+        constructRuleBuilder(entityForm, entity, "appliesToFulfillmentGroupRules","Fulfillment Group Qualification",
+                "rule-builder-simple","appliesToFulfillmentGroupRulesFieldService","appliesToFulfillmentGroupRulesJson");
+
+        constructRuleBuilder(entityForm, entity, "qualifyingItemCriteria","Qualifying Item Criteria",
+                "rule-builder-complex","qualifyingItemCriteriaFieldService","qualifyingItemCriteriaJson");
+
+        constructRuleBuilder(entityForm, entity, "targetItemCriteria","Target Item Criteria",
+                "rule-builder-complex","targetItemCriteriaFieldService","targetItemCriteriaJson");
 
         return view;
+    }
+
+    protected void constructRuleBuilder(EntityForm entityForm, Entity entity,
+                                        String fieldName, String friendlyName, String styleClass,
+                                        String fieldService, String fieldJson) throws IOException {
+        RuleBuilder ruleBuilder = new RuleBuilder();
+        ruleBuilder.setFieldName(fieldName);
+        ruleBuilder.setFriendlyName(friendlyName);
+        ruleBuilder.setStyleClass(styleClass);
+        ruleBuilder.setFieldBuilder(entity.getPMap().get(fieldService).getValue());
+        ruleBuilder.setJsonFieldName(fieldJson);
+        ruleBuilder.setDataWrapper(new DataWrapper());
+        if (entity.getPMap().get(fieldJson) != null) {
+            String json = entity.getPMap().get(fieldJson).getValue();
+            ruleBuilder.setJson(json);
+            DataWrapper dw = (convertJsonToDataWrapper(json) != null)? convertJsonToDataWrapper(json) : new DataWrapper();
+            ruleBuilder.setDataWrapper(dw);
+        }
+        entityForm.addRuleBuilder(ruleBuilder, null, null);
     }
 
     /**

@@ -210,12 +210,4 @@ public @interface AdminPresentationCollection {
      */
     String currencyCodeField() default "";
 
-    /**
-     * Optional - This tag informs the Form Builder whether to render
-     * this collection as a Rule Builder
-     *
-     * @return whether or not this collection should be rendered as a rule builder
-     */
-    boolean ruleBuilder() default false;
-
 }
