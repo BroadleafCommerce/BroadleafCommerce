@@ -41,12 +41,9 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -99,8 +96,6 @@ import java.util.Map;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
-@FilterDef(name="catalogFilter", parameters=@ParamDef(name="catalogId", type="long"))
-@Filters(@Filter(name="catalogFilter", condition="CATALOG_DISC IN (:catalogId)"))
 public class ProductImpl implements Product, Status {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
