@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -28,7 +29,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Currency;
 import java.util.Map;
 
@@ -69,6 +69,7 @@ public class BroadleafRequestContext {
     protected Theme theme;
     protected java.util.Locale javaLocale;
     protected Currency javaCurrency;
+    protected Catalog currentCatalog;
 
     /**
      * Gets the current request on the context
@@ -255,6 +256,14 @@ public class BroadleafRequestContext {
 
     public void setBroadleafCurrency(BroadleafCurrency broadleafCurrency) {
         this.broadleafCurrency = broadleafCurrency;
+    }
+
+    public Catalog getCurrentCatalog() {
+        return currentCatalog;
+    }
+
+    public void setCurrentCatalog(Catalog currentCatalog) {
+        this.currentCatalog = currentCatalog;
     }
 
     @SuppressWarnings("unchecked")

@@ -45,6 +45,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

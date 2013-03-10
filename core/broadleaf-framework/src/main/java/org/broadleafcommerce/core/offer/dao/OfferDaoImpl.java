@@ -107,7 +107,7 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     public List<Offer> readOffersByAutomaticDeliveryType() {
-        em.flush();
+        //em.flush();
         Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
         query.setParameter("specifiedDate", SystemTime.asDate());
         List<Offer> result = query.getResultList();

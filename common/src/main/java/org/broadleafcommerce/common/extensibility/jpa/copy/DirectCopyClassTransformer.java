@@ -23,6 +23,7 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
 import org.broadleafcommerce.common.logging.SupportLogManager;
@@ -68,147 +69,100 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
         
         if (xformTemplates.containsKey(convertedClassName)) {
             String xformKey = convertedClassName;
-            String xformVal = xformTemplates.get(xformKey);
-            logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying into [%s] from [%s]", xformKey, xformVal));
+            String[] xformVals = xformTemplates.get(xformKey).split(",");
+            logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying into [%s] from [%s]", xformKey,
+                    StringUtils.join(xformVals, ",")));
             
             try {
                 // Load the destination class and defrost it so it is eligible for modifications
                 ClassPool classPool = ClassPool.getDefault();
                 CtClass clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                 clazz.defrost();
-                
-                // Load the source class
-                classPool.appendClassPath(new LoaderClassPath(Class.forName(xformVal).getClassLoader()));
-                CtClass template = classPool.get(xformVal);
-                
-                // Add in extra interfaces
-                CtClass[] interfacesToCopy = template.getInterfaces();
-                for (CtClass i : interfacesToCopy) {
-                    logger.debug(String.format("Adding interface [%s]", i.getName()));
-                    clazz.addInterface(i);
-                }
 
-                /*// Add extra class level annotations
-                ClassFile templateFile = template.getClassFile();
-                ConstPool templateConstantPool = templateFile.getConstPool();
-                ClassPool pool = ClassPool.getDefault();
-                AnnotationsAttribute templateAnnotationsAttribute = new AnnotationsAttribute(templateConstantPool, AnnotationsAttribute.visibleTag);
-                List<?> templateAttributes = templateFile.getAttributes();
-                for (Object object : templateAttributes) {
-                    if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
-                        AnnotationsAttribute attr = (AnnotationsAttribute) object;
-                        Annotation[] items = attr.getAnnotations();
-                        for (Annotation legacyAnnotation : items) {
-                            templateAnnotationsAttribute.addAnnotation(legacyAnnotation);
-                        }
+                for (String xformVal : xformVals) {
+                    // Load the source class
+                    String trimmed = xformVal.trim();
+                    classPool.appendClassPath(new LoaderClassPath(Class.forName(trimmed).getClassLoader()));
+                    CtClass template = classPool.get(trimmed);
+
+                    // Add in extra interfaces
+                    CtClass[] interfacesToCopy = template.getInterfaces();
+                    for (CtClass i : interfacesToCopy) {
+                        logger.debug(String.format("Adding interface [%s]", i.getName()));
+                        clazz.addInterface(i);
                     }
-                }
-                Annotation[] annotationsToCopy = templateAnnotationsAttribute.getAnnotations();
-                if (!ArrayUtils.isEmpty(annotationsToCopy)) {
-                    ClassFile classFile = clazz.getClassFile();
-                    ConstPool constantPool = classFile.getConstPool();
-                    AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
-                    List<?> attributes = classFile.getAttributes();
-                    Iterator<?> itr = attributes.iterator();
-                    while(itr.hasNext()) {
-                        Object object = itr.next();
-                        if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
-                            AnnotationsAttribute attr = (AnnotationsAttribute) object;
-                            Annotation[] items = attr.getAnnotations();
-                            for (Annotation legacyAnnotation : items) {
-                                annotationsAttribute.addAnnotation(legacyAnnotation);
-                            }
-                            itr.remove();
-                        }
-                    }
-                    Annotation[] legacyAnnotations = annotationsAttribute.getAnnotations();
-                    for (Object copyVal : annotationsToCopy) {
-                        Annotation annotation = (Annotation) copyVal;
-                        boolean isFound = false;
-                        for (Annotation legacyAnnotation : legacyAnnotations) {
-                            if (legacyAnnotation.getTypeName().equals(annotation.getTypeName())) {
-                                isFound = true;
-                                break;
-                            }
-                        }
-                        if (!isFound) {
-                            logger.debug(String.format("Adding annotation [%s]", annotation.getTypeName()));
-                            pool.importPackage(annotation.getTypeName());
-                            annotationsAttribute.addAnnotation(annotation);
-                        }
-                    }
-                    classFile.addAttribute(annotationsAttribute);
-                }*/
-                
-                // Copy over all declared fields from the template class
-                // Note that we do not copy over fields with the @NonCopiedField annotation
-                CtField[] fieldsToCopy = template.getDeclaredFields();
-                for (CtField field : fieldsToCopy) {
-                    if (field.hasAnnotation(NonCopied.class)) {
-                        logger.debug(String.format("Not adding field [%s]", field.getName()));
-                    } else {
-                        logger.debug(String.format("Adding field [%s]", field.getName()));
-                        CtField copiedField = new CtField(field, clazz);
 
-                        boolean defaultConstructorFound = false;
+                    // Copy over all declared fields from the template class
+                    // Note that we do not copy over fields with the @NonCopiedField annotation
+                    CtField[] fieldsToCopy = template.getDeclaredFields();
+                    for (CtField field : fieldsToCopy) {
+                        if (field.hasAnnotation(NonCopied.class)) {
+                            logger.debug(String.format("Not adding field [%s]", field.getName()));
+                        } else {
+                            logger.debug(String.format("Adding field [%s]", field.getName()));
+                            CtField copiedField = new CtField(field, clazz);
 
-                        String implClass = getImplementationType(field.getType().getName());
+                            boolean defaultConstructorFound = false;
 
-                        // Look through all of the constructors in the implClass to see 
-                        // if there is one that takes zero parameters
-                        try {
-                            CtConstructor[] implConstructors = classPool.get(implClass).getConstructors();
-                            if (implConstructors != null) {
-                                for (CtConstructor cons : implConstructors) {
-                                    if (cons.getParameterTypes().length == 0) {
-                                        defaultConstructorFound = true;
-                                        break;
+                            String implClass = getImplementationType(field.getType().getName());
+
+                            // Look through all of the constructors in the implClass to see
+                            // if there is one that takes zero parameters
+                            try {
+                                CtConstructor[] implConstructors = classPool.get(implClass).getConstructors();
+                                if (implConstructors != null) {
+                                    for (CtConstructor cons : implConstructors) {
+                                        if (cons.getParameterTypes().length == 0) {
+                                            defaultConstructorFound = true;
+                                            break;
+                                        }
                                     }
                                 }
+                            } catch (NotFoundException e) {
+                                // Do nothing -- if we don't find this implementation, it's probably because it's
+                                // an array. In this case, we will not initialize the field.
                             }
-                        } catch (NotFoundException e) {
-                            // Do nothing -- if we don't find this implementation, it's probably because it's
-                            // an array. In this case, we will not initialize the field.
-                        }
 
-                        if (defaultConstructorFound) {
-                            clazz.addField(copiedField, "new " + implClass + "()");
-                        } else {
-                            clazz.addField(copiedField);
-                        }
-                    }
-                }
-                
-                // Copy over all declared methods from the template class
-                CtMethod[] methodsToCopy = template.getDeclaredMethods();
-                for (CtMethod method : methodsToCopy) {
-                    if (method.hasAnnotation(NonCopied.class)) {
-                        logger.debug(String.format("Not adding method [%s]", method.getName()));
-                    } else {
-                        try {
-                            CtClass[] paramTypes = method.getParameterTypes();
-                            CtMethod originalMethod = clazz.getDeclaredMethod(method.getName(), paramTypes);
-                            
-                            if (transformedMethods.contains(methodDescription(originalMethod))) {
-                                throw new RuntimeException("Method already replaced " + methodDescription(originalMethod));
+                            if (defaultConstructorFound) {
+                                clazz.addField(copiedField, "new " + implClass + "()");
                             } else {
-                                logger.debug(String.format("Marking as replaced [%s]", methodDescription(originalMethod)));
-                                transformedMethods.add(methodDescription(originalMethod));
+                                clazz.addField(copiedField);
                             }
-                            
-                            logger.debug(String.format("Removing method [%s]", method.getName()));
-                            clazz.removeMethod(originalMethod);
-                        } catch (NotFoundException e) {
-                            // Do nothing -- we don't need to remove a method because it doesn't exist
                         }
-                        
-                        logger.debug(String.format("Adding method [%s]", method.getName()));
-                        CtMethod copiedMethod = new CtMethod(method, clazz, null);
-                        clazz.addMethod(copiedMethod);
+                    }
+
+                    // Copy over all declared methods from the template class
+                    CtMethod[] methodsToCopy = template.getDeclaredMethods();
+                    for (CtMethod method : methodsToCopy) {
+                        if (method.hasAnnotation(NonCopied.class)) {
+                            logger.debug(String.format("Not adding method [%s]", method.getName()));
+                        } else {
+                            try {
+                                CtClass[] paramTypes = method.getParameterTypes();
+                                CtMethod originalMethod = clazz.getDeclaredMethod(method.getName(), paramTypes);
+
+                                if (transformedMethods.contains(methodDescription(originalMethod))) {
+                                    throw new RuntimeException("Method already replaced " + methodDescription(originalMethod));
+                                } else {
+                                    logger.debug(String.format("Marking as replaced [%s]", methodDescription(originalMethod)));
+                                    transformedMethods.add(methodDescription(originalMethod));
+                                }
+
+                                logger.debug(String.format("Removing method [%s]", method.getName()));
+                                clazz.removeMethod(originalMethod);
+                            } catch (NotFoundException e) {
+                                // Do nothing -- we don't need to remove a method because it doesn't exist
+                            }
+
+                            logger.debug(String.format("Adding method [%s]", method.getName()));
+                            CtMethod copiedMethod = new CtMethod(method, clazz, null);
+                            clazz.addMethod(copiedMethod);
+                        }
                     }
                 }
                 
-                logger.debug(String.format("END - Transform - Copying into [%s] from [%s]", xformKey, xformVal));
+                logger.lifecycle(LifeCycleEvent.END, String.format("Transform - Copying into [%s] from [%s]", xformKey,
+                                    StringUtils.join(xformVals, ",")));
                 return clazz.toBytecode();
             } catch (Exception e) {
                 throw new RuntimeException("Unable to transform class", e);
