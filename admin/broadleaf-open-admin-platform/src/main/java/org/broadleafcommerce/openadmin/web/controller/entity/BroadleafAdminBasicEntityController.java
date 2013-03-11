@@ -43,6 +43,7 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
@@ -135,7 +136,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         if (StringUtils.isBlank(entityType)) {
             List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
             model.addAttribute("entityTypes", entityTypes);
-            model.addAttribute("viewType", "entityTypeSelection");
+            model.addAttribute("viewType", "modal/entityTypeSelection");
         } else {
             ClassMetadata specificTypeMd = service.getClassMetadata(getSectionPersistencePackageRequest(entityType));
             EntityForm entityForm = formService.buildEntityForm(specificTypeMd);
@@ -146,7 +147,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             formService.removeNonApplicableFields(cmd, entityForm, entityType);
 
             model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "entityAdd");
+            model.addAttribute("viewType", "modal/entityAdd");
         }
 
         //Entity entity = service.getRecord(sectionClassName, id);
@@ -181,8 +182,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             return "modules/defaultContainer";
         }
         */
-
-        return "redirect:/" + sectionKey + "/" + entity.getPMap().get("id").getValue();
+        
+        
+        
+        return "ajaxredirect:/" + sectionKey + "/" + entity.getPMap().get("id").getValue();
     }
 
     /**
@@ -236,7 +239,8 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
             String id,
-            EntityForm entityForm, BindingResult result) throws Exception {
+            EntityForm entityForm, BindingResult result, 
+            RedirectAttributes ra) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
@@ -259,6 +263,8 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             return "modules/defaultContainer";
         }
 
+        ra.addFlashAttribute("headerFlash", "save.successful");
+        
         return "redirect:/" + sectionKey + "/" + id;
     }
 

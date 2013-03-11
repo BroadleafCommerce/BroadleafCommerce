@@ -9,5 +9,16 @@ $(document).ready(function() {
     	BLCAdmin.modalNavigateTo($(this).attr('href'));
     	return false;
     });
+    
+	$('body').on('submit', 'form.modal-add-entity-form', function(event) {
+		BLC.ajax({
+			url: this.action,
+			type: "POST",
+			data: $(this).serialize()
+		}, function(data) {
+			// Handle error scenario
+	    });
+		return false;
+	});
 	
 });

@@ -19,21 +19,20 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Set;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -119,8 +118,9 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
     }
 
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id, EntityForm entityForm, BindingResult result) throws Exception {
-        return super.saveEntity(request, response, model, "offer", id, entityForm, result);
+            String id, EntityForm entityForm, BindingResult result,
+            RedirectAttributes ra) throws Exception {
+        return super.saveEntity(request, response, model, "offer", id, entityForm, result, ra);
     }
 
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,

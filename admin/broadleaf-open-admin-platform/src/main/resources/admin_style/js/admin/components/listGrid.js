@@ -141,7 +141,11 @@ $(document).ready(function() {
 	});
 	
 	$('body').on('submit', 'form.modal-form', function(event) {
-		$.post(this.action, $(this).serialize(), function(data) {
+		BLC.ajax({
+			url: this.action,
+			type: "POST",
+			data: $(this).serialize()
+		}, function(data) {
 			replaceListGrid(data);
 	    });
 		return false;
