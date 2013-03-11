@@ -41,8 +41,8 @@ import java.util.Set;
 public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityController {
 
     @Override
-    public String getSectionCustomCriteria() {
-        return "Offer";
+    public String[] getSectionCustomCriteria() {
+        return new String[]{"Offer"};
     }
 
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,

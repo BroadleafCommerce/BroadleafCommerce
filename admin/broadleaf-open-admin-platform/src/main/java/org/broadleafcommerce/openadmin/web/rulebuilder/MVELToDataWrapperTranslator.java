@@ -44,7 +44,7 @@ public class MVELToDataWrapperTranslator {
     protected GroupingTranslator groupingTranslator = new GroupingTranslator();
     protected PhraseTranslator phraseTranslator = new PhraseTranslator();
 
-    public DataWrapper createRuleData(Entity[] entities, String mvelProperty, String quantityProperty,
+    public DataWrapper createRuleData(Entity[] entities, String mvelProperty, String quantityProperty, String idProperty,
             RuleBuilderFieldService fieldService) throws MVELTranslationException {
         if (entities == null || entities.length == 0 || mvelProperty == null) {
             return null;
@@ -55,6 +55,7 @@ public class MVELToDataWrapperTranslator {
         for (Entity e : entities) {
             String mvel = null;
             Integer qty = null;
+            Long id = null;
             for (Property p : e.getProperties()) {
                 if (mvelProperty.equals(p.getName())){
                     mvel = p.getValue();
@@ -63,12 +64,17 @@ public class MVELToDataWrapperTranslator {
                 if (quantityProperty !=null && quantityProperty.equals(p.getName())){
                     qty = Integer.parseInt(p.getValue());
                 }
+
+                if (idProperty != null && idProperty.equals(p.getName())) {
+                    id = Long.parseLong(p.getValue());
+                }
             }
 
             if (mvel != null) {
                 Group group = groupingTranslator.createGroups(mvel);
                 DataDTO dataDTO = createRuleDataDTO(null, group, fieldService);
                 if (dataDTO != null) {
+                    dataDTO.setId(id);
                     dataDTO.setQuantity(qty);
                     dataWrapper.getData().add(dataDTO);
                 }

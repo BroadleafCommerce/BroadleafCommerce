@@ -51,10 +51,12 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *
      * Here's an example of a DataWrapper with a single DataDTO
      *
-     * [{"quantity":"1",
+     * [{"id":"100",
+     *  "quantity":"1",
      *  "groupOperator":"AND",
      *  "groups":[
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"category.name",
@@ -78,16 +80,19 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      * Tests the creation of a Customer Qualification MVEL expression from a DataDTO
      * @throws MVELTranslationException
      *
-     * [{"quantity":null,
+     * [{"id":null,
+     *  "quantity":null,
      *  "groupOperator":"AND",
      *  "groups":[
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"emailAddress",
      *      "operator":"NOT_EQUAL_FIELD",
      *      "value":"username"},
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"deactivated",
@@ -122,25 +127,30 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      * Tests the creation of an Order Qualification MVEL expression from a DataDTO
      * @throws MVELTranslationException
      *
-     * [{"quantity":null,
+     * [{"id":null,
+     *  "quantity":null,
      *  "groupOperator":"AND",
      *  "groups":[
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"subTotal",
      *      "operator":"GREATER_OR_EQUAL",
      *      "value":"100"},
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":"OR",
      *      "groups":[
-     *          {"quantity":null,
+     *          {"id":null,
+     *          "quantity":null,
      *          "groupOperator":null,
      *          "groups":null,
      *          "name":"currency.defaultFlag",
      *          "operator":"EQUALS",
      *          "value":"true"},
-     *          {"quantity":null,
+     *          {"id":null,
+     *          "quantity":null,
      *          "groupOperator":"null",
      *          "groups":null,
      *          "name":"locale.localeCode",
@@ -187,10 +197,12 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      * Tests the creation of an Item Qualification MVEL expression from a DataDTO
      * @throws MVELTranslationException
      *
-     * [{"quantity":1,
+     * [{"id":100,
+     *  "quantity":1,
      *  "groupOperator":"AND",
      *  "groups":[
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"category.name",
@@ -198,16 +210,19 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "value":"test category"
      *      }]
      *  },
-     *  {"quantity":2,
+     *  {"id":"200",
+     *  "quantity":2,
      *  "groupOperator":"NOT",
      *  "groups":[
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"product.manufacturer",
      *      "operator":"EQUALS",
      *      "value":"test manufacturer"},
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"product.model",
@@ -256,16 +271,19 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      * Tests the creation of a Fulfillment Group Qualification MVEL expression from a DataDTO
      * @throws MVELTranslationException
      *
-     * [{"quantity":null,
+     * [{"id":null,
+     *  "quantity":null,
      *  "groupOperator":"AND",
      *  "groups":[
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"address.state.name",
      *      "operator":"EQUALS",
      *      "value":"Texas"},
-     *      {"quantity":null,
+     *      {"id":null,
+     *      "quantity":null,
      *      "groupOperator":null,
      *      "groups":null,
      *      "name":"retailShippingPrice",

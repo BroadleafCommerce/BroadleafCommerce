@@ -70,33 +70,35 @@ public interface AdminEntityService {
      * Persists the given entity
      * 
      * @param entityForm
+     * @param customCriteria
      * @return the persisted Entity
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity addEntity(EntityForm entityForm)
+    public Entity addEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException, ApplicationSecurityException;
 
     /**
      * Updates the given entity
      * 
      * @param entityForm
-     * @param className
+     * @param customCriteria
      * @return the persisted Entity
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity updateEntity(EntityForm entityForm)
+    public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException, ApplicationSecurityException;
 
     /**
      * Removes the given entity
      * 
      * @param entityForm
+     * @param customCriteria
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public void removeEntity(EntityForm entityForm)
+    public void removeEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException, ApplicationSecurityException;
 
     /**

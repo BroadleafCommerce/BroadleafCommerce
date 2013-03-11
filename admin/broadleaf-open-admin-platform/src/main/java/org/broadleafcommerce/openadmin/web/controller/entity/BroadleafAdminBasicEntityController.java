@@ -163,7 +163,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             EntityForm entityForm, BindingResult result) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        Entity entity = service.addEntity(entityForm);
+        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
         entityValidator.validate(entityForm, entity, result);
 
         /*
@@ -241,7 +241,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
 
-        Entity entity = service.updateEntity(entityForm);
+        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
         entityValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
@@ -252,6 +252,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
             formService.copyEntityFormValues(newForm, entityForm);
 
+            model.addAttribute("entity", entity);
             model.addAttribute("entityForm", newForm);
             model.addAttribute("viewType", "entityEdit");
             setModelAttributes(model, sectionKey);
@@ -276,7 +277,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             String sectionKey,
             String id,
             EntityForm entityForm, BindingResult result) throws Exception {
-        service.removeEntity(entityForm);
+        service.removeEntity(entityForm, getSectionCustomCriteria());
 
         return "redirect:/" + sectionKey;
     }
@@ -643,11 +644,11 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName) {
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withClassName(sectionClassName)
-                .addCustomCriteria(getSectionCustomCriteria());
+                .withCustomCriteria(getSectionCustomCriteria());
         return ppr;
     }
 
-    protected String getSectionCustomCriteria() {
+    protected String[] getSectionCustomCriteria() {
         return null;
     }
 

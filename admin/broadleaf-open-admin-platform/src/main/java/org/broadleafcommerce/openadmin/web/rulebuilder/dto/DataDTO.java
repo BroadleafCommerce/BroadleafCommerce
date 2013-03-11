@@ -26,11 +26,21 @@ public class DataDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    protected Long id;
+
     protected Integer quantity;
 
     protected String groupOperator;
 
     protected ArrayList<DataDTO> groups = new ArrayList<DataDTO>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Integer getQuantity() {
         return quantity;

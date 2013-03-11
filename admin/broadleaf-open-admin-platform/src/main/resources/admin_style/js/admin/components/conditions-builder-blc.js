@@ -72,7 +72,8 @@
 
         collectDataFromNode: function(element) {
             var klass = null;
-            var qty = null
+            var id = null;
+            var qty = null;
             var _this = this;
             if(element.is(".conditional")) {
                 klass = element.find("> .all-any-none-wrapper > .all-any-none").val();
@@ -80,6 +81,7 @@
                 if ("any" == klass) {klass = "OR";}
                 if ("none" == klass) {klass = "NOT";}
                 qty = element.find("> .all-any-none-wrapper > .conditional-qty").val();
+                id = element.find("> .all-any-none-wrapper > .conditional-id").val();
             }
 
             if(klass) {
@@ -88,6 +90,11 @@
                     out.quantity = qty;
                 } else {
                     out.quantity = null;
+                }
+                if (id) {
+                    out.id = id;
+                } else {
+                    out.id = null;
                 }
                 out.groupOperator = klass;
                 out.groups = [];
@@ -98,6 +105,7 @@
             }
             else {
                 return {
+                    id:null,
                     quantity:null,
                     groupOperator:null,
                     groups:null,
@@ -113,7 +121,7 @@
         buildAddNewRule: function(rules) {
             var _this = this;
             var f = _this.fields[0];
-            var newField = {quantity:null, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
+            var newField = {id:null, quantity:null, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
             var newFieldArray = [];
             newFieldArray.push(newField);
             rules.append(_this.buildConditional(newFieldArray));
@@ -122,7 +130,7 @@
         buildAddNewItemRule: function(rules) {
             var _this = this;
             var f = _this.fields[0];
-            var newField = {quantity:1, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
+            var newField = {id:null, quantity:1, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
             var newFieldArray = [];
             newFieldArray.push(newField);
             rules.append(_this.buildConditional(newFieldArray));
@@ -152,6 +160,12 @@
                     var quantity = $("<input>", {"class": "conditional-qty", "type": "text", "value": qty});
                     selectWrapper.append(quantity);
                     selectWrapper.append($("<span>", {text: "of", "class": "conditional-spacer"}));
+                }
+
+                var id = ruleData.id;
+                if (id != null) {
+                    var idHidden = $("<input>", {"class": "conditional-id", "type": "hidden", "value": id});
+                    selectWrapper.append(idHidden);
                 }
 
                 var select = $("<select>", {"class": "all-any-none no-custom"});

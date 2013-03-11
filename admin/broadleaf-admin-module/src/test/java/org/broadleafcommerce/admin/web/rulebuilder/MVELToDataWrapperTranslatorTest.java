@@ -56,21 +56,25 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
     public void testCreateRuleData() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
-        Property[] properties = new Property[2];
+        Property[] properties = new Property[3];
         Property mvelProperty = new Property();
         mvelProperty.setName("orderItemMatchRule");
         mvelProperty.setValue("MVEL.eval(\"toUpperCase()\",discreteOrderItem.category.name)==MVEL.eval(\"toUpperCase()\",\"merchandise\")");
         Property quantityProperty = new Property();
         quantityProperty.setName("quantity");
         quantityProperty.setValue("1");
+        Property idProperty = new Property();
+        idProperty.setName("id");
+        idProperty.setValue("100");
         properties[0] = mvelProperty;
         properties[1] = quantityProperty;
+        properties[2] = idProperty;
         Entity[] entities = new Entity[1];
         Entity entity = new Entity();
         entity.setProperties(properties);
         entities[0] = entity;
 
-        DataWrapper dataWrapper = translator.createRuleData(entities, "orderItemMatchRule", "quantity", orderItemFieldService);
+        DataWrapper dataWrapper = translator.createRuleData(entities, "orderItemMatchRule", "quantity", "id", orderItemFieldService);
         assert(dataWrapper.getData().size() == 1);
         assert(dataWrapper.getData().get(0).getQuantity() == 1);
         assert(dataWrapper.getData().get(0).getGroups().size()==1);
@@ -94,7 +98,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         entity.setProperties(properties);
         entities[0] = entity;
 
-        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, customerFieldService);
+        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, null, customerFieldService);
         assert(dataWrapper.getData().size() == 1);
         assert(dataWrapper.getData().get(0).getQuantity() == null);
         assert(dataWrapper.getData().get(0).getGroupOperator().equals(BLCOperator.AND.name()));
@@ -127,7 +131,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         entity.setProperties(properties);
         entities[0] = entity;
 
-        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, orderFieldService);
+        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, null, orderFieldService);
         assert(dataWrapper.getData().size() == 1);
         assert(dataWrapper.getData().get(0).getQuantity() == null);
         assert(dataWrapper.getData().get(0).getGroupOperator().equals(BLCOperator.AND.name()));
@@ -158,27 +162,35 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
     public void testItemQualificationDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
-        Property[] p1 = new Property[2];
+        Property[] p1 = new Property[3];
         Property m1 = new Property();
         m1.setName("orderItemMatchRule");
         m1.setValue("discreteOrderItem.category.name==\"test category\"");
         Property q1 = new Property();
         q1.setName("quantity");
         q1.setValue("1");
+        Property i1 = new Property();
+        i1.setName("id");
+        i1.setValue("100");
         p1[0] = m1;
         p1[1] = q1;
+        p1[2] = i1;
         Entity e1 = new Entity();
         e1.setProperties(p1);
 
-        Property[] p2 = new Property[2];
+        Property[] p2 = new Property[3];
         Property m2 = new Property();
         m2.setName("orderItemMatchRule");
         m2.setValue("!(discreteOrderItem.product.manufacturer==\"test manufacturer\"&&discreteOrderItem.product.model==\"test model\")");
         Property q2 = new Property();
         q2.setName("quantity");
         q2.setValue("2");
+        Property i2 = new Property();
+        i2.setName("id");
+        i2.setValue("200");
         p2[0] = m2;
         p2[1] = q2;
+        p2[2] = i2;
         Entity e2 = new Entity();
         e2.setProperties(p2);
 
@@ -186,7 +198,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         entities[0] = e1;
         entities[1] = e2;
 
-        DataWrapper dataWrapper = translator.createRuleData(entities, "orderItemMatchRule", "quantity", orderItemFieldService);
+        DataWrapper dataWrapper = translator.createRuleData(entities, "orderItemMatchRule", "quantity", "id", orderItemFieldService);
         assert(dataWrapper.getData().size() == 2);
 
         assert(dataWrapper.getData().get(0).getQuantity() == 1);
@@ -228,7 +240,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         entity.setProperties(properties);
         entities[0] = entity;
 
-        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, fulfillmentGroupFieldService);
+        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, null, fulfillmentGroupFieldService);
         assert(dataWrapper.getData().size() == 1);
         assert(dataWrapper.getData().get(0).getQuantity() == null);
         assert(dataWrapper.getData().get(0).getGroupOperator().equals(BLCOperator.AND.name()));

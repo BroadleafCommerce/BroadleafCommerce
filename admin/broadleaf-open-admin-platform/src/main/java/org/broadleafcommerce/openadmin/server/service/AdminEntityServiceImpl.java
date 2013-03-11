@@ -89,27 +89,27 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity addEntity(EntityForm entityForm)
+    public Entity addEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm);
+        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         return add(ppr);
     }
 
     @Override
-    public Entity updateEntity(EntityForm entityForm)
+    public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm);
+        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         return update(ppr);
     }
 
     @Override
-    public void removeEntity(EntityForm entityForm)
+    public void removeEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm);
+        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         remove(ppr);
     }
 
-    protected PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm) {
+    protected PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria) {
         // Build the property array from the field map
         Property[] properties = new Property[entityForm.getFields().size()];
         int i = 0;
@@ -126,6 +126,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withEntity(entity)
+                .withCustomCriteria(customCriteria)
                 .withClassName(entityForm.getEntityType());
 
         return ppr;
