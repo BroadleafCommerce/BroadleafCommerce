@@ -107,7 +107,7 @@ public class ClassTree implements IsSerializable, Serializable {
     }
 
     public String getFriendlyName() {
-        return friendlyName;
+        return friendlyName == null ? name : friendlyName;
     }
 
     public void setFriendlyName(String friendlyName) {
