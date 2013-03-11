@@ -1,0 +1,9 @@
+<div class="row">
+    <div class="twelve columns">
+        <h2>@AdminPresentationMainName</h2>
+    </div>
+</div>
+
+<form th:include="components/entityForm"
+    th:remove="tag"
+    th:with="deleteButton='true'" />

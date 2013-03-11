@@ -1,0 +1,23 @@
+<section id="sidebar" role="complementary">
+    <nav id="sideMenu" role="navigation">
+
+        <blc_admin:admin_module resultVar="modules22" />
+        
+        <ul class="blc-accordion">
+            <li class="blc-module" th:each="module : ${modules22}" th:inline="text">
+                <div class="title">
+                    <h5>[[#{${module.moduleKey}}]]</h5>
+                </div>
+                <div class="content">
+                    <ul>
+                        <li th:each="section : ${module.sections}" th:classappend="${currentAdminSection.id == section.id}? 'active'">
+                            <a blc_admin:admin_section_href="${section}">
+                                [[#{${module.moduleKey} + '.' + ${section.sectionKey}}]]
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</section>

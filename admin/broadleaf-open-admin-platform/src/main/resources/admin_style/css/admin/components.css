@@ -1,0 +1,11 @@
+ul.entity-type-selection {
+	list-style-type: none;
+}
+
+span.custom.checkbox {
+	margin-bottom: 10px;
+}
+
+label.custom-checkbox {
+	vertical-align: top;
+}

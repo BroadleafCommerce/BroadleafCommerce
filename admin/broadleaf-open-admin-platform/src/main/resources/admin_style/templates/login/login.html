@@ -1,0 +1,30 @@
+<div>
+    <div th:fragment="messages">
+        <div class="alert-box alert" th:unless="${#strings.isEmpty(param.login_error) and #strings.isEmpty(param.messageCode)}">
+            <div th:unless="${#strings.isEmpty(param.login_error)}">Invalid username / password combination.</div>
+            <div th:if="${param.messageCode == 'usernameSent'}">Your username was sent to the email address on file.</div>
+            <div th:if="${param.messageCode == 'passwordReset'}">Your password has been reset.  Please login with your new password.</div>
+        </div>
+    </div>
+
+    <form method="POST" th:fragment="form" th:action="@{/login_admin_post}" action="#">
+
+        <label>Username</label>
+        <input type="text" id="username" name="j_username" autofocus="autofocus" />
+
+        <label>Password</label>
+        <input type="password" id="password" name="j_password" />
+
+        <input type="submit" class="button radius right" value="Sign In"/>
+    </form>
+
+    <div th:fragment="options">
+        <ul class="inline-list">
+            <li><a th:href="@{forgotUsername}" href="#">Forgot Username</a></li>
+            <li class="divider">&nbsp;</li>
+            <li><a th:href="@{forgotPassword}" href="#">Forgot Password</a></li>
+            <li class="divider">&nbsp;</li>
+            <li><a th:href="@{changePassword}" href="#">Change Password</a></li>
+        </ul>
+    </div>
+</div>

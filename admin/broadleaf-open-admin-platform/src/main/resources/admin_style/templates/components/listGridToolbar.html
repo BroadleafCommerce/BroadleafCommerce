@@ -1,0 +1,20 @@
+<div class="listgrid-toolbar">
+    <ul class="inline-list" th:if="${listGrid.subCollectionFieldName != null}">
+        <li class="list-title" th:text="#{${listGrid.subCollectionFieldName}}">Sub-collection Field Name</li>
+        
+        <li>
+            <a class="sub-list-grid-add"
+                th:href="@{${'/' + sectionKey + '/' + entityForm.id + '/' + listGrid.subCollectionFieldName + '/add'}}">
+                <i class="foundicon-plus"></i>&nbsp;Add
+            </a>
+        </li>
+        
+        <li>
+            <a href="#" class="alert sub-list-grid-remove"><i class="foundicon-minus"></i>&nbsp;Remove</a>
+        </li>
+        
+        <li th:if="${listGrid.editable}">
+            <a href="#" class="alert sub-list-grid-update"><i class="foundicon-edit"></i>&nbsp;Update</a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,29 @@
+<div class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+    
+        <h3 id="myModalLabel" th:inline="text" th:switch="${modalHeaderType}">
+            <span th:case="'addEntity'" th:remove="tag">
+                Add New [[${currentAdminSection.name}]]
+            </span>
+            
+            <span th:case="'addCollectionItem'" th:remove="tag">
+                Add [[#{${collectionProperty.metadata.friendlyName}}]]
+            </span>
+            
+            <span th:case="'selectCollectionItem'" th:remove="tag">
+                Select [[#{${collectionProperty.metadata.friendlyName}}]]
+            </span>
+            
+            <span th:case="*" th:remove="tag">
+                Modal Header
+            </span>
+        </h3>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+    </div>
+    
+    <div class="modal-body">
+        <div th:substituteby="${'views/' + viewType}" />
+    </div>
+
+</div>

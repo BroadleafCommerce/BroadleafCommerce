@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="seven columns">
+        <form class="custom">
+            <label>Search</label>
+            <div class="row">
+                <div class="four columns">
+                    <!-- Custom Selects -->
+                    <select style="display:none;" id="customDropdown">
+                        <option selected="selected">All</option>
+                        <option>Context A</option>
+                        <option>Context B</option>
+                    </select>
+                    <div class="custom dropdown expand">
+                        <a href="#" class="current">
+                            All
+                        </a>
+                        <a href="#" class="selector"></a>
+                        <ul>
+                            <li>All</li>
+                            <li>Context A</li>
+                            <li>Context B</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="five columns">
+                    <input type="text" placeholder="Name" />
+                </div>
+                <div class="one columns">
+                    <a href="#" class="button small radius"><i class="foundicon-search"></i>&nbsp;Search</a>
+                </div>
+                <div class="two columns">&nbsp;</div>
+            </div>
+        </form>
+    </div>
+    <div class="five columns" style="padding-top:17px;">
+        <ul class="button-group" style="float: right;">
+            <li>
+                <a th:href="@{${sectionKey} + '/add'}" class="button small add-main-entity" th:inline="text">
+                    <i class="foundicon-plus"></i> &nbsp; Add [[${currentAdminSection.name}]]
+                </a>
+            </li>
+<!--             <li> -->
+<!--                 <a href="#" data-reveal-id="exampleModal" class="button small secondary"> -->
+<!--                     <i class="foundicon-add-doc"></i> &nbsp; Clone Product -->
+<!--                 </a> -->
+<!--             </li> -->
+<!--             <li> -->
+<!--                 <a href="#" data-reveal-id="exampleModal" class="button small secondary"> -->
+<!--                     <i class="foundicon-inbox"></i> &nbsp; Export Products -->
+<!--                 </a> -->
+<!--             </li> -->
+        </ul>
+    </div>
+</div>

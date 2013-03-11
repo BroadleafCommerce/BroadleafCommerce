@@ -1,0 +1,20 @@
+<dl class="tabs" th:if="${listGrid.listGridType == 'adorned_with_form'}">
+    <dd class="active">
+        <a id="adornedModalTab1Link" href="#adornedModalTab1">1. Pick Entity</a>
+    </dd>
+    <dd>
+        <a id="adornedModalTab2Link" href="#adornedModalTab2">2. Additional Fields</a>
+    </dd>
+</dl> 
+
+<ul class="tabs-content">
+    <li class="active" id="adornedModalTab1Tab">
+        <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+    </li>
+    
+    <li id="adornedModalTab2Tab">
+        <form th:include="components/entityForm"
+            th:remove="tag"
+            th:with="additionalClasses='modal-form'" />
+    </li>
+</ul>

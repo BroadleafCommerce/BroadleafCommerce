@@ -1,0 +1,12 @@
+<div class="additional-foreign-key-container">
+    <input type="hidden" class="display-value-property" th:value="*{fields['__${field.name}__'].foreignKeyDisplayValueProperty}"  />
+    <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}"  />
+    
+    <label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
+    <input type="text" class="eight display-value" th:value="*{fields['__${field.name}__'].displayValue}" />
+    
+    <a class="show-to-one-list-grid" th:href="@{${'/' + sectionKey + '/' + field.name + '/select'}}">
+        find
+    </a>
+</div>
+

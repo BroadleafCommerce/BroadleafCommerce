@@ -1,0 +1,97 @@
+<table class="list-grid-table table-hover responsive twelve"
+       th:attr="data-listgridtype=${listGrid.listGridType},data-currenturl=${currentUrl}"
+       blc_admin:component_id="${listGrid}">
+    <thead>
+        <tr>
+            <th>
+                <div class="listgrid-headerBtn split dropdown">
+                    <div class="listgrid-title"><i class="listgrid-icon-down"></i>&nbsp;id</div>
+                    <!-- This is commented out because tab switching is slow with it. -->
+                    <!-- TODO: APA Fix this so it's fast -->
+<!--                     <span class="hide-for-small"></span> -->
+<!--                     <ul> -->
+<!--                         <li><a href="#">Sort A Z</a></li> -->
+<!--                         <li><a href="#">Sort Z A</a></li> -->
+<!--                         <li class="divider"></li> -->
+<!--                         <li> -->
+<!--                             <label>Filter: <a class="add-filter" href="#">Add Criteria</a></label> -->
+<!--                             <div class="listgrid-criteria"> -->
+<!--                                 <div class="listgrid-criteria-container"> -->
+<!--                                     <input class="listgrid-criteria-input" type="text" placeholder="criteria"/> -->
+<!--                                     <a class="remove-filter" href="#">Remove</a> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                             <div class="listgrid-operators" style="display:none"> -->
+<!--                                 <select> -->
+<!--                                     <option>Match All</option> -->
+<!--                                     <option>Match Any</option> -->
+<!--                                 </select> -->
+<!--                             </div> -->
+<!--                             <a href="#">SORT</a> -->
+<!--                         </li> -->
+<!--                     </ul> -->
+                </div>
+            </th>
+            <th th:each="headerField : ${listGrid.headerFields}"
+                th:class="${'th' + headerFieldStat.count}"
+                th:inline="text"
+                scope="col">
+
+                <div href="#" class="listgrid-headerBtn split dropdown">
+                    <div class="listgrid-title">[[#{${headerField.friendlyName}}]]</div>
+                    <!-- This is commented out because tab switching is slow with it. -->
+                    <!-- TODO: APA Fix this so it's fast -->
+<!--                     <span class="hide-for-small"></span> -->
+<!--                     <ul th:class="${headerFieldStat.last}? 'end'"> -->
+<!--                         <li><a href="#">Sort A → Z</a></li> -->
+<!--                         <li><a href="#">Sort Z → A</a></li> -->
+<!--                         <li class="divider"></li> -->
+<!--                         <li> -->
+<!--                             <label>Filter: <a class="add-filter" href="#">Add Criteria</a></label> -->
+<!--                             <div class="listgrid-criteria"> -->
+<!--                                 <div class="listgrid-criteria-container"> -->
+<!--                                     <input class="listgrid-criteria-input" type="text" placeholder="criteria"/> -->
+<!--                                     <a class="remove-filter" href="#">Remove</a> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                             <div class="listgrid-operators" style="display:none"> -->
+<!--                                 <select> -->
+<!--                                     <option>Match All</option> -->
+<!--                                     <option>Match Any</option> -->
+<!--                                 </select> -->
+<!--                             </div> -->
+<!--                             <a href="#">SUBMIT</a> -->
+<!--                         </li> -->
+<!--                     </ul> -->
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr th:each="record : ${listGrid.records}"
+        th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
+        blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'data-link'">
+        <td data-fieldname="id" th:text="${record.id}" />
+        <td th:each="field : ${record.fields}"
+            th:class="${'td' + fieldStat.count}"
+            th:inline="text"
+            th:switch="${listGrid.listGridType}"
+            th:attr="data-fieldname=${field.name}">
+            
+            <span th:case="'main'" th:remove="tag">
+                <a th:if="${fieldStat.first}" blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'href'">
+                    [[${field.value}]]
+                </a>
+                <span th:unless="${fieldStat.first}" th:remove="tag">
+                    [[${field.value}]]
+                </span>
+            </span>
+            
+            <span th:case="*" th:remove="tag">
+                [[${field.value}]]
+            </span>
+            
+        </td>
+        </tr>
+    </tbody>
+</table>

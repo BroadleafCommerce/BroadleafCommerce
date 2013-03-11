@@ -1,0 +1,855 @@
+/* Broadleaf Admin Specific Styles  */
+
+body {
+    padding-bottom: 60px;
+    background: #e9e9e9;
+}
+
+[role="main"] {
+    background: #fff;
+    border-left: 3px solid #ccc;
+    border-top: 2px solid #ccc;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding-top: 15px;
+}
+
+.hidden {
+	display: none;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.clear {
+    clear:both;
+}
+
+.row {
+    width: 1440px;
+}
+
+.content {
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5 {
+    font-weight: 500;
+}
+
+header .subheader {
+    position: relative; top: -18px;
+}
+
+a {
+    color: #8EAA2B;
+}
+
+.label.secondary a, .label.secondary a:hover {
+    color: #6f6f6f;
+}
+
+.inline-block, input[type="text"].inline-block {
+    display: inline-block;
+    margin-bottom: 12px;
+    vertical-align: middle;
+}
+
+span.error {
+    color: #c60f13;
+    padding-left: 5px;
+}
+
+
+/* --------------------------------------------------
+  Top Bar
+-----------------------------------------------------
+*/
+.top-bar {
+    margin: 0 0 8px 0;
+}
+
+.top-bar a {
+    color: #fff;
+    font-weight: bold;
+}
+
+.top-bar .attached {
+    padding: 0 0 0 23px;
+    max-width: 1440px;
+    z-index: 0 !important;
+}
+
+.top-bar .attached > .brand {
+    float: left;
+    padding: 5px 10px 0px;
+}
+
+/* --------------------------------------------------
+   Navigation
+-----------------------------------------------------
+*/
+nav > ul.blc-accordion {
+    margin: 0 0 22px 0;
+    border-bottom: 1px solid #e9e9e9;
+}
+
+nav > ul.blc-accordion > li {
+    border-left: 3px solid #ccc;
+    background: #f2f2f2;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid #e9e9e9;
+}
+
+nav > ul.blc-accordion > li.active {
+    margin-top: 0;
+    border-top: 1px solid #4d4d4d;
+    border-left: 4px solid #1a1a1a;
+    background: #4d4d4d;
+}
+
+nav > ul.blc-accordion > li .title {
+    padding-top: 13px;
+    background: #f2f2f2;
+    border-width: 1px 1px 0 0;
+    color: #555;
+    cursor: pointer;
+    padding: 15px;
+    margin: 0;
+    position: relative;
+    border-left: 1px solid #e9e9e9;
+    border-right: 1px solid #e9e9e9;
+    -webkit-transition: 0.15s background linear;
+    -moz-transition: 0.15s background linear;
+    -o-transition: 0.15s background linear;
+    transition: 0.15s background linear;
+}
+
+nav > ul.blc-accordion > li.active .title {
+    background: #4d4d4d;
+    border: none;
+}
+
+nav > ul.blc-accordion > li .title::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 6px;
+    border-color: transparent transparent transparent #9d9d9d;
+    position: absolute;
+    right: 15px;
+    top: 21px;
+}
+
+nav > ul.blc-accordion > li.active .title::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 6px;
+    border-color: #9d9d9d transparent transparent transparent;
+}
+
+
+nav > ul.blc-accordion > li .title > h5 {
+    line-height: 1;
+    padding: 2px 6px;
+    font-size: 14px;
+    margin: 0;
+}
+
+nav > ul.blc-accordion > li.active .title > h5 {
+    line-height: 1;
+    padding: 2px 6px;
+    font-size: 14px;
+    margin: 0;
+    color: #fff;
+}
+
+nav > ul.blc-accordion > li .content {
+    padding: 0px;
+    background: #fff;
+}
+
+nav > ul.blc-accordion > li.active .content {
+    padding: 0px;
+    border-left: none;
+    border-right: 1px solid #e9e9e9;
+    background: #fff;
+}
+
+nav > ul.blc-accordion > li > .content > ul {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-left: solid 3px #ddd;
+    border-right: solid 1px #eee;
+    margin-left: -4px;
+    -webkit-box-shadow: 1px 0 0 white inset;
+    -moz-box-shadow: 1px 0 0 white inset;
+    box-shadow: 1px 0 0 white inset;
+}
+
+nav > ul.blc-accordion > li > .content > ul li {
+    border: none;
+    list-style: none;
+    padding: 2px;
+}
+
+nav > ul.blc-accordion > li > .content > ul li a {
+    cursor: pointer !important;
+    font-weight: normal;
+    color: #666 !important;
+    padding: 7px 0 7px 20px;
+    background: #fff !important;
+}
+
+nav > ul.blc-accordion > li > .content > ul li a:hover {
+    color: #111 !important;
+    background: #fff !important;
+}
+
+nav > ul.blc-accordion > li > .content > ul li.active {
+    border: none;
+}
+
+nav > ul.blc-accordion > li > .content > ul li.active a {
+    font-weight: bold;
+    color: #222 !important;
+}
+
+/* -----------------------------------------
+   Shared Styles
+----------------------------------------- */
+.button-blc, .button-blc:hover {
+    background: #8EAA2B;
+    border: 1px solid #8EAA2C;
+}
+
+table.table-hover tbody tr.clickable:hover {
+    cursor: pointer;
+    background-color: #f3f3f3;
+}
+
+/* -----------------------------------------
+  List Grid
+----------------------------------------- */
+[class^="listgrid-icon-"],
+[class*=" listgrid-icon-"] {
+    display: inline-block;
+    width: 20px;
+    height: 17px;
+    *margin-right: .3em;
+    vertical-align: text-top;
+    background-image: url("../../img/admin/listgrid/listgrid.png");
+    background-position: 14px 14px;
+    background-repeat: no-repeat;
+}
+[class^="listgrid-icon-"]:last-child,
+[class*=" listgrid-icon-"]:last-child {
+    *margin-left: 0;
+}
+
+.listgrid-icon-down{
+    background-position: 0 0;
+    width: 20px;
+    height: 17px;
+}
+
+.listgrid-icon-filter{
+    background-position: 0 -67px;
+    width: 20px;
+    height: 17px;
+}
+
+.listgrid-icon-filter-down{
+    background-position: 0 -134px;
+    width: 20px;
+    height: 17px;
+}
+
+.listgrid-icon-filter-up{
+    background-position: 0 -201px;
+    width: 20px;
+    height: 17px;
+}
+
+.listgrid-icon-up{
+    background-position: 0 -268px;
+    width: 20px;
+    height: 17px;
+}
+
+.listgrid-toolbar {
+    margin: 0;
+    padding: 10px;
+    background: #f1f1f1;
+    background: -moz-linear-gradient(top,  #f1f1f1 0%, #e2e2e2 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f1f1), color-stop(100%,#e2e2e2));
+    background: -webkit-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: -o-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: -ms-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: linear-gradient(to bottom,  #f1f1f1 0%,#e2e2e2 100%);
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.listgrid-toolbar > ul > li.list-title {
+    font-weight: bold;
+}
+
+.listgrid-toolbar > ul.inline-list, .listgrid-toolbar > ul.link-list {
+    margin-bottom: 0;
+}
+
+table.list-grid-table thead tr th {
+    padding: 0;
+}
+
+
+.listgrid-headerBtn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    text-align: left;
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+    margin: 0;
+    padding: 10px 20px 11px;
+    position: relative;
+    text-decoration: none;
+}
+
+.listgrid-headerBtn:hover, .listgrid-headerBtn:focus {
+    color: #222;
+    background: transparent;
+}
+
+
+.listgrid-headerBtn.dropdown {
+    position: relative;
+    padding-right: 44px; /* Sizes */ /* Triangles */ /* Flyout List */ /* Split Dropdown Buttons */
+}
+
+.listgrid-headerBtn.dropdown.large {
+    padding-right: 60px;
+}
+
+.listgrid-headerBtn.dropdown.small {
+    padding-right: 28px;
+}
+
+.listgrid-headerBtn.dropdown.tiny {
+    padding-right: 20px;
+}
+
+.listgrid-headerBtn.dropdown:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 6px;
+    border-color: white transparent transparent transparent;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    margin-top: -2px;
+}
+
+.listgrid-headerBtn.dropdown.large:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 7px;
+    border-color: white transparent transparent transparent;
+    margin-top: -3px;
+    right: 30px;
+}
+
+.listgrid-headerBtn.dropdown.small:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 5px;
+    border-color: white transparent transparent transparent;
+    margin-top: -2px;
+    right: 14px;
+}
+
+.listgrid-headerBtn.dropdown.tiny:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 4px;
+    border-color: white transparent transparent transparent;
+    margin-top: -1px;
+    right: 10px;
+}
+
+.listgrid-headerBtn.dropdown > ul {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    display: none;
+    position: absolute;
+    left: -1px;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.95);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #cccccc;
+    border-top: none;
+    min-width: 100%;
+    z-index: 40;
+}
+
+.listgrid-headerBtn.dropdown > ul li {
+    width: 100%;
+    cursor: pointer;
+    padding: 0;
+    min-height: 18px;
+    line-height: 18px;
+    margin: 0;
+    white-space: nowrap;
+    list-style: none;
+}
+
+.listgrid-headerBtn.dropdown > ul li a, .listgrid-headerBtn.dropdown > ul li button {
+    display: block;
+    color: #555;
+    font-size: 13px;
+    font-weight: normal;
+    padding: 6px 14px;
+    text-align: left;
+}
+
+.listgrid-headerBtn.dropdown > ul li a.add-filter,
+.listgrid-headerBtn.dropdown > ul li a.remove-filter {
+    display: inline;
+    color: #8EAA2B;
+    font-weight: normal;
+    text-align: left;
+    padding:0 2px 5px 0;
+}
+
+.listgrid-headerBtn.dropdown > ul li a.add-filter:hover,
+.listgrid-headerBtn.dropdown > ul li a.add-filter:focus,
+.listgrid-headerBtn.dropdown > ul li a.remove-filter:hover,
+.listgrid-headerBtn.dropdown > ul li a.remove-filter:focus {
+    color: #2ba6cb;
+}
+
+.listgrid-headerBtn.dropdown > ul li a.remove-filter {
+    text-align: right;
+    display:block;
+    padding: 0;
+}
+
+.listgrid-headerBtn.dropdown > ul li button {
+    width: 100%;
+    border: inherit;
+    background: inherit;
+    font-family: inherit;
+    margin: inherit;
+    -webkit-font-smoothing: antialiased;
+}
+
+.listgrid-headerBtn.dropdown > ul li:hover, .listgrid-headerBtn.dropdown > ul li:focus {
+    background-color: #e3f4f9;
+    color: #222;
+}
+
+.listgrid-headerBtn.dropdown > ul li.divider {
+    min-height: 0;
+    padding: 0;
+    height: 1px;
+    margin: 4px 0;
+    background: #ededed;
+}
+
+.listgrid-headerBtn.dropdown.up > ul {
+    border-top: 1px solid #cccccc;
+    border-bottom: none;
+}
+
+.listgrid-headerBtn.dropdown ul.no-hover.show-dropdown {
+    display: block !important;
+    width: 255px;
+}
+
+.listgrid-headerBtn.dropdown ul.no-hover.show-dropdown.end {
+    width: 100%;
+}
+
+.listgrid-headerBtn.dropdown:hover > ul.no-hover {
+    display: none;
+}
+
+.listgrid-headerBtn.dropdown.split {
+    padding: 0; position: relative; /* Sizes */ /* Triangle Spans */ /* Colors */
+}
+
+.listgrid-headerBtn.dropdown.split:after {
+    display: none;
+}
+
+.listgrid-headerBtn.dropdown.split:hover, .listgrid-headerBtn.dropdown.split:focus {
+    background-color: transparent;
+}
+
+.listgrid-headerBtn.dropdown.split.alert:hover, .listgrid-headerBtn.dropdown.split.alert:focus {
+    background-color: #c60f13;
+}
+
+.listgrid-headerBtn.dropdown.split.success:hover, .listgrid-headerBtn.dropdown.split.success:focus {
+    background-color: #5da423;
+}
+
+.listgrid-headerBtn.dropdown.split.secondary:hover, .listgrid-headerBtn.dropdown.split.secondary:focus {
+    background-color: #e9e9e9;
+}
+
+.listgrid-headerBtn.dropdown.split > a {
+    color: white;
+    display: block;
+    padding: 10px 50px 11px 20px;
+    padding-left: 20px;
+    padding-right: 50px;
+    -webkit-transition: background-color 0.15s ease-in-out;
+    -moz-transition: background-color 0.15s ease-in-out;
+    -o-transition: background-color 0.15s ease-in-out;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.listgrid-headerBtn.dropdown.split > a:hover, .listgrid-headerBtn.dropdown.split > a:focus {
+    background-color: #2284a1;
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+}
+
+.listgrid-headerBtn.dropdown.split.large > a {
+    padding: 15px 75px 16px 30px;
+    padding-left: 30px;
+    padding-right: 75px;
+}
+
+.listgrid-headerBtn.dropdown.split.small > a {
+    padding: 7px 35px 8px 14px;
+    padding-left: 14px;
+    padding-right: 35px;
+}
+
+.listgrid-headerBtn.dropdown.split.tiny > a {
+    padding: 5px 25px 6px 10px;
+    padding-left: 10px;
+    padding-right: 25px;
+}
+
+.listgrid-headerBtn.dropdown.split > span {
+    background: transparent;
+    border-left: 1px solid #e9e9e9;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 30px;
+    -webkit-box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -moz-box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -webkit-transition: background-color 0.15s ease-in-out;
+    -moz-transition: background-color 0.15s ease-in-out;
+    -o-transition: background-color 0.15s ease-in-out;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.listgrid-headerBtn.dropdown.split > span:hover, .listgrid-headerBtn.dropdown.split > span:focus {
+    background: #D2D2D2;
+}
+
+.listgrid-headerBtn.dropdown.split > span:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 6px;
+    border-color: #9d9d9d transparent transparent transparent;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -6px;
+    margin-top: -2px;
+}
+
+.listgrid-headerBtn.dropdown.split.secondary > span:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 6px;
+    border-color: #1d1d1d transparent transparent transparent;
+}
+
+.listgrid-headerBtn.dropdown.split.large span {
+    width: 45px;
+}
+
+.listgrid-headerBtn.dropdown.split.small span {
+    width: 21px;
+}
+
+.listgrid-headerBtn.dropdown.split.tiny span {
+    width: 15px;
+}
+
+.listgrid-headerBtn.dropdown.split.large span:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 7px;
+    border-color: white transparent transparent transparent;
+    margin-top: -3px;
+    margin-left: -7px;
+}
+
+.listgrid-headerBtn.dropdown.split.small span:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 4px;
+    border-color: white transparent transparent transparent;
+    margin-top: -1px;
+    margin-left: -4px;
+}
+
+.listgrid-headerBtn.dropdown.split.tiny span:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 3px;
+    border-color: white transparent transparent transparent;
+    margin-top: -1px;
+    margin-left: -3px;
+}
+
+.listgrid-headerBtn.dropdown.split.alert > span {
+    background-color: #c60f13;
+    border-left-color: #7f0a0c;
+}
+
+.listgrid-headerBtn.dropdown.split.success > span {
+    background-color: #5da423;
+    border-left-color: #396516;
+}
+
+.listgrid-headerBtn.dropdown.split.secondary > span {
+    background-color: #e9e9e9;
+    border-left-color: #c3c3c3;
+}
+
+.listgrid-headerBtn.dropdown.split.secondary > a {
+    color: #1d1d1d;
+}
+
+.listgrid-headerBtn.dropdown.split.alert > a:hover, .listgrid-headerBtn.dropdown.split.alert > span:hover, .listgrid-headerBtn.dropdown.split.alert > a:focus, .listgrid-headerBtn.dropdown.split.alert > span:focus {
+    background-color: #970b0e;
+}
+
+.listgrid-headerBtn.dropdown.split.success > a:hover, .listgrid-headerBtn.dropdown.split.success > span:hover, .listgrid-headerBtn.dropdown.split.success > a:focus, .listgrid-headerBtn.dropdown.split.success > span:focus {
+    background-color: #457a1a;
+}
+
+.listgrid-headerBtn.dropdown.split.secondary > a:hover, .listgrid-headerBtn.dropdown.split.secondary > span:hover, .listgrid-headerBtn.dropdown.split.secondary > a:focus, .listgrid-headerBtn.dropdown.split.secondary > span:focus {
+    background-color: #d0d0d0;
+}
+
+.listgrid-headerBtn.dropdown.split > .listgrid-title {
+    color: #222;
+    display: block;
+    padding: 10px 50px 11px 20px;
+    padding-left: 20px;
+    padding-right: 50px;
+    cursor: default;
+}
+
+.listgrid-headerBtn.dropdown > ul > li > form {
+    padding: 10px;
+}
+
+input[type="text"].listgrid-criteria-input {
+    margin: 0px;
+}
+
+input[type="submit"].listgrid-filter {
+    margin-top:5px;
+}
+
+/* -----------------------------------------
+   Magellan toolbar
+----------------------------------------- */
+
+ul.magellan-toolbar {
+    border: 1px solid #ddd;
+    border-bottom: 1px solid #bbb;
+    background: #f1f1f1;
+    background: -moz-linear-gradient(top,  #f1f1f1 0%, #e2e2e2 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f1f1), color-stop(100%,#e2e2e2));
+    background: -webkit-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: -o-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: -ms-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: linear-gradient(to bottom,  #f1f1f1 0%,#e2e2e2 100%);
+    z-index: 100;
+    width: 100%;
+    padding: 10px;
+    margin:0;
+}
+
+ul.magellan-toolbar > li.divider {
+    background: #ccc;
+    -webkit-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    -moz-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    height: 100%;
+    margin-right: 1px;
+    width: 1px;
+}
+
+
+.listgrid-toolbar a.alert, ul.magellan-toolbar a.alert {
+    color: #c60f13;
+}
+
+.listgrid-toolbar a.alert:hover, ul.magellan-toolbar a.alert:hover {
+    color: #970b0e;
+}
+
+table.list-grid-table tr.clickable.selected {
+	background-color: #C4DFE6;
+}
+
+table.list-grid-table tr.clickable.selected:hover {
+	background-color: #B3D4DD;
+}
+
+/* -----------------------------------------
+   Rule Builder
+----------------------------------------- */
+.conditional {
+    padding-left: 60px;
+}
+
+.conditional .all-any-none-wrapper {
+    margin: 5px 20px 5px -60px;
+    display: -moz-inline-stack;
+    display: inline-block;
+}
+
+.rule-builder-simple > div > .conditional-rules > .conditional > .remove {
+	display: none;
+}
+
+input[type="text"].conditional-qty {
+    display: -moz-inline-stack;
+    display: inline-block;	
+    margin-right: 10px;
+    width: 32px;
+}
+.conditional-spacer {
+		margin-right: 10px;
+}
+
+.add-item-rule {
+	margin: 5px 20px 5px 0px;
+	display: block;
+}
+
+.all-any-none {
+    margin-right: 10px;
+    width: 52px;
+}
+
+.all-any-none-wrapper, .conditional, .rule {
+    margin: 10px 0;
+}
+
+.rule select,
+.rule input[type="text"],
+.rule input[type="date"],
+.rule input[type="datetime"],
+.rule input[type="email"],
+.rule input[type="number"],
+.rule input[type="tel"],
+.rule input[type="time"],
+.rule input[type="url"],
+.rule textarea {
+    margin-right: 10px;
+    width: auto;
+    display: -moz-inline-stack;
+    display: inline-block;
+}
+.add-rule, .add-condition, .remove {
+    margin: auto 5px;
+}
+
+form.custom div.conditional div.custom.dropdown {
+    display:inline-block;
+    margin-right: 10px;
+}
+
+/* -----------------------------------------
+   Login/Forgot Password Forms
+----------------------------------------- */
+
+.basic-form {
+    background: #fff;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    margin: 50px auto 20px auto;
+    padding: 30px 30px 10px 30px;
+    max-width: 500px;
+}
+
+.basic-links {
+    margin: 0 auto;
+    padding-top: 20px;
+    clear:both;
+}
+
+.basic-links > ul > li.divider {
+    background: #ccc;
+    -webkit-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    -moz-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    height: 100%;
+    margin-right: 1px;
+    width: 1px;
+}
+
+.logo {
+    float: right;
+    padding-bottom: 15px;
+}

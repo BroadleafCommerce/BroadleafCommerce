@@ -1,0 +1,8 @@
+<section role="main">
+    <div class="row">
+        <div class="twelve columns">
+            <div id="sectionKey" th:text="${sectionKey}" style="display: none;" />
+            <div th:substituteby="${'views/' + viewType}" />
+        </div>
+    </div>
+</section>
