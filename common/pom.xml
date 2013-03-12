@@ -66,7 +66,15 @@
         </plugins>
         <resources>
             <resource>
+                <directory>src/main/resources/common_js</directory>
+                <filtering>false</filtering>
+                <targetPath>common_js</targetPath>
+            </resource>
+            <resource>
                 <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>common_js/**</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/java</directory>
