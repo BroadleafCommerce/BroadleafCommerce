@@ -16,9 +16,12 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -39,8 +42,6 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -77,9 +78,13 @@ public class CandidateItemOfferTest extends TestCase {
         sku1.setDiscountable(true);
         sku1.setRetailPrice(new Money(19.99D));
         product1.setDefaultSku(sku1);
+
+        CategoryProductXref xref1 = new CategoryProductXrefImpl();
+        xref1.setProduct(product1);
+        xref1.setCategory(category1);
         
-        category1.getAllProducts().add(product1);
-        
+        category1.getAllProducts().add(xref1);
+
         Category category2 = new CategoryImpl();
         category2.setName("test2");
         category2.setId(2L);
@@ -91,8 +96,12 @@ public class CandidateItemOfferTest extends TestCase {
         sku2.setDiscountable(true);
         sku2.setRetailPrice(new Money(29.99D));
         product2.setDefaultSku(sku2);
-        
-        category2.getAllProducts().add(product2);
+
+        CategoryProductXref xref2 = new CategoryProductXrefImpl();
+        xref2.setProduct(product2);
+        xref2.setCategory(category2);
+
+        category2.getAllProducts().add(xref2);
         
         DiscreteOrderItemImpl orderItem1 = new DiscreteOrderItemImpl();
         orderItem1.setCategory(category1);

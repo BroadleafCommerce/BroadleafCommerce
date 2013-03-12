@@ -31,7 +31,12 @@ public class SiteServiceImpl implements SiteService {
 
     @Override
     public Site retrieveSiteById(Long id) {
-        return siteDao.retrieve(id);
+        Site response = siteDao.retrieve(id);
+        if (response != null) {
+            response = response.clone();
+        }
+
+        return response;
     }
 
     @Override
@@ -46,7 +51,12 @@ public class SiteServiceImpl implements SiteService {
             }
         }
 
-        return siteDao.retrieveSiteByDomainOrDomainPrefix(domainName, domainPrefix);
+        Site response = siteDao.retrieveSiteByDomainOrDomainPrefix(domainName, domainPrefix);
+        if (response != null) {
+            response = response.clone();
+        }
+
+        return response;
     }
 
     @Override

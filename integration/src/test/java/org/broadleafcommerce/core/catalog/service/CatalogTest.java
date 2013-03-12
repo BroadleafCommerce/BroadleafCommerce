@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.catalog.service;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -30,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -53,7 +54,11 @@ public class CatalogTest extends BaseTest {
         category2 = catalogService.saveCategory(category2);
         Category category3 = new CategoryImpl();
         category3.setName("SuperCategory");
-        category3.getAllParentCategories().add(category);
+
+        CategoryXref temp = new CategoryXrefImpl();
+        temp.setCategory(category);
+        temp.setSubCategory(category3);
+        category3.getAllParentCategories().add(temp);
         category3 = catalogService.saveCategory(category3);
         
         // Test category hierarchy
@@ -61,8 +66,14 @@ public class CatalogTest extends BaseTest {
         category3 = null;
         category3 = catalogService.findCategoryById(cat3Id);
         category3.getAllParentCategories().clear();
-        category3.getAllParentCategories().add(category);
-        category3.getAllParentCategories().add(category2);
+        CategoryXref temp2 = new CategoryXrefImpl();
+        temp2.setCategory(category);
+        temp2.setSubCategory(category3);
+        category3.getAllParentCategories().add(temp2);
+        CategoryXref temp3 = new CategoryXrefImpl();
+        temp3.setCategory(category2);
+        temp3.setSubCategory(category3);
+        category3.getAllParentCategories().add(temp3);
         category3 = catalogService.saveCategory(category3);
         assert category3.getAllParentCategories().size() == 2;
         

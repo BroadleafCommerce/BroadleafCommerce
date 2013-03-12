@@ -72,7 +72,7 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
     @Override
     public void delete(CategoryXrefImpl categoryXref){
         if (!em.contains(categoryXref)) {
-            categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(), categoryXref.getCategoryXrefPK().getSubCategory().getId());
+            categoryXref = readXrefByIds(categoryXref.getCategory().getId(), categoryXref.getSubCategory().getId());
         }
         em.remove(categoryXref);        
     }

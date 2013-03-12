@@ -62,4 +62,13 @@ public @interface AdminPresentationClass {
      */
     String ceilingDisplayEntity() default "";
 
+    /**
+     * <p>Specify whether or not this class should be excluded from admin detection as a polymorphic type.
+     * This is useful if you have several entities that implement an interface, but you only want the
+     * admin to ignore one of the entities as a valid type for the interface.</p>
+     *
+     * @return Whether or not the admin should ignore this entity as a valid polymorphic type
+     */
+    boolean excludeFromPolymorphism() default false;
+
 }
