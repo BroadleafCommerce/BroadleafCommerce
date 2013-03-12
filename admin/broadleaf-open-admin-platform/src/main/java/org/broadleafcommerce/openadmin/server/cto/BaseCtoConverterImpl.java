@@ -16,18 +16,21 @@
 
 package org.broadleafcommerce.openadmin.server.cto;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.cto.server.FilterAndSortMapping;
 import com.anasoft.os.daofusion.cto.server.FilterValueConverter;
 import com.anasoft.os.daofusion.cto.server.NestedPropertyCriteriaBasedConverter;
 import com.anasoft.os.daofusion.util.FilterValueConverters;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.annotation.Resource;
 
 /**
  * 
@@ -39,6 +42,7 @@ import java.util.Date;
 public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter implements BaseCtoConverter {
     
     public static final FilterValueConverter<Long> NULL_AWARE_LONG = new FilterValueConverter<Long>() {
+        @Override
         public Long convert(String stringValue) {
             if (stringValue == null || stringValue.equals("null")) {
                 return null;
@@ -52,6 +56,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
     };
     
     public static final FilterValueConverter<Integer> NULL_AWARE_INTEGER = new FilterValueConverter<Integer>() {
+        @Override
         public Integer convert(String stringValue) {
             if (stringValue == null || stringValue.equals("null")) {
                 return null;
@@ -65,6 +70,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
     };
     
     public static final FilterValueConverter<BigDecimal> DECIMAL = new FilterValueConverter<BigDecimal>() {
+        @Override
         public BigDecimal convert(String stringValue) {
             if (stringValue == null) {
                 return null;
@@ -78,6 +84,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
     };
 
     public static final FilterValueConverter<Character> CHARACTER = new FilterValueConverter<Character>() {
+        @Override
         public Character convert(String stringValue) {
             if ("true".equals(stringValue)) {
                 return 'Y';
@@ -111,6 +118,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
         /**
          * @see com.anasoft.os.daofusion.cto.server.FilterValueConverter#convert(java.lang.String)
          */
+        @Override
         public Date convert(String stringValue) {
             return parseDate(stringValue, dateFormatPattern);
         }
@@ -128,12 +136,15 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
 
     }
     
+    @Resource(name = "blFilterCriterionProviders")
+    protected FilterCriterionProviders filterCriterionProviders;
+
     @Override
     public void addStringLikeMapping(String mappingGroupName, String propertyId,
                                      AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<String>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.LIKE, FilterValueConverters.STRING));
+                filterCriterionProviders.getLikeProvider(), FilterValueConverters.STRING));
     }
     
     @Override
@@ -141,7 +152,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                   AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<BigDecimal>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.BETWEEN, DECIMAL));
+                filterCriterionProviders.getBetweenProvider(), DECIMAL));
     }
     
     @Override
@@ -149,7 +160,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.BETWEEN, FilterValueConverters.LONG));
+                filterCriterionProviders.getBetweenProvider(), FilterValueConverters.LONG));
     }
     
     @Override
@@ -157,7 +168,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                  AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.EQ, FilterValueConverters.LONG));
+                filterCriterionProviders.getEqProvider(), FilterValueConverters.LONG));
     }
     
     @Override
@@ -165,7 +176,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                    AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<String>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.EQ, FilterValueConverters.STRING));
+                filterCriterionProviders.getEqProvider(), FilterValueConverters.STRING));
     }
     
     @Override
@@ -173,7 +184,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.ISNULL, NULL_AWARE_LONG));
+                filterCriterionProviders.getIsNullProvider(), NULL_AWARE_LONG));
     }
 
     @Override
@@ -186,7 +197,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                   AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Boolean>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.EQ, FilterValueConverters.BOOLEAN));
+                filterCriterionProviders.getEqProvider(), FilterValueConverters.BOOLEAN));
     }
 
     @Override
@@ -194,7 +205,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                     AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Character>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.EQ, CHARACTER));
+                filterCriterionProviders.getEqProvider(), CHARACTER));
     }
     
     @Override
@@ -202,7 +213,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Date>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.BETWEEN_DATE, new NullAwareDateConverter("yyyy-MM-dd'T'HH:mm:ss Z")));
+                filterCriterionProviders.getBetweenDateProvider(), new NullAwareDateConverter("yyyy-MM-dd'T'HH:mm:ss Z")));
     }
     
     @Override
@@ -210,7 +221,15 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                            AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Integer>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.COLLECTION_SIZE_EQ, FilterValueConverters.INTEGER));
+                filterCriterionProviders.getCollectionSizeEqualsProvider(), FilterValueConverters.INTEGER));
+    }
+
+    public FilterCriterionProviders getFilterCriterionProviders() {
+        return filterCriterionProviders;
+    }
+
+    public void setFilterCriterionProviders(FilterCriterionProviders filterCriterionProviders) {
+        this.filterCriterionProviders = filterCriterionProviders;
     }
     
 }

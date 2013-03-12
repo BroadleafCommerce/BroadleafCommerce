@@ -37,6 +37,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.broadleafcommerce.openadmin.server.cto.FilterCriterionProviders;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -103,14 +104,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         decimalFormat.applyPattern("0.########");
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+    @Override
     public boolean isCompatible(OperationType operationType) {
         return OperationType.BASIC == operationType || OperationType.NONDESTRUCTIVEREMOVE == operationType;
     }
 
+    @Override
     public FieldManager getFieldManager() {
         return persistenceManager.getDynamicEntityDao().getFieldManager();
     }
@@ -119,10 +123,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return dateFormat.parse(value);
     }
 
+    @Override
     public SimpleDateFormat getDateFormatter() {
         return dateFormat;
     }
 
+    @Override
     public DecimalFormat getDecimalFormatter() {
         return decimalFormat;
     }
@@ -141,6 +147,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return newMap;
     }
 
+    @Override
     public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParseException, NumberFormatException, InstantiationException, ClassNotFoundException {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
         FieldManager fieldManager = getFieldManager();
@@ -289,6 +296,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return instance;
     }
 
+    @Override
     public Entity getRecord(Map<String, FieldMetadata> primaryMergedProperties, Serializable record, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {
         List<Serializable> records = new ArrayList<Serializable>(1);
         records.add(record);
@@ -296,24 +304,29 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return productEntities[0];
     }
 
+    @Override
     public Entity getRecord(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, Serializable record) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, DOMException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, NoSuchFieldException {
         Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective);
         return getRecord(mergedProperties, record, null, null);
     }
 
+    @Override
     public Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<? extends Serializable> records) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, DOMException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, NoSuchFieldException {
         Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective);
         return getRecords(mergedProperties, records, null, null);
     }
 
+    @Override
     public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         return persistenceManager.getDynamicEntityDao().getSimpleMergedProperties(entityName, persistencePerspective);
     }
 
+    @Override
     public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {
         return getRecords(primaryMergedProperties, records, null, null);
     }
 
+    @Override
     public Entity[] getRecords(Map<String, FieldMetadata> primaryUnfilteredMergedProperties, List<? extends Serializable> records, Map<String, FieldMetadata> alternateUnfilteredMergedProperties, String pathToTargetObject) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {
         Map<String, FieldMetadata> primaryMergedProperties = filterOutCollectionMetadata(primaryUnfilteredMergedProperties);
         Map<String, FieldMetadata> alternateMergedProperties = filterOutCollectionMetadata(alternateUnfilteredMergedProperties);
@@ -521,6 +534,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
+    @Override
     public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedUnfilteredProperties) throws RuntimeException {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         Object primaryKey = null;
@@ -556,9 +570,18 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return primaryKey;
     }
 
+    @Override
     public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedUnfilteredProperties) throws ClassNotFoundException {
+        return getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties, null);
+    }
+
+    @Override
+    public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedUnfilteredProperties, FilterCriterionProviders criterionProviders) throws ClassNotFoundException {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         BaseCtoConverter ctoConverter = (BaseCtoConverter) applicationContext.getBean("blBaseCtoConverter");
+        if (criterionProviders != null) {
+            ctoConverter.setFilterCriterionProviders(criterionProviders);
+        }
         for (String propertyId : cto.getPropertyIdSet()) {
             if (mergedProperties.containsKey(propertyId)) {
                 buildProperty(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter, propertyId);
@@ -668,6 +691,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             case ADDITIONAL_FOREIGN_KEY:
                 if (cto.get(propertyName).getFilterValues().length > 0) {
                     int additionalForeignKeyIndexPosition = Arrays.binarySearch(persistencePerspective.getAdditionalForeignKeys(), new ForeignKey(propertyName, null, null), new Comparator<ForeignKey>() {
+                        @Override
                         public int compare(ForeignKey o1, ForeignKey o2) {
                             return o1.getManyToField().compareTo(o2.getManyToField());
                         }
@@ -706,7 +730,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
+    @Override
     public int getTotalRecords(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
+        PersistentEntityCriteria countCriteria = getCountCriteria(persistencePackage, cto, ctoConverter);
+        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname()) ? persistencePackage.getCeilingEntityFullyQualifiedClassname() : persistencePackage.getFetchTypeFullyQualifiedClassname()));
+    }
+
+    public PersistentEntityCriteria getCountCriteria(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
         PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), persistencePackage.getCeilingEntityFullyQualifiedClassname());
         Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
         boolean isArchivable = false;
@@ -718,6 +748,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
         if (isArchivable && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
             SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
+                @Override
                 public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
                     return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
                 }
@@ -725,9 +756,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
             ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
         }
-        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname()) ? persistencePackage.getCeilingEntityFullyQualifiedClassname() : persistencePackage.getFetchTypeFullyQualifiedClassname()));
+        return countCriteria;
     }
 
+    @Override
     public void extractProperties(Class<?>[] inheritanceLine, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
         extractPropertiesFromMetadata(inheritanceLine, mergedProperties.get(MergedPropertyType.PRIMARY), properties, false, MergedPropertyType.PRIMARY);
     }
@@ -765,6 +797,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
+    @Override
     public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
@@ -790,10 +823,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
+    @Override
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         return update(persistencePackage, null);
     }
 
+    @Override
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
         try {
             Entity entity = persistencePackage.getEntity();
@@ -850,6 +885,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
+    @Override
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
         try {
             Entity entity = persistencePackage.getEntity();
@@ -901,6 +937,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
+    @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         Entity[] payload;
         int totalRecords;
@@ -935,6 +972,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
             if (isArchivable && !persistencePerspective.getShowArchivedFields()) {
                 SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
+                    @Override
                     public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
                         return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
                     }
@@ -954,6 +992,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return new DynamicResultSet(null, payload, totalRecords);
     }
 
+    @Override
     public void setPersistenceManager(PersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
     }

@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.cto;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Component;
 
 import com.anasoft.os.daofusion.criteria.FilterCriterionProvider;
 import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
@@ -30,36 +31,39 @@ import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider.FilterDat
  * 
  * @author jfischer
  */
-public final class FilterCriterionProviders {
-    
-    private FilterCriterionProviders() {
-    }
+@Component("blFilterCriterionProviders")
+public class FilterCriterionProviders {
     
     public static final FilterCriterionProvider LIKE = new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
+        @Override
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
             return Restrictions.ilike(targetPropertyName, (String) directValues[0], MatchMode.START);
         }
     };
     
     public static final FilterCriterionProvider EQ = new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 1) {
+        @Override
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
             return Restrictions.eq(targetPropertyName, directValues[0]);
         }
     };
     
     public static final FilterCriterionProvider ISNULL = new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 1) {
+        @Override
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
             return Restrictions.isNull(targetPropertyName);
         }
     };
     
     public static final FilterCriterionProvider LE = new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
+        @Override
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
             return Restrictions.le(targetPropertyName, directValues[0]);
         }
     };
     
     public static final FilterCriterionProvider BETWEEN = new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
+        @Override
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
             if (directValues.length > 1) {
                 return Restrictions.between(targetPropertyName, directValues[0], directValues[1]);
@@ -70,6 +74,7 @@ public final class FilterCriterionProviders {
     };
 
     public static final FilterCriterionProvider BETWEEN_DATE = new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
+        @Override
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
             if (directValues.length > 2) {
                 return Restrictions.between(targetPropertyName, directValues[0], directValues[2]);
@@ -84,9 +89,38 @@ public final class FilterCriterionProviders {
     };
     
     public static final FilterCriterionProvider COLLECTION_SIZE_EQ = new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
+        @Override
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
             return Restrictions.sizeEq(targetPropertyName, (Integer) directValues[0]);
         }
     };
     
+    public FilterCriterionProvider getLikeProvider() {
+        return LIKE;
+    }
+
+    public FilterCriterionProvider getEqProvider() {
+        return EQ;
+    }
+
+    public FilterCriterionProvider getIsNullProvider() {
+        return ISNULL;
+    }
+
+    public FilterCriterionProvider getLessThanOrEqualProvider() {
+        return LE;
+    }
+
+    public FilterCriterionProvider getBetweenProvider() {
+        return BETWEEN;
+    }
+
+    public FilterCriterionProvider getBetweenDateProvider() {
+        return BETWEEN_DATE;
+    }
+
+    public FilterCriterionProvider getCollectionSizeEqualsProvider() {
+        return COLLECTION_SIZE_EQ;
+    }
+
 }
