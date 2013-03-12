@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
@@ -28,8 +29,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -47,6 +51,7 @@ import javax.servlet.http.HttpServletResponse;
  * </ul>
  *
  */
+@Controller("blAdminLoginController")
 public class BroadleafAdminLoginController extends BroadleafAbstractController {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
@@ -66,10 +71,12 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     protected static String loginRedirect = "login";
     protected static String resetPasswordRedirect = "resetPassword";
 
-    public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
+    @RequestMapping(value="/login", method=RequestMethod.GET)
+    public String baseLogin(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getLoginView();
     }
 
+    @RequestMapping(value = {"/", "/loginSuccess"}, method = RequestMethod.GET)
     public String loginSuccess(HttpServletRequest request, HttpServletResponse response, Model model) {
         List<AdminModule> modules = adminNavigationService.buildMenu(getPersistentAdminUser());
         if (!modules.isEmpty()) {
@@ -82,15 +89,35 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
         return null;
     }
    
+    @RequestMapping(value="/forgotPassword", method=RequestMethod.GET)
     public String forgotPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getForgotPasswordView();
     }
     
-    public String forgotUsername(HttpServletRequest request, HttpServletResponse response, Model model) {
+    @RequestMapping(value="/forgotUsername", method=RequestMethod.GET)
+    public String forgotUsername(HttpServletRequest request, HttpServletResponse response,Model model) {
         return getForgotUsernameView();
     }
     
-    public String processResetPassword(@RequestParam("username") String username, HttpServletRequest request, HttpServletResponse response, Model model) {
+    @RequestMapping(value="/resetPassword", method=RequestMethod.POST)
+    public String processResetPassword(HttpServletRequest request, HttpServletResponse response, Model model,
+            @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
+        if (!StringUtils.isEmpty(resetPasswordForm.getToken())) {
+            GenericResponse errorResponse = adminSecurityService.resetPasswordUsingToken(
+                    resetPasswordForm.getUsername(), 
+                    resetPasswordForm.getToken(), 
+                    resetPasswordForm.getPassword(), 
+                    resetPasswordForm.getConfirmPassword());
+            if (errorResponse.getHasErrors()) {
+                setErrors(errorResponse, request);
+                return getResetPasswordView();
+            } else {
+                return redirectToLoginWithMessage("passwordReset");
+            }
+        }
+        
+        String username = resetPasswordForm.getUsername();
+        
         GenericResponse errorResponse = adminSecurityService.sendResetPasswordNotification(username);
         if (errorResponse.getHasErrors()) {
             setErrors(errorResponse, request);
@@ -101,7 +128,9 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
         }
     }
    
-    public String processForgotUserName(@RequestParam("email") String email, HttpServletRequest request,Model model) {
+    @RequestMapping(value="/forgotUsername", method=RequestMethod.POST)
+    public String processForgotUserName(HttpServletRequest request, Model model,
+            @RequestParam("emailAddress") String email) {
         GenericResponse errorResponse = adminSecurityService.sendForgotUsernameNotification(email);
         if (errorResponse.getHasErrors()) {
             setErrors(errorResponse, request);
@@ -111,23 +140,9 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
         }
     }
 
+    @RequestMapping(value="/resetPassword", method=RequestMethod.GET)
     public String resetPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getResetPasswordView();
-    }
-
-    public String resetPassword(ResetPasswordForm resetPasswordForm,
-                                HttpServletRequest request) {
-        GenericResponse errorResponse = adminSecurityService.resetPasswordUsingToken(
-                resetPasswordForm.getUsername(), 
-                resetPasswordForm.getToken(), 
-                resetPasswordForm.getPassword(), 
-                resetPasswordForm.getConfirmPassword());
-        if (errorResponse.getHasErrors()) {
-            setErrors(errorResponse, request);
-            return getResetPasswordView();
-        } else {
-            return redirectToLoginWithMessage("passwordReset");
-        }
     }
 
     @ModelAttribute("resetPasswordForm")
@@ -138,6 +153,27 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
         resetPasswordForm.setToken(token);
         resetPasswordForm.setUsername(username);
         return resetPasswordForm;
+    }
+
+    @RequestMapping(value="/changePassword", method=RequestMethod.GET)
+    public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return getChangePasswordView();
+    }
+
+    @RequestMapping(value="/changePassword", method=RequestMethod.POST)
+    public String processchangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
+            @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
+        GenericResponse errorResponse = adminSecurityService
+                .changePassword(resetPasswordForm.getUsername(),
+                        resetPasswordForm.getOldPassword(),
+                        resetPasswordForm.getPassword(),
+                        resetPasswordForm.getConfirmPassword());
+        if (errorResponse.getHasErrors()) {
+            setErrors(errorResponse, request);
+            return getChangePasswordView();
+        } else {
+            return redirectToLoginWithMessage("passwordReset");
+        }
     }
 
     protected String redirectToLoginWithMessage(String message) {
@@ -154,24 +190,19 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
         String errorCode = response.getErrorCodesList().get(0);
         request.setAttribute("errorCode", errorCode);
     }
+    
+    protected AdminUser getPersistentAdminUser() {
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        if (ctx != null) {
+            Authentication auth = ctx.getAuthentication();
+            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
+                UserDetails temp = (UserDetails) auth.getPrincipal();
 
-    public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return getChangePasswordView();
-    }
-
-    public String processChangePassword(ResetPasswordForm resetPasswordForm,
-            HttpServletRequest request) {
-        GenericResponse errorResponse = adminSecurityService
-                .changePassword(resetPasswordForm.getUsername(),
-                        resetPasswordForm.getOldPassword(),
-                        resetPasswordForm.getPassword(),
-                        resetPasswordForm.getConfirmPassword());
-        if (errorResponse.getHasErrors()) {
-            setErrors(errorResponse, request);
-            return getChangePasswordView();
-        } else {
-            return redirectToLoginWithMessage("passwordReset");
+                return adminSecurityService.readAdminUserByUserName(temp.getUsername());
+            }
         }
+
+        return null;
     }
 
     public static String getLoginView() {
@@ -214,20 +245,6 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
         BroadleafAdminLoginController.changePasswordView = changePasswordView;
     }
     
-    protected AdminUser getPersistentAdminUser() {
-        SecurityContext ctx = SecurityContextHolder.getContext();
-        if (ctx != null) {
-            Authentication auth = ctx.getAuthentication();
-            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
-                UserDetails temp = (UserDetails) auth.getPrincipal();
-
-                return adminSecurityService.readAdminUserByUserName(temp.getUsername());
-            }
-        }
-
-        return null;
-    }
-
     public AdminSecurityService getAdminSecurityService() {
         return adminSecurityService;
     }

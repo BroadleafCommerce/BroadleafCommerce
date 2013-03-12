@@ -40,9 +40,16 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
 import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -58,6 +65,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Andre Azzolini (apazzolini)
  */
+@Controller("blAdminBasicEntityController")
 public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractController {
 
     @Resource(name = "blAdminEntityService")
@@ -82,8 +90,9 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey) throws Exception {
+            @PathVariable String sectionKey) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
@@ -113,9 +122,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/add", method = RequestMethod.GET)
     public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String entityType) throws Exception {
+            @PathVariable String sectionKey,
+            @RequestParam(defaultValue = "") String entityType) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
         ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName));
@@ -159,9 +169,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/modalContainer";
     }
 
+    @RequestMapping(value = "{sectionKey}/add", method = RequestMethod.POST)
     public String addEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            EntityForm entityForm, BindingResult result) throws Exception {
+            @PathVariable String sectionKey,
+            @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
         Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
@@ -199,9 +210,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id) throws Exception {
+            @PathVariable String sectionKey,
+            @PathVariable String id) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
@@ -236,10 +248,11 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/{id}", method = RequestMethod.POST)
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id,
-            EntityForm entityForm, BindingResult result, 
+            @PathVariable String sectionKey,
+            @PathVariable String id,
+            @ModelAttribute EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
@@ -279,10 +292,11 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/{id}/delete", method = RequestMethod.POST)
     public String removeEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id,
-            EntityForm entityForm, BindingResult result) throws Exception {
+            @PathVariable String sectionKey,
+            @PathVariable String id,
+            @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
         service.removeEntity(entityForm, getSectionCustomCriteria());
 
         return "redirect:/" + sectionKey;
@@ -300,9 +314,10 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/{collectionField}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String collectionField) throws Exception {
+            @PathVariable String sectionKey,
+            @PathVariable String collectionField) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
@@ -364,10 +379,11 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id,
-            String collectionField) throws Exception {
+            @PathVariable String sectionKey,
+            @PathVariable String id,
+            @PathVariable String collectionField) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
@@ -435,11 +451,12 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return "modules/modalContainer";
     }
 
+    @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id,
-            String collectionField,
-            String collectionItemId) throws Exception {
+            @PathVariable String sectionKey,
+            @PathVariable String id,
+            @PathVariable String collectionField,
+            @PathVariable String collectionItemId) throws Exception {
         /*
          * TODO APA
          * also refactor the list grid html stuff to load one that loads the toolbar included
@@ -511,11 +528,12 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/add", method = RequestMethod.POST)
     public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id,
-            String collectionField,
-            EntityForm entityForm) throws Exception {
+            @PathVariable String sectionKey,
+            @PathVariable String id,
+            @PathVariable String collectionField,
+            @ModelAttribute EntityForm entityForm) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
@@ -545,12 +563,13 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.POST)
     public String updateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id,
-            String collectionField,
-            String collectionItemId,
-            EntityForm entityForm) throws Exception {
+            @PathVariable String sectionKey,
+            @PathVariable String id,
+            @PathVariable String collectionField,
+            @PathVariable String collectionItemId,
+            @ModelAttribute EntityForm entityForm) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
@@ -583,11 +602,12 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/{collectionItemId}/delete", method = RequestMethod.POST)
     public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey,
-            String id,
-            String collectionField,
-            String collectionItemId) throws Exception {
+            @PathVariable String sectionKey,
+            @PathVariable String id,
+            @PathVariable String collectionField,
+            @PathVariable String collectionItemId) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
@@ -604,6 +624,12 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
+    }
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(Boolean.class, new NonNullBooleanEditor());
     }
 
     protected List<ClassTree> getAddEntityTypes(ClassTree classTree) {
@@ -658,9 +684,5 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
         return null;
     }
 
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-        binder.registerCustomEditor(Boolean.class, new NonNullBooleanEditor());
-    }
 
 }

@@ -25,8 +25,15 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -37,6 +44,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Elbert Bautista (elbertbautista)
  */
+@Controller
+@RequestMapping("offer")
 public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityController {
 
     @Override
@@ -44,12 +53,15 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
         return new String[]{"Offer"};
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-             String id) throws Exception {
+            @PathVariable String id) throws Exception {
         String view = super.viewEntityForm(request, response, model, "offer", id);
+        
         EntityForm entityForm = (EntityForm) model.asMap().get("entityForm");
         Entity entity = (Entity) model.asMap().get("entity");
         String additionalClasses = (String) model.asMap().get("additionalClasses");
+        
         if (additionalClasses == null) {
             additionalClasses = "";
         }
@@ -75,9 +87,51 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
         return view;
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+        return super.viewEntityList(request, response, model, "offer");
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String id,
+            @ModelAttribute EntityForm entityForm, BindingResult result,
+            RedirectAttributes ra) throws Exception {
+        return super.saveEntity(request, response, model, "offer", id, entityForm, result, ra);
+    }
+
+    @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
+    public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String id,
+            @PathVariable String collectionField) throws Exception {
+        return super.showAddCollectionItem(request, response, model, "offer", id, collectionField);
+    }
+
+    @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.POST)
+    public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String id,
+            @PathVariable String collectionField,
+            @ModelAttribute EntityForm entityForm) throws Exception {
+        return super.addCollectionItem(request, response, model, "offer", id, collectionField, entityForm);
+    }
+
+    @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}/delete", method = RequestMethod.POST)
+    public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String id,
+            @PathVariable String collectionField,
+            @PathVariable String collectionItemId) throws Exception {
+        return super.removeCollectionItem(request, response, model, "offer", id, collectionField, collectionItemId);
+    }
+    
+    @Override
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        super.initBinder(binder);
+    }
+
     protected void constructRuleBuilder(EntityForm entityForm, Entity entity,
-                                        String fieldName, String friendlyName, String styleClass,
-                                        String fieldService, String fieldJson) throws IOException {
+            String fieldName, String friendlyName, String styleClass, String fieldService, 
+            String fieldJson) throws IOException {
         RuleBuilder ruleBuilder = new RuleBuilder();
         ruleBuilder.setFieldName(fieldName);
         ruleBuilder.setFriendlyName(friendlyName);
@@ -111,30 +165,5 @@ public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityCont
         module.addDeserializer(DataDTO.class, dtoDeserializer);
         mapper.registerModule(module);
         return mapper.readValue(json, DataWrapper.class);
-    }
-
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-        return super.viewEntityList(request, response, model, "offer");
-    }
-
-    public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id, EntityForm entityForm, BindingResult result,
-            RedirectAttributes ra) throws Exception {
-        return super.saveEntity(request, response, model, "offer", id, entityForm, result, ra);
-    }
-
-    public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id, String collectionField) throws Exception {
-        return super.showAddCollectionItem(request, response, model, "offer", id, collectionField);
-    }
-
-    public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id, String collectionField, EntityForm entityForm) throws Exception {
-        return super.addCollectionItem(request, response, model, "offer", id, collectionField, entityForm);
-    }
-
-    public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id, String collectionField, String collectionItemId) throws Exception {
-        return super.removeCollectionItem(request, response, model, "offer", id, collectionField, collectionItemId);
     }
 }
