@@ -71,6 +71,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -472,10 +473,17 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
             //**** Admin 3.0 ****
             //Convert the item criteria JSON fields into MVEL and update the OfferInstance
-            convertItemJsonToMvel(entity, offerInstance, translator, "targetItemCriteriaJson",
-                    offerInstance.getTargetItemCriteria());
-            convertItemJsonToMvel(entity, offerInstance, translator, "qualifyingItemCriteriaJson",
-                    offerInstance.getQualifyingItemCriteria());
+            Set<OfferItemCriteria> netNewTargetCriteria = convertItemJsonToMvel(entity, offerInstance, translator,
+                    "targetItemCriteriaJson", offerInstance.getTargetItemCriteria());
+            for (OfferItemCriteria oic: netNewTargetCriteria) {
+                dynamicEntityDao.persist(oic);
+            }
+
+            Set<OfferItemCriteria> netNewQualifyCriteria = convertItemJsonToMvel(entity, offerInstance, translator,
+                    "qualifyingItemCriteriaJson", offerInstance.getQualifyingItemCriteria());
+            for (OfferItemCriteria oic: netNewQualifyCriteria) {
+                dynamicEntityDao.persist(oic);
+            }
 
             dynamicEntityDao.merge(offerInstance);
             
@@ -523,14 +531,17 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         }
     }
 
-    protected void convertItemJsonToMvel(Entity entity, Offer offerInstance, DataDTOToMVELTranslator translator,
+    protected Set<OfferItemCriteria> convertItemJsonToMvel(Entity entity, Offer offerInstance,
+                                         DataDTOToMVELTranslator translator,
                                          String itemCriteriaJson, Set<OfferItemCriteria> criteriaList)
             throws IOException, MVELTranslationException {
+
+        Set<OfferItemCriteria> netNew = new HashSet<OfferItemCriteria>();
         Property jsonProp = entity.findProperty(itemCriteriaJson);
         if (jsonProp != null && !StringUtils.isEmpty(jsonProp.getValue())) {
             DataWrapper dw = convertJsonToDataWrapper(jsonProp.getValue());
             if (dw != null && !dw.getData().isEmpty()) {
-                Set<OfferItemCriteria> updatedSet = new HashSet<OfferItemCriteria>();
+                ArrayList<Long> updated = new ArrayList<Long>();
                 for (DataDTO dto : dw.getData()) {
                     if (dto.getId() != null) {
                         //Update Existing Criteria
@@ -538,8 +549,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                             if (dto.getId().equals(oic.getId())){
                                 oic.setQuantity(dto.getQuantity());
                                 oic.setOrderItemMatchRule(translator.createMVEL("discreteOrderItem", dto,
-                                        ruleBuilderFieldServiceFactory.createInstance("ORDER_ITEM_FIELDS") ));
-                                updatedSet.add(oic);
+                                        ruleBuilderFieldServiceFactory.createInstance("ORDER_ITEM_FIELDS")));
+                                updated.add(oic.getId());
                             }
                         }
                     } else {
@@ -549,14 +560,25 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                         oic.setQuantity(dto.getQuantity());
                         oic.setOrderItemMatchRule(translator.createMVEL("discreteOrderItem", dto,
                                 ruleBuilderFieldServiceFactory.createInstance("ORDER_ITEM_FIELDS")));
-                        oic.setTargetOffer(offerInstance);
-                        updatedSet.add(oic);
+                        if ("targetItemCriteriaJson".equals(itemCriteriaJson)) {
+                            oic.setTargetOffer(offerInstance);
+                        } else if ("qualifyingItemCriteriaJson".equals(itemCriteriaJson)) {
+                            oic.setQualifyingOffer(offerInstance);
+                        }
+                        netNew.add(oic);
+                    }
+
+                    Iterator<OfferItemCriteria> itr = criteriaList.iterator();
+                    while (itr.hasNext()) {
+                        OfferItemCriteria oic = itr.next();
+                        if (oic.getId() != null && !updated.contains(oic.getId())) {
+                            itr.remove();
+                        }
                     }
                 }
-                criteriaList.clear();
-                criteriaList.addAll(updatedSet);
             }
         }
+        return netNew;
     }
 
     protected void convertMatchRuleJsonToMvel(String jsonProperty, String ruleProperty,

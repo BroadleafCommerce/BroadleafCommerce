@@ -74,7 +74,11 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
                 isExpression = true;
             }
             if ("id".equals(name)) {
-                dataDTO.setId(element.getValue().asLong());
+                if ("null".equals(element.getValue().asText())) {
+                    dataDTO.setId(null);
+                } else {
+                    dataDTO.setId(element.getValue().asLong());
+                }
             }
             if ("quantity".equals(name)) {
                 dataDTO.setQuantity(element.getValue().asInt());

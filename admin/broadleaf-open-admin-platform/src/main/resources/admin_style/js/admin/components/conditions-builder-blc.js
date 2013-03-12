@@ -62,12 +62,13 @@
 
         collectData: function() {
             var elements = this.element.find("> .conditional-rules > .conditional");
-            var data = [];
+            var dataWrapper = {};
+            dataWrapper.data = [];
             for (var i=0;i<elements.length;i++) {
                 var element = elements[i];
-                data.push(this.collectDataFromNode($(element)));
+                dataWrapper.data.push(this.collectDataFromNode($(element)));
             }
-            return data;
+            return dataWrapper;
         },
 
         collectDataFromNode: function(element) {
@@ -108,7 +109,7 @@
                     id:null,
                     quantity:null,
                     groupOperator:null,
-                    groups:null,
+                    groups:[],
                     name: element.find(".field").val(),
                     operator: element.find(".operator").val(),
                     value: element.find(".value").val(),
