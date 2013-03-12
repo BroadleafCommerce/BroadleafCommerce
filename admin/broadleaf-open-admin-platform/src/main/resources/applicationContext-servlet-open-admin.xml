@@ -76,6 +76,7 @@
                 <ref bean="blAdminWebCustomTemplateResolver" />
                 <ref bean="blAdminWebTemplateResolver" />
                 <ref bean="blAdminWebClasspathTemplateResolver" />
+                <ref bean="blWebCommonClasspathTemplateResolver" />
             </set>
         </property>
         <property name="dialects">

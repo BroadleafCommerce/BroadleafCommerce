@@ -65,6 +65,16 @@
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLocaleServiceOperation"/>
     </aop:config>         
     
+    <bean id="blWebCommonClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <property name="prefix" value="/common_templates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />        
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="false"/>
+        <property name="cacheTTLMs" value="300000" />
+        <property name="order" value="500"/> 
+    </bean>  
+    
 <!--  Message creator for velocity templates.  Now should be defined in client properties file. -->
     <!-- bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.VelocityMessageCreator">
         <constructor-arg ref="blVelocityEngine"/>

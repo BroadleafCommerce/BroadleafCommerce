@@ -103,6 +103,7 @@
                 <ref bean="blWebTemplateResolver" />
                 <ref bean="blWebClasspathTemplateResolver" />
                 <ref bean="blWebCustomTemplateResolver" />
+                <ref bean="blWebCommonClasspathTemplateResolver" />
             </set>
         </property>
         <property name="dialects">
