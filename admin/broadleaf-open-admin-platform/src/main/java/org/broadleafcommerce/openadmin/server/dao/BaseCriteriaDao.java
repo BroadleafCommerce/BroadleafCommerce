@@ -16,11 +16,14 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import org.hibernate.Criteria;
+
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.EntityManager;
 
 /**
  * 
@@ -30,16 +33,27 @@ import java.util.List;
  */
 public interface BaseCriteriaDao<T extends Serializable> {
 
-    public abstract List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
+    public List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
 
-    public abstract int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
+    public int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
 
-    public abstract EntityManager getStandardEntityManager();
+    public EntityManager getStandardEntityManager();
     
-    public abstract int count(PersistentEntityCriteria entityCriteria);
+    public int count(PersistentEntityCriteria entityCriteria);
     
-    public abstract List<T> query(PersistentEntityCriteria entityCriteria);
+    /**
+     * Convenience method for executing a row count for a given Hibernate criteria. This should not normally be used
+     * except for very specific cases where circumstances dictate a transformation of the Hibernate criteria (like if
+     * the <b>criteria</b> needs to have table aliases for joins). Normally the {{@link #count(PersistentEntityCriteria)} or
+     * {@link #count(PersistentEntityCriteria, Class)} should be used instead.
+     * 
+     * @param criteria
+     * @return
+     */
+    public int rowCount(Criteria criteria);
+
+    public List<T> query(PersistentEntityCriteria entityCriteria);
     
-    public abstract Class<? extends Serializable> getEntityClass();
+    public Class<? extends Serializable> getEntityClass();
 
 }

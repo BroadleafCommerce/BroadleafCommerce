@@ -16,16 +16,18 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.ejb.HibernateEntityManager;
 
-import javax.persistence.EntityManager;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+
 import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.EntityManager;
 
 /**
  * Inspired by the com.anasoft.os.daofusion.AbstractHibernateEntityDao class by vojtech.szocs.
@@ -49,25 +51,29 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
         return criteria;
     }
     
+    @Override
     @SuppressWarnings("unchecked")
     public List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass) {
         return getCriteria(entityCriteria, targetEntityClass).list();
     }
     
+    @Override
     public List<T> query(PersistentEntityCriteria entityCriteria) {
         return query(entityCriteria, getEntityClass());
     }
     
+    @Override
     public int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass) {
         Criteria criteria = getCriteria(entityCriteria, targetEntityClass);
         return rowCount(criteria);
     }
     
+    @Override
     public int count(PersistentEntityCriteria entityCriteria) {
         return count(entityCriteria, getEntityClass());
     }
     
-    protected int rowCount(Criteria criteria) {
+    public int rowCount(Criteria criteria) {
         criteria.setProjection(Projections.rowCount());
         
         List<?> projectionResults = criteria.list();
@@ -87,8 +93,10 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
         return ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
     }
     
+    @Override
     public abstract EntityManager getStandardEntityManager();
     
+    @Override
     public abstract Class<? extends Serializable> getEntityClass();
 
 }
