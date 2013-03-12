@@ -88,7 +88,7 @@ $(document).ready(function() {
 	 * Note that we MUST unbind this handler when the modal is hidden as there could be many different
 	 * to-one fields on an entity form.
 	 */
-    $('body').on('click', 'a.show-to-one-list-grid', function(event) {
+    $('body').on('click', '.to-one-lookup', function(event) {
     	var $container = $(this).closest('div.additional-foreign-key-container');
     	
     	$container.on('valueSelected', function(event, fields) {
@@ -96,12 +96,12 @@ $(document).ready(function() {
     		var displayValueProp = $this.find('input.display-value-property').val();
     		
     		$this.find('input.value').val(fields['id']);
-    		$this.find('input.display-value').val(fields[displayValueProp]);
+    		$this.find('span.display-value').html(fields[displayValueProp]);
     		
-			BLCAdmin.currentModal().modal('hide');
+			BLCAdmin.hideCurrentModal();
     	});
     	
-    	BLCAdmin.showLinkAsModal($(this).attr('href'), function() {
+    	BLCAdmin.showLinkAsModal($(this).data('select-url'), function() {
 			$('div.additional-foreign-key-container').unbind('valueSelected');
     	});
     	
@@ -156,7 +156,7 @@ $(document).ready(function() {
 		
 		$tr.find('td').each(function() {
 			var fieldName = $(this).data('fieldname');
-			var value = $(this).text();
+			var value = $(this).data('fieldvalue');
 			fields[fieldName] = value;
 		});
 		
@@ -167,7 +167,7 @@ $(document).ready(function() {
 		var $table = $(data);
 		var tableId = $table.attr('id');
 		$('#' + tableId).replaceWith($table);
-    	BLCAdmin.currentModal().modal('hide');
+    	BLCAdmin.hideCurrentModal();
 	}
 	
 });

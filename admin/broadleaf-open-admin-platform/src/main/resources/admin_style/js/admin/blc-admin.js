@@ -9,8 +9,10 @@ var BLCAdmin = (function($) {
 			// Create a modal out of the server response
 			var $data = $(data);
 			$data.attr('id', 'modal' + modals.length);
-			$data.find('input').foundationCustomForms();
 			$('body').append($data);
+			
+			// Add foundation custom form elements for any existing ones
+			$data.find('input').foundationCustomForms();
 			
 			// If we already have an active modal, we don't need another backdrop on subsequent modals
 			$data.modal({
@@ -56,12 +58,19 @@ var BLCAdmin = (function($) {
 	function currentModal() {
 		return modals.last();
 	}
+	
+	function hideCurrentModal() {
+		if (currentModal()) {
+			currentModal().modal('hide');
+		}
+	}
 
 	// The publicly accessible functions provided by this module
     return {
     	showLinkAsModal : showLinkAsModal,
     	modalNavigateTo : modalNavigateTo,
-    	currentModal : currentModal
+    	currentModal : currentModal,
+    	hideCurrentModal : hideCurrentModal
     }
     
 })(jQuery);

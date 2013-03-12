@@ -16,9 +16,13 @@ var BLC = (function($) {
     }
     
     function getExtraData($data) {
-        var extraData = $.parseJSON($data.find('#' + extraDataDiv).text());
-        $data.find('#' + extraDataDiv).remove();
-        return extraData;
+    	var extraData;
+    	var $extraDataDiv = $data.find('#' + extraDataDiv);
+    	if ($extraDataDiv.length > 0) {
+	        extraData = $.parseJSON($extraDataDiv.text());
+	        $extraDataDiv.remove();
+    	}
+	    return extraData;
     }
     
     function ajax(options, callback) {

@@ -9,3 +9,11 @@ span.custom.checkbox {
 label.custom-checkbox {
 	vertical-align: top;
 }
+
+.hover-cursor:hover {
+	cursor: pointer;
+}
+
+div.additional-foreign-key-container {
+	margin-bottom: 15px;
+}
