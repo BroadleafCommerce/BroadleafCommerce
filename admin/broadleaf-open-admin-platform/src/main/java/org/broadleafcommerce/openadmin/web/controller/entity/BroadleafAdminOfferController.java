@@ -44,9 +44,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-@Controller
+@Controller("blAdminOfferController")
 @RequestMapping("offer")
-public class BroadleafAdminOfferController extends BroadleafAdminBasicEntityController {
+public class BroadleafAdminOfferController extends BroadleafAdminAbstractEntityController {
 
     @Override
     public String[] getSectionCustomCriteria() {

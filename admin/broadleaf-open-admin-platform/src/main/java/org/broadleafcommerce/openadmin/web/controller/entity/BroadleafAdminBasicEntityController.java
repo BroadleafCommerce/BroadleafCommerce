@@ -16,30 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassTree;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
-import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
-import org.broadleafcommerce.openadmin.web.controller.BroadleafAdminAbstractController;
-import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
-import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
-import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping;
-import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -52,13 +29,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
-import java.net.URLDecoder;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -66,389 +36,66 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminBasicEntityController")
-public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractController {
+@RequestMapping("")
+public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractEntityController {
 
-    @Resource(name = "blAdminEntityService")
-    protected AdminEntityService service;
-
-    @Resource(name = "blFormBuilderService")
-    protected FormBuilderService formService;
-
-    @Resource(name = "blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
-
-    @Resource(name = "blEntityFormValidator")
-    protected EntityFormValidator entityValidator;
-
-    /**
-     * Renders the main entity listing for the specified class, which is based on the current sectionKey
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey) throws Exception {
-        String sectionClassName = getClassNameForSection(sectionKey);
-
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
-        ClassMetadata cmd = service.getClassMetadata(ppr);
-        Entity[] rows = service.getRecords(ppr);
-
-        ListGrid listGrid = formService.buildMainListGrid(rows, cmd);
-
-        model.addAttribute("listGrid", listGrid);
-        model.addAttribute("viewType", "entityList");
-
-        setModelAttributes(model, sectionKey);
-        return "modules/defaultContainer";
+        return super.viewEntityList(request, response, model, sectionKey);
     }
 
-    /**
-     * Renders the modal form that is used to add a new parent level entity. Note that this form cannot render any
-     * subcollections as operations on those collections require the parent level entity to first be saved and have 
-     * and id. Once the entity is initially saved, we will redirect the user to the normal manage entity screen where 
-     * they can then perform operations on sub collections.
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param entityType
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/add", method = RequestMethod.GET)
     public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @RequestParam(defaultValue = "") String entityType) throws Exception {
-        String sectionClassName = getClassNameForSection(sectionKey);
-
-        ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName));
-
-        // If the entity type isn't specified, we need to determine if there are various polymorphic types for this entity.
-        if (StringUtils.isBlank(entityType)) {
-            if (cmd.getPolymorphicEntities().getChildren().length == 0) {
-                entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
-            } else {
-                entityType = getDefaultEntityType();
-            }
-        } else {
-            entityType = URLDecoder.decode(entityType, "UTF-8");
-        }
-
-        // If we still don't have a type selected, that means that there were indeed multiple possible types and we 
-        // will be allowing the user to pick his desired type.
-        if (StringUtils.isBlank(entityType)) {
-            List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
-            model.addAttribute("entityTypes", entityTypes);
-            model.addAttribute("viewType", "modal/entityTypeSelection");
-        } else {
-            ClassMetadata specificTypeMd = service.getClassMetadata(getSectionPersistencePackageRequest(entityType));
-            EntityForm entityForm = formService.buildEntityForm(specificTypeMd);
-
-            // When we initially build the class metadata (and thus, the entity form), we had all of the possible
-            // polymorphic fields built out. Now that we have a concrete entity type to render, we can remove the
-            // fields that are not applicable for this given entity type.
-            formService.removeNonApplicableFields(cmd, entityForm, entityType);
-
-            model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modal/entityAdd");
-        }
-
-        //Entity entity = service.getRecord(sectionClassName, id);
-        //Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
-
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "addEntity");
-        setModelAttributes(model, sectionKey);
-        return "modules/modalContainer";
+        return super.viewAddEntityForm(request, response, model, sectionKey, entityType);
     }
 
     @RequestMapping(value = "{sectionKey}/add", method = RequestMethod.POST)
     public String addEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
-        String sectionClassName = getClassNameForSection(sectionKey);
-
-        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
-        entityValidator.validate(entityForm, entity, result);
-
-        /*
-        if (result.hasErrors()) {
-            ClassMetadata cmd = service.getClassMetadata(sectionClassName);
-            Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
-
-            //re-initialize the field groups as well as sub collections
-            EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
-            formService.copyEntityFormValues(newForm, entityForm);
-
-            model.addAttribute("entityForm", newForm);
-            model.addAttribute("viewType", "entityForm");
-            setModelAttributes(model, sectionKey);
-            return "modules/defaultContainer";
-        }
-        */
-        
-        
-        
-        return "ajaxredirect:/" + sectionKey + "/" + entity.getPMap().get("id").getValue();
+        return super.addEntity(request, response, model, sectionKey, entityForm, result);
     }
 
-    /**
-     * Renders the main entity form for the specified entity
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param id
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @PathVariable String id) throws Exception {
-        String sectionClassName = getClassNameForSection(sectionKey);
-
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
-
-        ClassMetadata cmd = service.getClassMetadata(ppr);
-        Entity entity = service.getRecord(ppr, id);
-
-        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
-
-        EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
-
-        model.addAttribute("entity", entity);
-        model.addAttribute("entityForm", entityForm);
-        model.addAttribute("viewType", "entityEdit");
-
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
-        setModelAttributes(model, sectionKey);
-        return "modules/defaultContainer";
+        return super.viewEntityForm(request, response, model, sectionKey, id);
     }
 
-    /**
-     * Attempts to save the given entity. If validation is unsuccessful, it will re-render the entity form with
-     * error fields highlighted. On a successful save, it will refresh the entity page.
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param id
-     * @param entityForm
-     * @param result
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/{id}", method = RequestMethod.POST)
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @PathVariable String id,
             @ModelAttribute EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
-        String sectionClassName = getClassNameForSection(sectionKey);
-
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
-
-        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
-        entityValidator.validate(entityForm, entity, result);
-
-        if (result.hasErrors()) {
-            ClassMetadata cmd = service.getClassMetadata(ppr);
-            Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
-
-            //re-initialize the field groups as well as sub collections
-            EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
-            formService.copyEntityFormValues(newForm, entityForm);
-
-            model.addAttribute("entity", entity);
-            model.addAttribute("entityForm", newForm);
-            model.addAttribute("viewType", "entityEdit");
-            setModelAttributes(model, sectionKey);
-            return "modules/defaultContainer";
-        }
-
-        ra.addFlashAttribute("headerFlash", "save.successful");
-        
-        return "redirect:/" + sectionKey + "/" + id;
+        return super.saveEntity(request, response, model, sectionKey, id, entityForm, result, ra);
     }
 
-    /**
-     * Attempts to remove the given entity.
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param id
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/{id}/delete", method = RequestMethod.POST)
     public String removeEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @PathVariable String id,
             @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
-        service.removeEntity(entityForm, getSectionCustomCriteria());
-
-        return "redirect:/" + sectionKey;
+        return super.removeEntity(request, response, model, sectionKey, id, entityForm, result);
     }
 
-    /**
-     * Shows the modal dialog that is used to select a "to-one" collection item. For example, this could be used to show
-     * a list of categories for the ManyToOne field "defaultCategory" in Product.
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param collectionField
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/{collectionField}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @PathVariable String collectionField) throws Exception {
-        String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
-        FieldMetadata md = collectionProperty.getMetadata();
-
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
-        if (md instanceof BasicFieldMetadata) {
-            Entity[] rows = service.getRecords(ppr);
-
-            ListGrid listGrid = formService.buildCollectionListGrid(null, rows, collectionProperty);
-
-            model.addAttribute("listGrid", listGrid);
-            model.addAttribute("viewType", "modal/simpleSelectEntity");
-        }
-
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "selectCollectionItem");
-        model.addAttribute("collectionProperty", collectionProperty);
-        setModelAttributes(model, sectionKey);
-        return "modules/modalContainer";
+        return super.showSelectCollectionItem(request, response, model, sectionKey, collectionField);
     }
 
-    /**
-     * Shows the modal dialog that is used to add an item to a given collection. There are several possible outcomes
-     * of this call depending on the type of the specified collection field.
-     * 
-     * <ul>
-     *  <li>
-     *    <b>Basic Collection (Persist)</b> - Renders a blank form for the specified target entity so that the user may
-     *    enter information and associate the record with this collection. Used by fields such as ProductAttribute.
-     *  </li>
-     *  <li>
-     *    <b>Basic Collection (Lookup)</b> - Renders a list grid that allows the user to click on an entity and select it. 
-     *    Used by fields such as "allParentCategories".
-     *  </li>
-     *  <li>
-     *    <b>Adorned Collection (without form)</b> - Renders a list grid that allows the user to click on an entity and 
-     *    select it. The view rendered by this is identical to basic collection (lookup), but will perform the operation
-     *    on an adorned field, which may carry extra meta-information about the created relationship, such as order.
-     *  </li>
-     *  <li>
-     *    <b>Adorned Collection (with form)</b> - Renders a list grid that allows the user to click on an entity and 
-     *    select it. Once the user selects the entity, he will be presented with an empty form based on the specified
-     *    "maintainedAdornedTargetFields" for this field. Used by fields such as "crossSellProducts", which in addition
-     *    to linking an entity, provide extra fields, such as a promotional message.
-     *  </li>
-     *  <li>
-     *    <b>Map Collection</b> - Renders a form for the target entity that has an additional key field. This field is
-     *    populated either from the configured map keys, or as a result of a lookup in the case of a key based on another
-     *    entity. Used by fields such as the mediaMap on a Sku.
-     *  </li>
-     *  
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param id
-     * @param collectionField
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @PathVariable String id,
             @PathVariable String collectionField) throws Exception {
-        String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
-        FieldMetadata md = collectionProperty.getMetadata();
-
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
-
-        if (md instanceof BasicCollectionMetadata) {
-            BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
-
-            // When adding items to basic collections, we will sometimes show a form to persist a new record
-            // and sometimes show a list grid to allow the user to associate an existing record.
-            if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
-                ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-                EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
-
-                entityForm.getTabs().iterator().next().getIsVisible();
-
-                model.addAttribute("entityForm", entityForm);
-                model.addAttribute("viewType", "modal/simpleAddEntity");
-            } else {
-                Entity[] rows = service.getRecords(ppr);
-                ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
-
-                model.addAttribute("listGrid", listGrid);
-                model.addAttribute("viewType", "modal/simpleSelectEntity");
-            }
-        } else if (md instanceof AdornedTargetCollectionMetadata) {
-            AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
-
-            // Even though this field represents an adorned target collection, the list we want to show in the modal
-            // is the standard list grid for the target entity of this field
-            ppr.setOperationTypesOverride(null);
-            ppr.setType(PersistencePackageRequest.Type.STANDARD);
-
-            ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-
-            Entity[] rows = service.getRecords(ppr);
-            ListGrid listGrid = formService.buildMainListGrid(rows, collectionMetadata);
-            listGrid.setSubCollectionFieldName(collectionField);
-            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
-
-            if (fmd.getMaintainedAdornedTargetFields().length > 0) {
-                listGrid.setListGridType(ListGrid.Type.ADORNED_WITH_FORM);
-            } else {
-                listGrid.setListGridType(ListGrid.Type.ADORNED);
-            }
-
-            model.addAttribute("listGrid", listGrid);
-            model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modal/adornedSelectEntity");
-        } else if (md instanceof MapMetadata) {
-            MapMetadata fmd = (MapMetadata) md;
-            ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-
-            EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
-            model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modal/mapAddEntity");
-        }
-
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "addCollectionItem");
-        model.addAttribute("collectionProperty", collectionProperty);
-        setModelAttributes(model, sectionKey);
-        return "modules/modalContainer";
+        return super.showAddCollectionItem(request, response, model, sectionKey, id, collectionField);
     }
 
     @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.GET)
@@ -457,112 +104,18 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             @PathVariable String id,
             @PathVariable String collectionField,
             @PathVariable String collectionItemId) throws Exception {
-        /*
-         * TODO APA
-         * also refactor the list grid html stuff to load one that loads the toolbar included
-         * basic collection persist, same form 
-         * adorned collection with form 
-         * map collections
-         */
-        String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
-        FieldMetadata md = collectionProperty.getMetadata();
-
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
-
-        if (md instanceof BasicCollectionMetadata &&
-                ((BasicCollectionMetadata) md).getAddMethodType().equals(AddMethodType.PERSIST)) {
-            BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
-
-            ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            PersistencePackageRequest ppr2 = getSectionPersistencePackageRequest(fmd.getCollectionCeilingEntity());
-            Entity entity = service.getRecord(ppr2, collectionItemId);
-
-            EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity);
-
-            model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modal/simpleEditEntity");
-        } else if (md instanceof AdornedTargetCollectionMetadata &&
-                ((AdornedTargetCollectionMetadata) md).getMaintainedAdornedTargetFields().length > 0) {
-            AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
-
-            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
-            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, id, collectionProperty, collectionItemId);
-
-            formService.populateEntityFormFields(entityForm, entity);
-            formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
-
-            model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modal/adornedEditEntity");
-        } else if (md instanceof MapMetadata) {
-            MapMetadata fmd = (MapMetadata) md;
-
-            ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, id, collectionProperty, collectionItemId);
-            EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
-
-            formService.populateEntityFormFields(entityForm, entity);
-            formService.populateMapEntityFormFields(entityForm, entity);
-
-            model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modal/mapEditEntity");
-        }
-
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "updateCollectionItem");
-        setModelAttributes(model, sectionKey);
-        return "modules/modalContainer";
+        return super.showUpdateCollectionItem(request, response, model, sectionKey, id, collectionField, collectionItemId);
     }
 
-    /**
-     * Adds the requested collection item
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param id
-     * @param collectionField
-     * @param entityForm
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/add", method = RequestMethod.POST)
     public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @PathVariable String id,
             @PathVariable String collectionField,
             @ModelAttribute EntityForm entityForm) throws Exception {
-        String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
-
-        // First, we must save the collection entity
-        service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id);
-
-        // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
-        model.addAttribute("listGrid", listGrid);
-
-        // We return the new list grid so that it can replace the currently visible one
-        setModelAttributes(model, sectionKey);
-        return "views/standaloneListGrid";
+        return super.addCollectionItem(request, response, model, sectionKey, id, collectionField, entityForm);
     }
 
-    /**
-     * Updates the specified collection item
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param id
-     * @param collectionField
-     * @param entityForm
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.POST)
     public String updateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -570,119 +123,22 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractC
             @PathVariable String collectionField,
             @PathVariable String collectionItemId,
             @ModelAttribute EntityForm entityForm) throws Exception {
-        String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
-
-        // First, we must save the collection entity
-        service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id, collectionItemId);
-
-        // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
-        model.addAttribute("listGrid", listGrid);
-
-        // We return the new list grid so that it can replace the currently visible one
-        setModelAttributes(model, sectionKey);
-        return "views/standaloneListGrid";
+        return super.updateCollectionItem(request, response, model, sectionKey, id, collectionField, collectionItemId, 
+                entityForm);
     }
 
-    /**
-     * Removes the requested collection item
-     * 
-     * Note that the request must contain a parameter called "key" when attempting to remove a collection item from a 
-     * map collection.
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param sectionKey
-     * @param id
-     * @param collectionField
-     * @param collectionItemId
-     * @return the return view path
-     * @throws Exception
-     */
     @RequestMapping(value = "{sectionKey}/{id}/{collectionField}/{collectionItemId}/delete", method = RequestMethod.POST)
     public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
             @PathVariable String id,
             @PathVariable String collectionField,
             @PathVariable String collectionItemId) throws Exception {
-        String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
-
-        String priorKey = request.getParameter("key");
-
-        // First, we must remove the collection entity
-        service.removeSubCollectionEntity(mainMetadata, collectionProperty, id, collectionItemId, priorKey);
-
-        // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
-        model.addAttribute("listGrid", listGrid);
-
-        // We return the new list grid so that it can replace the currently visible one
-        setModelAttributes(model, sectionKey);
-        return "views/standaloneListGrid";
+        return super.removeCollectionItem(request, response, model, sectionKey, id, collectionField, collectionItemId);
     }
     
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-        binder.registerCustomEditor(Boolean.class, new NonNullBooleanEditor());
+        super.initBinder(binder);
     }
-
-    protected List<ClassTree> getAddEntityTypes(ClassTree classTree) {
-        return classTree.getCollapsedClassTrees();
-    }
-
-    /*
-     * This method is called when attempting to add new entities that have a polymorphic tree. 
-     * 
-     * If this method returns null, there is no default type set for this particular entity type, and the user will be 
-     * presented with a selection of possible types to utilize.
-     * 
-     * If it returns a non-null value, the returned fullyQualifiedClassname will be used and will bypass the selection step.
-     */
-    protected String getDefaultEntityType() {
-        return null;
-    }
-
-    protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, String id, Property collectionProperty)
-            throws ServiceException, ApplicationSecurityException {
-        Entity[] rows = service.getRecordsForCollection(mainMetadata, id, collectionProperty);
-
-        ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
-        listGrid.setListGridType(ListGrid.Type.INLINE);
-
-        return listGrid;
-    }
-
-    protected String getClassNameForSection(String sectionKey) {
-        sectionKey = "/" + sectionKey;
-        AdminSection section = adminNavigationService.findAdminSectionByURI(sectionKey);
-        String className = section.getCeilingEntity();
-        return className;
-    }
-
-    protected void setModelAttributes(Model model, String sectionKey) {
-        AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
-
-        model.addAttribute("sectionKey", sectionKey);
-        model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
-        model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
-    }
-
-    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName) {
-        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                .withClassName(sectionClassName)
-                .withCustomCriteria(getSectionCustomCriteria());
-        return ppr;
-    }
-
-    protected String[] getSectionCustomCriteria() {
-        return null;
-    }
-
-
+    
 }
