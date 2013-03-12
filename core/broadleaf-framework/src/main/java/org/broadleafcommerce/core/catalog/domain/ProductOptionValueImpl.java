@@ -61,15 +61,15 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     protected Long id;
 
     @Column(name = "ATTRIBUTE_VALUE")
-    @AdminPresentation(friendlyName = "Attribute_Value")
+    @AdminPresentation(friendlyName = "productOptionValue_attributeValue")
     protected String attributeValue;
 
     @Column(name = "DISPLAY_ORDER")
-    @AdminPresentation(friendlyName = "Display_Order")
+    @AdminPresentation(friendlyName = "productOptionValue_displayOrder")
     protected Long displayOrder;
 
     @Column(name = "PRICE_ADJUSTMENT", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "Adjustment", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "productOptionValue_adjustment", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal priceAdjustment;
 
     @ManyToOne(targetEntity = ProductOptionImpl.class)
@@ -112,8 +112,10 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         Money returnPrice = null;
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
+
             DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this, priceAdjustment == null ? null : new Money(priceAdjustment), SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
             returnPrice = dynamicPrices.getPriceAdjustment();
+
         } else {
             if (priceAdjustment != null) {
                 returnPrice = new Money(priceAdjustment, Money.defaultCurrency());

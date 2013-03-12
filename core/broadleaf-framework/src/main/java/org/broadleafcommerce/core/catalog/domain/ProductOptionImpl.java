@@ -68,23 +68,23 @@ public class ProductOptionImpl implements ProductOption {
     protected Long id;
     
     @Column(name = "OPTION_TYPE")
-    @AdminPresentation(friendlyName = "Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.catalog.service.type.ProductOptionType")
+    @AdminPresentation(friendlyName = "productOption_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionType")
     protected String type;
     
     @Column(name = "ATTRIBUTE_NAME")
-    @AdminPresentation(friendlyName = "Attribute Name", tooltip="The attribute name that will appear in the order item attributes for this option")
+    @AdminPresentation(friendlyName = "productOption_name", helpText = "productOption_nameHelp")
     protected String attributeName;
     
     @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "Label", tooltip = "Text to display for the set of option values", prominent = true)
+    @AdminPresentation(friendlyName = "productOption_Label", helpText = "productOption_labelHelp", prominent = true)
     protected String label;
 
     @Column(name = "REQUIRED")
-    @AdminPresentation(friendlyName = "Required")
+    @AdminPresentation(friendlyName = "productOption_Required")
     protected Boolean required;
     
     @Column(name = "DISPLAY_ORDER")
-    @AdminPresentation(friendlyName = "Display Order")
+    @AdminPresentation(friendlyName = "productOption_displayOrder")
     protected Integer displayOrder;
     
     @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
