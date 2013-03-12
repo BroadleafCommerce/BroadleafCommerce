@@ -211,7 +211,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
                     //**** Admin 3.0 ****
                     //Convert the MVEL into JSON and place as a new property on the entity: "appliesToCustomerRulesJson"
-                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,
+                    convertMatchRuleToJson(entities[j], translator, mapper, customerRule,
                             "appliesToCustomerRulesJson","CUSTOMER_FIELDS");
                 }
                 //**** Admin 3.0 ****
@@ -231,7 +231,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                     //**** Admin 3.0 ****
                     //Convert the MVEL into JSON and place as a new property on the entity:
                     // "appliesToFulfillmentGroupRulesJson"
-                    convertMatchRuleToJson(entities[j], translator, mapper, orderRule,
+                    convertMatchRuleToJson(entities[j], translator, mapper, fgRule,
                             "appliesToFulfillmentGroupRulesJson","FULFILLMENT_GROUP_FIELDS");
                 }
                 //**** Admin 3.0 ****
@@ -325,13 +325,13 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     }
 
     protected void convertMatchRuleToJson(Entity entity, MVELToDataWrapperTranslator translator, ObjectMapper mapper,
-                    OfferRule orderRule, String jsonProp, String fieldService)
+                    OfferRule offerRule, String jsonProp, String fieldService)
         throws MVELTranslationException, IOException {
         Entity[] matchCriteria = new Entity[1];
         Property[] properties = new Property[1];
         Property mvelProperty = new Property();
         mvelProperty.setName("matchRule");
-        mvelProperty.setValue(orderRule.getMatchRule());
+        mvelProperty.setValue(offerRule.getMatchRule());
         properties[0] = mvelProperty;
         Entity criteria = new Entity();
         criteria.setProperties(properties);

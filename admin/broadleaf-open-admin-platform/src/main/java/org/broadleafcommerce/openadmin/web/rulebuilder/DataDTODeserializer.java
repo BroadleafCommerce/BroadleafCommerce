@@ -81,7 +81,11 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
                 }
             }
             if ("quantity".equals(name)) {
-                dataDTO.setQuantity(element.getValue().asInt());
+                if ("null".equals(element.getValue().asText())) {
+                    dataDTO.setQuantity(null);
+                } else {
+                    dataDTO.setQuantity(element.getValue().asInt());
+                }
             }
             if ("groupOperator".equals(name)) {
                 dataDTO.setGroupOperator(element.getValue().asText());

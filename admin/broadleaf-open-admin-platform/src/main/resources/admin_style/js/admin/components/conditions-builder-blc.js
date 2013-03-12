@@ -58,6 +58,7 @@
             this.data = this.options[1].data;
             var rules = this.buildRules(this.data);
             this.element.html(rules);
+            this.element.find(".conditional-rules").unwrap();
         },
 
         collectData: function() {
@@ -123,105 +124,102 @@
             var _this = this;
             var f = _this.fields[0];
             var newField = {id:null, quantity:null, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
-            var newFieldArray = [];
-            newFieldArray.push(newField);
-            rules.append(_this.buildConditional(newFieldArray));
+            rules.append(_this.buildConditional(newField));
         },
 
         buildAddNewItemRule: function(rules) {
             var _this = this;
             var f = _this.fields[0];
             var newField = {id:null, quantity:1, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
-            var newFieldArray = [];
-            newFieldArray.push(newField);
-            rules.append(_this.buildConditional(newFieldArray));
+            rules.append(_this.buildConditional(newField));
         },
 
 
         buildRules: function(ruleDataArray) {
-            return this.buildConditional(ruleDataArray) || this.buildRule(ruleDataArray);
+            var container = $("<div>");
+            for (var i=0; i<ruleDataArray.length; i++) {
+                if (this.buildConditional(ruleDataArray[i])) {
+                    container.append(this.buildConditional(ruleDataArray[i]));
+                } else {
+                    return  this.buildRule(ruleDataArray[i]);
+                }
+            }
+            return container;
         },
 
-        buildConditional: function(ruleDataArray) {
+        buildConditional: function(ruleData) {
             var output = $("<div>", {"class": "conditional-rules"});
-            for (var i=0; i<ruleDataArray.length; i++) {
-                var ruleData = ruleDataArray[i];
-                var kind;
-                if(ruleData.groupOperator == "AND") { kind = "all"; }
-                else if(ruleData.groupOperator == "OR") { kind = "any"; }
-                else if (ruleData.groupOperator == "NOT") { kind = "none"; }
-                if(!kind) { return; }
+            var kind;
+            if(ruleData.groupOperator == "AND") { kind = "all"; }
+            else if(ruleData.groupOperator == "OR") { kind = "any"; }
+            else if (ruleData.groupOperator == "NOT") { kind = "none"; }
+            if(!kind) { return; }
 
-                var div = $("<div>", {"class": "conditional " + kind});
-                var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"});
-                selectWrapper.append($("<span>", {text: "Match", "class": "conditional-spacer"}));
+            var div = $("<div>", {"class": "conditional " + kind});
+            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"});
+            selectWrapper.append($("<span>", {text: "Match", "class": "conditional-spacer"}));
 
-                var qty = ruleData.quantity;
-                if (qty != null) {
-                    var quantity = $("<input>", {"class": "conditional-qty", "type": "text", "value": qty});
-                    selectWrapper.append(quantity);
-                    selectWrapper.append($("<span>", {text: "of", "class": "conditional-spacer"}));
-                }
-
-                var id = ruleData.id;
-                if (id != null) {
-                    var idHidden = $("<input>", {"class": "conditional-id", "type": "hidden", "value": id});
-                    selectWrapper.append(idHidden);
-                }
-
-                var select = $("<select>", {"class": "all-any-none no-custom"});
-                select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
-                select.append($("<option>", {"value": "any", "text": "Any", "selected": kind == "any"}));
-                select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
-                selectWrapper.append(select);
-                selectWrapper.append($("<span>", {text: "of the following rules:"}));
-                div.append(selectWrapper);
-
-                var addRuleLink = $("<a>", {"href": "#", "class": "add-rule", "text": "Add Rule"});
-                var _this = this;
-                addRuleLink.click(function(e) {
-                    e.preventDefault();
-                    var f = _this.fields[0];
-                    var newField = {name: f.value, operator: f.operators[0], value: null};
-                    var newFieldArray = [];
-                    newFieldArray.push(newField);
-                    $(this).parent(".conditional").append(_this.buildRule(newFieldArray));
-                });
-                div.append(addRuleLink);
-
-                var addConditionLink = $("<a>", {"href": "#", "class": "add-condition", "text": "Add Sub-Condition"});
-                addConditionLink.click(function(e) {
-                    e.preventDefault();
-                    var f = _this.fields[0];
-                    var newField = {quantity:null, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
-                    var newFieldArray = [];
-                    newFieldArray.push(newField);
-                    $(this).parent(".conditional").append(_this.buildConditional(newFieldArray));
-                });
-                div.append(addConditionLink);
-
-                var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove This Sub-Condition"});
-                removeLink.click(function(e) {
-                    e.preventDefault();
-                    $(this).parent().parent(".conditional-rules").remove();
-                });
-                div.append(removeLink);
-
-                var rules = ruleData.groups;
-                for(var j=0; j<rules.length; j++) {
-                    var ruleArray = [];
-                    ruleArray.push(rules[j]);
-                    div.append(this.buildRules(ruleArray));
-                }
-                output.append(div);
+            var qty = ruleData.quantity;
+            if (qty != null) {
+                var quantity = $("<input>", {"class": "conditional-qty", "type": "text", "value": qty});
+                selectWrapper.append(quantity);
+                selectWrapper.append($("<span>", {text: "of", "class": "conditional-spacer"}));
             }
+
+            var id = ruleData.id;
+            if (id != null) {
+                var idHidden = $("<input>", {"class": "conditional-id", "type": "hidden", "value": id});
+                selectWrapper.append(idHidden);
+            }
+
+            var select = $("<select>", {"class": "all-any-none no-custom"});
+            select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
+            select.append($("<option>", {"value": "any", "text": "Any", "selected": kind == "any"}));
+            select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
+            selectWrapper.append(select);
+            selectWrapper.append($("<span>", {text: "of the following rules:"}));
+            div.append(selectWrapper);
+
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule", "text": "Add Rule"});
+            var _this = this;
+            addRuleLink.click(function(e) {
+                e.preventDefault();
+                var f = _this.fields[0];
+                var newField = {name: f.value, operator: f.operators[0], value: null};
+                $(this).parent(".conditional").append(_this.buildRule(newField));
+            });
+            div.append(addRuleLink);
+
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition", "text": "Add Sub-Condition"});
+            addConditionLink.click(function(e) {
+                e.preventDefault();
+                var f = _this.fields[0];
+                var newField = {quantity:null, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
+                $(this).parent(".conditional").append(_this.buildConditional(newField));
+            });
+            div.append(addConditionLink);
+
+            var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove This Sub-Condition"});
+            removeLink.click(function(e) {
+                e.preventDefault();
+                $(this).parent().remove();
+            });
+            div.append(removeLink);
+
+            var rules = ruleData.groups;
+            for(var j=0; j<rules.length; j++) {
+                var ruleArray = [];
+                ruleArray.push(rules[j]);
+                div.append(this.buildRules(ruleArray));
+            }
+            output.append(div);
+
 
             return output;
 
         },
 
-        buildRule: function(ruleDataArray) {
-            var ruleData = ruleDataArray[0];
+        buildRule: function(ruleData) {
             var ruleDiv = $("<div>", {"class": "rule"});
             var fieldSelect = getFieldSelect(this.fields, ruleData);
             var operatorSelect = getOperatorSelect();
@@ -233,7 +231,7 @@
             ruleDiv.append(removeLink());
 
             fieldSelect.change();
-            ruleDiv.find("> .value").val(ruleData.value);
+            ruleDiv.find(".value").val(ruleData.value);
             return ruleDiv;
         },
 
