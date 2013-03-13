@@ -71,7 +71,7 @@
     <tr th:each="record : ${listGrid.records}"
         th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
         blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'data-link'">
-        <td data-fieldname="id" th:text="${record.id}" />
+        <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
         <td th:each="field : ${record.fields}"
             th:class="${'td' + fieldStat.count}"
             th:switch="${listGrid.listGridType}"

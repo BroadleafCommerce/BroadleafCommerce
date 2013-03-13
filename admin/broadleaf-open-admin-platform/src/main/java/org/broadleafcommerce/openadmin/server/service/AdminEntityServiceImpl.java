@@ -155,7 +155,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             Assert.isTrue(entities != null && entities.length == 1);
             entity = entities[0];
         } else if (md instanceof MapMetadata) {
-            FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getForeignKeys()[0].getManyToField());
+            FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getForeignKey().getManyToField());
             fasc.setFilterValue(containingEntityId);
             ppr.addFilterAndSortCriteria(fasc);
 
@@ -191,11 +191,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         FieldMetadata md = collectionProperty.getMetadata();
 
         if (md instanceof BasicCollectionMetadata) {
-            fasc = new FilterAndSortCriteria(ppr.getForeignKeys()[0].getManyToField());
+            fasc = new FilterAndSortCriteria(ppr.getForeignKey().getManyToField());
         } else if (md instanceof AdornedTargetCollectionMetadata) {
             fasc = new FilterAndSortCriteria(ppr.getAdornedList().getCollectionFieldName());
         } else if (md instanceof MapMetadata) {
-            fasc = new FilterAndSortCriteria(ppr.getForeignKeys()[0].getManyToField());
+            fasc = new FilterAndSortCriteria(ppr.getForeignKey().getManyToField());
         } else {
             throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was not a " +
                     "collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
@@ -250,7 +250,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             ppr.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
 
             Property fp = new Property();
-            fp.setName(ppr.getForeignKeys()[0].getManyToField());
+            fp.setName(ppr.getForeignKey().getManyToField());
             fp.setValue(parentId);
             properties.add(fp);
         } else if (md instanceof AdornedTargetCollectionMetadata) {
@@ -294,7 +294,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             ppr.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
 
             Property fp = new Property();
-            fp.setName(ppr.getForeignKeys()[0].getManyToField());
+            fp.setName(ppr.getForeignKey().getManyToField());
             fp.setValue(parentId);
             properties.add(fp);
         } else if (md instanceof AdornedTargetCollectionMetadata) {
@@ -341,7 +341,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             properties.add(p);
 
             p = new Property();
-            p.setName(ppr.getForeignKeys()[0].getManyToField());
+            p.setName(ppr.getForeignKey().getManyToField());
             p.setValue(parentId);
             properties.add(p);
 

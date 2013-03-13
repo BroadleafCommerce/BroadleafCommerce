@@ -654,12 +654,17 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withClassName(sectionClassName)
                 .withCustomCriteria(getSectionCustomCriteria());
+        
+        attachSectionSpecificInfo(ppr);
+        
         return ppr;
     }
 
     protected String[] getSectionCustomCriteria() {
         return null;
     }
-
+    
+    protected void attachSectionSpecificInfo(PersistencePackageRequest ppr) {
+    }
 
 }

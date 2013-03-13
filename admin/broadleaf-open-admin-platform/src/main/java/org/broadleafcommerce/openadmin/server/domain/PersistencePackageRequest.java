@@ -33,12 +33,13 @@ public class PersistencePackageRequest {
     protected AdornedTargetList adornedList;
     protected MapStructure mapStructure;
     protected Entity entity;
+    protected ForeignKey foreignKey;
 
     protected OperationTypes operationTypesOverride = null;
 
     // These properties are accessed via getters and setters that operate on arrays.
     // We back them with a list so that we can have the convenience .add methods
-    protected List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
+    protected List<ForeignKey> additionalForeignKeys = new ArrayList<ForeignKey>();
     protected List<String> customCriteria = new ArrayList<String>();
     protected List<FilterAndSortCriteria> filterAndSortCriteria = new ArrayList<FilterAndSortCriteria>();
 
@@ -91,7 +92,7 @@ public class PersistencePackageRequest {
                 request.setType(Type.STANDARD);
                 request.setClassName(fmd.getCollectionCeilingEntity());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
-                request.addForeignKey(foreignKey);
+                request.setForeignKey(foreignKey);
             }
 
             @Override
@@ -117,7 +118,7 @@ public class PersistencePackageRequest {
                 request.setClassName(fmd.getTargetClass());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setMapStructure(mapStructure);
-                request.addForeignKey(foreignKey);
+                request.setForeignKey(foreignKey);
             }
         });
 
@@ -150,10 +151,8 @@ public class PersistencePackageRequest {
         return this;
     }
 
-    public PersistencePackageRequest withForeignKeys(ForeignKey[] foreignKeys) {
-        if (ArrayUtils.isNotEmpty(foreignKeys)) {
-            setForeignKeys(foreignKeys);
-        }
+    public PersistencePackageRequest withForeignKey(ForeignKey foreignKey) {
+        setForeignKey(foreignKey);
         return this;
     }
 
@@ -195,8 +194,8 @@ public class PersistencePackageRequest {
     /* ADD METHODS */
     /* *********** */
 
-    public PersistencePackageRequest addForeignKey(ForeignKey foreignKey) {
-        foreignKeys.add(foreignKey);
+    public PersistencePackageRequest addAdditionalForeignKey(ForeignKey foreignKey) {
+        additionalForeignKeys.add(foreignKey);
         return this;
     }
 
@@ -216,20 +215,20 @@ public class PersistencePackageRequest {
     /* CUSTOM GETTERS / SETTERS */
     /* ************************ */
 
-    public ForeignKey[] getForeignKeys() {
-        ForeignKey[] arr = new ForeignKey[this.foreignKeys.size()];
-        arr = this.foreignKeys.toArray(arr);
-        return arr;
-    }
-
-    public void setForeignKeys(ForeignKey[] foreignKeys) {
-        this.foreignKeys = Arrays.asList(foreignKeys);
-    }
-
     public String[] getCustomCriteria() {
         String[] arr = new String[this.customCriteria.size()];
         arr = this.customCriteria.toArray(arr);
         return arr;
+    }
+    
+    public ForeignKey[] getAdditionalForeignKeys() {
+        ForeignKey[] arr = new ForeignKey[this.additionalForeignKeys.size()];
+        arr = this.additionalForeignKeys.toArray(arr);
+        return arr;
+    }
+    
+    public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
+        this.additionalForeignKeys = Arrays.asList(additionalForeignKeys);
     }
 
     public void setCustomCriteria(String[] customCriteria) {
@@ -249,6 +248,15 @@ public class PersistencePackageRequest {
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
     /* ************************** */
+    
+
+    public ForeignKey getForeignKey() {
+        return foreignKey;
+    }
+    
+    public void setForeignKey(ForeignKey foreignKey) {
+        this.foreignKey = foreignKey;
+    }
 
     public Type getType() {
         return type;

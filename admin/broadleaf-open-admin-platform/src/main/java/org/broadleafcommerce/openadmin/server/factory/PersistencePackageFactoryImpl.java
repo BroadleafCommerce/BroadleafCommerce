@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.server.factory;
 
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -35,13 +34,12 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
     public PersistencePackage create(PersistencePackageRequest request) {
         PersistencePerspective persistencePerspective = new PersistencePerspective();
 
-        persistencePerspective.setAdditionalForeignKeys(new ForeignKey[] {});
+        persistencePerspective.setAdditionalForeignKeys(request.getAdditionalForeignKeys());
         persistencePerspective.setAdditionalNonPersistentProperties(new String[] {});
-
-        if (request.getForeignKeys() != null) {
-            for (ForeignKey fk : request.getForeignKeys()) {
-                persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, fk);
-            }
+        
+        if (request.getForeignKey() != null) {
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, 
+                    request.getForeignKey());
         }
 
         switch (request.getType()) {
