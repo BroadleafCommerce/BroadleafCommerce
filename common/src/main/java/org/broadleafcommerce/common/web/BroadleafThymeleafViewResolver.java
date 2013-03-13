@@ -16,23 +16,22 @@
 
 package org.broadleafcommerce.common.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.util.PatternMatchUtils;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 import org.thymeleaf.spring3.view.AbstractThymeleafView;
 import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class extends the default ThymeleafViewResolver to facilitate rendering
@@ -141,6 +140,12 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
             
             if (longestPrefix.equals("")) {
                 viewName = getFullPageLayout();
+            }
+            if (BroadleafRequestContext.getBroadleafRequestContext() != null && BroadleafRequestContext.getBroadleafRequestContext().getRequest() != null) {
+                String layoutOverride = (String) BroadleafRequestContext.getBroadleafRequestContext().getRequest().getAttribute("layoutOverride");
+                if (!StringUtils.isBlank(layoutOverride)) {
+                    viewName = layoutOverride;
+                }
             }
         }
         
