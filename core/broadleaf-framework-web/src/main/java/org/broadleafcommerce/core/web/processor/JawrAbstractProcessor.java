@@ -57,6 +57,7 @@ public abstract class JawrAbstractProcessor extends AbstractUnescapedTextChildMo
     @Override
     protected String getText(Arguments arguments, Element element, String attributeName) {
         String bundleName = element.getAttributeValue(attributeName);
+        bundleName = "/WEB-INF/default-theme" + bundleName;
         WebContext webContext = (WebContext) arguments.getContext();
         ServletContext servletContext = webContext.getServletContext();
         HttpServletRequest request = webContext.getHttpServletRequest();

@@ -258,6 +258,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
 
         order.addOfferCode(offerCode1);
         order.addOfferCode(offerCode2);
+        order = orderService.save(order, false);
 
         OfferInfo info1 = offerDao.createOfferInfo();
         info1.getFieldValues().put("key1", "value1");
@@ -265,6 +266,8 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         OfferInfo info2 = offerDao.createOfferInfo();
         info2.getFieldValues().put("key2", "value2");
         order.getAdditionalOfferInformation().put(offerCode2.getOffer(), info2);
+
+        order = orderService.save(order, false);
         
         order = orderService.save(order, true);
 

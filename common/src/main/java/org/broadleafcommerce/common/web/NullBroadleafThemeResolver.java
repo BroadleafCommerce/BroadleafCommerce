@@ -20,6 +20,8 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.site.domain.ThemeDTO;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,10 +33,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component("blThemeResolver")
 public class NullBroadleafThemeResolver implements BroadleafThemeResolver {
-    private Theme theme = new ThemeDTO();
+    private final Theme theme = new ThemeDTO();
 
     @Override
     public Theme resolveTheme(HttpServletRequest request, Site site) {
+        return resolveTheme(new ServletWebRequest(request), site);
+    }
+    
+    @Override
+    public Theme resolveTheme(WebRequest request, Site site) {
         return theme;
     }
 }

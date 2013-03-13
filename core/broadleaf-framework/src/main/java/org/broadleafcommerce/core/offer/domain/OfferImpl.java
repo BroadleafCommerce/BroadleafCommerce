@@ -119,7 +119,7 @@ public class OfferImpl implements Offer, Status {
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority", order=7,group = "OfferImpl_Description", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority", order = 7, group = "OfferImpl_Advanced", groupOrder = 4)
     protected int priority;
 
     @Column(name = "START_DATE")
@@ -139,7 +139,7 @@ public class OfferImpl implements Offer, Status {
     protected String targetSystem;
 
     @Column(name = "APPLY_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", group = "OfferImpl_Advanced", groupOrder=4)
+    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", group = "OfferImpl_Description", groupOrder = 1, order = 7)
     protected boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")

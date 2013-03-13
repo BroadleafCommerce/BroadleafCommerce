@@ -80,7 +80,7 @@ public class AdminAuditableListener {
             AdminSandBoxContext context = (AdminSandBoxContext) SandBoxContext.getSandBoxContext();
             if (context != null) {
                 field.setAccessible(true);
-                field.set(entity, context.getAdminUser());
+                field.set(entity, context.getAdminUser().getId());
             }
         } catch (IllegalStateException e) {
             //do nothing

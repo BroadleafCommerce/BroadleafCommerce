@@ -25,9 +25,11 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
+import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -47,9 +49,14 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     @Resource(name="blMergeCartService")
     private MergeCartService mergeCartService;
 
+    @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
+        execute(new ServletWebRequest(request, response), authResult);
+    }
+    
+    public void execute(WebRequest request, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
-        Customer anonymousCustomer = (Customer) request.getSession(true).getAttribute(CustomerStateFilter.ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME);
+        Customer anonymousCustomer = (Customer) request.getAttribute(CustomerStateRequestProcessor.ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
         
         Order cart = null;
         if (anonymousCustomer != null) {
@@ -64,7 +71,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
             throw new RuntimeException(e);
         }
 
-        request.getSession().setAttribute(mergeCartResponseKey, mergeCartResponse);
+        request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
     }
 
     public String getMergeCartResponseKey() {

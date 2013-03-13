@@ -16,11 +16,24 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import java.lang.reflect.Method;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,6 +48,7 @@ import javax.persistence.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualifiedEntity {
 
+    private static final Log LOG = LogFactory.getLog(AdminPermissionQualifiedEntityImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -79,5 +93,34 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
     @Override
     public void setAdminPermission(AdminPermission adminPermission) {
         this.adminPermission = adminPermission;
+    }
+
+    public void checkCloneable(AdminPermissionQualifiedEntity qualifiedEntity) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = qualifiedEntity.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !qualifiedEntity.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+        }
+    }
+
+    @Override
+    public AdminPermissionQualifiedEntity clone() {
+        AdminPermissionQualifiedEntity clone;
+        try {
+            clone = (AdminPermissionQualifiedEntity) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setId(id);
+            clone.setCeilingEntityFullyQualifiedName(ceilingEntityFullyQualifiedName);
+
+            //don't clone the AdminPermission, as it would cause a recursion
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
     }
 }

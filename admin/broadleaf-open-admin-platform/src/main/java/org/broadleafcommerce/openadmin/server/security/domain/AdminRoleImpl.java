@@ -55,6 +55,8 @@ import javax.persistence.TableGenerator;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "AdminRoleImpl_baseAdminRole")
 public class AdminRoleImpl implements AdminRole {
+
+    private static final Log LOG = LogFactory.getLog(AdminRoleImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -122,6 +124,43 @@ public class AdminRoleImpl implements AdminRole {
 
     public void setAllPermissions(Set<AdminPermission> allPermissions) {
         this.allPermissions = allPermissions;
+    }
+
+    public void checkCloneable(AdminRole adminRole) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = adminRole.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !adminRole.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+        }
+    }
+
+    @Override
+    public AdminRole clone() {
+        AdminRole clone;
+        try {
+            clone = (AdminRole) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setId(id);
+            clone.setName(name);
+            clone.setDescription(description);
+
+            //don't clone the allUsers collection, as it would cause a recursion
+
+            if (allPermissions != null) {
+                for (AdminPermission permission : allPermissions) {
+                    AdminPermission permissionClone = permission.clone();
+                    clone.getAllPermissions().add(permissionClone);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
     }
 
 }

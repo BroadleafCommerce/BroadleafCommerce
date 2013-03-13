@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.offer.service;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -219,8 +221,12 @@ public class OfferDataItemProvider {
         sku1.setDiscountable(true);
         sku1.setRetailPrice(new Money(19.99D));
         product1.setDefaultSku(sku1);
-        
-        category1.getAllProducts().add(product1);
+
+        CategoryProductXref xref1 = new CategoryProductXrefImpl();
+        xref1.setProduct(product1);
+        xref1.setCategory(category1);
+
+        category1.getAllProducts().add(xref1);
         
         Category category2 = new CategoryImpl();
         category2.setName("test2");
@@ -234,8 +240,12 @@ public class OfferDataItemProvider {
         sku2.setDiscountable(true);
         sku2.setRetailPrice(new Money(29.99D));
         product2.setDefaultSku(sku2);
+
+        CategoryProductXref xref2 = new CategoryProductXrefImpl();
+        xref2.setProduct(product2);
+        xref2.setCategory(category2);
         
-        category2.getAllProducts().add(product2);
+        category2.getAllProducts().add(xref2);
         
         DiscreteOrderItem orderItem1 = new DiscreteOrderItemImpl();
         orderItem1.setCategory(category1);

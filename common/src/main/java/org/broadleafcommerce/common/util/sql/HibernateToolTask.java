@@ -16,17 +16,8 @@
 
 package org.broadleafcommerce.common.util.sql;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -37,7 +28,16 @@ import org.broadleafcommerce.common.extensibility.context.StandardConfigLocation
 import org.broadleafcommerce.common.extensibility.jpa.ConfigurationOnlyState;
 import org.hibernate.MappingNotFoundException;
 import org.hibernate.tool.ant.ConfigurationTask;
-import org.hibernate.util.StringHelper;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This is a re-worked version from Hibernate tools
@@ -253,7 +253,7 @@ public class HibernateToolTask extends Task {
                 cause=cause.getCause();
             }
         }
-        if(StringHelper.isNotEmpty(ex)) {
+        if(StringUtils.isNotEmpty(ex)) {
             log(ex, Project.MSG_ERR);
         }
 

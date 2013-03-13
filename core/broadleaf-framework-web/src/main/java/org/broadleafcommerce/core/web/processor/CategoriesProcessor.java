@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.stereotype.Component;
@@ -62,7 +63,7 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
         List<Category> categories = catalogService.findCategoriesByName(parentCategory);
         if (categories != null && categories.size() > 0) {
             // gets child categories in order ONLY if they are in the xref table and active
-            List<Category> subcategories = categories.get(0).getChildCategories();
+            List<CategoryXref> subcategories = categories.get(0).getChildCategories();
             if (subcategories != null && !subcategories.isEmpty()) {
                 if (StringUtils.isNotEmpty(unparsedMaxResults)) {
                     int maxResults = Integer.parseInt(unparsedMaxResults);

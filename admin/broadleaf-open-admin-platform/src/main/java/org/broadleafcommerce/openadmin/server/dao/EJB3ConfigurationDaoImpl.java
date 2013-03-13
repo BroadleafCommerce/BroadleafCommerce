@@ -37,6 +37,7 @@ public class EJB3ConfigurationDaoImpl implements EJB3ConfigurationDao {
             if (configuration == null) {
                 Ejb3Configuration temp = new Ejb3Configuration();
                 configuration = temp.configure(persistenceUnitInfo, new HashMap());
+                configuration.getHibernateConfiguration().buildSessionFactory();
             }
         }
         return configuration;

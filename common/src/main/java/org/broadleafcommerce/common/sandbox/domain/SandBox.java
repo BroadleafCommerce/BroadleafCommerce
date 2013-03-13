@@ -48,6 +48,8 @@ public interface SandBox extends Serializable {
     public Long getAuthor();
 
     public void setAuthor(Long author);
+
+    public SandBox clone();
 }
 
 

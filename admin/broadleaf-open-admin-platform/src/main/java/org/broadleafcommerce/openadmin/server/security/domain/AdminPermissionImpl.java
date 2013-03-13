@@ -97,7 +97,7 @@ public class AdminPermissionImpl implements AdminPermission {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<AdminPermissionQualifiedEntity> qualifiedEntities;
+    protected List<AdminPermissionQualifiedEntity> qualifiedEntities = new ArrayList<AdminPermissionQualifiedEntity>();
 
     public Long getId() {
         return id;
@@ -155,5 +155,45 @@ public class AdminPermissionImpl implements AdminPermission {
 
     public void setAllUsers(Set<AdminUser> allUsers) {
         this.allUsers = allUsers;
+    }
+
+    public void checkCloneable(AdminPermission adminPermission) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = adminPermission.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !adminPermission.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+        }
+    }
+
+    @Override
+    public AdminPermission clone() {
+        AdminPermission clone;
+        try {
+            clone = (AdminPermission) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setId(id);
+            clone.setName(name);
+            clone.setType(getType());
+            clone.setDescription(description);
+
+            //don't clone the allUsers collection, as it would cause a recursion
+            //don't clone the allRoles collection, as it would cause a recursion
+
+            if (qualifiedEntities != null) {
+                for (AdminPermissionQualifiedEntity qualifiedEntity : qualifiedEntities) {
+                    AdminPermissionQualifiedEntity qualifiedEntityClone = qualifiedEntity.clone();
+                    qualifiedEntityClone.setAdminPermission(clone);
+                    clone.getQualifiedEntities().add(qualifiedEntityClone);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
     }
 }

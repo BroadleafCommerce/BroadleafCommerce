@@ -1,5 +1,3 @@
-
-
 /*
  * Copyright 2008-2012 the original author or authors.
  *
@@ -63,6 +61,7 @@ import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -132,6 +131,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * 
      * @param request
      * @param model
+     * @param errors
+     * @param emailAddress
      * @return the return path
      * @throws ServiceException 
      */
@@ -341,17 +342,17 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param request
      * @param response
      * @param model
-     * @param billingInfoForm
+     * @param billingForm
      * @return the return path
      * @throws ServiceException 
      */
     public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
-            BillingInfoForm billingInfoForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
+            BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
         
-        if (billingInfoForm.getPaymentMethod() == null || "credit_card".equals(billingInfoForm.getPaymentMethod())) {
-            return completeSecureCreditCardCheckout(request, response, model, billingInfoForm, result);
+        if (billingForm.getPaymentMethod() == null || "credit_card".equals(billingForm.getPaymentMethod())) {
+            return completeSecureCreditCardCheckout(request, response, model, billingForm, result);
         } else {
-            throw new IllegalArgumentException("Complete checkout called with payment Method " + billingInfoForm.getPaymentMethod() + " which has not been implemented.");
+            throw new IllegalArgumentException("Complete checkout called with payment Method " + billingForm.getPaymentMethod() + " which has not been implemented.");
         }
     }
 
@@ -382,6 +383,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         Order cart = CartState.getCart();
         if (cart != null) {
+            Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+
             orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
 
             if (billingForm.isUseShippingAddress()){
@@ -398,8 +401,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             ccInfo.setAddress(billingForm.getAddress());
             cart.getPaymentInfos().add(ccInfo);
 
-            Map<PaymentInfo, Referenced> payments = paymentInfoTypeService.getPaymentsMap(cart);
-
             CreditCardPaymentInfo ccReference = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
             ccReference.setNameOnCard(billingForm.getCreditCardName());
             ccReference.setReferenceNumber(ccInfo.getReferenceNumber());
@@ -410,25 +411,19 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             payments.put(ccInfo, ccReference);
 
-            CheckoutResponse checkoutResponse = null;
-            try {
-                checkoutResponse = checkoutService.performCheckout(cart, payments);
-            } catch (CheckoutException e) {
+            CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
+
+            if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
                 populateModelWithShippingReferenceData(request, model);
-                String errorMsg = e.getRootCauseMessage();
-                if (errorMsg.contains("Credit")){
-                    result.rejectValue("creditCardNumber", "payment.exception", null, null);
-                    model.addAttribute("paymentException", true);
-                } else {
-                    model.addAttribute("paymentOptionException", true);
-                }
+                result.rejectValue("creditCardNumber", "payment.exception", null, null);
                 return getCheckoutView();
             }
+
             return getConfirmationView(cart.getOrderNumber());
         }
+
         return getCartPageRedirect();
     }
-
 
     /**
      * This method will copy the shipping address of the first fulfillment group on the order
@@ -449,7 +444,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 billing.setState(shipping.getState());
                 billing.setPostalCode(shipping.getPostalCode());
                 billing.setCountry(shipping.getCountry());
-                billing.setPhonePrimary(shipping.getPhonePrimary());
+                billing.setPrimaryPhone(shipping.getPrimaryPhone());
                 billing.setEmailAddress(shipping.getEmailAddress());
                 billingInfoForm.setAddress(billing);
             }
@@ -571,8 +566,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 setValue(country);
             }
         });
-
         binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
+
             @Override
             public void setAsText(String text) {
                 if (!StringUtils.isBlank(text)) {
@@ -604,7 +599,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             hasValidShipping = hasValidShippingAddresses(CartState.getCart());
         }
         model.addAttribute("validShipping", hasValidShipping);
-        model.addAttribute("validPaymentOptions", true);
 
         putFulfillmentOptionsAndEstimationOnModel(model);
         

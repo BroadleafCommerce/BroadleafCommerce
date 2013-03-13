@@ -52,7 +52,7 @@ import javax.annotation.Resource;
  *
  */
 @Service("blAdminSecurityRemoteService")
-public class AdminSecurityServiceRemote implements AdminSecurityService  {
+public class AdminSecurityServiceRemote implements AdminSecurityService, SecurityVerifier {
     
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
     
@@ -90,6 +90,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         return null;
     }
 
+    @Override
     public AdminUser getPersistentAdminUser() {
         SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
@@ -104,6 +105,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         return null;
     }
     
+    @Override
     public void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType operationType) throws ServiceException {
         if (ceilingEntityFullyQualifiedName == null) {
             throw new ServiceException("Security Check Failed: ceilingEntityFullyQualifiedName not specified");
@@ -139,10 +141,12 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         }
     }
 
+    @Override
     public boolean isEntitySecurityExplicit() {
         return isEntitySecurityExplicit;
     }
 
+    @Override
     public void setEntitySecurityExplicit(boolean entitySecurityExplicit) {
         isEntitySecurityExplicit = entitySecurityExplicit;
     }

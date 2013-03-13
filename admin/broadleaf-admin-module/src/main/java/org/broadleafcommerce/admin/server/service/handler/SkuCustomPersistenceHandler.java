@@ -19,12 +19,19 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.module.SkuBasicClientEntityModule;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -45,15 +52,31 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider.FilterDataStrategy;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -67,29 +90,58 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
     
+    /**
+     * This represents the field that all of the product option values will be stored in. This would be used in the case
+     * where there are a bunch of product options and displaying each option as a grid header would have everything
+     * squashed together. Filtering on this field is currently unsupported.
+     */
+    public static String CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME = "consolidatedProductOptions";
+
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
     
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        String[] customCriteria = persistencePackage.getCustomCriteria();
-        return !ArrayUtils.isEmpty(customCriteria) && "productSkuList".equals(customCriteria[0]) && Sku.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return canHandle(persistencePackage, persistencePackage.getPersistencePerspective().getOperationTypes().getInspectType());
     }
     
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return canHandleInspect(persistencePackage);
+        OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
+        return canHandle(persistencePackage, fetchType);
     }
     
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return canHandleInspect(persistencePackage);
+        OperationType addType = persistencePackage.getPersistencePerspective().getOperationTypes().getAddType();
+        return canHandle(persistencePackage, addType);
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return canHandleInspect(persistencePackage);
+        OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
+        return canHandle(persistencePackage, updateType);
+    }
+
+    /**
+     * Since this is the default for all Skus, it's possible that we are providing custom criteria for this
+     * Sku lookup. In that case, we probably want to delegate to a child class, so only use this particular
+     * persistence handler if there is no custom criteria being used and the ceiling entity is an instance of Sku. The
+     * exception to this rule is when we are pulling back Media, since the admin actually uses Sku for the ceiling entity
+     * class name. That should be handled by the map structure module though, so only handle things in the Sku custom
+     * persistence handler for OperationType.BASIC
+     * 
+     */
+    protected Boolean canHandle(PersistencePackage persistencePackage, OperationType operationType) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        try {
+
+            Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
+            return Sku.class.isAssignableFrom(testClass) && ArrayUtils.isEmpty(persistencePackage.getCustomCriteria()) &&
+                    OperationType.BASIC.equals(operationType);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     /**
@@ -131,8 +183,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 metadata.setFriendlyName(option.getLabel());
                 metadata.setGroup("");
                 metadata.setOrder(order);
-                metadata.setTab("General");
-                metadata.setTabOrder(99999);
                 metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
                 metadata.setProminent(true);
                 metadata.setBroadleafEnumeration("");
@@ -140,8 +190,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
                 
                 //add this to the built Sku properties
-                properties.put("productOption" + option.getId(), metadata);
+                properties.put("productOption" + option.getId(), createIndividualOptionField(option, order));
             }
+
+            //also build the consolidated field; if using the SkuBasicClientEntityModule then this field will be
+            //permanently hidden
+            properties.put(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME, createConsolidatedOptionField(SkuImpl.class));
 
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Sku.class);
@@ -158,6 +212,119 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
     
+    /**
+     * Creates the metadata necessary for displaying all of the product option values in a single field. The display of this
+     * field is a single string with every product option value appended to it separated by a semicolon. This method should
+     * be invoked on an inspect for whatever is utilizing this so that the property will be ready to be populated on fetch.
+     * 
+     * The metadata that is returned will also be set to prominent by default so that it will be ready to display on whatever
+     * grid is being inspected. If you do not want this behavior you will need to override this functionality in the metadata
+     * that is returned.
+     * 
+     * @param inheritedFromType which type this should appear on. This would normally be SkuImpl.class, but if you want to
+     * display this field with a different entity then this should be that entity
+     * @return
+     */
+    public static FieldMetadata createConsolidatedOptionField(Class<?> inheritedFromType) {
+        BasicFieldMetadata metadata = new BasicFieldMetadata();
+        metadata.setFieldType(SupportedFieldType.STRING);
+        metadata.setMutable(false);
+        metadata.setInheritedFromType(SkuImpl.class.getName());
+        metadata.setAvailableToTypes(new String[] { SkuImpl.class.getName() });
+        metadata.setForeignKeyCollection(false);
+        metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+
+        metadata.setName(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
+        metadata.setFriendlyName("Options");
+        metadata.setGroup("");
+        metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        metadata.setProminent(true);
+        metadata.setVisibility(VisibilityEnum.FORM_HIDDEN);
+        metadata.setBroadleafEnumeration("");
+        metadata.setReadOnly(true);
+        metadata.setRequiredOverride(false);
+
+        return metadata;
+    }
+
+    /**
+     * Returns a {@link Property} filled out with a delimited list of the <b>values</b> that are passed in. This should be
+     * invoked on a fetch and the returned property should be added to the fetched {@link Entity} dto.
+     * 
+     * @param values
+     * @return
+     * @see {@link #createConsolidatedOptionField(Class)};
+     */
+    public static Property getConsolidatedOptionProperty(List<ProductOptionValue> values) {
+        Property optionValueProperty = new Property();
+        optionValueProperty.setName(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
+        
+        //order the values by the display order of their correspond product option
+        //        Collections.sort(values, new Comparator<ProductOptionValue>() {
+        //
+        //            @Override
+        //            public int compare(ProductOptionValue value1, ProductOptionValue value2) {
+        //                return new CompareToBuilder().append(value1.getProductOption().getDisplayOrder(),
+        //                        value2.getProductOption().getDisplayOrder()).toComparison();
+        //            }
+        //        });
+
+        ArrayList<String> stringValues = new ArrayList<String>();
+        CollectionUtils.collect(values, new Transformer() {
+
+            @Override
+            public Object transform(Object input) {
+                return ((ProductOptionValue) input).getAttributeValue();
+            }
+        }, stringValues);
+
+        optionValueProperty.setValue(StringUtils.join(stringValues, "; "));
+        return optionValueProperty;
+    }
+
+    /**
+     * <p>Creates an individual property for the specified product option. This should set up an enum field whose values will
+     * be the option values for this option.  This is useful when you would like to display each product option in as its
+     * own field in a grid so that you can further filter by product option values.</p>
+     * <p>In order for these fields to be utilized property on the fetch, in the GWT frontend you must use the
+     * {@link SkuBasicClientEntityModule} for your datasource.</p>
+     * 
+     * @param option
+     * @param order
+     * @return
+     */
+    public static FieldMetadata createIndividualOptionField(ProductOption option, int order) {
+        BasicFieldMetadata metadata = new BasicFieldMetadata();
+        metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
+        metadata.setMutable(true);
+        metadata.setInheritedFromType(SkuImpl.class.getName());
+        metadata.setAvailableToTypes(new String[] { SkuImpl.class.getName() });
+        metadata.setForeignKeyCollection(false);
+        metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+
+        //Set up the enumeration based on the product option values
+        String[][] optionValues = new String[option.getAllowedValues().size()][2];
+        for (int i = 0; i < option.getAllowedValues().size(); i++) {
+            ProductOptionValue value = option.getAllowedValues().get(i);
+            optionValues[i][0] = value.getId().toString();
+            optionValues[i][1] = value.getAttributeValue();
+        }
+        metadata.setEnumerationValues(optionValues);
+
+        metadata.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
+        metadata.setFriendlyName(option.getLabel());
+        metadata.setGroup("");
+        metadata.setOrder(order);
+        metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        metadata.setProminent(true);
+        metadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
+        metadata.setBroadleafEnumeration("");
+        metadata.setReadOnly(false);
+        metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
+
+        return metadata;
+    }
+
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -170,12 +337,65 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, 
                                                                     ceilingEntityFullyQualifiedClassname, originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
+
+            applyProductOptionValueCriteria(queryCriteria, cto, persistencePackage);
+
+            //allow subclasses to provide additional criteria before executing the query
+            applyAdditionalFetchCriteria(queryCriteria, cto, persistencePackage);
+            
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, 
                                                Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
             
+            List<Sku> result = new ArrayList<Sku>();
+            int additionalSkusAdded = 0;
+            int skusRemoved = 0;
+            for (Serializable serialSku : records) {
+                Sku sku = (Sku)serialSku;
+                //Is this a default sku?
+                if (sku.getProduct().getDefaultSku().getId().equals(sku.getId())) {
+
+                    //Include a default Sku only if the product is sellable without options
+                    if (CollectionUtils.isNotEmpty(sku.getProduct().getAdditionalSkus())) {
+                        if (sku.getProduct().getCanSellWithoutOptions()) {
+                            result.add(sku);
+                        } else {
+                            //didn't add this sku, keep track of it
+                            skusRemoved++;
+                        }
+                    } else {
+                        result.add(sku);
+                    }
+                    
+                    if (CollectionUtils.isNotEmpty(cto.getPropertyIdSet())) {
+                        //it's also possible that I have pulled back a default sku based on some filter criteria that is being
+                        //displayed from a getter for a property unset on the additional sku (like name or price). In this case, let's
+                        //pull back the additional Skus as well
+                        if (CollectionUtils.isNotEmpty(sku.getProduct().getAdditionalSkus())) {
+                            result.addAll(sku.getProduct().getAdditionalSkus());
+                            additionalSkusAdded += sku.getProduct().getAdditionalSkus().size();
+                        }
+                    }
+                } else {
+                    //not a default sku, so this criteria matched an additional sku
+                    result.add(sku);
+                }
+                //Solve the problem of the client providing criteria for both a getter name as well as product option
+                //values
+                
+            }
+            
             //Convert Skus into the client-side Entity representation
-            Entity[] payload = helper.getRecords(originalProps, records);
-            int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
+            Entity[] payload = helper.getRecords(originalProps, result);
+            int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter) + additionalSkusAdded - skusRemoved;
+
+            //if there weren't actually any results returned from this query, then it's possible that I removed some Skus
+            //via business logic and thus the frontend does not have any way to know what the total results should be. So,
+            //check the row that the frontend is trying to get and if I don't have any results for that, just set the total
+            //results to what has already been returned - 1. The frontend attempts to get say, row 95, row 95 does not exist
+            //so communicate that only 94 rows should've been returned
+            if (result.size() == 0) {
+                totalRecords = cto.getFirstResult() - 1;
+            }
             
             //Communicate to the front-end to allow form editing for all of the product options available for the current
             //Product to allow inserting Skus one at a time
@@ -193,16 +413,34 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
             
             //Now fill out the relevant properties for the product options for the Skus that were returned
-            for (int i = 0; i < records.size(); i++) {
-                Sku sku = (Sku)records.get(i);
+            for (int i = 0; i < result.size(); i++) {
+                Sku sku = result.get(i);
                 Entity entity = payload[i];
                 
+                //In the list of Skus from the database, it is possible that some important properties (like name,
+                //description, etc) are actually null. This isn't a problem on the site because the getters for Sku
+                //use the defaultSku on this Sku's product if they are null. Nothing like this happens for displaying the
+                //list of Skus in the admin, however, because everything is done via property reflection. Let's attempt to
+                //actually call the getters (using bean utils) if the properties are null from this Sku, so that values
+                //actually come back from the defaultSku (just like on the site)
+                for (Property property : entity.getProperties()) {
+                    if (StringUtils.isEmpty(property.getValue())) {
+                        String propertyName = property.getName();
+                        String strValue = SkuCustomPersistenceHandler.getStringValueFromGetter(propertyName, sku, helper);
+                        property.setValue(strValue);
+                    }
+                }
+
                 List<ProductOptionValue> optionValues = sku.getProductOptionValues();
                 for (ProductOptionValue value : optionValues) {
                     Property optionProperty = new Property();
                     optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + value.getProductOption().getId());
                     optionProperty.setValue(value.getId().toString());
                     entity.addProperty(optionProperty);
+                }
+                
+                if (CollectionUtils.isNotEmpty(optionValues)) {
+                    entity.addProperty(getConsolidatedOptionProperty(optionValues));
                 }
             }
             
@@ -211,6 +449,91 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
+    }
+
+    /**
+     * Under the covers this uses PropertyUtils to call the getter of the property name for the given Sku, then undergoes
+     * conversion according to the formatters from <b>helper</b>.  This also attempts to only get the first-level properties
+     * so it does not try to get values for things like 'sku.weight.weight', but only 'sku.weight'.
+     * 
+     * @param propertyName - name of the property in relation to <b>sku</b>. Thus, if you are attempting to bring back the
+     * sku name, the propertyName should just be 'name' rather than 'sku.name'. 
+     * @param sku the Sku instance to get the value from
+     * @param helper a RecordHelper to help convert decimals and dates to their string equivalents
+     * @return the String value from <b>sku</b> for <b>propertyName</b>
+     * @throws NoSuchMethodException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     */
+    public static String getStringValueFromGetter(String propertyName, Sku sku, RecordHelper helper) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        //only attempt the getter on the first-level Sku properties
+        if (propertyName.contains(".")) {
+            StringTokenizer tokens = new StringTokenizer(propertyName, ".");
+            propertyName = tokens.nextToken();
+        }
+
+        Object value = PropertyUtils.getProperty(sku, propertyName);
+
+        String strVal;
+        if (value == null) {
+            strVal = null;
+        } else {
+            if (Date.class.isAssignableFrom(value.getClass())) {
+                strVal = helper.getDateFormatter().format((Date) value);
+            } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
+                strVal = helper.getDateFormatter().format(new Date(((Timestamp) value).getTime()));
+            } else if (Calendar.class.isAssignableFrom(value.getClass())) {
+                strVal = helper.getDateFormatter().format(((Calendar) value).getTime());
+            } else if (Double.class.isAssignableFrom(value.getClass())) {
+                strVal = helper.getDecimalFormatter().format(value);
+            } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
+                strVal = helper.getDecimalFormatter().format(((BigDecimal) value).doubleValue());
+            } else {
+                strVal = value.toString();
+            }
+        }
+
+        return strVal;
+    }
+
+    protected void applyProductOptionValueCriteria(PersistentEntityCriteria queryCriteria, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+        Set<String> filterPropertySet = cto.getPropertyIdSet();
+
+        final List<Long> productOptionValueFilterIDs = new ArrayList<Long>();
+        for (String filterProperty : filterPropertySet) {
+            if (filterProperty.startsWith(PRODUCT_OPTION_FIELD_PREFIX)) {
+                FilterAndSortCriteria criteria = cto.get(filterProperty);
+                productOptionValueFilterIDs.add(Long.parseLong(criteria.getFilterValues()[0]));
+            }
+        }
+        if (productOptionValueFilterIDs.size() > 0) {
+
+            ((NestedPropertyCriteria) queryCriteria).add(
+                    new FilterCriterion(new AssociationPath(new AssociationPathElement("productOptionValues")),
+                            "id",
+                            productOptionValueFilterIDs,
+                            false,
+                            new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, productOptionValueFilterIDs.size()) {
+
+                                @Override
+                                @SuppressWarnings("unchecked")
+                                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                                    return Restrictions.in(targetPropertyName, (List<Long>) directValues[0]);
+                                }
+                            }));
+        }
+    }
+
+    /**
+     * <p>Available override point for subclasses if they would like to add additional criteria via the queryCritiera. At the
+     * point that this method has been called, criteria from the frontend has already been applied, thus allowing you to
+     * override from there as well.</p>
+     * <p>Subclasses that choose to override this should also call this super method so that correct filter criteria
+     * can be applied for product option values</p>
+     * 
+     */
+    public void applyAdditionalFetchCriteria(PersistentEntityCriteria queryCriteria, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+        //unimplemented
     }
     
     @Override

@@ -38,6 +38,7 @@ public class ContextType implements Serializable, BroadleafEnumerationType {
     public static final ContextType GLOBAL = new ContextType("GLOBAL", "Global");
     public static final ContextType SITE = new ContextType("SITE", "Site");
     public static final ContextType CATALOG = new ContextType("CATALOG", "Catalog");
+    public static final ContextType TEMPLATE = new ContextType("TEMPLATE", "Template");
 
     public static ContextType getInstance(final String type) {
         return TYPES.get(type);

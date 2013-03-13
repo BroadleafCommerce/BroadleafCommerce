@@ -39,4 +39,8 @@ public class ServiceException extends Exception implements IsSerializable {
         super(message);
     }
     
+    public ServiceException(Throwable cause) {
+        super(cause);
+    }
+
 }

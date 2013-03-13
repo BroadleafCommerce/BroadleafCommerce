@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.security.dao;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -61,4 +61,5 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
         List<AdminRole> roles = query.getResultList();
         return roles;
     }
+
 }

@@ -45,17 +45,16 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
-import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -67,10 +66,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -128,8 +132,8 @@ public class CategoryImpl implements Category, Status {
         newCategoryList.add(category.getId());
 
         categoryUrlMap.put(currentPath, newCategoryList);
-        for (Category currentCategory : category.getChildCategories()) {
-            fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
+        for (CategoryXref currentCategory : category.getChildCategories()) {
+            fillInURLMapForCategory(categoryUrlMap, currentCategory.getCategory(), currentPath, newCategoryList);
         }
     }
 
@@ -193,42 +197,38 @@ public class CategoryImpl implements Category, Status {
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent", order=13, group = "CategoryImpl_Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL, groupOrder = 2)
     protected Category defaultParentCategory;
 
-    @ManyToMany(targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
+    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.category")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
+    @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<Category> allChildCategories = new ArrayList<Category>(10);
+    protected List<CategoryXref> allChildCategories = new ArrayList<CategoryXref>(10);
 
-    @ManyToMany(targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
+    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.subCategory")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
+    @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<Category> allParentCategories = new ArrayList<Category>(10);
+    protected List<CategoryXref> allParentCategories = new ArrayList<CategoryXref>(10);
 
-    @ManyToMany(targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", nullable = true))
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.category")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
+    @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<Product> allProducts = new ArrayList<Product>(10);
+    protected List<CategoryProductXref> allProducts = new ArrayList<CategoryProductXref>(10);
 
-    @CollectionOfElements
-    @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
-    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
-    @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @ElementCollection
+    @MapKeyColumn(name="NAME")
+    @Column(name="URL")
+    @CollectionTable(name="BLC_CATEGORY_IMAGE", joinColumns=@JoinColumn(name="CATEGORY_ID"))
     @BatchSize(size = 50)
     @Deprecated
     protected Map<String, String> categoryImages = new HashMap<String, String>(10);
 
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
+    @MapKeyColumn(name = "MAP_KEY")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
@@ -285,7 +285,7 @@ public class CategoryImpl implements Category, Status {
     protected Map<String, List<Long>> childCategoryURLMap;        
 
     @Transient
-    protected List<Category> childCategories = new ArrayList<Category>(50);
+    protected List<CategoryXref> childCategories = new ArrayList<CategoryXref>(50);
 
     @Transient
     protected List<FeaturedProduct> filteredFeaturedProducts = null;
@@ -432,7 +432,7 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public List<Category> getAllChildCategories(){
+    public List<CategoryXref> getAllChildCategories(){
         return allChildCategories;
     }
 
@@ -442,18 +442,18 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public void setAllChildCategories(List<Category> childCategories){
+    public void setAllChildCategories(List<CategoryXref> childCategories){
         allChildCategories.clear();
-        for(Category category : childCategories){
+        for(CategoryXref category : childCategories){
             allChildCategories.add(category);
         }       
     }
 
     @Override
-    public List<Category> getChildCategories() {
+    public List<CategoryXref> getChildCategories() {
         if (childCategories.isEmpty()) {
-            for (Category category : allChildCategories) {
-                if (category.isActive()) {
+            for (CategoryXref category : allChildCategories) {
+                if (category.getSubCategory().isActive()) {
                     childCategories.add(category);
                 }
             }
@@ -467,9 +467,9 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public void setChildCategories(List<Category> childCategories) {
+    public void setChildCategories(List<CategoryXref> childCategories) {
         this.childCategories.clear();
-        for(Category category : childCategories){
+        for(CategoryXref category : childCategories){
             this.childCategories.add(category);
         }
     }
@@ -530,9 +530,11 @@ public class CategoryImpl implements Category, Status {
             myParentCategories.add(defaultParentCategory);
         }
         if (allParentCategories != null && allParentCategories.size() > 0) {
-            myParentCategories.addAll(allParentCategories);
+            for (CategoryXref parent : allParentCategories) {
+                myParentCategories.add(parent.getCategory());
+            }
         }
-        
+
         for (Category category : myParentCategories) {
             if (!currentHierarchy.contains(category)) {
                 currentHierarchy.add(category);
@@ -557,14 +559,17 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public List<Category> getAllParentCategories() {
+    public List<CategoryXref> getAllParentCategories() {
+        for (CategoryXref xref : allParentCategories) {
+            ((CategoryXrefImpl) xref).setChildOriented(false);
+        }
         return allParentCategories;
     }
 
     @Override
-    public void setAllParentCategories(List<Category> allParentCategories) {
+    public void setAllParentCategories(List<CategoryXref> allParentCategories) {
         this.allParentCategories.clear();
-        for(Category category : allParentCategories){
+        for(CategoryXref category : allParentCategories){
             this.allParentCategories.add(category);
         }
     }
@@ -673,10 +678,10 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public List<Product> getActiveProducts() {
-        List<Product> result = new ArrayList<Product>();
-        for (Product product : allProducts) {
-            if (product.isActive()) {
+    public List<CategoryProductXref> getActiveProducts() {
+        List<CategoryProductXref> result = new ArrayList<CategoryProductXref>();
+        for (CategoryProductXref product : allProducts) {
+            if (product.getProduct().isActive()) {
                 result.add(product);
             }
         }
@@ -684,14 +689,14 @@ public class CategoryImpl implements Category, Status {
     }
     
     @Override
-    public List<Product> getAllProducts() {
+    public List<CategoryProductXref> getAllProducts() {
         return allProducts;
     }
 
     @Override
-    public void setAllProducts(List<Product> allProducts) {
+    public void setAllProducts(List<CategoryProductXref> allProducts) {
         this.allProducts.clear();
-        for(Product product : allProducts){
+        for(CategoryProductXref product : allProducts){
             this.allProducts.add(product);
         }
     }

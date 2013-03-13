@@ -28,8 +28,12 @@ import java.util.List;
 @Service("blCustomerPaymentService")
 public class CustomerPaymentServiceImpl implements CustomerPaymentService {
 
+    /** Services */
     @Resource(name="blCustomerPaymentDao")
     protected CustomerPaymentDao customerPaymentDao;
+
+    @Resource(name="blCustomerService")
+    protected CustomerService customerService;
 
     @Override
     @Transactional("blTransactionManager")
@@ -79,10 +83,25 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     @Transactional("blTransactionManager")
     public CustomerPayment setAsDefaultPayment(CustomerPayment payment) {
         CustomerPayment oldDefault = findDefaultPaymentForCustomer(payment.getCustomer());
-        oldDefault.setDefault(false);
-        saveCustomerPayment(oldDefault);
+        if (oldDefault != null) {
+            oldDefault.setDefault(false);
+            saveCustomerPayment(oldDefault);
+        }
         payment.setDefault(true);
         return saveCustomerPayment(payment);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public Customer deleteCustomerPaymentFromCustomer(Customer customer, CustomerPayment payment) {
+        List<CustomerPayment> payments = customer.getCustomerPayments();
+        for (CustomerPayment customerPayment : payments) {
+            if (customerPayment.getId().equals(payment.getId())) {
+                customer.getCustomerPayments().remove(customerPayment);
+                break;
+            }
+        }
+       return customerService.saveCustomer(customer);
     }
 
 }

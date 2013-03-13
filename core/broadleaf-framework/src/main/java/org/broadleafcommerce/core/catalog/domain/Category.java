@@ -98,14 +98,14 @@ public interface Category extends Serializable {
      * @return the list of parent categories
      */
     @Nonnull
-    public List<Category> getAllParentCategories();
+    public List<CategoryXref> getAllParentCategories();
 
     /**
      * Sets the list of parent categories
      *
      * @param allParentCategories the list of parent categories
      */
-    public void setAllParentCategories(@Nonnull List<Category> allParentCategories);
+    public void setAllParentCategories(@Nonnull List<CategoryXref> allParentCategories);
 
     /**
      * Gets the url. The url represents the presentation layer destination for
@@ -270,7 +270,7 @@ public interface Category extends Serializable {
      * @return the list of active and inactive child categories.
      */
     @Nonnull
-    public List<Category> getAllChildCategories();
+    public List<CategoryXref> getAllChildCategories();
 
     /**
      * Checks for child categories.
@@ -284,7 +284,7 @@ public interface Category extends Serializable {
      * 
      * @param childCategories the list of child categories
      */
-    public void setAllChildCategories(@Nonnull List<Category> childCategories);
+    public void setAllChildCategories(@Nonnull List<CategoryXref> childCategories);
 
     /**
      * Gets the child categories. If child categories has not been previously
@@ -293,7 +293,7 @@ public interface Category extends Serializable {
      * @return the list of active child categories
      */
     @Nonnull
-    public List<Category> getChildCategories();
+    public List<CategoryXref> getChildCategories();
 
     /**
      * Checks for child categories.
@@ -308,7 +308,7 @@ public interface Category extends Serializable {
      * 
      * @param childCategories the list of active child categories.
      */
-    public void setChildCategories(@Nonnull List<Category> childCategories);
+    public void setChildCategories(@Nonnull List<CategoryXref> childCategories);
 
     /**
      * Gets the category images.
@@ -399,7 +399,7 @@ public interface Category extends Serializable {
      * @return the list of active {@link Product}s for this {@link Category}
      * @see {@link Product#isActive()}
      */
-    public List<Product> getActiveProducts();
+    public List<CategoryProductXref> getActiveProducts();
     
     /**
      * Retrieve all the {@code Product} instances associated with this
@@ -410,7 +410,7 @@ public interface Category extends Serializable {
      * @return the list of products associated with this category.
      */
     @Nonnull
-    public List<Product> getAllProducts();
+    public List<CategoryProductXref> getAllProducts();
 
     /**
      * Set all the {@code Product} instances associated with this
@@ -418,7 +418,7 @@ public interface Category extends Serializable {
      *
      * @param allProducts the list of products to associate with this category
      */
-    public void setAllProducts(@Nonnull List<Product> allProducts);
+    public void setAllProducts(@Nonnull List<CategoryProductXref> allProducts);
 
     /**
      * Returns a list of cross sale products that are related to this category.

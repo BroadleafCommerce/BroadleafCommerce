@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.persistence;
 import org.apache.commons.collections.MapUtils;
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.enhanced.TableGenerator;
 import org.hibernate.type.Type;
 

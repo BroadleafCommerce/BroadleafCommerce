@@ -35,4 +35,6 @@ public interface AdminPermissionQualifiedEntity {
     public AdminPermission getAdminPermission();
 
     public void setAdminPermission(AdminPermission adminPermission);
+
+    public AdminPermissionQualifiedEntity clone();
 }

@@ -35,28 +35,28 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -96,12 +96,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected SkuBundleItem skuBundleItem;
-    
-    @CollectionOfElements
-    @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "NAME", nullable = false) })
-    @Column(name = "VALUE")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
+
+    @ElementCollection
+    @MapKeyColumn(name="NAME")
+    @Column(name="VALUE")
+    @CollectionTable(name="BLC_ORDER_ITEM_ADD_ATTR", joinColumns=@JoinColumn(name="ORDER_ITEM_ID"))
     @BatchSize(size = 50)
     protected Map<String, String> additionalAttributes = new HashMap<String, String>();
     
@@ -231,21 +230,29 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null
         if (!skuRetailPrice.equals(getRetailPrice())) {
-            setBaseRetailPrice(skuRetailPrice);
-            setRetailPrice(skuRetailPrice);
-            updated = true;
+            if (!isRetailPriceOverride()) {
+                setBaseRetailPrice(skuRetailPrice);
+                setRetailPrice(skuRetailPrice);
+                updated = true;
+            }
         }
         if (skuSalePrice != null && !skuSalePrice.equals(getSalePrice())) {
-            setBaseSalePrice(skuSalePrice);
-            setSalePrice(skuSalePrice);
-            updated = true;
+            if (!isSalePriceOverride()) {
+                setBaseSalePrice(skuSalePrice);
+                setSalePrice(skuSalePrice);
+                updated = true;
+            }
         }
 
         // Adjust prices by adding in fees if they are attached.
         if (getDiscreteOrderItemFeePrices() != null) {
             for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
-                setSalePrice(getSalePrice().add(fee.getAmount()));
-                setRetailPrice(getRetailPrice().add(fee.getAmount()));
+                if (!isSalePriceOverride()) {
+                    setSalePrice(getSalePrice().add(fee.getAmount()));
+                }
+                if (!isRetailPriceOverride()) {
+                    setRetailPrice(getRetailPrice().add(fee.getAmount()));
+                }
             }
         }
         return updated;
@@ -313,6 +320,8 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         orderItem.setBundleOrderItem(bundleOrderItem);
         orderItem.setProduct(product);
         orderItem.setSku(sku);
+        orderItem.setSalePriceOverride(salePriceOverride);
+        orderItem.setRetailPriceOverride(retailPriceOverride);
 
         if (orderItem.getOrder() == null) {
             throw new IllegalStateException("Either an Order or a BundleOrderItem must be set on the DiscreteOrderItem");

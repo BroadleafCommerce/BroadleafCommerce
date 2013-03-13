@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.web.catalog;
 
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
@@ -24,12 +26,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-
 /**
  * 
  * @author jfischer
- *
+ * @see {@link DefaultDynamicSkuPricingFilter}
  */
 public abstract class AbstractDynamicSkuPricingFilter implements DynamicSkuPricingFilter {
 
@@ -49,10 +49,8 @@ public abstract class AbstractDynamicSkuPricingFilter implements DynamicSkuPrici
         
     }
 
-    public void init(FilterConfig arg0) throws ServletException {
+    public void init(FilterConfig config) throws ServletException {
         //do nothing
     }
-    
-    
 
 }

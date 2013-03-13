@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 
 /**
@@ -58,7 +59,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         
         //If someone already set the customer on the request then we don't need to do anything.
-        if (request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName()) == null){
+        if (request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName()) == null){
     
             //First check to see if someone already put the customerId on the request
             if (request.getAttribute(customerIdAttributeName) != null) {
@@ -80,7 +81,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
                 //If we found it, look up the customer and put it on the request.
                 Customer customer = customerService.readCustomerById(Long.valueOf(customerId));
                 if (customer != null) {
-                    servletRequest.setAttribute(CustomerStateFilter.getCustomerRequestAttributeName(), customer);
+                    servletRequest.setAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), customer);
                 }
             }
 

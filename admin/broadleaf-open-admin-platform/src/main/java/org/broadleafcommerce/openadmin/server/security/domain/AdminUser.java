@@ -28,6 +28,7 @@ import java.util.Set;
  */
 public interface AdminUser extends AdminSecurityContext {
     public Long getId();
+    public void setId(Long id);
     public String getName();
     public void setName(String name);
     public String getLogin();
@@ -92,4 +93,5 @@ public interface AdminUser extends AdminSecurityContext {
 
     public Set<AdminPermission> getAllPermissions();
     public void setAllPermissions(Set<AdminPermission> allPermissions);
+    public AdminUser clone();
 }

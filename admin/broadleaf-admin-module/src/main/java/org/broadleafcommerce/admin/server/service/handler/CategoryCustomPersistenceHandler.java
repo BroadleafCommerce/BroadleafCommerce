@@ -21,6 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
@@ -60,7 +62,10 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             if (adminInstance.getDefaultParentCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultParentCategory())) {
-                adminInstance.getAllParentCategories().add(adminInstance.getDefaultParentCategory());
+                CategoryXref categoryXref = new CategoryXrefImpl();
+                categoryXref.setCategory(adminInstance.getDefaultParentCategory());
+                categoryXref.setSubCategory(adminInstance);
+                adminInstance.getAllParentCategories().add(categoryXref);
             }
 
             adminInstance = (Category) dynamicEntityDao.merge(adminInstance);

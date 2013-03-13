@@ -286,7 +286,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             Properties props = newPU.getProperties();
             if (props != null) {
                 for (Object key : props.keySet()) {
-                    temp.getProperties().setProperty((String) key, props.getProperty((String) key));
+                    temp.getProperties().put(key, props.get(key));
                     for (BroadleafClassTransformer transformer : classTransformers) {
                         try {
                             transformer.compileJPAProperties(props, key);

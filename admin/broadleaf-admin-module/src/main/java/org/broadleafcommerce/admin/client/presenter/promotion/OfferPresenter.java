@@ -85,8 +85,8 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
     
     
     public OfferPresenter() {
-        resetVisibilityOnlyList.addAll(Arrays.asList(new String[]{"name", "description", "type", "discountType","maxUsesPerCustomer", "maxUsesPerOrder", "value", "priority", "startDate", "endDate"}));
-        permanentlyHideFieldsList.addAll(Arrays.asList(new String[]{"deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule"}));
+        resetVisibilityOnlyList.addAll(Arrays.asList(new String[] { "name", "description", "applyToSalePrice", "type", "discountType", "value", "startDate", "endDate" }));
+        permanentlyHideFieldsList.addAll(Arrays.asList(new String[] { "deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule" }));
     }
     @Override
     public void changeSelection(final Record selectedRecord) {

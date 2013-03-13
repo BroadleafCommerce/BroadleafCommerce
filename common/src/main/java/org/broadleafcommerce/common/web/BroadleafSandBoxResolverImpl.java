@@ -16,15 +16,6 @@
 
 package org.broadleafcommerce.common.web;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +26,16 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.FixedTimeSource;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Responsible for determining the SandBox to use for the current request. 
@@ -87,13 +88,19 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * SandBox. 
      * 
      */
+    @Override
     public SandBox resolveSandBox(HttpServletRequest request, Site site) {
+        return resolveSandBox(new ServletWebRequest(request), site);
+    }
+    
+    @Override
+    public SandBox resolveSandBox(WebRequest request, Site site) {
         SandBox currentSandbox = null;
         if (!sandBoxPreviewEnabled) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Sandbox preview disabled. Setting sandbox to production");
             }
-            request.setAttribute(SANDBOX_VAR, currentSandbox);
+            request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
         } else {
             Long sandboxId = null;
             // Clear the sandBox - second parameter is to support legacy implementations.
@@ -103,12 +110,12 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Removing sandbox from session.");
                 }
-                request.getSession().removeAttribute(SANDBOX_DATE_TIME_VAR);
-                request.getSession().removeAttribute(SANDBOX_ID_VAR);
+                request.removeAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                request.removeAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
             }
             if (sandboxId != null) {
                 currentSandbox = sandBoxDao.retrieve(sandboxId);
-                request.setAttribute(SANDBOX_VAR, currentSandbox);
+                request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
                 if (currentSandbox != null && !SandBoxType.PRODUCTION.equals(currentSandbox.getSandBoxType())) {
                     setContentTime(request);
                 }
@@ -130,10 +137,10 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         Date currentSystemDateTime = SystemTime.asDate(true);
         Calendar sandboxDateTimeCalendar = Calendar.getInstance();
         sandboxDateTimeCalendar.setTime(currentSystemDateTime);
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM, CONTENT_DATE_DISPLAY_FORMATTER.format(currentSystemDateTime));
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM, CONTENT_DATE_DISPLAY_HOURS_FORMATTER.format(currentSystemDateTime));
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM, CONTENT_DATE_DISPLAY_MINUTES_FORMATTER.format(currentSystemDateTime));
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM, sandboxDateTimeCalendar.get(Calendar.AM_PM));
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM, CONTENT_DATE_DISPLAY_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM, CONTENT_DATE_DISPLAY_HOURS_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM, CONTENT_DATE_DISPLAY_MINUTES_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM, sandboxDateTimeCalendar.get(Calendar.AM_PM), WebRequest.SCOPE_REQUEST);
         return currentSandbox;
     }
 
@@ -145,7 +152,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * @param site
      * @return
      */
-    private Long lookupSandboxId(HttpServletRequest request) {
+    private Long lookupSandboxId(WebRequest request) {
         String sandboxIdStr = request.getParameter(SANDBOX_ID_VAR);
         Long sandboxId = null;
 
@@ -162,18 +169,14 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
 
         if (sandboxId == null) {
             // check the session
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                sandboxId = (Long) session.getAttribute(SANDBOX_ID_VAR);
-                if (LOG.isTraceEnabled()) {
-                    if (sandboxId != null) {
-                        LOG.trace("SandboxId found in session " + sandboxId);
-                    }
+            sandboxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            if (LOG.isTraceEnabled()) {
+                if (sandboxId != null) {
+                    LOG.trace("SandboxId found in session " + sandboxId);
                 }
             }
         } else {
-            HttpSession session = request.getSession();
-            session.setAttribute(SANDBOX_ID_VAR, sandboxId);
+            request.setAttribute(SANDBOX_ID_VAR, sandboxId, WebRequest.SCOPE_GLOBAL_SESSION);
         }
         return sandboxId;
     }
@@ -183,7 +186,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * 
      * @param request
      */
-    private void setContentTime(HttpServletRequest request) {
+    private void setContentTime(WebRequest request) {
         String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_VAR);
         if (sandBoxPreviewEnabled) {
             sandboxDateTimeParam = null;
@@ -204,18 +207,13 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         }
 
         if (overrideTime == null) {
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                overrideTime = (Date) session.getAttribute(SANDBOX_DATE_TIME_VAR);
-            }
+            overrideTime = (Date) request.getAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Setting date-time for sandbox mode to " + overrideTime + " for sandboxDateTimeParam = " + sandboxDateTimeParam);
             }
-            HttpSession session = request.getSession();
-            session.setAttribute(SANDBOX_DATE_TIME_VAR, overrideTime);
+            request.setAttribute(SANDBOX_DATE_TIME_VAR, overrideTime, WebRequest.SCOPE_GLOBAL_SESSION);
         }
-
 
         if (overrideTime != null) {
             FixedTimeSource ft = new FixedTimeSource(overrideTime.getTime());
@@ -225,7 +223,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         }
     }
 
-    private Date readDateFromRequest(HttpServletRequest request) throws ParseException {
+    private Date readDateFromRequest(WebRequest request) throws ParseException {
         String date = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM);
         String minutes = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM);
         String hours = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM);

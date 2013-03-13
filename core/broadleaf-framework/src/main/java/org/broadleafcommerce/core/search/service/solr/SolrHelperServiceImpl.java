@@ -43,8 +43,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     private static final Log LOG = LogFactory.getLog(SolrHelperServiceImpl.class);
 
     // The value of these two fields has no special significance, but they must be non-blank
-    private static final String GLOBAL_FACET_TAG_FIELD = "a";
-    private static final String DEFAULT_NAMESPACE = "d";
+    protected static final String GLOBAL_FACET_TAG_FIELD = "a";
+    protected static final String DEFAULT_NAMESPACE = "d";
 
     protected static Locale defaultLocale;
     protected static SolrServer server;

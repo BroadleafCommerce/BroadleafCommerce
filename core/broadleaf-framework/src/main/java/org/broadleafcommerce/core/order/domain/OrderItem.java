@@ -56,12 +56,46 @@ public interface OrderItem extends Serializable {
     public void setRetailPrice(Money retailPrice);
 
     /**
+     * Indicates that the retail price was manually set.  A typical usage might be for a 
+     * CSR who has override privileges to control setting the price.   This will automatically be set
+     * by calling {@link #setRetailPrice(Money)}
+     */
+    void setRetailPriceOverride(Boolean override);
+
+    /**
+     * Returns true if the retail price was manually set.   If the retail price is manually set,
+     * calls to updatePrices() will not do anything.
+     * @return
+     */
+    boolean isRetailPriceOverride();
+    
+
+    /**
      * 
      * @return
      */
     public Money getSalePrice();
 
     public void setSalePrice(Money salePrice);
+    
+    /**
+     * Indicates that the sale price was manually set.  A typical usage might be for a 
+     * CSR who has override privileges to control setting the price.
+     * 
+     * Consider also calling {@link #setDiscountingAllowed(boolean)} with a value of false to restrict
+     * discounts after manually setting the retail price.   
+     * 
+     * If the salePrice is not lower than the retailPrice, the system will return the retailPrice when
+     * a call to {@link #getSalePrice()} is made.
+     */
+    void setSalePriceOverride(Boolean override);
+
+    /**
+     * Returns true if the sale price was manually set.   If the retail price is manually set,
+     * calls to updatePrices() will not do anything.
+     * @return
+     */
+    boolean isSalePriceOverride();
 
     /**
      * Summation of all of the adjustments associated with this {@link OrderItem}
@@ -210,5 +244,6 @@ public interface OrderItem extends Serializable {
     public Long getSplitParentItemId();
 
     public void setSplitParentItemId(Long id);
+
     
 }
