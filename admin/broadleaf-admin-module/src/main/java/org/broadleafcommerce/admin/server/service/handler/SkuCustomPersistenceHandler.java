@@ -69,6 +69,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -89,6 +90,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);
     
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
+
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
     
     /**
      * This represents the field that all of the product option values will be stored in. This would be used in the case
@@ -102,7 +105,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        return canHandle(persistencePackage, persistencePackage.getPersistencePerspective().getOperationTypes().getInspectType());
+        return canHandle(persistencePackage, persistencePackage.getPersistencePerspective().getOperationTypes()
+                .getInspectType());
     }
     
     @Override
@@ -479,15 +483,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             strVal = null;
         } else {
             if (Date.class.isAssignableFrom(value.getClass())) {
-                strVal = helper.getDateFormatter().format((Date) value);
+                strVal = dateFormat.format((Date) value);
             } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
-                strVal = helper.getDateFormatter().format(new Date(((Timestamp) value).getTime()));
+                strVal = dateFormat.format(new Date(((Timestamp) value).getTime()));
             } else if (Calendar.class.isAssignableFrom(value.getClass())) {
-                strVal = helper.getDateFormatter().format(((Calendar) value).getTime());
+                strVal = dateFormat.format(((Calendar) value).getTime());
             } else if (Double.class.isAssignableFrom(value.getClass())) {
-                strVal = helper.getDecimalFormatter().format(value);
+                strVal = dateFormat.format(value);
             } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-                strVal = helper.getDecimalFormatter().format(((BigDecimal) value).doubleValue());
+                strVal = dateFormat.format(((BigDecimal) value).doubleValue());
             } else {
                 strVal = value.toString();
             }

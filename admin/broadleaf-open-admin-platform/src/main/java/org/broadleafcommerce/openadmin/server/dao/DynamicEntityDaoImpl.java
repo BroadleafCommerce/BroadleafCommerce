@@ -17,7 +17,6 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import net.entropysoft.transmorph.cache.LRUMap;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -46,7 +45,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
 import org.broadleafcommerce.openadmin.client.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.hibernate.EntityMode;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
@@ -58,6 +56,8 @@ import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -78,9 +78,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 
 /**
  * 
@@ -182,9 +179,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 List<Class<?>> entities = new ArrayList<Class<?>>();
                 for (Object item : getSessionFactory().getAllClassMetadata().values()) {
                     ClassMetadata metadata = (ClassMetadata) item;
-                    Class<?> mappedClass = metadata.getMappedClass(EntityMode.POJO);
+                    Class<?> mappedClass = metadata.getMappedClass();
                     if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
-                        entities.add(mappedClass);
+                        AdminPresentationClass adminPresentationClass = mappedClass.getAnnotation(AdminPresentationClass.class);
+                        if (adminPresentationClass == null || !adminPresentationClass.excludeFromPolymorphism()) {
+                            entities.add(mappedClass);
+                        }
                     }
                 }
                 Class<?>[] sortedEntities = sortEntities(ceilingClass, entities);
