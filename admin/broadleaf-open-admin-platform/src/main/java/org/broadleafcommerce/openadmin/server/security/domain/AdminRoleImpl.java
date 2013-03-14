@@ -68,7 +68,7 @@ public class AdminRoleImpl implements AdminRole {
     @AdminPresentation(friendlyName = "AdminRoleImpl_Admin_Role_ID", group = "AdminRoleImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @Column(name = "NAME", nullable=false, unique = true)
+    @Column(name = "NAME", nullable=false)
     @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order = 1, group = "AdminRoleImpl_Role")
     protected String name;
 
