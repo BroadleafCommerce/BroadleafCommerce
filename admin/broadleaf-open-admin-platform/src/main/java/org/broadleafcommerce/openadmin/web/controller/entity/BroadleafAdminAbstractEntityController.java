@@ -183,7 +183,8 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         }
         */
         
-        return "ajaxredirect:/" + sectionKey + "/" + entity.getPMap().get("id").getValue();
+        // Note that AJAX Redirects need the context path prepended to them
+        return "ajaxredirect:" + getContextPath(request) + sectionKey + "/" + entity.getPMap().get("id").getValue();
     }
 
     /**

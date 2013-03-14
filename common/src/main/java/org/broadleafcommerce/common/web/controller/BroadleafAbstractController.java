@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -40,6 +42,31 @@ public abstract class BroadleafAbstractController {
      */
     protected boolean isAjaxRequest(HttpServletRequest request) {
         return BroadleafControllerUtility.isAjaxRequest(request);       
+    }
+    
+    /**
+     * Returns the current servlet context path. This will return a "/" if the application is
+     * deployed as root. If it's not deployed as root, it will return the context path BOTH a 
+     * leading slash but without a trailing slash.
+     * 
+     * @param request
+     * @return the context path
+     */
+    protected String getContextPath(HttpServletRequest request) {
+        String ctxPath = request.getContextPath();
+        if (StringUtils.isBlank(ctxPath)) {
+            return "/";
+        } else {
+            if (ctxPath.charAt(0) != '/') {
+                ctxPath = '/' + ctxPath;
+            }
+            if (ctxPath.charAt(ctxPath.length() - 1) != '/') {
+                ctxPath = ctxPath + '/';
+            }
+            
+            return ctxPath;
+        }
+        
     }
 
 }
