@@ -18,18 +18,20 @@ package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Responsible for setting the necessary attributes on the BroadleafRequestContext
@@ -42,6 +44,9 @@ public class BroadleafAdminRequestFilter extends OncePerRequestFilter {
 
     private Set<String> ignoreSuffixes;
 
+    @Resource(name = "blAdminRequestProcessor")
+    protected BroadleafAdminRequestProcessor requestProcessor;
+
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         if (!shouldProcessURL(request, request.getRequestURI())) {
@@ -52,12 +57,12 @@ public class BroadleafAdminRequestFilter extends OncePerRequestFilter {
             return;
         }
 
-        BroadleafRequestContext brc = new BroadleafRequestContext();        
-        brc.setRequest(request);
-        brc.setResponse(response);
-        BroadleafRequestContext.setBroadleafRequestContext(brc);
-        
-        filterChain.doFilter(request, response);
+        try {
+            requestProcessor.process(new ServletWebRequest(request, response));
+            filterChain.doFilter(request, response);
+        } catch (SiteNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_FOUND);
+        }
     }
    
 

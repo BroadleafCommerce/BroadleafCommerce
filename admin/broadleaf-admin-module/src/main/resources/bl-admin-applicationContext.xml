@@ -25,7 +25,7 @@
                 <bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.OfferItemCriteriaCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.openadmin.server.security.handler.AdminUserCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.CustomerCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.ChildCategoriesCustomPersistenceHandler"/>

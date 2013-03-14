@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.server.service.handler;
+package org.broadleafcommerce.openadmin.server.security.handler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +29,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
@@ -38,7 +37,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Persist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +62,11 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUser.class.getName());
+        try {
+            return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && AdminUser.class.isAssignableFrom(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
