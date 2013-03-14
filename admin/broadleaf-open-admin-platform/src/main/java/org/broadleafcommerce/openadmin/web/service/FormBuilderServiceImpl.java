@@ -17,6 +17,8 @@
 package org.broadleafcommerce.openadmin.web.service;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -24,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
@@ -215,9 +218,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property property : properties) {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
-
-                String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
-
+                // Depending on visibility, field for the particular property is not created on the form
+                if (! (fmd.getVisibility().compareTo(VisibilityEnum.HIDDEN_ALL) == 0 
+                		|| fmd.getVisibility().compareTo(VisibilityEnum.FORM_HIDDEN) == 0)){
+                	
+                	String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
                 // Create the field and set some basic attributes
                 Field f;
                 if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())) {
@@ -241,6 +246,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                 // Add the field to the appropriate FieldGroup
                 ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
+                }
             }
         }
     }
@@ -275,14 +281,19 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // Set the appropriate property values
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
-                Property entityProp = entity.findProperty(p.getName());
+            	//Check for visibility again, so that the field isn't attempted to be populated with a value on the form
+                if (!(((BasicFieldMetadata)p.getMetadata()).getVisibility().compareTo(VisibilityEnum.HIDDEN_ALL) == 0 || 
+                		((BasicFieldMetadata)p.getMetadata()).getVisibility().compareTo(VisibilityEnum.HIDDEN_ALL) == 0)){ 
 
-                if (entityProp == null) {
-                    ef.removeField(p.getName());
-                } else {
-                    Field field = ef.findField(p.getName());
-                    field.setValue(entityProp.getValue());
-                    field.setDisplayValue(entityProp.getDisplayValue());
+	                Property entityProp = entity.findProperty(p.getName());
+	
+	                if (entityProp == null) {
+	                    ef.removeField(p.getName());
+	                } else {
+	                    Field field = ef.findField(p.getName());
+	                    field.setValue(entityProp.getValue());
+	                    field.setDisplayValue(entityProp.getDisplayValue());
+	                }
                 }
             }
         }
