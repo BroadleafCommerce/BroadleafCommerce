@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -47,12 +44,15 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -219,8 +219,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
                 // Depending on visibility, field for the particular property is not created on the form
-                if (! (fmd.getVisibility().compareTo(VisibilityEnum.HIDDEN_ALL) == 0 
-                		|| fmd.getVisibility().compareTo(VisibilityEnum.FORM_HIDDEN) == 0)){
+                if (!(VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
+                || VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility()))) {
                 	
                 	String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
                 // Create the field and set some basic attributes
@@ -281,9 +281,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // Set the appropriate property values
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata bFM = (BasicFieldMetadata) p.getMetadata();
             	//Check for visibility again, so that the field isn't attempted to be populated with a value on the form
-                if (!(((BasicFieldMetadata)p.getMetadata()).getVisibility().compareTo(VisibilityEnum.HIDDEN_ALL) == 0 || 
-                		((BasicFieldMetadata)p.getMetadata()).getVisibility().compareTo(VisibilityEnum.HIDDEN_ALL) == 0)){ 
+                if (!(VisibilityEnum.HIDDEN_ALL.equals(bFM.getVisibility())
+                || VisibilityEnum.FORM_HIDDEN.equals(bFM.getVisibility()))) {
 
 	                Property entityProp = entity.findProperty(p.getName());
 	
