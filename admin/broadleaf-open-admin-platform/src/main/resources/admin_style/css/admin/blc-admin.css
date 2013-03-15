@@ -767,9 +767,19 @@ table.list-grid-table tr.clickable.selected:hover {
     display: inline-block;
 }
 
+.conditional > .rule ~ .rule > .remove {
+    display: inline-block;
+}
+
+.conditional > .rule > .remove {
+    display: none;
+}
+
+/*
 .rule-builder-simple > div > .conditional-rules > .conditional > .remove {
 	display: none;
 }
+*/
 
 input[type="text"].conditional-qty {
     display: -moz-inline-stack;
